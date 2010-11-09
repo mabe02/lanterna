@@ -86,7 +86,7 @@ public class GUIScreen
 
         //Go through the windows
         for(WindowPlacement windowPlacement: windowStack) {
-            if(windowPlacement.getWindow().isHideWhenNotTopLevel() && windowPlacement != windowStack.getLast())
+            if(hasSoloWindowAbove(windowPlacement))
                 continue;
             
             TerminalPosition topLeft = windowPlacement.getTopLeft();
@@ -257,6 +257,16 @@ public class GUIScreen
         OVERLAPPING,
         NEW_CORNER_WINDOW,
         CENTER
+    }
+
+    private boolean hasSoloWindowAbove(WindowPlacement windowPlacement)
+    {
+        int index = windowStack.indexOf(windowPlacement);
+        for(int i = index + 1; i < windowStack.size(); i++) {
+            if(windowStack.get(i).window.isSoloWindow())
+                return true;
+        }
+        return false;
     }
 
     private class WindowPlacement

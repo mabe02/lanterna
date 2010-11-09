@@ -40,7 +40,7 @@ public class Window implements Container
     private GUIScreen owner;
     private final Panel contentPane;
     private Interactable currentlyInFocus;
-    private boolean hideWhenNotTopLevel;
+    private boolean soloWindow;
 
     public Window(String title)
     {
@@ -50,7 +50,7 @@ public class Window implements Container
         this.contentPane = new Panel(title);
         this.contentPane.setParent(this);
         this.currentlyInFocus = null;
-        this.hideWhenNotTopLevel = false;
+        this.soloWindow = false;
     }
 
     public void addWindowListener(WindowListener listener)
@@ -212,14 +212,14 @@ public class Window implements Container
         }
     }
 
-    public boolean isHideWhenNotTopLevel()
+    public boolean isSoloWindow()
     {
-        return hideWhenNotTopLevel;
+        return soloWindow;
     }
 
-    public void setHideWhenNotTopLevel(boolean hideWhenNotTopLevel)
+    public void setSoloWindow(boolean soloWindow)
     {
-        this.hideWhenNotTopLevel = hideWhenNotTopLevel;
+        this.soloWindow = soloWindow;
     }
 
     boolean maximisesVertically()
