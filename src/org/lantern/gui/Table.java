@@ -53,13 +53,18 @@ public class Table extends AbstractComponent implements InteractableContainer
             mainPanel = new Panel(Panel.Orientation.HORISONTAL);
         else
             mainPanel = new Panel(title, Panel.Orientation.HORISONTAL);
-        mainPanel.setBetweenComponentsPadding(1);
+        mainPanel.setBetweenComponentsPadding(0);
 
         rows = new ArrayList<Component[]>();
 
         //Initialize to something to avoid null pointer exceptions
         columns = new Panel[0];
         alterTableStructure(nrOfColumns);        
+    }
+
+    public void setColumnPaddingSize(int size)
+    {
+        mainPanel.setBetweenComponentsPadding(size);
     }
 
     public void addRow(Component ...components)
