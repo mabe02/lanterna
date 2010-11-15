@@ -84,7 +84,7 @@ public class Button extends AbstractInteractableComponent
 
     public String getText()
     {
-        return buttonLabel.getText()[0];
+        return buttonLabel.getText();
     }
 
     public TerminalSize getPreferredSize()
