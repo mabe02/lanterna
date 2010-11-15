@@ -54,6 +54,19 @@ public class ActionListBox extends AbstractInteractableComponent
             selectedIndex = 0;
     }
 
+    public void addAction(final Action action)
+    {
+        addItem(new Item() {
+            public String getTitle() {
+                return action.toString();
+            }
+
+            public void doAction() throws LanternException {
+                action.doAction();
+            }
+        });
+    }
+
     public void clearItems()
     {
         itemList.clear();
