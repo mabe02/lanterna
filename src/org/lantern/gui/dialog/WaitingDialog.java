@@ -70,7 +70,7 @@ public class WaitingDialog extends Window
         public void run()
         {
             while(!isClosed) {
-                final String currentSpin = spinLabel.getText()[0];
+                final String currentSpin = spinLabel.getText();
                 final String nextSpin;
                 if(currentSpin.equals("-"))
                     nextSpin = "\\";
