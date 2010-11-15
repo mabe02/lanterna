@@ -17,6 +17,7 @@
 
 package org.lantern.gui;
 
+import java.util.Arrays;
 import org.lantern.gui.theme.Theme;
 import org.lantern.gui.theme.Theme.Category;
 import org.lantern.terminal.Terminal;
@@ -146,8 +147,17 @@ public class Label extends AbstractComponent
         invalidate();
     }
 
-    public String []getText() {
-        return text;
+    public String getText() {
+        StringBuilder sb = new StringBuilder();
+        for(String line: text)
+            sb.append(line).append("\n");
+        sb.delete(sb.length() - 1, sb.length());
+        return sb.toString();
+    }
+
+    public String[] getLines()
+    {
+        return Arrays.copyOf(text, text.length);
     }
 
     public void setStyle(Category style)
