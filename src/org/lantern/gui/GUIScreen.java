@@ -39,6 +39,7 @@ public class GUIScreen
     private final LinkedList<WindowPlacement> windowStack;
     private final Queue<Action> actionToRunInEventThread;
     private String title;
+    private boolean showMemoryUsage;
     private Theme guiTheme;
     private boolean needsRefresh;
     private Thread eventThread;
@@ -46,6 +47,7 @@ public class GUIScreen
     public GUIScreen(final Screen screen)
     {
         this.title = "";
+        this.showMemoryUsage = false;
         this.screen = screen;
         this.guiTheme = Theme.getDefaultTheme();
         this.windowStack = new LinkedList<WindowPlacement>();
@@ -83,6 +85,10 @@ public class GUIScreen
 
         //Write the title
         textGraphics.drawString(3, 0, title);
+
+        //Write memory usage
+        if(showMemoryUsage)
+            drawMemoryUsage(textGraphics);
 
         //Go through the windows
         for(WindowPlacement windowPlacement: windowStack) {
@@ -252,6 +258,16 @@ public class GUIScreen
         return eventThread == Thread.currentThread();
     }
 
+    public void setShowMemoryUsage(boolean showMemoryUsage)
+    {
+        this.showMemoryUsage = showMemoryUsage;
+    }
+
+    public boolean isShowingMemoryUsage()
+    {
+        return showMemoryUsage;
+    }
+
     public enum Position
     {
         OVERLAPPING,
@@ -267,6 +283,21 @@ public class GUIScreen
                 return true;
         }
         return false;
+    }
+
+    private void drawMemoryUsage(TextGraphics textGraphics)
+    {
+        Runtime runtime = Runtime.getRuntime();
+        long freeMemory = runtime.freeMemory();
+        long totalMemory = runtime.totalMemory();
+        long usedMemory = totalMemory - freeMemory;
+
+        usedMemory /= (1024 * 1024);
+        totalMemory /= (1024 * 1024);
+
+        String memUsageString = "Memory usage: " + usedMemory + " MB of " + totalMemory + " MB";
+        textGraphics.drawString(screen.getTerminalSize().getColumns() - memUsageString.length() - 1,
+                screen.getTerminalSize().getRows() - 1, memUsageString);
     }
 
     private class WindowPlacement
