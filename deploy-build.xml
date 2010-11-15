@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="lantern" default="all" basedir=".">
-    <property name="Version" value="1.0-beta3"/>
+    <property name="Version" value="1.0-rc1"/>
     <property name="JarFile" value="lanterna-${Version}.jar"/>
     <property name="SourceDeployDirectory" value="lanterna-${Version}"/>
     <property name="SourceFile" value="lanterna-${Version}-source.zip"/>
@@ -32,7 +32,7 @@ public class BuildInformation
 
     <target name="build" depends="compile">
         <echo message="Creating .jar file..."/>
-        <jar basedir="pkg" jarfile="dist/${JarFile}" compress="true" manifest="custom-manifest.mf"/>
+        <jar basedir="pkg" jarfile="dist/${JarFile}" compress="true" manifest="deploy-manifest.mf"/>
         
         <echo message="Generating javadoc..."/>
         <javadoc sourcepath="src" destdir="javadoc"/>
