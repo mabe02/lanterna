@@ -223,6 +223,7 @@ public class GUIScreen
         }
 
         window.addWindowListener(new WindowAdapter() {
+            @Override
             public void onWindowInvalidated(Window window)
             {
                 needsRefresh = true;
