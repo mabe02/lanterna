@@ -150,13 +150,13 @@ public class CheckBoxList extends AbstractInteractableComponent
     public TerminalSize getPreferredSize()
     {
         if(forceWidth != -1) {
-            if(items.size() == 0)
+            if(items.isEmpty())
                 return new TerminalSize(forceWidth, 1);
             else
                 return new TerminalSize(forceWidth, items.size());
         }
         else {
-            if(items.size() == 0)
+            if(items.isEmpty())
                 return new TerminalSize(1, 1);
             else {
                 int maxWidth = 1;
