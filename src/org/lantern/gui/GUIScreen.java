@@ -176,10 +176,8 @@ public class GUIScreen
             synchronized(actionToRunInEventThread) {
                 List<Action> actions = new ArrayList<Action>(actionToRunInEventThread);
                 actionToRunInEventThread.clear();
-                for(Action nextAction: actions) {
+                for(Action nextAction: actions)
                     nextAction.doAction();
-                    nextAction = actionToRunInEventThread.poll();
-                }
             }
 
             update();
