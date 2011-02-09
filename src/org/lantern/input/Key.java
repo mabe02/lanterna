@@ -66,7 +66,8 @@ public class Key
         Tab('\t'),
         ReverseTab('/'),
         Enter('\n'),
-        Unknown('!');
+        Unknown('!'),
+        CursorLocation('£');
 
         private char representationKey;
 

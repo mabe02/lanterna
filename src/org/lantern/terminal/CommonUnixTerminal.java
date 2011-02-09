@@ -52,8 +52,17 @@ public class CommonUnixTerminal extends CommonTerminal
 
     public TerminalSize queryTerminalSize() throws LanternException
     {
-        return TerminalStatus.querySize();
+        TerminalSize terminalSize = TerminalStatus.querySize();
+        if(terminalSize == null) {
+            saveCursorPosition();
+            moveCursor(5000, 5000);
+            reportPosition();
+            restoreCursorPosition();
+            terminalSize = lastKnownSize;
+        }
+        if(terminalSize == null)
+            return new TerminalSize(80, 24);
+        
+        return terminalSize;
     }
-
-
 }

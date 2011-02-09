@@ -118,4 +118,22 @@ public abstract class CommonTerminal extends AbstractTerminal
         writeToTerminal(((x+1) + "").getBytes());
         writeToTerminal((byte)'H');
     }
+
+    public void reportPosition() throws LanternException
+    {
+        CSI();
+        writeToTerminal("6n".getBytes());
+    }
+    
+    public void restoreCursorPosition() throws LanternException
+    {
+        CSI();
+        writeToTerminal("u".getBytes());
+    }
+
+    public void saveCursorPosition() throws LanternException
+    {
+        CSI();
+        writeToTerminal("s".getBytes());
+    }
 }

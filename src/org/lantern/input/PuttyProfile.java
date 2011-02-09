@@ -29,8 +29,8 @@ public class PuttyProfile extends CommonProfile
     Collection<CharacterPattern> getPatterns()
     {
         Collection<CharacterPattern> xtermPatterns = super.getPatterns();
-        xtermPatterns.add(new CharacterPattern(new Key(Key.Kind.Home), ESC_CODE, '[', '1', '~'));
-        xtermPatterns.add(new CharacterPattern(new Key(Key.Kind.End), ESC_CODE, '[', '4', '~'));
+        xtermPatterns.add(new BasicCharacterPattern(new Key(Key.Kind.Home), ESC_CODE, '[', '1', '~'));
+        xtermPatterns.add(new BasicCharacterPattern(new Key(Key.Kind.End), ESC_CODE, '[', '4', '~'));
         return xtermPatterns;
     }
 }

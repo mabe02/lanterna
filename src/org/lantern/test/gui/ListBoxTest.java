@@ -22,6 +22,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.lantern.LanternException;
 import org.lantern.LanternTerminal;
+import org.lantern.TerminalFactory;
 import org.lantern.gui.Action;
 import org.lantern.gui.Border;
 import org.lantern.gui.Button;
@@ -49,7 +50,7 @@ public class ListBoxTest
             }
         }
 
-        LanternTerminal terminal = new LanternTerminal();
+        LanternTerminal terminal = new LanternTerminal(new TerminalFactory.Common());
         final GUIScreen terminalGUIScreen = terminal.getGUIScreen();
         if(terminalGUIScreen == null) {
             System.err.println("Couldn't allocate a terminal!");

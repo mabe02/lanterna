@@ -29,8 +29,8 @@ public class GnomeTerminalProfile extends CommonProfile
     Collection<CharacterPattern> getPatterns()
     {
         Collection<CharacterPattern> xtermPatterns = super.getPatterns();
-        xtermPatterns.add(new CharacterPattern(new Key(Key.Kind.Home), ESC_CODE, 'O', 'H'));
-        xtermPatterns.add(new CharacterPattern(new Key(Key.Kind.End), ESC_CODE, 'O', 'F'));
+        xtermPatterns.add(new BasicCharacterPattern(new Key(Key.Kind.Home), ESC_CODE, 'O', 'H'));
+        xtermPatterns.add(new BasicCharacterPattern(new Key(Key.Kind.End), ESC_CODE, 'O', 'F'));
         return xtermPatterns;
     }
 }

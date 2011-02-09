@@ -40,6 +40,7 @@ public abstract class AbstractTerminal implements Terminal
     private final OutputStream terminalOutput;
     private final InputDecoder inputDecoder;
     private final List<ResizeListener> resizeListeners;
+    protected TerminalSize lastKnownSize;
 
     public AbstractTerminal(final InputStream terminalInput, final OutputStream terminalOutput,
             final Charset terminalCharset)
@@ -48,6 +49,7 @@ public abstract class AbstractTerminal implements Terminal
         this.terminalCharset = terminalCharset;
         this.inputDecoder = new InputDecoder(new InputStreamReader(terminalInput, terminalCharset));
         this.resizeListeners = new ArrayList<ResizeListener>();
+        this.lastKnownSize = null;
     }
 
     //Allow subclasses (that's susposted to know what they're doing) to write directly to the terminal
@@ -68,7 +70,22 @@ public abstract class AbstractTerminal implements Terminal
 
     public Key readInput() throws LanternException
     {
-        return inputDecoder.getNextCharacter();
+        Key key = inputDecoder.getNextCharacter();
+        if(key != null && key.getKind() == Key.Kind.CursorLocation) {
+            TerminalPosition reportedTerminalPosition = inputDecoder.getLastReportedTerminalPosition();
+            if(reportedTerminalPosition != null) {
+                TerminalSize newSize = new TerminalSize(reportedTerminalPosition.getColumn(),
+                                                            reportedTerminalPosition.getRow());
+
+                if(lastKnownSize == null || !newSize.equals(lastKnownSize)) {
+                    lastKnownSize = newSize;
+                    onResized();
+                }
+            }
+            return readInput();
+        }
+        else
+            return key;
     }
 
     public void addInputProfile(KeyMappingProfile profile)

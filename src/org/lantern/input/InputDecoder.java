@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 import org.lantern.LanternException;
+import org.lantern.terminal.TerminalPosition;
 
 /**
  *
@@ -38,6 +39,7 @@ public class InputDecoder
     private final Queue<Character> leftOverQueue;
     private final Set<CharacterPattern> bytePatterns;
     private final List<Character> currentMatching;
+    private TerminalPosition lastReportedTerminalPosition;
 
     public InputDecoder(final Reader source)
     {
@@ -46,6 +48,7 @@ public class InputDecoder
         this.leftOverQueue = new LinkedList<Character>();
         this.bytePatterns = new HashSet<CharacterPattern>();
         this.currentMatching = new ArrayList<Character>();
+        this.lastReportedTerminalPosition = null;
     }
 
     public InputDecoder(final Reader source, final KeyMappingProfile profile)
@@ -96,11 +99,14 @@ public class InputDecoder
                 currentMatching.add(nextChar);
                 for(CharacterPattern pattern: bytePatterns) {
                     if(pattern.matches(currentMatching)) {
-                        if(pattern.pattern.length == currentMatching.size()) {
+                        if(pattern.isCompleteMatch(currentMatching)) {
+                            Key result = pattern.getResult();
+                            if(result.getKind() == Key.Kind.CursorLocation)
+                                lastReportedTerminalPosition = ScreenInfoCharacterPattern.getCursorPosition(currentMatching);
                             currentMatching.clear();
-                            return pattern.result;
+                            return pattern.getResult();
                         }
-                        if(pattern.pattern.length > currentMatching.size())
+                        else
                             canMatchWithOneMoreChar = true;
                     }
                 }
@@ -117,5 +123,10 @@ public class InputDecoder
                 return new Key(first.charValue());
             }
         }
+    }
+
+    public TerminalPosition getLastReportedTerminalPosition()
+    {
+        return lastReportedTerminalPosition;
     }
 }

@@ -17,10 +17,13 @@
 
 package org.lantern.test;
 
+import java.nio.charset.Charset;
 import org.lantern.LanternException;
 import org.lantern.LanternTerminal;
+import org.lantern.TerminalFactory;
 import org.lantern.input.Key;
 import org.lantern.terminal.Terminal;
+import org.lantern.terminal.TerminalSize;
 
 /**
  *
@@ -38,18 +41,48 @@ public class TerminalInputTest
             }
         }
 
-        Terminal rawTerminal = new LanternTerminal().getUnderlyingTerminal();
+        final Terminal rawTerminal = new TerminalFactory.Common().createTerminal(System.in, System.out, Charset.defaultCharset());
         if(rawTerminal == null) {
             System.err.println("Couldn't allocate a terminal!");
             return;
         }
         rawTerminal.enterPrivateMode();
 
+        TerminalSize size = rawTerminal.queryTerminalSize();
+        if(size != null) {
+            String sizeString = size.toString();
+            for(int i = 0; i < sizeString.length(); i++)
+                rawTerminal.putCharacter(sizeString.charAt(i));
+        }
+
+        rawTerminal.addResizeListener(new Terminal.ResizeListener() {
+            public void onResized(TerminalSize newSize)
+            {
+                try {
+                    if(newSize != null) {
+                        String sizeString = " Resized: " + newSize.toString();
+                        for(int i = 0; i < sizeString.length(); i++)
+                            rawTerminal.putCharacter(sizeString.charAt(i));
+                    }
+                }
+                catch(LanternException e) {}
+            }
+        });
+
         Key key = null;
         while(key == null) {
             Thread.sleep(400);
             key = rawTerminal.readInput();
         }
+
+        size = rawTerminal.queryTerminalSize();
+        if(size != null) {
+            String sizeString = size.toString();
+            for(int i = 0; i < sizeString.length(); i++)
+                rawTerminal.putCharacter(sizeString.charAt(i));
+        }
+        
+        Thread.sleep(3000);
         rawTerminal.exitPrivateMode();
         do {
             System.out.println(key.toString());
