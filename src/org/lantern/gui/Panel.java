@@ -127,7 +127,9 @@ public class Panel extends AbstractContainer
         for(LanternLayout.LaidOutComponent laidOutComponent: laidOutComponents) {
             TextGraphics subSubGraphics = subGraphics.subAreaGraphics(
                     laidOutComponent.getTopLeftPosition(), laidOutComponent.getSize());
-            laidOutComponent.getComponent().repaint(subSubGraphics);
+            
+            if(laidOutComponent.getComponent().isVisible())
+                laidOutComponent.getComponent().repaint(subSubGraphics);
         }        
 
         graphics.applyThemeItem(graphics.getTheme().getItem(Category.DefaultDialog));

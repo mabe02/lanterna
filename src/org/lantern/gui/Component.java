@@ -30,5 +30,7 @@ public interface Component
     void addComponentListener(ComponentListener cl);
     void removeComponentListener(ComponentListener cl);
     void repaint(TextGraphics graphics);
+    void setVisible(boolean visible);
+    boolean isVisible();
     TerminalSize getPreferredSize();
 }

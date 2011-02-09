@@ -28,13 +28,15 @@ import org.lantern.gui.listener.ComponentListener;
  */
 public abstract class AbstractComponent implements Component
 {
-    private Container parent;
     private final List<ComponentListener> componentListeners;
+    private Container parent;
+    private boolean visible;
 
     public AbstractComponent()
     {
         componentListeners = new LinkedList<ComponentListener>();
         parent = null;
+        visible = true;
     }
 
     public Container getParent()
@@ -57,6 +59,18 @@ public abstract class AbstractComponent implements Component
     {
         componentListeners.remove(cl);
     }
+
+    public boolean isVisible()
+    {
+        return visible;
+    }
+
+    public void setVisible(boolean visible)
+    {
+        this.visible = visible;
+    }
+
+
 
     protected void invalidate()
     {
