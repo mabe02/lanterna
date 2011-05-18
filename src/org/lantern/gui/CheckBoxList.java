@@ -70,6 +70,13 @@ public class CheckBoxList extends AbstractInteractableComponent
             return null;
         return itemStatus.get(items.indexOf(object));
     }
+    
+    public Boolean isChecked(int index)
+    {
+        if(index < 0 || index >= itemStatus.size())
+            return null;
+        return itemStatus.get(index);
+    }
 
     public void setChecked(Object object, boolean checked)
     {
@@ -77,6 +84,16 @@ public class CheckBoxList extends AbstractInteractableComponent
             return;
         
         itemStatus.set(items.indexOf(object), checked);
+    }
+    
+    public int getItemCount()
+    {
+        return items.size();
+    }
+    
+    public Object getItemAt(int index)
+    {
+        return items.get(index);
     }
 
     public void keyboardInteraction(Key key, InteractableResult result)
