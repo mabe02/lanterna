@@ -93,10 +93,8 @@ class TerminalStatus
                 continue;
             }
         }
-        if(terminalHeight == -1)
-            terminalHeight = 24;
-        if(terminalWidth == -1)
-            terminalWidth = 80;
+        if(terminalHeight == -1 || terminalWidth == -1)
+            return null;
         return new TerminalSize(terminalWidth, terminalHeight);
     }
 
