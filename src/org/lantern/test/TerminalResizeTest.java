@@ -19,6 +19,7 @@ package org.lantern.test;
 
 import org.lantern.LanternException;
 import org.lantern.LanternTerminal;
+import org.lantern.input.Key;
 import org.lantern.terminal.Terminal;
 import org.lantern.terminal.TerminalSize;
 
@@ -45,7 +46,13 @@ public class TerminalResizeTest implements Terminal.ResizeListener
         terminal.moveCursor(0, 0);
         terminal.addResizeListener(new TerminalResizeTest());
 
-        Thread.sleep(10000);
+        while(true) {
+            Key key = terminal.readInput();
+            if(key == null || key.getCharacter() != 'q')
+                Thread.sleep(1);
+            else
+                break;
+        }
         terminal.exitPrivateMode();
     }
 
