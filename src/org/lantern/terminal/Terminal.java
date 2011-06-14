@@ -40,6 +40,7 @@ public interface Terminal extends InputProvider
     public void addInputProfile(KeyMappingProfile profile);
     public void addResizeListener(ResizeListener listener);
     public void removeResizeListener(ResizeListener listener);
+    public void hackSendFakeResize() throws LanternException;
     public TerminalSize queryTerminalSize() throws LanternException;
 
     public enum SGR

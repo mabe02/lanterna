@@ -103,6 +103,11 @@ public class Screen implements InputProvider
             return terminalSize;
         }
     }
+    
+    public void hackSendFakeResize() throws LanternException
+    {
+        terminal.hackSendFakeResize();
+    }
 
     public void startScreen() throws LanternException
     {

@@ -188,6 +188,11 @@ public class SwingTerminal implements Terminal
         resizeListeners.remove(listener);
     }
 
+    public void hackSendFakeResize() throws LanternException
+    {
+        //Don't do this on Swing
+    }
+
     private synchronized void resize(final TerminalSize newSize)
     {
         TerminalCharacter [][]newCharacterMap = new TerminalCharacter[newSize.getRows()][newSize.getColumns()];

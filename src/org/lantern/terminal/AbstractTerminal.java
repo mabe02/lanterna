@@ -114,6 +114,11 @@ public abstract class AbstractTerminal implements Terminal
         if(listener != null)
             resizeListeners.remove(listener);
     }
+    
+    public void hackSendFakeResize() throws LanternException
+    {
+        onResized();
+    }
 
     protected synchronized void onResized() throws LanternException
     {
