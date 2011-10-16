@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="lantern" default="all" basedir=".">
-    <property name="Version" value="1.0-rc1"/>
+    <property name="Version" value="1.0"/>
     <property name="JarFile" value="lanterna-${Version}.jar"/>
     <property name="SourceDeployDirectory" value="lanterna-${Version}"/>
     <property name="SourceFile" value="lanterna-${Version}-source.zip"/>
@@ -19,19 +19,23 @@
     <target name="compile" depends="init">
         <echo message="Compiling sources..."/>
         <buildnumber/>
-        <echo file="src/org/lantern/BuildInformation.java" append="false">
-package org.lantern;
+        <echo file="src/org/lantern/BuildInformation.java" append="false">package org.lantern;
+
 public class BuildInformation
 {
     public static final String VERSION = "${Version}";
     public static final int BUILD = ${build.number};
 }
+
         </echo>
-        <javac destdir="pkg" debug="false" target="5" encoding="UTF-8" srcdir="src"/>
+        <javac destdir="pkg" debug="false" source="5" target="5" encoding="UTF-8" srcdir="src"/>
     </target>
 
     <target name="build" depends="compile">
         <echo message="Creating .jar file..."/>
+        <copy todir="pkg">
+            <fileset dir="." includes="License.txt"/>
+        </copy>
         <jar basedir="pkg" jarfile="dist/${JarFile}" compress="true" manifest="deploy-manifest.mf"/>
         
         <echo message="Generating javadoc..."/>
@@ -40,7 +44,7 @@ public class BuildInformation
         <echo message="Generating the source distribution..."/>
         <mkdir dir="${SourceDeployDirectory}"/>
         <copy todir="${SourceDeployDirectory}">
-            <fileset dir="." includes="src/**,javadoc/**"/>
+            <fileset dir="." includes="src/**,javadoc/**,License.txt"/>
         </copy>
         <zip basedir="lanterna-${Version}" zipfile="dist/${SourceFile}" compress="true" level="9"/>
 
