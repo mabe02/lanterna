@@ -22,7 +22,7 @@ package org.lantern.terminal;
 import org.lantern.LanternException;
 
 /**
- *
+ * Terminal dimensions in 2-d space
  * @author mabe02
  */
 public class TerminalSize {

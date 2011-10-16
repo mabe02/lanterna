@@ -33,7 +33,7 @@ import org.lantern.input.Key;
 import org.lantern.input.KeyMappingProfile;
 
 /**
- *
+ * Containing a common implementation for most terminal
  * @author mabe02
  */
 public abstract class AbstractTerminal implements Terminal

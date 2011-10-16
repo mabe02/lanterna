@@ -29,7 +29,7 @@ import sun.misc.Signal;
 import sun.misc.SignalHandler;
 
 /**
- *
+ * A common ANSI terminal extention with support for Unix resize signals
  * @author mabe02
  */
 public class CommonUnixTerminal extends CommonTerminal

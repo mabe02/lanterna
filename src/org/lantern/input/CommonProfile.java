@@ -25,7 +25,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- *
+ * Common key press profiles that seems to be shared by most terminals/terminal emulators.
  * @author mabe02
  */
 public class CommonProfile extends KeyMappingProfile

@@ -22,7 +22,8 @@ package org.lantern.input;
 import java.util.Collection;
 
 /**
- *
+ * Adds some codes from the Putty, a popular terminal emulator for Windows 
+ * (http://www.chiark.greenend.org.uk/~sgtatham/putty/)
  * @author mabe02
  */
 public class PuttyProfile extends CommonProfile

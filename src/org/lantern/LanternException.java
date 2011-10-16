@@ -24,7 +24,9 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 
 /**
- *
+ * This is a general exception class used by all of Lantern, mostly for 
+ * wrapping IOException:s. If you think this should be extending
+ * RuntimeException instead of Exception, please let us know.
  * @author mabe02
  */
 public class LanternException extends Exception {

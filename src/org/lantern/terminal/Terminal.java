@@ -24,7 +24,9 @@ import org.lantern.input.InputProvider;
 import org.lantern.input.KeyMappingProfile;
 
 /**
- *
+ * This is the main terminal interface, at the lowest level supported by Lantern.
+ * You can implement your own implementation of this if you want to target an
+ * exotic text terminal specification or another graphical environment (like SWT).
  * @author mabe02
  */
 public interface Terminal extends InputProvider

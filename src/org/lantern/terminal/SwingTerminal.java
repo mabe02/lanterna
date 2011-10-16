@@ -45,7 +45,7 @@ import org.lantern.input.Key;
 import org.lantern.input.KeyMappingProfile;
 
 /**
- *
+ * A Swing-based text terminal emulator
  * @author mabe02
  */
 public class SwingTerminal implements Terminal

@@ -26,7 +26,7 @@ import org.lantern.terminal.Terminal.Color;
 import org.lantern.terminal.TerminalPosition;
 
 /**
- *
+ * Helper class to write to a Screen, a bit like a pen in graphical environments.
  * @author mabe02
  */
 public class ScreenWriter

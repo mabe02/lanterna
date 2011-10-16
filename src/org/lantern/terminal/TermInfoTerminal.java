@@ -26,7 +26,9 @@ import org.lantern.LanternException;
 import org.lantern.input.TermInfoProfile;
 
 /**
- *
+ * A terminal implementation reading it's format for the term-info database.
+ * Warning, many term-info databases are not accurate! Please use the common Unix
+ * terminal instead!
  * @author mabe02
  */
 public abstract class TermInfoTerminal extends AbstractTerminal

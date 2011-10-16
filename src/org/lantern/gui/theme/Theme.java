@@ -22,7 +22,7 @@ package org.lantern.gui.theme;
 import org.lantern.terminal.Terminal.Color;
 
 /**
- *
+ * Extend this class to create your own themes
  * @author mabe02
  */
 public class Theme

@@ -24,7 +24,9 @@ import java.util.regex.Pattern;
 import org.lantern.LanternException;
 
 /**
- *
+ * A rather hacky class for figuring out and controlling the terminal environment.
+ * Much of this is sort of Linux specific, but I've got some of it working 
+ * on Solaris too.
  * @author mabe02
  */
 class TerminalStatus

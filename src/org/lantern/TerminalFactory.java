@@ -28,13 +28,17 @@ import org.lantern.terminal.SwingTerminal;
 import org.lantern.terminal.Terminal;
 
 /**
- *
+ * This factory class will create terminal objects suitable for a specific environment
  * @author mabe02
  */
 public abstract class TerminalFactory
 {
     public abstract Terminal createTerminal(InputStream terminalInput, OutputStream terminalOutput, Charset terminalCharset);
 
+    /**
+     * This factory implementation returns a Swing terminal if GraphicsEnvironment.isHeadless() returns false,
+     * otherwise a common Unix text terminal.
+     */
     public static class Default extends TerminalFactory
     {
         @Override
@@ -47,6 +51,9 @@ public abstract class TerminalFactory
         }
     }
 
+    /**
+     * This factory implementation returns a common unix text terminal.
+     */
     public static class Common extends TerminalFactory
     {
         @Override
@@ -56,6 +63,9 @@ public abstract class TerminalFactory
         }
     }
 
+    /**
+     * This factory implementation returns a Swing-based text terminal emulator
+     */
     public static class Swing extends TerminalFactory
     {
         @Override

@@ -22,7 +22,7 @@ package org.lantern.input;
 import java.util.Collection;
 
 /**
- *
+ * Adds some codes from the gnome-terminal, commonly used in Ubuntu.
  * @author mabe02
  */
 public class GnomeTerminalProfile extends CommonProfile

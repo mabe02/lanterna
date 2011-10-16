@@ -25,7 +25,8 @@ import java.nio.charset.Charset;
 import org.lantern.LanternException;
 
 /**
- *
+ * A term-info driven terminal with Unix resize capabilities.
+ * Warning, this probably won't be too accurate, use CommonUnixTerminal instead.
  * @author mabe02
  */
 public class UnixTerminal extends TermInfoTerminal

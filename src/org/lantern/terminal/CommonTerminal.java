@@ -26,7 +26,7 @@ import org.lantern.LanternException;
 import org.lantern.input.CommonProfile;
 
 /**
- *
+ * A common ANSI text terminal implementation
  * @author mabe02
  */
 public abstract class CommonTerminal extends AbstractTerminal

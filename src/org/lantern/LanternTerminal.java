@@ -27,7 +27,7 @@ import org.lantern.screen.Screen;
 import org.lantern.terminal.Terminal;
 
 /**
- *
+ * This is a helper class for creating the three types of terminal objects.
  * @author mabe02
  */
 public class LanternTerminal

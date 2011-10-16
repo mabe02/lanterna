@@ -31,7 +31,9 @@ import org.lantern.terminal.TerminalPosition;
 import org.lantern.terminal.TerminalSize;
 
 /**
- *
+ * A layer to put on top of a Terminal object, giving you a kind of screen buffer
+ * to use, which is a lot easier to work with. Drawing text or graphics to the
+ * terminal is kind of like writing to a bitmap.
  * @author mabe02
  */
 public class Screen implements InputProvider

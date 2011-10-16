@@ -20,7 +20,7 @@
 package org.lantern.terminal;
 
 /**
- *
+ * A 2-d position in 'terminal space'
  * @author mabe02
  */
 public class TerminalPosition {
