@@ -78,6 +78,9 @@ public abstract class CommonTerminal extends AbstractTerminal
                 case EXIT_UNDERLINE:
                     writeToTerminal((byte)'2', (byte)'4');
                     break;
+                case ENTER_BLINK:
+                    writeToTerminal((byte)'5');
+                    break;
                 case RESET_ALL:
                     writeToTerminal((byte)'0');
                     break;

@@ -20,7 +20,10 @@
 package org.lantern.screen;
 
 import java.util.Arrays;
+import java.util.EnumSet;
+
 import java.util.HashSet;
+import java.util.Set;
 import org.lantern.terminal.Terminal;
 import org.lantern.terminal.Terminal.Color;
 import org.lantern.terminal.TerminalPosition;
@@ -93,7 +96,7 @@ public class ScreenWriter
         currentPosition.setColumn(x);
         currentPosition.setRow(y);
 
-        final HashSet<Terminal.Style> drawStyle = new HashSet<Terminal.Style>(Arrays.asList(styles));
+        final Set<Terminal.Style> drawStyle = new HashSet<Terminal.Style>(Arrays.asList(styles));
         targetScreen.putString(x, y, string, foregroundColor, backgroundColor,
                 drawStyle.contains(Terminal.Style.Bold), drawStyle.contains(Terminal.Style.Underline),
                 drawStyle.contains(Terminal.Style.Reverse));

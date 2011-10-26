@@ -1,0 +1,86 @@
+/*
+ * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * 
+ * lanterna is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * Copyright (C) 2010-2011 mabe02
+ */
+
+package org.lantern.test;
+
+import org.lantern.LanternException;
+import org.lantern.LanternTerminal;
+import org.lantern.TerminalFactory;
+import org.lantern.screen.Screen;
+import org.lantern.screen.ScreenWriter;
+import org.lantern.screen.TabBehaviour;
+import org.lantern.terminal.Terminal;
+import org.lantern.terminal.TerminalPosition;
+
+/**
+ *
+ * @author martin
+ */
+public class ScreenTabTest {
+    public static void main(String[] args) throws LanternException, InterruptedException
+    {
+        new ScreenTabTest();
+    }
+
+    private LanternTerminal lanternTerminal;
+    private Screen screen;
+
+    public ScreenTabTest() throws LanternException, InterruptedException
+    {
+        this.lanternTerminal = new LanternTerminal(new TerminalFactory.Common());
+        if (lanternTerminal == null) {
+            System.err.println("Couldn't allocate a terminal!");
+            return;
+        }
+        lanternTerminal.start();
+        screen = lanternTerminal.getScreen();
+        screen.setCursorPosition(new TerminalPosition(0, 0));
+        drawStrings("Trying out some tabs!");
+
+        long now = System.currentTimeMillis();
+        while(System.currentTimeMillis() - now < 20 * 1000) {
+            Thread.yield();
+        }
+        lanternTerminal.stopAndRestoreTerminal();
+    }
+
+    private void drawStrings(String topTitle) throws LanternException
+    {
+        ScreenWriter writer = new ScreenWriter(screen);
+        writer.setForegroundColor(Terminal.Color.DEFAULT);
+        writer.setBackgroundColor(Terminal.Color.DEFAULT);
+        writer.fillScreen(' ');
+
+        writer.setForegroundColor(Terminal.Color.DEFAULT);
+        writer.setBackgroundColor(Terminal.Color.DEFAULT);
+        writer.drawString(0, 0, topTitle, Terminal.Style.Blinking);
+        screen.setTabBehaviour(TabBehaviour.CONVERT_TO_ONE_SPACE);
+        writer.drawString(10, 1, "Four tabs: |\t|\t|\t|\t|");
+        screen.setTabBehaviour(TabBehaviour.CONVERT_TO_FOUR_SPACES);
+        writer.drawString(10, 2, "Four tabs: |\t|\t|\t|\t|");
+        screen.setTabBehaviour(TabBehaviour.CONVERT_TO_EIGHT_SPACES);
+        writer.drawString(10, 3, "Four tabs: |\t|\t|\t|\t|");
+        screen.setTabBehaviour(TabBehaviour.ALIGN_TO_COLUMN_4);
+        writer.drawString(10, 4, "Four tabs: |\t|\t|\t|\t|");
+        screen.setTabBehaviour(TabBehaviour.ALIGN_TO_COLUMN_8);
+        writer.drawString(10, 5, "Four tabs: |\t|\t|\t|\t|");
+
+        screen.refresh();
+    }
+}

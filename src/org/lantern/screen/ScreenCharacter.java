@@ -33,6 +33,7 @@ class ScreenCharacter
     private final boolean bold;
     private final boolean underline;
     private final boolean negative;
+    private final boolean blinking;
 
     ScreenCharacter(final char character, final Terminal.Color foregroundColor, final Terminal.Color backgroundColor, boolean bold) {
         this(character, foregroundColor, backgroundColor, bold, false, false);
@@ -40,7 +41,13 @@ class ScreenCharacter
 
     ScreenCharacter(final char character, Terminal.Color foregroundColor, Terminal.Color backgroundColor,
             final boolean bold, final boolean underline, final boolean negative) {
-        if(foregroundColor == null)
+    	this(character, foregroundColor, backgroundColor, bold, underline, negative, false);
+        
+    }
+    
+    ScreenCharacter(final char character, Terminal.Color foregroundColor, Terminal.Color backgroundColor,
+        final boolean bold, final boolean underline, final boolean negative, final boolean blinking) {
+    	if(foregroundColor == null)
             foregroundColor = Terminal.Color.DEFAULT;
         if(backgroundColor == null)
             backgroundColor = Terminal.Color.DEFAULT;
@@ -51,11 +58,12 @@ class ScreenCharacter
         this.bold = bold;
         this.underline = underline;
         this.negative = negative;
+        this.blinking = blinking;
     }
 
     ScreenCharacter(final ScreenCharacter character) {
         this(character.getCharacter(), character.getForegroundColor(), character.getBackgroundColor(),
-                character.isBold(), character.isUnderline(), character.isNegative());
+                character.isBold(), character.isUnderline(), character.isNegative(), character.isBlinking());
     }
 
     char getCharacter() {
@@ -81,6 +89,10 @@ class ScreenCharacter
     boolean isUnderline() {
         return underline;
     }
+    
+    boolean isBlinking() {
+    	return blinking;
+    }
 
     @Override
     public boolean equals(Object obj) {
@@ -93,7 +105,8 @@ class ScreenCharacter
                 getBackgroundColor() == other.getBackgroundColor() &&
                 isBold() == other.isBold() &&
                 isNegative() == other.isNegative() &&
-                isUnderline() == other.isUnderline();
+                isUnderline() == other.isUnderline() &&
+                isBlinking() == other.isBlinking();
     }
 
     @Override

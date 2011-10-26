@@ -19,13 +19,13 @@
 
 package org.lantern.gui;
 
-import org.lantern.gui.theme.Theme;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import org.lantern.terminal.Terminal.Color;
+import java.util.EnumSet;
+
+import org.lantern.gui.theme.Theme;
 import org.lantern.screen.Screen;
 import org.lantern.terminal.Terminal;
+import org.lantern.terminal.Terminal.Color;
 import org.lantern.terminal.TerminalPosition;
 import org.lantern.terminal.TerminalSize;
 
@@ -98,17 +98,12 @@ public class TextGraphics
         if(string.length() + column > areaSize.getColumns())
             string = string.substring(0, areaSize.getColumns() - column);
 
-        Set<Terminal.Style> stylesSet = new HashSet<Terminal.Style>(Arrays.asList(styles));
+        EnumSet<Terminal.Style> stylesSet = EnumSet.copyOf(Arrays.asList(styles));
         if(currentlyBold)
             stylesSet.add(Terminal.Style.Bold);
 
-        boolean bold = stylesSet.contains(Terminal.Style.Bold);
-        boolean underline = stylesSet.contains(Terminal.Style.Underline);
-        boolean reverse = stylesSet.contains(Terminal.Style.Reverse);
-
         screen.putString(column + topLeft.getColumn(), row + topLeft.getRow(), string,
-                foregroundColor, backgroundColor,
-                bold, underline, reverse);
+                foregroundColor, backgroundColor, stylesSet);
     }
 
     public Color getBackgroundColor()

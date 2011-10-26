@@ -85,7 +85,11 @@ public abstract class TermInfoTerminal extends AbstractTerminal
                 case EXIT_REVERSE:
                     writeToTerminal(decodeTerminfoString(terminalProperties.getExitReverseModeString()));
                     break;
-
+                    
+                case ENTER_BLINK:
+                    writeToTerminal(decodeTerminfoString(terminalProperties.getEnterBlinkMode()));
+                    break;
+                	
                 case RESET_ALL:
                     writeToTerminal(decodeTerminfoString("\\E0m"));
                     break;

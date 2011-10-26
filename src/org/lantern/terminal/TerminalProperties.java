@@ -81,12 +81,17 @@ public class TerminalProperties
     {
         return environment.get("enter_underline_mode");
     }
-
+    
     public String getExitUnderlineModeString()
     {
         return environment.get("exit_underline_mode");
     }
-
+    
+    public String getEnterBlinkMode()
+    {
+    	return environment.get("enter_blink_mode");
+    }
+    
     public String getSetForegroundColorString()
     {
         return environment.get("set_a_foreground");

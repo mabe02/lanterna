@@ -20,13 +20,18 @@
 package org.lantern.screen;
 
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.lantern.LanternException;
 import org.lantern.input.InputProvider;
 import org.lantern.input.Key;
 import org.lantern.terminal.Terminal;
+import org.lantern.terminal.Terminal.Style;
 import org.lantern.terminal.TerminalPosition;
 import org.lantern.terminal.TerminalSize;
 
@@ -47,6 +52,9 @@ public class Screen implements InputProvider
     private ScreenCharacter [][] backbuffer;
     private boolean wholeScreenInvalid;
     private boolean hasBeenActivated;
+    
+    //How to deal with \t characters
+    private TabBehaviour tabBehaviour;
 
     public Screen(Terminal terminal) throws LanternException
     {
@@ -69,6 +77,7 @@ public class Screen implements InputProvider
         this.wholeScreenInvalid = false;
         this.hasBeenActivated = false;
         this.cursorPosition = new TerminalPosition(0, 0);
+        this.tabBehaviour = TabBehaviour.ALIGN_TO_COLUMN_8;
 
         this.terminal.addResizeListener(new TerminalResizeListener());
 
@@ -88,7 +97,8 @@ public class Screen implements InputProvider
 
     public void setCursorPosition(TerminalPosition position)
     {
-        this.cursorPosition = new TerminalPosition(position);
+        if(position != null)
+            this.cursorPosition = new TerminalPosition(position);
     }
 
     public void setCursorPosition(int column, int row)
@@ -96,6 +106,15 @@ public class Screen implements InputProvider
         this.cursorPosition = new TerminalPosition(column, row);
     }
 
+    public void setTabBehaviour(TabBehaviour tabBehaviour) {
+        if(tabBehaviour != null)
+            this.tabBehaviour = tabBehaviour;
+    }
+
+    public TabBehaviour getTabBehaviour() {
+        return tabBehaviour;
+    }
+    
     public Key readInput() throws LanternException
     {
         return terminal.readInput();
@@ -136,8 +155,38 @@ public class Screen implements InputProvider
     public void putString(int x, int y, String string, Terminal.Color foregroundColor,
             Terminal.Color backgroundColor, boolean bold, boolean underline, boolean negative)
     {
-        for(int i = 0; i < string.length(); i++)
-            putCharacter(x + i, y, new ScreenCharacter(string.charAt(i), foregroundColor, backgroundColor, bold, underline, negative));
+        putString(x, y, string, foregroundColor, backgroundColor, bold, underline, negative, false);
+    }
+    
+    public void putString(int x, int y, String string, Terminal.Color foregroundColor,
+            Terminal.Color backgroundColor, EnumSet<Terminal.Style> styles)
+    {
+    	putString(x, y, string, foregroundColor, backgroundColor,
+    		styles.contains(Style.Bold), styles.contains(Style.Underline),
+    		styles.contains(Style.Reverse), styles.contains(Style.Blinking));
+    }
+    
+    public void putString(int x, int y, String string, Terminal.Color foregroundColor,
+        Terminal.Color backgroundColor, boolean bold, boolean underline, boolean negative, boolean blinking)
+    {
+    	int tabPosition = string.indexOf('\t');
+        while(tabPosition != -1) {
+            int tabX = x + tabPosition;
+            String tabReplacementHere = getTabReplacement(x);
+            string = string.substring(0, tabPosition) + tabReplacementHere + string.substring(tabPosition + 1);
+            tabPosition += tabReplacementHere.length();
+            tabPosition = string.indexOf('\t', tabPosition);
+        }
+  	
+    	for(int i = 0; i < string.length(); i++)
+    		putCharacter(x + i, y, 
+                        new ScreenCharacter(string.charAt(i), 
+                                            foregroundColor, 
+                                            backgroundColor,
+                                            bold, 
+                                            underline, 
+                                            negative, 
+                                            blinking));
     }
 
     void putCharacter(int x, int y, ScreenCharacter character)
@@ -244,6 +293,28 @@ public class Screen implements InputProvider
         return getTerminalSize().getRows();
     }
 
+    private String getTabReplacement(int x) {
+        int align = 0;
+        switch(tabBehaviour) {
+            case CONVERT_TO_ONE_SPACE:
+                return " ";
+            case CONVERT_TO_FOUR_SPACES:
+                return "    ";
+            case CONVERT_TO_EIGHT_SPACES:
+                return "        ";
+            case ALIGN_TO_COLUMN_4:
+                align = 4 - (x % 4);
+                break;
+            case ALIGN_TO_COLUMN_8:
+                align = 8 - (x % 8);
+                break;
+        }
+        StringBuilder replace = new StringBuilder();
+        for(int i = 0; i < align; i++)
+            replace.append(" ");
+        return replace.toString();
+    }
+
     private static class ScreenPointComparator implements Comparator<TerminalPosition>
     {
         public int compare(TerminalPosition o1, TerminalPosition o2)
@@ -275,7 +346,8 @@ public class Screen implements InputProvider
         private boolean currentlyIsBold;
         private boolean currentlyIsUnderline;
         private boolean currentlyIsNegative;
-
+        private boolean currentlyIsBlinking;
+        
         public Writer()
         {
             currentForegroundColor = Terminal.Color.DEFAULT;
@@ -283,6 +355,7 @@ public class Screen implements InputProvider
             currentlyIsBold = false;
             currentlyIsUnderline = false;
             currentlyIsNegative = false;
+            currentlyIsBlinking = false;
         }
 
         void setCursorPosition(int x, int y) throws LanternException
@@ -292,6 +365,23 @@ public class Screen implements InputProvider
 
         void writeCharacter(ScreenCharacter character) throws LanternException
         {
+            if (currentlyIsBlinking != character.isBlinking()) {
+                if (character.isBlinking()) {
+                    terminal.applySGR(Terminal.SGR.ENTER_BLINK);
+                    currentlyIsBlinking = true;
+                }
+                else {
+                    terminal.applySGR(Terminal.SGR.RESET_ALL);
+                    terminal.applyBackgroundColor(character.getBackgroundColor());
+                    terminal.applyForegroundColor(character.getForegroundColor());
+
+                    // emulating "stop_blink_mode" so that previous formatting is preserved
+                    currentlyIsBold = false;
+                    currentlyIsUnderline = false;
+                    currentlyIsNegative = false;
+                    currentlyIsBlinking = false;
+                }
+            }
             if(currentForegroundColor != character.getForegroundColor()) {
                 terminal.applyForegroundColor(character.getForegroundColor());
                 currentForegroundColor = character.getForegroundColor();

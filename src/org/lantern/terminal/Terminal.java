@@ -53,6 +53,7 @@ public interface Terminal extends InputProvider
         ENTER_BOLD,
         ENTER_REVERSE,
         ENTER_UNDERLINE,
+        ENTER_BLINK,
         EXIT_BOLD,
         EXIT_REVERSE,
         EXIT_UNDERLINE
@@ -83,7 +84,10 @@ public interface Terminal extends InputProvider
 
     public enum Style
     {
-        Bold, Underline, Reverse
+        Bold, 
+        Underline, 
+        Reverse, 
+        Blinking
     }
 
     public interface ResizeListener
