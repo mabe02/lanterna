@@ -477,7 +477,11 @@ public class SwingTerminal implements Terminal
 
         public java.awt.Color getBackgroundAsAWT()
         {
-            return convertColorToAWT(background, false);
+            //TODO: Fix the lookup method to handle color 'default' for background also
+            if (background == Color.DEFAULT)
+                return convertColorToAWT(Color.BLACK, false);
+            else
+                return convertColorToAWT(background, false);
         }
 
         @Override
