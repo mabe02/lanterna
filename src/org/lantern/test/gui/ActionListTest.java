@@ -52,18 +52,9 @@ public class ActionListTest
 
         Panel mainPanel = new Panel(new Border.Invisible(), Panel.Orientation.VERTICAL);
         ActionListBox actionListBox = new ActionListBox();
-        for(int i = 0; i < 5; i++) {
-            actionListBox.addItem(new ActionListBox.Item() {
-                public String getTitle()
-                {
-                    return "ActionListBox item";
-                }
-
-                public void doAction() throws LanternException
-                {
-                }
-            });
-        }
+        for(int i = 0; i < 5; i++)
+            actionListBox.addItem(new ActionListBoxItem());
+        
         mainPanel.addComponent(actionListBox);
         window1.addComponent(mainPanel);
 
@@ -78,5 +69,21 @@ public class ActionListTest
         window1.addComponent(buttonPanel);
         terminalGUIScreen.showWindow(window1, GUIScreen.Position.CENTER);
         terminal.stopAndRestoreTerminal();
+    }
+    
+    private static class ActionListBoxItem implements ActionListBox.Item {             
+        private static int counter = 1;
+        private int nr;
+
+        public ActionListBoxItem() {
+            nr = counter++;
+        }
+        
+        public String getTitle() {
+            return "ActionListBox item #" + nr;
+        }
+
+        public void doAction() throws LanternException {
+        }
     }
 }
