@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="lantern" default="all" basedir=".">
-    <property name="Version" value="1.1-SNAPSHOT"/>
+    <property name="Version" value="1.0.2-SNAPSHOT"/>
     <property name="JarFile" value="lanterna-${Version}.jar"/>
     <property name="SourceDeployDirectory" value="lanterna-${Version}"/>
     <property name="SourceFile" value="lanterna-${Version}-source.zip"/>
