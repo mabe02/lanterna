@@ -98,7 +98,8 @@ public class TextGraphics
         if(string.length() + column > areaSize.getColumns())
             string = string.substring(0, areaSize.getColumns() - column);
 
-        EnumSet<Terminal.Style> stylesSet = EnumSet.copyOf(Arrays.asList(styles));
+        EnumSet<Terminal.Style> stylesSet = EnumSet.noneOf(Terminal.Style.class);
+        stylesSet.addAll(Arrays.asList(styles));
         if(currentlyBold)
             stylesSet.add(Terminal.Style.Bold);
 
