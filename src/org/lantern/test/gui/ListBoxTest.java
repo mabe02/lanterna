@@ -52,7 +52,7 @@ public class ListBoxTest
             }
         }
 
-        LanternTerminal terminal = new LanternTerminal(new TerminalFactory.Common());
+        LanternTerminal terminal = new LanternTerminal();
         final GUIScreen terminalGUIScreen = terminal.getGUIScreen();
         if(terminalGUIScreen == null) {
             System.err.println("Couldn't allocate a terminal!");
