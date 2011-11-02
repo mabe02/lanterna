@@ -107,8 +107,11 @@ public class SwingTerminal implements Terminal
     {
         for(SGR sgr: options)
         {
-            if(sgr == SGR.RESET_ALL)
+            if(sgr == SGR.RESET_ALL) {
                 currentlyBold = false;
+                currentForegroundColor = Color.DEFAULT;
+                currentBackgroundColor = Color.DEFAULT;
+            }
             else if(sgr == SGR.ENTER_BOLD)
                 currentlyBold = true;
             else if(sgr == SGR.EXIT_BOLD)
