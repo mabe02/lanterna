@@ -25,8 +25,6 @@ import java.nio.charset.Charset;
 import org.lantern.LanternException;
 import org.lantern.input.GnomeTerminalProfile;
 import org.lantern.input.PuttyProfile;
-import sun.misc.Signal;
-import sun.misc.SignalHandler;
 
 /**
  * A common ANSI terminal extention with support for Unix resize signals
@@ -39,17 +37,6 @@ public class CommonUnixTerminal extends CommonTerminal
         super(terminalInput, terminalOutput, terminalCharset);
         addInputProfile(new GnomeTerminalProfile());
         addInputProfile(new PuttyProfile());
-
-        Signal.handle(new Signal("WINCH"), new SignalHandler() {
-            public void handle(Signal signal)
-            {
-                try {
-                    onResized();
-                }
-                catch(LanternException e) {
-                }
-            }
-        });
     }
 
     public TerminalSize queryTerminalSize() throws LanternException
