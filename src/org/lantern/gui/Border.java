@@ -21,6 +21,7 @@ package org.lantern.gui;
 
 import org.lantern.gui.theme.Theme;
 import org.lantern.terminal.ACS;
+import org.lantern.terminal.Terminal;
 import org.lantern.terminal.Terminal.Color;
 import org.lantern.terminal.TerminalPosition;
 import org.lantern.terminal.TerminalSize;
@@ -59,7 +60,6 @@ public abstract class Border
             this.bold = bold;
         }
 
-        @Override
         public void drawBorder(TextGraphics graphics, TerminalSize actualSize)
         {
             graphics.setForegroundColor(foreground);
@@ -69,25 +69,24 @@ public abstract class Border
             final int height = actualSize.getRows();
 
             //Top
-            graphics.drawString(0, 0, ACS.ULCORNER + "");            
+            graphics.drawString(0, 0, ACS.ULCORNER + "", new Terminal.Style[]{});            
             for(int x = 0; x < width - 2; x++)
-                graphics.drawString(x, 0, ACS.HLINE + "");
-            graphics.drawString(width - 1, 0, ACS.URCORNER + "");
+                graphics.drawString(x, 0, ACS.HLINE + "", new Terminal.Style[]{});
+            graphics.drawString(width - 1, 0, ACS.URCORNER + "", new Terminal.Style[]{});
 
             //Each row
             for(int i = 0; i < height - 2; i++) {
-                graphics.drawString(0, i + 1, ACS.VLINE + "");
-                graphics.drawString(0 + width - 1, i + 1, ACS.VLINE + "");
+                graphics.drawString(0, i + 1, ACS.VLINE + "", new Terminal.Style[]{});
+                graphics.drawString(0 + width - 1, i + 1, ACS.VLINE + "", new Terminal.Style[]{});
             }
 
             //Bottom
-            graphics.drawString(0, height - 1, ACS.LLCORNER + "");
+            graphics.drawString(0, height - 1, ACS.LLCORNER + "", new Terminal.Style[]{});
             for(int x = 0; x < width - 2; x++)
-                graphics.drawString(x + 1, height - 1, ACS.HLINE + "");
-            graphics.drawString(width - 1, height - 1, ACS.LRCORNER + "");
+                graphics.drawString(x + 1, height - 1, ACS.HLINE + "", new Terminal.Style[]{});
+            graphics.drawString(width - 1, height - 1, ACS.LRCORNER + "", new Terminal.Style[]{});
         }
 
-        @Override
         public TerminalPosition getInnerAreaLocation(int width, int height)
         {
             if(width > 2 && height > 2)
@@ -96,7 +95,6 @@ public abstract class Border
                 return new TerminalPosition(0,0);
         }
 
-        @Override
         public TerminalSize getInnerAreaSize(int width, int height)
         {
             if(width > 2 && height > 2)
@@ -105,7 +103,6 @@ public abstract class Border
                 return new TerminalSize(width, height);
         }
 
-        @Override
         public TerminalSize surroundAreaSize(TerminalSize TerminalSize)
         {
             return new TerminalSize(TerminalSize.getColumns() == Integer.MAX_VALUE ? Integer.MAX_VALUE : TerminalSize.getColumns() + 4,
@@ -121,7 +118,6 @@ public abstract class Border
             this.raised = raised;
         }
 
-        @Override
         public void drawBorder(TextGraphics graphics, TerminalSize actualSize)
         {
             final int width = actualSize.getColumns();
@@ -140,30 +136,29 @@ public abstract class Border
 
             //Top
             graphics.applyThemeItem(upperLeft);
-            graphics.drawString(0, 0, ACS.ULCORNER + "");
+            graphics.drawString(0, 0, ACS.ULCORNER + "", new Terminal.Style[]{});
             for(int i = 0; i < width - 2; i++)
-                graphics.drawString(1 + i, 0, ACS.HLINE + "");
+                graphics.drawString(1 + i, 0, ACS.HLINE + "", new Terminal.Style[]{});
             graphics.applyThemeItem(lowerRight);
-            graphics.drawString(width - 1, 0, ACS.URCORNER + "");
+            graphics.drawString(width - 1, 0, ACS.URCORNER + "", new Terminal.Style[]{});
 
             //Each row
             for(int i = 0; i < height - 2; i++) {
                 graphics.applyThemeItem(upperLeft);
-                graphics.drawString(0, i + 1, ACS.VLINE + "");
+                graphics.drawString(0, i + 1, ACS.VLINE + "", new Terminal.Style[]{});
                 graphics.applyThemeItem(lowerRight);
-                graphics.drawString(width - 1, i + 1, ACS.VLINE + "");
+                graphics.drawString(width - 1, i + 1, ACS.VLINE + "", new Terminal.Style[]{});
             }
 
             //Bottom
             graphics.applyThemeItem(upperLeft);
-            graphics.drawString(0, height - 1, ACS.LLCORNER + "");
+            graphics.drawString(0, height - 1, ACS.LLCORNER + "", new Terminal.Style[]{});
             graphics.applyThemeItem(lowerRight);
             for(int i = 0; i < width - 2; i++)
-                graphics.drawString(1 + i, height - 1, ACS.HLINE + "");
-            graphics.drawString(width - 1, height - 1, ACS.LRCORNER + "");
+                graphics.drawString(1 + i, height - 1, ACS.HLINE + "", new Terminal.Style[]{});
+            graphics.drawString(width - 1, height - 1, ACS.LRCORNER + "", new Terminal.Style[]{});
         }
 
-        @Override
         public TerminalPosition getInnerAreaLocation(int width, int height)
         {
             if(width > 2 && height > 2)
@@ -172,7 +167,6 @@ public abstract class Border
                 return new TerminalPosition(0,0);
         }
 
-        @Override
         public TerminalSize getInnerAreaSize(int width, int height)
         {
             if(width > 2 && height > 2)
@@ -181,7 +175,6 @@ public abstract class Border
                 return new TerminalSize(width, height);
         }
 
-        @Override
         public TerminalSize surroundAreaSize(TerminalSize TerminalSize)
         {
             return new TerminalSize(TerminalSize.getColumns() == Integer.MAX_VALUE ? Integer.MAX_VALUE : TerminalSize.getColumns() + 4,
@@ -191,24 +184,20 @@ public abstract class Border
 
     public static class Invisible extends Border
     {
-        @Override
         public void drawBorder(TextGraphics graphics, TerminalSize actualSize)
         {
         }
 
-        @Override
         public TerminalPosition getInnerAreaLocation(int width, int height)
         {
             return new TerminalPosition(0,0);
         }
 
-        @Override
         public TerminalSize getInnerAreaSize(int width, int height)
         {
             return new TerminalSize(width, height);
         }
 
-        @Override
         public TerminalSize surroundAreaSize(TerminalSize TerminalSize)
         {
             return TerminalSize;

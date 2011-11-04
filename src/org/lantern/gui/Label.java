@@ -108,7 +108,7 @@ public class Label extends AbstractComponent
         if(textColor != null)
             graphics.setForegroundColor(textColor);
         if(textBold != null) {
-            if(textBold)
+            if(textBold.booleanValue())
                 graphics.setBoldMask(true);
             else
                 graphics.setBoldMask(false);
@@ -120,8 +120,10 @@ public class Label extends AbstractComponent
         int leftPosition = 0;
         if(textAlignment == Alignment.MIDDLE || textAlignment == Alignment.END) {
             int longestLine = 0;
-            for(String line: text)
+            for(int i = 0; i < text.length; i++) {
+                String line = text[i];
                 longestLine = Math.max(longestLine, line.length());
+            }
             if(longestLine < graphics.getWidth()) {
                 if(textAlignment == Alignment.MIDDLE)
                     leftPosition = (graphics.getWidth() - longestLine) / 2;
@@ -134,12 +136,12 @@ public class Label extends AbstractComponent
         for(int i = 0; i < text.length; i++) {
             if(forceWidth > -1) {
                 if(text[i].length() > forceWidth)
-                    graphics.drawString(leftPosition, i, text[i].substring(0, forceWidth - 3) + "...");
+                    graphics.drawString(leftPosition, i, text[i].substring(0, forceWidth - 3) + "...", new Terminal.Style[0]);
                 else
-                    graphics.drawString(leftPosition, i, text[i]);
+                    graphics.drawString(leftPosition, i, text[i], new Terminal.Style[0]);
             }
             else
-                graphics.drawString(leftPosition, i, text[i]);
+                graphics.drawString(leftPosition, i, text[i], new Terminal.Style[0]);
         }
     }
 
@@ -151,15 +153,17 @@ public class Label extends AbstractComponent
 
     public String getText() {
         StringBuilder sb = new StringBuilder();
-        for(String line: text)
+        for(int i = 0; i < text.length; i++) {    
+            String line = text[i];
             sb.append(line).append("\n");
+        }
         sb.delete(sb.length() - 1, sb.length());
         return sb.toString();
     }
 
     public String[] getLines()
     {
-        return Arrays.copyOf(text, text.length);
+        return (String[])Arrays.copyOf(text, text.length);
     }
 
     public void setStyle(Category style)
@@ -201,16 +205,31 @@ public class Label extends AbstractComponent
             height = 1;
 
         width = 0;
-        for(String line: text) {
+        for(int i = 0; i < text.length; i++) {
+            String line = text[i];
             if(line.length() > width)
                 width = line.length();
         }
     }
 
-    public static enum Alignment
+    public static class Alignment
     {
-        START,
-        MIDDLE,
-        END;
+        public static final int START_ID = 1;
+        public static final int MIDDLE_ID = 2;
+        public static final int END_ID = 3;
+        
+        public static final Alignment START = new Alignment(START_ID);
+        public static final Alignment MIDDLE = new Alignment(MIDDLE_ID);
+        public static final Alignment END = new Alignment(END_ID);
+        
+        private final int index;
+
+        private Alignment(int index) {
+            this.index = index;
+        }
+
+        public int getIndex() {
+            return index;
+        }
     }
 }

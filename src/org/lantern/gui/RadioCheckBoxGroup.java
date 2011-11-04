@@ -28,12 +28,12 @@ import java.util.List;
  */
 public class RadioCheckBoxGroup
 {
-    private final List<RadioCheckBox> radioBoxes;
+    private final List radioBoxes;
     private int selectedIndex;
 
     public RadioCheckBoxGroup()
     {
-        this.radioBoxes = new ArrayList<RadioCheckBox>();
+        this.radioBoxes = new ArrayList();
         this.selectedIndex = 0;
     }
 

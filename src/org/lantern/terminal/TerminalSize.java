@@ -68,13 +68,11 @@ public class TerminalSize {
         this.rows = rows;
     }
 
-    @Override
     public String toString()
     {
         return "{" + columns + "x" + rows + "}";
     }
 
-    @Override
     public boolean equals(Object obj)
     {
         if(obj instanceof TerminalSize == false)
@@ -85,7 +83,6 @@ public class TerminalSize {
                 rows == other.rows;
     }
 
-    @Override
     public int hashCode()
     {
         int hash = 5;

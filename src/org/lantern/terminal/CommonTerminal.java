@@ -39,68 +39,69 @@ public abstract class CommonTerminal extends AbstractTerminal
 
     private void CSI() throws LanternException
     {
-        writeToTerminal((byte)0x1b, (byte)'[');
+        writeToTerminal(new byte[] {(byte)0x1b, (byte)'[' });
     }
 
     public void applyBackgroundColor(Color color) throws LanternException
     {
         CSI();
-        writeToTerminal((byte)'4', (byte)((color.getIndex() + "").charAt(0)), (byte)'m');
+        writeToTerminal(new byte[] {(byte)'4', (byte)((color.getIndex() + "").charAt(0)), (byte)'m'});
     }
 
     public void applyForegroundColor(Color color) throws LanternException
     {
         CSI();
-        writeToTerminal((byte)'3', (byte)((color.getIndex() + "").charAt(0)), (byte)'m');
+        writeToTerminal(new byte[] {(byte)'3', (byte)((color.getIndex() + "").charAt(0)), (byte)'m'});
     }
 
-    public void applySGR(SGR... options) throws LanternException
+    public void applySGR(SGR[] options) throws LanternException
     {
         CSI();
         int index = 0;
-        for(SGR sgr: options) {
-            switch(sgr) {
-                case ENTER_BOLD:
-                    writeToTerminal((byte)'1');
+        for(int i = 0; i < options.length; i++) {
+            SGR sgr = options[i];
+            switch(sgr.getIndex()) {
+                case SGR.ENTER_BOLD_ID:
+                    writeToTerminal(new byte[]{(byte)'1'});
                     break;
-                case ENTER_REVERSE:
-                    writeToTerminal((byte)'7');
+                case SGR.ENTER_REVERSE_ID:
+                    writeToTerminal(new byte[]{(byte)'7'});
                     break;
-                case ENTER_UNDERLINE:
-                    writeToTerminal((byte)'4');
+                case SGR.ENTER_UNDERLINE_ID:
+                    writeToTerminal(new byte[]{(byte)'4'});
                     break;
-                case EXIT_BOLD:
-                    writeToTerminal((byte)'2', (byte)'2');
+                case SGR.EXIT_BOLD_ID:
+                    writeToTerminal(new byte[]{(byte)'2', (byte)'2'});
                     break;
-                case EXIT_REVERSE:
-                    writeToTerminal((byte)'2', (byte)'7');
+                case SGR.EXIT_REVERSE_ID:
+                    writeToTerminal(new byte[]{(byte)'2', (byte)'7'});
                     break;
-                case EXIT_UNDERLINE:
-                    writeToTerminal((byte)'2', (byte)'4');
+                case SGR.EXIT_UNDERLINE_ID:
+                    writeToTerminal(new byte[]{(byte)'2', (byte)'4'});
                     break;
-                case ENTER_BLINK:
-                    writeToTerminal((byte)'5');
+                case SGR.ENTER_BLINK_ID:
+                    writeToTerminal(new byte[]{(byte)'5'});
                     break;
-                case RESET_ALL:
-                    writeToTerminal((byte)'0');
+                case SGR.RESET_ALL_ID:
+                    writeToTerminal(new byte[]{(byte)'0'});
                     break;
             }
             if(index++ < options.length - 1)
-                writeToTerminal((byte)';');
+                writeToTerminal(new byte[]{(byte)';'});
         }
-        writeToTerminal((byte)'m');
+        writeToTerminal(new byte[]{(byte)'m'});
     }
 
     public void clearScreen() throws LanternException
     {
         CSI();
-        writeToTerminal((byte)'2', (byte)'J');
+        writeToTerminal(new byte[]{(byte)'2', (byte)'J'});
     }
 
     public void enterPrivateMode() throws LanternException
     {
         CSI();
-        writeToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'4', (byte)'9', (byte)'h');
+        writeToTerminal(new byte[]{(byte)'?', (byte)'1', (byte)'0', (byte)'4', (byte)'9', (byte)'h'});
         TerminalStatus.setCBreak(true);
         TerminalStatus.setKeyEcho(false);
         TerminalStatus.setMinimumCharacterForRead(1);
@@ -108,9 +109,9 @@ public abstract class CommonTerminal extends AbstractTerminal
 
     public void exitPrivateMode() throws LanternException
     {
-        applySGR(SGR.RESET_ALL);
+        applySGR(new SGR[]{SGR.RESET_ALL});
         CSI();
-        writeToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'4', (byte)'9', (byte)'l');
+        writeToTerminal(new byte[]{(byte)'?', (byte)'1', (byte)'0', (byte)'4', (byte)'9', (byte)'l'});
         TerminalStatus.setCBreak(false);
         TerminalStatus.setKeyEcho(true);
     }
@@ -119,9 +120,9 @@ public abstract class CommonTerminal extends AbstractTerminal
     {
         CSI();
         writeToTerminal(((y+1) + "").getBytes());
-        writeToTerminal((byte)';');
+        writeToTerminal(new byte[]{(byte)';'});
         writeToTerminal(((x+1) + "").getBytes());
-        writeToTerminal((byte)'H');
+        writeToTerminal(new byte[]{(byte)'H'});
     }
 
     public void reportPosition() throws LanternException

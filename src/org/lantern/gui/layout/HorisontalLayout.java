@@ -28,31 +28,26 @@ import org.lantern.terminal.TerminalSize;
  */
 public class HorisontalLayout extends AxisLayout
 {
-    @Override
     protected int getMajorAxis(TerminalSize terminalSize)
     {
         return terminalSize.getColumns();
     }
 
-    @Override
     protected int getMinorAxis(TerminalSize terminalSize)
     {
         return terminalSize.getRows();
     }
 
-    @Override
     protected void setMajorAxis(TerminalSize terminalSize, int majorAxisValue)
     {
         terminalSize.setColumns(majorAxisValue);
     }
 
-    @Override
     protected void setMajorAxis(TerminalPosition terminalPosition, int majorAxisValue)
     {
         terminalPosition.setColumn(majorAxisValue);
     }
 
-    @Override
     protected void setMinorAxis(TerminalSize terminalSize, int minorAxisValue)
     {
         terminalSize.setRows(minorAxisValue);

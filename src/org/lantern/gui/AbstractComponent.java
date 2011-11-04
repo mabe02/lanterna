@@ -19,6 +19,7 @@
 
 package org.lantern.gui;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import org.lantern.gui.listener.ComponentListener;
@@ -30,13 +31,13 @@ import org.lantern.gui.listener.ComponentListener;
  */
 public abstract class AbstractComponent implements Component
 {
-    private final List<ComponentListener> componentListeners;
+    private final List componentListeners;
     private Container parent;
     private boolean visible;
 
     public AbstractComponent()
     {
-        componentListeners = new LinkedList<ComponentListener>();
+        componentListeners = new LinkedList();
         parent = null;
         visible = true;
     }
@@ -76,8 +77,9 @@ public abstract class AbstractComponent implements Component
 
     protected void invalidate()
     {
-        for(ComponentListener cl: componentListeners)
-            cl.onComponentInvalidated(this);
+        Iterator iter = componentListeners.iterator();
+        while(iter.hasNext())
+            ((ComponentListener)iter.next()).onComponentInvalidated(this);
         
         if(parent != null && parent instanceof AbstractContainer) {
             ((AbstractContainer)parent).invalidate();

@@ -35,7 +35,7 @@ public interface LanternLayout
 
     public TerminalSize getPreferredSize();
 
-    public List<LaidOutComponent> layout(TerminalSize layoutArea);
+    public List layout(TerminalSize layoutArea);
 
     public void setPadding(int paddingSize);
 

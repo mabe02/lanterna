@@ -22,7 +22,9 @@ package org.lantern.input;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -37,19 +39,19 @@ import org.lantern.terminal.TerminalPosition;
 public class InputDecoder
 {
     private final Reader source;
-    private final Queue<Character> inputBuffer;
-    private final Queue<Character> leftOverQueue;
-    private final Set<CharacterPattern> bytePatterns;
-    private final List<Character> currentMatching;
+    private final Queue inputBuffer;
+    private final Queue leftOverQueue;
+    private final Set bytePatterns;
+    private final List currentMatching;
     private TerminalPosition lastReportedTerminalPosition;
 
     public InputDecoder(final Reader source)
     {
         this.source = source;
-        this.inputBuffer = new LinkedList<Character>();
-        this.leftOverQueue = new LinkedList<Character>();
-        this.bytePatterns = new HashSet<CharacterPattern>();
-        this.currentMatching = new ArrayList<Character>();
+        this.inputBuffer = new LinkedList();
+        this.leftOverQueue = new LinkedList();
+        this.bytePatterns = new HashSet();
+        this.currentMatching = new ArrayList();
         this.lastReportedTerminalPosition = null;
     }
 
@@ -61,16 +63,17 @@ public class InputDecoder
 
     public void addProfile(KeyMappingProfile profile)
     {
-        for(CharacterPattern pattern: profile.getPatterns())
-            bytePatterns.add(pattern);
+        Iterator iter = profile.getPatterns().iterator();
+        while(iter.hasNext())
+            bytePatterns.add(iter.next());
     }
 
     public Key getNextCharacter() throws LanternException
     {
         if(leftOverQueue.size() > 0) {
-            Character first = leftOverQueue.poll();
+            Character first = (Character)leftOverQueue.poll();
             //HACK!!!
-            if(first == 0x1b)
+            if(first.charValue() == 0x1b)
                 return new Key(Key.Kind.Escape);
             
             return new Key(first.charValue());
@@ -82,7 +85,7 @@ public class InputDecoder
                 if(readChar == -1)
                     return null;
 
-                inputBuffer.add((char)readChar);
+                inputBuffer.add(new Character((char)readChar));
             }
         }
         catch(IOException e) {
@@ -94,12 +97,14 @@ public class InputDecoder
 
         while(true) {
             //Check all patterns
-            Character nextChar = inputBuffer.poll();
+            Character nextChar = (Character)inputBuffer.poll();
             boolean canMatchWithOneMoreChar = false;
 
             if(nextChar != null) {
                 currentMatching.add(nextChar);
-                for(CharacterPattern pattern: bytePatterns) {
+                Iterator iter = bytePatterns.iterator();
+                while(iter.hasNext()) {
+                    CharacterPattern pattern = (CharacterPattern)iter.next();
                     if(pattern.matches(currentMatching)) {
                         if(pattern.isCompleteMatch(currentMatching)) {
                             Key result = pattern.getResult();
@@ -114,13 +119,13 @@ public class InputDecoder
                 }
             }
             if(!canMatchWithOneMoreChar) {
-                for(Character c: currentMatching)
-                    leftOverQueue.add(c);
+                for(int i = 0; i < currentMatching.size(); i++)
+                    leftOverQueue.add(currentMatching.get(i));
                 currentMatching.clear();
-                Character first = leftOverQueue.poll();
+                Character first = (Character)leftOverQueue.poll();
                 
                 //HACK!!!
-                if(first == 0x1b)
+                if(first.charValue() == 0x1b)
                     return new Key(Key.Kind.Escape);
                 return new Key(first.charValue());
             }

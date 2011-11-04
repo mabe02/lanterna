@@ -31,7 +31,7 @@ import org.lantern.terminal.TerminalSize;
 public class Table extends AbstractComponent implements InteractableContainer
 {
     private final Panel mainPanel;
-    private final List<Component[]> rows;
+    private final List rows;
     private Panel[] columns;
 
     public Table()
@@ -57,7 +57,7 @@ public class Table extends AbstractComponent implements InteractableContainer
             mainPanel = new Panel(title, Panel.Orientation.HORISONTAL);
         mainPanel.setBetweenComponentsPadding(0);
 
-        rows = new ArrayList<Component[]>();
+        rows = new ArrayList();
 
         //Initialize to something to avoid null pointer exceptions
         columns = new Panel[0];
@@ -69,7 +69,7 @@ public class Table extends AbstractComponent implements InteractableContainer
         mainPanel.setBetweenComponentsPadding(size);
     }
 
-    public void addRow(Component ...components)
+    public void addRow(Component[] components)
     {
         Component[] newRow = new Component[columns.length];
         for(int i = 0; i < columns.length; i++) {
@@ -90,7 +90,7 @@ public class Table extends AbstractComponent implements InteractableContainer
 
     public Component[] getRow(int index)
     {
-        return Arrays.copyOf(rows.get(index), columns.length);
+        return (Component[])Arrays.copyOf((Component[])rows.get(index), columns.length);
     }
 
     public void removeRow(int index)
@@ -129,7 +129,6 @@ public class Table extends AbstractComponent implements InteractableContainer
         mainPanel.repaint(graphics);
     }
 
-    @Override
     void setParent(Container container)
     {
         super.setParent(container);

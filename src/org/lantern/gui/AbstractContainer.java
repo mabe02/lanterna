@@ -21,6 +21,7 @@ package org.lantern.gui;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import org.lantern.gui.listener.ContainerListener;
@@ -31,13 +32,13 @@ import org.lantern.gui.listener.ContainerListener;
  */
 public abstract class AbstractContainer extends AbstractComponent implements InteractableContainer, Container
 {
-    private final List<ContainerListener> containerListeners;
-    private final List<Component> components;
+    private final List containerListeners;
+    private final List components;
 
     protected AbstractContainer()
     {
-        components = new ArrayList<Component>();
-        containerListeners = new LinkedList<ContainerListener>();
+        components = new ArrayList();
+        containerListeners = new LinkedList();
     }
 
     public void addComponent(Component component)
@@ -56,7 +57,7 @@ public abstract class AbstractContainer extends AbstractComponent implements Int
     public Component getComponentAt(int index)
     {
         synchronized(components) {
-            return components.get(index);
+            return (Component)components.get(index);
         }
     }
 
@@ -85,9 +86,9 @@ public abstract class AbstractContainer extends AbstractComponent implements Int
         }
     }
 
-    protected Iterable<Component> components()
+    protected Iterator components()
     {
-        return components;
+        return components.iterator();
     }
 
     public void addContainerListener(ContainerListener cl)
@@ -104,8 +105,10 @@ public abstract class AbstractContainer extends AbstractComponent implements Int
 
     public boolean hasInteractable(Interactable interactable)
     {
-        for(Component component: components())
+        Iterator iter = components();
+        while(iter.hasNext())
         {
+            Component component = (Component)iter.next();
             if(component instanceof InteractableContainer)
                 if(((InteractableContainer)(component)).hasInteractable(interactable))
                     return true;
@@ -119,8 +122,10 @@ public abstract class AbstractContainer extends AbstractComponent implements Int
     {
         boolean chooseNext = (previous == null);
 
-        for(Component component: components())
+        Iterator iter = components();
+        while(iter.hasNext())
         {
+            Component component = (Component)iter.next();
             if(chooseNext) {
                 if(component instanceof Interactable)
                     return (Interactable)component;
@@ -157,11 +162,13 @@ public abstract class AbstractContainer extends AbstractComponent implements Int
     {
         boolean chooseNext = (fromThis == null);
 
-        List<Component> revComponents = new ArrayList<Component>(components);
+        List revComponents = new ArrayList(components);
         Collections.reverse(revComponents);
 
-        for(Component component: revComponents)
+        Iterator iter = revComponents.iterator();
+        while(iter.hasNext())
         {
+            Component component = (Component)iter.next();
             if(chooseNext) {
                 if(component instanceof Interactable)
                     return (Interactable)component;

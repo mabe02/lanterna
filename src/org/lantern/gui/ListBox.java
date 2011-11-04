@@ -25,6 +25,7 @@ import org.lantern.LanternException;
 import org.lantern.gui.theme.Theme.Category;
 import org.lantern.input.Key;
 import org.lantern.terminal.ACS;
+import org.lantern.terminal.Terminal;
 import org.lantern.terminal.TerminalPosition;
 import org.lantern.terminal.TerminalSize;
 
@@ -34,7 +35,7 @@ import org.lantern.terminal.TerminalSize;
  */
 public class ListBox extends AbstractInteractableComponent
 {
-    private final List<Object> items;
+    private final List items;
     private final TerminalSize preferredSize;
     private int selectedIndex;
     private int scrollTopIndex;
@@ -46,7 +47,7 @@ public class ListBox extends AbstractInteractableComponent
 
     public ListBox(final TerminalSize preferredSize)
     {
-        this.items = new ArrayList<Object>();
+        this.items = new ArrayList();
         this.preferredSize = new TerminalSize(preferredSize);
         this.selectedIndex = -1;
         this.scrollTopIndex = 0;
@@ -117,14 +118,14 @@ public class ListBox extends AbstractInteractableComponent
 
         if(items.size() > graphics.getHeight()) {
             graphics.applyThemeItem(Category.DefaultDialog);
-            graphics.drawString(graphics.getWidth() - 1, 0, ACS.ARROW_UP + "");
+            graphics.drawString(graphics.getWidth() - 1, 0, ACS.ARROW_UP + "", new Terminal.Style[0]);
 
             graphics.applyThemeItem(Category.DefaultDialog);
             for(int i = 1; i < graphics.getHeight() - 1; i++)
-                graphics.drawString(graphics.getWidth() - 1, i, ACS.BLOCK_MIDDLE + "");
+                graphics.drawString(graphics.getWidth() - 1, i, ACS.BLOCK_MIDDLE + "", new Terminal.Style[0]);
 
             graphics.applyThemeItem(Category.DefaultDialog);
-            graphics.drawString(graphics.getWidth() - 1, graphics.getHeight() - 1, ACS.ARROW_DOWN + "");
+            graphics.drawString(graphics.getWidth() - 1, graphics.getHeight() - 1, ACS.ARROW_DOWN + "", new Terminal.Style[0]);
             
             //Finally print the 'tick'
             int scrollableSize = items.size() - graphics.getHeight();
@@ -132,7 +133,7 @@ public class ListBox extends AbstractInteractableComponent
             int tickPosition = (int)(((double)graphics.getHeight() - 3.0) * position);
 
             graphics.applyThemeItem(Category.Shadow);
-            graphics.drawString(graphics.getWidth() - 1, 1 + tickPosition, " ");
+            graphics.drawString(graphics.getWidth() - 1, 1 + tickPosition, " ", new Terminal.Style[0]);
         }
         if(selectedIndex == -1 || items.isEmpty())
             setHotspot(new TerminalPosition(0, 0));
@@ -142,26 +143,26 @@ public class ListBox extends AbstractInteractableComponent
 
     public void keyboardInteraction(Key key, InteractableResult result) throws LanternException
     {
-        switch(key.getKind()) {
-            case Tab:
-            case ArrowRight:
-            case Enter:
+        switch(key.getKind().getIndex()) {
+            case Key.Kind.Tab_ID:
+            case Key.Kind.ArrowRight_ID:
+            case Key.Kind.Enter_ID:
                 result.type = Result.NEXT_INTERACTABLE;
                 break;
 
-            case ReverseTab:
-            case ArrowLeft:
+            case Key.Kind.ReverseTab_ID:
+            case Key.Kind.ArrowLeft_ID:
                 result.type = Result.PREVIOUS_INTERACTABLE;
                 break;
 
-            case ArrowDown:
+            case Key.Kind.ArrowDown_ID:
                 if(items.isEmpty() || selectedIndex == items.size() - 1)
                     return;
 
                 selectedIndex++;
                 break;
 
-            case ArrowUp:
+            case Key.Kind.ArrowUp_ID:
                 if(items.isEmpty() || selectedIndex == 0)
                     return;
 
@@ -177,7 +178,7 @@ public class ListBox extends AbstractInteractableComponent
     {
         if(text.length() > graphics.getWidth())
             text = text.substring(0, graphics.getWidth());
-        graphics.drawString(x, y, text);
+        graphics.drawString(x, y, text, new Terminal.Style[0]);
     }
 
 }

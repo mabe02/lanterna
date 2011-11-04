@@ -40,7 +40,7 @@ class TerminalStatus
 
     private static int getPID() throws LanternException
     {
-        return Integer.parseInt(ShellCommand.exec("bash", "-c", "echo $PPID"));
+        return Integer.parseInt(ShellCommand.exec(new String[] {"bash", "-c", "echo $PPID"}));
     }
 
     private static String getTTY() throws LanternException
@@ -48,8 +48,8 @@ class TerminalStatus
         if(CACHED_TTY != null)
             return CACHED_TTY;
         
-        Integer myPid = getPID();
-        String processRow = ShellCommand.exec("bash", "-c", "ps -A|grep " + myPid);
+        int myPid = getPID();
+        String processRow = ShellCommand.exec(new String [] {"bash", "-c", "ps -A|grep " + myPid });
         Pattern psPattern = Pattern.compile(" *([0-9]+) ([^ ]+) +([^ ]*) (.*)");
         Matcher matcher = psPattern.matcher(processRow);
         if(!matcher.matches()) {
@@ -74,13 +74,14 @@ class TerminalStatus
         if(tty == null)
             return null;
         
-        String stty = (ShellCommand.exec(STTY_PROGRAM, "-F", tty, "-a"));
+        String stty = (ShellCommand.exec(new String[] {STTY_PROGRAM, "-F", tty, "-a"}));
         String []splittedSTTY = stty.split(";");
         int terminalWidth = -1;
         int terminalHeight = -1;
         final Pattern columnsPattern = Pattern.compile("columns ([0-9]+)");
         final Pattern rowsPattern = Pattern.compile("rows ([0-9]+)");
-        for(String sttyElement: splittedSTTY) {
+        for(int i = 0; i < splittedSTTY.length; i++) {
+            String sttyElement = splittedSTTY[i];
             if(terminalHeight >= 0 && terminalWidth >= 0)
                 break;
 
@@ -108,13 +109,14 @@ class TerminalStatus
         if(tty == null)
             return false;
 
-        String stty = (ShellCommand.exec(STTY_PROGRAM, "-F", tty, "-a"));
+        String stty = (ShellCommand.exec(new String[] {STTY_PROGRAM, "-F", tty, "-a"}));
         String []splittedSTTY = stty.split(";");
         int terminalWidth = -1;
         int terminalHeight = -1;
         final Pattern columnsPattern = Pattern.compile("columns ([0-9]+)");
         final Pattern rowsPattern = Pattern.compile("rows ([0-9]+)");
-        for(String sttyElement: splittedSTTY) {
+        for(int i = 0; i < splittedSTTY.length; i++) {
+            String sttyElement = splittedSTTY[i];
             if(terminalHeight >= 0 && terminalWidth >= 0)
                 break;
 
@@ -141,8 +143,8 @@ class TerminalStatus
         if(tty == null)
             return; */
 
-        ShellCommand.exec("/bin/sh", "-c",
-                            "/bin/stty " + (enable ? "echo" : "-echo") + " < /dev/tty");
+        ShellCommand.exec(new String[] { "/bin/sh", "-c",
+                            "/bin/stty " + (enable ? "echo" : "-echo") + " < /dev/tty" });
 /*
         if("SunOS".equals(System.getProperty("os.name")))
             ShellCommand.exec("stty", enable ? "echo" : "-echo");
@@ -153,8 +155,8 @@ class TerminalStatus
 
     static void setMinimumCharacterForRead(final int nrCharacters) throws LanternException
     {
-        ShellCommand.exec("/bin/sh", "-c",
-                            "/bin/stty min " + nrCharacters + " < /dev/tty");
+        ShellCommand.exec(new String[] {"/bin/sh", "-c",
+                            "/bin/stty min " + nrCharacters + " < /dev/tty" });
         /*
         String tty = getTTY();
         if(tty == null)
@@ -170,8 +172,8 @@ class TerminalStatus
     static void setCBreak(final boolean enable) throws LanternException
     {
         //if("SunOS".equals(System.getProperty("os.name")))
-            ShellCommand.exec("/bin/sh", "-c",
-                            "/bin/stty " + (enable ? "-icanon" : "icanon") + " < /dev/tty");
+            ShellCommand.exec(new String[] {"/bin/sh", "-c",
+                            "/bin/stty " + (enable ? "-icanon" : "icanon") + " < /dev/tty"});
         //else
           //  ShellCommand.exec("/bin/sh", "-c",
             //                "/bin/stty " + (enable ? "cbreak" : "-cbreak") + " < /dev/tty");

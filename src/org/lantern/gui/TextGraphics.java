@@ -22,6 +22,8 @@ package org.lantern.gui;
 import java.util.Arrays;
 import java.util.EnumSet;
 
+import java.util.HashSet;
+import java.util.Set;
 import org.lantern.gui.theme.Theme;
 import org.lantern.screen.Screen;
 import org.lantern.terminal.Terminal;
@@ -90,7 +92,7 @@ public class TextGraphics
         return new TextGraphics(this, topLeft, subAreaSize);
     }
 
-    public void drawString(int column, int row, String string, Terminal.Style... styles)
+    public void drawString(int column, int row, String string, Terminal.Style[] styles)
     {
         if(column >= areaSize.getColumns() || row >= areaSize.getRows() || string == null)
             return;
@@ -98,13 +100,21 @@ public class TextGraphics
         if(string.length() + column > areaSize.getColumns())
             string = string.substring(0, areaSize.getColumns() - column);
 
-        EnumSet<Terminal.Style> stylesSet = EnumSet.noneOf(Terminal.Style.class);
-        stylesSet.addAll(Arrays.asList(styles));
+        Set stylesSet = new HashSet(Arrays.asList(styles));
+        
         if(currentlyBold)
             stylesSet.add(Terminal.Style.Bold);
 
-        screen.putString(column + topLeft.getColumn(), row + topLeft.getRow(), string,
-                foregroundColor, backgroundColor, stylesSet);
+        screen.putString(
+                column + topLeft.getColumn(), 
+                row + topLeft.getRow(), 
+                string,
+                foregroundColor, 
+                backgroundColor, 
+                stylesSet.contains(Terminal.Style.Bold), 
+                stylesSet.contains(Terminal.Style.Underline), 
+                stylesSet.contains(Terminal.Style.Reverse), 
+                stylesSet.contains(Terminal.Style.Blinking));
     }
 
     public Color getBackgroundColor()
@@ -176,10 +186,9 @@ public class TextGraphics
             emptyLineBuilder.append(character);
         String emptyLine = emptyLineBuilder.toString();
         for(int i = 0; i < rectangleSize.getRows(); i++)
-            drawString(topLeft.getColumn(), topLeft.getRow() + i, emptyLine);
+            drawString(topLeft.getColumn(), topLeft.getRow() + i, emptyLine, new Terminal.Style[0]);
     }
 
-    @Override
     public String toString()
     {
         return "TextGraphics {topLeft: " + topLeft.toString() + ", size: " + areaSize.toString() + "}";

@@ -57,43 +57,26 @@ public abstract class TermInfoTerminal extends AbstractTerminal
         writeToTerminal(decodeTerminfoString(foregroundColorString));
     }
 
-    public void applySGR(final SGR... options) throws LanternException
+    public void applySGR(final SGR[] options) throws LanternException
     {
-        for(SGR sgr: options) {
-            switch(sgr) {
-                case ENTER_BOLD:
-                    writeToTerminal(decodeTerminfoString(terminalProperties.getEnterBoldModeString()));
-                    break;
-
-                case EXIT_BOLD:
-                    //writeToTerminal(decodeTerminfoString(terminalProperties.getExitBoldModeString()));
-                    writeToTerminal(decodeTerminfoString("\\E[22m"));
-                    break;
-
-                case ENTER_UNDERLINE:
+        for(int i = 0; i < options.length; i++) {
+            SGR sgr = options[i];
+            if(sgr == SGR.ENTER_BOLD)
+                writeToTerminal(decodeTerminfoString(terminalProperties.getEnterBoldModeString()));
+            else if(sgr == SGR.EXIT_BOLD)
+                writeToTerminal(decodeTerminfoString("\\E[22m"));
+            else if(sgr == SGR.ENTER_UNDERLINE)
                     writeToTerminal(decodeTerminfoString(terminalProperties.getEnterUnderlineModeString()));
-                    break;
-
-                case EXIT_UNDERLINE:
+            else if(sgr == SGR.EXIT_UNDERLINE)
                     writeToTerminal(decodeTerminfoString(terminalProperties.getExitUnderlineModeString()));
-                    break;
-
-                case ENTER_REVERSE:
+            else if(sgr == SGR.ENTER_REVERSE)
                     writeToTerminal(decodeTerminfoString(terminalProperties.getEnterReverseModeString()));
-                    break;
-
-                case EXIT_REVERSE:
+            else if(sgr == SGR.EXIT_REVERSE)
                     writeToTerminal(decodeTerminfoString(terminalProperties.getExitReverseModeString()));
-                    break;
-                    
-                case ENTER_BLINK:
+            else if(sgr == SGR.ENTER_BLINK)
                     writeToTerminal(decodeTerminfoString(terminalProperties.getEnterBlinkMode()));
-                    break;
-                	
-                case RESET_ALL:
+            else if(sgr == SGR.RESET_ALL)
                     writeToTerminal(decodeTerminfoString("\\E0m"));
-                    break;
-            }
         }
     }
 

@@ -34,16 +34,43 @@ public interface Interactable
     public void onLeaveFocus(FocusChangeDirection direction);
     public TerminalPosition getHotspot();
 
-    public enum Result
+    public static class Result
     {
-        DO_NOTHING,
-        NEXT_INTERACTABLE,
-        PREVIOUS_INTERACTABLE
+        public static final int DO_NOTHING_ID = 1;
+        public static final int NEXT_INTERACTABLE_ID = 2;
+        public static final int PREVIOUS_INTERACTABLE_ID = 3;
+        
+        public static final Result DO_NOTHING = new Result(DO_NOTHING_ID);
+        public static final Result NEXT_INTERACTABLE = new Result(NEXT_INTERACTABLE_ID);
+        public static final Result PREVIOUS_INTERACTABLE = new Result(PREVIOUS_INTERACTABLE_ID);
+        
+        private final int index;
+
+        private Result(int index) {
+            this.index = index;
+        }
+
+        public int getIndex() {
+            return index;
+        }
     }
 
-    public enum FocusChangeDirection
+    public static class FocusChangeDirection
     {
-        DOWN_OR_RIGHT,
-        UP_OR_LEFT
+        public static final int DOWN_OR_RIGHT_ID = 1;
+        public static final int UP_OR_LEFT_ID = 2;
+        
+        public static final FocusChangeDirection DOWN_OR_RIGHT = new FocusChangeDirection(DOWN_OR_RIGHT_ID);
+        public static final FocusChangeDirection UP_OR_LEFT = new FocusChangeDirection(UP_OR_LEFT_ID);
+        
+        private final int index;
+
+        private FocusChangeDirection(int index) {
+            this.index = index;
+        }
+
+        public int getIndex() {
+            return index;
+        }
     }
 }

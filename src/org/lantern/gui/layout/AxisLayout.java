@@ -32,16 +32,15 @@ import org.lantern.terminal.TerminalSize;
  */
 public abstract class AxisLayout implements LanternLayout
 {
-    private final List<AxisLayoutComponent> componentList;
+    private final List componentList;
     private int padding;
     
     AxisLayout()
     {
-        this.componentList = new ArrayList<AxisLayoutComponent>();
+        this.componentList = new ArrayList();
         this.padding = 0;
     }
 
-    @Override
     public void addComponent(Component component, Object modifiers)
     {
         if(modifiers instanceof SizePolicy == false)
@@ -49,12 +48,11 @@ public abstract class AxisLayout implements LanternLayout
         componentList.add(new AxisLayoutComponent(component, (SizePolicy)modifiers));
     }
 
-    @Override
     public void removeComponent(Component component)
     {
-        Iterator<AxisLayoutComponent> iterator = componentList.iterator();
+        Iterator iterator = componentList.iterator();
         while(iterator.hasNext()) {
-            if(iterator.next().component == component) {
+            if(((AxisLayoutComponent)iterator.next()).component == component) {
                 iterator.remove();
                 return;
             }
@@ -63,9 +61,11 @@ public abstract class AxisLayout implements LanternLayout
 
     public boolean isMaximising()
     {
-        for(AxisLayoutComponent axisLayoutComponent: componentList)
+        for(int i = 0; i < componentList.size(); i++) {
+            AxisLayoutComponent axisLayoutComponent = (AxisLayoutComponent)componentList.get(i);
             if(axisLayoutComponent.sizePolicy == SizePolicy.MAXIMUM)
                 return true;
+        }
 
         return false;
     }
@@ -75,11 +75,11 @@ public abstract class AxisLayout implements LanternLayout
         this.padding = padding;
     }
 
-    @Override
     public TerminalSize getPreferredSize()
     {
         final TerminalSize preferredSize = new TerminalSize(0, 0);
-        for(AxisLayoutComponent axisLayoutComponent: componentList) {
+        for(int i = 0; i < componentList.size(); i++) {
+            AxisLayoutComponent axisLayoutComponent = (AxisLayoutComponent)componentList.get(i);
             final TerminalSize componentPreferredSize = axisLayoutComponent.component.getPreferredSize();
             setMajorAxis(preferredSize, getMajorAxis(preferredSize) + getMajorAxis(componentPreferredSize));
             setMinorAxis(preferredSize, Math.max(getMinorAxis(preferredSize), getMinorAxis(componentPreferredSize)));
@@ -88,16 +88,16 @@ public abstract class AxisLayout implements LanternLayout
         return preferredSize;
     }
 
-    @Override
-    public List<LaidOutComponent> layout(TerminalSize layoutArea)
+    public List layout(TerminalSize layoutArea)
     {
-        List<AxisLaidOutComponent> result = new ArrayList<AxisLaidOutComponent>();
-        List<AxisLaidOutComponent> growingComponents = new ArrayList<AxisLaidOutComponent>();
+        List result = new ArrayList();
+        List growingComponents = new ArrayList();
 
         final int availableMinorAxisSpace = getMinorAxis(layoutArea);
         int availableMajorAxisSpace = getMajorAxis(layoutArea);
 
-        for(AxisLayoutComponent axisLayoutComponent: componentList) {
+        for(int i = 0; i < componentList.size(); i++) {
+            AxisLayoutComponent axisLayoutComponent = (AxisLayoutComponent)componentList.get(i);
             TerminalSize componentPreferredSize = axisLayoutComponent.component.getPreferredSize();
             int componentPreferredMajorAxisSize = getMajorAxis(componentPreferredSize);
             
@@ -122,7 +122,8 @@ public abstract class AxisLayout implements LanternLayout
         }
 
         while(!growingComponents.isEmpty() && availableMajorAxisSpace > 0) {
-            for(AxisLaidOutComponent laidOutComponent: growingComponents) {
+            for(int i = 0; i < growingComponents.size(); i++) {
+                AxisLaidOutComponent laidOutComponent = (AxisLaidOutComponent)growingComponents.get(i);
                 setMajorAxis(laidOutComponent.size, getMajorAxis(laidOutComponent.size) + 1);
                 if(--availableMajorAxisSpace == 0)
                     break;
@@ -130,7 +131,8 @@ public abstract class AxisLayout implements LanternLayout
         }
 
         int nextMajorPosition = 0;
-        for(AxisLaidOutComponent laidOutComponent: result) {
+        for(int i = 0; i < result.size(); i++) {
+            AxisLaidOutComponent laidOutComponent = (AxisLaidOutComponent)result.get(i);
             setMajorAxis(laidOutComponent.topLeftPosition, nextMajorPosition);
             nextMajorPosition += getMajorAxis(laidOutComponent.size) + padding;
         }

@@ -48,14 +48,12 @@ public class WaitingDialog extends Window
         spinThread = new Thread(new SpinCode());
     }
 
-    @Override
     protected void onVisible()
     {
         super.onVisible();
         spinThread.start();
     }
     
-    @Override
     public void close()
     {
         isClosed = true;

@@ -64,8 +64,8 @@ public class TerminalResizeTest implements Terminal.ResizeListener
             terminal.moveCursor(0, 0);
             String string = newSize.getColumns() + "x" + newSize.getRows() + "                     ";
             char []chars = string.toCharArray();
-            for(char c: chars)
-                terminal.putCharacter(c);
+            for(int i = 0; i < chars.length; i++)
+                terminal.putCharacter(chars[i]);
         }
         catch(LanternException e) {
         }

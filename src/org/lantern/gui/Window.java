@@ -20,6 +20,7 @@
 package org.lantern.gui;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import org.lantern.LanternException;
 import org.lantern.gui.layout.SizePolicy;
@@ -37,8 +38,8 @@ import org.lantern.terminal.TerminalSize;
  */
 public class Window implements Container
 {
-    private final List<WindowListener> windowListeners;
-    private final List<ComponentInvalidatorAlert> invalidatorAlerts;
+    private final List windowListeners;
+    private final List invalidatorAlerts;
     private GUIScreen owner;
     private final Panel contentPane;
     private Interactable currentlyInFocus;
@@ -46,8 +47,8 @@ public class Window implements Container
 
     public Window(String title)
     {
-        this.windowListeners = new ArrayList<WindowListener>();
-        this.invalidatorAlerts = new ArrayList<ComponentInvalidatorAlert>();
+        this.windowListeners = new ArrayList();
+        this.invalidatorAlerts = new ArrayList();
         this.owner = null;
         this.contentPane = new Panel(title);
         this.contentPane.setParent(this);
@@ -95,8 +96,9 @@ public class Window implements Container
 
     public void invalidate()
     {
-        for(WindowListener listener: windowListeners)
-            listener.onWindowInvalidated(this);
+        Iterator iter = windowListeners.iterator();
+        while(iter.hasNext())
+            ((WindowListener)iter.next()).onWindowInvalidated(this);
     }
 
     public void addEmptyLine()
@@ -165,7 +167,8 @@ public class Window implements Container
         
         contentPane.removeComponent(component);
 
-        for(ComponentInvalidatorAlert invalidatorAlert: invalidatorAlerts) {
+        for(int i = 0; i < invalidatorAlerts.size(); i++) {
+            ComponentInvalidatorAlert invalidatorAlert = (ComponentInvalidatorAlert)invalidatorAlerts.get(i);
             if(component == invalidatorAlert.component) {
                 component.removeComponentListener(invalidatorAlert);
                 invalidatorAlerts.remove(invalidatorAlert);
@@ -257,14 +260,16 @@ public class Window implements Container
 
     protected void onVisible()
     {
-        for(WindowListener listener: windowListeners)
-            listener.onWindowShown(this);
+        Iterator iter = windowListeners.iterator();
+        while(iter.hasNext())
+            ((WindowListener)iter.next()).onWindowShown(this);
     }
 
     protected void onClosed()
     {
-        for(WindowListener listener: windowListeners)
-            listener.onWindowClosed(this);
+        Iterator iter = windowListeners.iterator();
+        while(iter.hasNext())
+            ((WindowListener)iter.next()).onWindowClosed(this);
     }
 
     private class ComponentInvalidatorAlert extends ComponentAdapter
@@ -281,7 +286,6 @@ public class Window implements Container
             return component;
         }
 
-        @Override
         public void onComponentInvalidated(Component component)
         {
             invalidate();

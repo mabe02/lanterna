@@ -25,6 +25,7 @@ import org.lantern.gui.layout.LanternLayout;
 import org.lantern.gui.layout.SizePolicy;
 import org.lantern.gui.layout.VerticalLayout;
 import org.lantern.gui.theme.Theme.Category;
+import org.lantern.terminal.Terminal;
 import org.lantern.terminal.TerminalPosition;
 import org.lantern.terminal.TerminalSize;
 
@@ -125,8 +126,9 @@ public class Panel extends AbstractContainer
         TerminalSize contentPaneSize = border.getInnerAreaSize(graphics.getWidth(), graphics.getHeight());
         TextGraphics subGraphics = graphics.subAreaGraphics(contentPaneTopLeft, contentPaneSize);
 
-        List<LanternLayout.LaidOutComponent> laidOutComponents = layoutManager.layout(contentPaneSize);
-        for(LanternLayout.LaidOutComponent laidOutComponent: laidOutComponents) {
+        List laidOutComponents = layoutManager.layout(contentPaneSize);
+        for(int i = 0; i < laidOutComponents.size(); i++) {
+            LanternLayout.LaidOutComponent laidOutComponent = (LanternLayout.LaidOutComponent)laidOutComponents.get(i);
             TextGraphics subSubGraphics = subGraphics.subAreaGraphics(
                     laidOutComponent.getTopLeftPosition(), laidOutComponent.getSize());
             
@@ -136,7 +138,7 @@ public class Panel extends AbstractContainer
 
         graphics.applyThemeItem(graphics.getTheme().getItem(Category.DefaultDialog));
         graphics.setBoldMask(true);
-        graphics.drawString(2, 0, title);
+        graphics.drawString(2, 0, title, new Terminal.Style[] {});
     }
 
     public TerminalSize getPreferredSize()
@@ -144,7 +146,6 @@ public class Panel extends AbstractContainer
         return border.surroundAreaSize(layoutManager.getPreferredSize());
     }
 
-    @Override
     public void addComponent(Component component)
     {
         addComponent(component, SizePolicy.CONSTANT);
@@ -156,20 +157,31 @@ public class Panel extends AbstractContainer
         layoutManager.addComponent(component, sizePolicy);
     }
 
-    @Override
     public void removeComponent(Component component)
     {
         super.removeComponent(component);
         layoutManager.removeComponent(component);
     }
     
-    public enum Orientation
+    public static class Orientation
     {
-        HORISONTAL,
-        VERTICAL
+        public static final int HORISONTAL_ID = 1;
+        public static final int VERTICAL_ID = 2;
+        
+        public static final Orientation HORISONTAL = new Orientation(HORISONTAL_ID);
+        public static final Orientation VERTICAL = new Orientation(VERTICAL_ID);
+        
+        private final int index;
+
+        public Orientation(int index) {
+            this.index = index;
+        }
+
+        public int getIndex() {
+            return index;
+        }
     }
 
-    @Override
     public String toString()
     {
         return "Panel with " + getComponentCount() + " components";

@@ -53,31 +53,52 @@ public class Key
         return character;
     }
 
-    public enum Kind
+    public static class Kind
     {
-        NormalKey('N'),
-        Escape('\\'),
-        Backspace('B'),
-        ArrowLeft('L'),
-        ArrowRight('R'),
-        ArrowUp('U'),
-        ArrowDown('D'),
-        Insert('I'),
-        Delete('T'),
-        Home('H'),
-        End('E'),
-        PageUp('P'),
-        PageDown('O'),
-        Tab('\t'),
-        ReverseTab('/'),
-        Enter('\n'),
-        Unknown('!'),
-        CursorLocation('£');
+        public static final int NormalKey_ID = 1;
+        public static final int Escape_ID = 2;
+        public static final int Backspace_ID = 3;
+        public static final int ArrowLeft_ID = 4;
+        public static final int ArrowRight_ID = 5;
+        public static final int ArrowUp_ID = 6;
+        public static final int ArrowDown_ID = 7;
+        public static final int Insert_ID = 8;
+        public static final int Delete_ID = 9;
+        public static final int Home_ID = 10;
+        public static final int End_ID = 11;
+        public static final int PageUp_ID = 12;
+        public static final int PageDown_ID = 13;
+        public static final int Tab_ID = 14;
+        public static final int ReverseTab_ID = 15;
+        public static final int Enter_ID = 16;
+        public static final int Unknown_ID = 17;
+        public static final int CursorLocation_ID = 18;
+        
+        public static final Kind NormalKey = new Kind(NormalKey_ID, 'N');
+        public static final Kind Escape = new Kind(Escape_ID, '\\');
+        public static final Kind Backspace = new Kind(Backspace_ID, 'B');
+        public static final Kind ArrowLeft = new Kind(ArrowLeft_ID, 'L');
+        public static final Kind ArrowRight = new Kind(ArrowRight_ID, 'R');
+        public static final Kind ArrowUp = new Kind(ArrowUp_ID, 'U');
+        public static final Kind ArrowDown = new Kind(ArrowDown_ID, 'D');
+        public static final Kind Insert = new Kind(Insert_ID, 'I');
+        public static final Kind Delete = new Kind(Delete_ID, 'T');
+        public static final Kind Home = new Kind(Home_ID, 'H');
+        public static final Kind End = new Kind(End_ID, 'E');
+        public static final Kind PageUp = new Kind(PageUp_ID, 'P');
+        public static final Kind PageDown = new Kind(PageDown_ID, 'O');
+        public static final Kind Tab = new Kind(Tab_ID, '\t');
+        public static final Kind ReverseTab = new Kind(ReverseTab_ID, '/');
+        public static final Kind Enter = new Kind(Enter_ID, '\n');
+        public static final Kind Unknown = new Kind(Unknown_ID, '!');
+        public static final Kind CursorLocation = new Kind(CursorLocation_ID, '£');
 
+        private int index;
         private char representationKey;
 
-        private Kind(char representationKey)
+        private Kind(int index, char representationKey)
         {
+            this.index = index;
             this.representationKey = representationKey;
         }
 
@@ -85,15 +106,17 @@ public class Key
         {
             return representationKey;
         }
+
+        public int getIndex() {
+            return index;
+        }
     }
 
-    @Override
     public String toString()
     {
         return getKind().toString() + (getKind() == Kind.NormalKey ? ": " + character : "");
     }
 
-    @Override
     public boolean equals(Object obj)
     {
         if(obj == null)
@@ -103,7 +126,6 @@ public class Key
         return character == ((Key)(obj)).character;
     }
 
-    @Override
     public int hashCode()
     {
         int hash = 3;

@@ -41,7 +41,6 @@ public abstract class TerminalFactory
      */
     public static class Default extends TerminalFactory
     {
-        @Override
         public Terminal createTerminal(InputStream terminalInput, OutputStream terminalOutput, Charset terminalCharset)
         {
             if(GraphicsEnvironment.isHeadless())
@@ -56,7 +55,6 @@ public abstract class TerminalFactory
      */
     public static class Common extends TerminalFactory
     {
-        @Override
         public Terminal createTerminal(InputStream terminalInput, OutputStream terminalOutput, Charset terminalCharset)
         {
             return new CommonUnixTerminal(terminalInput, terminalOutput, terminalCharset);
@@ -68,7 +66,6 @@ public abstract class TerminalFactory
      */
     public static class Swing extends TerminalFactory
     {
-        @Override
         public Terminal createTerminal(InputStream terminalInput, OutputStream terminalOutput, Charset terminalCharset)
         {
             return new SwingTerminal();

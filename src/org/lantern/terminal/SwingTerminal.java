@@ -50,7 +50,7 @@ import org.lantern.input.KeyMappingProfile;
  */
 public class SwingTerminal implements Terminal
 {
-    private final List<ResizeListener> resizeListeners;
+    private final List resizeListeners;
     private final TerminalRenderer terminalRenderer;
     private final Font terminalFont;
     private TerminalSize terminalSize;
@@ -60,7 +60,7 @@ public class SwingTerminal implements Terminal
     private Color currentBackgroundColor;
     private boolean currentlyBold;
     private TerminalCharacter [][]characterMap;
-    private Queue<Key> keyQueue;
+    private Queue keyQueue;
     private final Object resizeMutex;
 
     public SwingTerminal()
@@ -70,7 +70,7 @@ public class SwingTerminal implements Terminal
 
     public SwingTerminal(TerminalSize terminalSize)
     {
-        this.resizeListeners = new ArrayList<ResizeListener>();
+        this.resizeListeners = new ArrayList();
         this.terminalSize = terminalSize;
         this.terminalFont = new Font("Courier New", Font.PLAIN, 14);
         this.terminalRenderer = new TerminalRenderer();
@@ -79,7 +79,7 @@ public class SwingTerminal implements Terminal
         this.currentForegroundColor = Color.WHITE;
         this.currentBackgroundColor = Color.BLACK;
         this.currentlyBold = false;
-        this.keyQueue = new ConcurrentLinkedQueue<Key>();
+        this.keyQueue = new ConcurrentLinkedQueue();
         this.resizeMutex = new Object();
         clearScreen();
     }
@@ -103,10 +103,11 @@ public class SwingTerminal implements Terminal
         currentForegroundColor = color;
     }
 
-    public void applySGR(SGR... options) throws LanternException
+    public void applySGR(SGR[] options) throws LanternException
     {
-        for(SGR sgr: options)
+        for(int i = 0; i < options.length; i++)
         {
+            SGR sgr = options[i];
             if(sgr == SGR.RESET_ALL) {
                 currentlyBold = false;
                 currentForegroundColor = Color.DEFAULT;
@@ -221,8 +222,8 @@ public class SwingTerminal implements Terminal
                 }
             });
 
-            for(ResizeListener resizeListener: resizeListeners)
-                resizeListener.onResized(newSize);
+            for(int i = 0; i < resizeListeners.size(); i++)
+                ((ResizeListener)resizeListeners.get(i)).onResized(newSize);
         }
     }
 
@@ -236,7 +237,7 @@ public class SwingTerminal implements Terminal
 
     public Key readInput() throws LanternException
     {
-        return keyQueue.poll();
+        return (Key)keyQueue.poll();
     }
 
     private void refreshScreen()
@@ -252,57 +253,57 @@ public class SwingTerminal implements Terminal
     private java.awt.Color convertColorToAWT(Color color, boolean bold)
     {
         //Values below are shamelessly stolen from gnome terminal!
-        switch(color)
+        switch(color.getIndex())
         {
-            case BLACK:
+            case Color.BLACK_ID:
                 if(bold)
                     return new java.awt.Color(85, 87, 83);
                 else
                     return new java.awt.Color(46, 52, 54);
 
-            case BLUE:
+            case Color.BLUE_ID:
                 if(bold)
                     return new java.awt.Color(114, 159, 207);
                 else
                     return new java.awt.Color(52, 101, 164);
 
-            case CYAN:
+            case Color.CYAN_ID:
                 if(bold)
                     return new java.awt.Color(52, 226, 226);
                 else
                     return new java.awt.Color(6, 152, 154);
 
-            case DEFAULT:
+            case Color.DEFAULT_ID:
                 if(bold)
                     return new java.awt.Color(238, 238, 236);
                 else
                     return new java.awt.Color(211, 215, 207);
 
-            case GREEN:
+            case Color.GREEN_ID:
                 if(bold)
                     return new java.awt.Color(138, 226, 52);
                 else
                     return new java.awt.Color(78, 154, 6);
 
-            case MAGENTA:
+            case Color.MAGENTA_ID:
                 if(bold)
                     return new java.awt.Color(173, 127, 168);
                 else
                     return new java.awt.Color(117, 80, 123);
 
-            case RED:
+            case Color.RED_ID:
                 if(bold)
                     return new java.awt.Color(239, 41, 41);
                 else
                     return new java.awt.Color(204, 0, 0);
 
-            case WHITE:
+            case Color.WHITE_ID:
                 if(bold)
                     return new java.awt.Color(238, 238, 236);
                 else
                     return new java.awt.Color(211, 215, 207);
 
-            case YELLOW:
+            case Color.YELLOW_ID:
                 if(bold)
                     return new java.awt.Color(252, 233, 79);
                 else
@@ -313,19 +314,17 @@ public class SwingTerminal implements Terminal
 
     private class KeyCapturer extends KeyAdapter
     {
-        private Set<Character> typedIgnore = new HashSet<Character>(
-                Arrays.asList('\n', '\t', '\r', '\b'));
+        private Set typedIgnore = new HashSet(
+                Arrays.asList(new Character[] {new Character('\n'), new Character('\t'), new Character('\r'), new Character('\b')}));
 
-        @Override
         public void keyTyped(KeyEvent e)
         {
-            if(typedIgnore.contains(e.getKeyChar()))
+            if(typedIgnore.contains(new Character(e.getKeyChar())))
                 return;
             else
                 keyQueue.add(new Key(e.getKeyChar()));
         }
 
-        @Override
         public void keyPressed(KeyEvent e)
         {
             if(e.getKeyCode() == KeyEvent.VK_ENTER)
@@ -368,7 +367,6 @@ public class SwingTerminal implements Terminal
         private int lastWidth = -1;
         private int lastHeight = -1;
         
-        @Override
         public void componentResized(ComponentEvent e)
         {
             if(e.getComponent() == null || e.getComponent() instanceof JFrame == false)
@@ -399,7 +397,6 @@ public class SwingTerminal implements Terminal
         {
         }
 
-        @Override
         public Dimension getPreferredSize()
         {
             FontMetrics fontMetrics = getGraphics().getFontMetrics(terminalFont);
@@ -408,7 +405,6 @@ public class SwingTerminal implements Terminal
             return new Dimension(screenWidth, screenHeight);
         }
 
-        @Override
         protected void paintComponent(Graphics g)
         {
             final Graphics2D graphics2D = (Graphics2D)g.create();
@@ -487,7 +483,6 @@ public class SwingTerminal implements Terminal
                 return convertColorToAWT(background, false);
         }
 
-        @Override
         public String toString()
         {
             return Character.toString(character);

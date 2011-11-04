@@ -42,12 +42,12 @@ public class ScreenInfoCharacterPattern implements CharacterPattern
         return new Key(Key.Kind.CursorLocation);
     }
 
-    public boolean isCompleteMatch(List<Character> currentMatching)
+    public boolean isCompleteMatch(List currentMatching)
     {
         if(currentMatching.isEmpty())
             return false;
 
-        if(currentMatching.get(0) != KeyMappingProfile.ESC_CODE)
+        if(((Character)currentMatching.get(0)).charValue() != KeyMappingProfile.ESC_CODE)
             return false;
 
         String asString = "";
@@ -61,27 +61,27 @@ public class ScreenInfoCharacterPattern implements CharacterPattern
         return true;
     }
 
-    public boolean matches(List<Character> currentMatching)
+    public boolean matches(List currentMatching)
     {
         if(currentMatching.isEmpty())
             return true;
 
-        if(currentMatching.get(0) != KeyMappingProfile.ESC_CODE)
+        if(((Character)currentMatching.get(0)).charValue() != KeyMappingProfile.ESC_CODE)
             return false;
         if(currentMatching.size() == 1)
             return true;
 
-        if(currentMatching.get(1) != '[')
+        if(((Character)currentMatching.get(1)).charValue() != '[')
             return false;
         if(currentMatching.size() == 2)
             return true;
 
         int i = 2;
         for(i = 2; i < currentMatching.size(); i++) {
-            if(!Character.isDigit(currentMatching.get(i)) && ';' != currentMatching.get(i))
+            if(!Character.isDigit(((Character)currentMatching.get(i)).charValue()) && ';' != ((Character)currentMatching.get(i)).charValue())
                 return false;
             
-            if(';' == currentMatching.get(i))
+            if(';' == ((Character)currentMatching.get(i)).charValue())
                 break;
         }
 
@@ -89,22 +89,22 @@ public class ScreenInfoCharacterPattern implements CharacterPattern
             return true;
 
         for(i = i+1; i < currentMatching.size(); i++) {
-            if(!Character.isDigit(currentMatching.get(i)) && 'R' != currentMatching.get(i))
+            if(!Character.isDigit(((Character)currentMatching.get(i)).charValue()) && 'R' != ((Character)currentMatching.get(i)).charValue())
                 return false;
 
-            if('R' == currentMatching.get(i))
+            if('R' == ((Character)currentMatching.get(i)).charValue())
                 break;
         }
 
         return true;
     }
 
-    public static TerminalPosition getCursorPosition(List<Character> currentMatching)
+    public static TerminalPosition getCursorPosition(List currentMatching)
     {
         if(currentMatching.isEmpty())
             return null;
 
-        if(currentMatching.get(0) != KeyMappingProfile.ESC_CODE)
+        if(((Character)currentMatching.get(0)).charValue() != KeyMappingProfile.ESC_CODE)
             return null;
 
         String asString = "";

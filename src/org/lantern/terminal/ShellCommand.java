@@ -33,7 +33,7 @@ import org.lantern.LanternException;
  */
 class ShellCommand
 {
-    static String exec(String ...cmd) throws LanternException
+    static String exec(String[] cmd) throws LanternException
     {
         try {
             ProcessBuilder pb = new ProcessBuilder(cmd);

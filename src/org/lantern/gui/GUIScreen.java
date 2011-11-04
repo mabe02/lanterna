@@ -20,6 +20,7 @@
 package org.lantern.gui;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import org.lantern.gui.theme.Theme;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,6 +29,7 @@ import org.lantern.LanternException;
 import org.lantern.gui.listener.WindowAdapter;
 import org.lantern.input.Key;
 import org.lantern.screen.Screen;
+import org.lantern.terminal.Terminal;
 import org.lantern.terminal.TerminalPosition;
 import org.lantern.terminal.TerminalSize;
 
@@ -38,8 +40,8 @@ import org.lantern.terminal.TerminalSize;
 public class GUIScreen
 {
     private final Screen screen;
-    private final LinkedList<WindowPlacement> windowStack;
-    private final Queue<Action> actionToRunInEventThread;
+    private final LinkedList windowStack;
+    private final Queue actionToRunInEventThread;
     private String title;
     private boolean showMemoryUsage;
     private Theme guiTheme;
@@ -52,8 +54,8 @@ public class GUIScreen
         this.showMemoryUsage = false;
         this.screen = screen;
         this.guiTheme = Theme.getDefaultTheme();
-        this.windowStack = new LinkedList<WindowPlacement>();
-        this.actionToRunInEventThread = new LinkedList<Action>();
+        this.windowStack = new LinkedList();
+        this.actionToRunInEventThread = new LinkedList();
         this.needsRefresh = false;
         this.eventThread = Thread.currentThread();  //We'll be expecting the thread who created us is the same as will be the event thread later
     }
@@ -86,14 +88,16 @@ public class GUIScreen
         textGraphics.fillRectangle(' ', new TerminalPosition(0, 0), new TerminalSize(screen.getTerminalSize()));
 
         //Write the title
-        textGraphics.drawString(3, 0, title);
+        textGraphics.drawString(3, 0, title, new Terminal.Style[0]);
 
         //Write memory usage
         if(showMemoryUsage)
             drawMemoryUsage(textGraphics);
 
         //Go through the windows
-        for(WindowPlacement windowPlacement: windowStack) {
+        Iterator iter = windowStack.iterator();
+        while(iter.hasNext()) {
+            WindowPlacement windowPlacement = (WindowPlacement)iter.next();
             if(hasSoloWindowAbove(windowPlacement))
                 continue;
             
@@ -135,8 +139,8 @@ public class GUIScreen
             windowPlacement.getWindow().repaint(subGraphics);
         }
 
-        if(windowStack.size() > 0 && windowStack.getLast().getWindow().getWindowHotspotPosition() != null)
-            screen.setCursorPosition(windowStack.getLast().getWindow().getWindowHotspotPosition());
+        if(windowStack.size() > 0 && ((WindowPlacement)windowStack.getLast()).getWindow().getWindowHotspotPosition() != null)
+            screen.setCursorPosition(((WindowPlacement)windowStack.getLast()).getWindow().getWindowHotspotPosition());
         else
             screen.setCursorPosition(new TerminalPosition(screen.getWidth() - 1, screen.getHeight() - 1));
         screen.refresh();
@@ -157,7 +161,7 @@ public class GUIScreen
 
     boolean isWindowTopLevel(Window window)
     {
-        if(windowStack.size() > 0 && windowStack.getLast().getWindow() == window)
+        if(windowStack.size() > 0 && ((WindowPlacement)windowStack.getLast()).getWindow() == window)
             return true;
         else
             return false;
@@ -176,17 +180,17 @@ public class GUIScreen
             }
 
             synchronized(actionToRunInEventThread) {
-                List<Action> actions = new ArrayList<Action>(actionToRunInEventThread);
+                List actions = new ArrayList(actionToRunInEventThread);
                 actionToRunInEventThread.clear();
-                for(Action nextAction: actions)
-                    nextAction.doAction();
+                for(int i = 0; i < actions.size(); i++)
+                    ((Action)actions.get(i)).doAction();
             }
 
             update();
 
             Key nextKey = screen.readInput();
             if(nextKey != null) {
-                windowStack.getLast().window.onKeyPressed(nextKey);
+                ((WindowPlacement)windowStack.getLast()).window.onKeyPressed(nextKey);
                 invalidate();
             }
             else {
@@ -215,7 +219,7 @@ public class GUIScreen
 
         if(position == Position.OVERLAPPING &&
                 windowStack.size() > 0) {
-            WindowPlacement lastWindow = windowStack.getLast();
+            WindowPlacement lastWindow = ((WindowPlacement)windowStack.getLast());
             if(lastWindow.getPositionPolicy() != Position.CENTER) {
                 newWindowX = lastWindow.getTopLeft().getColumn() + 2;
                 newWindowY = lastWindow.getTopLeft().getRow() + 1;
@@ -223,7 +227,6 @@ public class GUIScreen
         }
 
         window.addWindowListener(new WindowAdapter() {
-            @Override
             public void onWindowInvalidated(Window window)
             {
                 needsRefresh = true;
@@ -240,10 +243,10 @@ public class GUIScreen
     {
         if(windowStack.size() == 0)
             return;
-        if(windowStack.getLast().window != window)
+        if(((WindowPlacement)windowStack.getLast()).window != window)
             return;
 
-        WindowPlacement windowPlacement = windowStack.removeLast();
+        WindowPlacement windowPlacement = (WindowPlacement)windowStack.removeLast();
         windowPlacement.getWindow().onClosed();
     }
 
@@ -269,18 +272,32 @@ public class GUIScreen
         return showMemoryUsage;
     }
 
-    public enum Position
+    public static class Position
     {
-        OVERLAPPING,
-        NEW_CORNER_WINDOW,
-        CENTER
+        public static final int OVERLAPPING_ID = 1;
+        public static final int NEW_CORNER_WINDOW_ID = 2;
+        public static final int CENTER_ID = 3;
+        
+        public static final Position OVERLAPPING = new Position(OVERLAPPING_ID);
+        public static final Position NEW_CORNER_WINDOW = new Position(NEW_CORNER_WINDOW_ID);
+        public static final Position CENTER = new Position(CENTER_ID);
+        
+        private final int index;
+
+        public Position(int index) {
+            this.index = index;
+        }
+
+        public int getIndex() {
+            return index;
+        }
     }
 
     private boolean hasSoloWindowAbove(WindowPlacement windowPlacement)
     {
         int index = windowStack.indexOf(windowPlacement);
         for(int i = index + 1; i < windowStack.size(); i++) {
-            if(windowStack.get(i).window.isSoloWindow())
+            if(((WindowPlacement)windowStack.get(i)).window.isSoloWindow())
                 return true;
         }
         return false;
@@ -298,7 +315,7 @@ public class GUIScreen
 
         String memUsageString = "Memory usage: " + usedMemory + " MB of " + totalMemory + " MB";
         textGraphics.drawString(screen.getTerminalSize().getColumns() - memUsageString.length() - 1,
-                screen.getTerminalSize().getRows() - 1, memUsageString);
+                screen.getTerminalSize().getRows() - 1, memUsageString, new Terminal.Style[0]);
     }
 
     private class WindowPlacement

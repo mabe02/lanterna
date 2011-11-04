@@ -29,6 +29,7 @@ import org.lantern.gui.GUIScreen;
 import org.lantern.gui.TextGraphics;
 import org.lantern.gui.Window;
 import org.lantern.gui.theme.Theme.Category;
+import org.lantern.terminal.Terminal.Style;
 import org.lantern.terminal.TerminalSize;
 
 /**
@@ -64,7 +65,7 @@ public class ButtonTest
                 graphics.applyThemeItem(graphics.getTheme().getItem(Category.Shadow));
                 for(int y = 0; y < graphics.getHeight(); y++)
                     for(int x = 0; x < graphics.getWidth(); x++)
-                        graphics.drawString(x, y, "X");
+                        graphics.drawString(x, y, "X", new Style[0]);
             }
 
             public TerminalSize getPreferredSize()

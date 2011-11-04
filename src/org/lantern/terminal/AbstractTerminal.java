@@ -26,6 +26,7 @@ import java.io.OutputStream;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import org.lantern.LanternException;
 import org.lantern.input.InputDecoder;
@@ -41,7 +42,7 @@ public abstract class AbstractTerminal implements Terminal
     private final Charset terminalCharset;
     private final OutputStream terminalOutput;
     private final InputDecoder inputDecoder;
-    private final List<ResizeListener> resizeListeners;
+    private final List resizeListeners;
     protected TerminalSize lastKnownSize;
 
     public AbstractTerminal(final InputStream terminalInput, final OutputStream terminalOutput,
@@ -50,12 +51,12 @@ public abstract class AbstractTerminal implements Terminal
         this.terminalOutput = terminalOutput;
         this.terminalCharset = terminalCharset;
         this.inputDecoder = new InputDecoder(new InputStreamReader(terminalInput, terminalCharset));
-        this.resizeListeners = new ArrayList<ResizeListener>();
+        this.resizeListeners = new ArrayList();
         this.lastKnownSize = null;
     }
 
     //Allow subclasses (that's susposted to know what they're doing) to write directly to the terminal
-    protected synchronized void writeToTerminal(final byte... bytes) throws LanternException
+    protected synchronized void writeToTerminal(final byte[] bytes) throws LanternException
     {
         try {
             terminalOutput.write(bytes);
@@ -125,8 +126,11 @@ public abstract class AbstractTerminal implements Terminal
     protected synchronized void onResized() throws LanternException
     {
         TerminalSize size = queryTerminalSize();
-        for(ResizeListener resizeListener: resizeListeners)
+        Iterator iter = resizeListeners.iterator();
+        while(iter.hasNext()) {
+            ResizeListener resizeListener = (ResizeListener)iter.next();
             resizeListener.onResized(size);
+        }            
     }
 
     private byte[] translateCharacter(char input)

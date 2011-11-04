@@ -94,7 +94,6 @@ class ScreenCharacter
     	return blinking;
     }
 
-    @Override
     public boolean equals(Object obj) {
         if(obj instanceof ScreenCharacter == false)
             return false;
@@ -109,14 +108,12 @@ class ScreenCharacter
                 isBlinking() == other.isBlinking();
     }
 
-    @Override
     public int hashCode() {
         int hash = 5;
         hash = 71 * hash + this.character;
         return hash;
     }
 
-    @Override
     public String toString()
     {
         return Character.toString(character);

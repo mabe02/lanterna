@@ -38,7 +38,6 @@ public class UnixTerminal extends TermInfoTerminal
         super(terminalInput, terminalOutput, terminalCharset, terminalProperties);
     }
 
-    @Override
     public TerminalSize queryTerminalSize() throws LanternException
     {
         return TerminalStatus.querySize();

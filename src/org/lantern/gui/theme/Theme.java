@@ -113,56 +113,81 @@ public class Theme
 
     public Theme.Item getItem(Category category)
     {
-        switch(category)
+        switch(category.getIndex())
         {
-            case DefaultDialog:
+            case Category.DefaultDialog_ID:
                 return getDialogEmptyArea();
-            case ScreenBackground:
+            case Category.ScreenBackground_ID:
                 return getScreenBackground();
-            case Shadow:
+            case Category.Shadow_ID:
                 return getShadow();
-            case Border:
+            case Category.Border_ID:
                 return getBorder();
-            case ButtonLabelActive:
+            case Category.ButtonLabelActive_ID:
                 return getButtonLabelActive();
-            case ButtonLabelInactive:
+            case Category.ButtonLabelInactive_ID:
                 return getButtonLabelInactive();
-            case ButtonActive:
+            case Category.ButtonActive_ID:
                 return getButtonActive();
-            case ButtonInactive:
+            case Category.ButtonInactive_ID:
                 return getButtonInactive();
-            case Item:
+            case Category.Item_ID:
                 return getItem();
-            case ItemSelected:
+            case Category.ItemSelected_ID:
                 return getItemSelected();
-            case CheckBox:
+            case Category.CheckBox_ID:
                 return getCheckBox();
-            case CheckBoxSelected:
+            case Category.CheckBoxSelected_ID:
                 return getCheckBoxSelected();
-            case TextBox:
+            case Category.TextBox_ID:
                 return getTextBox();
-            case TextBoxFocused:
+            case Category.TextBoxFocused_ID:
                 return getTextBoxFocused();
         }
         return getDefault();
     }
 
-    public enum Category
+    public static class Category
     {
-        DefaultDialog,
-        ScreenBackground,
-        Shadow,
-        Border,
-        ButtonActive,
-        ButtonInactive,
-        ButtonLabelInactive,
-        ButtonLabelActive,
-        Item,
-        ItemSelected,
-        CheckBox,
-        CheckBoxSelected,
-        TextBox,
-        TextBoxFocused
+        public static final int DefaultDialog_ID = 1;
+        public static final int ScreenBackground_ID = 2;
+        public static final int Shadow_ID = 3;
+        public static final int Border_ID = 4;
+        public static final int ButtonActive_ID = 5;
+        public static final int ButtonInactive_ID = 6;
+        public static final int ButtonLabelInactive_ID = 7;
+        public static final int ButtonLabelActive_ID = 8;
+        public static final int Item_ID = 9;
+        public static final int ItemSelected_ID = 10;
+        public static final int CheckBox_ID = 11;
+        public static final int CheckBoxSelected_ID = 12;
+        public static final int TextBox_ID = 13;
+        public static final int TextBoxFocused_ID = 14;
+                
+        public static final Category DefaultDialog = new Category(DefaultDialog_ID);
+        public static final Category ScreenBackground = new Category(ScreenBackground_ID);
+        public static final Category Shadow = new Category(Shadow_ID);
+        public static final Category Border = new Category(Border_ID);
+        public static final Category ButtonActive = new Category(ButtonActive_ID);
+        public static final Category ButtonInactive = new Category(ButtonInactive_ID);
+        public static final Category ButtonLabelInactive = new Category(ButtonLabelInactive_ID);
+        public static final Category ButtonLabelActive = new Category(ButtonLabelActive_ID);
+        public static final Category Item = new Category(Item_ID);
+        public static final Category ItemSelected = new Category(ItemSelected_ID);
+        public static final Category CheckBox = new Category(CheckBox_ID);
+        public static final Category CheckBoxSelected = new Category(CheckBoxSelected_ID);
+        public static final Category TextBox = new Category(TextBox_ID);
+        public static final Category TextBoxFocused = new Category(TextBoxFocused_ID);
+                
+        private final int index;
+
+        private Category(int index) {
+            this.index = index;
+        }
+
+        public int getIndex() {
+            return index;
+        }
     }
 
     public class Item

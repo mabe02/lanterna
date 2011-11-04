@@ -35,7 +35,6 @@ public class PasswordBox extends TextBox
         super(width, initialContent);
     }
 
-    @Override
     protected String prerenderTransformation(String textboxString)
     {
         String newString = "";

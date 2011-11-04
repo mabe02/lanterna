@@ -66,7 +66,6 @@ public class TerminalPosition {
             column = 0;
     }
 
-    @Override
     public String toString()
     {
         return "[" + column + ":" + row + "]";

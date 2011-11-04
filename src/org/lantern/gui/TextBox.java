@@ -21,6 +21,7 @@ package org.lantern.gui;
 
 import org.lantern.gui.theme.Theme.Category;
 import org.lantern.input.Key;
+import org.lantern.terminal.Terminal;
 import org.lantern.terminal.TerminalPosition;
 import org.lantern.terminal.TerminalSize;
 
@@ -97,7 +98,7 @@ public class TextBox extends AbstractInteractableComponent
         String displayString = prerenderTransformation(backend).substring(visibleLeftPosition);
         if(displayString.length() > graphics.getWidth())
             displayString = displayString.substring(0, graphics.getWidth()-1);
-        graphics.drawString(0, 0, displayString);
+        graphics.drawString(0, 0, displayString, new Terminal.Style[0]);
         setHotspot(graphics.translateToGlobalCoordinates(new TerminalPosition(editPosition - visibleLeftPosition, 0)));
         lastKnownWidth = graphics.getWidth();
     }
@@ -109,19 +110,19 @@ public class TextBox extends AbstractInteractableComponent
 
     public void keyboardInteraction(Key key, InteractableResult result)
     {
-        switch(key.getKind()) {
-            case Tab:
-            case ArrowDown:
-            case Enter:
+        switch(key.getKind().getIndex()) {
+            case Key.Kind.Tab_ID:
+            case Key.Kind.ArrowDown_ID:
+            case Key.Kind.Enter_ID:
                 result.type = Result.NEXT_INTERACTABLE;
                 break;
 
-            case ReverseTab:
-            case ArrowUp:
+            case Key.Kind.ReverseTab_ID:
+            case Key.Kind.ArrowUp_ID:
                 result.type = Result.PREVIOUS_INTERACTABLE;
                 break;
 
-            case ArrowRight:
+            case Key.Kind.ArrowRight_ID:
                 if(editPosition == backend.length())
                     break;
                 editPosition++;
@@ -129,7 +130,7 @@ public class TextBox extends AbstractInteractableComponent
                     visibleLeftPosition++;
                 break;
 
-            case ArrowLeft:
+            case Key.Kind.ArrowLeft_ID:
                 if(editPosition == 0)
                     break;
                 editPosition--;
@@ -137,24 +138,24 @@ public class TextBox extends AbstractInteractableComponent
                     visibleLeftPosition--;
                 break;
 
-            case End:
+            case Key.Kind.End_ID:
                 editPosition = backend.length();
                 if(editPosition - visibleLeftPosition >= lastKnownWidth)
                     visibleLeftPosition = editPosition - lastKnownWidth + 1;
                 break;
 
-            case Home:
+            case Key.Kind.Home_ID:
                 editPosition = 0;
                 visibleLeftPosition = 0;
                 break;
 
-            case Delete:
+            case Key.Kind.Delete_ID:
                 if(editPosition == backend.length())
                     break;
                 backend = backend.substring(0, editPosition) + backend.substring(editPosition + 1);
                 break;
 
-            case Backspace:
+            case Key.Kind.Backspace_ID:
                 if(editPosition == 0)
                     break;
                 editPosition--;
@@ -163,7 +164,7 @@ public class TextBox extends AbstractInteractableComponent
                 backend = backend.substring(0, editPosition) + backend.substring(editPosition + 1);
                 break;
 
-            case NormalKey:
+            case Key.Kind.NormalKey_ID:
                 //Add character
                 if(Character.isISOControl(key.getCharacter()) || key.getCharacter() > 127)
                     break;

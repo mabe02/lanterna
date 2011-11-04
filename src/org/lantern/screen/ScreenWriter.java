@@ -20,7 +20,6 @@
 package org.lantern.screen;
 
 import java.util.Arrays;
-import java.util.EnumSet;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -87,29 +86,27 @@ public class ScreenWriter
 
         String line = sb.toString();
         for(int i = 0; i < screenHeight; i++) {
-            drawString(0, i, line);
+            drawString(0, i, line, new Terminal.Style[0]);
         }
     }
 
-    public void drawString(final int x, final int y, final String string, final Terminal.Style... styles)
+    public void drawString(final int x, final int y, final String string, final Terminal.Style[] styles)
     {
         currentPosition.setColumn(x);
         currentPosition.setRow(y);
 
-        final Set<Terminal.Style> drawStyle = new HashSet<Terminal.Style>(Arrays.asList(styles));
+        final Set drawStyle = new HashSet(Arrays.asList(styles));
         targetScreen.putString(x, y, string, foregroundColor, backgroundColor,
                 drawStyle.contains(Terminal.Style.Bold), drawStyle.contains(Terminal.Style.Underline),
                 drawStyle.contains(Terminal.Style.Reverse));
         currentPosition.setColumn(currentPosition.getColumn() + string.length());
     }
 
-    @Override
     public int hashCode()
     {
         return targetScreen.hashCode();
     }
 
-    @Override
     public boolean equals(Object obj)
     {
         if(obj instanceof ScreenWriter == false)

@@ -31,10 +31,10 @@ import org.lantern.LanternException;
  */
 public class TerminalProperties
 {
-    private final Map<String, String> environment;
+    private final Map environment;
 
-    private TerminalProperties(Map<String, String> environment) {
-        this.environment = new HashMap<String, String>(environment);
+    private TerminalProperties(Map environment) {
+        this.environment = new HashMap(environment);
     }
 
     public boolean hasPrivateBufferMode()
@@ -44,127 +44,128 @@ public class TerminalProperties
 
     public String getClearScreenString()
     {
-        return environment.get("clear_screen");
+        return (String)environment.get("clear_screen");
     }
 
     public String getCursorPositionString()
     {
-        return environment.get("cursor_address");
+        return (String)environment.get("cursor_address");
     }
 
     public String getEnterPrivateModeString()
     {
-        return environment.get("enter_ca_mode");
+        return (String)environment.get("enter_ca_mode");
     }
 
     public String getExitPrivateModeString()
     {
-        return environment.get("exit_ca_mode");
+        return (String)environment.get("exit_ca_mode");
     }
 
     public String getEnterBoldModeString()
     {
-        return environment.get("enter_bold_mode");
+        return (String)environment.get("enter_bold_mode");
     }
 
     public String getEnterReverseModeString()
     {
-        return environment.get("enter_reverse_mode");
+        return (String)environment.get("enter_reverse_mode");
     }
 
     public String getExitReverseModeString()
     {
-        return environment.get("exit_standout_mode");
+        return (String)environment.get("exit_standout_mode");
     }
 
     public String getEnterUnderlineModeString()
     {
-        return environment.get("enter_underline_mode");
+        return (String)environment.get("enter_underline_mode");
     }
     
     public String getExitUnderlineModeString()
     {
-        return environment.get("exit_underline_mode");
+        return (String)environment.get("exit_underline_mode");
     }
     
     public String getEnterBlinkMode()
     {
-    	return environment.get("enter_blink_mode");
+    	return (String)environment.get("enter_blink_mode");
     }
     
     public String getSetForegroundColorString()
     {
-        return environment.get("set_a_foreground");
+        return (String)environment.get("set_a_foreground");
     }
 
     public String getSetBackgroundColorString()
     {
-        return environment.get("set_a_background");
+        return (String)environment.get("set_a_background");
     }
 
     public String getKeyCursorUp()
     {
-        return environment.get("cursor_up");
+        return (String)environment.get("cursor_up");
     }
 
     public String getKeyCursorDown()
     {
-        return environment.get("cursor_down");
+        return (String)environment.get("cursor_down");
     }
 
     public String getKeyCursorRight()
     {
-        return environment.get("cursor_right");
+        return (String)environment.get("cursor_right");
     }
 
     public String getKeyCursorLeft()
     {
-        return environment.get("cursor_left");
+        return (String)environment.get("cursor_left");
     }
 
     public String getKeyReverseTab()
     {
-        return environment.get("back_tab");
+        return (String)environment.get("back_tab");
     }
 
     public String getKeyInsert()
     {
-        return environment.get("key_ic");
+        return (String)environment.get("key_ic");
     }
 
     public String getKeyDelete()
     {
-        return environment.get("key_dc");
+        return (String)environment.get("key_dc");
     }
 
     public String getKeyHome()
     {
-        return environment.get("key_home");
+        return (String)environment.get("key_home");
     }
 
     public String getKeyEnd()
     {
-        return environment.get("key_end");
+        return (String)environment.get("key_end");
     }
 
     public String getKeyPageUp()
     {
-        return environment.get("key_ppage");
+        return (String)environment.get("key_ppage");
     }
 
     public String getKeyPageDown()
     {
-        return environment.get("key_npage");
+        return (String)environment.get("key_npage");
     }
 
     public static TerminalProperties query() throws LanternException
     {
         final Pattern keyValuePattern = Pattern.compile("([a-z_0-9]+)=(.*)");
-        final Map<String, String> parameters = new HashMap<String, String>();
+        final Map parameters = new HashMap();
 
-        String infocmpOutput = ShellCommand.exec("infocmp", "-L");
+        String infocmpOutput = ShellCommand.exec(new String[] {"infocmp", "-L"});
         String []entries = infocmpOutput.split(",");
-        for(String entry: entries) {
+        for(int i = 0; i < entries.length; i++) {
+            String entry = entries[i];
             Matcher matcher = keyValuePattern.matcher(entry.trim());
             if(matcher.matches()) {
                 parameters.put(matcher.group(1), matcher.group(2));

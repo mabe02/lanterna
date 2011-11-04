@@ -69,17 +69,17 @@ public class ScreenTabTest {
 
         writer.setForegroundColor(Terminal.Color.DEFAULT);
         writer.setBackgroundColor(Terminal.Color.DEFAULT);
-        writer.drawString(0, 0, topTitle, Terminal.Style.Blinking);
+        writer.drawString(0, 0, topTitle, new Terminal.Style[] {Terminal.Style.Blinking});
         screen.setTabBehaviour(TabBehaviour.CONVERT_TO_ONE_SPACE);
-        writer.drawString(10, 1, "Four tabs: |\t|\t|\t|\t|");
+        writer.drawString(10, 1, "Four tabs: |\t|\t|\t|\t|", new Terminal.Style[0]);
         screen.setTabBehaviour(TabBehaviour.CONVERT_TO_FOUR_SPACES);
-        writer.drawString(10, 2, "Four tabs: |\t|\t|\t|\t|");
+        writer.drawString(10, 2, "Four tabs: |\t|\t|\t|\t|", new Terminal.Style[0]);
         screen.setTabBehaviour(TabBehaviour.CONVERT_TO_EIGHT_SPACES);
-        writer.drawString(10, 3, "Four tabs: |\t|\t|\t|\t|");
+        writer.drawString(10, 3, "Four tabs: |\t|\t|\t|\t|", new Terminal.Style[0]);
         screen.setTabBehaviour(TabBehaviour.ALIGN_TO_COLUMN_4);
-        writer.drawString(10, 4, "Four tabs: |\t|\t|\t|\t|");
+        writer.drawString(10, 4, "Four tabs: |\t|\t|\t|\t|", new Terminal.Style[0]);
         screen.setTabBehaviour(TabBehaviour.ALIGN_TO_COLUMN_8);
-        writer.drawString(10, 5, "Four tabs: |\t|\t|\t|\t|");
+        writer.drawString(10, 5, "Four tabs: |\t|\t|\t|\t|", new Terminal.Style[0]);
 
         screen.refresh();
     }

@@ -38,49 +38,41 @@ public class LanternException extends Exception {
         this.cause = cause;
     }
 
-    @Override
     public Throwable getCause()
     {
         return cause;
     }
 
-    @Override
     public String getLocalizedMessage()
     {
         return cause.getLocalizedMessage();
     }
 
-    @Override
     public String getMessage()
     {
         return cause.getMessage();
     }
 
-    @Override
     public StackTraceElement[] getStackTrace()
     {
         return cause.getStackTrace();
     }
 
-    @Override
     public void printStackTrace()
     {
         cause.printStackTrace();
     }
 
-    @Override
     public void printStackTrace(PrintStream s)
     {
         cause.printStackTrace(s);
     }
 
-    @Override
     public void printStackTrace(PrintWriter s)
     {
         cause.printStackTrace(s);
     }
 
-    @Override
     public String toString()
     {
         return cause.toString();

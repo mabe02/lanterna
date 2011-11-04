@@ -29,8 +29,8 @@ public interface CharacterPattern {
 
     Key getResult();
 
-    boolean isCompleteMatch(List<Character> currentMatching);
+    boolean isCompleteMatch(List currentMatching);
 
-    boolean matches(List<Character> currentMatching);
+    boolean matches(List currentMatching);
 
 }

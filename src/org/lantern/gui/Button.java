@@ -22,6 +22,7 @@ package org.lantern.gui;
 import org.lantern.LanternException;
 import org.lantern.gui.theme.Theme;
 import org.lantern.input.Key;
+import org.lantern.terminal.Terminal;
 import org.lantern.terminal.TerminalPosition;
 import org.lantern.terminal.TerminalSize;
 
@@ -58,8 +59,8 @@ public class Button extends AbstractInteractableComponent
 
         if(graphics.getWidth() < preferredSize.getColumns()) {
             int allowedSize = graphics.getWidth() - 4;
-            graphics.drawString(0, 0, "< ");
-            graphics.drawString(graphics.getWidth() - 2, 0, " >");
+            graphics.drawString(0, 0, "< ", new Terminal.Style[]{});
+            graphics.drawString(graphics.getWidth() - 2, 0, " >", new Terminal.Style[]{});
             TextGraphics subGraphics = graphics.subAreaGraphics(new TerminalPosition(2, 0),
                     new TerminalSize(allowedSize, buttonLabel.getPreferredSize().getRows()));
             buttonLabel.repaint(subGraphics);
@@ -67,13 +68,13 @@ public class Button extends AbstractInteractableComponent
         }
         else {
             int leftPosition = (graphics.getWidth() - preferredSize.getColumns()) / 2;
-            graphics.drawString(leftPosition, 0, "< ");
+            graphics.drawString(leftPosition, 0, "< ", new Terminal.Style[]{});
             final TerminalSize labelPrefSize = buttonLabel.getPreferredSize();
             TextGraphics subGraphics = graphics.subAreaGraphics(
                     new TerminalPosition(leftPosition + 2, 0),
                     new TerminalSize(labelPrefSize.getColumns(), labelPrefSize.getRows()));
             buttonLabel.repaint(subGraphics);
-            graphics.drawString(leftPosition + 2 + labelPrefSize.getColumns(), 0, " >");
+            graphics.drawString(leftPosition + 2 + labelPrefSize.getColumns(), 0, " >", new Terminal.Style[]{});
 
             setHotspot(graphics.translateToGlobalCoordinates(new TerminalPosition(leftPosition + 2, 0)));
         }
@@ -95,32 +96,30 @@ public class Button extends AbstractInteractableComponent
         return new TerminalSize(labelSize.getColumns() + 2 + 2, labelSize.getRows());
     }
 
-    @Override
     public void afterEnteredFocus(FocusChangeDirection direction) {
         buttonLabel.setStyle(Theme.Category.ButtonLabelActive);
     }
 
-    @Override
     public void afterLeftFocus(FocusChangeDirection direction) {
         buttonLabel.setStyle(Theme.Category.ButtonLabelInactive);
     }
 
     public void keyboardInteraction(Key key, InteractableResult result) throws LanternException
     {
-        switch(key.getKind()) {
-            case Enter:
+        switch(key.getKind().getIndex()) {
+            case Key.Kind.Enter_ID:
                 onPressEvent.doAction();
                 break;
 
-            case ArrowRight:
-            case ArrowDown:
-            case Tab:
+            case Key.Kind.ArrowRight_ID:
+            case Key.Kind.ArrowDown_ID:
+            case Key.Kind.Tab_ID:
                 result.type = Result.NEXT_INTERACTABLE;
                 break;
 
-            case ArrowLeft:
-            case ArrowUp:
-            case ReverseTab:
+            case Key.Kind.ArrowLeft_ID:
+            case Key.Kind.ArrowUp_ID:
+            case Key.Kind.ReverseTab_ID:
                 result.type = Result.PREVIOUS_INTERACTABLE;
                 break;
         }

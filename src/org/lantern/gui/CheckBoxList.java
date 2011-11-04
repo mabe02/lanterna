@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.lantern.gui.theme.Theme.Category;
 import org.lantern.input.Key;
+import org.lantern.terminal.Terminal;
 import org.lantern.terminal.TerminalPosition;
 import org.lantern.terminal.TerminalSize;
 
@@ -32,8 +33,8 @@ import org.lantern.terminal.TerminalSize;
  */
 public class CheckBoxList extends AbstractInteractableComponent
 {
-    private final List<Object> items;
-    private final List<Boolean> itemStatus;
+    private final List items;
+    private final List itemStatus;
     private final int forceWidth;
     private int selectedIndex;
 
@@ -45,8 +46,8 @@ public class CheckBoxList extends AbstractInteractableComponent
     public CheckBoxList(int forceWidth)
     {
         this.forceWidth = forceWidth;
-        this.items = new ArrayList<Object>();
-        this.itemStatus = new ArrayList<Boolean>();
+        this.items = new ArrayList();
+        this.itemStatus = new ArrayList();
         this.selectedIndex = -1;
     }
 
@@ -70,14 +71,14 @@ public class CheckBoxList extends AbstractInteractableComponent
     {
         if(items.indexOf(object) == -1)
             return null;
-        return itemStatus.get(items.indexOf(object));
+        return (Boolean)itemStatus.get(items.indexOf(object));
     }
     
     public Boolean isChecked(int index)
     {
         if(index < 0 || index >= itemStatus.size())
             return null;
-        return itemStatus.get(index);
+        return (Boolean)itemStatus.get(index);
     }
 
     public void setChecked(Object object, boolean checked)
@@ -85,7 +86,7 @@ public class CheckBoxList extends AbstractInteractableComponent
         if(items.indexOf(object) == -1)
             return;
         
-        itemStatus.set(items.indexOf(object), checked);
+        itemStatus.set(items.indexOf(object), new Boolean(checked));
     }
     
     public int getItemCount()
@@ -100,27 +101,27 @@ public class CheckBoxList extends AbstractInteractableComponent
 
     public void keyboardInteraction(Key key, InteractableResult result)
     {
-        switch(key.getKind())
+        switch(key.getKind().getIndex())
         {
-            case Enter:
-            case Tab:
-            case ArrowRight:
+            case Key.Kind.Enter_ID:
+            case Key.Kind.Tab_ID:
+            case Key.Kind.ArrowRight_ID:
                 result.type = Result.NEXT_INTERACTABLE;
                 break;
 
-            case ReverseTab:
-            case ArrowLeft:
+            case Key.Kind.ReverseTab_ID:
+            case Key.Kind.ArrowLeft_ID:
                 result.type = Result.PREVIOUS_INTERACTABLE;
                 break;
 
-            case ArrowDown:
+            case Key.Kind.ArrowDown_ID:
                 if(selectedIndex == items.size() - 1)
                     result.type = Result.NEXT_INTERACTABLE;
                 else
                     selectedIndex++;
                 break;
 
-            case ArrowUp:
+            case Key.Kind.ArrowUp_ID:
                 if(selectedIndex == 0)
                     result.type = Result.PREVIOUS_INTERACTABLE;
                 else
@@ -129,7 +130,7 @@ public class CheckBoxList extends AbstractInteractableComponent
 
             default:
                 if(key.getCharacter() == ' ') {
-                    if(itemStatus.get(selectedIndex) == true)
+                    if(((Boolean)itemStatus.get(selectedIndex)).booleanValue() == true)
                         itemStatus.set(selectedIndex, Boolean.FALSE);
                     else
                         itemStatus.set(selectedIndex, Boolean.TRUE);
@@ -152,13 +153,13 @@ public class CheckBoxList extends AbstractInteractableComponent
 
             
             String check = " ";
-            if(itemStatus.get(i))
+            if(((Boolean)itemStatus.get(i)).booleanValue())
                 check = "x";
             String text = items.get(i).toString();
             if(text.length() + 4 > graphics.getWidth())
                 text = text.substring(0, graphics.getWidth() - 4);
 
-            graphics.drawString(0, i, "[" + check + "] " + text);
+            graphics.drawString(0, i, "[" + check + "] " + text, new Terminal.Style[]{});
         }
         if(selectedIndex == -1)
             setHotspot(new TerminalPosition(0, 0));
@@ -179,7 +180,8 @@ public class CheckBoxList extends AbstractInteractableComponent
                 return new TerminalSize(1, 1);
             else {
                 int maxWidth = 1;
-                for(Object object: items) {
+                for(int i = 0; i < items.size(); i++) {
+                    Object object = items.get(i);
                     if(maxWidth < object.toString().length() + 4)
                         maxWidth = object.toString().length() + 4;
                 }

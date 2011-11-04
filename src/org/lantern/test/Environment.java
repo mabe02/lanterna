@@ -21,6 +21,7 @@ package org.lantern.test;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Properties;
 
 /**
@@ -32,15 +33,21 @@ public class Environment
     public static void main(String[] args)
     {
         Properties properties = System.getProperties();
-        ArrayList<String> keys = new ArrayList(properties.keySet());
+        ArrayList keys = new ArrayList(properties.keySet());
         Collections.sort(keys);
-        for(String key: keys)
+        Iterator iter = keys.iterator();
+        while(iter.hasNext()) {
+            String key = (String)iter.next();
             System.out.println(key + " = " + properties.getProperty(key));
+        }
 
-        keys = new ArrayList<String>(System.getenv().keySet());
+        keys = new ArrayList(System.getenv().keySet());
         Collections.sort(keys);
-        for(String key: keys)
+        iter = keys.iterator();
+        while(iter.hasNext()) {
+            String key = (String)iter.next();
             System.out.println(key + " = " + System.getenv(key));
+        }
 
         /*
         try {

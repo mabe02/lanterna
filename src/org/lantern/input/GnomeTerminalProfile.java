@@ -27,12 +27,11 @@ import java.util.Collection;
  */
 public class GnomeTerminalProfile extends CommonProfile
 {
-    @Override
-    Collection<CharacterPattern> getPatterns()
+    Collection getPatterns()
     {
-        Collection<CharacterPattern> xtermPatterns = super.getPatterns();
-        xtermPatterns.add(new BasicCharacterPattern(new Key(Key.Kind.Home), ESC_CODE, 'O', 'H'));
-        xtermPatterns.add(new BasicCharacterPattern(new Key(Key.Kind.End), ESC_CODE, 'O', 'F'));
+        Collection xtermPatterns = super.getPatterns();
+        xtermPatterns.add(new BasicCharacterPattern(new Key(Key.Kind.Home), new char[] {ESC_CODE, 'O', 'H'}));
+        xtermPatterns.add(new BasicCharacterPattern(new Key(Key.Kind.End), new char[] {ESC_CODE, 'O', 'F'}));
         return xtermPatterns;
     }
 }

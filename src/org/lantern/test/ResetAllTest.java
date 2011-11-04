@@ -18,7 +18,6 @@ package org.lantern.test;
 
 import org.lantern.LanternException;
 import org.lantern.LanternTerminal;
-import org.lantern.TerminalFactory.Common;
 import org.lantern.terminal.Terminal;
 
 /**
@@ -33,13 +32,13 @@ public class ResetAllTest {
         terminal.moveCursor(10, 5);
         terminal.putCharacter('H');
         terminal.putCharacter('e');
-        terminal.applySGR(Terminal.SGR.ENTER_BOLD);
+        terminal.applySGR(new Terminal.SGR[] {Terminal.SGR.ENTER_BOLD});
         terminal.putCharacter('l');
         terminal.applyForegroundColor(Terminal.Color.CYAN);
         terminal.putCharacter('l');
-        terminal.applySGR(Terminal.SGR.ENTER_REVERSE);
+        terminal.applySGR(new Terminal.SGR[] {Terminal.SGR.ENTER_REVERSE});
         terminal.putCharacter('o');
-        terminal.applySGR(Terminal.SGR.RESET_ALL);
+        terminal.applySGR(new Terminal.SGR[] {Terminal.SGR.RESET_ALL});
         terminal.putCharacter('!');
         terminal.moveCursor(0, 0);
 

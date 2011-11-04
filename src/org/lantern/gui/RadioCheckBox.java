@@ -35,26 +35,22 @@ public class RadioCheckBox extends CommonCheckBox
         group.addRadioBox(this);
     }
 
-    @Override
     protected char getSelectionCharacter()
     {
         return 'o';
     }
 
-    @Override
     protected String surroundCharacter(char character)
     {
         return "(" + character + ")";
     }
 
 
-    @Override
     public boolean isSelected()
     {
         return group.isSelected(this);
     }
 
-    @Override
     protected void onActivated()
     {
         group.setSelected(this);

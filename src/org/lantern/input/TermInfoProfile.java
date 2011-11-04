@@ -31,33 +31,32 @@ import org.lantern.terminal.TerminalProperties;
  */
 public class TermInfoProfile extends KeyMappingProfile
 {
-    private static final List<BasicCharacterPattern> TERMINFO_PATTERNS =
-            new ArrayList<BasicCharacterPattern>();
+    private static final List TERMINFO_PATTERNS = new ArrayList();
 
     public TermInfoProfile(TerminalProperties terminalProperties)
     {
         TERMINFO_PATTERNS.addAll(
                 Arrays.asList(
-                    new BasicCharacterPattern(new Key(Key.Kind.ArrowUp), decodeTermInfoString(terminalProperties.getKeyCursorUp())),
-                    new BasicCharacterPattern(new Key(Key.Kind.ArrowDown), decodeTermInfoString(terminalProperties.getKeyCursorDown())),
-                    new BasicCharacterPattern(new Key(Key.Kind.ArrowRight), decodeTermInfoString(terminalProperties.getKeyCursorRight())),
-                    new BasicCharacterPattern(new Key(Key.Kind.ArrowLeft), decodeTermInfoString(terminalProperties.getKeyCursorLeft())),
-                    new BasicCharacterPattern(new Key(Key.Kind.Tab), '\t'),
-                    new BasicCharacterPattern(new Key(Key.Kind.Enter), System.getProperty("line.separator").toCharArray()),
-                    new BasicCharacterPattern(new Key(Key.Kind.ReverseTab), decodeTermInfoString(terminalProperties.getKeyReverseTab())),
-                    new BasicCharacterPattern(new Key(Key.Kind.Backspace), (char)0x7f),
-                    new BasicCharacterPattern(new Key(Key.Kind.Insert), decodeTermInfoString(terminalProperties.getKeyInsert())),
-                    new BasicCharacterPattern(new Key(Key.Kind.Delete), decodeTermInfoString(terminalProperties.getKeyDelete())),
-                    new BasicCharacterPattern(new Key(Key.Kind.Home), decodeTermInfoString(terminalProperties.getKeyHome())),
-                    new BasicCharacterPattern(new Key(Key.Kind.End), decodeTermInfoString(terminalProperties.getKeyEnd())),
-                    new BasicCharacterPattern(new Key(Key.Kind.PageUp), decodeTermInfoString(terminalProperties.getKeyPageUp())),
-                    new BasicCharacterPattern(new Key(Key.Kind.PageDown), decodeTermInfoString(terminalProperties.getKeyPageDown()))));
+                    new Object[] {
+                        new BasicCharacterPattern(new Key(Key.Kind.ArrowUp), decodeTermInfoString(terminalProperties.getKeyCursorUp())),
+                        new BasicCharacterPattern(new Key(Key.Kind.ArrowDown), decodeTermInfoString(terminalProperties.getKeyCursorDown())),
+                        new BasicCharacterPattern(new Key(Key.Kind.ArrowRight), decodeTermInfoString(terminalProperties.getKeyCursorRight())),
+                        new BasicCharacterPattern(new Key(Key.Kind.ArrowLeft), decodeTermInfoString(terminalProperties.getKeyCursorLeft())),
+                        new BasicCharacterPattern(new Key(Key.Kind.Tab), new char[]{'\t'}),
+                        new BasicCharacterPattern(new Key(Key.Kind.Enter), System.getProperty("line.separator").toCharArray()),
+                        new BasicCharacterPattern(new Key(Key.Kind.ReverseTab), decodeTermInfoString(terminalProperties.getKeyReverseTab())),
+                        new BasicCharacterPattern(new Key(Key.Kind.Backspace), new char[]{(char)0x7f}),
+                        new BasicCharacterPattern(new Key(Key.Kind.Insert), decodeTermInfoString(terminalProperties.getKeyInsert())),
+                        new BasicCharacterPattern(new Key(Key.Kind.Delete), decodeTermInfoString(terminalProperties.getKeyDelete())),
+                        new BasicCharacterPattern(new Key(Key.Kind.Home), decodeTermInfoString(terminalProperties.getKeyHome())),
+                        new BasicCharacterPattern(new Key(Key.Kind.End), decodeTermInfoString(terminalProperties.getKeyEnd())),
+                        new BasicCharacterPattern(new Key(Key.Kind.PageUp), decodeTermInfoString(terminalProperties.getKeyPageUp())),
+                        new BasicCharacterPattern(new Key(Key.Kind.PageDown), decodeTermInfoString(terminalProperties.getKeyPageDown())) }));
     }
 
-    @Override
-    Collection<CharacterPattern> getPatterns()
+    Collection getPatterns()
     {
-        return new ArrayList<CharacterPattern>(TERMINFO_PATTERNS);
+        return new ArrayList(TERMINFO_PATTERNS);
     }
 
     private static char[] decodeTermInfoString(String terminfoString)

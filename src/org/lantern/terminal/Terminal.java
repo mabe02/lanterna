@@ -36,7 +36,7 @@ public interface Terminal extends InputProvider
     public void clearScreen() throws LanternException;
     public void moveCursor(int x, int y) throws LanternException;
     public void putCharacter(char c) throws LanternException;
-    public void applySGR(SGR... options) throws LanternException;
+    public void applySGR(SGR[] options) throws LanternException;
     public void applyForegroundColor(Color color) throws LanternException;
     public void applyBackgroundColor(Color color) throws LanternException;
     public void setEcho(boolean echoOn) throws LanternException;
@@ -47,31 +47,60 @@ public interface Terminal extends InputProvider
     public void hackSendFakeResize() throws LanternException;
     public TerminalSize queryTerminalSize() throws LanternException;
 
-    public enum SGR
+    public static class SGR
     {
-        RESET_ALL,
-        ENTER_BOLD,
-        ENTER_REVERSE,
-        ENTER_UNDERLINE,
-        ENTER_BLINK,
-        EXIT_BOLD,
-        EXIT_REVERSE,
-        EXIT_UNDERLINE
+        public static final int RESET_ALL_ID = 0;
+        public static final int ENTER_BOLD_ID = 1;
+        public static final int ENTER_REVERSE_ID = 2;
+        public static final int ENTER_UNDERLINE_ID = 3;
+        public static final int ENTER_BLINK_ID = 4;
+        public static final int EXIT_BOLD_ID = 5;
+        public static final int EXIT_REVERSE_ID = 6;
+        public static final int EXIT_UNDERLINE_ID = 7;
+        
+        public static final SGR RESET_ALL = new SGR(RESET_ALL_ID);
+        public static final SGR ENTER_BOLD = new SGR(ENTER_BOLD_ID);
+        public static final SGR ENTER_REVERSE = new SGR(ENTER_REVERSE_ID);
+        public static final SGR ENTER_UNDERLINE = new SGR(ENTER_UNDERLINE_ID);
+        public static final SGR ENTER_BLINK = new SGR(ENTER_BLINK_ID);
+        public static final SGR EXIT_BOLD = new SGR(EXIT_BOLD_ID);
+        public static final SGR EXIT_REVERSE = new SGR(EXIT_REVERSE_ID);
+        public static final SGR EXIT_UNDERLINE = new SGR(EXIT_UNDERLINE_ID);
+        
+        private final int index;
+
+        private SGR(int index) {
+            this.index = index;
+        }
+
+        public int getIndex() {
+            return index;
+        }
     }
 
-    public enum Color
+    public static class Color
     {
-        BLACK(0),
-        RED(1),
-        GREEN(2),
-        YELLOW(3),
-        BLUE(4),
-        MAGENTA(5),
-        CYAN(6),
-        WHITE(7),
-        DEFAULT(9);
-
-        private int index;
+        public static final int BLACK_ID = 0;
+        public static final int RED_ID = 1;
+        public static final int GREEN_ID = 2;
+        public static final int YELLOW_ID = 3;
+        public static final int BLUE_ID = 4;
+        public static final int MAGENTA_ID = 5;
+        public static final int CYAN_ID = 6;
+        public static final int WHITE_ID = 7;
+        public static final int DEFAULT_ID = 9;
+        
+        public static final Color BLACK = new Color(BLACK_ID);
+        public static final Color RED = new Color(RED_ID);
+        public static final Color GREEN = new Color(GREEN_ID);
+        public static final Color YELLOW = new Color(YELLOW_ID);
+        public static final Color BLUE = new Color(BLUE_ID);
+        public static final Color MAGENTA = new Color(MAGENTA_ID);
+        public static final Color CYAN = new Color(CYAN_ID);
+        public static final Color WHITE = new Color(WHITE_ID);
+        public static final Color DEFAULT = new Color(DEFAULT_ID);
+        
+        private final int index;
 
         private Color(int index) {
             this.index = index;
@@ -82,12 +111,22 @@ public interface Terminal extends InputProvider
         }
     }
 
-    public enum Style
+    public static class Style
     {
-        Bold, 
-        Underline, 
-        Reverse, 
-        Blinking
+        public static final Style Bold = new Style(1);
+        public static final Style Underline = new Style(2);
+        public static final Style Reverse = new Style(3);
+        public static final Style Blinking = new Style(4);
+        
+        private final int index;
+
+        private Style(int index) {
+            this.index = index;
+        }
+
+        public int getIndex() {
+            return index;
+        }
     }
 
     public interface ResizeListener

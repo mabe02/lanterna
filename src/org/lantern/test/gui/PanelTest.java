@@ -30,6 +30,7 @@ import org.lantern.gui.TextGraphics;
 import org.lantern.gui.Window;
 import org.lantern.gui.layout.SizePolicy;
 import org.lantern.gui.theme.Theme.Category;
+import org.lantern.terminal.Terminal.Style;
 import org.lantern.terminal.TerminalSize;
 
 /**
@@ -109,7 +110,7 @@ public class PanelTest
             for(int i = 0; i < graphics.getWidth(); i++)
                 sb.append(fillCharacter);
             for(int i = 0; i < graphics.getHeight(); i++)
-                graphics.drawString(0, i, sb.toString());
+                graphics.drawString(0, i, sb.toString(), new Style[0]);
         }
 
     }

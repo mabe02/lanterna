@@ -19,13 +19,11 @@
 
 package org.lantern.test;
 
-import java.nio.charset.Charset;
 import org.lantern.LanternException;
 import org.lantern.LanternTerminal;
 import org.lantern.screen.Screen;
 import org.lantern.screen.ScreenWriter;
 import org.lantern.terminal.Terminal;
-import org.lantern.terminal.CommonUnixTerminal;
 
 /**
  *
@@ -50,79 +48,79 @@ public class TerminalTest
             Thread.sleep(500);
         }
         catch(InterruptedException e) {}
-        writer.drawString(10, 10, "Hello world!");
+        writer.drawString(10, 10, "Hello world!", new Terminal.Style[]{});
         screen.refresh();
         try {
             Thread.sleep(500);
         }
         catch(InterruptedException e) {}
-        writer.drawString(10, 10, " ello world!");
+        writer.drawString(10, 10, " ello world!", new Terminal.Style[]{});
         screen.refresh();
         try {
             Thread.sleep(500);
         }
         catch(InterruptedException e) {}
-        writer.drawString(10, 10, "  llo world!");
+        writer.drawString(10, 10, "  llo world!", new Terminal.Style[]{});
         screen.refresh();
         try {
             Thread.sleep(500);
         }
         catch(InterruptedException e) {}
-        writer.drawString(10, 10, "   lo world!");
+        writer.drawString(10, 10, "   lo world!", new Terminal.Style[]{});
         screen.refresh();
         try {
             Thread.sleep(500);
         }
         catch(InterruptedException e) {}
-        writer.drawString(10, 10, "    o world!");
+        writer.drawString(10, 10, "    o world!", new Terminal.Style[]{});
         screen.refresh();
         try {
             Thread.sleep(500);
         }
         catch(InterruptedException e) {}
-        writer.drawString(10, 10, "      world!");
+        writer.drawString(10, 10, "      world!", new Terminal.Style[]{});
         screen.refresh();
         try {
             Thread.sleep(500);
         }
         catch(InterruptedException e) {}
-        writer.drawString(10, 10, "      world!");
+        writer.drawString(10, 10, "      world!", new Terminal.Style[]{});
         screen.refresh();
         try {
             Thread.sleep(500);
         }
         catch(InterruptedException e) {}
-        writer.drawString(10, 10, "       orld!");
+        writer.drawString(10, 10, "       orld!", new Terminal.Style[]{});
         screen.refresh();
         try {
             Thread.sleep(500);
         }
         catch(InterruptedException e) {}
-        writer.drawString(10, 10, "        rld!");
+        writer.drawString(10, 10, "        rld!", new Terminal.Style[]{});
         screen.refresh();
         try {
             Thread.sleep(500);
         }
         catch(InterruptedException e) {}
-        writer.drawString(10, 10, "         ld!");
+        writer.drawString(10, 10, "         ld!", new Terminal.Style[]{});
         screen.refresh();
         try {
             Thread.sleep(500);
         }
         catch(InterruptedException e) {}
-        writer.drawString(10, 10, "          d!");
+        writer.drawString(10, 10, "          d!", new Terminal.Style[]{});
         screen.refresh();
         try {
             Thread.sleep(500);
         }
         catch(InterruptedException e) {}
-        writer.drawString(10, 10, "           !");
+        writer.drawString(10, 10, "           !", new Terminal.Style[]{});
         screen.refresh();
         try {
             Thread.sleep(500);
         }
         catch(InterruptedException e) {}
-        writer.drawString(10, 10, "            ");
+        writer.drawString(10, 10, "            ", new Terminal.Style[]{});
         screen.refresh();
         try {
             Thread.sleep(500);

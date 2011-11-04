@@ -23,10 +23,25 @@ package org.lantern.gui.dialog;
  *
  * @author mabe02
  */
-public enum DialogResult
+public class DialogResult
 {
-    OK,
-    CANCEL,
-    YES,
-    NO
+    public static final int OK_ID = 1;
+    public static final int CANCEL_ID = 2;
+    public static final int YES_ID = 3;
+    public static final int NO_ID = 4;
+    
+    public static final DialogResult OK = new DialogResult(OK_ID);
+    public static final DialogResult CANCEL = new DialogResult(CANCEL_ID);
+    public static final DialogResult YES = new DialogResult(YES_ID);
+    public static final DialogResult NO = new DialogResult(NO_ID);
+    
+    private final int index;
+
+    private DialogResult(int index) {
+        this.index = index;
+    }
+
+    public int getIndex() {
+        return index;
+    }
 }

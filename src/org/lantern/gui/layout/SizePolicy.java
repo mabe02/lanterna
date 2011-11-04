@@ -23,8 +23,23 @@ package org.lantern.gui.layout;
  *
  * @author mabe02
  */
-public enum SizePolicy {
-    CONSTANT,
-    GROWING,
-    MAXIMUM
+public class SizePolicy {
+    
+    public static final int CONSTANT_ID = 1;
+    public static final int GROWING_ID = 2;
+    public static final int MAXIMUM_ID = 3;
+    
+    public static final SizePolicy CONSTANT = new SizePolicy(CONSTANT_ID);
+    public static final SizePolicy GROWING = new SizePolicy(GROWING_ID);
+    public static final SizePolicy MAXIMUM = new SizePolicy(MAXIMUM_ID);
+    
+    private final int index;
+
+    private SizePolicy(int index) {
+        this.index = index;
+    }
+
+    public int getIndex() {
+        return index;
+    }
 }

@@ -23,10 +23,27 @@ package org.lantern.screen;
  *
  * @author martin
  */
-public enum TabBehaviour {
-    CONVERT_TO_ONE_SPACE,
-    CONVERT_TO_FOUR_SPACES,
-    CONVERT_TO_EIGHT_SPACES,
-    ALIGN_TO_COLUMN_4,
-    ALIGN_TO_COLUMN_8
+public class TabBehaviour {
+    
+    public static final int CONVERT_TO_ONE_SPACE_ID = 1;
+    public static final int CONVERT_TO_FOUR_SPACES_ID = 2;
+    public static final int CONVERT_TO_EIGHT_SPACES_ID = 3;
+    public static final int ALIGN_TO_COLUMN_4_ID = 4;
+    public static final int ALIGN_TO_COLUMN_8_ID = 5;
+    
+    public static final TabBehaviour CONVERT_TO_ONE_SPACE = new TabBehaviour(CONVERT_TO_ONE_SPACE_ID);
+    public static final TabBehaviour CONVERT_TO_FOUR_SPACES = new TabBehaviour(CONVERT_TO_FOUR_SPACES_ID);
+    public static final TabBehaviour CONVERT_TO_EIGHT_SPACES = new TabBehaviour(CONVERT_TO_EIGHT_SPACES_ID);
+    public static final TabBehaviour ALIGN_TO_COLUMN_4 = new TabBehaviour(ALIGN_TO_COLUMN_4_ID);
+    public static final TabBehaviour ALIGN_TO_COLUMN_8 = new TabBehaviour(ALIGN_TO_COLUMN_8_ID);
+
+    private final int index;
+
+    private TabBehaviour(int index) {
+        this.index = index;
+    }
+
+    public int getIndex() {
+        return index;
+    }
 }

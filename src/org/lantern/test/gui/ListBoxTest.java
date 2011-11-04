@@ -67,7 +67,6 @@ public class ListBoxTest
         final ListBox listBox = new ListBox(10, 5);
 
         Thread thread = new Thread() {
-            @Override
             public void run()
             {
                 for(int i = 0; i < 15; i++) {
@@ -75,7 +74,7 @@ public class ListBoxTest
                         Thread.sleep(1000);
                     }
                     catch(InterruptedException e) {}
-                    final Integer count = i + 1;
+                    final Integer count = new Integer(i + 1);
                     terminalGUIScreen.runInEventThread(new Action() {
                         public void doAction() throws LanternException
                         {

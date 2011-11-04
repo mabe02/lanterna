@@ -27,18 +27,18 @@ class BasicCharacterPattern implements CharacterPattern
     private Key result;
     private char[] pattern;
 
-    BasicCharacterPattern(Key result, char... pattern)
+    BasicCharacterPattern(Key result, char[] pattern)
     {
         this.result = result;
         this.pattern = pattern;
     }
 
-    public boolean matches(List<Character> currentMatching)
+    public boolean matches(List currentMatching)
     {
         int minSize = Math.min(currentMatching.size(), pattern.length);
         for (int i = 0; i < minSize; i++)
         {
-            if (pattern[i] != currentMatching.get(i).charValue())
+            if (pattern[i] != ((Character)currentMatching.get(i)).charValue())
             {
                 return false;
             }
@@ -51,12 +51,11 @@ class BasicCharacterPattern implements CharacterPattern
         return result;
     }
 
-    public boolean isCompleteMatch(List<Character> currentMatching)
+    public boolean isCompleteMatch(List currentMatching)
     {
         return pattern.length == currentMatching.size();
     }
 
-    @Override
     public boolean equals(Object obj)
     {
         if(obj instanceof BasicCharacterPattern == false)
@@ -66,7 +65,6 @@ class BasicCharacterPattern implements CharacterPattern
         return Arrays.equals(pattern, other.pattern);
     }
 
-    @Override
     public int hashCode()
     {
         int hash = 3;

@@ -70,21 +70,25 @@ public class ActionListDialog extends Window
         });
     }
 
-    public static void showActionListDialog(GUIScreen owner, String title, String description, ActionListBox.Item... items) throws LanternException
+    public static void showActionListDialog(GUIScreen owner, String title, String description, ActionListBox.Item[] items) throws LanternException
     {
         int maxLength = 0;
-        for(ActionListBox.Item item: items)
+        for(int i = 0; i < items.length; i++) {
+            ActionListBox.Item item = items[i];
             if(item.getTitle().length() > maxLength)
                 maxLength = item.getTitle().length();
+        }
         
         showActionListDialog(owner, title, description, maxLength, items);
     }
 
-    public static void showActionListDialog(GUIScreen owner, String title, String description, int itemWidth, ActionListBox.Item... items) throws LanternException
+    public static void showActionListDialog(GUIScreen owner, String title, String description, int itemWidth, ActionListBox.Item[] items) throws LanternException
     {
         ActionListDialog actionListDialog = new ActionListDialog(title, description, itemWidth);
-        for(ActionListBox.Item item: items)
+        for(int i = 0; i < items.length; i++) {
+            ActionListBox.Item item = items[i];
             actionListDialog.addItem(item);
+        }
         owner.showWindow(actionListDialog, GUIScreen.Position.CENTER);
     }
 }

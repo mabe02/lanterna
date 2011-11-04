@@ -22,6 +22,7 @@ package org.lantern.gui;
 import org.lantern.LanternException;
 import org.lantern.gui.theme.Theme.Category;
 import org.lantern.input.Key;
+import org.lantern.terminal.Terminal;
 import org.lantern.terminal.TerminalPosition;
 import org.lantern.terminal.TerminalSize;
 
@@ -59,9 +60,9 @@ public abstract class CommonCheckBox extends AbstractInteractableComponent
         if(isSelected())
             check = getSelectionCharacter();
 
-        graphics.drawString(0, 0, surroundCharacter(check));
+        graphics.drawString(0, 0, surroundCharacter(check), new Terminal.Style[]{});
         graphics.applyThemeItem(Category.CheckBox);
-        graphics.drawString(3, 0, " ");
+        graphics.drawString(3, 0, " ", new Terminal.Style[]{});
         TextGraphics subArea = graphics.subAreaGraphics(new TerminalPosition(4, 0));
         label.repaint(subArea);
 
@@ -70,21 +71,21 @@ public abstract class CommonCheckBox extends AbstractInteractableComponent
 
     public void keyboardInteraction(Key key, InteractableResult result) throws LanternException
     {
-        switch(key.getKind())
+        switch(key.getKind().getIndex())
         {
-            case Tab:
-            case ArrowDown:
-            case ArrowRight:
+            case Key.Kind.Tab_ID:
+            case Key.Kind.ArrowDown_ID:
+            case Key.Kind.ArrowRight_ID:
                 result.type = Result.NEXT_INTERACTABLE;
                 break;
 
-            case ArrowUp:
-            case ReverseTab:
-            case ArrowLeft:
+            case Key.Kind.ArrowUp_ID:
+            case Key.Kind.ReverseTab_ID:
+            case Key.Kind.ArrowLeft_ID:
                 result.type = Result.PREVIOUS_INTERACTABLE;
                 break;
 
-            case Enter:
+            case Key.Kind.Enter_ID:
                 onActivated();
                 break;
                 

@@ -29,31 +29,26 @@ import org.lantern.terminal.TerminalSize;
  */
 public class VerticalLayout extends AxisLayout
 {
-    @Override
     protected int getMajorAxis(TerminalSize terminalSize)
     {
         return terminalSize.getRows();
     }
 
-    @Override
     protected int getMinorAxis(TerminalSize terminalSize)
     {
         return terminalSize.getColumns();
     }
 
-    @Override
     protected void setMajorAxis(TerminalSize terminalSize, int majorAxisValue)
     {
         terminalSize.setRows(majorAxisValue);
     }
 
-    @Override
     protected void setMajorAxis(TerminalPosition terminalPosition, int majorAxisValue)
     {
         terminalPosition.setRow(majorAxisValue);
     }
 
-    @Override
     protected void setMinorAxis(TerminalSize terminalSize, int minorAxisValue)
     {
         terminalSize.setColumns(minorAxisValue);

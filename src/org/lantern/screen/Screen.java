@@ -21,6 +21,7 @@ package org.lantern.screen;
 
 import java.util.Comparator;
 import java.util.EnumSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
@@ -43,7 +44,7 @@ public class Screen implements InputProvider
 {
     private final Object mutex;
     private final Terminal terminal;
-    private final LinkedList<TerminalSize> resizeQueue;
+    private final LinkedList resizeQueue;
     private TerminalPosition cursorPosition;
     private TerminalSize terminalSize;
     private ScreenCharacter [][] visibleScreen;
@@ -71,7 +72,7 @@ public class Screen implements InputProvider
         this.terminalSize = new TerminalSize(terminalWidth, terminalHeight);
         this.visibleScreen = new ScreenCharacter[terminalHeight][terminalWidth];
         this.backbuffer = new ScreenCharacter[terminalHeight][terminalWidth];
-        this.resizeQueue = new LinkedList<TerminalSize>();
+        this.resizeQueue = new LinkedList();
         this.wholeScreenInvalid = false;
         this.hasBeenActivated = false;
         this.cursorPosition = new TerminalPosition(0, 0);
@@ -155,15 +156,7 @@ public class Screen implements InputProvider
     {
         putString(x, y, string, foregroundColor, backgroundColor, bold, underline, negative, false);
     }
-    
-    public void putString(int x, int y, String string, Terminal.Color foregroundColor,
-            Terminal.Color backgroundColor, EnumSet<Terminal.Style> styles)
-    {
-    	putString(x, y, string, foregroundColor, backgroundColor,
-    		styles.contains(Style.Bold), styles.contains(Style.Underline),
-    		styles.contains(Style.Reverse), styles.contains(Style.Blinking));
-    }
-    
+        
     public void putString(int x, int y, String string, Terminal.Color foregroundColor,
         Terminal.Color backgroundColor, boolean bold, boolean underline, boolean negative, boolean blinking)
     {
@@ -210,7 +203,7 @@ public class Screen implements InputProvider
                 if(resizeQueue.size() == 0)
                     return true;
 
-                newSize = resizeQueue.getLast();
+                newSize = (TerminalSize)resizeQueue.getLast();
                 resizeQueue.clear();
             }
 
@@ -249,7 +242,7 @@ public class Screen implements InputProvider
             return;
         
         synchronized(mutex) {
-            Map<TerminalPosition, ScreenCharacter> updateMap = new TreeMap<TerminalPosition, ScreenCharacter>(new ScreenPointComparator());
+            Map updateMap = new TreeMap(new ScreenPointComparator());
             
             for(int y = 0; y < terminalSize.getRows(); y++)
             {
@@ -266,12 +259,15 @@ public class Screen implements InputProvider
             Writer terminalWriter = new Writer();
             terminalWriter.reset();
             TerminalPosition previousPoint = null;
-            for(TerminalPosition nextUpdate: updateMap.keySet()) {
+            
+            Iterator iter = updateMap.keySet().iterator();
+            while(iter.hasNext()) {
+                TerminalPosition nextUpdate = (TerminalPosition)iter.next();
                 if(previousPoint == null || previousPoint.getRow() != nextUpdate.getRow() ||
                         previousPoint.getColumn() + 1 != nextUpdate.getColumn()) {
                     terminalWriter.setCursorPosition(nextUpdate.getColumn(), nextUpdate.getRow());
                 }
-                terminalWriter.writeCharacter(updateMap.get(nextUpdate));
+                terminalWriter.writeCharacter((ScreenCharacter)updateMap.get(nextUpdate));
                 previousPoint = nextUpdate;
             }
             terminalWriter.setCursorPosition(getCursorPosition().getColumn(), getCursorPosition().getRow());
@@ -279,13 +275,11 @@ public class Screen implements InputProvider
         }
     }
 
-    @Deprecated
     public int getWidth()
     {
         return getTerminalSize().getColumns();
     }
 
-    @Deprecated
     public int getHeight()
     {
         return getTerminalSize().getRows();
@@ -293,17 +287,17 @@ public class Screen implements InputProvider
 
     private String getTabReplacement(int x) {
         int align = 0;
-        switch(tabBehaviour) {
-            case CONVERT_TO_ONE_SPACE:
+        switch(tabBehaviour.getIndex()) {
+            case TabBehaviour.CONVERT_TO_ONE_SPACE_ID:
                 return " ";
-            case CONVERT_TO_FOUR_SPACES:
+            case TabBehaviour.CONVERT_TO_FOUR_SPACES_ID:
                 return "    ";
-            case CONVERT_TO_EIGHT_SPACES:
+            case TabBehaviour.CONVERT_TO_EIGHT_SPACES_ID:
                 return "        ";
-            case ALIGN_TO_COLUMN_4:
+            case TabBehaviour.ALIGN_TO_COLUMN_4_ID:
                 align = 4 - (x % 4);
                 break;
-            case ALIGN_TO_COLUMN_8:
+            case TabBehaviour.ALIGN_TO_COLUMN_8_ID:
                 align = 8 - (x % 8);
                 break;
         }
@@ -313,17 +307,19 @@ public class Screen implements InputProvider
         return replace.toString();
     }
 
-    private static class ScreenPointComparator implements Comparator<TerminalPosition>
+    private static class ScreenPointComparator implements Comparator
     {
-        public int compare(TerminalPosition o1, TerminalPosition o2)
+        public int compare(Object obj1, Object obj2)
         {
+            TerminalPosition o1 = (TerminalPosition)obj1;
+            TerminalPosition o2 = (TerminalPosition)obj2;
             if(o1.getRow() == o2.getRow())
                 if(o1.getColumn() == o2.getColumn())
                     return 0;
                 else
-                    return new Integer(o1.getColumn()).compareTo(o2.getColumn());
+                    return new Integer(o1.getColumn()).compareTo(new Integer(o2.getColumn()));
             else
-                return new Integer(o1.getRow()).compareTo(o2.getRow());
+                return new Integer(o1.getRow()).compareTo(new Integer(o2.getRow()));
         }
     }
 
@@ -365,11 +361,11 @@ public class Screen implements InputProvider
         {
             if (currentlyIsBlinking != character.isBlinking()) {
                 if (character.isBlinking()) {
-                    terminal.applySGR(Terminal.SGR.ENTER_BLINK);
+                    terminal.applySGR(new Terminal.SGR[] {Terminal.SGR.ENTER_BLINK});
                     currentlyIsBlinking = true;
                 }
                 else {
-                    terminal.applySGR(Terminal.SGR.RESET_ALL);
+                    terminal.applySGR(new Terminal.SGR[] {Terminal.SGR.RESET_ALL});
                     terminal.applyBackgroundColor(character.getBackgroundColor());
                     terminal.applyForegroundColor(character.getForegroundColor());
 
@@ -390,31 +386,31 @@ public class Screen implements InputProvider
             }
             if(currentlyIsBold != character.isBold()) {
                 if(character.isBold()) {
-                    terminal.applySGR(Terminal.SGR.ENTER_BOLD);
+                    terminal.applySGR(new Terminal.SGR[] {Terminal.SGR.ENTER_BOLD});
                     currentlyIsBold = true;
                 }
                 else {
-                    terminal.applySGR(Terminal.SGR.EXIT_BOLD);
+                    terminal.applySGR(new Terminal.SGR[] {Terminal.SGR.EXIT_BOLD});
                     currentlyIsBold = false;
                 }
             }
             if(currentlyIsUnderline != character.isUnderline()) {
                 if(character.isUnderline()) {
-                    terminal.applySGR(Terminal.SGR.ENTER_UNDERLINE);
+                    terminal.applySGR(new Terminal.SGR[] {Terminal.SGR.ENTER_UNDERLINE});
                     currentlyIsUnderline = true;
                 }
                 else {
-                    terminal.applySGR(Terminal.SGR.EXIT_UNDERLINE);
+                    terminal.applySGR(new Terminal.SGR[] {Terminal.SGR.EXIT_UNDERLINE});
                     currentlyIsUnderline = false;
                 }
             }
             if(currentlyIsNegative != character.isNegative()) {
                 if(character.isNegative()) {
-                    terminal.applySGR(Terminal.SGR.ENTER_REVERSE);
+                    terminal.applySGR(new Terminal.SGR[] {Terminal.SGR.ENTER_REVERSE});
                     currentlyIsNegative = true;
                 }
                 else {
-                    terminal.applySGR(Terminal.SGR.EXIT_REVERSE);
+                    terminal.applySGR(new Terminal.SGR[] {Terminal.SGR.EXIT_REVERSE});
                     currentlyIsNegative = false;
                 }
             }
@@ -423,7 +419,7 @@ public class Screen implements InputProvider
 
         void reset() throws LanternException
         {
-            terminal.applySGR(Terminal.SGR.RESET_ALL);
+            terminal.applySGR(new Terminal.SGR[] {Terminal.SGR.RESET_ALL});
             terminal.moveCursor(0, 0);
 
             currentBackgroundColor = Terminal.Color.DEFAULT;

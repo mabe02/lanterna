@@ -33,25 +33,21 @@ public class CheckBox extends CommonCheckBox
         this.selected = initiallyChecked;
     }
 
-    @Override
     protected char getSelectionCharacter()
     {
         return 'x';
     }
 
-    @Override
     public boolean isSelected()
     {
         return selected;
     }
 
-    @Override
     protected void onActivated()
     {
         selected = !selected;
     }
 
-    @Override
     protected String surroundCharacter(char character)
     {
         return "[" + character + "]";

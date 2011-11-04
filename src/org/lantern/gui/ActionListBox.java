@@ -24,6 +24,7 @@ import java.util.List;
 import org.lantern.LanternException;
 import org.lantern.gui.theme.Theme.Category;
 import org.lantern.input.Key;
+import org.lantern.terminal.Terminal;
 import org.lantern.terminal.TerminalPosition;
 import org.lantern.terminal.TerminalSize;
 
@@ -33,7 +34,7 @@ import org.lantern.terminal.TerminalSize;
  */
 public class ActionListBox extends AbstractInteractableComponent
 {
-    private final List<Item> itemList;
+    private final List itemList;
     private final int forceWidth;
     private int selectedIndex;
 
@@ -44,7 +45,7 @@ public class ActionListBox extends AbstractInteractableComponent
 
     public ActionListBox(int forceWidth)
     {
-        this.itemList = new ArrayList<Item>();
+        this.itemList = new ArrayList();
         this.forceWidth = forceWidth;
         this.selectedIndex = -1;
     }
@@ -82,7 +83,7 @@ public class ActionListBox extends AbstractInteractableComponent
 
     public Item getItem(int index)
     {
-        return itemList.get(index);
+        return (Item)itemList.get(index);
     }
 
     public int getNrOfItems()
@@ -112,11 +113,11 @@ public class ActionListBox extends AbstractInteractableComponent
             else
                 graphics.applyThemeItem(Category.Item);
 
-            String title = itemList.get(i).getTitle();
+            String title = ((Item)itemList.get(i)).getTitle();
             if(title.length() > graphics.getWidth() && graphics.getWidth() > 3)
                 title = title.substring(0, graphics.getWidth() - 3) + "...";
 
-            graphics.drawString(0, i, title);
+            graphics.drawString(0, i, title, new Terminal.Style[]{});
         }
         if(selectedIndex == -1)
             setHotspot(new TerminalPosition(0, 0));
@@ -133,14 +134,14 @@ public class ActionListBox extends AbstractInteractableComponent
             return new TerminalSize(forceWidth, itemList.size());
 
         int maxLength = 0;
-        for(Item item: itemList) {
+        for(int i = 0; i < itemList.size(); i++) {
+            Item item = (Item)itemList.get(i);
             if(item.getTitle().length() > maxLength)
                 maxLength = item.getTitle().length();
         }
         return new TerminalSize(maxLength, itemList.size());
     }
     
-    @Override
     protected void afterEnteredFocus(FocusChangeDirection direction)
     {
         if(direction == FocusChangeDirection.DOWN_OR_RIGHT)
@@ -151,41 +152,41 @@ public class ActionListBox extends AbstractInteractableComponent
 
     public void keyboardInteraction(Key key, InteractableResult result) throws LanternException
     {
-        switch(key.getKind()) {
-            case Tab:
-            case ArrowRight:
+        switch(key.getKind().getIndex()) {
+            case Key.Kind.Tab_ID:
+            case Key.Kind.ArrowRight_ID:
                 result.type = Result.NEXT_INTERACTABLE;
                 break;
 
-            case ReverseTab:
-            case ArrowLeft:
+            case Key.Kind.ReverseTab_ID:
+            case Key.Kind.ArrowLeft_ID:
                 result.type = Result.PREVIOUS_INTERACTABLE;
                 break;
 
-            case ArrowDown:
+            case Key.Kind.ArrowDown_ID:
                 if(selectedIndex == itemList.size() - 1)
                     result.type = Result.NEXT_INTERACTABLE;
                 else
                     selectedIndex++;
                 break;
 
-            case ArrowUp:
+            case Key.Kind.ArrowUp_ID:
                 if(selectedIndex == 0)
                     result.type = Result.PREVIOUS_INTERACTABLE;
                 else
                     selectedIndex--;
                 break;
 
-            case Enter:
+            case Key.Kind.Enter_ID:
                 if(selectedIndex != -1)
-                    itemList.get(selectedIndex).doAction();
+                    ((Item)itemList.get(selectedIndex)).doAction();
                 break;
 
-            case PageDown:
+            case Key.Kind.PageDown_ID:
                 selectedIndex = itemList.size() - 1;
                 break;
 
-            case PageUp:
+            case Key.Kind.PageUp_ID:
                 selectedIndex = 0;
                 break;
         }

@@ -28,5 +28,5 @@ import java.util.Collection;
 public abstract class KeyMappingProfile
 {
     protected static final char ESC_CODE = (char)0x1b;
-    abstract Collection<CharacterPattern> getPatterns();
+    abstract Collection getPatterns();
 }
