@@ -100,7 +100,9 @@ public class TextGraphics
         if(string.length() + column > areaSize.getColumns())
             string = string.substring(0, areaSize.getColumns() - column);
 
-        Set stylesSet = new HashSet(Arrays.asList(styles));
+        Set stylesSet = new HashSet();
+        if(styles != null && styles.length > 0)
+            stylesSet.addAll(Arrays.asList(styles));
         
         if(currentlyBold)
             stylesSet.add(Terminal.Style.Bold);
