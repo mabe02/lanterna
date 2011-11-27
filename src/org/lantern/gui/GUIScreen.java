@@ -24,7 +24,6 @@ import java.util.Iterator;
 import org.lantern.gui.theme.Theme;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 import org.lantern.LanternException;
 import org.lantern.gui.listener.WindowAdapter;
 import org.lantern.input.Key;
@@ -41,7 +40,7 @@ public class GUIScreen
 {
     private final Screen screen;
     private final LinkedList windowStack;
-    private final Queue actionToRunInEventThread;
+    private final LinkedList actionToRunInEventThread;
     private String title;
     private boolean showMemoryUsage;
     private Theme guiTheme;

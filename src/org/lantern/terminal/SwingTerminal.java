@@ -33,10 +33,9 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 import java.util.Set;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
@@ -60,7 +59,7 @@ public class SwingTerminal implements Terminal
     private Color currentBackgroundColor;
     private boolean currentlyBold;
     private TerminalCharacter [][]characterMap;
-    private Queue keyQueue;
+    private LinkedList keyQueue;
     private final Object resizeMutex;
 
     public SwingTerminal()
@@ -79,7 +78,7 @@ public class SwingTerminal implements Terminal
         this.currentForegroundColor = Color.WHITE;
         this.currentBackgroundColor = Color.BLACK;
         this.currentlyBold = false;
-        this.keyQueue = new ConcurrentLinkedQueue();
+        this.keyQueue = new LinkedList();
         this.resizeMutex = new Object();
         clearScreen();
     }
@@ -237,7 +236,9 @@ public class SwingTerminal implements Terminal
 
     public Key readInput() throws LanternException
     {
-        return (Key)keyQueue.poll();
+        synchronized(keyQueue) {
+            return (Key)keyQueue.poll();
+        }
     }
 
     private void refreshScreen()
@@ -321,43 +322,48 @@ public class SwingTerminal implements Terminal
         {
             if(typedIgnore.contains(new Character(e.getKeyChar())))
                 return;
-            else
-                keyQueue.add(new Key(e.getKeyChar()));
+            else {
+                synchronized(keyQueue) {
+                    keyQueue.add(new Key(e.getKeyChar()));
+                }
+            }
         }
 
         public void keyPressed(KeyEvent e)
         {
-            if(e.getKeyCode() == KeyEvent.VK_ENTER)
-                keyQueue.add(new Key(Key.Kind.Enter));
-            else if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
-                keyQueue.add(new Key(Key.Kind.Escape));
-            else if(e.getKeyCode() == KeyEvent.VK_BACK_SPACE)
-                keyQueue.add(new Key(Key.Kind.Backspace));
-            else if(e.getKeyCode() == KeyEvent.VK_LEFT)
-                keyQueue.add(new Key(Key.Kind.ArrowLeft));
-            else if(e.getKeyCode() == KeyEvent.VK_RIGHT)
-                keyQueue.add(new Key(Key.Kind.ArrowRight));
-            else if(e.getKeyCode() == KeyEvent.VK_UP)
-                keyQueue.add(new Key(Key.Kind.ArrowUp));
-            else if(e.getKeyCode() == KeyEvent.VK_DOWN)
-                keyQueue.add(new Key(Key.Kind.ArrowDown));
-            else if(e.getKeyCode() == KeyEvent.VK_INSERT)
-                keyQueue.add(new Key(Key.Kind.Insert));
-            else if(e.getKeyCode() == KeyEvent.VK_DELETE)
-                keyQueue.add(new Key(Key.Kind.Delete));
-            else if(e.getKeyCode() == KeyEvent.VK_HOME)
-                keyQueue.add(new Key(Key.Kind.Home));
-            else if(e.getKeyCode() == KeyEvent.VK_END)
-                keyQueue.add(new Key(Key.Kind.End));
-            else if(e.getKeyCode() == KeyEvent.VK_PAGE_UP)
-                keyQueue.add(new Key(Key.Kind.PageUp));
-            else if(e.getKeyCode() == KeyEvent.VK_PAGE_DOWN)
-                keyQueue.add(new Key(Key.Kind.PageDown));
-            else if(e.getKeyCode() == KeyEvent.VK_TAB) {
-                if(e.isShiftDown())
-                    keyQueue.add(new Key(Key.Kind.ReverseTab));
-                else
-                    keyQueue.add(new Key(Key.Kind.Tab));
+            synchronized(keyQueue) {
+                if(e.getKeyCode() == KeyEvent.VK_ENTER)
+                    keyQueue.add(new Key(Key.Kind.Enter));
+                else if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
+                    keyQueue.add(new Key(Key.Kind.Escape));
+                else if(e.getKeyCode() == KeyEvent.VK_BACK_SPACE)
+                    keyQueue.add(new Key(Key.Kind.Backspace));
+                else if(e.getKeyCode() == KeyEvent.VK_LEFT)
+                    keyQueue.add(new Key(Key.Kind.ArrowLeft));
+                else if(e.getKeyCode() == KeyEvent.VK_RIGHT)
+                    keyQueue.add(new Key(Key.Kind.ArrowRight));
+                else if(e.getKeyCode() == KeyEvent.VK_UP)
+                    keyQueue.add(new Key(Key.Kind.ArrowUp));
+                else if(e.getKeyCode() == KeyEvent.VK_DOWN)
+                    keyQueue.add(new Key(Key.Kind.ArrowDown));
+                else if(e.getKeyCode() == KeyEvent.VK_INSERT)
+                    keyQueue.add(new Key(Key.Kind.Insert));
+                else if(e.getKeyCode() == KeyEvent.VK_DELETE)
+                    keyQueue.add(new Key(Key.Kind.Delete));
+                else if(e.getKeyCode() == KeyEvent.VK_HOME)
+                    keyQueue.add(new Key(Key.Kind.Home));
+                else if(e.getKeyCode() == KeyEvent.VK_END)
+                    keyQueue.add(new Key(Key.Kind.End));
+                else if(e.getKeyCode() == KeyEvent.VK_PAGE_UP)
+                    keyQueue.add(new Key(Key.Kind.PageUp));
+                else if(e.getKeyCode() == KeyEvent.VK_PAGE_DOWN)
+                    keyQueue.add(new Key(Key.Kind.PageDown));
+                else if(e.getKeyCode() == KeyEvent.VK_TAB) {
+                    if(e.isShiftDown())
+                        keyQueue.add(new Key(Key.Kind.ReverseTab));
+                    else
+                        keyQueue.add(new Key(Key.Kind.Tab));
+                }
             }
         }
     }

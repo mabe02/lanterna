@@ -22,12 +22,10 @@ package org.lantern.input;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 import java.util.Set;
 import org.lantern.LanternException;
 import org.lantern.terminal.TerminalPosition;
@@ -39,8 +37,8 @@ import org.lantern.terminal.TerminalPosition;
 public class InputDecoder
 {
     private final Reader source;
-    private final Queue inputBuffer;
-    private final Queue leftOverQueue;
+    private final LinkedList inputBuffer;
+    private final LinkedList leftOverQueue;
     private final Set bytePatterns;
     private final List currentMatching;
     private TerminalPosition lastReportedTerminalPosition;
