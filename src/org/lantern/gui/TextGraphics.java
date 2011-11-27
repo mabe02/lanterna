@@ -99,7 +99,9 @@ public class TextGraphics
             string = string.substring(0, areaSize.getColumns() - column);
 
         EnumSet<Terminal.Style> stylesSet = EnumSet.noneOf(Terminal.Style.class);
-        stylesSet.addAll(Arrays.asList(styles));
+        if(styles != null && styles.length != 0)
+            stylesSet = EnumSet.copyOf(Arrays.asList(styles));
+        
         if(currentlyBold)
             stylesSet.add(Terminal.Style.Bold);
 
