@@ -68,7 +68,22 @@ class BasicCharacterPattern implements CharacterPattern
     public int hashCode()
     {
         int hash = 3;
-        hash = 53 * hash + Arrays.hashCode(this.pattern);
+        hash = 53 * hash + hashCode(this.pattern);
         return hash;
+    }
+    
+    /**
+     * Copied from Arrays.hashCode in Java 6
+     */
+    private static int hashCode(char a[]) {
+        if (a == null)
+            return 0;
+
+        int result = 1;
+        for (int i = 0; i < a.length; i++) {
+            char element = a[i];
+            result = 31 * result + element;
+        }
+        return result;
     }
 }
