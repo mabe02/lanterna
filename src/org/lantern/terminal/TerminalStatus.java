@@ -32,7 +32,7 @@ import org.lantern.LanternException;
 class TerminalStatus
 {
     private static String CACHED_TTY = null;
-    private static final String STTY_ENV_VARIABLE = System.getenv("STTY_PATH");
+    private static final String STTY_ENV_VARIABLE = System.getProperty("STTY_PATH");
     private static final String STTY_PROGRAM = 
             (STTY_ENV_VARIABLE != null && !STTY_ENV_VARIABLE.trim().equals("")) ?
                 STTY_ENV_VARIABLE : "stty";
