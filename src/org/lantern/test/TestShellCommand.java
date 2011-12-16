@@ -43,7 +43,7 @@ public class TestShellCommand {
         }
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
         BufferedReader reader = new BufferedReader(new InputStreamReader(bais));
-        StringBuilder builder = new StringBuilder();
+        StringBuffer builder = new StringBuffer();
         while(reader.ready()) {
             builder.append(reader.readLine());
         }

@@ -152,7 +152,7 @@ public class Label extends AbstractComponent
     }
 
     public String getText() {
-        StringBuilder sb = new StringBuilder();
+        StringBuffer sb = new StringBuffer();
         for(int i = 0; i < text.length; i++) {    
             String line = text[i];
             sb.append(line).append("\n");

@@ -301,7 +301,7 @@ public class Screen implements InputProvider
                 align = 8 - (x % 8);
                 break;
         }
-        StringBuilder replace = new StringBuilder();
+        StringBuffer replace = new StringBuffer();
         for(int i = 0; i < align; i++)
             replace.append(" ");
         return replace.toString();

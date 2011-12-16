@@ -105,7 +105,7 @@ public class PanelTest
 
         public void repaint(TextGraphics graphics)
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuffer sb = new StringBuffer();
             graphics.applyThemeItem(Category.DefaultDialog);
             for(int i = 0; i < graphics.getWidth(); i++)
                 sb.append(fillCharacter);

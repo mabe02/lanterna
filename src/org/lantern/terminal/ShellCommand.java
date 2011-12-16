@@ -36,8 +36,7 @@ class ShellCommand
     static String exec(String[] cmd) throws LanternException
     {
         try {
-            ProcessBuilder pb = new ProcessBuilder(cmd);
-            Process process = pb.start();
+            Process process = Runtime.getRuntime().exec(cmd);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             InputStream stdout = process.getInputStream();
             int readByte = stdout.read();
@@ -47,7 +46,7 @@ class ShellCommand
             }
             ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
             BufferedReader reader = new BufferedReader(new InputStreamReader(bais));
-            StringBuilder builder = new StringBuilder();
+            StringBuffer builder = new StringBuffer();
             while(reader.ready()) {
                 builder.append(reader.readLine());
             }

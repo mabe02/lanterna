@@ -183,7 +183,7 @@ public class TextGraphics
 
     public void fillRectangle(char character, TerminalPosition topLeft, TerminalSize rectangleSize)
     {
-        StringBuilder emptyLineBuilder = new StringBuilder();
+        StringBuffer emptyLineBuilder = new StringBuffer();
         for(int i = 0; i < rectangleSize.getColumns(); i++)
             emptyLineBuilder.append(character);
         String emptyLine = emptyLineBuilder.toString();
