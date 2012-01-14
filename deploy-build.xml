@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="lantern" default="all" basedir=".">
-    <property name="Version" value="jre142-4"/>
+    <property name="Version" value="jre142-6"/>
     <property name="JarFile" value="lanterna-${Version}.jar"/>
     <property name="SourceDeployDirectory" value="lanterna-${Version}"/>
     <property name="SourceFile" value="lanterna-${Version}-source.zip"/>
@@ -31,27 +31,33 @@ public class BuildInformation
         <javac destdir="pkg" debug="false" source="1.4" target="1.4" encoding="UTF-8" srcdir="src"/>
     </target>
 
-    <target name="build" depends="compile">
+    <target name="jar" depends="compile">
         <echo message="Creating .jar file..."/>
         <copy todir="pkg">
             <fileset dir="." includes="License.txt"/>
         </copy>
         <jar basedir="pkg" jarfile="dist/${JarFile}" compress="true" manifest="deploy-manifest.mf"/>
-        
+    </target>
+
+    <target name="javadoc" depends="compile">
         <echo message="Generating javadoc..."/>
         <javadoc sourcepath="src" destdir="javadoc"/>
+    </target>
 
+    <target name="source-pkg" depends="compile">
         <echo message="Generating the source distribution..."/>
         <mkdir dir="${SourceDeployDirectory}"/>
         <copy todir="${SourceDeployDirectory}">
             <fileset dir="." includes="src/**,javadoc/**,License.txt"/>
         </copy>
         <zip basedir="lanterna-${Version}" zipfile="dist/${SourceFile}" compress="true" level="9"/>
-
+    </target>
+    
+    <target name="clean-up" depends="compile">
         <echo message="Cleaning up..."/>
         <delete dir="pkg"/>
         <delete dir="${SourceDeployDirectory}"/>
     </target>
-
-    <target name="all" depends="clean, build"/>
+    
+    <target name="all" depends="clean, jar, javadoc, source-pkg, clean-up"/>
 </project>
