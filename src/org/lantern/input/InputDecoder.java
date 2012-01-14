@@ -69,7 +69,7 @@ public class InputDecoder
     public Key getNextCharacter() throws LanternException
     {
         if(leftOverQueue.size() > 0) {
-            Character first = (Character)leftOverQueue.poll();
+            Character first = (Character)leftOverQueue.removeFirst();
             //HACK!!!
             if(first.charValue() == 0x1b)
                 return new Key(Key.Kind.Escape);
@@ -95,7 +95,9 @@ public class InputDecoder
 
         while(true) {
             //Check all patterns
-            Character nextChar = (Character)inputBuffer.poll();
+            Character nextChar = null;
+            if(!inputBuffer.isEmpty())
+                nextChar = (Character)inputBuffer.removeFirst();
             boolean canMatchWithOneMoreChar = false;
 
             if(nextChar != null) {
@@ -120,7 +122,7 @@ public class InputDecoder
                 for(int i = 0; i < currentMatching.size(); i++)
                     leftOverQueue.add(currentMatching.get(i));
                 currentMatching.clear();
-                Character first = (Character)leftOverQueue.poll();
+                Character first = (Character)leftOverQueue.removeFirst();
                 
                 //HACK!!!
                 if(first.charValue() == 0x1b)

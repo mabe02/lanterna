@@ -71,7 +71,7 @@ public class SwingTerminal implements Terminal
     {
         this.resizeListeners = new ArrayList();
         this.terminalSize = terminalSize;
-        this.terminalFont = new Font("Courier New", Font.PLAIN, 14);
+        this.terminalFont = new Font("Monospaced", Font.PLAIN, 14);
         this.terminalRenderer = new TerminalRenderer();
         this.textPosition = new TerminalPosition(0, 0);
         this.characterMap = new TerminalCharacter[terminalSize.getRows()][terminalSize.getColumns()];
@@ -138,7 +138,6 @@ public class SwingTerminal implements Terminal
         terminalFrame.addKeyListener(new KeyCapturer());
         terminalFrame.pack();
         terminalFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        terminalFrame.setLocationByPlatform(true);
         terminalFrame.setVisible(true);
         terminalFrame.setFocusTraversalKeysEnabled(false);
         //terminalEmulator.setSize(terminalEmulator.getPreferredSize());
@@ -237,7 +236,9 @@ public class SwingTerminal implements Terminal
     public Key readInput() throws LanternException
     {
         synchronized(keyQueue) {
-            return (Key)keyQueue.poll();
+            if(keyQueue.isEmpty())
+                return null;
+            return (Key)keyQueue.removeFirst();
         }
     }
 
