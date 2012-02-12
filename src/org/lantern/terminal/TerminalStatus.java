@@ -75,11 +75,15 @@ class TerminalStatus
             return null;
         
         String stty = (ShellCommand.exec(STTY_PROGRAM, "-F", tty, "-a"));
+        if (stty.equals("")) {
+            // OS X's stty command uses -f instead of -F
+            stty = (ShellCommand.exec(STTY_PROGRAM, "-f", tty, "-a"));
+        }
         String []splittedSTTY = stty.split(";");
         int terminalWidth = -1;
         int terminalHeight = -1;
-        final Pattern columnsPattern = Pattern.compile("columns ([0-9]+)");
-        final Pattern rowsPattern = Pattern.compile("rows ([0-9]+)");
+        final Pattern columnsPattern = Pattern.compile("(?:columns ([0-9]+)|([0-9]+) columns)");
+        final Pattern rowsPattern = Pattern.compile("(?:rows ([0-9]+)|([0-9]+) rows)");
         for(String sttyElement: splittedSTTY) {
             if(terminalHeight >= 0 && terminalWidth >= 0)
                 break;
@@ -87,13 +91,17 @@ class TerminalStatus
             final String element = sttyElement.trim();
             final Matcher colMatcher = columnsPattern.matcher(element);
             if(colMatcher.matches()) {
-                terminalWidth = Integer.parseInt(colMatcher.group(1));
+                terminalWidth = Integer.parseInt(
+                    colMatcher.group(1) != null ? colMatcher.group(1) : colMatcher.group(2)
+                );
                 continue;
             }
             
             final Matcher rowMatcher = rowsPattern.matcher(element);
             if(rowMatcher.matches()) {
-                terminalHeight = Integer.parseInt(rowMatcher.group(1));
+                terminalHeight = Integer.parseInt(
+                    rowMatcher.group(1) != null ? rowMatcher.group(1) : rowMatcher.group(2)
+                );
                 continue;
             }
         }
