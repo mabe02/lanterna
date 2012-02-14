@@ -52,8 +52,8 @@ public class StaticTextArea  extends AbstractInteractableComponent
         
         int longestLine = 0;
         for(String line: lines)
-            if(line.length() > longestLine)
-                longestLine = line.length();
+            if(line.replace("\t", "    ").length() > longestLine)
+                longestLine = line.replace("\t", "    ").length();
         this.longestLine = longestLine;
     }
 
