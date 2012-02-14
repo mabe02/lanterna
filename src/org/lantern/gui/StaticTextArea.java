@@ -37,6 +37,7 @@ public class StaticTextArea  extends AbstractInteractableComponent
 {
     private final List<String> lines;
     private final TerminalSize maxSize;
+    private final int longestLine;
     private int scrollTopIndex;
 
     public StaticTextArea(TerminalSize maxSize, String text)
@@ -48,12 +49,18 @@ public class StaticTextArea  extends AbstractInteractableComponent
         this.maxSize = maxSize;
         this.scrollTopIndex = 0;
         lines.addAll(Arrays.asList(text.split("\n")));
+        
+        int longestLine = 0;
+        for(String line: lines)
+            if(line.length() > longestLine)
+                longestLine = line.length();
+        this.longestLine = longestLine;
     }
 
     public TerminalSize getPreferredSize()
     {
         return new TerminalSize(
-                maxSize.getColumns() < 80 ? maxSize.getColumns() : 80, 
+                maxSize.getColumns() < longestLine ? maxSize.getColumns() : longestLine, 
                 maxSize.getRows() < lines.size() ? maxSize.getRows() : lines.size());
     }
 
