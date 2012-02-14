@@ -95,6 +95,9 @@ public class TextGraphics
         if(column >= areaSize.getColumns() || row >= areaSize.getRows() || string == null)
             return;
 
+        //TODO: fix this
+        string = string.replace("\t", "    ");
+        
         if(string.length() + column > areaSize.getColumns())
             string = string.substring(0, areaSize.getColumns() - column);
 

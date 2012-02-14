@@ -128,6 +128,9 @@ public class StaticTextArea  extends AbstractInteractableComponent
 
     private void printItem(TextGraphics graphics, int x, int y, String text)
     {
+        //TODO: fix this
+        text = text.replace("\t", "    ");
+        
         if(text.length() > graphics.getWidth())
             text = text.substring(0, graphics.getWidth());
         graphics.drawString(x, y, text);
