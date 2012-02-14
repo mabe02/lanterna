@@ -75,6 +75,10 @@ public class GUIScreen
         this.title = title;
     }
     
+    public TerminalSize getTerminalSize() {
+        return screen.getTerminalSize();
+    }
+    
     private synchronized void repaint() throws LanternException
     {
         final TextGraphics textGraphics = new TextGraphics(new TerminalPosition(0, 0),
