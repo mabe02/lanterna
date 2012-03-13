@@ -239,6 +239,10 @@ public class SwingTerminal implements Terminal
         return keyQueue.poll();
     }
 
+    public void flush() throws LanternException {
+        //Not needed
+    }
+
     private void refreshScreen()
     {
         SwingUtilities.invokeLater(new Runnable() {

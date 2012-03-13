@@ -46,6 +46,7 @@ public interface Terminal extends InputProvider
     public void removeResizeListener(ResizeListener listener);
     public void hackSendFakeResize() throws LanternException;
     public TerminalSize queryTerminalSize() throws LanternException;
+    public void flush() throws LanternException;
 
     public enum SGR
     {

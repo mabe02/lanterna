@@ -277,6 +277,7 @@ public class Screen implements InputProvider
             terminalWriter.setCursorPosition(getCursorPosition().getColumn(), getCursorPosition().getRow());
             wholeScreenInvalid = false;
         }
+        terminal.flush();
     }
 
     @Deprecated

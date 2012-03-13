@@ -122,6 +122,15 @@ public abstract class AbstractTerminal implements Terminal
         onResized();
     }
 
+    public void flush() throws LanternException {
+        try {
+            terminalOutput.flush();
+        }
+        catch(IOException e) {
+            throw new LanternException(e);
+        }
+    }
+
     protected synchronized void onResized() throws LanternException
     {
         TerminalSize size = queryTerminalSize();
