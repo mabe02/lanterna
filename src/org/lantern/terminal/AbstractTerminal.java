@@ -121,7 +121,7 @@ public abstract class AbstractTerminal implements Terminal
     {
         onResized();
     }
-
+    
     public void flush() throws LanternException {
         try {
             terminalOutput.flush();

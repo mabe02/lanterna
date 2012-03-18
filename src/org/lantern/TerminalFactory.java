@@ -26,6 +26,7 @@ import java.nio.charset.Charset;
 import org.lantern.terminal.CommonUnixTerminal;
 import org.lantern.terminal.SwingTerminal;
 import org.lantern.terminal.Terminal;
+import org.lantern.terminal.TerminalSizeQuerier;
 
 /**
  * This factory class will create terminal objects suitable for a specific environment
@@ -56,10 +57,20 @@ public abstract class TerminalFactory
      */
     public static class Common extends TerminalFactory
     {
+        private TerminalSizeQuerier sizeQuerier;
+
+        public Common() {
+            sizeQuerier = null;
+        }
+        
         @Override
         public Terminal createTerminal(InputStream terminalInput, OutputStream terminalOutput, Charset terminalCharset)
         {
-            return new CommonUnixTerminal(terminalInput, terminalOutput, terminalCharset);
+            return new CommonUnixTerminal(terminalInput, terminalOutput, terminalCharset, sizeQuerier);
+        }
+
+        public void setSizeQuerier(TerminalSizeQuerier sizeQuerier) {
+            this.sizeQuerier = sizeQuerier;
         }
     }
 

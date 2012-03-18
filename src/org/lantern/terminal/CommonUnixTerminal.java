@@ -34,9 +34,24 @@ import sun.misc.SignalHandler;
  */
 public class CommonUnixTerminal extends CommonTerminal
 {
-    public CommonUnixTerminal(InputStream terminalInput, OutputStream terminalOutput, Charset terminalCharset)
+    private final TerminalSizeQuerier terminalSizeQuerier;
+            
+    public CommonUnixTerminal(
+            InputStream terminalInput, 
+            OutputStream terminalOutput, 
+            Charset terminalCharset)
+    {
+        this(terminalInput, terminalOutput, terminalCharset, null);
+    }
+            
+    public CommonUnixTerminal(
+            InputStream terminalInput, 
+            OutputStream terminalOutput, 
+            Charset terminalCharset,
+            TerminalSizeQuerier customSizeQuerier)
     {
         super(terminalInput, terminalOutput, terminalCharset);
+        this.terminalSizeQuerier = customSizeQuerier;
         addInputProfile(new GnomeTerminalProfile());
         addInputProfile(new PuttyProfile());
 
@@ -54,17 +69,13 @@ public class CommonUnixTerminal extends CommonTerminal
 
     public TerminalSize queryTerminalSize() throws LanternException
     {
-        TerminalSize terminalSize = TerminalStatus.querySize();
-        if(terminalSize == null) {
-            saveCursorPosition();
-            moveCursor(5000, 5000);
-            reportPosition();
-            restoreCursorPosition();
-            terminalSize = lastKnownSize;
-        }
-        if(terminalSize == null)
-            return new TerminalSize(80, 24);
+        if(terminalSizeQuerier != null)
+            return terminalSizeQuerier.queryTerminalSize();
         
-        return terminalSize;
+        saveCursorPosition();
+        moveCursor(5000, 5000);
+        reportPosition();
+        restoreCursorPosition();        
+        return lastKnownSize;
     }
 }

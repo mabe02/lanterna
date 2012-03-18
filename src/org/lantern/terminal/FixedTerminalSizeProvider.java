@@ -19,28 +19,20 @@
 
 package org.lantern.terminal;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.charset.Charset;
 import org.lantern.LanternException;
 
 /**
- * A term-info driven terminal with Unix resize capabilities.
- * Warning, this probably won't be too accurate, use CommonUnixTerminal instead.
- * @author mabe02
+ *
+ * @author martin
  */
-public class UnixTerminal extends TermInfoTerminal
-{
+public class FixedTerminalSizeProvider implements TerminalSizeQuerier {
+    private final TerminalSize size;
 
-    public UnixTerminal(InputStream terminalInput, OutputStream terminalOutput,
-            Charset terminalCharset, TerminalProperties terminalProperties)
-    {
-        super(terminalInput, terminalOutput, terminalCharset, terminalProperties);
+    public FixedTerminalSizeProvider(TerminalSize size) {
+        this.size = size;
     }
 
-    @Override
-    public TerminalSize queryTerminalSize() throws LanternException
-    {
-        return TerminalStatus.querySize();
+    public TerminalSize queryTerminalSize() throws LanternException {
+        return size;
     }
 }
