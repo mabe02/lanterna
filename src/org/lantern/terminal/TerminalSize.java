@@ -93,14 +93,4 @@ public class TerminalSize {
         hash = 53 * hash + this.rows;
         return hash;
     }
-
-    public static void overrideSizeQuerying(TerminalSize fixedSize)
-    {
-        TerminalStatus.USE_THIS_SIZE_INSTEAD_OF_QUERY_OS = fixedSize;
-    }
-
-    public static boolean canQuerySize() throws LanternException
-    {
-        return TerminalStatus.verifySizeQuery();
-    }
 }

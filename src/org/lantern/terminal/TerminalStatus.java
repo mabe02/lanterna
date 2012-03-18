@@ -19,129 +19,16 @@
 
 package org.lantern.terminal;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.lantern.LanternException;
 
 /**
- * A rather hacky class for figuring out and controlling the terminal environment.
- * Much of this is sort of Linux specific, but I've got some of it working 
- * on Solaris too.
+ * This class used to do terminal size querying, but that's been removed now.
+ * It is now only used for turning off echo mode, configuring the input mode
+ * and cbreak
  * @author mabe02
  */
 class TerminalStatus
 {
-    private static String CACHED_TTY = null;
-    private static final String STTY_ENV_VARIABLE = System.getenv("STTY_PATH");
-    private static final String STTY_PROGRAM = 
-            (STTY_ENV_VARIABLE != null && !STTY_ENV_VARIABLE.trim().equals("")) ?
-                STTY_ENV_VARIABLE : "stty";
-    public static TerminalSize USE_THIS_SIZE_INSTEAD_OF_QUERY_OS = null;
-
-    private static int getPID() throws LanternException
-    {
-        return Integer.parseInt(ShellCommand.exec("bash", "-c", "echo $PPID"));
-    }
-
-    private static String getTTY() throws LanternException
-    {
-        if(CACHED_TTY != null)
-            return CACHED_TTY;
-        
-        Integer myPid = getPID();
-        String processRow = ShellCommand.exec("bash", "-c", "ps -A|grep " + myPid);
-        Pattern psPattern = Pattern.compile(" *([0-9]+) ([^ ]+) +([^ ]*) (.*)");
-        Matcher matcher = psPattern.matcher(processRow);
-        if(!matcher.matches()) {
-            return null;
-        }
-        
-        String tty = matcher.group(2);
-        if(tty.equals("?")) {
-            //System.err.println("Error: no pts terminal!");
-            return null;
-        }
-        CACHED_TTY = "/dev/" + tty;
-        return CACHED_TTY;
-    }
-
-    static TerminalSize querySize() throws LanternException
-    {
-        if(USE_THIS_SIZE_INSTEAD_OF_QUERY_OS != null)
-            return USE_THIS_SIZE_INSTEAD_OF_QUERY_OS;
-        
-        String tty = getTTY();
-        if(tty == null)
-            return null;
-        
-        String stty = (ShellCommand.exec(STTY_PROGRAM, "-F", tty, "-a"));
-        if (stty.equals("")) {
-            // OS X's stty command uses -f instead of -F
-            stty = (ShellCommand.exec(STTY_PROGRAM, "-f", tty, "-a"));
-        }
-        String []splittedSTTY = stty.split(";");
-        int terminalWidth = -1;
-        int terminalHeight = -1;
-        final Pattern columnsPattern = Pattern.compile("(?:columns ([0-9]+)|([0-9]+) columns)");
-        final Pattern rowsPattern = Pattern.compile("(?:rows ([0-9]+)|([0-9]+) rows)");
-        for(String sttyElement: splittedSTTY) {
-            if(terminalHeight >= 0 && terminalWidth >= 0)
-                break;
-
-            final String element = sttyElement.trim();
-            final Matcher colMatcher = columnsPattern.matcher(element);
-            if(colMatcher.matches()) {
-                terminalWidth = Integer.parseInt(
-                    colMatcher.group(1) != null ? colMatcher.group(1) : colMatcher.group(2)
-                );
-                continue;
-            }
-            
-            final Matcher rowMatcher = rowsPattern.matcher(element);
-            if(rowMatcher.matches()) {
-                terminalHeight = Integer.parseInt(
-                    rowMatcher.group(1) != null ? rowMatcher.group(1) : rowMatcher.group(2)
-                );
-                continue;
-            }
-        }
-        if(terminalHeight == -1 || terminalWidth == -1)
-            return null;
-        return new TerminalSize(terminalWidth, terminalHeight);
-    }
-
-    static boolean verifySizeQuery() throws LanternException
-    {
-        String tty = getTTY();
-        if(tty == null)
-            return false;
-
-        String stty = (ShellCommand.exec(STTY_PROGRAM, "-F", tty, "-a"));
-        String []splittedSTTY = stty.split(";");
-        int terminalWidth = -1;
-        int terminalHeight = -1;
-        final Pattern columnsPattern = Pattern.compile("columns ([0-9]+)");
-        final Pattern rowsPattern = Pattern.compile("rows ([0-9]+)");
-        for(String sttyElement: splittedSTTY) {
-            if(terminalHeight >= 0 && terminalWidth >= 0)
-                break;
-
-            final String element = sttyElement.trim();
-            final Matcher colMatcher = columnsPattern.matcher(element);
-            if(colMatcher.matches()) {
-                terminalWidth = Integer.parseInt(colMatcher.group(1));
-                continue;
-            }
-
-            final Matcher rowMatcher = rowsPattern.matcher(element);
-            if(rowMatcher.matches()) {
-                terminalHeight = Integer.parseInt(rowMatcher.group(1));
-                continue;
-            }
-        }
-        return terminalHeight != -1 && terminalWidth != -1;
-    }
-
     static void setKeyEcho(final boolean enable) throws LanternException
     {
         /*
