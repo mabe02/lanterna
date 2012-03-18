@@ -80,7 +80,10 @@ public class Label extends AbstractComponent
 
     public Label(String text, int fixedWidth, Terminal.Color color, Boolean textBold, Alignment textAlignment)
     {
-        this.text = text.split("\n");
+        if(text == null)
+            this.text = new String[] { "null" };
+        else
+            this.text = text.split("\n");
         this.textColor = color;
         this.textBold = textBold;
         this.height = 0;
