@@ -8,3 +8,4 @@ dist
 nbproject/private
 javadoc
 build\.number
+target
