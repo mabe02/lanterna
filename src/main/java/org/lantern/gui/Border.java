@@ -31,12 +31,12 @@ import org.lantern.terminal.TerminalSize;
  */
 public abstract class Border
 {
-    public void drawBorder(TextGraphics graphics)
+    public void drawBorder(TextGraphics graphics, String title)
     {
-        drawBorder(graphics, new TerminalSize(graphics.getWidth(), graphics.getHeight()));
+        drawBorder(graphics, new TerminalSize(graphics.getWidth(), graphics.getHeight()), title);
     }
 
-    public abstract void drawBorder(TextGraphics graphics, TerminalSize actualSize);
+    public abstract void drawBorder(TextGraphics graphics, TerminalSize actualSize, String title);
     public abstract TerminalSize getInnerAreaSize(int width, int height);
     public abstract TerminalPosition getInnerAreaLocation(int width, int height);
     public abstract TerminalSize surroundAreaSize(TerminalSize TerminalSize);
@@ -45,22 +45,19 @@ public abstract class Border
     {
         private Color foreground;
         private Color background;
-        private boolean bold;
 
         public Standard() {
             this.foreground = Color.DEFAULT;
             this.background = Color.DEFAULT;
-            this.bold = false;
         }
 
-        public Standard(Color foreground, Color background, boolean bold) {
+        public Standard(Color foreground, Color background) {
             this.foreground = foreground;
             this.background = background;
-            this.bold = bold;
         }
 
         @Override
-        public void drawBorder(TextGraphics graphics, TerminalSize actualSize)
+        public void drawBorder(TextGraphics graphics, TerminalSize actualSize, String title)
         {
             graphics.setForegroundColor(foreground);
             graphics.setBackgroundColor(background);
@@ -69,29 +66,34 @@ public abstract class Border
             final int height = actualSize.getRows();
 
             //Top
-            graphics.drawString(0, 0, ACS.ULCORNER + "");            
-            for(int x = 0; x < width - 2; x++)
+            graphics.drawString(0, 0, ACS.ULCORNER + "");     
+            for(int x = 1; x < width - 1; x++)
                 graphics.drawString(x, 0, ACS.HLINE + "");
             graphics.drawString(width - 1, 0, ACS.URCORNER + "");
 
             //Each row
-            for(int i = 0; i < height - 2; i++) {
-                graphics.drawString(0, i + 1, ACS.VLINE + "");
-                graphics.drawString(0 + width - 1, i + 1, ACS.VLINE + "");
+            for(int i = 1; i < height - 1; i++) {
+                graphics.drawString(0, i, ACS.VLINE + "");
+                graphics.drawString(0 + width - 1, i, ACS.VLINE + "");
             }
 
             //Bottom
             graphics.drawString(0, height - 1, ACS.LLCORNER + "");
-            for(int x = 0; x < width - 2; x++)
-                graphics.drawString(x + 1, height - 1, ACS.HLINE + "");
+            for(int x = 1; x < width - 1; x++)
+                graphics.drawString(x, height - 1, ACS.HLINE + "");
             graphics.drawString(width - 1, height - 1, ACS.LRCORNER + "");
+            
+            // Write the title
+            graphics.applyThemeItem(graphics.getTheme().getItem(Theme.Category.DefaultDialog));
+            graphics.setBoldMask(true);
+            graphics.drawString(2, 0, title);
         }
 
         @Override
         public TerminalPosition getInnerAreaLocation(int width, int height)
         {
             if(width > 2 && height > 2)
-                return new TerminalPosition(2, 2);
+                return new TerminalPosition(2, 1);
             else
                 return new TerminalPosition(0,0);
         }
@@ -100,7 +102,7 @@ public abstract class Border
         public TerminalSize getInnerAreaSize(int width, int height)
         {
             if(width > 2 && height > 2)
-                return new TerminalSize(width - 4, height - 3);
+                return new TerminalSize(width - 4, height - 2);
             else
                 return new TerminalSize(width, height);
         }
@@ -122,7 +124,7 @@ public abstract class Border
         }
 
         @Override
-        public void drawBorder(TextGraphics graphics, TerminalSize actualSize)
+        public void drawBorder(TextGraphics graphics, TerminalSize actualSize, String title)
         {
             final int width = actualSize.getColumns();
             final int height = actualSize.getRows();
@@ -141,26 +143,31 @@ public abstract class Border
             //Top
             graphics.applyThemeItem(upperLeft);
             graphics.drawString(0, 0, ACS.ULCORNER + "");
-            for(int i = 0; i < width - 2; i++)
-                graphics.drawString(1 + i, 0, ACS.HLINE + "");
+            for(int i = 1; i < width - 1; i++)
+                graphics.drawString(i, 0, ACS.HLINE + "");
             graphics.applyThemeItem(lowerRight);
             graphics.drawString(width - 1, 0, ACS.URCORNER + "");
 
             //Each row
-            for(int i = 0; i < height - 2; i++) {
+            for(int i = 1; i < height - 1; i++) {
                 graphics.applyThemeItem(upperLeft);
-                graphics.drawString(0, i + 1, ACS.VLINE + "");
+                graphics.drawString(0, 1, ACS.VLINE + "");
                 graphics.applyThemeItem(lowerRight);
-                graphics.drawString(width - 1, i + 1, ACS.VLINE + "");
+                graphics.drawString(width - 1, i, ACS.VLINE + "");
             }
 
             //Bottom
             graphics.applyThemeItem(upperLeft);
             graphics.drawString(0, height - 1, ACS.LLCORNER + "");
             graphics.applyThemeItem(lowerRight);
-            for(int i = 0; i < width - 2; i++)
-                graphics.drawString(1 + i, height - 1, ACS.HLINE + "");
+            for(int i = 1; i < width - 1; i++)
+                graphics.drawString(i, height - 1, ACS.HLINE + "");
             graphics.drawString(width - 1, height - 1, ACS.LRCORNER + "");
+            
+            // Write the title
+            graphics.applyThemeItem(graphics.getTheme().getItem(Theme.Category.DefaultDialog));
+            graphics.setBoldMask(true);
+            graphics.drawString(2, 0, title);
         }
 
         @Override
@@ -192,7 +199,7 @@ public abstract class Border
     public static class Invisible extends Border
     {
         @Override
-        public void drawBorder(TextGraphics graphics, TerminalSize actualSize)
+        public void drawBorder(TextGraphics graphics, TerminalSize actualSize, String title)
         {
         }
 

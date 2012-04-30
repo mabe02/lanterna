@@ -120,7 +120,7 @@ public class Panel extends AbstractContainer
 
     public void repaint(TextGraphics graphics)
     {
-        border.drawBorder(graphics, new TerminalSize(graphics.getWidth(), graphics.getHeight()));
+        border.drawBorder(graphics, new TerminalSize(graphics.getWidth(), graphics.getHeight()), title);
         TerminalPosition contentPaneTopLeft = border.getInnerAreaLocation(graphics.getWidth(), graphics.getHeight());
         TerminalSize contentPaneSize = border.getInnerAreaSize(graphics.getWidth(), graphics.getHeight());
         TextGraphics subGraphics = graphics.subAreaGraphics(contentPaneTopLeft, contentPaneSize);
@@ -132,11 +132,7 @@ public class Panel extends AbstractContainer
             
             if(laidOutComponent.getComponent().isVisible())
                 laidOutComponent.getComponent().repaint(subSubGraphics);
-        }        
-
-        graphics.applyThemeItem(graphics.getTheme().getItem(Category.DefaultDialog));
-        graphics.setBoldMask(true);
-        graphics.drawString(2, 0, title);
+        }
     }
 
     public TerminalSize getPreferredSize()
