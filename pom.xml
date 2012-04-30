@@ -15,6 +15,10 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+  </properties>
   <scm>
     <connection>scm:hg:https://code.google.com/p/lanterna</connection>
     <developerConnection>scm:hg:http://code.google.com/p/lanterna</developerConnection>
