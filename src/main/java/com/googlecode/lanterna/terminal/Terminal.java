@@ -47,16 +47,29 @@ public interface Terminal extends InputProvider
     public TerminalSize queryTerminalSize() throws LanternaException;
     public void flush() throws LanternaException;
 
+    /**
+     * SGR - Select Graphic Rendition, changes the state of the terminal as to
+     * what kind of text to print after this command. When applying an ENTER SGR 
+     * code, it normally applies until you send the corresponding EXIT code. 
+     * RESET_ALL will clear any code currently enabled.
+     */
     public enum SGR
     {
+        /**
+         * Removes any code SGR code currently enabled
+         */
         RESET_ALL,
         ENTER_BOLD,
         ENTER_REVERSE,
         ENTER_UNDERLINE,
+        /**
+         * This code may not be supported by all terminals/terminal emulators
+         */
         ENTER_BLINK,
         EXIT_BOLD,
         EXIT_REVERSE,
-        EXIT_UNDERLINE
+        EXIT_UNDERLINE,
+        EXIT_BLINK
     }
 
     public enum Color
