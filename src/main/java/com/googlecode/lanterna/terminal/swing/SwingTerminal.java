@@ -182,16 +182,16 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
         return size();
     }
 
-    private synchronized void resize(final TerminalSize newSize)
+    private synchronized void resize(int newSizeColumns, int newSizeRows)
     {
-        TerminalCharacter [][]newCharacterMap = new TerminalCharacter[newSize.getRows()][newSize.getColumns()];
-        for(int y = 0; y < newSize.getRows(); y++)
-            for(int x = 0; x < newSize.getColumns(); x++)
+        TerminalCharacter [][]newCharacterMap = new TerminalCharacter[newSizeRows][newSizeColumns];
+        for(int y = 0; y < newSizeRows; y++)
+            for(int x = 0; x < newSizeColumns; x++)
                 newCharacterMap[y][x] = new TerminalCharacter(' ', Color.WHITE, Color.BLACK, false);
 
         synchronized(resizeMutex) {
-            for(int y = 0; y < size().getRows() && y < newSize.getRows(); y++) {
-                for(int x = 0; x < size().getColumns() && x < newSize.getColumns(); x++) {
+            for(int y = 0; y < size().getRows() && y < newSizeRows; y++) {
+                for(int x = 0; x < size().getColumns() && x < newSizeColumns; x++) {
                     newCharacterMap[y][x] = this.characterMap[y][x];
                 }
             }
@@ -204,7 +204,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
                 }
             });
 
-            onResized(newSize.getColumns(), newSize.getRows());
+            onResized(newSizeColumns, newSizeRows);
         }
     }
 
@@ -378,7 +378,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
             lastWidth = consoleWidth;
             lastHeight = consoleHeight;
             
-            resize(new TerminalSize(consoleWidth, consoleHeight));
+            resize(consoleWidth, consoleHeight);
         }
     }
 
