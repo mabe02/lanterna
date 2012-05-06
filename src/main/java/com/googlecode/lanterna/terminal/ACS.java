@@ -25,6 +25,8 @@ package com.googlecode.lanterna.terminal;
  * @author martin
  */
 public class ACS {
+    private ACS() {}
+    
     public static final char ULCORNER = 0x250C;
     public static final char URCORNER = 0x2510;
     public static final char LLCORNER = 0x2514;
