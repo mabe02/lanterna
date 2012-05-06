@@ -22,7 +22,7 @@ package com.googlecode.lanterna.test;
 import java.nio.charset.Charset;
 import com.googlecode.lanterna.LanternException;
 import com.googlecode.lanterna.LanternTerminal;
-import com.googlecode.lanterna.TerminalFactory;
+import com.googlecode.lanterna.terminal.TerminalFactory;
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalSize;

@@ -21,7 +21,7 @@ package com.googlecode.lanterna.test;
 
 import com.googlecode.lanterna.LanternException;
 import com.googlecode.lanterna.LanternTerminal;
-import com.googlecode.lanterna.TerminalFactory;
+import com.googlecode.lanterna.terminal.TerminalFactory;
 import com.googlecode.lanterna.terminal.ACS;
 import com.googlecode.lanterna.terminal.Terminal;
 

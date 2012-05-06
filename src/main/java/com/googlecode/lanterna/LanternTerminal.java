@@ -19,6 +19,7 @@
 
 package com.googlecode.lanterna;
 
+import com.googlecode.lanterna.terminal.TerminalFactory;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;

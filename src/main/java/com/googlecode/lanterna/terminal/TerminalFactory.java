@@ -17,7 +17,7 @@
  * Copyright (C) 2010-2012 mabe02
  */
 
-package com.googlecode.lanterna;
+package com.googlecode.lanterna.terminal;
 
 import com.googlecode.lanterna.terminal.CommonUnixTerminal;
 import com.googlecode.lanterna.terminal.SwingTerminal;
