@@ -19,7 +19,7 @@
 
 package com.googlecode.lanterna.terminal;
 
-import com.googlecode.lanterna.LanternException;
+import com.googlecode.lanterna.LanternaException;
 
 /**
  *
@@ -32,7 +32,7 @@ public class FixedTerminalSizeProvider implements TerminalSizeQuerier {
         this.size = size;
     }
 
-    public TerminalSize queryTerminalSize() throws LanternException {
+    public TerminalSize queryTerminalSize() throws LanternaException {
         return size;
     }
 }

@@ -29,10 +29,10 @@ import java.io.PrintWriter;
  * RuntimeException instead of Exception, please let us know.
  * @author mabe02
  */
-public class LanternException extends Exception {
+public class LanternaException extends Exception {
     private IOException cause;
 
-    public LanternException(IOException cause)
+    public LanternaException(IOException cause)
     {
         super(cause.getMessage(), cause);
         this.cause = cause;

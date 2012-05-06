@@ -19,7 +19,7 @@
 
 package com.googlecode.lanterna.test;
 
-import com.googlecode.lanterna.LanternException;
+import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.LanternTerminal;
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.terminal.Terminal;
@@ -33,7 +33,7 @@ public class TerminalResizeTest implements Terminal.ResizeListener
 {
     private static Terminal terminal;
     
-    public static void main(String[] args) throws LanternException, InterruptedException
+    public static void main(String[] args) throws LanternaException, InterruptedException
     {
         terminal = new LanternTerminal().getUnderlyingTerminal();
         terminal.enterPrivateMode();
@@ -67,7 +67,7 @@ public class TerminalResizeTest implements Terminal.ResizeListener
             for(char c: chars)
                 terminal.putCharacter(c);
         }
-        catch(LanternException e) {
+        catch(LanternaException e) {
         }
     }
 }

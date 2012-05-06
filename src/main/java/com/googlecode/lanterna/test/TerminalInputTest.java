@@ -19,7 +19,7 @@
 
 package com.googlecode.lanterna.test;
 
-import com.googlecode.lanterna.LanternException;
+import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalFactory;
@@ -32,7 +32,7 @@ import java.nio.charset.Charset;
  */
 public class TerminalInputTest
 {
-    public static void main(String[] args) throws LanternException, InterruptedException
+    public static void main(String[] args) throws LanternaException, InterruptedException
     {
         if(args.length > 0) {
             try {
@@ -66,7 +66,7 @@ public class TerminalInputTest
                             rawTerminal.putCharacter(sizeString.charAt(i));
                     }
                 }
-                catch(LanternException e) {}
+                catch(LanternaException e) {}
             }
         });
 

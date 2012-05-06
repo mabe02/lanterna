@@ -19,7 +19,7 @@
 
 package com.googlecode.lanterna.terminal;
 
-import com.googlecode.lanterna.LanternException;
+import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.input.KeyMappingProfile;
 import java.awt.*;
@@ -84,17 +84,17 @@ public class SwingTerminal implements Terminal
         resizeListeners.add(listener);
     }
 
-    public void applyBackgroundColor(Color color) throws LanternException
+    public void applyBackgroundColor(Color color) throws LanternaException
     {
         currentBackgroundColor = color;
     }
 
-    public void applyForegroundColor(Color color) throws LanternException
+    public void applyForegroundColor(Color color) throws LanternaException
     {
         currentForegroundColor = color;
     }
 
-    public void applySGR(SGR... options) throws LanternException
+    public void applySGR(SGR... options) throws LanternaException
     {
         for(SGR sgr: options)
         {
@@ -120,7 +120,7 @@ public class SwingTerminal implements Terminal
         }
     }
 
-    public void enterPrivateMode() throws LanternException
+    public void enterPrivateMode() throws LanternaException
     {
         terminalFrame = new JFrame("Terminal");
         terminalFrame.addComponentListener(new FrameResizeListener());
@@ -136,7 +136,7 @@ public class SwingTerminal implements Terminal
         terminalFrame.pack();
     }
 
-    public void exitPrivateMode() throws LanternException
+    public void exitPrivateMode() throws LanternaException
     {
         if(terminalFrame == null)
             return;
@@ -161,7 +161,7 @@ public class SwingTerminal implements Terminal
         refreshScreen();
     }
 
-    public synchronized void putCharacter(char c) throws LanternException
+    public synchronized void putCharacter(char c) throws LanternaException
     {
         characterMap[textPosition.getRow()][textPosition.getColumn()] =
                 new TerminalCharacter(c, currentForegroundColor, currentBackgroundColor, currentlyBold);
@@ -174,7 +174,7 @@ public class SwingTerminal implements Terminal
             moveCursor(textPosition.getColumn() + 1, textPosition.getRow());
     }
 
-    public TerminalSize queryTerminalSize() throws LanternException
+    public TerminalSize queryTerminalSize() throws LanternaException
     {
         return terminalSize;
     }
@@ -184,7 +184,7 @@ public class SwingTerminal implements Terminal
         resizeListeners.remove(listener);
     }
 
-    public void hackSendFakeResize() throws LanternException
+    public void hackSendFakeResize() throws LanternaException
     {
         //Don't do this on Swing
     }
@@ -217,20 +217,20 @@ public class SwingTerminal implements Terminal
         }
     }
 
-    public void setCBreak(boolean cbreakOn) throws LanternException
+    public void setCBreak(boolean cbreakOn) throws LanternaException
     {
     }
 
-    public void setEcho(boolean echoOn) throws LanternException
+    public void setEcho(boolean echoOn) throws LanternaException
     {
     }
 
-    public Key readInput() throws LanternException
+    public Key readInput() throws LanternaException
     {
         return keyQueue.poll();
     }
 
-    public void flush() throws LanternException {
+    public void flush() throws LanternaException {
         //Not needed
     }
 

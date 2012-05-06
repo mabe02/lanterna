@@ -19,7 +19,7 @@
 
 package com.googlecode.lanterna.gui;
 
-import com.googlecode.lanterna.LanternException;
+import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 
@@ -29,7 +29,7 @@ import com.googlecode.lanterna.terminal.TerminalPosition;
  */
 public interface Interactable
 {
-    public void keyboardInteraction(Key key, InteractableResult result) throws LanternException;
+    public void keyboardInteraction(Key key, InteractableResult result) throws LanternaException;
     public void onEnterFocus(FocusChangeDirection direction);
     public void onLeaveFocus(FocusChangeDirection direction);
     public TerminalPosition getHotspot();

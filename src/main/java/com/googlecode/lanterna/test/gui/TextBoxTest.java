@@ -19,7 +19,7 @@
 
 package com.googlecode.lanterna.test.gui;
 
-import com.googlecode.lanterna.LanternException;
+import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.LanternTerminal;
 import com.googlecode.lanterna.gui.*;
 
@@ -29,7 +29,7 @@ import com.googlecode.lanterna.gui.*;
  */
 public class TextBoxTest
 {
-    public static void main(String[] args) throws LanternException
+    public static void main(String[] args) throws LanternaException
     {
         if(args.length > 0) {
             try {

@@ -19,7 +19,7 @@
 
 package com.googlecode.lanterna.gui.dialog;
 
-import com.googlecode.lanterna.LanternException;
+import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.gui.*;
 
 /**
@@ -69,13 +69,13 @@ public class TextInputDialog extends Window
     }
 
     public static String showTextInputBox(final GUIScreen owner, final String title,
-            final String description, final String initialText) throws LanternException
+            final String description, final String initialText) throws LanternaException
     {
         return showTextInputBox(owner, title, description, initialText, -1);
     }
 
     public static String showTextInputBox(final GUIScreen owner, final String title,
-            final String description, final String initialText, final int textBoxWidth) throws LanternException
+            final String description, final String initialText, final int textBoxWidth) throws LanternaException
     {
         final TextInputDialog textInputBox =
                 new TextInputDialog(new NormalTextBoxFactory(), title, description, initialText, textBoxWidth);
@@ -84,13 +84,13 @@ public class TextInputDialog extends Window
     }
 
     public static String showPasswordInputBox(final GUIScreen owner, final String title,
-            final String description, final String initialText) throws LanternException
+            final String description, final String initialText) throws LanternaException
     {
         return showPasswordInputBox(owner, title, description, initialText, -1);
     }
 
     public static String showPasswordInputBox(final GUIScreen owner, final String title,
-            final String description, final String initialText, final int textBoxWidth) throws LanternException
+            final String description, final String initialText, final int textBoxWidth) throws LanternaException
     {
         TextInputDialog textInputBox = new TextInputDialog(new PasswordTextBoxFactory(), title, description, initialText, textBoxWidth);
         owner.showWindow(textInputBox, GUIScreen.Position.CENTER);

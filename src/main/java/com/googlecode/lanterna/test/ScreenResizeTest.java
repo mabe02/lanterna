@@ -19,7 +19,7 @@
 
 package com.googlecode.lanterna.test;
 
-import com.googlecode.lanterna.LanternException;
+import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.LanternTerminal;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.ScreenWriter;
@@ -32,7 +32,7 @@ import com.googlecode.lanterna.terminal.TerminalPosition;
  */
 public class ScreenResizeTest
 {
-    public static void main(String[] args) throws LanternException, InterruptedException
+    public static void main(String[] args) throws LanternaException, InterruptedException
     {
         if(args.length > 0) {
             try {
@@ -49,7 +49,7 @@ public class ScreenResizeTest
     private Screen screen;
     private boolean willResize;
 
-    public ScreenResizeTest() throws LanternException, InterruptedException
+    public ScreenResizeTest() throws LanternaException, InterruptedException
     {
         this.willResize = false;
         this.lanternTerminal = new LanternTerminal();
@@ -75,7 +75,7 @@ public class ScreenResizeTest
         lanternTerminal.stopAndRestoreTerminal();
     }
 
-    private void drawStrings(String topTitle) throws LanternException
+    private void drawStrings(String topTitle) throws LanternaException
     {
         ScreenWriter writer = new ScreenWriter(screen);
         writer.setForegroundColor(Terminal.Color.DEFAULT);

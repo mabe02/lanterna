@@ -19,7 +19,7 @@
 
 package com.googlecode.lanterna.screen;
 
-import com.googlecode.lanterna.LanternException;
+import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.input.InputProvider;
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.terminal.Terminal;
@@ -49,7 +49,7 @@ public class Screen implements InputProvider
     //How to deal with \t characters
     private TabBehaviour tabBehaviour;
 
-    public Screen(Terminal terminal) throws LanternException
+    public Screen(Terminal terminal) throws LanternaException
     {
         this(terminal, terminal.queryTerminalSize());
     }
@@ -108,7 +108,7 @@ public class Screen implements InputProvider
         return tabBehaviour;
     }
     
-    public Key readInput() throws LanternException
+    public Key readInput() throws LanternaException
     {
         return terminal.readInput();
     }
@@ -120,12 +120,12 @@ public class Screen implements InputProvider
         }
     }
     
-    public void hackSendFakeResize() throws LanternException
+    public void hackSendFakeResize() throws LanternaException
     {
         terminal.hackSendFakeResize();
     }
 
-    public void startScreen() throws LanternException
+    public void startScreen() throws LanternaException
     {
         if(hasBeenActivated)
             return;
@@ -136,7 +136,7 @@ public class Screen implements InputProvider
         refresh();
     }
 
-    public void stopScreen() throws LanternException
+    public void stopScreen() throws LanternaException
     {
         if(!hasBeenActivated)
             return;
@@ -238,7 +238,7 @@ public class Screen implements InputProvider
         }
     }
 
-    public void refresh() throws LanternException
+    public void refresh() throws LanternaException
     {
         if(!hasBeenActivated)
             return;
@@ -352,12 +352,12 @@ public class Screen implements InputProvider
             currentlyIsBlinking = false;
         }
 
-        void setCursorPosition(int x, int y) throws LanternException
+        void setCursorPosition(int x, int y) throws LanternaException
         {
             terminal.moveCursor(x, y);
         }
 
-        void writeCharacter(ScreenCharacter character) throws LanternException
+        void writeCharacter(ScreenCharacter character) throws LanternaException
         {
             if (currentlyIsBlinking != character.isBlinking()) {
                 if (character.isBlinking()) {
@@ -417,7 +417,7 @@ public class Screen implements InputProvider
             terminal.putCharacter(character.getCharacter());
         }
 
-        void reset() throws LanternException
+        void reset() throws LanternaException
         {
             terminal.applySGR(Terminal.SGR.RESET_ALL);
             terminal.moveCursor(0, 0);

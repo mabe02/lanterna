@@ -19,7 +19,7 @@
 
 package com.googlecode.lanterna.gui.dialog;
 
-import com.googlecode.lanterna.LanternException;
+import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.gui.Border.Invisible;
 import com.googlecode.lanterna.gui.*;
 
@@ -56,7 +56,7 @@ public class ActionListDialog extends Window
                 return actionItem.getTitle();
             }
 
-            public void doAction() throws LanternException
+            public void doAction() throws LanternaException
             {
                 actionItem.doAction();
                 close();
@@ -64,7 +64,7 @@ public class ActionListDialog extends Window
         });
     }
 
-    public static void showActionListDialog(GUIScreen owner, String title, String description, ActionListBox.Item... items) throws LanternException
+    public static void showActionListDialog(GUIScreen owner, String title, String description, ActionListBox.Item... items) throws LanternaException
     {
         int maxLength = 0;
         for(ActionListBox.Item item: items)
@@ -74,7 +74,7 @@ public class ActionListDialog extends Window
         showActionListDialog(owner, title, description, maxLength, items);
     }
 
-    public static void showActionListDialog(GUIScreen owner, String title, String description, int itemWidth, ActionListBox.Item... items) throws LanternException
+    public static void showActionListDialog(GUIScreen owner, String title, String description, int itemWidth, ActionListBox.Item... items) throws LanternaException
     {
         ActionListDialog actionListDialog = new ActionListDialog(title, description, itemWidth);
         for(ActionListBox.Item item: items)

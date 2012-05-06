@@ -19,7 +19,7 @@
 
 package com.googlecode.lanterna.test;
 
-import com.googlecode.lanterna.LanternException;
+import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.LanternTerminal;
 import com.googlecode.lanterna.terminal.Terminal;
 
@@ -29,7 +29,7 @@ import com.googlecode.lanterna.terminal.Terminal;
  */
 public class RawTerminalTest
 {
-    public static void main(String[] args) throws LanternException, InterruptedException
+    public static void main(String[] args) throws LanternaException, InterruptedException
     {
         Terminal terminal = new LanternTerminal().getUnderlyingTerminal();
         terminal.enterPrivateMode();

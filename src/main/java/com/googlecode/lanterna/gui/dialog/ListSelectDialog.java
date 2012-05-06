@@ -19,7 +19,7 @@
 
 package com.googlecode.lanterna.gui.dialog;
 
-import com.googlecode.lanterna.LanternException;
+import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.gui.ActionListBox;
 import com.googlecode.lanterna.gui.GUIScreen;
 import java.util.ArrayList;
@@ -32,13 +32,13 @@ import java.util.List;
 public class ListSelectDialog
 {
     public static Object showDialog(final GUIScreen owner, final String title,
-            final String description, final Object... items) throws LanternException
+            final String description, final Object... items) throws LanternaException
     {
         return showDialog(owner, title, description, -1, items);
     }
 
     public static Object showDialog(final GUIScreen owner, final String title,
-            final String description, final int listWidth, final Object... items) throws LanternException
+            final String description, final int listWidth, final Object... items) throws LanternaException
     {
         final List<Object> result = new ArrayList<Object>();
         ActionListBox.Item []actionItems = new ActionListBox.Item[items.length];

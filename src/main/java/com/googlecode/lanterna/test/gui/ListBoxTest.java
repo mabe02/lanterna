@@ -19,7 +19,7 @@
 
 package com.googlecode.lanterna.test.gui;
 
-import com.googlecode.lanterna.LanternException;
+import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.LanternTerminal;
 import com.googlecode.lanterna.gui.*;
 import java.util.Random;
@@ -32,7 +32,7 @@ public class ListBoxTest
 {
     public static boolean cancelThread = false;
     
-    public static void main(String[] args) throws LanternException
+    public static void main(String[] args) throws LanternaException
     {
         if(args.length > 0) {
             try {
@@ -67,7 +67,7 @@ public class ListBoxTest
                     catch(InterruptedException e) {}
                     final Integer count = i + 1;
                     terminalGUIScreen.runInEventThread(new Action() {
-                        public void doAction() throws LanternException
+                        public void doAction() throws LanternaException
                         {
                             listBox.addItem("Item #" + count.intValue());
                         }

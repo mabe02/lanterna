@@ -19,7 +19,7 @@
 
 package com.googlecode.lanterna.gui;
 
-import com.googlecode.lanterna.LanternException;
+import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.gui.layout.SizePolicy;
 import com.googlecode.lanterna.gui.listener.ComponentAdapter;
 import com.googlecode.lanterna.gui.listener.ContainerListener;
@@ -193,7 +193,7 @@ public class Window implements Container
             return currentlyInFocus.getHotspot();
     }
 
-    public void onKeyPressed(Key key) throws LanternException
+    public void onKeyPressed(Key key) throws LanternaException
     {
         InteractableResult resultContainer = new InteractableResult();
 

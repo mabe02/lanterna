@@ -19,12 +19,12 @@
 
 package com.googlecode.lanterna.gui;
 
-import com.googlecode.lanterna.LanternException;
+import com.googlecode.lanterna.LanternaException;
 
 /**
  *
  * @author mabe02
  */
 public interface Action {
-    public void doAction() throws LanternException;
+    public void doAction() throws LanternaException;
 }

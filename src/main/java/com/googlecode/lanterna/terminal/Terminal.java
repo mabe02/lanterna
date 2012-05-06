@@ -19,7 +19,7 @@
 
 package com.googlecode.lanterna.terminal;
 
-import com.googlecode.lanterna.LanternException;
+import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.input.InputProvider;
 import com.googlecode.lanterna.input.KeyMappingProfile;
 
@@ -31,22 +31,22 @@ import com.googlecode.lanterna.input.KeyMappingProfile;
  */
 public interface Terminal extends InputProvider
 {
-    public void enterPrivateMode() throws LanternException;
-    public void exitPrivateMode() throws LanternException;
-    public void clearScreen() throws LanternException;
-    public void moveCursor(int x, int y) throws LanternException;
-    public void putCharacter(char c) throws LanternException;
-    public void applySGR(SGR... options) throws LanternException;
-    public void applyForegroundColor(Color color) throws LanternException;
-    public void applyBackgroundColor(Color color) throws LanternException;
-    public void setEcho(boolean echoOn) throws LanternException;
-    public void setCBreak(boolean cbreakOn) throws LanternException;
+    public void enterPrivateMode() throws LanternaException;
+    public void exitPrivateMode() throws LanternaException;
+    public void clearScreen() throws LanternaException;
+    public void moveCursor(int x, int y) throws LanternaException;
+    public void putCharacter(char c) throws LanternaException;
+    public void applySGR(SGR... options) throws LanternaException;
+    public void applyForegroundColor(Color color) throws LanternaException;
+    public void applyBackgroundColor(Color color) throws LanternaException;
+    public void setEcho(boolean echoOn) throws LanternaException;
+    public void setCBreak(boolean cbreakOn) throws LanternaException;
     public void addInputProfile(KeyMappingProfile profile);
     public void addResizeListener(ResizeListener listener);
     public void removeResizeListener(ResizeListener listener);
-    public void hackSendFakeResize() throws LanternException;
-    public TerminalSize queryTerminalSize() throws LanternException;
-    public void flush() throws LanternException;
+    public void hackSendFakeResize() throws LanternaException;
+    public TerminalSize queryTerminalSize() throws LanternaException;
+    public void flush() throws LanternaException;
 
     public enum SGR
     {

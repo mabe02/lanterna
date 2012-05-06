@@ -19,7 +19,7 @@
 
 package com.googlecode.lanterna.input;
 
-import com.googlecode.lanterna.LanternException;
+import com.googlecode.lanterna.LanternaException;
 
 
 /**
@@ -27,5 +27,5 @@ import com.googlecode.lanterna.LanternException;
  * @author mabe02
  */
 public interface InputProvider {
-    public Key readInput() throws LanternException;
+    public Key readInput() throws LanternaException;
 }

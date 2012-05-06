@@ -18,12 +18,12 @@
  */
 package com.googlecode.lanterna.terminal;
 
-import com.googlecode.lanterna.LanternException;
+import com.googlecode.lanterna.LanternaException;
 
 /**
  *
  * @author martin
  */
 public interface TerminalSizeQuerier {
-    TerminalSize queryTerminalSize() throws LanternException;
+    TerminalSize queryTerminalSize() throws LanternaException;
 }

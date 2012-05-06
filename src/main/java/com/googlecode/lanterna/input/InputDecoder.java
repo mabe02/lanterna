@@ -19,7 +19,7 @@
 
 package com.googlecode.lanterna.input;
 
-import com.googlecode.lanterna.LanternException;
+import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import java.io.IOException;
 import java.io.Reader;
@@ -60,7 +60,7 @@ public class InputDecoder
             bytePatterns.add(pattern);
     }
 
-    public Key getNextCharacter() throws LanternException
+    public Key getNextCharacter() throws LanternaException
     {
         if(leftOverQueue.size() > 0) {
             Character first = leftOverQueue.poll();
@@ -81,7 +81,7 @@ public class InputDecoder
             }
         }
         catch(IOException e) {
-            throw new LanternException(e);
+            throw new LanternaException(e);
         }
 
         if(inputBuffer.size() == 0)

@@ -19,7 +19,7 @@
 
 package com.googlecode.lanterna.gui;
 
-import com.googlecode.lanterna.LanternException;
+import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.gui.listener.WindowAdapter;
 import com.googlecode.lanterna.gui.theme.Theme;
 import com.googlecode.lanterna.input.Key;
@@ -79,7 +79,7 @@ public class GUIScreen
         return screen.getTerminalSize();
     }
     
-    private synchronized void repaint() throws LanternException
+    private synchronized void repaint() throws LanternaException
     {
         final TextGraphics textGraphics = new TextGraphics(new TerminalPosition(0, 0),
                 new TerminalSize(screen.getTerminalSize()), screen, guiTheme);
@@ -146,7 +146,7 @@ public class GUIScreen
         screen.refresh();
     }
 
-    private void update() throws LanternException
+    private void update() throws LanternaException
     {
         if(needsRefresh || !screen.verifySize()) {
             repaint();
@@ -167,7 +167,7 @@ public class GUIScreen
             return false;
     }
 
-    private void doEventLoop() throws LanternException
+    private void doEventLoop() throws LanternaException
     {
         int currentStackLength = windowStack.size();
         if(currentStackLength == 0)
@@ -202,12 +202,12 @@ public class GUIScreen
         }
     }
 
-    public void showWindow(Window window) throws LanternException
+    public void showWindow(Window window) throws LanternaException
     {
         showWindow(window, Position.OVERLAPPING);
     }
 
-    public void showWindow(Window window, Position position) throws LanternException
+    public void showWindow(Window window, Position position) throws LanternaException
     {
         if(window == null)
             return;

@@ -19,7 +19,7 @@
 
 package com.googlecode.lanterna.terminal;
 
-import com.googlecode.lanterna.LanternException;
+import com.googlecode.lanterna.LanternaException;
 import java.io.*;
 
 /**
@@ -28,7 +28,7 @@ import java.io.*;
  */
 class ShellCommand
 {
-    static String exec(String ...cmd) throws LanternException
+    static String exec(String ...cmd) throws LanternaException
     {
         try {
             ProcessBuilder pb = new ProcessBuilder(cmd);
@@ -50,7 +50,7 @@ class ShellCommand
             return builder.toString();
         }
         catch(IOException e) {
-            throw new LanternException(e);
+            throw new LanternaException(e);
         }
     }
 }

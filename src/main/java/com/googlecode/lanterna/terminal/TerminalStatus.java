@@ -19,7 +19,7 @@
 
 package com.googlecode.lanterna.terminal;
 
-import com.googlecode.lanterna.LanternException;
+import com.googlecode.lanterna.LanternaException;
 
 /**
  * This class used to do terminal size querying, but that's been removed now.
@@ -29,7 +29,7 @@ import com.googlecode.lanterna.LanternException;
  */
 class TerminalStatus
 {
-    static void setKeyEcho(final boolean enable) throws LanternException
+    static void setKeyEcho(final boolean enable) throws LanternaException
     {
         /*
         String tty = getTTY();
@@ -46,7 +46,7 @@ class TerminalStatus
  */
     }
 
-    static void setMinimumCharacterForRead(final int nrCharacters) throws LanternException
+    static void setMinimumCharacterForRead(final int nrCharacters) throws LanternaException
     {
         ShellCommand.exec("/bin/sh", "-c",
                             "/bin/stty min " + nrCharacters + " < /dev/tty");
@@ -62,7 +62,7 @@ class TerminalStatus
          */
     }
 
-    static void setCBreak(final boolean enable) throws LanternException
+    static void setCBreak(final boolean enable) throws LanternaException
     {
         //if("SunOS".equals(System.getProperty("os.name")))
             ShellCommand.exec("/bin/sh", "-c",

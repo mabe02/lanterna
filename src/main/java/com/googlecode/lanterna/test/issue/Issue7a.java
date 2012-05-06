@@ -19,7 +19,7 @@
 
 package com.googlecode.lanterna.test.issue;
 
-import com.googlecode.lanterna.LanternException;
+import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.LanternTerminal;
 import com.googlecode.lanterna.gui.*;
 
@@ -31,7 +31,7 @@ import com.googlecode.lanterna.gui.*;
  * @author Martin
  */
 public class Issue7a {
-    public static void main(String[] args) throws LanternException {
+    public static void main(String[] args) throws LanternaException {
         final LanternTerminal terminal = new LanternTerminal();
         terminal.start();
         final GUIScreen textGUI = terminal.getGUIScreen();

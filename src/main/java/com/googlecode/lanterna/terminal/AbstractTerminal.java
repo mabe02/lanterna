@@ -19,7 +19,7 @@
 
 package com.googlecode.lanterna.terminal;
 
-import com.googlecode.lanterna.LanternException;
+import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.input.InputDecoder;
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.input.KeyMappingProfile;
@@ -55,22 +55,22 @@ public abstract class AbstractTerminal implements Terminal
     }
 
     //Allow subclasses (that's susposted to know what they're doing) to write directly to the terminal
-    protected synchronized void writeToTerminal(final byte... bytes) throws LanternException
+    protected synchronized void writeToTerminal(final byte... bytes) throws LanternaException
     {
         try {
             terminalOutput.write(bytes);
         }
         catch(IOException e) {
-            throw new LanternException(e);
+            throw new LanternaException(e);
         }
     }
 
-    public void putCharacter(char c) throws LanternException
+    public void putCharacter(char c) throws LanternaException
     {
         writeToTerminal(translateCharacter(c));
     }
 
-    public Key readInput() throws LanternException
+    public Key readInput() throws LanternaException
     {
         Key key = inputDecoder.getNextCharacter();
         if(key != null && key.getKind() == Key.Kind.CursorLocation) {
@@ -95,12 +95,12 @@ public abstract class AbstractTerminal implements Terminal
         inputDecoder.addProfile(profile);
     }
 
-    public void setCBreak(boolean cbreakOn) throws LanternException
+    public void setCBreak(boolean cbreakOn) throws LanternaException
     {
         TerminalStatus.setCBreak(cbreakOn);
     }
 
-    public void setEcho(boolean echoOn) throws LanternException
+    public void setEcho(boolean echoOn) throws LanternaException
     {
         TerminalStatus.setKeyEcho(echoOn);
     }
@@ -117,21 +117,21 @@ public abstract class AbstractTerminal implements Terminal
             resizeListeners.remove(listener);
     }
     
-    public void hackSendFakeResize() throws LanternException
+    public void hackSendFakeResize() throws LanternaException
     {
         onResized();
     }
     
-    public void flush() throws LanternException {
+    public void flush() throws LanternaException {
         try {
             terminalOutput.flush();
         }
         catch(IOException e) {
-            throw new LanternException(e);
+            throw new LanternaException(e);
         }
     }
 
-    protected synchronized void onResized() throws LanternException
+    protected synchronized void onResized() throws LanternaException
     {
         TerminalSize size = queryTerminalSize();
         for(ResizeListener resizeListener: resizeListeners)

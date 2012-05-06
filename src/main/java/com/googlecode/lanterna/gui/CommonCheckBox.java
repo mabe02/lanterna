@@ -19,7 +19,7 @@
 
 package com.googlecode.lanterna.gui;
 
-import com.googlecode.lanterna.LanternException;
+import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.gui.theme.Theme.Category;
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.terminal.TerminalPosition;
@@ -68,7 +68,7 @@ public abstract class CommonCheckBox extends AbstractInteractableComponent
         setHotspot(graphics.translateToGlobalCoordinates(new TerminalPosition(1, 0)));
     }
 
-    public void keyboardInteraction(Key key, InteractableResult result) throws LanternException
+    public void keyboardInteraction(Key key, InteractableResult result) throws LanternaException
     {
         switch(key.getKind())
         {

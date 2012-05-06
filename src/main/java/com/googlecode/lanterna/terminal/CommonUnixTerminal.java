@@ -19,7 +19,7 @@
 
 package com.googlecode.lanterna.terminal;
 
-import com.googlecode.lanterna.LanternException;
+import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.input.GnomeTerminalProfile;
 import com.googlecode.lanterna.input.PuttyProfile;
 import java.io.InputStream;
@@ -61,13 +61,13 @@ public class CommonUnixTerminal extends CommonTerminal
                 try {
                     onResized();
                 }
-                catch(LanternException e) {
+                catch(LanternaException e) {
                 }
             }
         });
     }
 
-    public TerminalSize queryTerminalSize() throws LanternException
+    public TerminalSize queryTerminalSize() throws LanternaException
     {
         if(terminalSizeQuerier != null)
             return terminalSizeQuerier.queryTerminalSize();

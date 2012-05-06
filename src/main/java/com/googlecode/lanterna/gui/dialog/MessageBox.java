@@ -19,7 +19,7 @@
 
 package com.googlecode.lanterna.gui.dialog;
 
-import com.googlecode.lanterna.LanternException;
+import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.gui.*;
 
 /**
@@ -125,13 +125,13 @@ public class MessageBox extends Window
         }
     }
 
-    public static DialogResult showMessageBox(final GUIScreen owner, final String title, final String message) throws LanternException
+    public static DialogResult showMessageBox(final GUIScreen owner, final String title, final String message) throws LanternaException
     {
         return showMessageBox(owner, title, message, DialogButtons.OK);
     }
 
     public static DialogResult showMessageBox(final GUIScreen owner, final String title,
-            final String message, final DialogButtons buttons) throws LanternException
+            final String message, final DialogButtons buttons) throws LanternaException
     {
         MessageBox messageBox = new MessageBox(title, message, buttons);
         owner.showWindow(messageBox, GUIScreen.Position.CENTER);

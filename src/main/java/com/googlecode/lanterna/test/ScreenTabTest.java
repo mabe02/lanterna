@@ -19,7 +19,7 @@
 
 package com.googlecode.lanterna.test;
 
-import com.googlecode.lanterna.LanternException;
+import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.LanternTerminal;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.ScreenWriter;
@@ -33,7 +33,7 @@ import com.googlecode.lanterna.terminal.TerminalPosition;
  * @author martin
  */
 public class ScreenTabTest {
-    public static void main(String[] args) throws LanternException, InterruptedException
+    public static void main(String[] args) throws LanternaException, InterruptedException
     {
         new ScreenTabTest();
     }
@@ -41,7 +41,7 @@ public class ScreenTabTest {
     private LanternTerminal lanternTerminal;
     private Screen screen;
 
-    public ScreenTabTest() throws LanternException, InterruptedException
+    public ScreenTabTest() throws LanternaException, InterruptedException
     {
         this.lanternTerminal = new LanternTerminal(new TerminalFactory.Common());
         if (lanternTerminal == null) {
@@ -60,7 +60,7 @@ public class ScreenTabTest {
         lanternTerminal.stopAndRestoreTerminal();
     }
 
-    private void drawStrings(String topTitle) throws LanternException
+    private void drawStrings(String topTitle) throws LanternaException
     {
         ScreenWriter writer = new ScreenWriter(screen);
         writer.setForegroundColor(Terminal.Color.DEFAULT);

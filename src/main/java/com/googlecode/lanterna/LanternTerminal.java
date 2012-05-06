@@ -38,40 +38,40 @@ public class LanternTerminal
     private final Screen screen;
     private GUIScreen managedGUIScreen;
 
-    public LanternTerminal() throws LanternException
+    public LanternTerminal() throws LanternaException
     {
         this(DEFAULT_CHARSET);
     }
 
-    public LanternTerminal(Charset terminalCharset) throws LanternException
+    public LanternTerminal(Charset terminalCharset) throws LanternaException
     {
         this(new TerminalFactory.Default(), terminalCharset);
     }
 
-    public LanternTerminal(TerminalFactory terminalFactory) throws LanternException
+    public LanternTerminal(TerminalFactory terminalFactory) throws LanternaException
     {
         this(terminalFactory, DEFAULT_CHARSET);
     }
 
-    public LanternTerminal(TerminalFactory terminalFactory, Charset terminalCharset) throws LanternException
+    public LanternTerminal(TerminalFactory terminalFactory, Charset terminalCharset) throws LanternaException
     {
         this(terminalFactory, System.in, System.out, terminalCharset);
     }
 
     public LanternTerminal(TerminalFactory terminalFactory, InputStream terminalInput, 
-            OutputStream terminalOutput, Charset terminalCharset) throws LanternException
+            OutputStream terminalOutput, Charset terminalCharset) throws LanternaException
     {
         this.terminal = terminalFactory.createTerminal(terminalInput, terminalOutput, terminalCharset);
         this.screen = new Screen(terminal);
         this.managedGUIScreen = null;
     }
 
-    public void start() throws LanternException
+    public void start() throws LanternaException
     {
         screen.startScreen();
     }
 
-    public void stopAndRestoreTerminal() throws LanternException
+    public void stopAndRestoreTerminal() throws LanternaException
     {
         screen.stopScreen();
     }
@@ -86,7 +86,7 @@ public class LanternTerminal
         return screen;
     }
 
-    public void refreshScreen() throws LanternException
+    public void refreshScreen() throws LanternaException
     {
         screen.refresh();
     }

@@ -19,7 +19,7 @@
 
 package com.googlecode.lanterna.gui;
 
-import com.googlecode.lanterna.LanternException;
+import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.gui.theme.Theme;
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.terminal.ACS;
@@ -99,7 +99,7 @@ public class StaticTextArea  extends AbstractInteractableComponent
         }
     }
 
-    public void keyboardInteraction(Key key, InteractableResult result) throws LanternException
+    public void keyboardInteraction(Key key, InteractableResult result) throws LanternaException
     {
         switch(key.getKind()) {
             case Tab:

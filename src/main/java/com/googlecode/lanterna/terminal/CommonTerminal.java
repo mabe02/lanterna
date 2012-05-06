@@ -19,7 +19,7 @@
 
 package com.googlecode.lanterna.terminal;
 
-import com.googlecode.lanterna.LanternException;
+import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.input.CommonProfile;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -37,24 +37,24 @@ public abstract class CommonTerminal extends AbstractTerminal
         addInputProfile(new CommonProfile());
     }
 
-    private void CSI() throws LanternException
+    private void CSI() throws LanternaException
     {
         writeToTerminal((byte)0x1b, (byte)'[');
     }
 
-    public void applyBackgroundColor(Color color) throws LanternException
+    public void applyBackgroundColor(Color color) throws LanternaException
     {
         CSI();
         writeToTerminal((byte)'4', (byte)((color.getIndex() + "").charAt(0)), (byte)'m');
     }
 
-    public void applyForegroundColor(Color color) throws LanternException
+    public void applyForegroundColor(Color color) throws LanternaException
     {
         CSI();
         writeToTerminal((byte)'3', (byte)((color.getIndex() + "").charAt(0)), (byte)'m');
     }
 
-    public void applySGR(SGR... options) throws LanternException
+    public void applySGR(SGR... options) throws LanternaException
     {
         CSI();
         int index = 0;
@@ -91,13 +91,13 @@ public abstract class CommonTerminal extends AbstractTerminal
         writeToTerminal((byte)'m');
     }
 
-    public void clearScreen() throws LanternException
+    public void clearScreen() throws LanternaException
     {
         CSI();
         writeToTerminal((byte)'2', (byte)'J');
     }
 
-    public void enterPrivateMode() throws LanternException
+    public void enterPrivateMode() throws LanternaException
     {
         CSI();
         writeToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'4', (byte)'9', (byte)'h');
@@ -106,7 +106,7 @@ public abstract class CommonTerminal extends AbstractTerminal
         TerminalStatus.setMinimumCharacterForRead(1);
     }
 
-    public void exitPrivateMode() throws LanternException
+    public void exitPrivateMode() throws LanternaException
     {
         applySGR(SGR.RESET_ALL);
         CSI();
@@ -115,7 +115,7 @@ public abstract class CommonTerminal extends AbstractTerminal
         TerminalStatus.setKeyEcho(true);
     }
 
-    public void moveCursor(int x, int y) throws LanternException
+    public void moveCursor(int x, int y) throws LanternaException
     {
         CSI();
         writeToTerminal(((y+1) + "").getBytes());
@@ -124,19 +124,19 @@ public abstract class CommonTerminal extends AbstractTerminal
         writeToTerminal((byte)'H');
     }
 
-    public void reportPosition() throws LanternException
+    public void reportPosition() throws LanternaException
     {
         CSI();
         writeToTerminal("6n".getBytes());
     }
     
-    public void restoreCursorPosition() throws LanternException
+    public void restoreCursorPosition() throws LanternaException
     {
         CSI();
         writeToTerminal("u".getBytes());
     }
 
-    public void saveCursorPosition() throws LanternException
+    public void saveCursorPosition() throws LanternaException
     {
         CSI();
         writeToTerminal("s".getBytes());
