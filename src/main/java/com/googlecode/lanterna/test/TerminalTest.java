@@ -84,12 +84,6 @@ public class TerminalTest
             Thread.sleep(500);
         }
         catch(InterruptedException e) {}
-        writer.drawString(10, 10, "      world!");
-        screen.refresh();
-        try {
-            Thread.sleep(500);
-        }
-        catch(InterruptedException e) {}
         writer.drawString(10, 10, "       orld!");
         screen.refresh();
         try {
