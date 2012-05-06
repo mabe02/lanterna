@@ -63,7 +63,19 @@ public abstract class TerminalFactory
         }
         
         @Override
-        public Terminal createTerminal(InputStream terminalInput, OutputStream terminalOutput, Charset terminalCharset)
+        public Terminal createTerminal(
+                InputStream terminalInput, 
+                OutputStream terminalOutput, 
+                Charset terminalCharset)
+        {
+            return createTerminal(terminalInput, terminalOutput, terminalCharset, sizeQuerier);
+        }
+        
+        public Terminal createTerminal(
+                InputStream terminalInput, 
+                OutputStream terminalOutput, 
+                Charset terminalCharset,
+                UnixTerminalSizeQuerier sizeQuerier)
         {
             return new UnixTerminal(terminalInput, terminalOutput, terminalCharset, sizeQuerier);
         }
