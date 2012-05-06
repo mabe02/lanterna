@@ -21,7 +21,7 @@ package com.googlecode.lanterna.terminal;
 
 /**
  * Some text graphics, taken from http://en.wikipedia.org/wiki/Codepage_437
- * This is UTF-8 specific though...
+ * but converted to its UTF-8 counterpart.
  * @author martin
  */
 public class ACS {
