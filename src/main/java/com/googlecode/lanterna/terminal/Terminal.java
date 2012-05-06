@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright (C) 2010-2012 mabe02
+ * Copyright (C) 2010-2012 Martin
  */
 
 package com.googlecode.lanterna.terminal;
@@ -26,7 +26,7 @@ import com.googlecode.lanterna.input.InputProvider;
  * This is the main terminal interface, at the lowest level supported by Lanterna.
  * You can implement your own implementation of this if you want to target an
  * exotic text terminal specification or another graphical environment (like SWT).
- * @author mabe02
+ * @author Martin
  */
 public interface Terminal extends InputProvider
 {

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright (C) 2010-2012 mabe02
+ * Copyright (C) 2010-2012 Martin
  */
 
 package com.googlecode.lanterna.terminal.text;
@@ -31,7 +31,7 @@ import sun.misc.SignalHandler;
 /**
  * A common ANSI terminal extention with support for Unix resize signals and 
  * the stty program to control cbreak and key echo
- * @author mabe02
+ * @author Martin
  */
 public class UnixTerminal extends ANSITerminal
 {

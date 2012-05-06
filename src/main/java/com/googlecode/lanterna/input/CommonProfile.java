@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright (C) 2010-2012 mabe02
+ * Copyright (C) 2010-2012 Martin
  */
 
 package com.googlecode.lanterna.input;
@@ -26,7 +26,7 @@ import java.util.List;
 
 /**
  * Common key press profiles that seems to be shared by most terminals/terminal emulators.
- * @author mabe02
+ * @author Martin
  */
 public class CommonProfile extends KeyMappingProfile
 {

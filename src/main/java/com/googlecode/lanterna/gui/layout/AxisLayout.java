@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright (C) 2010-2012 mabe02
+ * Copyright (C) 2010-2012 Martin
  */
 
 package com.googlecode.lanterna.gui.layout;
@@ -28,7 +28,7 @@ import java.util.List;
 
 /**
  *
- * @author mabe02
+ * @author Martin
  */
 public abstract class AxisLayout implements LanternLayout
 {

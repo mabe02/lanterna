@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright (C) 2010-2012 mabe02
+ * Copyright (C) 2010-2012 Martin
  */
 
 package com.googlecode.lanterna;
@@ -28,7 +28,7 @@ import java.io.PrintWriter;
  * wrapping IOException:s. These IOException are quite rare and comes from
  * problems with stdin or stdout normally, so it is a RuntimeException since
  * Lanterna 2.0.
- * @author mabe02
+ * @author Martin
  */
 public class LanternaException extends RuntimeException {
     private IOException cause;

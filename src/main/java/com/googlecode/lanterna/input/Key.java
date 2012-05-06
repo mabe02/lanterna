@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright (C) 2010-2012 mabe02
+ * Copyright (C) 2010-2012 Martin
  */
 
 package com.googlecode.lanterna.input;
@@ -24,7 +24,7 @@ package com.googlecode.lanterna.input;
  * key or any special key. Currently the function keys F1 - F12 are not implemented.
  * Also, sorry if the special keys are sort of european-language centered, that's
  * unfortunately the only keyboard I have to test this with.
- * @author mabe02
+ * @author Martin
  */
 public class Key
 {
