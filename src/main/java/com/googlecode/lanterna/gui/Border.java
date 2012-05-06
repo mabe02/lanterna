@@ -21,7 +21,6 @@ package com.googlecode.lanterna.gui;
 
 import com.googlecode.lanterna.gui.theme.Theme;
 import com.googlecode.lanterna.terminal.ACS;
-import com.googlecode.lanterna.terminal.Terminal.Color;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 
@@ -38,28 +37,17 @@ public abstract class Border
 
     public static class Standard extends Border
     {
-        private Color foreground;
-        private Color background;
 
         public Standard() {
-            this.foreground = Color.DEFAULT;
-            this.background = Color.DEFAULT;
-        }
-
-        public Standard(Color foreground, Color background) {
-            this.foreground = foreground;
-            this.background = background;
         }
 
         @Override
         public void drawBorder(TextGraphics graphics, TerminalSize actualSize, String title)
         {
-            graphics.setForegroundColor(foreground);
-            graphics.setBackgroundColor(background);
-            graphics.setBoldMask(false);
+            graphics.applyThemeItem(graphics.getTheme().getItem(Theme.Category.Border));
             final int width = actualSize.getColumns();
             final int height = actualSize.getRows();
-
+            
             //Top
             graphics.drawString(0, 0, ACS.ULCORNER + "");     
             for(int x = 1; x < width - 1; x++)
@@ -127,12 +115,12 @@ public abstract class Border
             final Theme.Item lowerRight;
 
             if(raised) {
-                upperLeft = graphics.getTheme().getItem(Theme.Category.Border);
-                lowerRight = graphics.getTheme().getItem(Theme.Category.DefaultDialog);
+                upperLeft = graphics.getTheme().getItem(Theme.Category.RaisedBorder);
+                lowerRight = graphics.getTheme().getItem(Theme.Category.Border);
             }
             else {
-                upperLeft = graphics.getTheme().getItem(Theme.Category.DefaultDialog);
-                lowerRight = graphics.getTheme().getItem(Theme.Category.Border);
+                upperLeft = graphics.getTheme().getItem(Theme.Category.Border);
+                lowerRight = graphics.getTheme().getItem(Theme.Category.RaisedBorder);
             }
 
             //Top

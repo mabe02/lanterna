@@ -53,6 +53,11 @@ public class Theme
 
     protected Item getBorder()
     {
+        return new Item(Color.BLACK, Color.WHITE, true);
+    }
+
+    protected Item getRaisedBorder()
+    {
         return new Item(Color.WHITE, Color.WHITE, true);
     }
 
@@ -121,6 +126,8 @@ public class Theme
                 return getScreenBackground();
             case Shadow:
                 return getShadow();
+            case RaisedBorder:
+                return getRaisedBorder();
             case Border:
                 return getBorder();
             case ButtonLabelActive:
@@ -152,6 +159,7 @@ public class Theme
         DefaultDialog,
         ScreenBackground,
         Shadow,
+        RaisedBorder,
         Border,
         ButtonActive,
         ButtonInactive,
