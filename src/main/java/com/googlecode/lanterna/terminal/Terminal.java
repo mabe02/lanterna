@@ -24,7 +24,7 @@ import com.googlecode.lanterna.input.InputProvider;
 import com.googlecode.lanterna.input.KeyMappingProfile;
 
 /**
- * This is the main terminal interface, at the lowest level supported by Lantern.
+ * This is the main terminal interface, at the lowest level supported by Lanterna.
  * You can implement your own implementation of this if you want to target an
  * exotic text terminal specification or another graphical environment (like SWT).
  * @author mabe02
@@ -44,7 +44,6 @@ public interface Terminal extends InputProvider
     public void addInputProfile(KeyMappingProfile profile);
     public void addResizeListener(ResizeListener listener);
     public void removeResizeListener(ResizeListener listener);
-    public void hackSendFakeResize() throws LanternaException;
     public TerminalSize queryTerminalSize() throws LanternaException;
     public void flush() throws LanternaException;
 
