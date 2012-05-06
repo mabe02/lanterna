@@ -19,6 +19,7 @@
 
 package com.googlecode.lanterna.terminal;
 
+import com.googlecode.lanterna.terminal.text.UnixTerminal;
 import com.googlecode.lanterna.terminal.swing.SwingTerminal;
 import java.awt.GraphicsEnvironment;
 import java.io.InputStream;
@@ -63,7 +64,7 @@ public abstract class TerminalFactory
         @Override
         public Terminal createTerminal(InputStream terminalInput, OutputStream terminalOutput, Charset terminalCharset)
         {
-            return new CommonUnixTerminal(terminalInput, terminalOutput, terminalCharset, sizeQuerier);
+            return new UnixTerminal(terminalInput, terminalOutput, terminalCharset, sizeQuerier);
         }
 
         public void setSizeQuerier(TerminalSizeQuerier sizeQuerier) {
