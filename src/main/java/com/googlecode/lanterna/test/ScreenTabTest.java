@@ -22,6 +22,7 @@ package com.googlecode.lanterna.test;
 import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.LanternTerminal;
 import com.googlecode.lanterna.screen.Screen;
+import com.googlecode.lanterna.screen.ScreenCharacterStyle;
 import com.googlecode.lanterna.screen.ScreenWriter;
 import com.googlecode.lanterna.screen.TabBehaviour;
 import com.googlecode.lanterna.terminal.Terminal;
@@ -69,7 +70,7 @@ public class ScreenTabTest {
 
         writer.setForegroundColor(Terminal.Color.DEFAULT);
         writer.setBackgroundColor(Terminal.Color.DEFAULT);
-        writer.drawString(0, 0, topTitle, Terminal.Style.Blinking);
+        writer.drawString(0, 0, topTitle, ScreenCharacterStyle.Blinking);
         screen.setTabBehaviour(TabBehaviour.CONVERT_TO_ONE_SPACE);
         writer.drawString(10, 1, "Four tabs: |\t|\t|\t|\t|");
         screen.setTabBehaviour(TabBehaviour.CONVERT_TO_FOUR_SPACES);

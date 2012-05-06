@@ -23,7 +23,7 @@ import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.Terminal.Color;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.Set;
 
 /**
@@ -89,15 +89,17 @@ public class ScreenWriter
         }
     }
 
-    public void drawString(final int x, final int y, final String string, final Terminal.Style... styles)
+    public void drawString(final int x, final int y, final String string, final ScreenCharacterStyle... styles)
     {
         currentPosition.setColumn(x);
         currentPosition.setRow(y);
 
-        final Set<Terminal.Style> drawStyle = new HashSet<Terminal.Style>(Arrays.asList(styles));
+        Set<ScreenCharacterStyle> drawStyle = EnumSet.noneOf(ScreenCharacterStyle.class);
+        drawStyle.addAll(Arrays.asList(styles));
+        
         targetScreen.putString(x, y, string, foregroundColor, backgroundColor,
-                drawStyle.contains(Terminal.Style.Bold), drawStyle.contains(Terminal.Style.Underline),
-                drawStyle.contains(Terminal.Style.Reverse));
+                drawStyle.contains(ScreenCharacterStyle.Bold), drawStyle.contains(ScreenCharacterStyle.Underline),
+                drawStyle.contains(ScreenCharacterStyle.Reverse));
         currentPosition.setColumn(currentPosition.getColumn() + string.length());
     }
 

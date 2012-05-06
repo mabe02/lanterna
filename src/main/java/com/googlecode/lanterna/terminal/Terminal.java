@@ -21,7 +21,6 @@ package com.googlecode.lanterna.terminal;
 
 import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.input.InputProvider;
-import com.googlecode.lanterna.input.KeyMappingProfile;
 
 /**
  * This is the main terminal interface, at the lowest level supported by Lanterna.
@@ -202,14 +201,6 @@ public interface Terminal extends InputProvider
         public int getIndex() {
             return index;
         }
-    }
-
-    public enum Style
-    {
-        Bold, 
-        Underline, 
-        Reverse, 
-        Blinking
     }
 
     /**

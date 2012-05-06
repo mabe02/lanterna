@@ -20,6 +20,8 @@
 package com.googlecode.lanterna.screen;
 
 import com.googlecode.lanterna.terminal.Terminal;
+import java.util.EnumSet;
+import java.util.Set;
 
 /**
  *
@@ -32,21 +34,30 @@ class ScreenCharacter
     private final Terminal.Color backgroundColor;
     private final boolean bold;
     private final boolean underline;
-    private final boolean negative;
+    private final boolean reverse;
     private final boolean blinking;
-
-    ScreenCharacter(final char character, final Terminal.Color foregroundColor, final Terminal.Color backgroundColor, boolean bold) {
-        this(character, foregroundColor, backgroundColor, bold, false, false);
-    }
-
-    ScreenCharacter(final char character, Terminal.Color foregroundColor, Terminal.Color backgroundColor,
-            final boolean bold, final boolean underline, final boolean negative) {
-    	this(character, foregroundColor, backgroundColor, bold, underline, negative, false);
-        
+    
+    ScreenCharacter(char character) {
+        this(character, Terminal.Color.DEFAULT, Terminal.Color.DEFAULT);
     }
     
-    ScreenCharacter(final char character, Terminal.Color foregroundColor, Terminal.Color backgroundColor,
-        final boolean bold, final boolean underline, final boolean negative, final boolean blinking) {
+    ScreenCharacter(
+            char character, 
+            Terminal.Color foregroundColor, 
+            Terminal.Color backgroundColor) {
+        this(character, foregroundColor, backgroundColor, EnumSet.noneOf(ScreenCharacterStyle.class));
+    }
+    
+    /**
+     * Warning, this class has another independent constructor too! If you change 
+     * this constructor, please check the other one to make sure you're not missing 
+     * anything!
+     */
+    ScreenCharacter(
+            char character, 
+            Terminal.Color foregroundColor, 
+            Terminal.Color backgroundColor,
+            Set<ScreenCharacterStyle> style) {
     	if(foregroundColor == null)
             foregroundColor = Terminal.Color.DEFAULT;
         if(backgroundColor == null)
@@ -55,15 +66,25 @@ class ScreenCharacter
         this.character = character;
         this.foregroundColor = foregroundColor;
         this.backgroundColor = backgroundColor;
-        this.bold = bold;
-        this.underline = underline;
-        this.negative = negative;
-        this.blinking = blinking;
+        this.bold = style.contains(ScreenCharacterStyle.Bold);
+        this.underline = style.contains(ScreenCharacterStyle.Underline);
+        this.reverse = style.contains(ScreenCharacterStyle.Reverse);
+        this.blinking = style.contains(ScreenCharacterStyle.Blinking);
     }
 
+    /**
+     * Warning, this class has another independent constructor too! If you change 
+     * this constructor, please check the other one to make sure you're not missing 
+     * anything!
+     */
     ScreenCharacter(final ScreenCharacter character) {
-        this(character.getCharacter(), character.getForegroundColor(), character.getBackgroundColor(),
-                character.isBold(), character.isUnderline(), character.isNegative(), character.isBlinking());
+        this.character = character.character;
+        this.foregroundColor = character.foregroundColor;
+        this.backgroundColor = character.backgroundColor;
+        this.bold = character.bold;
+        this.underline = character.underline;
+        this.reverse = character.reverse;
+        this.blinking = character.blinking;
     }
 
     char getCharacter() {
@@ -83,7 +104,7 @@ class ScreenCharacter
     }
 
     boolean isNegative() {
-        return negative;
+        return reverse;
     }
 
     boolean isUnderline() {

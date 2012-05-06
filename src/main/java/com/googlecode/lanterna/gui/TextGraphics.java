@@ -21,6 +21,7 @@ package com.googlecode.lanterna.gui;
 
 import com.googlecode.lanterna.gui.theme.Theme;
 import com.googlecode.lanterna.screen.Screen;
+import com.googlecode.lanterna.screen.ScreenCharacterStyle;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.Terminal.Color;
 import com.googlecode.lanterna.terminal.TerminalPosition;
@@ -89,7 +90,7 @@ public class TextGraphics
         return new TextGraphics(this, topLeft, subAreaSize);
     }
 
-    public void drawString(int column, int row, String string, Terminal.Style... styles)
+    public void drawString(int column, int row, String string, ScreenCharacterStyle... styles)
     {
         if(column >= areaSize.getColumns() || row >= areaSize.getRows() || string == null)
             return;
@@ -100,12 +101,12 @@ public class TextGraphics
         if(string.length() + column > areaSize.getColumns())
             string = string.substring(0, areaSize.getColumns() - column);
 
-        EnumSet<Terminal.Style> stylesSet = EnumSet.noneOf(Terminal.Style.class);
+        EnumSet<ScreenCharacterStyle> stylesSet = EnumSet.noneOf(ScreenCharacterStyle.class);
         if(styles != null && styles.length != 0)
             stylesSet = EnumSet.copyOf(Arrays.asList(styles));
         
         if(currentlyBold)
-            stylesSet.add(Terminal.Style.Bold);
+            stylesSet.add(ScreenCharacterStyle.Bold);
 
         screen.putString(column + topLeft.getColumn(), row + topLeft.getRow(), string,
                 foregroundColor, backgroundColor, stylesSet);

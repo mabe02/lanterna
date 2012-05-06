@@ -22,7 +22,6 @@ package com.googlecode.lanterna.screen;
 import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.terminal.Terminal;
-import com.googlecode.lanterna.terminal.Terminal.Style;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import java.util.*;
@@ -47,7 +46,7 @@ public class Screen
     
     //How to deal with \t characters
     private TabBehaviour tabBehaviour;
-
+    
     public Screen(Terminal terminal) throws LanternaException
     {
         this(terminal, terminal.queryTerminalSize());
@@ -73,7 +72,7 @@ public class Screen
 
         this.terminal.addResizeListener(new TerminalResizeListener());
 
-        ScreenCharacter background = new ScreenCharacter(new ScreenCharacter(' ', Terminal.Color.DEFAULT, Terminal.Color.DEFAULT, false));
+        ScreenCharacter background = new ScreenCharacter(new ScreenCharacter(' '));
         for(int y = 0; y < terminalHeight; y++) {
             for(int x = 0; x < terminalWidth; x++) {
                 visibleScreen[y][x] = new ScreenCharacter(background);
@@ -140,22 +139,29 @@ public class Screen
     }
 
     public void putString(int x, int y, String string, Terminal.Color foregroundColor,
-            Terminal.Color backgroundColor, boolean bold, boolean underline, boolean negative)
+            Terminal.Color backgroundColor, boolean bold, boolean underline, boolean reverse)
     {
-        putString(x, y, string, foregroundColor, backgroundColor, bold, underline, negative, false);
+        putString(x, y, string, foregroundColor, backgroundColor, bold, underline, reverse, false);
     }
     
     public void putString(int x, int y, String string, Terminal.Color foregroundColor,
-            Terminal.Color backgroundColor, EnumSet<Terminal.Style> styles)
+        Terminal.Color backgroundColor, boolean bold, boolean underline, boolean reverse, boolean blinking)
     {
-    	putString(x, y, string, foregroundColor, backgroundColor,
-    		styles.contains(Style.Bold), styles.contains(Style.Underline),
-    		styles.contains(Style.Reverse), styles.contains(Style.Blinking));
+        Set<ScreenCharacterStyle> styles = EnumSet.noneOf(ScreenCharacterStyle.class);
+        if(bold)
+            styles.add(ScreenCharacterStyle.Bold);
+        if(underline)
+            styles.add(ScreenCharacterStyle.Underline);
+        if(reverse)
+            styles.add(ScreenCharacterStyle.Reverse);
+        if(blinking)
+            styles.add(ScreenCharacterStyle.Blinking);
+        putString(x, y, string, foregroundColor, backgroundColor, styles);
     }
     
     public void putString(int x, int y, String string, Terminal.Color foregroundColor,
-        Terminal.Color backgroundColor, boolean bold, boolean underline, boolean negative, boolean blinking)
-    {
+            Terminal.Color backgroundColor, Set<ScreenCharacterStyle> styles)
+    {    
     	int tabPosition = string.indexOf('\t');
         while(tabPosition != -1) {
             int tabX = x + tabPosition;
@@ -170,10 +176,7 @@ public class Screen
                         new ScreenCharacter(string.charAt(i), 
                                             foregroundColor, 
                                             backgroundColor,
-                                            bold, 
-                                            underline, 
-                                            negative, 
-                                            blinking));
+                                            styles));
     }
 
     void putCharacter(int x, int y, ScreenCharacter character)
@@ -207,7 +210,7 @@ public class Screen
             int width = newSize.getColumns();
             ScreenCharacter [][]newBackBuffer = new ScreenCharacter[height][width];
             ScreenCharacter [][]newVisibleScreen = new ScreenCharacter[height][width];
-            ScreenCharacter newAreaCharacter = new ScreenCharacter('X', Terminal.Color.GREEN, Terminal.Color.BLACK, false);
+            ScreenCharacter newAreaCharacter = new ScreenCharacter('X', Terminal.Color.GREEN, Terminal.Color.BLACK);
             for(int y = 0; y < height; y++)
             {
                 for(int x = 0; x < width; x++)
