@@ -167,6 +167,11 @@ public interface Terminal extends InputProvider
          * Removes any code SGR code currently enabled
          */
         RESET_ALL,
+        
+        /**
+         * Please note that on some terminal implementations, instead of making
+         * the text bold, it will draw the text in a slightly different color
+         */
         ENTER_BOLD,
         ENTER_REVERSE,
         ENTER_UNDERLINE,
