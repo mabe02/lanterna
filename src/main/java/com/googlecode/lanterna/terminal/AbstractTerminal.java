@@ -50,11 +50,14 @@ public abstract class AbstractTerminal implements Terminal
             resizeListeners.remove(listener);
     }
 
-    protected synchronized void onResized(TerminalSize newSize)
-    {
-    }
-
-    protected void onResized(int columns, int rows) 
+    /**
+     * Call this method when the terminal has been resized or the initial size
+     * of the terminal has been discovered. It will trigger all resize listeners,
+     * but only if the size has changed from before.
+     * @param columns
+     * @param rows 
+     */
+    protected synchronized void onResized(int columns, int rows) 
     {
         TerminalSize newSize = new TerminalSize(columns, rows);
         if(lastKnownSize == null || !lastKnownSize.equals(newSize)) {
@@ -64,6 +67,9 @@ public abstract class AbstractTerminal implements Terminal
         }
     }
     
+    /**
+     * Used internally to get the last size known to the terminal
+     */
     protected TerminalSize getLastKnownSize() 
     {
         return lastKnownSize;
