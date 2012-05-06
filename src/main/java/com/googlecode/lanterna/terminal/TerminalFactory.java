@@ -19,6 +19,7 @@
 
 package com.googlecode.lanterna.terminal;
 
+import com.googlecode.lanterna.terminal.swing.SwingTerminal;
 import java.awt.GraphicsEnvironment;
 import java.io.InputStream;
 import java.io.OutputStream;

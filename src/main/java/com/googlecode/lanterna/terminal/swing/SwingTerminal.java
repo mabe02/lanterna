@@ -17,11 +17,14 @@
  * Copyright (C) 2010-2012 mabe02
  */
 
-package com.googlecode.lanterna.terminal;
+package com.googlecode.lanterna.terminal.swing;
 
 import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.input.KeyMappingProfile;
+import com.googlecode.lanterna.terminal.Terminal;
+import com.googlecode.lanterna.terminal.TerminalPosition;
+import com.googlecode.lanterna.terminal.TerminalSize;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
