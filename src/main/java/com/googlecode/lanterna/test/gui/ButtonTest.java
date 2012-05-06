@@ -19,8 +19,8 @@
 
 package com.googlecode.lanterna.test.gui;
 
-import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.LanternTerminal;
+import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.gui.*;
 import com.googlecode.lanterna.gui.theme.Theme.Category;
 import com.googlecode.lanterna.terminal.TerminalSize;
@@ -51,7 +51,7 @@ public class ButtonTest
         terminal.start();
         terminalGUIScreen.setTitle("GUI Test");
 
-        final Window mainWindow = new Window("Ett fönster med paneler");
+        final Window mainWindow = new Window("Window with panels");
         mainWindow.addComponent(new AbstractComponent() {
             public void repaint(TextGraphics graphics)
             {
