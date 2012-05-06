@@ -19,8 +19,8 @@
 
 package com.googlecode.lanterna.test.gui;
 
-import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.LanternTerminal;
+import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.gui.*;
 
 /**
