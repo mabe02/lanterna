@@ -16,23 +16,15 @@
  * 
  * Copyright (C) 2010-2012 mabe02
  */
-
-package com.googlecode.lanterna.terminal;
+package com.googlecode.lanterna.terminal.text;
 
 import com.googlecode.lanterna.LanternaException;
+import com.googlecode.lanterna.terminal.TerminalSize;
 
 /**
  *
  * @author martin
  */
-public class FixedTerminalSizeProvider implements TerminalSizeQuerier {
-    private final TerminalSize size;
-
-    public FixedTerminalSizeProvider(TerminalSize size) {
-        this.size = size;
-    }
-
-    public TerminalSize queryTerminalSize() throws LanternaException {
-        return size;
-    }
+public interface TerminalSizeQuerier {
+    TerminalSize queryTerminalSize() throws LanternaException;
 }

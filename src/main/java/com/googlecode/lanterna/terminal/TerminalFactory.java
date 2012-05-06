@@ -19,6 +19,7 @@
 
 package com.googlecode.lanterna.terminal;
 
+import com.googlecode.lanterna.terminal.text.TerminalSizeQuerier;
 import com.googlecode.lanterna.terminal.text.UnixTerminal;
 import com.googlecode.lanterna.terminal.swing.SwingTerminal;
 import java.awt.GraphicsEnvironment;
