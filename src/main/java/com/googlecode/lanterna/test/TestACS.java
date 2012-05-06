@@ -22,7 +22,8 @@ package com.googlecode.lanterna.test;
 import com.googlecode.lanterna.terminal.ACS;
 
 /**
- *
+ * This program will print all ACS symbols to standard out, it's a good test
+ * to see if your terminal emulator supports these UTF-8 characters or not.
  * @author Martin
  */
 public class TestACS
