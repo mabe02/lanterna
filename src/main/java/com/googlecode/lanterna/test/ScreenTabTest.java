@@ -21,11 +21,11 @@ package com.googlecode.lanterna.test;
 
 import com.googlecode.lanterna.LanternException;
 import com.googlecode.lanterna.LanternTerminal;
-import com.googlecode.lanterna.terminal.TerminalFactory;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.ScreenWriter;
 import com.googlecode.lanterna.screen.TabBehaviour;
 import com.googlecode.lanterna.terminal.Terminal;
+import com.googlecode.lanterna.terminal.TerminalFactory;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 
 /**

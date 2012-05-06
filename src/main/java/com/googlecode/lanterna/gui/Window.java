@@ -19,8 +19,6 @@
 
 package com.googlecode.lanterna.gui;
 
-import java.util.ArrayList;
-import java.util.List;
 import com.googlecode.lanterna.LanternException;
 import com.googlecode.lanterna.gui.layout.SizePolicy;
 import com.googlecode.lanterna.gui.listener.ComponentAdapter;
@@ -30,6 +28,8 @@ import com.googlecode.lanterna.gui.theme.Theme.Category;
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *

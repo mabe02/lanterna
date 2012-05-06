@@ -19,20 +19,10 @@
 
 package com.googlecode.lanterna.test.gui;
 
-import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import com.googlecode.lanterna.LanternException;
 import com.googlecode.lanterna.LanternTerminal;
-import com.googlecode.lanterna.terminal.TerminalFactory;
-import com.googlecode.lanterna.gui.Action;
-import com.googlecode.lanterna.gui.Border;
-import com.googlecode.lanterna.gui.Button;
-import com.googlecode.lanterna.gui.EmptySpace;
-import com.googlecode.lanterna.gui.GUIScreen;
-import com.googlecode.lanterna.gui.ListBox;
-import com.googlecode.lanterna.gui.Panel;
-import com.googlecode.lanterna.gui.Window;
+import com.googlecode.lanterna.gui.*;
+import java.util.Random;
 
 /**
  *

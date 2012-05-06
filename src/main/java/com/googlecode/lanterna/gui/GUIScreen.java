@@ -19,17 +19,17 @@
 
 package com.googlecode.lanterna.gui;
 
-import java.util.ArrayList;
-import com.googlecode.lanterna.gui.theme.Theme;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
 import com.googlecode.lanterna.LanternException;
 import com.googlecode.lanterna.gui.listener.WindowAdapter;
+import com.googlecode.lanterna.gui.theme.Theme;
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 
 /**
  *

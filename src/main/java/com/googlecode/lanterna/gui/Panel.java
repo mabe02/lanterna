@@ -19,14 +19,13 @@
 
 package com.googlecode.lanterna.gui;
 
-import java.util.List;
 import com.googlecode.lanterna.gui.layout.HorisontalLayout;
 import com.googlecode.lanterna.gui.layout.LanternLayout;
 import com.googlecode.lanterna.gui.layout.SizePolicy;
 import com.googlecode.lanterna.gui.layout.VerticalLayout;
-import com.googlecode.lanterna.gui.theme.Theme.Category;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
+import java.util.List;
 
 /**
  *

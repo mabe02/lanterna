@@ -19,10 +19,10 @@
 
 package com.googlecode.lanterna.gui;
 
+import com.googlecode.lanterna.terminal.TerminalSize;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import com.googlecode.lanterna.terminal.TerminalSize;
 
 /**
  *

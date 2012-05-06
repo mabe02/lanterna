@@ -19,12 +19,6 @@
 
 package com.googlecode.lanterna.screen;
 
-import java.util.Comparator;
-import java.util.EnumSet;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.TreeMap;
-
 import com.googlecode.lanterna.LanternException;
 import com.googlecode.lanterna.input.InputProvider;
 import com.googlecode.lanterna.input.Key;
@@ -32,6 +26,7 @@ import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.Terminal.Style;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
+import java.util.*;
 
 /**
  * A layer to put on top of a Terminal object, giving you a kind of screen buffer

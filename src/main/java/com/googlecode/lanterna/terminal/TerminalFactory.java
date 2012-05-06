@@ -19,10 +19,6 @@
 
 package com.googlecode.lanterna.terminal;
 
-import com.googlecode.lanterna.terminal.CommonUnixTerminal;
-import com.googlecode.lanterna.terminal.SwingTerminal;
-import com.googlecode.lanterna.terminal.Terminal;
-import com.googlecode.lanterna.terminal.TerminalSizeQuerier;
 import java.awt.GraphicsEnvironment;
 import java.io.InputStream;
 import java.io.OutputStream;

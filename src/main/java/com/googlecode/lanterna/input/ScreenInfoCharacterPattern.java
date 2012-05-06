@@ -19,10 +19,10 @@
 
 package com.googlecode.lanterna.input;
 
+import com.googlecode.lanterna.terminal.TerminalPosition;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import com.googlecode.lanterna.terminal.TerminalPosition;
 
 /**
  *

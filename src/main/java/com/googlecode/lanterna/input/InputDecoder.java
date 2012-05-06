@@ -19,16 +19,11 @@
 
 package com.googlecode.lanterna.input;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
-import java.util.Set;
 import com.googlecode.lanterna.LanternException;
 import com.googlecode.lanterna.terminal.TerminalPosition;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.*;
 
 /**
  *

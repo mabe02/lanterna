@@ -20,14 +20,8 @@
 package com.googlecode.lanterna.gui.dialog;
 
 import com.googlecode.lanterna.LanternException;
-import com.googlecode.lanterna.gui.Action;
-import com.googlecode.lanterna.gui.ActionListBox;
 import com.googlecode.lanterna.gui.Border.Invisible;
-import com.googlecode.lanterna.gui.Button;
-import com.googlecode.lanterna.gui.GUIScreen;
-import com.googlecode.lanterna.gui.Label;
-import com.googlecode.lanterna.gui.Panel;
-import com.googlecode.lanterna.gui.Window;
+import com.googlecode.lanterna.gui.*;
 
 /**
  *

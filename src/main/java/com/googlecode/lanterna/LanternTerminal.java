@@ -19,13 +19,13 @@
 
 package com.googlecode.lanterna;
 
+import com.googlecode.lanterna.gui.GUIScreen;
+import com.googlecode.lanterna.screen.Screen;
+import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalFactory;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
-import com.googlecode.lanterna.gui.GUIScreen;
-import com.googlecode.lanterna.screen.Screen;
-import com.googlecode.lanterna.terminal.Terminal;
 
 /**
  * This is a helper class for creating the three types of terminal objects.

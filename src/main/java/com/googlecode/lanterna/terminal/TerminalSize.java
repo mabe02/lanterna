@@ -19,8 +19,6 @@
 
 package com.googlecode.lanterna.terminal;
 
-import com.googlecode.lanterna.LanternException;
-
 /**
  * Terminal dimensions in 2-d space
  * @author mabe02

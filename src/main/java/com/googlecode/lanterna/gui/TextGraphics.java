@@ -19,15 +19,14 @@
 
 package com.googlecode.lanterna.gui;
 
-import java.util.Arrays;
-import java.util.EnumSet;
-
 import com.googlecode.lanterna.gui.theme.Theme;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.Terminal.Color;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
+import java.util.Arrays;
+import java.util.EnumSet;
 
 /**
  *

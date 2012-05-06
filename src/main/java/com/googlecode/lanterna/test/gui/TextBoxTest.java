@@ -21,15 +21,7 @@ package com.googlecode.lanterna.test.gui;
 
 import com.googlecode.lanterna.LanternException;
 import com.googlecode.lanterna.LanternTerminal;
-import com.googlecode.lanterna.gui.Action;
-import com.googlecode.lanterna.gui.Border;
-import com.googlecode.lanterna.gui.Button;
-import com.googlecode.lanterna.gui.EmptySpace;
-import com.googlecode.lanterna.gui.GUIScreen;
-import com.googlecode.lanterna.gui.Label;
-import com.googlecode.lanterna.gui.Panel;
-import com.googlecode.lanterna.gui.TextBox;
-import com.googlecode.lanterna.gui.Window;
+import com.googlecode.lanterna.gui.*;
 
 /**
  *

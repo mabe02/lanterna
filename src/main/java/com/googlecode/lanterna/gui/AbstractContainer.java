@@ -19,11 +19,11 @@
 
 package com.googlecode.lanterna.gui;
 
+import com.googlecode.lanterna.gui.listener.ContainerListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import com.googlecode.lanterna.gui.listener.ContainerListener;
 
 /**
  *

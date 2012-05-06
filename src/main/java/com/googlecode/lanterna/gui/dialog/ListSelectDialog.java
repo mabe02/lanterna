@@ -19,11 +19,11 @@
 
 package com.googlecode.lanterna.gui.dialog;
 
-import java.util.ArrayList;
-import java.util.List;
 import com.googlecode.lanterna.LanternException;
 import com.googlecode.lanterna.gui.ActionListBox;
 import com.googlecode.lanterna.gui.GUIScreen;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *

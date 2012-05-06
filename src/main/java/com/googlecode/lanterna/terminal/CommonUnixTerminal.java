@@ -19,12 +19,12 @@
 
 package com.googlecode.lanterna.terminal;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.charset.Charset;
 import com.googlecode.lanterna.LanternException;
 import com.googlecode.lanterna.input.GnomeTerminalProfile;
 import com.googlecode.lanterna.input.PuttyProfile;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
 import sun.misc.Signal;
 import sun.misc.SignalHandler;
 

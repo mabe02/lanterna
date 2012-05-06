@@ -19,12 +19,12 @@
 
 package com.googlecode.lanterna.gui.layout;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import com.googlecode.lanterna.gui.Component;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  *

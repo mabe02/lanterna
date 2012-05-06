@@ -19,9 +19,9 @@
 
 package com.googlecode.lanterna.gui;
 
+import com.googlecode.lanterna.gui.listener.ComponentListener;
 import java.util.LinkedList;
 import java.util.List;
-import com.googlecode.lanterna.gui.listener.ComponentListener;
 
 
 /**

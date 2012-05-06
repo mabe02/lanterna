@@ -19,11 +19,11 @@
 
 package com.googlecode.lanterna.terminal;
 
+import com.googlecode.lanterna.LanternException;
+import com.googlecode.lanterna.input.CommonProfile;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
-import com.googlecode.lanterna.LanternException;
-import com.googlecode.lanterna.input.CommonProfile;
 
 /**
  * A common ANSI text terminal implementation
