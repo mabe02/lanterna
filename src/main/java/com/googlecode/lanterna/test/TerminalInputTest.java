@@ -42,7 +42,7 @@ public class TerminalInputTest
             }
         }
 
-        final Terminal rawTerminal = new TerminalFactory.Common().createTerminal(System.in, System.out, Charset.defaultCharset());
+        final Terminal rawTerminal = new TerminalFactory.PureUnixTextEnvironment().createTerminal(System.in, System.out, Charset.defaultCharset());
         if(rawTerminal == null) {
             System.err.println("Couldn't allocate a terminal!");
             return;

@@ -44,7 +44,7 @@ public class ScreenTabTest {
 
     public ScreenTabTest() throws LanternaException, InterruptedException
     {
-        this.lanternTerminal = new LanternTerminal(new TerminalFactory.Common());
+        this.lanternTerminal = new LanternTerminal(new TerminalFactory.PureUnixTextEnvironment());
         if (lanternTerminal == null) {
             System.err.println("Couldn't allocate a terminal!");
             return;

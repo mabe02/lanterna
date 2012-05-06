@@ -19,9 +19,9 @@
 
 package com.googlecode.lanterna.terminal;
 
+import com.googlecode.lanterna.terminal.swing.SwingTerminal;
 import com.googlecode.lanterna.terminal.text.TerminalSizeQuerier;
 import com.googlecode.lanterna.terminal.text.UnixTerminal;
-import com.googlecode.lanterna.terminal.swing.SwingTerminal;
 import java.awt.GraphicsEnvironment;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -45,7 +45,7 @@ public abstract class TerminalFactory
         public Terminal createTerminal(InputStream terminalInput, OutputStream terminalOutput, Charset terminalCharset)
         {
             if(GraphicsEnvironment.isHeadless())
-                return new Common().createTerminal(terminalInput, terminalOutput, terminalCharset);
+                return new PureUnixTextEnvironment().createTerminal(terminalInput, terminalOutput, terminalCharset);
             else
                 return new Swing().createTerminal(terminalInput, terminalOutput, terminalCharset);
         }
@@ -54,11 +54,11 @@ public abstract class TerminalFactory
     /**
      * This factory implementation returns a common unix text terminal.
      */
-    public static class Common extends TerminalFactory
+    public static class PureUnixTextEnvironment extends TerminalFactory
     {
         private TerminalSizeQuerier sizeQuerier;
 
-        public Common() {
+        public PureUnixTextEnvironment() {
             sizeQuerier = null;
         }
         
