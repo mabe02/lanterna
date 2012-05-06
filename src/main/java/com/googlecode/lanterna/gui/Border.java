@@ -31,11 +31,6 @@ import com.googlecode.lanterna.terminal.TerminalSize;
  */
 public abstract class Border
 {
-    public void drawBorder(TextGraphics graphics, String title)
-    {
-        drawBorder(graphics, new TerminalSize(graphics.getWidth(), graphics.getHeight()), title);
-    }
-
     public abstract void drawBorder(TextGraphics graphics, TerminalSize actualSize, String title);
     public abstract TerminalSize getInnerAreaSize(int width, int height);
     public abstract TerminalPosition getInnerAreaLocation(int width, int height);
