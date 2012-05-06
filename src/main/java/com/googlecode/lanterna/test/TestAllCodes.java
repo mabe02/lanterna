@@ -20,7 +20,8 @@
 package com.googlecode.lanterna.test;
 
 /**
- *
+ * Prints the whole symbol table, this is debug stuff for UTF-8 to non-UTF-8
+ * symbol character conversions...
  * @author Martin
  */
 public class TestAllCodes {
