@@ -52,7 +52,7 @@ public class PanelTest
         final GUIScreen textGUI = terminal.getGUIScreen();
 
         textGUI.setTitle("GUI Test");
-        final Window mainWindow = new Window("Ett fönster med paneler");
+        final Window mainWindow = new Window("Window with panels");
         TextFillComponent oneComponent = new TextFillComponent(5,5, '1');
         TextFillComponent twoComponent = new TextFillComponent(5,5, '2');
         TextFillComponent xComponent = new TextFillComponent(5,5, 'X');
