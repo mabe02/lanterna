@@ -44,7 +44,7 @@ public class ScreenTabTest {
 
     public ScreenTabTest() throws LanternaException, InterruptedException
     {
-        this.lanternTerminal = new LanternTerminal(new TerminalFactory.PureUnixTextEnvironment());
+        this.lanternTerminal = new LanternTerminal();
         if (lanternTerminal == null) {
             System.err.println("Couldn't allocate a terminal!");
             return;
@@ -72,15 +72,15 @@ public class ScreenTabTest {
         writer.setBackgroundColor(Terminal.Color.DEFAULT);
         writer.drawString(0, 0, topTitle, ScreenCharacterStyle.Blinking);
         screen.setTabBehaviour(TabBehaviour.CONVERT_TO_ONE_SPACE);
-        writer.drawString(10, 1, "Four tabs: |\t|\t|\t|\t|");
+        writer.drawString(10, 1, "TabBehaviour.CONVERT_TO_ONE_SPACE:    |\t|\t|\t|\t|");
         screen.setTabBehaviour(TabBehaviour.CONVERT_TO_FOUR_SPACES);
-        writer.drawString(10, 2, "Four tabs: |\t|\t|\t|\t|");
+        writer.drawString(10, 2, "TabBehaviour.CONVERT_TO_FOUR_SPACES:  |\t|\t|\t|\t|");
         screen.setTabBehaviour(TabBehaviour.CONVERT_TO_EIGHT_SPACES);
-        writer.drawString(10, 3, "Four tabs: |\t|\t|\t|\t|");
+        writer.drawString(10, 3, "TabBehaviour.CONVERT_TO_EIGHT_SPACES: |\t|\t|\t|\t|");
         screen.setTabBehaviour(TabBehaviour.ALIGN_TO_COLUMN_4);
-        writer.drawString(10, 4, "Four tabs: |\t|\t|\t|\t|");
+        writer.drawString(10, 4, "TabBehaviour.ALIGN_TO_COLUMN_4:       |\t|\t|\t|\t|");
         screen.setTabBehaviour(TabBehaviour.ALIGN_TO_COLUMN_8);
-        writer.drawString(10, 5, "Four tabs: |\t|\t|\t|\t|");
+        writer.drawString(10, 5, "TabBehaviour.ALIGN_TO_COLUMN_8:       |\t|\t|\t|\t|");
 
         screen.refresh();
     }
