@@ -45,9 +45,8 @@ public class TerminalSize {
 
     public void setColumns(int columns)
     {
-        //TODO: Vad ska vi göra här?
-        if(columns < -1)
-            columns = 0;
+        if(columns < 0)
+            throw new IllegalArgumentException("TerminalSize.columns cannot be less than 0!");
 
         this.columns = columns;
     }
@@ -59,9 +58,8 @@ public class TerminalSize {
 
     public void setRows(int rows)
     {
-        //TODO: Vad ska vi göra här?
-        if(rows < -1)
-            rows = 0;
+        if(rows < 0)
+            throw new IllegalArgumentException("TerminalSize.rows cannot be less than 0!");
         
         this.rows = rows;
     }
