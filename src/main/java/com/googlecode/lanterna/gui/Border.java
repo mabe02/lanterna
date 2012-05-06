@@ -146,7 +146,7 @@ public abstract class Border
             //Each row
             for(int i = 1; i < height - 1; i++) {
                 graphics.applyThemeItem(upperLeft);
-                graphics.drawString(0, 1, ACS.VLINE + "");
+                graphics.drawString(0, i, ACS.VLINE + "");
                 graphics.applyThemeItem(lowerRight);
                 graphics.drawString(width - 1, i, ACS.VLINE + "");
             }
