@@ -99,10 +99,12 @@ public class UnixTerminal extends ANSITerminal
         setEcho(true);
     }
 
+    @Override
     public void setCBreak(boolean cbreakOn) throws LanternaException {
         sttyICanon(cbreakOn);
     }
 
+    @Override
     public void setEcho(boolean echoOn) throws LanternaException {
         sttyKeyEcho(echoOn);
     }

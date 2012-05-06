@@ -122,6 +122,27 @@ public abstract class ANSITerminal extends StreamBasedTerminal
             writeToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'4', (byte)'9', (byte)'l');
         }
     }
+    
+    /**
+     * Enables or disables keyboard echo, meaning the immediate output of the
+     * characters you type on your keyboard. If your users are going to interact
+     * with this application through the keyboard, you probably want to disable
+     * echo mode.
+     * @param echoOn true if keyboard input will immediately echo, false if it's hidden
+     * @throws LanternaException
+     */
+    public abstract void setEcho(boolean echoOn) throws LanternaException;
+
+    /**
+     * Enabling cbreak mode will allow you to read user input immediately as the
+     * user enters the characters, as opposed to reading the data in lines as
+     * the user presses enter. If you want your program to respond to user input
+     * by the keyboard, you probably want to enable cbreak mode.
+     * @see <a href="http://en.wikipedia.org/wiki/POSIX_terminal_interface">POSIX terminal interface</a>
+     * @param cbreakOn
+     * @throws LanternaException
+     */
+    public abstract void setCBreak(boolean cbreakOn) throws LanternaException;
 
     public void moveCursor(int x, int y) throws LanternaException
     {
