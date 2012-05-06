@@ -19,9 +19,10 @@
 
 package com.googlecode.lanterna.test.gui;
 
-import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.LanternTerminal;
+import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.gui.*;
+import com.googlecode.lanterna.gui.dialog.MessageBox;
 
 /**
  *
@@ -53,7 +54,7 @@ public class ActionListTest
         Panel mainPanel = new Panel(new Border.Invisible(), Panel.Orientation.VERTICAL);
         ActionListBox actionListBox = new ActionListBox();
         for(int i = 0; i < 5; i++)
-            actionListBox.addItem(new ActionListBoxItem());
+            actionListBox.addItem(new ActionListBoxItem(terminalGUIScreen));
         
         mainPanel.addComponent(actionListBox);
         window1.addComponent(mainPanel);
@@ -71,12 +72,14 @@ public class ActionListTest
         terminal.stopAndRestoreTerminal();
     }
     
-    private static class ActionListBoxItem implements ActionListBox.Item {             
+    private static class ActionListBoxItem implements ActionListBox.Item {
         private static int counter = 1;
+        private GUIScreen owner;
         private int nr;
 
-        public ActionListBoxItem() {
-            nr = counter++;
+        public ActionListBoxItem(GUIScreen owner) {
+            this.nr = counter++;
+            this.owner = owner;
         }
         
         public String getTitle() {
@@ -84,6 +87,7 @@ public class ActionListTest
         }
 
         public void doAction() throws LanternaException {
+            MessageBox.showMessageBox(owner, "Action", "Selected " + getTitle());
         }
     }
 }
