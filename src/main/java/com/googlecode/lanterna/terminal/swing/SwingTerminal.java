@@ -20,8 +20,10 @@
 package com.googlecode.lanterna.terminal.swing;
 
 import com.googlecode.lanterna.LanternaException;
+import com.googlecode.lanterna.input.InputProvider;
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.input.KeyMappingProfile;
+import com.googlecode.lanterna.terminal.AbstractTerminal;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
@@ -42,12 +44,10 @@ import javax.swing.SwingUtilities;
  * A Swing-based text terminal emulator
  * @author Martin
  */
-public class SwingTerminal implements Terminal
+public class SwingTerminal extends AbstractTerminal implements InputProvider
 {
-    private final List<ResizeListener> resizeListeners;
     private final TerminalRenderer terminalRenderer;
     private final Font terminalFont;
-    private TerminalSize terminalSize;
     private JFrame terminalFrame;
     private TerminalPosition textPosition;
     private Color currentForegroundColor;
@@ -59,32 +59,31 @@ public class SwingTerminal implements Terminal
 
     public SwingTerminal()
     {
-        this(new TerminalSize(160, 40)); //By default, create a 160x40 terminal (normal size * 2)
+        this(160, 40); //By default, create a 160x40 terminal (normal size * 2)
     }
 
-    public SwingTerminal(TerminalSize terminalSize)
+    public SwingTerminal(TerminalSize terminalSize) 
     {
-        this.resizeListeners = new ArrayList<ResizeListener>();
-        this.terminalSize = terminalSize;
+        this(terminalSize.getColumns(), terminalSize.getRows());
+    }
+    
+    public SwingTerminal(int widthInColumns, int heightInRows)
+    {
         this.terminalFont = new Font("Courier New", Font.PLAIN, 14);
         this.terminalRenderer = new TerminalRenderer();
         this.textPosition = new TerminalPosition(0, 0);
-        this.characterMap = new TerminalCharacter[terminalSize.getRows()][terminalSize.getColumns()];
+        this.characterMap = new TerminalCharacter[heightInRows][widthInColumns];
         this.currentForegroundColor = Color.WHITE;
         this.currentBackgroundColor = Color.BLACK;
         this.currentlyBold = false;
         this.keyQueue = new ConcurrentLinkedQueue<Key>();
         this.resizeMutex = new Object();
+        onResized(widthInColumns, heightInRows);
         clearScreen();
     }
 
     public void addInputProfile(KeyMappingProfile profile)
     {
-    }
-
-    public void addResizeListener(ResizeListener listener)
-    {
-        resizeListeners.add(listener);
     }
 
     public void applyBackgroundColor(Color color) throws LanternaException
@@ -116,8 +115,8 @@ public class SwingTerminal implements Terminal
     public void clearScreen()
     {
         synchronized(resizeMutex) {
-            for(int y = 0; y < terminalSize.getRows(); y++)
-                for(int x = 0; x < terminalSize.getColumns(); x++)
+            for(int y = 0; y < size().getRows(); y++)
+                for(int x = 0; x < size().getColumns(); x++)
                     this.characterMap[y][x] = new TerminalCharacter(' ', Color.WHITE, Color.BLACK, false);
             moveCursor(0,0);
         }
@@ -152,12 +151,12 @@ public class SwingTerminal implements Terminal
     {
         if(x < 0)
             x = 0;
-        if(x >= terminalSize.getColumns())
-            x = terminalSize.getColumns() - 1;
+        if(x >= size().getColumns())
+            x = size().getColumns() - 1;
         if(y < 0)
             y = 0;
-        if(y >= terminalSize.getRows())
-            y = terminalSize.getRows() - 1;
+        if(y >= size().getRows())
+            y = size().getRows() - 1;
 
         textPosition.setColumn(x);
         textPosition.setRow(y);
@@ -168,28 +167,19 @@ public class SwingTerminal implements Terminal
     {
         characterMap[textPosition.getRow()][textPosition.getColumn()] =
                 new TerminalCharacter(c, currentForegroundColor, currentBackgroundColor, currentlyBold);
-        if(textPosition.getColumn() == terminalSize.getColumns() - 1 &&
-                textPosition.getRow() == terminalSize.getRows() - 1)
+        if(textPosition.getColumn() == size().getColumns() - 1 &&
+                textPosition.getRow() == size().getRows() - 1)
             moveCursor(0, textPosition.getRow());
-        if(textPosition.getColumn() == terminalSize.getColumns() - 1)
+        if(textPosition.getColumn() == size().getColumns() - 1)
             moveCursor(0, textPosition.getRow() + 1);
         else
             moveCursor(textPosition.getColumn() + 1, textPosition.getRow());
     }
 
-    public TerminalSize queryTerminalSize() throws LanternaException
+    public TerminalSize queryTerminalSize()
     {
-        return terminalSize;
-    }
-
-    public void removeResizeListener(ResizeListener listener)
-    {
-        resizeListeners.remove(listener);
-    }
-
-    public void hackSendFakeResize() throws LanternaException
-    {
-        //Don't do this on Swing
+        //Just bypass to size()
+        return size();
     }
 
     private synchronized void resize(final TerminalSize newSize)
@@ -200,14 +190,13 @@ public class SwingTerminal implements Terminal
                 newCharacterMap[y][x] = new TerminalCharacter(' ', Color.WHITE, Color.BLACK, false);
 
         synchronized(resizeMutex) {
-            for(int y = 0; y < terminalSize.getRows() && y < newSize.getRows(); y++) {
-                for(int x = 0; x < terminalSize.getColumns() && x < newSize.getColumns(); x++) {
+            for(int y = 0; y < size().getRows() && y < newSize.getRows(); y++) {
+                for(int x = 0; x < size().getColumns() && x < newSize.getColumns(); x++) {
                     newCharacterMap[y][x] = this.characterMap[y][x];
                 }
             }
 
             this.characterMap = newCharacterMap;
-            terminalSize = newSize;
             SwingUtilities.invokeLater(new Runnable() {
                 public void run()
                 {
@@ -215,19 +204,11 @@ public class SwingTerminal implements Terminal
                 }
             });
 
-            for(ResizeListener resizeListener: resizeListeners)
-                resizeListener.onResized(newSize);
+            onResized(newSize.getColumns(), newSize.getRows());
         }
     }
 
-    public void setCBreak(boolean cbreakOn) throws LanternaException
-    {
-    }
-
-    public void setEcho(boolean echoOn) throws LanternaException
-    {
-    }
-
+    @Override
     public Key readInput() throws LanternaException
     {
         return keyQueue.poll();
@@ -247,6 +228,16 @@ public class SwingTerminal implements Terminal
         });
     }
 
+    /**
+     * Returns the size of the terminal, which will always be same as calling
+     * getLastKnownSize(), but since that could be confusing when reading the 
+     * code, I added this helper method.
+     */
+    private TerminalSize size()
+    {
+        return getLastKnownSize();
+    }
+    
     private java.awt.Color convertColorToAWT(Color color, boolean bold)
     {
         //Values below are shamelessly stolen from gnome terminal!
@@ -401,8 +392,8 @@ public class SwingTerminal implements Terminal
         public Dimension getPreferredSize()
         {
             FontMetrics fontMetrics = getGraphics().getFontMetrics(terminalFont);
-            final int screenWidth = terminalSize.getColumns() * fontMetrics.charWidth(' ');
-            final int screenHeight = terminalSize.getRows() * fontMetrics.getHeight();
+            final int screenWidth = SwingTerminal.this.size().getColumns() * fontMetrics.charWidth(' ');
+            final int screenHeight = SwingTerminal.this.size().getRows() * fontMetrics.getHeight();
             return new Dimension(screenWidth, screenHeight);
         }
 
@@ -417,8 +408,8 @@ public class SwingTerminal implements Terminal
             final int charWidth = fontMetrics.charWidth(' ');
             final int charHeight = fontMetrics.getHeight();
             
-            for(int row = 0; row < terminalSize.getRows(); row++) {
-                for(int col = 0; col < terminalSize.getColumns(); col++) {
+            for(int row = 0; row < SwingTerminal.this.size().getRows(); row++) {
+                for(int col = 0; col < SwingTerminal.this.size().getColumns(); col++) {
                     TerminalCharacter character = characterMap[row][col];
                     if(row != textPosition.getRow() || col != textPosition.getColumn())
                         graphics2D.setColor(character.getBackgroundAsAWT());
