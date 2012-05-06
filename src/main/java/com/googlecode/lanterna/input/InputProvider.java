@@ -27,5 +27,12 @@ import com.googlecode.lanterna.LanternaException;
  * @author mabe02
  */
 public interface InputProvider {
+    /**
+     * Adds a KeyMappingProfile to be used when converting raw user input bytes
+     * to {@code Key} objects.
+     * @see KeyMappingProfile
+     * @param profile 
+     */
+    public void addInputProfile(KeyMappingProfile profile);
     public Key readInput() throws LanternaException;
 }

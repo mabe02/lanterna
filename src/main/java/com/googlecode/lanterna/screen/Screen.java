@@ -20,7 +20,6 @@
 package com.googlecode.lanterna.screen;
 
 import com.googlecode.lanterna.LanternaException;
-import com.googlecode.lanterna.input.InputProvider;
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.Terminal.Style;
@@ -34,7 +33,7 @@ import java.util.*;
  * terminal is kind of like writing to a bitmap.
  * @author mabe02
  */
-public class Screen implements InputProvider
+public class Screen
 {
     private final Object mutex;
     private final Terminal terminal;
