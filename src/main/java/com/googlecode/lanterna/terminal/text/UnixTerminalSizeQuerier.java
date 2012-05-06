@@ -22,9 +22,11 @@ import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.terminal.TerminalSize;
 
 /**
- *
+ * This class allows you to override by what means Lanterna detects the size of
+ * the terminal. You can implement this interface and pass it to the 
+ * UnixTerminal constructor in order to use it.
  * @author martin
  */
-public interface TerminalSizeQuerier {
+public interface UnixTerminalSizeQuerier {
     TerminalSize queryTerminalSize() throws LanternaException;
 }

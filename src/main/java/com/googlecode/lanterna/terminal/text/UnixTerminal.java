@@ -35,7 +35,7 @@ import sun.misc.SignalHandler;
  */
 public class UnixTerminal extends ANSITerminal
 {
-    private final TerminalSizeQuerier terminalSizeQuerier;
+    private final UnixTerminalSizeQuerier terminalSizeQuerier;
             
     public UnixTerminal(
             InputStream terminalInput, 
@@ -49,7 +49,7 @@ public class UnixTerminal extends ANSITerminal
             InputStream terminalInput, 
             OutputStream terminalOutput, 
             Charset terminalCharset,
-            TerminalSizeQuerier customSizeQuerier)
+            UnixTerminalSizeQuerier customSizeQuerier)
     {
         super(terminalInput, terminalOutput, terminalCharset);
         this.terminalSizeQuerier = customSizeQuerier;

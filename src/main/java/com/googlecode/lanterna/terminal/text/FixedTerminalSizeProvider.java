@@ -26,7 +26,7 @@ import com.googlecode.lanterna.terminal.TerminalSize;
  *
  * @author martin
  */
-public class FixedTerminalSizeProvider implements TerminalSizeQuerier {
+public class FixedTerminalSizeProvider implements UnixTerminalSizeQuerier {
     private final TerminalSize size;
 
     public FixedTerminalSizeProvider(TerminalSize size) {

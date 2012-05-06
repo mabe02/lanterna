@@ -20,7 +20,7 @@
 package com.googlecode.lanterna.terminal;
 
 import com.googlecode.lanterna.terminal.swing.SwingTerminal;
-import com.googlecode.lanterna.terminal.text.TerminalSizeQuerier;
+import com.googlecode.lanterna.terminal.text.UnixTerminalSizeQuerier;
 import com.googlecode.lanterna.terminal.text.UnixTerminal;
 import java.awt.GraphicsEnvironment;
 import java.io.InputStream;
@@ -56,7 +56,7 @@ public abstract class TerminalFactory
      */
     public static class PureUnixTextEnvironment extends TerminalFactory
     {
-        private TerminalSizeQuerier sizeQuerier;
+        private UnixTerminalSizeQuerier sizeQuerier;
 
         public PureUnixTextEnvironment() {
             sizeQuerier = null;
@@ -68,7 +68,7 @@ public abstract class TerminalFactory
             return new UnixTerminal(terminalInput, terminalOutput, terminalCharset, sizeQuerier);
         }
 
-        public void setSizeQuerier(TerminalSizeQuerier sizeQuerier) {
+        public void setSizeQuerier(UnixTerminalSizeQuerier sizeQuerier) {
             this.sizeQuerier = sizeQuerier;
         }
     }
