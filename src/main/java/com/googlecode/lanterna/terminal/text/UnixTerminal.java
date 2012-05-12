@@ -56,6 +56,7 @@ public class UnixTerminal extends ANSITerminal
         addInputProfile(new GnomeTerminalProfile());
         addInputProfile(new PuttyProfile());
 
+        onResized(80, 20);
         Signal.handle(new Signal("WINCH"), new SignalHandler() {
             public void handle(Signal signal)
             {
