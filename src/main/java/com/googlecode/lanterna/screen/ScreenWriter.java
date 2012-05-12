@@ -97,9 +97,7 @@ public class ScreenWriter
         Set<ScreenCharacterStyle> drawStyle = EnumSet.noneOf(ScreenCharacterStyle.class);
         drawStyle.addAll(Arrays.asList(styles));
         
-        targetScreen.putString(x, y, string, foregroundColor, backgroundColor,
-                drawStyle.contains(ScreenCharacterStyle.Bold), drawStyle.contains(ScreenCharacterStyle.Underline),
-                drawStyle.contains(ScreenCharacterStyle.Reverse));
+        targetScreen.putString(x, y, string, foregroundColor, backgroundColor, drawStyle);
         currentPosition.setColumn(currentPosition.getColumn() + string.length());
     }
 
