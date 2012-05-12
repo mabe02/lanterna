@@ -159,6 +159,16 @@ public class Screen
         putString(x, y, string, foregroundColor, backgroundColor, styles);
     }
     
+    
+    
+    public void putString(int x, int y, String string, Terminal.Color foregroundColor,
+            Terminal.Color backgroundColor, ScreenCharacterStyle... styles)
+    {
+        Set<ScreenCharacterStyle> drawStyle = EnumSet.noneOf(ScreenCharacterStyle.class);
+        drawStyle.addAll(Arrays.asList(styles));
+        putString(x, y, string, foregroundColor, backgroundColor, drawStyle);
+    }
+    
     public void putString(int x, int y, String string, Terminal.Color foregroundColor,
             Terminal.Color backgroundColor, Set<ScreenCharacterStyle> styles)
     {    
