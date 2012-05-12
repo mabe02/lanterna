@@ -27,10 +27,7 @@ import com.googlecode.lanterna.terminal.AbstractTerminal;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Queue;
@@ -39,6 +36,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 
 /**
  * A Swing-based text terminal emulator
@@ -48,13 +46,18 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
 {
     private final TerminalRenderer terminalRenderer;
     private final Font terminalFont;
+    private final Timer blinkTimer;
+    
     private JFrame terminalFrame;
+    private TerminalCharacter [][]characterMap;
     private TerminalPosition textPosition;
     private Color currentForegroundColor;
     private Color currentBackgroundColor;
     private boolean currentlyBold;
-    private TerminalCharacter [][]characterMap;
+    private boolean currentlyBlinking;
+    private boolean blinkVisible;
     private Queue<Key> keyQueue;
+    
     private final Object resizeMutex;
 
     public SwingTerminal()
@@ -71,15 +74,28 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
     {
         this.terminalFont = new Font("Courier New", Font.PLAIN, 14);
         this.terminalRenderer = new TerminalRenderer();
+        this.blinkTimer = new Timer(500, new BlinkAction());
         this.textPosition = new TerminalPosition(0, 0);
         this.characterMap = new TerminalCharacter[heightInRows][widthInColumns];
         this.currentForegroundColor = Color.WHITE;
         this.currentBackgroundColor = Color.BLACK;
         this.currentlyBold = false;
+        this.currentlyBlinking = false;
+        this.blinkVisible = false;
         this.keyQueue = new ConcurrentLinkedQueue<Key>();
         this.resizeMutex = new Object();
+        
         onResized(widthInColumns, heightInRows);
-        clearScreen();
+        clearScreen();        
+    }
+    
+    private class BlinkAction implements ActionListener 
+    {
+        public void actionPerformed(ActionEvent e) 
+        {
+            blinkVisible = !blinkVisible;
+            terminalRenderer.repaint();
+        }
     }
 
     public void addInputProfile(KeyMappingProfile profile)
@@ -102,6 +118,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
         {
             if(sgr == SGR.RESET_ALL) {
                 currentlyBold = false;
+                currentlyBlinking = false;
                 currentForegroundColor = Color.DEFAULT;
                 currentBackgroundColor = Color.DEFAULT;
             }
@@ -109,6 +126,10 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
                 currentlyBold = true;
             else if(sgr == SGR.EXIT_BOLD)
                 currentlyBold = false;
+            else if(sgr == SGR.ENTER_BLINK)
+                currentlyBlinking = true;
+            else if(sgr == SGR.EXIT_BLINK)
+                currentlyBlinking = false;
         }
     }
 
@@ -117,7 +138,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
         synchronized(resizeMutex) {
             for(int y = 0; y < size().getRows(); y++)
                 for(int x = 0; x < size().getColumns(); x++)
-                    this.characterMap[y][x] = new TerminalCharacter(' ', Color.WHITE, Color.BLACK, false);
+                    this.characterMap[y][x] = new TerminalCharacter(' ', Color.WHITE, Color.BLACK, false, false);
             moveCursor(0,0);
         }
     }
@@ -136,6 +157,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
         terminalFrame.setFocusTraversalKeysEnabled(false);
         //terminalEmulator.setSize(terminalEmulator.getPreferredSize());
         terminalFrame.pack();
+        blinkTimer.start();
     }
 
     public void exitPrivateMode() throws LanternaException
@@ -143,6 +165,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
         if(terminalFrame == null)
             return;
         
+        blinkTimer.stop();
         terminalFrame.setVisible(false);
         terminalFrame.dispose();
     }
@@ -166,7 +189,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
     public synchronized void putCharacter(char c) throws LanternaException
     {
         characterMap[textPosition.getRow()][textPosition.getColumn()] =
-                new TerminalCharacter(c, currentForegroundColor, currentBackgroundColor, currentlyBold);
+                new TerminalCharacter(c, currentForegroundColor, currentBackgroundColor, currentlyBold, currentlyBlinking);
         if(textPosition.getColumn() == size().getColumns() - 1 &&
                 textPosition.getRow() == size().getRows() - 1)
             moveCursor(0, textPosition.getRow());
@@ -187,7 +210,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
         TerminalCharacter [][]newCharacterMap = new TerminalCharacter[newSizeRows][newSizeColumns];
         for(int y = 0; y < newSizeRows; y++)
             for(int x = 0; x < newSizeColumns; x++)
-                newCharacterMap[y][x] = new TerminalCharacter(' ', Color.WHITE, Color.BLACK, false);
+                newCharacterMap[y][x] = new TerminalCharacter(' ', Color.WHITE, Color.BLACK, false, false);
 
         synchronized(resizeMutex) {
             for(int y = 0; y < size().getRows() && y < newSizeRows; y++) {
@@ -411,15 +434,17 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
             for(int row = 0; row < SwingTerminal.this.size().getRows(); row++) {
                 for(int col = 0; col < SwingTerminal.this.size().getColumns(); col++) {
                     TerminalCharacter character = characterMap[row][col];
-                    if(row != textPosition.getRow() || col != textPosition.getColumn())
-                        graphics2D.setColor(character.getBackgroundAsAWT());
-                    else
+                    if(row == textPosition.getRow() && col == textPosition.getColumn())
                         graphics2D.setColor(character.getForegroundAsAWT());
+                    else
+                        graphics2D.setColor(character.getBackgroundAsAWT());
                     graphics2D.fillRect(col * charWidth, row * charHeight, charWidth, charHeight);
-                    if(row != textPosition.getRow() || col != textPosition.getColumn())
-                        graphics2D.setColor(character.getForegroundAsAWT());
-                    else
+                    if((row == textPosition.getRow() && col == textPosition.getColumn()) ||
+                            (character.isBlinking() && !blinkVisible))
                         graphics2D.setColor(character.getBackgroundAsAWT());
+                    else
+                        graphics2D.setColor(character.getForegroundAsAWT());
+                        
                     graphics2D.drawString(character.toString(), col * charWidth, ((row + 1) * charHeight) - fontMetrics.getDescent());
                 }
             }
@@ -433,13 +458,15 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
         private Color foreground;
         private Color background;
         private boolean bold;
+        private boolean blinking;
 
-        public TerminalCharacter(char character, Color foreground, Color background, boolean bold)
+        public TerminalCharacter(char character, Color foreground, Color background, boolean bold, boolean blinking)
         {
             this.character = character;
             this.foreground = foreground;
             this.background = background;
             this.bold = bold;
+            this.blinking = blinking;
         }
 
         public Color getBackground()
@@ -452,6 +479,10 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
             return bold;
         }
 
+        public boolean isBlinking() {
+            return blinking;
+        }
+        
         public char getCharacter()
         {
             return character;
