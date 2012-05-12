@@ -30,7 +30,9 @@ import java.nio.charset.Charset;
 /**
  * This is a helper class for creating the three types of terminal objects.
  * @author Martin
+ * @deprecated This class is not very focused, please use Lanterna instead
  */
+@Deprecated
 public class LanternTerminal
 {
     private static final Charset DEFAULT_CHARSET = Charset.forName(System.getProperty("file.encoding"));
