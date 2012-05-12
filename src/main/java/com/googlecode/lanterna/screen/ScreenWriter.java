@@ -92,12 +92,8 @@ public class ScreenWriter
     public void drawString(final int x, final int y, final String string, final ScreenCharacterStyle... styles)
     {
         currentPosition.setColumn(x);
-        currentPosition.setRow(y);
-
-        Set<ScreenCharacterStyle> drawStyle = EnumSet.noneOf(ScreenCharacterStyle.class);
-        drawStyle.addAll(Arrays.asList(styles));
-        
-        targetScreen.putString(x, y, string, foregroundColor, backgroundColor, drawStyle);
+        currentPosition.setRow(y);        
+        targetScreen.putString(x, y, string, foregroundColor, backgroundColor, styles);
         currentPosition.setColumn(currentPosition.getColumn() + string.length());
     }
 
