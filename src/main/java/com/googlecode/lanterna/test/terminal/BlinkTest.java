@@ -4,7 +4,7 @@
  */
 package com.googlecode.lanterna.test.terminal;
 
-import com.googlecode.lanterna.Lanterna;
+import com.googlecode.lanterna.TerminalFacade;
 import com.googlecode.lanterna.terminal.Terminal;
 
 /**
@@ -13,7 +13,7 @@ import com.googlecode.lanterna.terminal.Terminal;
  */
 public class BlinkTest {
     public static void main(String[] args) {
-        Terminal rawTerminal = Lanterna.getTerminal();
+        Terminal rawTerminal = TerminalFacade.getTerminal();
         rawTerminal.enterPrivateMode();
         rawTerminal.clearScreen();
         rawTerminal.applyForegroundColor(Terminal.Color.RED);

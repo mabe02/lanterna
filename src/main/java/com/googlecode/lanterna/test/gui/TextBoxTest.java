@@ -19,7 +19,7 @@
 
 package com.googlecode.lanterna.test.gui;
 
-import com.googlecode.lanterna.Lanterna;
+import com.googlecode.lanterna.TerminalFacade;
 import com.googlecode.lanterna.gui.*;
 
 /**
@@ -30,7 +30,7 @@ public class TextBoxTest
 {
     public static void main(String[] args)
     {
-        final GUIScreen guiScreen = Lanterna.getGUIScreen();
+        final GUIScreen guiScreen = TerminalFacade.getGUIScreen();
         guiScreen.getScreen().startScreen();
         final Window window1 = new Window("Text box window");
         //window1.addComponent(new Widget(1, 1));

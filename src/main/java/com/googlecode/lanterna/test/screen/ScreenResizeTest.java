@@ -19,7 +19,7 @@
 
 package com.googlecode.lanterna.test.screen;
 
-import com.googlecode.lanterna.Lanterna;
+import com.googlecode.lanterna.TerminalFacade;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.ScreenCharacterStyle;
 import com.googlecode.lanterna.screen.ScreenWriter;
@@ -51,7 +51,7 @@ public class ScreenResizeTest
     public ScreenResizeTest() throws InterruptedException
     {
         this.willResize = false;
-        screen = Lanterna.getScreen();
+        screen = TerminalFacade.getScreen();
         screen.startScreen();
         screen.setCursorPosition(new TerminalPosition(0, 0));
         drawStrings("Initial setup, please resize the window");

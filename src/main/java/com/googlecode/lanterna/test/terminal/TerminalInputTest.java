@@ -19,7 +19,7 @@
 
 package com.googlecode.lanterna.test.terminal;
 
-import com.googlecode.lanterna.Lanterna;
+import com.googlecode.lanterna.TerminalFacade;
 import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.terminal.Terminal;
@@ -41,7 +41,7 @@ public class TerminalInputTest
             }
         }
 
-        final Terminal rawTerminal = Lanterna.getTerminal();
+        final Terminal rawTerminal = TerminalFacade.getTerminal();
         if(rawTerminal == null) {
             System.err.println("Couldn't allocate a terminal!");
             return;

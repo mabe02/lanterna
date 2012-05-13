@@ -33,8 +33,8 @@ import java.nio.charset.Charset;
  * system
  * @author Martin
  */
-public class Lanterna {
-    private Lanterna() {}
+public class TerminalFacade {
+    private TerminalFacade() {}
     
     private static final Charset DEFAULT_CHARSET = Charset.forName(System.getProperty("file.encoding"));
     

@@ -19,7 +19,7 @@
 
 package com.googlecode.lanterna.test.screen;
 
-import com.googlecode.lanterna.Lanterna;
+import com.googlecode.lanterna.TerminalFacade;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.ScreenCharacterStyle;
 import com.googlecode.lanterna.screen.ScreenWriter;
@@ -41,7 +41,7 @@ public class ScreenTabTest {
 
     public ScreenTabTest() throws InterruptedException
     {
-        screen = Lanterna.getScreen();
+        screen = TerminalFacade.getScreen();
         screen.startScreen();
         screen.setCursorPosition(new TerminalPosition(0, 0));
         drawStrings("Trying out some tabs!");

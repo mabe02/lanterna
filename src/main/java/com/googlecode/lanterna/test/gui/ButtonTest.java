@@ -19,7 +19,7 @@
 
 package com.googlecode.lanterna.test.gui;
 
-import com.googlecode.lanterna.Lanterna;
+import com.googlecode.lanterna.TerminalFacade;
 import com.googlecode.lanterna.gui.*;
 import com.googlecode.lanterna.gui.theme.Theme.Category;
 import com.googlecode.lanterna.terminal.TerminalSize;
@@ -32,7 +32,7 @@ public class ButtonTest
 {
     public static void main(String[] args)
     {
-        final GUIScreen guiScreen = Lanterna.getGUIScreen();
+        final GUIScreen guiScreen = TerminalFacade.getGUIScreen();
         guiScreen.getScreen().startScreen();
         guiScreen.setTitle("GUI Test");
 

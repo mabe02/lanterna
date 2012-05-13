@@ -19,7 +19,7 @@
 
 package com.googlecode.lanterna.test.screen;
 
-import com.googlecode.lanterna.Lanterna;
+import com.googlecode.lanterna.TerminalFacade;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.ScreenCharacterStyle;
 import com.googlecode.lanterna.screen.ScreenWriter;
@@ -33,7 +33,7 @@ public class TerminalColorTest
 {
     public static void main(String[] args)
     {
-        Screen screen = Lanterna.getScreen();
+        Screen screen = TerminalFacade.getScreen();
         screen.startScreen();
 
         ScreenWriter writer = new ScreenWriter(screen);
