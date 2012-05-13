@@ -101,11 +101,23 @@ public class TerminalFacade {
         return new UnixTerminal(terminalInput, terminalOutput, terminalCharset);
     }
     
-    public static Screen getScreen() {
-        return new Screen(getTerminal());
+    public static Screen createScreen() {
+        return createScreen(getTerminal());
     }
     
-    public static GUIScreen getGUIScreen() {
-        return new GUIScreen(getScreen());
+    public static Screen createScreen(Terminal terminal) {
+        return new Screen(terminal);
+    }
+    
+    public static GUIScreen createGUIScreen() {
+        return new GUIScreen(createScreen());
+    }
+    
+    public static GUIScreen createGUIScreen(Terminal terminal) {
+        return new GUIScreen(createScreen(terminal));
+    }
+    
+    public static GUIScreen createGUIScreen(Screen screen) {
+        return new GUIScreen(screen);
     }
 }
