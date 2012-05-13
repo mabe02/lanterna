@@ -33,19 +33,7 @@ public class TerminalInputTest
 {
     public static void main(String[] args) throws InterruptedException
     {
-        if(args.length > 0) {
-            try {
-                Thread.sleep(15000);
-            }
-            catch(InterruptedException e) {
-            }
-        }
-
         final Terminal rawTerminal = new TestTerminalFactory(args).createTerminal();
-        if(rawTerminal == null) {
-            System.err.println("Couldn't allocate a terminal!");
-            return;
-        }
         rawTerminal.enterPrivateMode();
 
         TerminalSize size = rawTerminal.queryTerminalSize();
