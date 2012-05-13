@@ -19,9 +19,9 @@
 package com.googlecode.lanterna;
 
 import com.googlecode.lanterna.terminal.Terminal;
-import com.googlecode.lanterna.terminal.TerminalFactory;
 import com.googlecode.lanterna.terminal.swing.SwingTerminal;
 import com.googlecode.lanterna.terminal.text.UnixTerminal;
+import java.awt.GraphicsEnvironment;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
@@ -43,17 +43,7 @@ public class Lanterna {
     
     public static Terminal getTerminal(Charset terminalCharset)
     {
-        return getTerminal(new TerminalFactory.Default(), terminalCharset);
-    }
-
-    public static Terminal getTerminal(TerminalFactory terminalFactory)
-    {
-        return getTerminal(terminalFactory, DEFAULT_CHARSET);
-    }
-
-    public static Terminal getTerminal(TerminalFactory terminalFactory, Charset terminalCharset)
-    {
-        return getTerminal(terminalFactory, System.in, System.out, terminalCharset);
+        return getTerminal(System.in, System.out, terminalCharset);
     }
     
     public static Terminal getTerminal(
@@ -68,16 +58,10 @@ public class Lanterna {
                                     OutputStream terminalOutput,
                                     Charset terminalCharset)
     {
-        return getTerminal(new TerminalFactory.Default(), terminalInput, terminalOutput, terminalCharset);
-    }
-
-    public static Terminal getTerminal(
-                                    TerminalFactory terminalFactory, 
-                                    InputStream terminalInput, 
-                                    OutputStream terminalOutput, 
-                                    Charset terminalCharset)
-    {
-        return terminalFactory.createTerminal(terminalInput, terminalOutput, terminalCharset);
+        if(GraphicsEnvironment.isHeadless())
+            return getUnixTerminal(terminalInput, terminalOutput, terminalCharset);
+        else
+            return getSwingTerminal();
     }
     
     public static SwingTerminal getSwingTerminal()
