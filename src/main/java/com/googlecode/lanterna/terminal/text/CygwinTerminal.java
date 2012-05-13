@@ -115,13 +115,21 @@ public class CygwinTerminal extends ANSITerminal {
     }
     
     private static String findShell() {
+        return findProgram("sh.exe");
+    }
+    
+    private static String findSTTY() {
+        return findProgram("stty.exe");
+    }
+    
+    private static String findProgram(String programName) {
         String[] paths = System.getProperty("java.library.path").split(";");
         for(String path: paths) {
-            File shBin = new File(path, "sh.exe");
+            File shBin = new File(path, programName);
             if(shBin.exists())
                 return shBin.getAbsolutePath();
         }
-        return "sh.exe";
+        return programName;
     }
     
     private static String exec(String ...cmd)
