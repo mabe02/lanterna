@@ -58,16 +58,21 @@ public class UnixTerminal extends ANSITerminal
 
         //Make sure to set an initial size
         onResized(80, 20);
-        Signal.handle(new Signal("WINCH"), new SignalHandler() {
-            public void handle(Signal signal)
-            {
-                try {
-                    queryTerminalSize();
+        try {
+            Signal.handle(new Signal("WINCH"), new SignalHandler() {
+                public void handle(Signal signal)
+                {
+                    try {
+                        queryTerminalSize();
+                    }
+                    catch(LanternaException e) {
+                    }
                 }
-                catch(LanternaException e) {
-                }
-            }
-        });
+            });
+        }
+        catch(IllegalArgumentException e) {
+            System.err.println(e.getMessage());
+        }
     }
 
     public TerminalSize queryTerminalSize() throws LanternaException
