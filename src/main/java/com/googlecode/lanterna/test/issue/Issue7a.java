@@ -19,8 +19,8 @@
 
 package com.googlecode.lanterna.test.issue;
 
-import com.googlecode.lanterna.TerminalFacade;
 import com.googlecode.lanterna.gui.*;
+import com.googlecode.lanterna.test.TestTerminalFactory;
 
 /**
  * http://code.google.com/p/lanterna/issues/detail?id=7
@@ -31,7 +31,7 @@ import com.googlecode.lanterna.gui.*;
  */
 public class Issue7a {
     public static void main(String[] args) {
-        final GUIScreen textGUI = TerminalFacade.createGUIScreen();
+        final GUIScreen textGUI = new TestTerminalFactory(args).createGUIScreen();
         textGUI.getScreen().startScreen();
         textGUI.setTitle("GUI Test");
         final Window mainWindow = new Window("Testing issue 7");

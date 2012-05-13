@@ -19,10 +19,10 @@
 
 package com.googlecode.lanterna.test.terminal;
 
-import com.googlecode.lanterna.TerminalFacade;
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalSize;
+import com.googlecode.lanterna.test.TestTerminalFactory;
 
 /**
  *
@@ -34,7 +34,7 @@ public class TerminalResizeTest implements Terminal.ResizeListener
     
     public static void main(String[] args) throws InterruptedException
     {
-        terminal = TerminalFacade.createTerminal();
+        terminal = new TestTerminalFactory(args).createTerminal();
         terminal.enterPrivateMode();
         terminal.clearScreen();
         terminal.moveCursor(10, 5);

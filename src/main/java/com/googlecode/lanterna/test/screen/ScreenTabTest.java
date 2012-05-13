@@ -19,13 +19,13 @@
 
 package com.googlecode.lanterna.test.screen;
 
-import com.googlecode.lanterna.TerminalFacade;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.ScreenCharacterStyle;
 import com.googlecode.lanterna.screen.ScreenWriter;
 import com.googlecode.lanterna.screen.TabBehaviour;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalPosition;
+import com.googlecode.lanterna.test.TestTerminalFactory;
 
 /**
  *
@@ -34,14 +34,14 @@ import com.googlecode.lanterna.terminal.TerminalPosition;
 public class ScreenTabTest {
     public static void main(String[] args) throws InterruptedException
     {
-        new ScreenTabTest();
+        new ScreenTabTest(args);
     }
 
     private Screen screen;
 
-    public ScreenTabTest() throws InterruptedException
+    public ScreenTabTest(String[] args) throws InterruptedException
     {
-        screen = TerminalFacade.createScreen();
+        screen = new TestTerminalFactory(args).createScreen();
         screen.startScreen();
         screen.setCursorPosition(new TerminalPosition(0, 0));
         drawStrings("Trying out some tabs!");

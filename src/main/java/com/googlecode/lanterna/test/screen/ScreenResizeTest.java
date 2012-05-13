@@ -19,12 +19,12 @@
 
 package com.googlecode.lanterna.test.screen;
 
-import com.googlecode.lanterna.TerminalFacade;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.ScreenCharacterStyle;
 import com.googlecode.lanterna.screen.ScreenWriter;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalPosition;
+import com.googlecode.lanterna.test.TestTerminalFactory;
 
 /**
  *
@@ -34,24 +34,16 @@ public class ScreenResizeTest
 {
     public static void main(String[] args) throws InterruptedException
     {
-        if(args.length > 0) {
-            try {
-                Thread.sleep(15000);
-            }
-            catch(InterruptedException e) {
-            }
-        }
-        
-        new ScreenResizeTest();
+        new ScreenResizeTest(args);
     }
 
     private Screen screen;
     private boolean willResize;
 
-    public ScreenResizeTest() throws InterruptedException
+    public ScreenResizeTest(String[] args) throws InterruptedException
     {
         this.willResize = false;
-        screen = TerminalFacade.createScreen();
+        screen = new TestTerminalFactory(args).createScreen();
         screen.startScreen();
         screen.setCursorPosition(new TerminalPosition(0, 0));
         drawStrings("Initial setup, please resize the window");

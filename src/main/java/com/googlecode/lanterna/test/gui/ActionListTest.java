@@ -19,9 +19,9 @@
 
 package com.googlecode.lanterna.test.gui;
 
-import com.googlecode.lanterna.TerminalFacade;
 import com.googlecode.lanterna.gui.*;
 import com.googlecode.lanterna.gui.dialog.MessageBox;
+import com.googlecode.lanterna.test.TestTerminalFactory;
 
 /**
  *
@@ -31,7 +31,7 @@ public class ActionListTest
 {
     public static void main(String[] args)
     {
-        final GUIScreen guiScreen = TerminalFacade.createGUIScreen();
+        final GUIScreen guiScreen = new TestTerminalFactory(args).createGUIScreen();
         guiScreen.getScreen().startScreen();
         final Window window1 = new Window("Text box window");
         //window1.addComponent(new Widget(1, 1));

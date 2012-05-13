@@ -19,9 +19,9 @@
 
 package com.googlecode.lanterna.test.gui;
 
-import com.googlecode.lanterna.TerminalFacade;
 import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.gui.*;
+import com.googlecode.lanterna.test.TestTerminalFactory;
 import java.util.Random;
 
 /**
@@ -34,7 +34,7 @@ public class ListBoxTest
     
     public static void main(String[] args) throws LanternaException
     {
-        final GUIScreen guiScreen = TerminalFacade.createGUIScreen();
+        final GUIScreen guiScreen = new TestTerminalFactory(args).createGUIScreen();
         guiScreen.getScreen().startScreen();
         
         final Window window1 = new Window("List box window");
