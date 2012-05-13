@@ -104,16 +104,25 @@ public class TerminalFacade {
         return new UnixTerminal(terminalInput, terminalOutput, terminalCharset);
     }
     
+    /**
+     * <b>Experimental</b> Cygwin support!
+     */
     public static CygwinTerminal createCygwinTerminal() 
     {
         return createCygwinTerminal(DEFAULT_CHARSET);
     }
     
+    /**
+     * <b>Experimental</b> Cygwin support!
+     */
     public static CygwinTerminal createCygwinTerminal(Charset terminalCharset)
     {
         return createCygwinTerminal(System.in, System.out, terminalCharset);
     }
     
+    /**
+     * <b>Experimental</b> Cygwin support!
+     */
     public static CygwinTerminal createCygwinTerminal(
                                     InputStream terminalInput, 
                                     OutputStream terminalOutput)
@@ -121,6 +130,9 @@ public class TerminalFacade {
         return createCygwinTerminal(terminalInput, terminalOutput, DEFAULT_CHARSET);
     }
     
+    /**
+     * <b>Experimental</b> Cygwin support!
+     */
     public static CygwinTerminal createCygwinTerminal(
                                     InputStream terminalInput, 
                                     OutputStream terminalOutput,
@@ -129,13 +141,19 @@ public class TerminalFacade {
         return new CygwinTerminal(terminalInput, terminalOutput, terminalCharset);
     }
     
-    
-    
+    /*
+     * Will create a suitable text terminal dependent on what environment you
+     * are running from.
+     */
     public static Terminal createTextTerminal() 
     {
         return createTextTerminal(System.in, System.out, DEFAULT_CHARSET);
     }
     
+    /*
+     * Will create a suitable text terminal dependent on what environment you
+     * are running from.
+     */
     public static Terminal createTextTerminal(InputStream terminalInput, 
                                     OutputStream terminalOutput,
                                     Charset terminalCharset) 
