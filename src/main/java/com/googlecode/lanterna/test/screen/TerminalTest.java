@@ -17,13 +17,11 @@
  * Copyright (C) 2010-2012 Martin
  */
 
-package com.googlecode.lanterna.test;
+package com.googlecode.lanterna.test.screen;
 
-import com.googlecode.lanterna.LanternaException;
-import com.googlecode.lanterna.LanternTerminal;
+import com.googlecode.lanterna.Lanterna;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.ScreenWriter;
-import com.googlecode.lanterna.terminal.Terminal;
 
 /**
  *
@@ -31,17 +29,8 @@ import com.googlecode.lanterna.terminal.Terminal;
  */
 public class TerminalTest
 {
-    public static void main(String[] args) throws LanternaException {
-        if(args.length > 0) {
-            try {
-                Thread.sleep(15000);
-            }
-            catch(InterruptedException e) {
-            }
-        }
-
-        Terminal rawTerminal = new LanternTerminal().getUnderlyingTerminal();
-        Screen screen = new Screen(rawTerminal);
+    public static void main(String[] args) {
+        Screen screen = Lanterna.getScreen();
         ScreenWriter writer = new ScreenWriter(screen);
         screen.startScreen();
         try {
@@ -122,6 +111,4 @@ public class TerminalTest
         catch(InterruptedException e) {}
         screen.stopScreen();
     }
-    
-
 }

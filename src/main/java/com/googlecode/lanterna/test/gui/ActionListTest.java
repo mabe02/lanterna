@@ -19,8 +19,7 @@
 
 package com.googlecode.lanterna.test.gui;
 
-import com.googlecode.lanterna.LanternTerminal;
-import com.googlecode.lanterna.LanternaException;
+import com.googlecode.lanterna.Lanterna;
 import com.googlecode.lanterna.gui.*;
 import com.googlecode.lanterna.gui.dialog.MessageBox;
 
@@ -30,31 +29,17 @@ import com.googlecode.lanterna.gui.dialog.MessageBox;
  */
 public class ActionListTest
 {
-    public static void main(String[] args) throws LanternaException
+    public static void main(String[] args)
     {
-        if(args.length > 0) {
-            try {
-                Thread.sleep(15000);
-            }
-            catch(InterruptedException e) {
-            }
-        }
-
-        LanternTerminal terminal = new LanternTerminal();
-        final GUIScreen terminalGUIScreen = terminal.getGUIScreen();
-        if(terminalGUIScreen == null) {
-            System.err.println("Couldn't allocate a terminal!");
-            return;
-        }
-
-        terminal.start();
+        final GUIScreen guiScreen = Lanterna.getGUIScreen();
+        guiScreen.getScreen().startScreen();
         final Window window1 = new Window("Text box window");
         //window1.addComponent(new Widget(1, 1));
 
         Panel mainPanel = new Panel(new Border.Invisible(), Panel.Orientation.VERTICAL);
         ActionListBox actionListBox = new ActionListBox();
         for(int i = 0; i < 5; i++)
-            actionListBox.addItem(new ActionListBoxItem(terminalGUIScreen));
+            actionListBox.addItem(new ActionListBoxItem(guiScreen));
         
         mainPanel.addComponent(actionListBox);
         window1.addComponent(mainPanel);
@@ -62,14 +47,14 @@ public class ActionListTest
         Panel buttonPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORISONTAL);
         Button exitButton = new Button("Exit", new Action() {
                 public void doAction()  {
-                    terminalGUIScreen.closeWindow(window1);
+                    guiScreen.closeWindow(window1);
                 }
             });
         buttonPanel.addComponent(new EmptySpace(20, 1));
         buttonPanel.addComponent(exitButton);
         window1.addComponent(buttonPanel);
-        terminalGUIScreen.showWindow(window1, GUIScreen.Position.CENTER);
-        terminal.stopAndRestoreTerminal();
+        guiScreen.showWindow(window1, GUIScreen.Position.CENTER);
+        guiScreen.getScreen().stopScreen();
     }
     
     private static class ActionListBoxItem implements ActionListBox.Item {
@@ -86,7 +71,7 @@ public class ActionListTest
             return "ActionListBox item #" + nr;
         }
 
-        public void doAction() throws LanternaException {
+        public void doAction() {
             MessageBox.showMessageBox(owner, "Action", "Selected " + getTitle());
         }
     }

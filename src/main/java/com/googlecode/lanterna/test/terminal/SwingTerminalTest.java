@@ -17,21 +17,20 @@
  * Copyright (C) 2010-2012 Martin
  */
 
-package com.googlecode.lanterna.test;
+package com.googlecode.lanterna.test.terminal;
 
-import com.googlecode.lanterna.LanternaException;
-import com.googlecode.lanterna.LanternTerminal;
+import com.googlecode.lanterna.Lanterna;
+import com.googlecode.lanterna.terminal.ACS;
 import com.googlecode.lanterna.terminal.Terminal;
 
 /**
  *
  * @author Martin
  */
-public class RawTerminalTest
-{
-    public static void main(String[] args) throws LanternaException, InterruptedException
+public class SwingTerminalTest {
+    public static void main(String[] args) throws InterruptedException
     {
-        Terminal terminal = new LanternTerminal().getUnderlyingTerminal();
+        Terminal terminal = Lanterna.getSwingTerminal();
         terminal.enterPrivateMode();
         terminal.clearScreen();
         terminal.moveCursor(10, 5);
@@ -41,6 +40,16 @@ public class RawTerminalTest
         terminal.putCharacter('l');
         terminal.putCharacter('o');
         terminal.putCharacter('!');
+        terminal.putCharacter(' ');
+        terminal.putCharacter(ACS.HEART);
+        terminal.putCharacter(ACS.SPADES);
+        terminal.putCharacter(ACS.CLUB);
+        terminal.putCharacter(ACS.DIAMOND);
+        terminal.putCharacter(ACS.DOUBLE_LINE_CROSS);
+        terminal.putCharacter(ACS.SINGLE_LINE_CROSS);
+        terminal.putCharacter(ACS.DOUBLE_LINE_T_DOWN);
+        terminal.putCharacter(ACS.SINGLE_LINE_VERTICAL);
+        terminal.putCharacter(ACS.SINGLE_LINE_HORIZONTAL);
         terminal.moveCursor(0, 0);
 
         Thread.sleep(5000);

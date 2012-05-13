@@ -17,35 +17,52 @@
  * Copyright (C) 2010-2012 Martin
  */
 
-package com.googlecode.lanterna.test;
+package com.googlecode.lanterna.test.terminal;
 
-import com.googlecode.lanterna.LanternaException;
-import com.googlecode.lanterna.LanternTerminal;
+import com.googlecode.lanterna.Lanterna;
+import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.terminal.Terminal;
+import com.googlecode.lanterna.terminal.TerminalSize;
 
 /**
  *
- * @author martin
+ * @author Martin
  */
-public class ResetAllTest {
-    public static void main(String[] args) throws LanternaException, InterruptedException {
-        Terminal terminal = new LanternTerminal().getUnderlyingTerminal();
+public class TerminalResizeTest implements Terminal.ResizeListener
+{
+    private static Terminal terminal;
+    
+    public static void main(String[] args) throws InterruptedException
+    {
+        terminal = Lanterna.getTerminal();
         terminal.enterPrivateMode();
         terminal.clearScreen();
         terminal.moveCursor(10, 5);
         terminal.putCharacter('H');
         terminal.putCharacter('e');
-        terminal.applySGR(Terminal.SGR.ENTER_BOLD);
         terminal.putCharacter('l');
-        terminal.applyForegroundColor(Terminal.Color.CYAN);
         terminal.putCharacter('l');
-        terminal.applySGR(Terminal.SGR.ENTER_REVERSE);
         terminal.putCharacter('o');
-        terminal.applySGR(Terminal.SGR.RESET_ALL);
         terminal.putCharacter('!');
         terminal.moveCursor(0, 0);
+        terminal.addResizeListener(new TerminalResizeTest());
 
-        Thread.sleep(5000);
+        while(true) {
+            Key key = terminal.readInput();
+            if(key == null || key.getCharacter() != 'q')
+                Thread.sleep(1);
+            else
+                break;
+        }
         terminal.exitPrivateMode();
+    }
+
+    public void onResized(TerminalSize newSize)
+    {
+        terminal.moveCursor(0, 0);
+        String string = newSize.getColumns() + "x" + newSize.getRows() + "                     ";
+        char []chars = string.toCharArray();
+        for(char c: chars)
+            terminal.putCharacter(c);
     }
 }

@@ -17,16 +17,14 @@
  * Copyright (C) 2010-2012 Martin
  */
 
-package com.googlecode.lanterna.test;
+package com.googlecode.lanterna.test.screen;
 
-import com.googlecode.lanterna.LanternaException;
-import com.googlecode.lanterna.LanternTerminal;
+import com.googlecode.lanterna.Lanterna;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.ScreenCharacterStyle;
 import com.googlecode.lanterna.screen.ScreenWriter;
 import com.googlecode.lanterna.screen.TabBehaviour;
 import com.googlecode.lanterna.terminal.Terminal;
-import com.googlecode.lanterna.terminal.TerminalFactory;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 
 /**
@@ -34,23 +32,17 @@ import com.googlecode.lanterna.terminal.TerminalPosition;
  * @author martin
  */
 public class ScreenTabTest {
-    public static void main(String[] args) throws LanternaException, InterruptedException
+    public static void main(String[] args) throws InterruptedException
     {
         new ScreenTabTest();
     }
 
-    private LanternTerminal lanternTerminal;
     private Screen screen;
 
-    public ScreenTabTest() throws LanternaException, InterruptedException
+    public ScreenTabTest() throws InterruptedException
     {
-        this.lanternTerminal = new LanternTerminal();
-        if (lanternTerminal == null) {
-            System.err.println("Couldn't allocate a terminal!");
-            return;
-        }
-        lanternTerminal.start();
-        screen = lanternTerminal.getScreen();
+        screen = Lanterna.getScreen();
+        screen.startScreen();
         screen.setCursorPosition(new TerminalPosition(0, 0));
         drawStrings("Trying out some tabs!");
 
@@ -58,10 +50,10 @@ public class ScreenTabTest {
         while(System.currentTimeMillis() - now < 20 * 1000) {
             Thread.yield();
         }
-        lanternTerminal.stopAndRestoreTerminal();
+        screen.stopScreen();
     }
 
-    private void drawStrings(String topTitle) throws LanternaException
+    private void drawStrings(String topTitle)
     {
         ScreenWriter writer = new ScreenWriter(screen);
         writer.setForegroundColor(Terminal.Color.DEFAULT);

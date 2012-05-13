@@ -18,6 +18,8 @@
  */
 package com.googlecode.lanterna;
 
+import com.googlecode.lanterna.gui.GUIScreen;
+import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.swing.SwingTerminal;
 import com.googlecode.lanterna.terminal.text.UnixTerminal;
@@ -97,5 +99,13 @@ public class Lanterna {
                                     Charset terminalCharset)
     {
         return new UnixTerminal(terminalInput, terminalOutput, terminalCharset);
+    }
+    
+    public static Screen getScreen() {
+        return new Screen(getTerminal());
+    }
+    
+    public static GUIScreen getGUIScreen() {
+        return new GUIScreen(getScreen());
     }
 }

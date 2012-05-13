@@ -41,13 +41,5 @@ public class Environment
         Collections.sort(keys);
         for(String key: keys)
             System.out.println(key + " = " + System.getenv(key));
-
-        /*
-        try {
-            TerminalStatus.querySize();
-        }
-        catch(IOException e) {
-            e.printStackTrace();
-        } */
     }
 }

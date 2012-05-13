@@ -17,14 +17,13 @@
  * Copyright (C) 2010-2012 Martin
  */
 
-package com.googlecode.lanterna.test;
+package com.googlecode.lanterna.test.terminal;
 
+import com.googlecode.lanterna.Lanterna;
 import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.terminal.Terminal;
-import com.googlecode.lanterna.terminal.TerminalFactory;
 import com.googlecode.lanterna.terminal.TerminalSize;
-import java.nio.charset.Charset;
 
 /**
  *
@@ -32,7 +31,7 @@ import java.nio.charset.Charset;
  */
 public class TerminalInputTest
 {
-    public static void main(String[] args) throws LanternaException, InterruptedException
+    public static void main(String[] args) throws InterruptedException
     {
         if(args.length > 0) {
             try {
@@ -42,7 +41,7 @@ public class TerminalInputTest
             }
         }
 
-        final Terminal rawTerminal = new TerminalFactory.PureUnixTextEnvironment().createTerminal(System.in, System.out, Charset.defaultCharset());
+        final Terminal rawTerminal = Lanterna.getTerminal();
         if(rawTerminal == null) {
             System.err.println("Couldn't allocate a terminal!");
             return;

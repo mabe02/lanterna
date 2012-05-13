@@ -19,8 +19,7 @@
 
 package com.googlecode.lanterna.test.issue;
 
-import com.googlecode.lanterna.LanternaException;
-import com.googlecode.lanterna.LanternTerminal;
+import com.googlecode.lanterna.Lanterna;
 import com.googlecode.lanterna.gui.*;
 
 /**
@@ -31,11 +30,9 @@ import com.googlecode.lanterna.gui.*;
  * @author Martin
  */
 public class Issue7a {
-    public static void main(String[] args) throws LanternaException {
-        final LanternTerminal terminal = new LanternTerminal();
-        terminal.start();
-        final GUIScreen textGUI = terminal.getGUIScreen();
-
+    public static void main(String[] args) {
+        final GUIScreen textGUI = Lanterna.getGUIScreen();
+        textGUI.getScreen().startScreen();
         textGUI.setTitle("GUI Test");
         final Window mainWindow = new Window("Testing issue 7");
         mainWindow.addComponent(new EmptySpace(16, 1));
@@ -54,6 +51,6 @@ public class Issue7a {
         }));
 
         textGUI.showWindow(mainWindow, GUIScreen.Position.CENTER);
-        terminal.stopAndRestoreTerminal();
+        textGUI.getScreen().stopScreen();
     }
 }

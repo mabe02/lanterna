@@ -17,10 +17,9 @@
  * Copyright (C) 2010-2012 Martin
  */
 
-package com.googlecode.lanterna.test;
+package com.googlecode.lanterna.test.screen;
 
-import com.googlecode.lanterna.LanternTerminal;
-import com.googlecode.lanterna.LanternaException;
+import com.googlecode.lanterna.Lanterna;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.ScreenCharacterStyle;
 import com.googlecode.lanterna.screen.ScreenWriter;
@@ -33,7 +32,7 @@ import com.googlecode.lanterna.terminal.TerminalPosition;
  */
 public class ScreenResizeTest
 {
-    public static void main(String[] args) throws LanternaException, InterruptedException
+    public static void main(String[] args) throws InterruptedException
     {
         if(args.length > 0) {
             try {
@@ -46,21 +45,14 @@ public class ScreenResizeTest
         new ScreenResizeTest();
     }
 
-    private LanternTerminal lanternTerminal;
     private Screen screen;
     private boolean willResize;
 
-    public ScreenResizeTest() throws LanternaException, InterruptedException
+    public ScreenResizeTest() throws InterruptedException
     {
         this.willResize = false;
-        this.lanternTerminal = new LanternTerminal();
-        if (lanternTerminal == null)
-        {
-            System.err.println("Couldn't allocate a terminal!");
-            return;
-        }
-        lanternTerminal.start();
-        screen = lanternTerminal.getScreen();
+        screen = Lanterna.getScreen();
+        screen.startScreen();
         screen.setCursorPosition(new TerminalPosition(0, 0));
         drawStrings("Initial setup, please resize the window");
 
@@ -73,10 +65,10 @@ public class ScreenResizeTest
 
             Thread.sleep(1);
         }
-        lanternTerminal.stopAndRestoreTerminal();
+        screen.stopScreen();
     }
 
-    private void drawStrings(String topTitle) throws LanternaException
+    private void drawStrings(String topTitle)
     {
         ScreenWriter writer = new ScreenWriter(screen);
         writer.setForegroundColor(Terminal.Color.DEFAULT);

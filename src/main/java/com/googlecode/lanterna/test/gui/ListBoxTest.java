@@ -19,7 +19,7 @@
 
 package com.googlecode.lanterna.test.gui;
 
-import com.googlecode.lanterna.LanternTerminal;
+import com.googlecode.lanterna.Lanterna;
 import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.gui.*;
 import java.util.Random;
@@ -34,22 +34,9 @@ public class ListBoxTest
     
     public static void main(String[] args) throws LanternaException
     {
-        if(args.length > 0) {
-            try {
-                Thread.sleep(15000);
-            }
-            catch(InterruptedException e) {
-            }
-        }
-
-        LanternTerminal terminal = new LanternTerminal();
-        final GUIScreen terminalGUIScreen = terminal.getGUIScreen();
-        if(terminalGUIScreen == null) {
-            System.err.println("Couldn't allocate a terminal!");
-            return;
-        }
-
-        terminal.start();
+        final GUIScreen guiScreen = Lanterna.getGUIScreen();
+        guiScreen.getScreen().startScreen();
+        
         final Window window1 = new Window("List box window");
         //window1.addComponent(new Widget(1, 1));
 
@@ -66,7 +53,7 @@ public class ListBoxTest
                     }
                     catch(InterruptedException e) {}
                     final Integer count = i + 1;
-                    terminalGUIScreen.runInEventThread(new Action() {
+                    guiScreen.runInEventThread(new Action() {
                         public void doAction() throws LanternaException
                         {
                             listBox.addItem("Item #" + count.intValue());
@@ -92,15 +79,15 @@ public class ListBoxTest
         Panel buttonPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORISONTAL);
         Button exitButton = new Button("Exit", new Action() {
                 public void doAction()  {
-                    terminalGUIScreen.closeWindow(window1);
+                    guiScreen.closeWindow(window1);
                 }
             });
         buttonPanel.addComponent(new EmptySpace(20, 1));
         buttonPanel.addComponent(exitButton);
         window1.addComponent(buttonPanel);
         thread.start();
-        terminalGUIScreen.showWindow(window1, GUIScreen.Position.CENTER);
+        guiScreen.showWindow(window1, GUIScreen.Position.CENTER);
         cancelThread = true;
-        terminal.stopAndRestoreTerminal();
+        guiScreen.getScreen().stopScreen();
     }
 }

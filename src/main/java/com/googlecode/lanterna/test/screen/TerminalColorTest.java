@@ -17,10 +17,9 @@
  * Copyright (C) 2010-2012 Martin
  */
 
-package com.googlecode.lanterna.test;
+package com.googlecode.lanterna.test.screen;
 
-import com.googlecode.lanterna.LanternTerminal;
-import com.googlecode.lanterna.LanternaException;
+import com.googlecode.lanterna.Lanterna;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.ScreenCharacterStyle;
 import com.googlecode.lanterna.screen.ScreenWriter;
@@ -32,16 +31,10 @@ import com.googlecode.lanterna.terminal.Terminal;
  */
 public class TerminalColorTest
 {
-    public static void main(String[] args) throws LanternaException
+    public static void main(String[] args)
     {
-        LanternTerminal lanternTerminal = new LanternTerminal();
-        if (lanternTerminal == null)
-        {
-            System.err.println("Couldn't allocate a terminal!");
-            return;
-        }
-        Screen screen = lanternTerminal.getScreen();
-        lanternTerminal.start();
+        Screen screen = Lanterna.getScreen();
+        screen.startScreen();
 
         ScreenWriter writer = new ScreenWriter(screen);
         writer.setForegroundColor(Terminal.Color.DEFAULT);
@@ -124,6 +117,6 @@ public class TerminalColorTest
         } catch (InterruptedException e)
         {
         }
-        lanternTerminal.stopAndRestoreTerminal();
+        screen.stopScreen();
     }
 }

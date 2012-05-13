@@ -19,8 +19,7 @@
 
 package com.googlecode.lanterna.test.gui;
 
-import com.googlecode.lanterna.LanternTerminal;
-import com.googlecode.lanterna.LanternaException;
+import com.googlecode.lanterna.Lanterna;
 import com.googlecode.lanterna.gui.*;
 import com.googlecode.lanterna.gui.theme.Theme.Category;
 import com.googlecode.lanterna.terminal.TerminalSize;
@@ -31,25 +30,11 @@ import com.googlecode.lanterna.terminal.TerminalSize;
  */
 public class ButtonTest
 {
-    public static void main(String[] args) throws LanternaException
+    public static void main(String[] args)
     {
-        if(args.length > 0) {
-            try {
-                Thread.sleep(15000);
-            }
-            catch(InterruptedException e) {
-            }
-        }
-
-        LanternTerminal terminal = new LanternTerminal();
-        final GUIScreen terminalGUIScreen = terminal.getGUIScreen();
-        if(terminalGUIScreen == null) {
-            System.err.println("Couldn't allocate a terminal!");
-            return;
-        }
-
-        terminal.start();
-        terminalGUIScreen.setTitle("GUI Test");
+        final GUIScreen guiScreen = Lanterna.getGUIScreen();
+        guiScreen.getScreen().startScreen();
+        guiScreen.setTitle("GUI Test");
 
         final Window mainWindow = new Window("Window with panels");
         mainWindow.addComponent(new AbstractComponent() {
@@ -70,7 +55,7 @@ public class ButtonTest
         Button button1 = new Button("Button1", new Action() {
             public void doAction()
             {
-                terminalGUIScreen.closeWindow(mainWindow);
+                guiScreen.closeWindow(mainWindow);
             }
         });
         Button button2 = new Button("Button2");
@@ -80,7 +65,7 @@ public class ButtonTest
         buttonPanel.addComponent(button3);
         mainWindow.addComponent(buttonPanel);
 
-        terminalGUIScreen.showWindow(mainWindow, GUIScreen.Position.CENTER);
-        terminal.stopAndRestoreTerminal();
+        guiScreen.showWindow(mainWindow, GUIScreen.Position.CENTER);
+        guiScreen.getScreen().stopScreen();
     }
 }

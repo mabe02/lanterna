@@ -19,8 +19,7 @@
 
 package com.googlecode.lanterna.test.gui;
 
-import com.googlecode.lanterna.LanternTerminal;
-import com.googlecode.lanterna.LanternaException;
+import com.googlecode.lanterna.Lanterna;
 import com.googlecode.lanterna.gui.*;
 import com.googlecode.lanterna.gui.layout.SizePolicy;
 import com.googlecode.lanterna.gui.theme.Theme.Category;
@@ -32,26 +31,11 @@ import com.googlecode.lanterna.terminal.TerminalSize;
  */
 public class PanelTest
 {
-    public static void main(String[] args) throws LanternaException
+    public static void main(String[] args)
     {
-        if(args.length > 0) {
-            try {
-                Thread.sleep(15000);
-            }
-            catch(InterruptedException e) {
-            }
-        }
-
-        final LanternTerminal terminal = new LanternTerminal();
-        if(terminal == null) {
-            System.err.println("Couldn't allocate a terminal!");
-            return;
-        }
-
-        terminal.start();
-        final GUIScreen textGUI = terminal.getGUIScreen();
-
-        textGUI.setTitle("GUI Test");
+        final GUIScreen guiScreen = Lanterna.getGUIScreen();
+        guiScreen.getScreen().startScreen();
+        guiScreen.setTitle("GUI Test");
         final Window mainWindow = new Window("Window with panels");
         TextFillComponent oneComponent = new TextFillComponent(5,5, '1');
         TextFillComponent twoComponent = new TextFillComponent(5,5, '2');
@@ -72,12 +56,12 @@ public class PanelTest
         mainWindow.addComponent(new Button("Close", new Action() {
             public void doAction()
             {
-                textGUI.closeWindow(mainWindow);
+                guiScreen.closeWindow(mainWindow);
             }
         }));
 
-        textGUI.showWindow(mainWindow, GUIScreen.Position.CENTER);
-        terminal.stopAndRestoreTerminal();
+        guiScreen.showWindow(mainWindow, GUIScreen.Position.CENTER);
+        guiScreen.getScreen().stopScreen();
     }
 
     private static class TextFillComponent extends AbstractComponent

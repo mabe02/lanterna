@@ -17,41 +17,31 @@
  * Copyright (C) 2010-2012 Martin
  */
 
-package com.googlecode.lanterna.test;
+package com.googlecode.lanterna.test.terminal;
 
-import com.googlecode.lanterna.LanternaException;
-import com.googlecode.lanterna.LanternTerminal;
-import com.googlecode.lanterna.terminal.ACS;
+import com.googlecode.lanterna.Lanterna;
 import com.googlecode.lanterna.terminal.Terminal;
-import com.googlecode.lanterna.terminal.TerminalFactory;
 
 /**
  *
- * @author Martin
+ * @author martin
  */
-public class SwingTerminalTest {
-    public static void main(String[] args) throws LanternaException, InterruptedException
-    {
-        Terminal terminal = new LanternTerminal(new TerminalFactory.Swing()).getUnderlyingTerminal();
+public class ResetAllTest {
+    public static void main(String[] args) throws InterruptedException {
+        Terminal terminal = Lanterna.getTerminal();
         terminal.enterPrivateMode();
         terminal.clearScreen();
         terminal.moveCursor(10, 5);
         terminal.putCharacter('H');
         terminal.putCharacter('e');
+        terminal.applySGR(Terminal.SGR.ENTER_BOLD);
         terminal.putCharacter('l');
+        terminal.applyForegroundColor(Terminal.Color.CYAN);
         terminal.putCharacter('l');
+        terminal.applySGR(Terminal.SGR.ENTER_REVERSE);
         terminal.putCharacter('o');
+        terminal.applySGR(Terminal.SGR.RESET_ALL);
         terminal.putCharacter('!');
-        terminal.putCharacter(' ');
-        terminal.putCharacter(ACS.HEART);
-        terminal.putCharacter(ACS.SPADES);
-        terminal.putCharacter(ACS.CLUB);
-        terminal.putCharacter(ACS.DIAMOND);
-        terminal.putCharacter(ACS.DOUBLE_LINE_CROSS);
-        terminal.putCharacter(ACS.SINGLE_LINE_CROSS);
-        terminal.putCharacter(ACS.DOUBLE_LINE_T_DOWN);
-        terminal.putCharacter(ACS.SINGLE_LINE_VERTICAL);
-        terminal.putCharacter(ACS.SINGLE_LINE_HORIZONTAL);
         terminal.moveCursor(0, 0);
 
         Thread.sleep(5000);
