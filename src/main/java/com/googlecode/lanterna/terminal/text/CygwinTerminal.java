@@ -29,7 +29,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- *
+ * This class is trying to provide some special workarounds in order to function
+ * in Cygwin terminal environments. 
+ * <b>This is work in progress and is not functional at the moment</b>
  * @author Martin
  */
 public class CygwinTerminal extends ANSITerminal {
