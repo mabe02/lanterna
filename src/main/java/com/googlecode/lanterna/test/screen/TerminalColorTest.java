@@ -33,7 +33,7 @@ public class TerminalColorTest
 {
     public static void main(String[] args)
     {
-        Screen screen = TerminalFacade.getScreen();
+        Screen screen = TerminalFacade.createScreen();
         screen.startScreen();
 
         ScreenWriter writer = new ScreenWriter(screen);

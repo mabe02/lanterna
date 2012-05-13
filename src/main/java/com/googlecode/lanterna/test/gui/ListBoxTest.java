@@ -34,7 +34,7 @@ public class ListBoxTest
     
     public static void main(String[] args) throws LanternaException
     {
-        final GUIScreen guiScreen = TerminalFacade.getGUIScreen();
+        final GUIScreen guiScreen = TerminalFacade.createGUIScreen();
         guiScreen.getScreen().startScreen();
         
         final Window window1 = new Window("List box window");

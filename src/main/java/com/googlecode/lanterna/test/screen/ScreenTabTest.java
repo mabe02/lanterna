@@ -41,7 +41,7 @@ public class ScreenTabTest {
 
     public ScreenTabTest() throws InterruptedException
     {
-        screen = TerminalFacade.getScreen();
+        screen = TerminalFacade.createScreen();
         screen.startScreen();
         screen.setCursorPosition(new TerminalPosition(0, 0));
         drawStrings("Trying out some tabs!");

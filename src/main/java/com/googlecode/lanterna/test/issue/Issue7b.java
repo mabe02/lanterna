@@ -31,7 +31,7 @@ import com.googlecode.lanterna.gui.*;
  */
 public class Issue7b {
     public static void main(String[] args) {
-        final GUIScreen textGUI = TerminalFacade.getGUIScreen();
+        final GUIScreen textGUI = TerminalFacade.createGUIScreen();
         textGUI.getScreen().startScreen();
 
         textGUI.setTitle("GUI Test");

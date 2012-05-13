@@ -30,7 +30,8 @@ import java.nio.charset.Charset;
 
 /**
  * This class gives an easy facade over the whole Lanterna terminal construction
- * system
+ * system. You can invoke methods in this class if you quickly want a Terminal,
+ * Screen or GUIScreen object with default settings applied.
  * @author Martin
  */
 public class TerminalFacade {
@@ -38,62 +39,62 @@ public class TerminalFacade {
     
     private static final Charset DEFAULT_CHARSET = Charset.forName(System.getProperty("file.encoding"));
     
-    public static Terminal getTerminal() 
+    public static Terminal createTerminal() 
     {
-        return getTerminal(DEFAULT_CHARSET);
+        return createTerminal(DEFAULT_CHARSET);
     }
     
-    public static Terminal getTerminal(Charset terminalCharset)
+    public static Terminal createTerminal(Charset terminalCharset)
     {
-        return getTerminal(System.in, System.out, terminalCharset);
+        return createTerminal(System.in, System.out, terminalCharset);
     }
     
-    public static Terminal getTerminal(
+    public static Terminal createTerminal(
                                     InputStream terminalInput, 
                                     OutputStream terminalOutput)
     {
-        return getTerminal(terminalInput, terminalOutput, DEFAULT_CHARSET);
+        return createTerminal(terminalInput, terminalOutput, DEFAULT_CHARSET);
     }
     
-    public static Terminal getTerminal(
+    public static Terminal createTerminal(
                                     InputStream terminalInput, 
                                     OutputStream terminalOutput,
                                     Charset terminalCharset)
     {
         if(GraphicsEnvironment.isHeadless())
-            return getUnixTerminal(terminalInput, terminalOutput, terminalCharset);
+            return createUnixTerminal(terminalInput, terminalOutput, terminalCharset);
         else
-            return getSwingTerminal();
+            return createSwingTerminal();
     }
     
-    public static SwingTerminal getSwingTerminal()
+    public static SwingTerminal createSwingTerminal()
     {
-        return getSwingTerminal(100, 30);
+        return createSwingTerminal(100, 30);
     }
     
-    public static SwingTerminal getSwingTerminal(int columns, int rows)
+    public static SwingTerminal createSwingTerminal(int columns, int rows)
     {
         return new SwingTerminal(columns, rows);
     }
     
-    public static UnixTerminal getUnixTerminal() 
+    public static UnixTerminal createUnixTerminal() 
     {
-        return getUnixTerminal(DEFAULT_CHARSET);
+        return createUnixTerminal(DEFAULT_CHARSET);
     }
     
-    public static UnixTerminal getUnixTerminal(Charset terminalCharset)
+    public static UnixTerminal createUnixTerminal(Charset terminalCharset)
     {
-        return getUnixTerminal(System.in, System.out, terminalCharset);
+        return createUnixTerminal(System.in, System.out, terminalCharset);
     }
     
-    public static UnixTerminal getUnixTerminal(
+    public static UnixTerminal createUnixTerminal(
                                     InputStream terminalInput, 
                                     OutputStream terminalOutput)
     {
-        return getUnixTerminal(terminalInput, terminalOutput, DEFAULT_CHARSET);
+        return createUnixTerminal(terminalInput, terminalOutput, DEFAULT_CHARSET);
     }
     
-    public static UnixTerminal getUnixTerminal(
+    public static UnixTerminal createUnixTerminal(
                                     InputStream terminalInput, 
                                     OutputStream terminalOutput,
                                     Charset terminalCharset)
@@ -102,7 +103,7 @@ public class TerminalFacade {
     }
     
     public static Screen createScreen() {
-        return createScreen(getTerminal());
+        return createScreen(createTerminal());
     }
     
     public static Screen createScreen(Terminal terminal) {

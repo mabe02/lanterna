@@ -28,7 +28,7 @@ import com.googlecode.lanterna.terminal.Terminal;
  */
 public class ResetAllTest {
     public static void main(String[] args) throws InterruptedException {
-        Terminal terminal = TerminalFacade.getTerminal();
+        Terminal terminal = TerminalFacade.createTerminal();
         terminal.enterPrivateMode();
         terminal.clearScreen();
         terminal.moveCursor(10, 5);

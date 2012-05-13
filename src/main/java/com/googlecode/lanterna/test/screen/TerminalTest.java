@@ -30,7 +30,7 @@ import com.googlecode.lanterna.screen.ScreenWriter;
 public class TerminalTest
 {
     public static void main(String[] args) {
-        Screen screen = TerminalFacade.getScreen();
+        Screen screen = TerminalFacade.createScreen();
         ScreenWriter writer = new ScreenWriter(screen);
         screen.startScreen();
         try {

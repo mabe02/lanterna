@@ -33,7 +33,7 @@ public class PanelTest
 {
     public static void main(String[] args)
     {
-        final GUIScreen guiScreen = TerminalFacade.getGUIScreen();
+        final GUIScreen guiScreen = TerminalFacade.createGUIScreen();
         guiScreen.getScreen().startScreen();
         guiScreen.setTitle("GUI Test");
         final Window mainWindow = new Window("Window with panels");

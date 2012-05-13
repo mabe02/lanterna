@@ -41,7 +41,7 @@ public class TerminalInputTest
             }
         }
 
-        final Terminal rawTerminal = TerminalFacade.getTerminal();
+        final Terminal rawTerminal = TerminalFacade.createTerminal();
         if(rawTerminal == null) {
             System.err.println("Couldn't allocate a terminal!");
             return;

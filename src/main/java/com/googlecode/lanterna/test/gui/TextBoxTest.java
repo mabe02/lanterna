@@ -30,7 +30,7 @@ public class TextBoxTest
 {
     public static void main(String[] args)
     {
-        final GUIScreen guiScreen = TerminalFacade.getGUIScreen();
+        final GUIScreen guiScreen = TerminalFacade.createGUIScreen();
         guiScreen.getScreen().startScreen();
         final Window window1 = new Window("Text box window");
         //window1.addComponent(new Widget(1, 1));

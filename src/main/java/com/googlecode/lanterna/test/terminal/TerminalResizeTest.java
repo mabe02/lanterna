@@ -34,7 +34,7 @@ public class TerminalResizeTest implements Terminal.ResizeListener
     
     public static void main(String[] args) throws InterruptedException
     {
-        terminal = TerminalFacade.getTerminal();
+        terminal = TerminalFacade.createTerminal();
         terminal.enterPrivateMode();
         terminal.clearScreen();
         terminal.moveCursor(10, 5);

@@ -30,7 +30,7 @@ import com.googlecode.lanterna.terminal.Terminal;
 public class SwingTerminalTest {
     public static void main(String[] args) throws InterruptedException
     {
-        Terminal terminal = TerminalFacade.getSwingTerminal();
+        Terminal terminal = TerminalFacade.createSwingTerminal();
         terminal.enterPrivateMode();
         terminal.clearScreen();
         terminal.moveCursor(10, 5);
