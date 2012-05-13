@@ -39,7 +39,7 @@ public class TestTerminalFactory {
     
     public Terminal createTerminal() {
         if(forceUnixTerminal)
-            return TerminalFacade.createUnixTerminal();
+            return TerminalFacade.createTextTerminal();
         else
             return TerminalFacade.createTerminal();
     }

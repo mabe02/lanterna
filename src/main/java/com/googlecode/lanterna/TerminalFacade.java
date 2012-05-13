@@ -22,6 +22,7 @@ import com.googlecode.lanterna.gui.GUIScreen;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.swing.SwingTerminal;
+import com.googlecode.lanterna.terminal.text.CygwinTerminal;
 import com.googlecode.lanterna.terminal.text.UnixTerminal;
 import java.awt.GraphicsEnvironment;
 import java.io.InputStream;
@@ -35,6 +36,7 @@ import java.nio.charset.Charset;
  * @author Martin
  */
 public class TerminalFacade {
+
     private TerminalFacade() {}
     
     private static final Charset DEFAULT_CHARSET = Charset.forName(System.getProperty("file.encoding"));
@@ -62,7 +64,7 @@ public class TerminalFacade {
                                     Charset terminalCharset)
     {
         if(GraphicsEnvironment.isHeadless())
-            return createUnixTerminal(terminalInput, terminalOutput, terminalCharset);
+            return createTextTerminal(terminalInput, terminalOutput, terminalCharset);
         else
             return createSwingTerminal();
     }
@@ -100,6 +102,48 @@ public class TerminalFacade {
                                     Charset terminalCharset)
     {
         return new UnixTerminal(terminalInput, terminalOutput, terminalCharset);
+    }
+    
+    public static CygwinTerminal createCygwinTerminal() 
+    {
+        return createCygwinTerminal(DEFAULT_CHARSET);
+    }
+    
+    public static CygwinTerminal createCygwinTerminal(Charset terminalCharset)
+    {
+        return createCygwinTerminal(System.in, System.out, terminalCharset);
+    }
+    
+    public static CygwinTerminal createCygwinTerminal(
+                                    InputStream terminalInput, 
+                                    OutputStream terminalOutput)
+    {
+        return createCygwinTerminal(terminalInput, terminalOutput, DEFAULT_CHARSET);
+    }
+    
+    public static CygwinTerminal createCygwinTerminal(
+                                    InputStream terminalInput, 
+                                    OutputStream terminalOutput,
+                                    Charset terminalCharset)
+    {
+        return new CygwinTerminal(terminalInput, terminalOutput, terminalCharset);
+    }
+    
+    
+    
+    public static Terminal createTextTerminal() 
+    {
+        return createTextTerminal(System.in, System.out, DEFAULT_CHARSET);
+    }
+    
+    public static Terminal createTextTerminal(InputStream terminalInput, 
+                                    OutputStream terminalOutput,
+                                    Charset terminalCharset) 
+    {
+        if(System.getProperty("os.name", "").toLowerCase().startsWith("windows"))
+            return createCygwinTerminal(terminalInput, terminalOutput, terminalCharset);
+        else
+            return createUnixTerminal(terminalInput, terminalOutput, terminalCharset);
     }
     
     public static Screen createScreen() {
