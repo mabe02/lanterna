@@ -25,6 +25,7 @@ public class BlinkTest {
         rawTerminal.putCharacter('l');
         rawTerminal.putCharacter('o');
         rawTerminal.putCharacter('!');
+        rawTerminal.moveCursor(0, 0);
         rawTerminal.flush();
         try {
             Thread.sleep(5000);
