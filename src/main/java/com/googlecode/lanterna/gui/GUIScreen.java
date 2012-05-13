@@ -78,6 +78,10 @@ public class GUIScreen
     public TerminalSize getTerminalSize() {
         return screen.getTerminalSize();
     }
+
+    public Screen getScreen() {
+        return screen;
+    }
     
     private synchronized void repaint() throws LanternaException
     {
