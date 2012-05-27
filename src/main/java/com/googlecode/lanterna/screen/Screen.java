@@ -113,9 +113,11 @@ public class Screen
 
     public void setCursorPosition(int column, int row)
     {
-        if(column >= 0 && column < terminalSize.getColumns() &&
-                row >= 0 && row < terminalSize.getRows()) {
-            this.cursorPosition = new TerminalPosition(column, row);
+        synchronized(mutex) {
+            if(column >= 0 && column < terminalSize.getColumns() &&
+                    row >= 0 && row < terminalSize.getRows()) {
+                this.cursorPosition = new TerminalPosition(column, row);
+            }
         }
     }
 
