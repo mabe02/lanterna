@@ -26,5 +26,5 @@ import com.googlecode.lanterna.LanternaException;
  * @author Martin
  */
 public interface Action {
-    public void doAction() throws LanternaException;
+    public void doAction();
 }

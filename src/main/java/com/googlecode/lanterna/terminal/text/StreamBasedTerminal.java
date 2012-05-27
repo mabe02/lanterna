@@ -69,7 +69,7 @@ public abstract class StreamBasedTerminal extends InputEnabledAbstractTerminal {
      * @param c Character to write to the output stream
      * @throws LanternaException 
      */
-    public void putCharacter(char c) throws LanternaException {
+    public void putCharacter(char c) {
         synchronized(writerMutex) {
             writeToTerminal(translateCharacter(c));
         }
@@ -81,7 +81,7 @@ public abstract class StreamBasedTerminal extends InputEnabledAbstractTerminal {
      * The reason is that many control sequences are a group of bytes and we want to 
      * synchronize the whole thing rather than each character one by one.
      */
-    protected void writeToTerminal(final byte... bytes) throws LanternaException {
+    protected void writeToTerminal(final byte... bytes) {
         try {
             terminalOutput.write(bytes);
         } catch (IOException e) {
@@ -89,7 +89,7 @@ public abstract class StreamBasedTerminal extends InputEnabledAbstractTerminal {
         }
     }
 
-    public void flush() throws LanternaException {
+    public void flush() {
         try {
             terminalOutput.flush();
         } catch (IOException e) {

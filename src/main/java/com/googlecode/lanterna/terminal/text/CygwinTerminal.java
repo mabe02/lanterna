@@ -52,7 +52,7 @@ public class CygwinTerminal extends ANSITerminal {
         resizeCheckTimer = null;
     }
 
-    public TerminalSize queryTerminalSize() throws LanternaException
+    public TerminalSize queryTerminalSize()
     {        
         synchronized(writerMutex) {
             saveCursorPosition();
@@ -64,7 +64,7 @@ public class CygwinTerminal extends ANSITerminal {
     }
     
     @Override
-    public void enterPrivateMode() throws LanternaException
+    public void enterPrivateMode()
     {
         super.enterPrivateMode();
         setCBreak(true);
@@ -80,7 +80,7 @@ public class CygwinTerminal extends ANSITerminal {
     }
 
     @Override
-    public void exitPrivateMode() throws LanternaException
+    public void exitPrivateMode()
     {
         resizeCheckTimer.cancel();
         setEcho(true);
@@ -89,28 +89,28 @@ public class CygwinTerminal extends ANSITerminal {
     }
 
     @Override
-    public void setCBreak(boolean cbreakOn) throws LanternaException {
+    public void setCBreak(boolean cbreakOn) {
         sttyICanon(cbreakOn);
     }
 
     @Override
-    public void setEcho(boolean echoOn) throws LanternaException {
+    public void setEcho(boolean echoOn) {
         sttyKeyEcho(echoOn);
     }
     
-    private static void sttyKeyEcho(final boolean enable) throws LanternaException
+    private static void sttyKeyEcho(final boolean enable)
     {
         exec(findShell(), "-c",
                             "/bin/stty.exe " + (enable ? "echo" : "-echo") + " < /dev/tty");
     }
 
-    private static void sttyMinimumCharacterForRead(final int nrCharacters) throws LanternaException
+    private static void sttyMinimumCharacterForRead(final int nrCharacters)
     {
         exec(findShell(), "-c",
                             "/bin/stty.exe min " + nrCharacters + " < /dev/tty");
     }
 
-    private static void sttyICanon(final boolean enable) throws LanternaException
+    private static void sttyICanon(final boolean enable)
     {
         exec(findShell(), "-c",
                             "/bin/stty.exe " + (enable ? "-icanon" : "icanon") + " < /dev/tty");

@@ -33,7 +33,7 @@ public class FixedTerminalSizeProvider implements UnixTerminalSizeQuerier {
         this.size = size;
     }
 
-    public TerminalSize queryTerminalSize() throws LanternaException {
+    public TerminalSize queryTerminalSize() {
         return size;
     }
 }

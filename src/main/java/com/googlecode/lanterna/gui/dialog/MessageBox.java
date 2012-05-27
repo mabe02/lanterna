@@ -125,13 +125,13 @@ public class MessageBox extends Window
         }
     }
 
-    public static DialogResult showMessageBox(final GUIScreen owner, final String title, final String message) throws LanternaException
+    public static DialogResult showMessageBox(final GUIScreen owner, final String title, final String message)
     {
         return showMessageBox(owner, title, message, DialogButtons.OK);
     }
 
     public static DialogResult showMessageBox(final GUIScreen owner, final String title,
-            final String message, final DialogButtons buttons) throws LanternaException
+            final String message, final DialogButtons buttons)
     {
         MessageBox messageBox = new MessageBox(title, message, buttons);
         owner.showWindow(messageBox, GUIScreen.Position.CENTER);

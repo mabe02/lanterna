@@ -68,7 +68,7 @@ public abstract class CommonCheckBox extends AbstractInteractableComponent
         setHotspot(graphics.translateToGlobalCoordinates(new TerminalPosition(1, 0)));
     }
 
-    public void keyboardInteraction(Key key, InteractableResult result) throws LanternaException
+    public void keyboardInteraction(Key key, InteractableResult result)
     {
         switch(key.getKind())
         {

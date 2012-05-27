@@ -63,7 +63,7 @@ public class ActionListBox extends AbstractInteractableComponent
                 return action.toString();
             }
 
-            public void doAction() throws LanternaException {
+            public void doAction() {
                 action.doAction();
             }
         });
@@ -149,7 +149,7 @@ public class ActionListBox extends AbstractInteractableComponent
             selectedIndex = itemList.size() - 1;
     }
 
-    public void keyboardInteraction(Key key, InteractableResult result) throws LanternaException
+    public void keyboardInteraction(Key key, InteractableResult result)
     {
         switch(key.getKind()) {
             case Tab:
@@ -195,6 +195,6 @@ public class ActionListBox extends AbstractInteractableComponent
     public static interface Item
     {
         public String getTitle();
-        public void doAction() throws LanternaException;
+        public void doAction();
     }
 }

@@ -56,7 +56,7 @@ public class ActionListDialog extends Window
                 return actionItem.getTitle();
             }
 
-            public void doAction() throws LanternaException
+            public void doAction()
             {
                 actionItem.doAction();
                 close();
@@ -64,7 +64,7 @@ public class ActionListDialog extends Window
         });
     }
 
-    public static void showActionListDialog(GUIScreen owner, String title, String description, ActionListBox.Item... items) throws LanternaException
+    public static void showActionListDialog(GUIScreen owner, String title, String description, ActionListBox.Item... items)
     {
         int maxLength = 0;
         for(ActionListBox.Item item: items)
@@ -74,7 +74,7 @@ public class ActionListDialog extends Window
         showActionListDialog(owner, title, description, maxLength, items);
     }
 
-    public static void showActionListDialog(GUIScreen owner, String title, String description, int itemWidth, ActionListBox.Item... items) throws LanternaException
+    public static void showActionListDialog(GUIScreen owner, String title, String description, int itemWidth, ActionListBox.Item... items)
     {
         ActionListDialog actionListDialog = new ActionListDialog(title, description, itemWidth);
         for(ActionListBox.Item item: items)

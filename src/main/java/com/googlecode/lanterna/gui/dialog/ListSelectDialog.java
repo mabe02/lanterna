@@ -32,13 +32,13 @@ import java.util.List;
 public class ListSelectDialog
 {
     public static Object showDialog(final GUIScreen owner, final String title,
-            final String description, final Object... items) throws LanternaException
+            final String description, final Object... items)
     {
         return showDialog(owner, title, description, -1, items);
     }
 
     public static Object showDialog(final GUIScreen owner, final String title,
-            final String description, final int listWidth, final Object... items) throws LanternaException
+            final String description, final int listWidth, final Object... items)
     {
         final List<Object> result = new ArrayList<Object>();
         ActionListBox.Item []actionItems = new ActionListBox.Item[items.length];

@@ -140,7 +140,7 @@ public class ListBox extends AbstractInteractableComponent
             setHotspot(graphics.translateToGlobalCoordinates(new TerminalPosition(0, selectedIndex - scrollTopIndex)));
     }
 
-    public void keyboardInteraction(Key key, InteractableResult result) throws LanternaException
+    public void keyboardInteraction(Key key, InteractableResult result)
     {
         switch(key.getKind()) {
             case Tab:

@@ -28,5 +28,5 @@ import com.googlecode.lanterna.terminal.TerminalSize;
  * @author martin
  */
 public interface UnixTerminalSizeQuerier {
-    TerminalSize queryTerminalSize() throws LanternaException;
+    TerminalSize queryTerminalSize();
 }

@@ -69,13 +69,13 @@ public class TextInputDialog extends Window
     }
 
     public static String showTextInputBox(final GUIScreen owner, final String title,
-            final String description, final String initialText) throws LanternaException
+            final String description, final String initialText)
     {
         return showTextInputBox(owner, title, description, initialText, -1);
     }
 
     public static String showTextInputBox(final GUIScreen owner, final String title,
-            final String description, final String initialText, final int textBoxWidth) throws LanternaException
+            final String description, final String initialText, final int textBoxWidth)
     {
         final TextInputDialog textInputBox =
                 new TextInputDialog(new NormalTextBoxFactory(), title, description, initialText, textBoxWidth);
@@ -84,13 +84,13 @@ public class TextInputDialog extends Window
     }
 
     public static String showPasswordInputBox(final GUIScreen owner, final String title,
-            final String description, final String initialText) throws LanternaException
+            final String description, final String initialText)
     {
         return showPasswordInputBox(owner, title, description, initialText, -1);
     }
 
     public static String showPasswordInputBox(final GUIScreen owner, final String title,
-            final String description, final String initialText, final int textBoxWidth) throws LanternaException
+            final String description, final String initialText, final int textBoxWidth)
     {
         TextInputDialog textInputBox = new TextInputDialog(new PasswordTextBoxFactory(), title, description, initialText, textBoxWidth);
         owner.showWindow(textInputBox, GUIScreen.Position.CENTER);

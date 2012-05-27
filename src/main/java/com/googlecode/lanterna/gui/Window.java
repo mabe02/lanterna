@@ -193,7 +193,7 @@ public class Window implements Container
             return currentlyInFocus.getHotspot();
     }
 
-    public void onKeyPressed(Key key) throws LanternaException
+    public void onKeyPressed(Key key)
     {
         InteractableResult resultContainer = new InteractableResult();
 

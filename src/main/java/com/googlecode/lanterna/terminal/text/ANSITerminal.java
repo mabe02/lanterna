@@ -38,12 +38,12 @@ public abstract class ANSITerminal extends StreamBasedTerminal
         addInputProfile(new CommonProfile());
     }
 
-    private void CSI() throws LanternaException
+    private void CSI()
     {
         writeToTerminal((byte)0x1b, (byte)'[');
     }
 
-    public void applyBackgroundColor(Color color) throws LanternaException
+    public void applyBackgroundColor(Color color)
     {
         synchronized(writerMutex) {
             CSI();
@@ -51,7 +51,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal
         }
     }
 
-    public void applyForegroundColor(Color color) throws LanternaException
+    public void applyForegroundColor(Color color)
     {
         synchronized(writerMutex) {
             CSI();
@@ -59,7 +59,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal
         }
     }
 
-    public void applySGR(SGR... options) throws LanternaException
+    public void applySGR(SGR... options)
     {
         synchronized(writerMutex) {
             CSI();
@@ -98,7 +98,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal
         }
     }
 
-    public void clearScreen() throws LanternaException
+    public void clearScreen()
     {
         synchronized(writerMutex) {
             CSI();
@@ -106,7 +106,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal
         }
     }
 
-    public void enterPrivateMode() throws LanternaException
+    public void enterPrivateMode()
     {
         synchronized(writerMutex) {
             CSI();
@@ -114,7 +114,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal
         }
     }
 
-    public void exitPrivateMode() throws LanternaException
+    public void exitPrivateMode()
     {
         synchronized(writerMutex) {
             applySGR(SGR.RESET_ALL);
@@ -131,7 +131,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal
      * @param echoOn true if keyboard input will immediately echo, false if it's hidden
      * @throws LanternaException
      */
-    public abstract void setEcho(boolean echoOn) throws LanternaException;
+    public abstract void setEcho(boolean echoOn);
 
     /**
      * Enabling cbreak mode will allow you to read user input immediately as the
@@ -142,9 +142,9 @@ public abstract class ANSITerminal extends StreamBasedTerminal
      * @param cbreakOn
      * @throws LanternaException
      */
-    public abstract void setCBreak(boolean cbreakOn) throws LanternaException;
+    public abstract void setCBreak(boolean cbreakOn);
 
-    public void moveCursor(int x, int y) throws LanternaException
+    public void moveCursor(int x, int y)
     {
         synchronized(writerMutex) {
             CSI();
@@ -158,7 +158,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal
     /**
      * Synchronize with writerMutex externally!!!
      */
-    protected void reportPosition() throws LanternaException
+    protected void reportPosition()
     {
         CSI();
         writeToTerminal("6n".getBytes());
@@ -167,7 +167,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal
     /**
      * Synchronize with writerMutex externally!!!
      */
-    protected void restoreCursorPosition() throws LanternaException
+    protected void restoreCursorPosition()
     {
         CSI();
         writeToTerminal("u".getBytes());
@@ -176,7 +176,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal
     /**
      * Synchronize with writerMutex externally!!!
      */
-    protected void saveCursorPosition() throws LanternaException
+    protected void saveCursorPosition()
     {
         CSI();
         writeToTerminal("s".getBytes());

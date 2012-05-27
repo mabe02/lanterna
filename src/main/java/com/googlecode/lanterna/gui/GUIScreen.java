@@ -83,7 +83,7 @@ public class GUIScreen
         return screen;
     }
     
-    private synchronized void repaint() throws LanternaException
+    private synchronized void repaint()
     {
         final TextGraphics textGraphics = new TextGraphics(new TerminalPosition(0, 0),
                 new TerminalSize(screen.getTerminalSize()), screen, guiTheme);
@@ -153,7 +153,7 @@ public class GUIScreen
         screen.refresh();
     }
 
-    private void update() throws LanternaException
+    private void update()
     {
         if(needsRefresh || !screen.resizePending()) {
             repaint();
@@ -174,7 +174,7 @@ public class GUIScreen
             return false;
     }
 
-    private void doEventLoop() throws LanternaException
+    private void doEventLoop()
     {
         int currentStackLength = windowStack.size();
         if(currentStackLength == 0)
@@ -209,12 +209,12 @@ public class GUIScreen
         }
     }
 
-    public void showWindow(Window window) throws LanternaException
+    public void showWindow(Window window)
     {
         showWindow(window, Position.OVERLAPPING);
     }
 
-    public void showWindow(Window window, Position position) throws LanternaException
+    public void showWindow(Window window, Position position)
     {
         if(window == null)
             return;

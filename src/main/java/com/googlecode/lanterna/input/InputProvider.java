@@ -34,5 +34,5 @@ public interface InputProvider {
      * @param profile 
      */
     public void addInputProfile(KeyMappingProfile profile);
-    public Key readInput() throws LanternaException;
+    public Key readInput();
 }

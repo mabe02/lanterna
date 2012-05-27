@@ -75,7 +75,7 @@ public class UnixTerminal extends ANSITerminal
         }
     }
 
-    public TerminalSize queryTerminalSize() throws LanternaException
+    public TerminalSize queryTerminalSize()
     {
         if(terminalSizeQuerier != null)
             return terminalSizeQuerier.queryTerminalSize();
@@ -90,7 +90,7 @@ public class UnixTerminal extends ANSITerminal
     }
     
     @Override
-    public void enterPrivateMode() throws LanternaException
+    public void enterPrivateMode()
     {
         super.enterPrivateMode();
         setCBreak(true);
@@ -99,7 +99,7 @@ public class UnixTerminal extends ANSITerminal
     }
 
     @Override
-    public void exitPrivateMode() throws LanternaException
+    public void exitPrivateMode()
     {
         super.exitPrivateMode();
         setCBreak(false);
@@ -107,34 +107,34 @@ public class UnixTerminal extends ANSITerminal
     }
 
     @Override
-    public void setCBreak(boolean cbreakOn) throws LanternaException {
+    public void setCBreak(boolean cbreakOn) {
         sttyICanon(cbreakOn);
     }
 
     @Override
-    public void setEcho(boolean echoOn) throws LanternaException {
+    public void setEcho(boolean echoOn) {
         sttyKeyEcho(echoOn);
     }
     
-    private static void sttyKeyEcho(final boolean enable) throws LanternaException
+    private static void sttyKeyEcho(final boolean enable)
     {
         exec("/bin/sh", "-c",
                             "/bin/stty " + (enable ? "echo" : "-echo") + " < /dev/tty");
     }
 
-    private static void sttyMinimumCharacterForRead(final int nrCharacters) throws LanternaException
+    private static void sttyMinimumCharacterForRead(final int nrCharacters)
     {
         exec("/bin/sh", "-c",
                             "/bin/stty min " + nrCharacters + " < /dev/tty");
     }
 
-    private static void sttyICanon(final boolean enable) throws LanternaException
+    private static void sttyICanon(final boolean enable)
     {
         exec("/bin/sh", "-c",
                             "/bin/stty " + (enable ? "-icanon" : "icanon") + " < /dev/tty");
     }
     
-    private static String exec(String ...cmd) throws LanternaException
+    private static String exec(String ...cmd)
     {
         try {
             ProcessBuilder pb = new ProcessBuilder(cmd);

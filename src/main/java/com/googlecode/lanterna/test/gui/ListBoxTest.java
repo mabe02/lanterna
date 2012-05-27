@@ -32,7 +32,7 @@ public class ListBoxTest
 {
     public static boolean cancelThread = false;
     
-    public static void main(String[] args) throws LanternaException
+    public static void main(String[] args)
     {
         final GUIScreen guiScreen = new TestTerminalFactory(args).createGUIScreen();
         guiScreen.getScreen().startScreen();
@@ -54,7 +54,7 @@ public class ListBoxTest
                     catch(InterruptedException e) {}
                     final Integer count = i + 1;
                     guiScreen.runInEventThread(new Action() {
-                        public void doAction() throws LanternaException
+                        public void doAction()
                         {
                             listBox.addItem("Item #" + count.intValue());
                         }

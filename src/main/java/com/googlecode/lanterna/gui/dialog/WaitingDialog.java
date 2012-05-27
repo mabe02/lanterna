@@ -60,7 +60,7 @@ public class WaitingDialog extends Window
     {
         isClosed = true;
         getOwner().runInEventThread(new Action() {
-            public void doAction() throws LanternaException
+            public void doAction()
             {
                 WaitingDialog.super.close();
             }
@@ -84,7 +84,7 @@ public class WaitingDialog extends Window
                     nextSpin = "-";
                 if(getOwner() != null) {
                     getOwner().runInEventThread(new Action() {
-                        public void doAction() throws LanternaException
+                        public void doAction()
                         {
                             spinLabel.setText(nextSpin);
                         }

@@ -99,7 +99,7 @@ public class StaticTextArea  extends AbstractInteractableComponent
         }
     }
 
-    public void keyboardInteraction(Key key, InteractableResult result) throws LanternaException
+    public void keyboardInteraction(Key key, InteractableResult result)
     {
         switch(key.getKind()) {
             case Tab:

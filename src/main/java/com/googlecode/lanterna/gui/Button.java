@@ -105,7 +105,7 @@ public class Button extends AbstractInteractableComponent
         buttonLabel.setStyle(Theme.Category.ButtonLabelInactive);
     }
 
-    public void keyboardInteraction(Key key, InteractableResult result) throws LanternaException
+    public void keyboardInteraction(Key key, InteractableResult result)
     {
         switch(key.getKind()) {
             case Enter:

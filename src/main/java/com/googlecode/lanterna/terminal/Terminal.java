@@ -37,7 +37,7 @@ public interface Terminal extends InputProvider
      * mode. 
      * @throws LanternaException 
      */
-    public void enterPrivateMode() throws LanternaException;
+    public void enterPrivateMode();
     
     /**
      * If you have previously entered private mode, this method will exit this
@@ -45,7 +45,7 @@ public interface Terminal extends InputProvider
      * like before private mode was entered.
      * @throws LanternaException 
      */    
-    public void exitPrivateMode() throws LanternaException;
+    public void exitPrivateMode();
     
     /**
      * Removes all the characters, colors and graphics from the screep and leaves
@@ -54,7 +54,7 @@ public interface Terminal extends InputProvider
      * {@code moveCursor} next.
      * @throws LanternaException 
      */    
-    public void clearScreen() throws LanternaException;
+    public void clearScreen();
     
     /**
      * Moves the text cursor to a new location
@@ -62,7 +62,7 @@ public interface Terminal extends InputProvider
      * @param y The 0-indexed row to place the cursor at
      * @throws LanternaException 
      */    
-    public void moveCursor(int x, int y) throws LanternaException;
+    public void moveCursor(int x, int y);
     
     /**
      * Prints one character to the terminal at the current cursor location. Please
@@ -71,7 +71,7 @@ public interface Terminal extends InputProvider
      * @param c
      * @throws LanternaException 
      */
-    public void putCharacter(char c) throws LanternaException;
+    public void putCharacter(char c);
     
     /**
      * Activates an {@code SGR} code for all the following characters put to the 
@@ -80,7 +80,7 @@ public interface Terminal extends InputProvider
      * @throws LanternaException 
      * @see Terminal.SGR
      */
-    public void applySGR(SGR... options) throws LanternaException;
+    public void applySGR(SGR... options);
     
     /**
      * Changes the foreground color for all the following characters put to the 
@@ -88,7 +88,7 @@ public interface Terminal extends InputProvider
      * @param color Color to use for foreground
      * @throws LanternaException 
      */    
-    public void applyForegroundColor(Color color) throws LanternaException;
+    public void applyForegroundColor(Color color);
     
     /**
      * Changes the background color for all the following characters put to the 
@@ -97,7 +97,7 @@ public interface Terminal extends InputProvider
      * @param color Color to use for the background
      * @throws LanternaException 
      */    
-    public void applyBackgroundColor(Color color) throws LanternaException;
+    public void applyBackgroundColor(Color color);
     
     /**
      * Adds a {@code ResizeListener} to be called when the terminal has changed
@@ -125,14 +125,14 @@ public interface Terminal extends InputProvider
      * @throws LanternaException 
      * @see TerminalSize
      */
-    public TerminalSize queryTerminalSize() throws LanternaException;
+    public TerminalSize queryTerminalSize();
     
     /**
      * Calls {@code flush()} on the underlying {@code OutputStream} object, or
      * whatever other implementation this terminal is built around. 
      * @throws LanternaException 
      */
-    public void flush() throws LanternaException;
+    public void flush();
 
     /**
      * SGR - Select Graphic Rendition, changes the state of the terminal as to

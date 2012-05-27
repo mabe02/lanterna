@@ -40,7 +40,7 @@ public abstract class InputEnabledAbstractTerminal extends AbstractTerminal impl
         inputDecoder.addProfile(profile);
     }
 
-    public Key readInput() throws LanternaException {
+    public Key readInput() {
         Key key = inputDecoder.getNextCharacter();
         if (key != null && key.getKind() == Key.Kind.CursorLocation) {
             TerminalPosition reportedTerminalPosition = inputDecoder.getLastReportedTerminalPosition();

@@ -102,17 +102,17 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
     {
     }
 
-    public void applyBackgroundColor(Color color) throws LanternaException
+    public void applyBackgroundColor(Color color)
     {
         currentBackgroundColor = color;
     }
 
-    public void applyForegroundColor(Color color) throws LanternaException
+    public void applyForegroundColor(Color color)
     {
         currentForegroundColor = color;
     }
 
-    public void applySGR(SGR... options) throws LanternaException
+    public void applySGR(SGR... options)
     {
         for(SGR sgr: options)
         {
@@ -143,7 +143,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
         }
     }
 
-    public void enterPrivateMode() throws LanternaException
+    public void enterPrivateMode()
     {
         terminalFrame = new JFrame("Terminal");
         terminalFrame.addComponentListener(new FrameResizeListener());
@@ -160,7 +160,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
         blinkTimer.start();
     }
 
-    public void exitPrivateMode() throws LanternaException
+    public void exitPrivateMode()
     {
         if(terminalFrame == null)
             return;
@@ -186,7 +186,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
         refreshScreen();
     }
 
-    public synchronized void putCharacter(char c) throws LanternaException
+    public synchronized void putCharacter(char c)
     {
         characterMap[textPosition.getRow()][textPosition.getColumn()] =
                 new TerminalCharacter(c, currentForegroundColor, currentBackgroundColor, currentlyBold, currentlyBlinking);
@@ -232,12 +232,12 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
     }
 
     @Override
-    public Key readInput() throws LanternaException
+    public Key readInput()
     {
         return keyQueue.poll();
     }
 
-    public void flush() throws LanternaException {
+    public void flush() {
         //Not needed
     }
 

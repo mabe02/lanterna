@@ -60,7 +60,7 @@ public class InputDecoder
             bytePatterns.add(pattern);
     }
 
-    public Key getNextCharacter() throws LanternaException
+    public Key getNextCharacter()
     {
         if(leftOverQueue.size() > 0) {
             Character first = leftOverQueue.poll();
