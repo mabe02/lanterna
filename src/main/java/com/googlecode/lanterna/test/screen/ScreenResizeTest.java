@@ -53,7 +53,7 @@ public class ScreenResizeTest
         {
             screen.readInput();
             if(!screen.resizePending())
-                drawStrings("Size: " + screen.getWidth() + "x" + screen.getHeight());
+                drawStrings("Size: " + screen.getTerminalSize().getColumns() + "x" + screen.getTerminalSize().getRows());
 
             Thread.sleep(1);
         }

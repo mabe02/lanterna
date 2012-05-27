@@ -99,6 +99,9 @@ public class GUIScreen
         //Write memory usage
         if(showMemoryUsage)
             drawMemoryUsage(textGraphics);
+        
+        int screenSizeColumns = screen.getTerminalSize().getColumns();
+        int screenSizeRows = screen.getTerminalSize().getRows();
 
         //Go through the windows
         for(WindowPlacement windowPlacement: windowStack) {
@@ -111,15 +114,15 @@ public class GUIScreen
                 if(windowPlacement.getWindow().maximisesHorisontally())
                     topLeft.setColumn(2);
                 else
-                    topLeft.setColumn((screen.getWidth() / 2) - (preferredSize.getColumns() / 2));
+                    topLeft.setColumn((screenSizeColumns / 2) - (preferredSize.getColumns() / 2));
 
                 if(windowPlacement.getWindow().maximisesVertically())
                     topLeft.setRow(1);
                 else
-                    topLeft.setRow((screen.getHeight() / 2) - (preferredSize.getRows() / 2));
+                    topLeft.setRow((screenSizeRows / 2) - (preferredSize.getRows() / 2));
             }            
-            int maxSizeWidth = screen.getWidth() - windowPlacement.getTopLeft().getColumn() - 1;
-            int maxSizeHeight = screen.getHeight() - windowPlacement.getTopLeft().getRow() - 1;
+            int maxSizeWidth = screenSizeColumns - windowPlacement.getTopLeft().getColumn() - 1;
+            int maxSizeHeight = screenSizeRows - windowPlacement.getTopLeft().getRow() - 1;
 
             if(preferredSize.getColumns() > maxSizeWidth || windowPlacement.getWindow().maximisesHorisontally())
                 preferredSize.setColumns(maxSizeWidth);
@@ -146,7 +149,7 @@ public class GUIScreen
         if(windowStack.size() > 0 && windowStack.getLast().getWindow().getWindowHotspotPosition() != null)
             screen.setCursorPosition(windowStack.getLast().getWindow().getWindowHotspotPosition());
         else
-            screen.setCursorPosition(new TerminalPosition(screen.getWidth() - 1, screen.getHeight() - 1));
+            screen.setCursorPosition(new TerminalPosition(screenSizeColumns - 1, screenSizeRows - 1));
         screen.refresh();
     }
 

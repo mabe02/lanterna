@@ -301,18 +301,6 @@ public class Screen
         terminalSize = new TerminalSize(newSize);
     }
 
-    @Deprecated
-    public int getWidth()
-    {
-        return getTerminalSize().getColumns();
-    }
-
-    @Deprecated
-    public int getHeight()
-    {
-        return getTerminalSize().getRows();
-    }
-
     private String getTabReplacement(int x) {
         int align = 0;
         switch(tabBehaviour) {
