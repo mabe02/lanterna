@@ -62,11 +62,7 @@ public class UnixTerminal extends ANSITerminal
             Signal.handle(new Signal("WINCH"), new SignalHandler() {
                 public void handle(Signal signal)
                 {
-                    try {
-                        queryTerminalSize();
-                    }
-                    catch(LanternaException e) {
-                    }
+                    queryTerminalSize();
                 }
             });
         }

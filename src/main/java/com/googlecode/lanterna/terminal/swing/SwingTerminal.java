@@ -19,7 +19,6 @@
 
 package com.googlecode.lanterna.terminal.swing;
 
-import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.input.InputProvider;
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.input.KeyMappingProfile;

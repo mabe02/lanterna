@@ -19,7 +19,6 @@
 
 package com.googlecode.lanterna.gui.dialog;
 
-import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.gui.Border.Invisible;
 import com.googlecode.lanterna.gui.*;
 

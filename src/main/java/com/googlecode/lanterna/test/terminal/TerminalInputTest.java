@@ -19,7 +19,6 @@
 
 package com.googlecode.lanterna.test.terminal;
 
-import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalSize;
@@ -46,14 +45,11 @@ public class TerminalInputTest
         rawTerminal.addResizeListener(new Terminal.ResizeListener() {
             public void onResized(TerminalSize newSize)
             {
-                try {
-                    if(newSize != null) {
-                        String sizeString = " Resized: " + newSize.toString();
-                        for(int i = 0; i < sizeString.length(); i++)
-                            rawTerminal.putCharacter(sizeString.charAt(i));
-                    }
+                if(newSize != null) {
+                    String sizeString = " Resized: " + newSize.toString();
+                    for(int i = 0; i < sizeString.length(); i++)
+                        rawTerminal.putCharacter(sizeString.charAt(i));
                 }
-                catch(LanternaException e) {}
             }
         });
 

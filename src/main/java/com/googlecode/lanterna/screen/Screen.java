@@ -19,7 +19,6 @@
 
 package com.googlecode.lanterna.screen;
 
-import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalPosition;

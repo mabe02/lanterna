@@ -19,7 +19,6 @@
 
 package com.googlecode.lanterna.gui;
 
-import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.gui.layout.SizePolicy;
 import com.googlecode.lanterna.gui.listener.ComponentAdapter;
 import com.googlecode.lanterna.gui.listener.ContainerListener;

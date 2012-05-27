@@ -19,7 +19,6 @@
 
 package com.googlecode.lanterna.gui;
 
-import com.googlecode.lanterna.LanternaException;
 
 /**
  *

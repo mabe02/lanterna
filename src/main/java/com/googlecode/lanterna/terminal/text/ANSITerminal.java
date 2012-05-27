@@ -19,7 +19,6 @@
 
 package com.googlecode.lanterna.terminal.text;
 
-import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.input.CommonProfile;
 import java.io.InputStream;
 import java.io.OutputStream;

@@ -19,7 +19,6 @@
 
 package com.googlecode.lanterna.terminal;
 
-import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.input.InputProvider;
 
 /**

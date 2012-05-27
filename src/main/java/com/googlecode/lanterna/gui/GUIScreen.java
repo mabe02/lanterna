@@ -19,7 +19,6 @@
 
 package com.googlecode.lanterna.gui;
 
-import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.gui.listener.WindowAdapter;
 import com.googlecode.lanterna.gui.theme.Theme;
 import com.googlecode.lanterna.input.Key;
