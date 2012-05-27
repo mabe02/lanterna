@@ -49,7 +49,7 @@ public class Screen
     
     /**
      * Creates a new Screen on top of a supplied terminal, will query the terminal
-     * for its size
+     * for its size. The screen is initially blank.
      * @param terminal
      * @throws LanternaException 
      */
@@ -60,7 +60,7 @@ public class Screen
 
     /**
      * Creates a new Screen on top of a supplied terminal and will set the size
-     * of the screen to a supplied value
+     * of the screen to a supplied value. The screen is initially blank.
      * @param terminal
      * @param terminalSize 
      */
@@ -71,7 +71,7 @@ public class Screen
 
     /**
      * Creates a new Screen on top of a supplied terminal and will set the size
-     * of the screen to a supplied value
+     * of the screen to a supplied value. The screen is initially blank.
      * @param terminal
      * @param terminalWidth Width (number of columns) of the terminal
      * @param terminalHeight Height (number of rows) of the terminal
