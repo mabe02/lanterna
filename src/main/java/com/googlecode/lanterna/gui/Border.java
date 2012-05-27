@@ -111,8 +111,8 @@ public abstract class Border
         {
             final int width = actualSize.getColumns();
             final int height = actualSize.getRows();
-            final Theme.Item upperLeft;
-            final Theme.Item lowerRight;
+            final Theme.Definition upperLeft;
+            final Theme.Definition lowerRight;
 
             if(raised) {
                 upperLeft = graphics.getTheme().getItem(Theme.Category.RaisedBorder);

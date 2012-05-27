@@ -162,7 +162,7 @@ public class TextGraphics
         return new TerminalPosition(pointInArea.getColumn() + topLeft.getColumn(), pointInArea.getRow() + topLeft.getRow());
     }
 
-    public void applyThemeItem(Theme.Item themeItem)
+    public void applyThemeItem(Theme.Definition themeItem)
     {
         setForegroundColor(themeItem.foreground);
         setBackgroundColor(themeItem.background);

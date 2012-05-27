@@ -31,84 +31,84 @@ public class Theme
     {
     }
 
-    protected Item getDefault()
+    protected Definition getDefault()
     {
         return getDialogEmptyArea();
     }
 
-    protected Item getDialogEmptyArea()
+    protected Definition getDialogEmptyArea()
     {
-        return new Item(Color.BLACK, Color.WHITE, false);
+        return new Definition(Color.BLACK, Color.WHITE, false);
     }
 
-    protected Item getScreenBackground()
+    protected Definition getScreenBackground()
     {
-        return new Item(Color.CYAN, Color.BLUE, true);
+        return new Definition(Color.CYAN, Color.BLUE, true);
     }
 
-    protected Item getShadow()
+    protected Definition getShadow()
     {
-        return new Item(Color.BLACK, Color.BLACK, true);
+        return new Definition(Color.BLACK, Color.BLACK, true);
     }
 
-    protected Item getBorder()
+    protected Definition getBorder()
     {
-        return new Item(Color.BLACK, Color.WHITE, true);
+        return new Definition(Color.BLACK, Color.WHITE, true);
     }
 
-    protected Item getRaisedBorder()
+    protected Definition getRaisedBorder()
     {
-        return new Item(Color.WHITE, Color.WHITE, true);
+        return new Definition(Color.WHITE, Color.WHITE, true);
     }
 
-    protected Item getButtonLabelActive()
+    protected Definition getButtonLabelActive()
     {
-        return new Item(Color.YELLOW, Color.BLUE, true);
+        return new Definition(Color.YELLOW, Color.BLUE, true);
     }
 
-    protected Item getButtonLabelInactive()
+    protected Definition getButtonLabelInactive()
     {
-        return new Item(Color.BLACK, Color.WHITE, true);
+        return new Definition(Color.BLACK, Color.WHITE, true);
     }
 
-    protected Item getButtonActive()
+    protected Definition getButtonActive()
     {
-        return new Item(Color.WHITE, Color.BLUE, true);
+        return new Definition(Color.WHITE, Color.BLUE, true);
     }
 
-    protected Item getButtonInactive()
+    protected Definition getButtonInactive()
     {
-        return new Item(Color.BLACK, Color.WHITE, false);
+        return new Definition(Color.BLACK, Color.WHITE, false);
     }
     
-    protected Item getItem()
+    protected Definition getItem()
     {
-        return new Item(Color.BLACK, Color.WHITE, false);
+        return new Definition(Color.BLACK, Color.WHITE, false);
     }
     
-    protected Item getItemSelected()
+    protected Definition getItemSelected()
     {
-        return new Item(Color.WHITE, Color.BLUE, true);
+        return new Definition(Color.WHITE, Color.BLUE, true);
     }
 
-    protected Item getCheckBox()
+    protected Definition getCheckBox()
     {
-        return new Item(Color.BLACK, Color.WHITE, false);
+        return new Definition(Color.BLACK, Color.WHITE, false);
     }
 
-    protected Item getCheckBoxSelected()
+    protected Definition getCheckBoxSelected()
     {
-        return new Item(Color.WHITE, Color.BLUE, true);
+        return new Definition(Color.WHITE, Color.BLUE, true);
     }
 
-    protected Item getTextBoxFocused()
+    protected Definition getTextBoxFocused()
     {
-        return new Item(Color.YELLOW, Color.BLUE, true);
+        return new Definition(Color.YELLOW, Color.BLUE, true);
     }
 
-    protected Item getTextBox()
+    protected Definition getTextBox()
     {
-        return new Item(Color.WHITE, Color.BLUE, true);
+        return new Definition(Color.WHITE, Color.BLUE, true);
     }
 
     public static Theme getDefaultTheme()
@@ -116,7 +116,7 @@ public class Theme
         return new Theme();
     }
 
-    public Theme.Item getItem(Category category)
+    public Theme.Definition getItem(Category category)
     {
         switch(category)
         {
@@ -173,24 +173,24 @@ public class Theme
         TextBoxFocused
     }
 
-    public class Item
+    public class Definition
     {
         public Color foreground;
         public Color background;
         public boolean highlighted;
         public boolean underlined;
 
-        public Item(Color foreground, Color background)
+        public Definition(Color foreground, Color background)
         {
             this(foreground, background, false);
         }
 
-        public Item(Color foreground, Color background, boolean highlighted)
+        public Definition(Color foreground, Color background, boolean highlighted)
         {
             this(foreground, background, highlighted, false);
         }
 
-        public Item(Color foreground, Color background, boolean highlighted, boolean underlined)
+        public Definition(Color foreground, Color background, boolean highlighted, boolean underlined)
         {
             this.foreground = foreground;
             this.background = background;
@@ -198,76 +198,4 @@ public class Theme
             this.underlined = underlined;
         }
     }
-
-    public static final Color TITLE_FG = Color.YELLOW;
-    public static final Color TITLE_BG = Color.WHITE;
-    public static final boolean TITLE_HL = true;
-
-    
-
-    public static final Color BUTTON_KEY_ACTIVE_FG = Color.WHITE;
-    public static final Color BUTTON_KEY_ACTIVE_BG = Color.BLUE;
-    public static final boolean BUTTON_KEY_ACTIVE_HL = true;
-
-    public static final Color BUTTON_KEY_INACTIVE_FG = Color.RED;
-    public static final Color BUTTON_KEY_INACTIVE_BG = Color.WHITE;
-    public static final boolean BUTTON_KEY_INACTIVE_HL = false;
-
-    public static final Color INPUTBOX_FG = Color.BLACK;
-    public static final Color INPUTBOX_BG = Color.WHITE;
-    public static final boolean INPUTBOX_HL = false;
-
-    public static final Color INPUTBOX_BORDER_FG = Color.BLACK;
-    public static final Color INPUTBOX_BORDER_BG = Color.WHITE;
-    public static final boolean INPUTBOX_BORDER_HL = false;
-
-    public static final Color SEARCHBOX_FG = Color.BLACK;
-    public static final Color SEARCHBOX_BG = Color.WHITE;
-    public static final boolean SEARCHBOX_HL = false;
-
-    public static final Color SEARCHBOX_TITLE_FG = Color.YELLOW;
-    public static final Color SEARCHBOX_TITLE_BG = Color.WHITE;
-    public static final boolean SEARCHBOX_TITLE_HL = true;
-
-    public static final Color SEARCHBOX_BORDER_FG = Color.WHITE;
-    public static final Color SEARCHBOX_BORDER_BG = Color.WHITE;
-    public static final boolean SEARCHBOX_BORDER_HL = true;
-
-    public static final Color POSITION_INDICATOR_FG = Color.YELLOW;
-    public static final Color POSITION_INDICATOR_BG = Color.WHITE;
-    public static final boolean POSITION_INDICATOR_HL = true;
-
-    public static final Color MENUBOX_FG = Color.BLACK;
-    public static final Color MENUBOX_BG = Color.WHITE;
-    public static final boolean MENUBOX_HL = false;
-
-    public static final Color MENUBOX_BORDER_FG = Color.WHITE;
-    public static final Color MENUBOX_BORDER_BG = Color.WHITE;
-    public static final boolean MENUBOX_BORDER_HL = true;
-
-    public static final Color TAG_FG = Color.YELLOW;
-    public static final Color TAG_BG = Color.WHITE;
-    public static final boolean TAG_HL = true;
-
-    public static final Color TAG_SELECTED_FG = Color.YELLOW;
-    public static final Color TAG_SELECTED_BG = Color.BLUE;
-    public static final boolean TAG_SELECTED_HL = true;
-
-    public static final Color TAG_KEY_FG = Color.YELLOW;
-    public static final Color TAG_KEY_BG = Color.WHITE;
-    public static final boolean TAG_KEY_HL = true;
-
-    public static final Color TAG_KEY_SELECTED_FG = Color.YELLOW;
-    public static final Color TAG_KEY_SELECTED_BG = Color.BLUE;
-    public static final boolean TAG_KEY_SELECTED_HL = true;
-
-    public static final Color UARROW_FG = Color.GREEN;
-    public static final Color UARROW_BG = Color.WHITE;
-    public static final boolean UARROW_HL = true;
-
-    public static final Color DARROW_FG = Color.GREEN;
-    public static final Color DARROW_BG = Color.WHITE;
-    public static final boolean DARROW_HL = true;
-
-
 }
