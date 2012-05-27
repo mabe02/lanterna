@@ -113,7 +113,10 @@ public class Screen
 
     public void setCursorPosition(int column, int row)
     {
-        this.cursorPosition = new TerminalPosition(column, row);
+        if(column >= 0 && column < terminalSize.getColumns() &&
+                row >= 0 && row < terminalSize.getRows()) {
+            this.cursorPosition = new TerminalPosition(column, row);
+        }
     }
 
     public void setTabBehaviour(TabBehaviour tabBehaviour) {
