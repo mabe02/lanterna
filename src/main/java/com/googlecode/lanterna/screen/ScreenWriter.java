@@ -45,16 +45,6 @@ public class ScreenWriter
         this.currentPosition = new TerminalPosition(0, 0);
     }
 
-    public int getWidth()
-    {
-        return targetScreen.getWidth();
-    }
-
-    public int getHeight()
-    {
-        return targetScreen.getHeight();
-    }
-
     public Color getBackgroundColor()
     {
         return backgroundColor;
