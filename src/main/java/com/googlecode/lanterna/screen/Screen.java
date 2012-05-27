@@ -218,42 +218,8 @@ public class Screen
      */
     public boolean resizePending()
     {
-        synchronized(mutex) {
-            TerminalSize newSize;
-            synchronized(resizeQueue) {
-                if(resizeQueue.size() == 0)
-                    return true;
-
-                newSize = resizeQueue.getLast();
-                resizeQueue.clear();
-            }
-
-            int height = newSize.getRows();
-            int width = newSize.getColumns();
-            ScreenCharacter [][]newBackBuffer = new ScreenCharacter[height][width];
-            ScreenCharacter [][]newVisibleScreen = new ScreenCharacter[height][width];
-            ScreenCharacter newAreaCharacter = new ScreenCharacter('X', Terminal.Color.GREEN, Terminal.Color.BLACK);
-            for(int y = 0; y < height; y++)
-            {
-                for(int x = 0; x < width; x++)
-                {
-                    if(x < backbuffer[0].length && y < backbuffer.length)
-                        newBackBuffer[y][x] = backbuffer[y][x];
-                    else
-                        newBackBuffer[y][x] = new ScreenCharacter(newAreaCharacter);
-
-                    if(x < visibleScreen[0].length && y < visibleScreen.length)
-                        newVisibleScreen[y][x] = visibleScreen[y][x];
-                    else
-                        newVisibleScreen[y][x] = new ScreenCharacter(newAreaCharacter);
-                }
-            }
-            
-            backbuffer = newBackBuffer;
-            visibleScreen = newVisibleScreen;
-            wholeScreenInvalid = true;
-            terminalSize = new TerminalSize(newSize);
-            return false;
+        synchronized(resizeQueue) {
+            return !resizeQueue.isEmpty();
         }
     }
 
@@ -263,6 +229,9 @@ public class Screen
             return;
         
         synchronized(mutex) {
+            //If any resize operations are in the queue, execute them
+            resizeScreenIfNeeded();
+
             Map<TerminalPosition, ScreenCharacter> updateMap = new TreeMap<TerminalPosition, ScreenCharacter>(new ScreenPointComparator());
             
             for(int y = 0; y < terminalSize.getRows(); y++)
@@ -292,6 +261,44 @@ public class Screen
             wholeScreenInvalid = false;
         }
         terminal.flush();
+    }
+
+    //WARNING!!! Should only be called in a block synchronized on mutex! See refresh()
+    private void resizeScreenIfNeeded() {
+        TerminalSize newSize;
+        synchronized(resizeQueue) {
+            if(resizeQueue.isEmpty())
+                return;
+
+            newSize = resizeQueue.getLast();
+            resizeQueue.clear();
+        }
+
+        int height = newSize.getRows();
+        int width = newSize.getColumns();
+        ScreenCharacter [][]newBackBuffer = new ScreenCharacter[height][width];
+        ScreenCharacter [][]newVisibleScreen = new ScreenCharacter[height][width];
+        ScreenCharacter newAreaCharacter = new ScreenCharacter('X', Terminal.Color.GREEN, Terminal.Color.BLACK);
+        for(int y = 0; y < height; y++)
+        {
+            for(int x = 0; x < width; x++)
+            {
+                if(x < backbuffer[0].length && y < backbuffer.length)
+                    newBackBuffer[y][x] = backbuffer[y][x];
+                else
+                    newBackBuffer[y][x] = new ScreenCharacter(newAreaCharacter);
+
+                if(x < visibleScreen[0].length && y < visibleScreen.length)
+                    newVisibleScreen[y][x] = visibleScreen[y][x];
+                else
+                    newVisibleScreen[y][x] = new ScreenCharacter(newAreaCharacter);
+            }
+        }
+
+        backbuffer = newBackBuffer;
+        visibleScreen = newVisibleScreen;
+        wholeScreenInvalid = true;
+        terminalSize = new TerminalSize(newSize);
     }
 
     @Deprecated
