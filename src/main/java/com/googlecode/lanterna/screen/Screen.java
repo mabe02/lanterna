@@ -47,16 +47,35 @@ public class Screen
     //How to deal with \t characters
     private TabBehaviour tabBehaviour;
     
+    /**
+     * Creates a new Screen on top of a supplied terminal, will query the terminal
+     * for its size
+     * @param terminal
+     * @throws LanternaException 
+     */
     public Screen(Terminal terminal) throws LanternaException
     {
         this(terminal, terminal.queryTerminalSize());
     }
 
+    /**
+     * Creates a new Screen on top of a supplied terminal and will set the size
+     * of the screen to a supplied value
+     * @param terminal
+     * @param terminalSize 
+     */
     public Screen(Terminal terminal, TerminalSize terminalSize)
     {
         this(terminal, terminalSize.getColumns(), terminalSize.getRows());
     }
 
+    /**
+     * Creates a new Screen on top of a supplied terminal and will set the size
+     * of the screen to a supplied value
+     * @param terminal
+     * @param terminalWidth Width (number of columns) of the terminal
+     * @param terminalHeight Height (number of rows) of the terminal
+     */
     public Screen(Terminal terminal, int terminalWidth, int terminalHeight)
     {
         this.mutex = new Object();
