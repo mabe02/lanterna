@@ -52,7 +52,7 @@ public class ScreenResizeTest
         while(System.currentTimeMillis() - now < 20 * 1000)
         {
             screen.readInput();
-            if(!screen.verifySize())
+            if(!screen.resizePending())
                 drawStrings("Size: " + screen.getWidth() + "x" + screen.getHeight());
 
             Thread.sleep(1);

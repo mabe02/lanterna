@@ -216,7 +216,7 @@ public class Screen
      * apply them to the Screen
      * @return true if the size is the same as before, false if the screen was resized
      */
-    public boolean verifySize()
+    public boolean resizePending()
     {
         synchronized(mutex) {
             TerminalSize newSize;

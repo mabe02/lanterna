@@ -152,7 +152,7 @@ public class GUIScreen
 
     private void update() throws LanternaException
     {
-        if(needsRefresh || !screen.verifySize()) {
+        if(needsRefresh || !screen.resizePending()) {
             repaint();
             needsRefresh = false;
         }
