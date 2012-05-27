@@ -142,6 +142,11 @@ public class Screen
         }
     }
 
+    /**
+     * Calling this method will put the underlying terminal in private mode, 
+     * clear the screen, move the cursor and refresh.
+     * @throws LanternaException 
+     */
     public void startScreen() throws LanternaException
     {
         if(hasBeenActivated)
@@ -153,7 +158,13 @@ public class Screen
         terminal.moveCursor(cursorPosition.getColumn(), cursorPosition.getRow());
         refresh();
     }
-
+    
+    /**
+     * Calling this method will make the underlying terminal leave private mode,
+     * effectively going back to whatever state the terminal was in before 
+     * calling {@code startScreen()}
+     * @throws LanternaException 
+     */
     public void stopScreen() throws LanternaException
     {
         if(!hasBeenActivated)
