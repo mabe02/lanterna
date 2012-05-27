@@ -223,6 +223,12 @@ public class Screen
         }
     }
 
+    /**
+     * Call this method to make changes done through {@code putCharacter(...)},
+     * {@code putString(...)} visible on the terminal. The screen will calculate
+     * the changes that are required and send the necessary characters and
+     * control sequences to make it so.
+     */
     public void refresh()
     {
         if(!hasBeenActivated)
