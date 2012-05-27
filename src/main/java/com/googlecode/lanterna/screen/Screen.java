@@ -187,7 +187,6 @@ public class Screen
     {    
     	int tabPosition = string.indexOf('\t');
         while(tabPosition != -1) {
-            int tabX = x + tabPosition;
             String tabReplacementHere = getTabReplacement(x);
             string = string.substring(0, tabPosition) + tabReplacementHere + string.substring(tabPosition + 1);
             tabPosition += tabReplacementHere.length();
