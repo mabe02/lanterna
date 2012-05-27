@@ -53,7 +53,7 @@ public class Screen
      * @param terminal
      * @throws LanternaException 
      */
-    public Screen(Terminal terminal) throws LanternaException
+    public Screen(Terminal terminal)
     {
         this(terminal, terminal.queryTerminalSize());
     }
@@ -130,7 +130,7 @@ public class Screen
         return tabBehaviour;
     }
     
-    public Key readInput() throws LanternaException
+    public Key readInput()
     {
         return terminal.readInput();
     }
@@ -147,7 +147,7 @@ public class Screen
      * clear the screen, move the cursor and refresh.
      * @throws LanternaException 
      */
-    public void startScreen() throws LanternaException
+    public void startScreen()
     {
         if(hasBeenActivated)
             return;
@@ -165,7 +165,7 @@ public class Screen
      * calling {@code startScreen()}
      * @throws LanternaException 
      */
-    public void stopScreen() throws LanternaException
+    public void stopScreen()
     {
         if(!hasBeenActivated)
             return;
@@ -281,7 +281,7 @@ public class Screen
         }
     }
 
-    public void refresh() throws LanternaException
+    public void refresh()
     {
         if(!hasBeenActivated)
             return;
@@ -395,12 +395,12 @@ public class Screen
             currentlyIsBlinking = false;
         }
 
-        void setCursorPosition(int x, int y) throws LanternaException
+        void setCursorPosition(int x, int y)
         {
             terminal.moveCursor(x, y);
         }
 
-        void writeCharacter(ScreenCharacter character) throws LanternaException
+        void writeCharacter(ScreenCharacter character)
         {
             if (currentlyIsBlinking != character.isBlinking()) {
                 if (character.isBlinking()) {
@@ -460,7 +460,7 @@ public class Screen
             terminal.putCharacter(character.getCharacter());
         }
 
-        void reset() throws LanternaException
+        void reset()
         {
             terminal.applySGR(Terminal.SGR.RESET_ALL);
             terminal.moveCursor(0, 0);
