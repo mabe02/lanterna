@@ -120,7 +120,7 @@ public class Theme
     {
         switch(category)
         {
-            case DefaultDialog:
+            case DialogArea:
                 return getDialogEmptyArea();
             case ScreenBackground:
                 return getScreenBackground();
@@ -138,9 +138,9 @@ public class Theme
                 return getButtonActive();
             case ButtonInactive:
                 return getButtonInactive();
-            case Item:
+            case ListItem:
                 return getItem();
-            case ItemSelected:
+            case ListItemSelected:
                 return getItemSelected();
             case CheckBox:
                 return getCheckBox();
@@ -156,7 +156,7 @@ public class Theme
 
     public enum Category
     {
-        DefaultDialog,
+        DialogArea,
         ScreenBackground,
         Shadow,
         RaisedBorder,
@@ -165,8 +165,8 @@ public class Theme
         ButtonInactive,
         ButtonLabelInactive,
         ButtonLabelActive,
-        Item,
-        ItemSelected,
+        ListItem,
+        ListItemSelected,
         CheckBox,
         CheckBoxSelected,
         TextBox,

@@ -67,7 +67,7 @@ public abstract class Border
             graphics.drawString(width - 1, height - 1, ACS.LRCORNER + "");
             
             // Write the title
-            graphics.applyThemeItem(graphics.getTheme().getItem(Theme.Category.DefaultDialog));
+            graphics.applyThemeItem(graphics.getTheme().getItem(Theme.Category.DialogArea));
             graphics.setBoldMask(true);
             graphics.drawString(2, 0, title);
         }
@@ -148,7 +148,7 @@ public abstract class Border
             graphics.drawString(width - 1, height - 1, ACS.LRCORNER + "");
             
             // Write the title
-            graphics.applyThemeItem(graphics.getTheme().getItem(Theme.Category.DefaultDialog));
+            graphics.applyThemeItem(graphics.getTheme().getItem(Theme.Category.DialogArea));
             graphics.setBoldMask(true);
             graphics.drawString(2, 0, title);
         }

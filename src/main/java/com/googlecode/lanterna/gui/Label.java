@@ -92,7 +92,7 @@ public class Label extends AbstractComponent
         this.height = 0;
         this.width = 0;
         this.forceWidth = fixedWidth;
-        this.style = Theme.Category.DefaultDialog;
+        this.style = Theme.Category.DialogArea;
         this.textAlignment = textAlignment;
         updateMetrics();
     }

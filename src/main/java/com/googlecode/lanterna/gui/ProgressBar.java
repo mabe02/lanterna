@@ -48,9 +48,9 @@ public class ProgressBar extends AbstractComponent
     {
         int totalWidth = graphics.getWidth();
         int highlightedBlocks = (int)(totalWidth * progress);
-        graphics.applyThemeItem(Category.ItemSelected);
+        graphics.applyThemeItem(Category.ListItemSelected);
         graphics.fillRectangle(ACS.BLOCK_SOLID, new TerminalPosition(0, 0), new TerminalSize(highlightedBlocks, 1));
-        graphics.applyThemeItem(Category.Item);
+        graphics.applyThemeItem(Category.ListItem);
         graphics.fillRectangle(ACS.BLOCK_SOLID, new TerminalPosition(highlightedBlocks, 0), new TerminalSize(totalWidth - highlightedBlocks, 1));
     }
 

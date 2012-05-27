@@ -101,7 +101,7 @@ public class ListBox extends AbstractInteractableComponent
                 scrollTopIndex = selectedIndex - graphics.getHeight() + 1;
         }
 
-        graphics.applyThemeItem(Category.Item);
+        graphics.applyThemeItem(Category.ListItem);
         graphics.fillArea(' ');
 
         for(int i = scrollTopIndex; i < items.size(); i++) {
@@ -109,21 +109,21 @@ public class ListBox extends AbstractInteractableComponent
                 break;
 
             if(i == selectedIndex)
-                graphics.applyThemeItem(Category.ItemSelected);
+                graphics.applyThemeItem(Category.ListItemSelected);
             else
-                graphics.applyThemeItem(Category.Item);
+                graphics.applyThemeItem(Category.ListItem);
             printItem(graphics, 0, 0 + i - scrollTopIndex, items.get(i).toString());
         }
 
         if(items.size() > graphics.getHeight()) {
-            graphics.applyThemeItem(Category.DefaultDialog);
+            graphics.applyThemeItem(Category.DialogArea);
             graphics.drawString(graphics.getWidth() - 1, 0, ACS.ARROW_UP + "");
 
-            graphics.applyThemeItem(Category.DefaultDialog);
+            graphics.applyThemeItem(Category.DialogArea);
             for(int i = 1; i < graphics.getHeight() - 1; i++)
                 graphics.drawString(graphics.getWidth() - 1, i, ACS.BLOCK_MIDDLE + "");
 
-            graphics.applyThemeItem(Category.DefaultDialog);
+            graphics.applyThemeItem(Category.DialogArea);
             graphics.drawString(graphics.getWidth() - 1, graphics.getHeight() - 1, ACS.ARROW_DOWN + "");
             
             //Finally print the 'tick'

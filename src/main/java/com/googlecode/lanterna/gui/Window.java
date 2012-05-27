@@ -88,7 +88,7 @@ public class Window implements Container
 
     public void repaint(TextGraphics graphics)
     {
-        graphics.applyThemeItem(graphics.getTheme().getItem(Category.DefaultDialog));
+        graphics.applyThemeItem(graphics.getTheme().getItem(Category.DialogArea));
         graphics.fillRectangle(' ', new TerminalPosition(0, 0), new TerminalSize(graphics.getWidth(), graphics.getHeight()));
         contentPane.repaint(graphics);
     }

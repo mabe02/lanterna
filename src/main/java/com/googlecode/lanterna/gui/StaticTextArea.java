@@ -66,26 +66,26 @@ public class StaticTextArea  extends AbstractInteractableComponent
 
     public void repaint(TextGraphics graphics)
     {
-        graphics.applyThemeItem(Theme.Category.Item);
+        graphics.applyThemeItem(Theme.Category.ListItem);
         graphics.fillArea(' ');
 
         for(int i = scrollTopIndex; i < lines.size(); i++) {
             if(i - scrollTopIndex >= graphics.getHeight())
                 break;
 
-            graphics.applyThemeItem(Theme.Category.Item);
+            graphics.applyThemeItem(Theme.Category.ListItem);
             printItem(graphics, 0, 0 + i - scrollTopIndex, lines.get(i));
         }
 
         if(lines.size() > graphics.getHeight()) {
-            graphics.applyThemeItem(Theme.Category.DefaultDialog);
+            graphics.applyThemeItem(Theme.Category.DialogArea);
             graphics.drawString(graphics.getWidth() - 1, 0, ACS.ARROW_UP + "");
 
-            graphics.applyThemeItem(Theme.Category.DefaultDialog);
+            graphics.applyThemeItem(Theme.Category.DialogArea);
             for(int i = 1; i < graphics.getHeight() - 1; i++)
                 graphics.drawString(graphics.getWidth() - 1, i, ACS.BLOCK_MIDDLE + "");
 
-            graphics.applyThemeItem(Theme.Category.DefaultDialog);
+            graphics.applyThemeItem(Theme.Category.DialogArea);
             graphics.drawString(graphics.getWidth() - 1, graphics.getHeight() - 1, ACS.ARROW_DOWN + "");
             
             //Finally print the 'tick'

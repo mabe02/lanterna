@@ -108,9 +108,9 @@ public class ActionListBox extends AbstractInteractableComponent
     {
         for(int i = 0; i < itemList.size(); i++) {
             if(selectedIndex == i && hasFocus())
-                graphics.applyThemeItem(Category.ItemSelected);
+                graphics.applyThemeItem(Category.ListItemSelected);
             else
-                graphics.applyThemeItem(Category.Item);
+                graphics.applyThemeItem(Category.ListItem);
 
             String title = itemList.get(i).getTitle();
             if(title.length() > graphics.getWidth() && graphics.getWidth() > 3)

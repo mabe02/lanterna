@@ -39,7 +39,7 @@ public class Separator extends AbstractComponent
 
     public void repaint(TextGraphics graphics)
     {
-        graphics.applyThemeItem(Category.DefaultDialog);
+        graphics.applyThemeItem(Category.DialogArea);
         graphics.fillArea('-');
     }
 }
