@@ -150,6 +150,7 @@ public class Screen
         hasBeenActivated = true;
         terminal.enterPrivateMode();
         terminal.clearScreen();
+        terminal.moveCursor(cursorPosition.getColumn(), cursorPosition.getRow());
         refresh();
     }
 
