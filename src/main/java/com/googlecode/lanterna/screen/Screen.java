@@ -175,29 +175,6 @@ public class Screen
     }
 
     public void putString(int x, int y, String string, Terminal.Color foregroundColor,
-            Terminal.Color backgroundColor, boolean bold, boolean underline, boolean reverse)
-    {
-        putString(x, y, string, foregroundColor, backgroundColor, bold, underline, reverse, false);
-    }
-    
-    public void putString(int x, int y, String string, Terminal.Color foregroundColor,
-        Terminal.Color backgroundColor, boolean bold, boolean underline, boolean reverse, boolean blinking)
-    {
-        Set<ScreenCharacterStyle> styles = EnumSet.noneOf(ScreenCharacterStyle.class);
-        if(bold)
-            styles.add(ScreenCharacterStyle.Bold);
-        if(underline)
-            styles.add(ScreenCharacterStyle.Underline);
-        if(reverse)
-            styles.add(ScreenCharacterStyle.Reverse);
-        if(blinking)
-            styles.add(ScreenCharacterStyle.Blinking);
-        putString(x, y, string, foregroundColor, backgroundColor, styles);
-    }
-    
-    
-    
-    public void putString(int x, int y, String string, Terminal.Color foregroundColor,
             Terminal.Color backgroundColor, ScreenCharacterStyle... styles)
     {
         Set<ScreenCharacterStyle> drawStyle = EnumSet.noneOf(ScreenCharacterStyle.class);
