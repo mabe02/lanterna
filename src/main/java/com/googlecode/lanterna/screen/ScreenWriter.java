@@ -67,14 +67,12 @@ public class ScreenWriter
 
     public void fillScreen(char c)
     {
-        int screenWidth = targetScreen.getWidth();
-        int screenHeight = targetScreen.getHeight();
         StringBuilder sb = new StringBuilder();
-        for(int i = 0; i < screenWidth; i++)
+        for(int i = 0; i < targetScreen.getTerminalSize().getColumns(); i++)
             sb.append(c);
 
         String line = sb.toString();
-        for(int i = 0; i < screenHeight; i++) {
+        for(int i = 0; i < targetScreen.getTerminalSize().getRows(); i++) {
             drawString(0, i, line);
         }
     }
