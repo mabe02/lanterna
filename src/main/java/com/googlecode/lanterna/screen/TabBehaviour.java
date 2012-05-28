@@ -28,5 +28,39 @@ public enum TabBehaviour {
     CONVERT_TO_FOUR_SPACES,
     CONVERT_TO_EIGHT_SPACES,
     ALIGN_TO_COLUMN_4,
-    ALIGN_TO_COLUMN_8
+    ALIGN_TO_COLUMN_8,
+    ;
+
+    String replaceTabs(String string, int x) {
+        int tabPosition = string.indexOf('\t');
+        while(tabPosition != -1) {
+            String tabReplacementHere = getTabReplacement(x);
+            string = string.substring(0, tabPosition) + tabReplacementHere + string.substring(tabPosition + 1);
+            tabPosition += tabReplacementHere.length();
+            tabPosition = string.indexOf('\t', tabPosition);
+        }
+        return string;
+    }
+    
+    private String getTabReplacement(int x) {
+        int align = 0;
+        switch(this) {
+            case CONVERT_TO_ONE_SPACE:
+                return " ";
+            case CONVERT_TO_FOUR_SPACES:
+                return "    ";
+            case CONVERT_TO_EIGHT_SPACES:
+                return "        ";
+            case ALIGN_TO_COLUMN_4:
+                align = 4 - (x % 4);
+                break;
+            case ALIGN_TO_COLUMN_8:
+                align = 8 - (x % 8);
+                break;
+        }
+        StringBuilder replace = new StringBuilder();
+        for(int i = 0; i < align; i++)
+            replace.append(" ");
+        return replace.toString();
+    }
 }

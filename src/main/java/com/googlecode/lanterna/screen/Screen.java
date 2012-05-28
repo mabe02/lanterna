@@ -184,14 +184,7 @@ public class Screen
     public void putString(int x, int y, String string, Terminal.Color foregroundColor,
             Terminal.Color backgroundColor, Set<ScreenCharacterStyle> styles)
     {    
-    	int tabPosition = string.indexOf('\t');
-        while(tabPosition != -1) {
-            String tabReplacementHere = getTabReplacement(x);
-            string = string.substring(0, tabPosition) + tabReplacementHere + string.substring(tabPosition + 1);
-            tabPosition += tabReplacementHere.length();
-            tabPosition = string.indexOf('\t', tabPosition);
-        }
-  	
+    	string = tabBehaviour.replaceTabs(string, x);  	
     	for(int i = 0; i < string.length(); i++)
     		putCharacter(x + i, y, 
                         new ScreenCharacter(string.charAt(i), 
@@ -304,28 +297,6 @@ public class Screen
         visibleScreen = newVisibleScreen;
         wholeScreenInvalid = true;
         terminalSize = new TerminalSize(newSize);
-    }
-
-    private String getTabReplacement(int x) {
-        int align = 0;
-        switch(tabBehaviour) {
-            case CONVERT_TO_ONE_SPACE:
-                return " ";
-            case CONVERT_TO_FOUR_SPACES:
-                return "    ";
-            case CONVERT_TO_EIGHT_SPACES:
-                return "        ";
-            case ALIGN_TO_COLUMN_4:
-                align = 4 - (x % 4);
-                break;
-            case ALIGN_TO_COLUMN_8:
-                align = 8 - (x % 8);
-                break;
-        }
-        StringBuilder replace = new StringBuilder();
-        for(int i = 0; i < align; i++)
-            replace.append(" ");
-        return replace.toString();
     }
 
     private static class ScreenPointComparator implements Comparator<TerminalPosition>
