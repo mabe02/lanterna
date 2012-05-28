@@ -31,7 +31,7 @@ public enum TabBehaviour {
     ALIGN_TO_COLUMN_8,
     ;
 
-    String replaceTabs(String string, int x) {
+    public String replaceTabs(String string, int x) {
         int tabPosition = string.indexOf('\t');
         while(tabPosition != -1) {
             String tabReplacementHere = getTabReplacement(x);
