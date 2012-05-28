@@ -22,9 +22,6 @@ package com.googlecode.lanterna.screen;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.Terminal.Color;
 import com.googlecode.lanterna.terminal.TerminalPosition;
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.Set;
 
 /**
  * Helper class to write to a Screen, a bit like a pen in graphical environments.
