@@ -110,8 +110,4 @@ public class Key
         hash = 73 * hash + this.character;
         return hash;
     }
-
-
-
-
 }
