@@ -32,6 +32,6 @@ public interface InputProvider {
      * @see KeyMappingProfile
      * @param profile 
      */
-    public void addInputProfile(KeyMappingProfile profile);
-    public Key readInput();
+    void addInputProfile(KeyMappingProfile profile);
+    Key readInput();
 }
