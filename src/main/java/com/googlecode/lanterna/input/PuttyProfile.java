@@ -31,9 +31,9 @@ public class PuttyProfile extends CommonProfile
     @Override
     Collection<CharacterPattern> getPatterns()
     {
-        Collection<CharacterPattern> xtermPatterns = super.getPatterns();
-        xtermPatterns.add(new BasicCharacterPattern(new Key(Key.Kind.Home), ESC_CODE, '[', '1', '~'));
-        xtermPatterns.add(new BasicCharacterPattern(new Key(Key.Kind.End), ESC_CODE, '[', '4', '~'));
-        return xtermPatterns;
+        Collection<CharacterPattern> puttyPatterns = super.getPatterns();
+        puttyPatterns.add(new BasicCharacterPattern(new Key(Key.Kind.Home), ESC_CODE, '[', '1', '~'));
+        puttyPatterns.add(new BasicCharacterPattern(new Key(Key.Kind.End), ESC_CODE, '[', '4', '~'));
+        return puttyPatterns;
     }
 }
