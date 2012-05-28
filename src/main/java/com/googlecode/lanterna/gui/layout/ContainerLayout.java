@@ -28,7 +28,7 @@ import java.util.List;
  *
  * @author Martin
  */
-public interface LanternLayout
+public interface ContainerLayout
 {
     public void addComponent(Component component, Object modifiers);
     public void removeComponent(Component component);

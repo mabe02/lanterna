@@ -30,7 +30,7 @@ import java.util.List;
  *
  * @author Martin
  */
-public abstract class AxisLayout implements LanternLayout
+public abstract class AxisLayout implements ContainerLayout
 {
     private final List<AxisLayoutComponent> componentList;
     private int padding;
@@ -156,7 +156,7 @@ public abstract class AxisLayout implements LanternLayout
         }
     }
 
-    private class AxisLaidOutComponent implements LanternLayout.LaidOutComponent
+    private class AxisLaidOutComponent implements ContainerLayout.LaidOutComponent
     {
         final Component component;
         final TerminalSize size;

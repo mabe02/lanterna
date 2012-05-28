@@ -20,7 +20,7 @@
 package com.googlecode.lanterna.gui;
 
 import com.googlecode.lanterna.gui.layout.HorisontalLayout;
-import com.googlecode.lanterna.gui.layout.LanternLayout;
+import com.googlecode.lanterna.gui.layout.ContainerLayout;
 import com.googlecode.lanterna.gui.layout.SizePolicy;
 import com.googlecode.lanterna.gui.layout.VerticalLayout;
 import com.googlecode.lanterna.terminal.TerminalPosition;
@@ -34,7 +34,7 @@ import java.util.List;
 public class Panel extends AbstractContainer
 {
     private Border border;
-    private LanternLayout layoutManager;
+    private ContainerLayout layoutManager;
     private String title;
 
     public Panel()
@@ -124,8 +124,8 @@ public class Panel extends AbstractContainer
         TerminalSize contentPaneSize = border.getInnerAreaSize(graphics.getWidth(), graphics.getHeight());
         TextGraphics subGraphics = graphics.subAreaGraphics(contentPaneTopLeft, contentPaneSize);
 
-        List<LanternLayout.LaidOutComponent> laidOutComponents = layoutManager.layout(contentPaneSize);
-        for(LanternLayout.LaidOutComponent laidOutComponent: laidOutComponents) {
+        List<ContainerLayout.LaidOutComponent> laidOutComponents = layoutManager.layout(contentPaneSize);
+        for(ContainerLayout.LaidOutComponent laidOutComponent: laidOutComponents) {
             TextGraphics subSubGraphics = subGraphics.subAreaGraphics(
                     laidOutComponent.getTopLeftPosition(), laidOutComponent.getSize());
             
