@@ -22,6 +22,7 @@ package com.googlecode.lanterna.gui;
 import com.googlecode.lanterna.gui.theme.Theme;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.ScreenCharacterStyle;
+import com.googlecode.lanterna.screen.TabBehaviour;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.Terminal.Color;
 import com.googlecode.lanterna.terminal.TerminalPosition;
@@ -95,8 +96,7 @@ public class TextGraphics
         if(column >= areaSize.getColumns() || row >= areaSize.getRows() || string == null)
             return;
 
-        //TODO: fix this
-        string = string.replace("\t", "    ");
+        string = TabBehaviour.ALIGN_TO_COLUMN_4.replaceTabs(string, column + topLeft.getColumn());
         
         if(string.length() + column > areaSize.getColumns())
             string = string.substring(0, areaSize.getColumns() - column);
