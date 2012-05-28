@@ -23,7 +23,8 @@ import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 
 /**
- *
+ * Layout which will put components along a horizontal line. The height of the
+ * container will be the same as the tallest child.
  * @author Martin
  */
 public class HorisontalLayout extends AxisLayout

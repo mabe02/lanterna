@@ -23,7 +23,8 @@ import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 
 /**
- *
+ * Layout which will put components along a vertical line. The width of the
+ * container will be the same as the broadest child.
  * @author Martin
  */
 public class VerticalLayout extends AxisLayout
