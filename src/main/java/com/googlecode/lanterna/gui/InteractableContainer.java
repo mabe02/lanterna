@@ -20,12 +20,29 @@
 package com.googlecode.lanterna.gui;
 
 /**
- *
+ * Containers containing interactable components must implement this interface
+ * so that the GUI system knows how to switch between the different components.
  * @author Martin
  */
 public interface InteractableContainer
 {
     boolean hasInteractable(Interactable interactable);
+    
+    /**
+     * Given an interactable, find the next one in line to receive focus.
+     * @param fromThis Component from which to get the next interactable, or if 
+     * null, pick the first available interactable
+     * @return The next interactable component, or null if there are no more 
+     * interactables in the list
+     */
     Interactable nextFocus(Interactable fromThis);
+    
+    /**
+     * Given an interactable, find the previous one in line to receive focus.
+     * @param fromThis Component from which to get the previous interactable, 
+     * or if null, pick the last interactable in the list
+     * @return The previous interactable component, or null if there are no more 
+     * interactables in the list
+     */
     Interactable previousFocus(Interactable fromThis);
 }
