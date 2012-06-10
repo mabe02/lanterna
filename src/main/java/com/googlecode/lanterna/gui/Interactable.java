@@ -23,26 +23,70 @@ import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 
 /**
- *
+ * Any component which wants to recieve keyboard events must implement this
+ * interface.
  * @author Martin
  */
 public interface Interactable
 {
+    /**
+     * This method is called when this component has focus and the user has
+     * pressed a key on the keyboard
+     * @param key Key pressed on the keyboard
+     * @param result Change the value inside this object for the desired action
+     * to be taken by the GUI system as a result of this interaction
+     */
     public void keyboardInteraction(Key key, InteractableResult result);
+    
+    /**
+     * Method called when this component gained keyboard focus
+     * @param direction What direction did the focus come from
+     */
     public void onEnterFocus(FocusChangeDirection direction);
+    /**
+     * Method called when this component leaves keyboard focus
+     * @param direction What direction is focus going to
+     */
     public void onLeaveFocus(FocusChangeDirection direction);
+    
+    /**
+     * When the component has keyboard focus, this method is called by the GUI
+     * system to figure out where should the cursor be positioned
+     * @return position of the cursor, in component-local coordinates
+     */
     public TerminalPosition getHotspot();
 
+    /**
+     * The available results from a keyboard interaction
+     */
     public enum Result
     {
+        /**
+         * The event has been dealt with, don't do anything special
+         */
         DO_NOTHING,
+        /**
+         * Move keyboard focus to the next component
+         */
         NEXT_INTERACTABLE,
+        /**
+         * Move keyboard focus to the previous component
+         */
         PREVIOUS_INTERACTABLE
     }
 
+    /**
+     * When focus has changed, which direction
+     */
     public enum FocusChangeDirection
     {
+        /**
+         * The next interactable component
+         */
         DOWN_OR_RIGHT,
+        /**
+         * The previous interactable component
+         */
         UP_OR_LEFT
     }
 }
