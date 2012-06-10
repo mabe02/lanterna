@@ -21,7 +21,8 @@ package com.googlecode.lanterna.gui;
 
 
 /**
- *
+ * This class is similar to the ActionListener in AWT, used to setup actions
+ * associated with, for example, buttons
  * @author Martin
  */
 public interface Action {

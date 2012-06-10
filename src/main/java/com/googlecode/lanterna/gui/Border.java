@@ -24,7 +24,8 @@ import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 
 /**
- *
+ * Class responsible for defining and rendering a border around a component. The
+ * actuals border implementations are available through subclasses.
  * @author Martin
  */
 public abstract class Border
