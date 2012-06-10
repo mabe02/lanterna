@@ -19,11 +19,14 @@
 
 package com.googlecode.lanterna.test.issue;
 
+import com.googlecode.lanterna.gui.Action;
+import com.googlecode.lanterna.gui.Border;
+import com.googlecode.lanterna.gui.GUIScreen;
+import com.googlecode.lanterna.gui.Window;
+import com.googlecode.lanterna.gui.component.Button;
 import com.googlecode.lanterna.gui.component.EmptySpace;
 import com.googlecode.lanterna.gui.component.Label;
 import com.googlecode.lanterna.gui.component.Panel;
-import com.googlecode.lanterna.gui.component.Button;
-import com.googlecode.lanterna.gui.*;
 import com.googlecode.lanterna.test.TestTerminalFactory;
 
 /**
@@ -50,7 +53,7 @@ public class Issue7a {
         mainWindow.addComponent(new Button("Close", new Action() {
             public void doAction()
             {
-                textGUI.closeWindow(mainWindow);
+                textGUI.closeWindow();
             }
         }));
 

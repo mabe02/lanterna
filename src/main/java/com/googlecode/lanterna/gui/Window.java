@@ -252,7 +252,7 @@ public class Window implements Container
     protected void close()
     {
         if(owner != null)
-            owner.closeWindow(this);
+            owner.closeWindow();
     }
 
     protected void onVisible()

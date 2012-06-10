@@ -19,12 +19,11 @@
 
 package com.googlecode.lanterna.test.gui;
 
-import com.googlecode.lanterna.gui.component.EmptySpace;
-import com.googlecode.lanterna.gui.component.Label;
-import com.googlecode.lanterna.gui.component.Panel;
-import com.googlecode.lanterna.gui.component.Button;
-import com.googlecode.lanterna.gui.component.TextBox;
-import com.googlecode.lanterna.gui.*;
+import com.googlecode.lanterna.gui.Action;
+import com.googlecode.lanterna.gui.Border;
+import com.googlecode.lanterna.gui.GUIScreen;
+import com.googlecode.lanterna.gui.Window;
+import com.googlecode.lanterna.gui.component.*;
 import com.googlecode.lanterna.test.TestTerminalFactory;
 
 /**
@@ -52,7 +51,7 @@ public class TextBoxTest
         Panel buttonPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORISONTAL);
         Button exitButton = new Button("Exit", new Action() {
                 public void doAction()  {
-                    guiScreen.closeWindow(window1);
+                    guiScreen.closeWindow();
                 }
             });
         buttonPanel.addComponent(new EmptySpace(20, 1));

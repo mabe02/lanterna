@@ -19,12 +19,15 @@
 
 package com.googlecode.lanterna.test.gui;
 
-import com.googlecode.lanterna.gui.component.AbstractComponent;
-import com.googlecode.lanterna.gui.component.Panel;
-import com.googlecode.lanterna.gui.component.Button;
-import com.googlecode.lanterna.gui.*;
-import com.googlecode.lanterna.gui.layout.SizePolicy;
+import com.googlecode.lanterna.gui.Action;
+import com.googlecode.lanterna.gui.GUIScreen;
+import com.googlecode.lanterna.gui.TextGraphics;
 import com.googlecode.lanterna.gui.Theme.Category;
+import com.googlecode.lanterna.gui.Window;
+import com.googlecode.lanterna.gui.component.AbstractComponent;
+import com.googlecode.lanterna.gui.component.Button;
+import com.googlecode.lanterna.gui.component.Panel;
+import com.googlecode.lanterna.gui.layout.SizePolicy;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.test.TestTerminalFactory;
 
@@ -59,7 +62,7 @@ public class PanelTest
         mainWindow.addComponent(new Button("Close", new Action() {
             public void doAction()
             {
-                guiScreen.closeWindow(mainWindow);
+                guiScreen.closeWindow();
             }
         }));
 
