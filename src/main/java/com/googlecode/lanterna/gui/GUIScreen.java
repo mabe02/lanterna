@@ -30,7 +30,10 @@ import java.util.List;
 import java.util.Queue;
 
 /**
- *
+ * This is the main class of the GUI system in Lanterna. To setup a GUI, you
+ * instantiate this class and call the showWindow(...) method on window. 
+ * Please notice that this class doesn't have any start or stop methods, this
+ * must be managed by the underlying screen which is the backend for the GUI.
  * @author Martin
  */
 public class GUIScreen
@@ -56,6 +59,9 @@ public class GUIScreen
         this.eventThread = Thread.currentThread();  //We'll be expecting the thread who created us is the same as will be the event thread later
     }
 
+    /**
+     * Sets a new Theme for the entire GUI
+     */
     public void setTheme(Theme newTheme)
     {
         if(newTheme == null)
@@ -65,6 +71,9 @@ public class GUIScreen
         needsRefresh = true;
     }
 
+    /**
+     * @param title Title to be displayed in the top-left corner
+     */
     public void setTitle(String title)
     {
         if(title == null)
@@ -72,11 +81,12 @@ public class GUIScreen
         
         this.title = title;
     }
-    
-    public TerminalSize getTerminalSize() {
-        return screen.getTerminalSize();
-    }
 
+    /**
+     * Gets the underlying screen, which can be used for starting, stopping, 
+     * querying for size and much more
+     * @return The Screen which is backing this GUI
+     */
     public Screen getScreen() {
         return screen;
     }
@@ -159,17 +169,12 @@ public class GUIScreen
         }
     }
 
+    /**
+     * Signals the the entire screen needs to be re-drawn
+     */
     public void invalidate()
     {
         needsRefresh = true;
-    }
-
-    boolean isWindowTopLevel(Window window)
-    {
-        if(windowStack.size() > 0 && windowStack.getLast().getWindow() == window)
-            return true;
-        else
-            return false;
     }
 
     private void doEventLoop()
@@ -207,11 +212,26 @@ public class GUIScreen
         }
     }
 
+    /**
+     * Same as calling showWindow(window, Position.OVERLAPPING)
+     * @param window Window to be shown
+     */
     public void showWindow(Window window)
     {
         showWindow(window, Position.OVERLAPPING);
     }
 
+    /**
+     * This method starts the GUI system with an initial window. The method
+     * does not return until the window has been closed, so you need to provide
+     * a mechanism for closing the window using the GUI.
+     * 
+     * If you call this method when already in GUI mode, it will create the new
+     * window stacked on top of any previous window(s) and won't return until 
+     * this new window has been closed.
+     * @param window Window to display
+     * @param position Where to position the new window
+     */
     public void showWindow(Window window, Position position)
     {
         if(window == null)
@@ -245,17 +265,26 @@ public class GUIScreen
         doEventLoop();
     }
 
-    public void closeWindow(Window window)
+    /**
+     * Closes the currently active, top-level window. Making it go away from the
+     * screen and eventually returns control to whoever was calling showWindow
+     * on it
+     */
+    public void closeWindow()
     {
         if(windowStack.size() == 0)
-            return;
-        if(windowStack.getLast().window != window)
             return;
 
         WindowPlacement windowPlacement = windowStack.removeLast();
         windowPlacement.getWindow().onClosed();
     }
 
+    /**
+     * Since Lanterna isn't thread safe, here's a way to run code on the same
+     * thread as the GUI system is using. Pass an action in and it will be 
+     * queued for execution.
+     * @param codeToRun Code to be executed on the same thread as the GUI
+     */
     public void runInEventThread(Action codeToRun)
     {
         synchronized(actionToRunInEventThread) {
@@ -263,11 +292,19 @@ public class GUIScreen
         }
     }
 
+    /**
+     * @return True if the current thread calling this method is the same thread
+     * as the GUI system is using
+     */
     public boolean isInEventThread()
     {
         return eventThread == Thread.currentThread();
     }
 
+    /**
+     * If true, will display the current memory usage in the bottom right corner,
+     * updated on every screen refresh
+     */
     public void setShowMemoryUsage(boolean showMemoryUsage)
     {
         this.showMemoryUsage = showMemoryUsage;
@@ -278,10 +315,24 @@ public class GUIScreen
         return showMemoryUsage;
     }
 
+    /**
+     * Where to position a window that is to be put on the screen
+     */
     public enum Position
     {
+        /**
+         * Starting from the top left corner, created windows overlapping in
+         * a down-right direction (similar to Microsoft Windows)
+         */
         OVERLAPPING,
+        /**
+         * This window will be placed in the top-left corner, any windows 
+         * created with overlapping after it will be positioned relative
+         */
         NEW_CORNER_WINDOW,
+        /**
+         * At the center of the screen
+         */
         CENTER
     }
 
