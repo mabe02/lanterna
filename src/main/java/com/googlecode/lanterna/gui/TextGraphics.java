@@ -29,7 +29,10 @@ import java.util.Arrays;
 import java.util.EnumSet;
 
 /**
- *
+ * This class works as a kind of 'pencil', able to output text graphics. The 
+ * main use for it is not only to provide a way to draw text through, it is also
+ * the carrier of context information, such as which screen we are associated
+ * with, what the current theme is and how big size the drawing area has.
  * @author Martin
  */
 public class TextGraphics
@@ -42,7 +45,7 @@ public class TextGraphics
     private Color backgroundColor;
     private boolean currentlyBold;
 
-    public TextGraphics(final TerminalPosition topLeft, final TerminalSize areaSize, final Screen screen, final Theme theme)
+    TextGraphics(final TerminalPosition topLeft, final TerminalSize areaSize, final Screen screen, final Theme theme)
     {
         this.topLeft = topLeft;
         this.areaSize = areaSize;
@@ -61,6 +64,15 @@ public class TextGraphics
                 graphics.screen, graphics.theme);
     }
 
+    /**
+     * Creates a new TextGraphics object using the same area or smaller. Use the
+     * terminalPosition variable to determine what the new TextGraphics object
+     * will cover. 
+     * @param terminalPosition In local coordinates of the current TextGraphics,
+     * the left-left coordinates of the new TextGraphics
+     * @return A new TextGraphics object covering the same or smaller area as 
+     * this
+     */
     public TextGraphics subAreaGraphics(final TerminalPosition terminalPosition)
     {
         terminalPosition.ensurePositivePosition();
@@ -70,6 +82,17 @@ public class TextGraphics
         return subAreaGraphics(terminalPosition, newArea);
     }
 
+
+    /**
+     * Creates a new TextGraphics object using the same area or smaller. Use the
+     * topLeft and subAreaSize variable to determine what the new TextGraphics 
+     * object will cover. 
+     * @param topLeft  In local coordinates of the current TextGraphics,
+     * the left-left coordinates of the new TextGraphics
+     * @param subAreaSize Size of the area the new TextGraphics will cover
+     * @return A new TextGraphics object covering the same or smaller area as 
+     * this
+     */
     public TextGraphics subAreaGraphics(final TerminalPosition topLeft, final TerminalSize subAreaSize)
     {
         if(topLeft.getColumn() < 0)
@@ -89,6 +112,15 @@ public class TextGraphics
         return new TextGraphics(this, topLeft, subAreaSize);
     }
 
+    /**
+     * Draws a string to the terminal, with the first character starting at 
+     * specified coordinates and which an option list of styles applied. All
+     * coordinates are local to the top-left corner of the TextGraphics object
+     * @param column Column of the first character in the string
+     * @param row Row of the first character in the string
+     * @param string String to print to terminal
+     * @param styles Which styles to apply to the string
+     */
     public void drawString(int column, int row, String string, ScreenCharacterStyle... styles)
     {
         if(column >= areaSize.getColumns() || row >= areaSize.getRows() || string == null)
@@ -130,11 +162,21 @@ public class TextGraphics
         this.foregroundColor = foregroundColor;
     }
 
+    /**
+     * Width, in columns, of the TextGraphics drawing area. Attemps to draw 
+     * outside of this will be ignored
+     * @return Size of the TextGraphics area, in columns
+     */
     public int getWidth()
     {
         return areaSize.getColumns();
     }
 
+    /**
+     * Height, in rows, of the TextGraphics drawing area. Attemps to draw 
+     * outside of this will be ignored
+     * @return Size of the TextGraphics area, in rows
+     */
     public int getHeight()
     {
         return areaSize.getRows();
@@ -150,16 +192,34 @@ public class TextGraphics
         return theme;
     }
 
-    public void applyThemeItem(Theme.Category category)
-    {
-        applyThemeItem(getTheme().getItem(category));
-    }
-
+    /**
+     * Translates local coordinates of this TextGraphics object to global
+     * @param pointInArea Point in local coordinates
+     * @return The point in global coordinates
+     */
     public TerminalPosition translateToGlobalCoordinates(TerminalPosition pointInArea)
     {
         return new TerminalPosition(pointInArea.getColumn() + topLeft.getColumn(), pointInArea.getRow() + topLeft.getRow());
     }
 
+    /**
+     * Applies theme-specific settings according to the category supplied. This
+     * may modify the foreground color, background color and/or styles. Any 
+     * string drawn after this call will have these settings applied
+     * @param category Category to use
+     */
+    public void applyThemeItem(Theme.Category category)
+    {
+        applyThemeItem(getTheme().getItem(category));
+    }
+    
+
+    /**
+     * Applies theme-specific settings according to the definition supplied. This
+     * may modify the foreground color, background color and/or styles. Any 
+     * string drawn after this call will have these settings applied
+     * @param themeItem Definition to use
+     */
     public void applyThemeItem(Theme.Definition themeItem)
     {
         setForegroundColor(themeItem.foreground);
@@ -167,11 +227,20 @@ public class TextGraphics
         setBoldMask(themeItem.highlighted);
     }
 
+    /**
+     * Replaces the content of the entire TextGraphic object with one character
+     * @param character Character to fill the area with
+     */
     public void fillArea(char character)
     {
         fillRectangle(character, new TerminalPosition(0, 0), new TerminalSize(areaSize));
     }
 
+    /**
+     * Replaces the content of a rectangle within the TextGraphic drawing area
+     * with a specified character
+     * @param character Character to fill the area with
+     */
     public void fillRectangle(char character, TerminalPosition topLeft, TerminalSize rectangleSize)
     {
         StringBuilder emptyLineBuilder = new StringBuilder();
