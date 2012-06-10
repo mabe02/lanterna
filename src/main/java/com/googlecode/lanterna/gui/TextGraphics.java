@@ -19,7 +19,6 @@
 
 package com.googlecode.lanterna.gui;
 
-import com.googlecode.lanterna.gui.theme.Theme;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.ScreenCharacterStyle;
 import com.googlecode.lanterna.screen.TabBehaviour;

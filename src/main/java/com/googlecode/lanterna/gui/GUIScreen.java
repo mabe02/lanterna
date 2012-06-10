@@ -20,7 +20,6 @@
 package com.googlecode.lanterna.gui;
 
 import com.googlecode.lanterna.gui.listener.WindowAdapter;
-import com.googlecode.lanterna.gui.theme.Theme;
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.TerminalPosition;

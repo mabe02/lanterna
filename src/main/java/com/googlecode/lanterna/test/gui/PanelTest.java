@@ -21,7 +21,7 @@ package com.googlecode.lanterna.test.gui;
 
 import com.googlecode.lanterna.gui.*;
 import com.googlecode.lanterna.gui.layout.SizePolicy;
-import com.googlecode.lanterna.gui.theme.Theme.Category;
+import com.googlecode.lanterna.gui.Theme.Category;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.test.TestTerminalFactory;
 

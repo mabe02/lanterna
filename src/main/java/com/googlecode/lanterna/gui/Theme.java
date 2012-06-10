@@ -17,7 +17,7 @@
  * Copyright (C) 2010-2012 Martin
  */
 
-package com.googlecode.lanterna.gui.theme;
+package com.googlecode.lanterna.gui;
 
 import com.googlecode.lanterna.terminal.Terminal.Color;
 

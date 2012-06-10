@@ -19,7 +19,6 @@
 
 package com.googlecode.lanterna.gui;
 
-import com.googlecode.lanterna.gui.theme.Theme;
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;

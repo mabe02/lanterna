@@ -19,8 +19,7 @@
 
 package com.googlecode.lanterna.gui;
 
-import com.googlecode.lanterna.gui.theme.Theme;
-import com.googlecode.lanterna.gui.theme.Theme.Category;
+import com.googlecode.lanterna.gui.Theme.Category;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.Terminal.Color;
 import com.googlecode.lanterna.terminal.TerminalSize;
