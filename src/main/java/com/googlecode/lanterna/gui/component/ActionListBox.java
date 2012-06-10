@@ -20,7 +20,7 @@
 package com.googlecode.lanterna.gui.component;
 
 import com.googlecode.lanterna.gui.Action;
-import com.googlecode.lanterna.gui.InteractableResult;
+import com.googlecode.lanterna.gui.Interactable;
 import com.googlecode.lanterna.gui.TextGraphics;
 import com.googlecode.lanterna.gui.Theme.Category;
 import com.googlecode.lanterna.input.Key;
@@ -151,47 +151,50 @@ public class ActionListBox extends AbstractInteractableComponent
             selectedIndex = itemList.size() - 1;
     }
 
-    public void keyboardInteraction(Key key, InteractableResult result)
+    public Interactable.Result keyboardInteraction(Key key)
     {
-        switch(key.getKind()) {
-            case Tab:
-            case ArrowRight:
-                result.type = Result.NEXT_INTERACTABLE;
-                break;
+        try {
+            switch(key.getKind()) {
+                case Tab:
+                case ArrowRight:
+                    return Result.NEXT_INTERACTABLE;
 
-            case ReverseTab:
-            case ArrowLeft:
-                result.type = Result.PREVIOUS_INTERACTABLE;
-                break;
+                case ReverseTab:
+                case ArrowLeft:
+                    return Result.PREVIOUS_INTERACTABLE;
 
-            case ArrowDown:
-                if(selectedIndex == itemList.size() - 1)
-                    result.type = Result.NEXT_INTERACTABLE;
-                else
-                    selectedIndex++;
-                break;
+                case ArrowDown:
+                    if(selectedIndex == itemList.size() - 1)
+                        return Result.NEXT_INTERACTABLE;
+                    else
+                        selectedIndex++;
+                    break;
 
-            case ArrowUp:
-                if(selectedIndex == 0)
-                    result.type = Result.PREVIOUS_INTERACTABLE;
-                else
-                    selectedIndex--;
-                break;
+                case ArrowUp:
+                    if(selectedIndex == 0)
+                        return Result.PREVIOUS_INTERACTABLE;
+                    else
+                        selectedIndex--;
+                    break;
 
-            case Enter:
-                if(selectedIndex != -1)
-                    itemList.get(selectedIndex).doAction();
-                break;
+                case Enter:
+                    if(selectedIndex != -1)
+                        itemList.get(selectedIndex).doAction();
+                    break;
 
-            case PageDown:
-                selectedIndex = itemList.size() - 1;
-                break;
+                case PageDown:
+                    selectedIndex = itemList.size() - 1;
+                    break;
 
-            case PageUp:
-                selectedIndex = 0;
-                break;
+                case PageUp:
+                    selectedIndex = 0;
+                    break;
+            }
+            return Result.DO_NOTHING;
         }
-        invalidate();
+        finally {
+            invalidate();
+        }
     }
 
     public static interface Item

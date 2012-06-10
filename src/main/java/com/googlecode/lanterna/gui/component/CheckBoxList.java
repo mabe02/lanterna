@@ -19,7 +19,7 @@
 
 package com.googlecode.lanterna.gui.component;
 
-import com.googlecode.lanterna.gui.InteractableResult;
+import com.googlecode.lanterna.gui.Interactable;
 import com.googlecode.lanterna.gui.TextGraphics;
 import com.googlecode.lanterna.gui.Theme.Category;
 import com.googlecode.lanterna.input.Key;
@@ -100,44 +100,47 @@ public class CheckBoxList extends AbstractInteractableComponent
         return items.get(index);
     }
 
-    public void keyboardInteraction(Key key, InteractableResult result)
+    public Interactable.Result keyboardInteraction(Key key)
     {
-        switch(key.getKind())
-        {
-            case Enter:
-            case Tab:
-            case ArrowRight:
-                result.type = Result.NEXT_INTERACTABLE;
-                break;
+        try {
+            switch(key.getKind())
+            {
+                case Enter:
+                case Tab:
+                case ArrowRight:
+                    return Result.NEXT_INTERACTABLE;
 
-            case ReverseTab:
-            case ArrowLeft:
-                result.type = Result.PREVIOUS_INTERACTABLE;
-                break;
+                case ReverseTab:
+                case ArrowLeft:
+                    return Result.PREVIOUS_INTERACTABLE;
 
-            case ArrowDown:
-                if(selectedIndex == items.size() - 1)
-                    result.type = Result.NEXT_INTERACTABLE;
-                else
-                    selectedIndex++;
-                break;
-
-            case ArrowUp:
-                if(selectedIndex == 0)
-                    result.type = Result.PREVIOUS_INTERACTABLE;
-                else
-                    selectedIndex--;
-                break;
-
-            default:
-                if(key.getCharacter() == ' ') {
-                    if(itemStatus.get(selectedIndex) == true)
-                        itemStatus.set(selectedIndex, Boolean.FALSE);
+                case ArrowDown:
+                    if(selectedIndex == items.size() - 1)
+                        return Result.NEXT_INTERACTABLE;
                     else
-                        itemStatus.set(selectedIndex, Boolean.TRUE);
-                }
+                        selectedIndex++;
+                    break;
+
+                case ArrowUp:
+                    if(selectedIndex == 0)
+                        return Result.PREVIOUS_INTERACTABLE;
+                    else
+                        selectedIndex--;
+                    break;
+
+                default:
+                    if(key.getCharacter() == ' ') {
+                        if(itemStatus.get(selectedIndex) == true)
+                            itemStatus.set(selectedIndex, Boolean.FALSE);
+                        else
+                            itemStatus.set(selectedIndex, Boolean.TRUE);
+                    }
+            }
+            return Result.DO_NOTHING;
         }
-        invalidate();
+        finally {
+            invalidate();
+        }
     }
 
     public void repaint(TextGraphics graphics)

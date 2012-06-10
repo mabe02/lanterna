@@ -19,7 +19,6 @@
 
 package com.googlecode.lanterna.gui.component;
 
-import com.googlecode.lanterna.gui.InteractableResult;
 import com.googlecode.lanterna.gui.TextGraphics;
 import com.googlecode.lanterna.gui.Theme;
 import com.googlecode.lanterna.input.Key;
@@ -100,31 +99,34 @@ public class StaticTextArea  extends AbstractInteractableComponent
         }
     }
 
-    public void keyboardInteraction(Key key, InteractableResult result)
+    public Result keyboardInteraction(Key key)
     {
-        switch(key.getKind()) {
-            case Tab:
-            case ArrowRight:
-            case Enter:
-                result.type = Result.NEXT_INTERACTABLE;
-                break;
+        try {
+            switch(key.getKind()) {
+                case Tab:
+                case ArrowRight:
+                case Enter:
+                    return Result.NEXT_INTERACTABLE;
 
-            case ReverseTab:
-            case ArrowLeft:
-                result.type = Result.PREVIOUS_INTERACTABLE;
-                break;
+                case ReverseTab:
+                case ArrowLeft:
+                    return Result.PREVIOUS_INTERACTABLE;
 
-            case ArrowDown:
-                if(scrollTopIndex < lines.size() - maxSize.getRows())
-                    scrollTopIndex++;
-                break;
+                case ArrowDown:
+                    if(scrollTopIndex < lines.size() - maxSize.getRows())
+                        scrollTopIndex++;
+                    break;
 
-            case ArrowUp:
-                if(scrollTopIndex > 0)
-                    scrollTopIndex--;
-                break;
+                case ArrowUp:
+                    if(scrollTopIndex > 0)
+                        scrollTopIndex--;
+                    break;
+            }
+            return Result.DO_NOTHING;
         }
-        invalidate();
+        finally {
+            invalidate();
+        }
     }
 
     private void printItem(TextGraphics graphics, int x, int y, String text)

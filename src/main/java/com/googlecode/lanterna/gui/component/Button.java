@@ -20,7 +20,7 @@
 package com.googlecode.lanterna.gui.component;
 
 import com.googlecode.lanterna.gui.Action;
-import com.googlecode.lanterna.gui.InteractableResult;
+import com.googlecode.lanterna.gui.Interactable;
 import com.googlecode.lanterna.gui.TextGraphics;
 import com.googlecode.lanterna.gui.Theme;
 import com.googlecode.lanterna.input.Key;
@@ -107,7 +107,7 @@ public class Button extends AbstractInteractableComponent
         buttonLabel.setStyle(Theme.Category.ButtonLabelInactive);
     }
 
-    public void keyboardInteraction(Key key, InteractableResult result)
+    public Interactable.Result keyboardInteraction(Key key)
     {
         switch(key.getKind()) {
             case Enter:
@@ -117,15 +117,14 @@ public class Button extends AbstractInteractableComponent
             case ArrowRight:
             case ArrowDown:
             case Tab:
-                result.type = Result.NEXT_INTERACTABLE;
-                break;
+                return Result.NEXT_INTERACTABLE;
 
             case ArrowLeft:
             case ArrowUp:
             case ReverseTab:
-                result.type = Result.PREVIOUS_INTERACTABLE;
-                break;
+                return Result.PREVIOUS_INTERACTABLE;
         }
+        return Result.DO_NOTHING;
     }
 
     /*

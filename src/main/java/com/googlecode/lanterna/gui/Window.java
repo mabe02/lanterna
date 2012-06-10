@@ -195,17 +195,15 @@ public class Window implements Container
 
     public void onKeyPressed(Key key)
     {
-        InteractableResult resultContainer = new InteractableResult();
-
         if(currentlyInFocus != null) {
-            currentlyInFocus.keyboardInteraction(key, resultContainer);
-            if(resultContainer.type == Interactable.Result.NEXT_INTERACTABLE) {
+            Interactable.Result result =  currentlyInFocus.keyboardInteraction(key);
+            if(result == Interactable.Result.NEXT_INTERACTABLE) {
                 Interactable nextItem = contentPane.nextFocus(currentlyInFocus);
                 if(nextItem == null)
                     nextItem = contentPane.nextFocus(null);
                 setFocus(nextItem, Interactable.FocusChangeDirection.DOWN_OR_RIGHT);
             }
-            if(resultContainer.type == Interactable.Result.PREVIOUS_INTERACTABLE) {
+            if(result == Interactable.Result.PREVIOUS_INTERACTABLE) {
                 Interactable prevItem = contentPane.previousFocus(currentlyInFocus);
                 if(prevItem == null)
                     prevItem = contentPane.previousFocus(null);

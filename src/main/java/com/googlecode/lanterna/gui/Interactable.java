@@ -36,7 +36,7 @@ public interface Interactable
      * @param result Change the value inside this object for the desired action
      * to be taken by the GUI system as a result of this interaction
      */
-    public void keyboardInteraction(Key key, InteractableResult result);
+    public Result keyboardInteraction(Key key);
     
     /**
      * Method called when this component gained keyboard focus

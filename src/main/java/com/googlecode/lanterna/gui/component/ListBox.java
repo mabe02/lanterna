@@ -19,7 +19,6 @@
 
 package com.googlecode.lanterna.gui.component;
 
-import com.googlecode.lanterna.gui.InteractableResult;
 import com.googlecode.lanterna.gui.TextGraphics;
 import com.googlecode.lanterna.gui.Theme.Category;
 import com.googlecode.lanterna.input.Key;
@@ -141,37 +140,40 @@ public class ListBox extends AbstractInteractableComponent
             setHotspot(graphics.translateToGlobalCoordinates(new TerminalPosition(0, selectedIndex - scrollTopIndex)));
     }
 
-    public void keyboardInteraction(Key key, InteractableResult result)
+    public Result keyboardInteraction(Key key)
     {
-        switch(key.getKind()) {
-            case Tab:
-            case ArrowRight:
-            case Enter:
-                result.type = Result.NEXT_INTERACTABLE;
-                break;
+        try {
+            switch(key.getKind()) {
+                case Tab:
+                case ArrowRight:
+                case Enter:
+                    return Result.NEXT_INTERACTABLE;
 
-            case ReverseTab:
-            case ArrowLeft:
-                result.type = Result.PREVIOUS_INTERACTABLE;
-                break;
+                case ReverseTab:
+                case ArrowLeft:
+                    return Result.PREVIOUS_INTERACTABLE;
 
-            case ArrowDown:
-                if(items.isEmpty() || selectedIndex == items.size() - 1)
-                    return;
+                case ArrowDown:
+                    if(items.isEmpty() || selectedIndex == items.size() - 1)
+                        return Result.DO_NOTHING;
 
-                selectedIndex++;
-                break;
+                    selectedIndex++;
+                    break;
 
-            case ArrowUp:
-                if(items.isEmpty() || selectedIndex == 0)
-                    return;
+                case ArrowUp:
+                    if(items.isEmpty() || selectedIndex == 0)
+                        return Result.DO_NOTHING;
 
-                selectedIndex--;
-                if(selectedIndex - scrollTopIndex < 0)
-                    scrollTopIndex--;
-                break;
+                    selectedIndex--;
+                    if(selectedIndex - scrollTopIndex < 0)
+                        scrollTopIndex--;
+                    break;
+            }
+            return Result.DO_NOTHING;
         }
-        invalidate();
+        finally {
+            invalidate();
+        }
     }
 
     private void printItem(TextGraphics graphics, int x, int y, String text)

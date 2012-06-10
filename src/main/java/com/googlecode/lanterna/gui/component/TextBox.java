@@ -19,7 +19,6 @@
 
 package com.googlecode.lanterna.gui.component;
 
-import com.googlecode.lanterna.gui.InteractableResult;
 import com.googlecode.lanterna.gui.TextGraphics;
 import com.googlecode.lanterna.gui.Theme.Category;
 import com.googlecode.lanterna.input.Key;
@@ -109,73 +108,76 @@ public class TextBox extends AbstractInteractableComponent
         return new TerminalSize(forceWidth, 1);
     }
 
-    public void keyboardInteraction(Key key, InteractableResult result)
+    public Result keyboardInteraction(Key key)
     {
-        switch(key.getKind()) {
-            case Tab:
-            case ArrowDown:
-            case Enter:
-                result.type = Result.NEXT_INTERACTABLE;
-                break;
+        try {
+            switch(key.getKind()) {
+                case Tab:
+                case ArrowDown:
+                case Enter:
+                    return Result.NEXT_INTERACTABLE;
 
-            case ReverseTab:
-            case ArrowUp:
-                result.type = Result.PREVIOUS_INTERACTABLE;
-                break;
+                case ReverseTab:
+                case ArrowUp:
+                    return Result.PREVIOUS_INTERACTABLE;
 
-            case ArrowRight:
-                if(editPosition == backend.length())
-                    break;
-                editPosition++;
-                if(editPosition - visibleLeftPosition >= lastKnownWidth)
-                    visibleLeftPosition++;
-                break;
-
-            case ArrowLeft:
-                if(editPosition == 0)
-                    break;
-                editPosition--;
-                if(editPosition - visibleLeftPosition < 0)
-                    visibleLeftPosition--;
-                break;
-
-            case End:
-                editPosition = backend.length();
-                if(editPosition - visibleLeftPosition >= lastKnownWidth)
-                    visibleLeftPosition = editPosition - lastKnownWidth + 1;
-                break;
-
-            case Home:
-                editPosition = 0;
-                visibleLeftPosition = 0;
-                break;
-
-            case Delete:
-                if(editPosition == backend.length())
-                    break;
-                backend = backend.substring(0, editPosition) + backend.substring(editPosition + 1);
-                break;
-
-            case Backspace:
-                if(editPosition == 0)
-                    break;
-                editPosition--;
-                if(editPosition - visibleLeftPosition < 0)
-                    visibleLeftPosition--;
-                backend = backend.substring(0, editPosition) + backend.substring(editPosition + 1);
-                break;
-
-            case NormalKey:
-                //Add character
-                if(Character.isISOControl(key.getCharacter()) || key.getCharacter() > 127)
+                case ArrowRight:
+                    if(editPosition == backend.length())
+                        break;
+                    editPosition++;
+                    if(editPosition - visibleLeftPosition >= lastKnownWidth)
+                        visibleLeftPosition++;
                     break;
 
-                backend = backend.substring(0, editPosition) + (char)key.getCharacter() + backend.substring(editPosition);
-                editPosition++;
-                if(editPosition - visibleLeftPosition >= lastKnownWidth)
-                    visibleLeftPosition++;
-                break;
+                case ArrowLeft:
+                    if(editPosition == 0)
+                        break;
+                    editPosition--;
+                    if(editPosition - visibleLeftPosition < 0)
+                        visibleLeftPosition--;
+                    break;
+
+                case End:
+                    editPosition = backend.length();
+                    if(editPosition - visibleLeftPosition >= lastKnownWidth)
+                        visibleLeftPosition = editPosition - lastKnownWidth + 1;
+                    break;
+
+                case Home:
+                    editPosition = 0;
+                    visibleLeftPosition = 0;
+                    break;
+
+                case Delete:
+                    if(editPosition == backend.length())
+                        break;
+                    backend = backend.substring(0, editPosition) + backend.substring(editPosition + 1);
+                    break;
+
+                case Backspace:
+                    if(editPosition == 0)
+                        break;
+                    editPosition--;
+                    if(editPosition - visibleLeftPosition < 0)
+                        visibleLeftPosition--;
+                    backend = backend.substring(0, editPosition) + backend.substring(editPosition + 1);
+                    break;
+
+                case NormalKey:
+                    //Add character
+                    if(Character.isISOControl(key.getCharacter()) || key.getCharacter() > 127)
+                        break;
+
+                    backend = backend.substring(0, editPosition) + (char)key.getCharacter() + backend.substring(editPosition);
+                    editPosition++;
+                    if(editPosition - visibleLeftPosition >= lastKnownWidth)
+                        visibleLeftPosition++;
+                    break;
+            }
+            return Result.DO_NOTHING;
         }
-        invalidate();
+        finally {
+            invalidate();
+        }
     }
 }

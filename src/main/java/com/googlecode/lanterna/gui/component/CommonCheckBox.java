@@ -19,7 +19,7 @@
 
 package com.googlecode.lanterna.gui.component;
 
-import com.googlecode.lanterna.gui.InteractableResult;
+import com.googlecode.lanterna.gui.Interactable;
 import com.googlecode.lanterna.gui.TextGraphics;
 import com.googlecode.lanterna.gui.Theme.Category;
 import com.googlecode.lanterna.input.Key;
@@ -69,32 +69,35 @@ public abstract class CommonCheckBox extends AbstractInteractableComponent
         setHotspot(graphics.translateToGlobalCoordinates(new TerminalPosition(1, 0)));
     }
 
-    public void keyboardInteraction(Key key, InteractableResult result)
+    public Interactable.Result keyboardInteraction(Key key)
     {
-        switch(key.getKind())
-        {
-            case Tab:
-            case ArrowDown:
-            case ArrowRight:
-                result.type = Result.NEXT_INTERACTABLE;
-                break;
+        try {
+            switch(key.getKind())
+            {
+                case Tab:
+                case ArrowDown:
+                case ArrowRight:
+                    return Result.NEXT_INTERACTABLE;
 
-            case ArrowUp:
-            case ReverseTab:
-            case ArrowLeft:
-                result.type = Result.PREVIOUS_INTERACTABLE;
-                break;
+                case ArrowUp:
+                case ReverseTab:
+                case ArrowLeft:
+                    return Result.PREVIOUS_INTERACTABLE;
 
-            case Enter:
-                onActivated();
-                break;
-                
-            default:
-                if(key.getCharacter() == ' ' || key.getCharacter() == 'x')
+                case Enter:
                     onActivated();
-                break;
+                    break;
+
+                default:
+                    if(key.getCharacter() == ' ' || key.getCharacter() == 'x')
+                        onActivated();
+                    break;
+            }
+            return Result.DO_NOTHING;
         }
-        invalidate();
+        finally {
+            invalidate();
+        }
     }
 
     public abstract boolean isSelected();
