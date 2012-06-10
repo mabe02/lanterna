@@ -33,7 +33,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * The Window class is the basis for Lanternas GUI system. The workflow is to
+ * create and show modal windows and promt the user for input. A window, once
+ * displayed, will take over control by entering an event loop and won't come 
+ * back until the window is closed.
  * @author Martin
  */
 public class Window implements Container
@@ -45,6 +48,10 @@ public class Window implements Container
     private Interactable currentlyInFocus;
     private boolean soloWindow;
 
+    /**
+     * Creates a new window
+     * @param title Title for the new window
+     */
     public Window(String title)
     {
         this.windowListeners = new ArrayList<WindowListener>();
@@ -60,6 +67,9 @@ public class Window implements Container
         windowListeners.add(listener);
     }
 
+    /**
+     * @return The GUIScreen which this window is displayed on
+     */
     public GUIScreen getOwner()
     {
         return owner;
@@ -70,6 +80,9 @@ public class Window implements Container
         this.owner = owner;
     }
 
+    /**
+     * @return The border of this window
+     */
     public Border getBorder()
     {
         return contentPane.getBorder();
@@ -81,19 +94,22 @@ public class Window implements Container
             contentPane.setBorder(border);
     }
 
-    public TerminalSize getPreferredSize()
+    /**
+     * @return How big this window would like to be
+     */
+    TerminalSize getPreferredSize()
     {
         return contentPane.getPreferredSize();
     }
 
-    public void repaint(TextGraphics graphics)
+    void repaint(TextGraphics graphics)
     {
         graphics.applyThemeItem(graphics.getTheme().getItem(Category.DialogArea));
         graphics.fillRectangle(' ', new TerminalPosition(0, 0), new TerminalSize(graphics.getWidth(), graphics.getHeight()));
         contentPane.repaint(graphics);
     }
 
-    public void invalidate()
+    private void invalidate()
     {
         for(WindowListener listener: windowListeners)
             listener.onWindowInvalidated(this);
@@ -140,11 +156,18 @@ public class Window implements Container
         return contentPane.getComponentAt(index);
     }
 
+    /**
+     * @return How many top-level components this window has
+     */
     public int getComponentCount()
     {
         return contentPane.getComponentCount();
     }
 
+    /**
+     * Removes a top-level component from the window
+     * @param component Top-level component to remove
+     */
     public void removeComponent(Component component)
     {
         if(component instanceof InteractableContainer) {
@@ -174,18 +197,25 @@ public class Window implements Container
         }
     }
 
-    protected void removeAllComponents()
+    /**
+     * Removes all components from the window
+     */
+    public void removeAllComponents()
     {
         while(getComponentCount() > 0)
             removeComponent(getComponentAt(0));
     }
 
+    /**
+     * Sets the amount of padding to put between components
+     * @param paddingSize Padding size, both horizontally and vertically
+     */
     public void setBetweenComponentsPadding(int paddingSize)
     {
         contentPane.setBetweenComponentsPadding(paddingSize);
     }
 
-    public TerminalPosition getWindowHotspotPosition()
+    TerminalPosition getWindowHotspotPosition()
     {
         if(currentlyInFocus == null)
             return null;
@@ -193,7 +223,7 @@ public class Window implements Container
             return currentlyInFocus.getHotspot();
     }
 
-    public void onKeyPressed(Key key)
+    void onKeyPressed(Key key)
     {
         if(currentlyInFocus != null) {
             Interactable.Result result =  currentlyInFocus.keyboardInteraction(key);
@@ -217,6 +247,10 @@ public class Window implements Container
         return soloWindow;
     }
 
+    /**
+     * If set to true, when this window is shown, all previous windows are 
+     * hidden. Set to false to show them again.
+     */
     public void setSoloWindow(boolean soloWindow)
     {
         this.soloWindow = soloWindow;
