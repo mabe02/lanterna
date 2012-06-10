@@ -22,15 +22,35 @@ package com.googlecode.lanterna.gui;
 import com.googlecode.lanterna.gui.listener.ContainerListener;
 
 /**
- *
+ * This interface must be implemented by any component this is to have 
+ * subcomponents.
  * @author Martin
  */
 public interface Container
 {
     void addContainerListener(ContainerListener cl);
     void removeContainerListener(ContainerListener cl);
+    
+    /**
+     * Adds a new subcomponent to this container.
+     * @param component Component to add to this container
+     */
     void addComponent(Component component);
+    
+    /**
+     * Removes a component from this container.
+     * @param component Component to remove from this container
+     */
     void removeComponent(Component component);
+    
+    /**
+     * @return How many component this container currently has
+     */
     int getComponentCount();
+    
+    /**
+     * @param index Index to look up a component at
+     * @return Component at the specified index
+     */
     Component getComponentAt(int index);
 }
