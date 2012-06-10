@@ -159,14 +159,14 @@ public abstract class AbstractContainer extends AbstractComponent implements Int
 
     public Interactable previousFocus(Interactable fromThis)
     {
-        boolean chooseNext = (fromThis == null);
+        boolean chooseNextAvailable = (fromThis == null);
 
         List<Component> revComponents = new ArrayList<Component>(components);
         Collections.reverse(revComponents);
 
         for(Component component: revComponents)
         {
-            if(chooseNext) {
+            if(chooseNextAvailable) {
                 if(component instanceof Interactable)
                     return (Interactable)component;
                 if(component instanceof InteractableContainer) {
@@ -178,7 +178,7 @@ public abstract class AbstractContainer extends AbstractComponent implements Int
             }
 
             if(component == fromThis) {
-                chooseNext = true;
+                chooseNextAvailable = true;
                 continue;
             }
 
@@ -187,7 +187,7 @@ public abstract class AbstractContainer extends AbstractComponent implements Int
                 if(ic.hasInteractable(fromThis)) {
                     Interactable next = ic.previousFocus(fromThis);
                     if(next == null) {
-                        chooseNext = true;
+                        chooseNextAvailable = true;
                         continue;
                     }
                     else
