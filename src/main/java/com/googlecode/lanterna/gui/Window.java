@@ -19,11 +19,13 @@
 
 package com.googlecode.lanterna.gui;
 
+import com.googlecode.lanterna.gui.Theme.Category;
+import com.googlecode.lanterna.gui.component.EmptySpace;
+import com.googlecode.lanterna.gui.component.Panel;
 import com.googlecode.lanterna.gui.layout.SizePolicy;
 import com.googlecode.lanterna.gui.listener.ComponentAdapter;
 import com.googlecode.lanterna.gui.listener.ContainerListener;
 import com.googlecode.lanterna.gui.listener.WindowListener;
-import com.googlecode.lanterna.gui.Theme.Category;
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
@@ -39,7 +41,7 @@ public class Window implements Container
     private final List<WindowListener> windowListeners;
     private final List<ComponentInvalidatorAlert> invalidatorAlerts;
     private GUIScreen owner;
-    private final Panel contentPane;
+    private final WindowContentPane contentPane;
     private Interactable currentlyInFocus;
     private boolean soloWindow;
 
@@ -48,8 +50,7 @@ public class Window implements Container
         this.windowListeners = new ArrayList<WindowListener>();
         this.invalidatorAlerts = new ArrayList<ComponentInvalidatorAlert>();
         this.owner = null;
-        this.contentPane = new Panel(title);
-        this.contentPane.setParent(this);
+        this.contentPane = new WindowContentPane(title);
         this.currentlyInFocus = null;
         this.soloWindow = false;
     }
@@ -284,6 +285,26 @@ public class Window implements Container
         public void onComponentInvalidated(Component component)
         {
             invalidate();
+        }
+    }
+    
+    /**
+     * Private class to get through some method restrictions
+     */
+    private class WindowContentPane extends Panel {
+        public WindowContentPane(String title) {
+            super(title);
+            setParent(Window.this);
+        }
+
+        @Override
+        protected boolean maximisesHorisontally() {
+            return super.maximisesHorisontally();
+        }
+
+        @Override
+        protected boolean maximisesVertically() {
+            return super.maximisesVertically();
         }
     }
 }

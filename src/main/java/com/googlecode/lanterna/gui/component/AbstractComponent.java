@@ -17,8 +17,12 @@
  * Copyright (C) 2010-2012 Martin
  */
 
-package com.googlecode.lanterna.gui;
+package com.googlecode.lanterna.gui.component;
 
+import com.googlecode.lanterna.gui.Component;
+import com.googlecode.lanterna.gui.Container;
+import com.googlecode.lanterna.gui.GUIScreen;
+import com.googlecode.lanterna.gui.Window;
 import com.googlecode.lanterna.gui.listener.ComponentListener;
 import java.util.LinkedList;
 import java.util.List;
@@ -46,7 +50,7 @@ public abstract class AbstractComponent implements Component
         return parent;
     }
 
-    void setParent(Container parent)
+    protected void setParent(Container parent)
     {
         this.parent = parent;
     }

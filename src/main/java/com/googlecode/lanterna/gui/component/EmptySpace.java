@@ -17,46 +17,38 @@
  * Copyright (C) 2010-2012 Martin
  */
 
-package com.googlecode.lanterna.gui;
+package com.googlecode.lanterna.gui.component;
 
+import com.googlecode.lanterna.gui.TextGraphics;
+import com.googlecode.lanterna.gui.Theme.Category;
+import com.googlecode.lanterna.terminal.TerminalSize;
 
 /**
  *
  * @author Martin
  */
-public class RadioCheckBox extends CommonCheckBox
+public class EmptySpace extends AbstractComponent
 {
-    private final RadioCheckBoxGroup group;
+    private final TerminalSize size;
 
-    public RadioCheckBox(final String label, final RadioCheckBoxGroup group)
+    public EmptySpace()
     {
-        super(label);
-        this.group = group;
-        group.addRadioBox(this);
+        this(1, 1);
     }
 
-    @Override
-    protected char getSelectionCharacter()
+    public EmptySpace(final int width, final int height)
     {
-        return 'o';
+        this.size = new TerminalSize(width, height);
     }
 
-    @Override
-    protected String surroundCharacter(char character)
+    public TerminalSize getPreferredSize()
     {
-        return "(" + character + ")";
+        return size;
     }
 
-
-    @Override
-    public boolean isSelected()
+    public void repaint(TextGraphics graphics)
     {
-        return group.isSelected(this);
-    }
-
-    @Override
-    protected void onActivated()
-    {
-        group.setSelected(this);
+        graphics.applyThemeItem(Category.DialogArea);
+        graphics.fillArea(' ');
     }
 }

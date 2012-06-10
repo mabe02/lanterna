@@ -17,8 +17,9 @@
  * Copyright (C) 2010-2012 Martin
  */
 
-package com.googlecode.lanterna.gui;
+package com.googlecode.lanterna.gui.component;
 
+import com.googlecode.lanterna.gui.*;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -130,7 +131,7 @@ public class Table extends AbstractComponent implements InteractableContainer
     }
 
     @Override
-    void setParent(Container container)
+    protected void setParent(Container container)
     {
         super.setParent(container);
         

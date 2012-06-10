@@ -17,8 +17,10 @@
  * Copyright (C) 2010-2012 Martin
  */
 
-package com.googlecode.lanterna.gui;
+package com.googlecode.lanterna.gui.component;
 
+import com.googlecode.lanterna.gui.InteractableResult;
+import com.googlecode.lanterna.gui.TextGraphics;
 import com.googlecode.lanterna.gui.Theme.Category;
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.terminal.TerminalPosition;

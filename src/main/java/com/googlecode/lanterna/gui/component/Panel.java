@@ -17,10 +17,13 @@
  * Copyright (C) 2010-2012 Martin
  */
 
-package com.googlecode.lanterna.gui;
+package com.googlecode.lanterna.gui.component;
 
-import com.googlecode.lanterna.gui.layout.HorisontalLayout;
+import com.googlecode.lanterna.gui.Border;
+import com.googlecode.lanterna.gui.Component;
+import com.googlecode.lanterna.gui.TextGraphics;
 import com.googlecode.lanterna.gui.layout.ContainerLayout;
+import com.googlecode.lanterna.gui.layout.HorisontalLayout;
 import com.googlecode.lanterna.gui.layout.SizePolicy;
 import com.googlecode.lanterna.gui.layout.VerticalLayout;
 import com.googlecode.lanterna.terminal.TerminalPosition;
@@ -101,7 +104,7 @@ public class Panel extends AbstractContainer
         layoutManager.setPadding(paddingSize);
     }
 
-    boolean maximisesVertically()
+    protected boolean maximisesVertically()
     {
         if(layoutManager instanceof VerticalLayout == false)
             return false;
@@ -109,7 +112,7 @@ public class Panel extends AbstractContainer
         return ((VerticalLayout)layoutManager).isMaximising();
     }
 
-    boolean maximisesHorisontally()
+    protected boolean maximisesHorisontally()
     {
         if(layoutManager instanceof HorisontalLayout == false)
             return false;

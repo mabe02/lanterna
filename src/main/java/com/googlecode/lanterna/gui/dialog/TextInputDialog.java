@@ -19,6 +19,12 @@
 
 package com.googlecode.lanterna.gui.dialog;
 
+import com.googlecode.lanterna.gui.component.EmptySpace;
+import com.googlecode.lanterna.gui.component.Label;
+import com.googlecode.lanterna.gui.component.Panel;
+import com.googlecode.lanterna.gui.component.Button;
+import com.googlecode.lanterna.gui.component.PasswordBox;
+import com.googlecode.lanterna.gui.component.TextBox;
 import com.googlecode.lanterna.gui.*;
 
 /**

@@ -17,8 +17,9 @@
  * Copyright (C) 2010-2012 Martin
  */
 
-package com.googlecode.lanterna.gui;
+package com.googlecode.lanterna.gui.component;
 
+import com.googlecode.lanterna.gui.Interactable;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 
 /**

@@ -19,6 +19,10 @@
 
 package com.googlecode.lanterna.test.gui;
 
+import com.googlecode.lanterna.gui.component.EmptySpace;
+import com.googlecode.lanterna.gui.component.Panel;
+import com.googlecode.lanterna.gui.component.ActionListBox;
+import com.googlecode.lanterna.gui.component.Button;
 import com.googlecode.lanterna.gui.*;
 import com.googlecode.lanterna.gui.dialog.MessageBox;
 import com.googlecode.lanterna.test.TestTerminalFactory;

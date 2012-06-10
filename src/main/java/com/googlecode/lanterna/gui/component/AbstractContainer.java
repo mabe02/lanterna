@@ -17,8 +17,12 @@
  * Copyright (C) 2010-2012 Martin
  */
 
-package com.googlecode.lanterna.gui;
+package com.googlecode.lanterna.gui.component;
 
+import com.googlecode.lanterna.gui.Component;
+import com.googlecode.lanterna.gui.Container;
+import com.googlecode.lanterna.gui.Interactable;
+import com.googlecode.lanterna.gui.InteractableContainer;
 import com.googlecode.lanterna.gui.listener.ContainerListener;
 import java.util.ArrayList;
 import java.util.Collections;

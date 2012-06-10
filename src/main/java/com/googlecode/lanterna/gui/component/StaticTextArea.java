@@ -17,126 +17,87 @@
  * Copyright (C) 2010-2012 Martin
  */
 
-package com.googlecode.lanterna.gui;
+package com.googlecode.lanterna.gui.component;
 
-import com.googlecode.lanterna.gui.Theme.Category;
+import com.googlecode.lanterna.gui.InteractableResult;
+import com.googlecode.lanterna.gui.TextGraphics;
+import com.googlecode.lanterna.gui.Theme;
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.terminal.ACS;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
  *
- * @author Martin
+ * @author mberglun
  */
-public class ListBox extends AbstractInteractableComponent
+public class StaticTextArea  extends AbstractInteractableComponent
 {
-    private final List<Object> items;
-    private final TerminalSize preferredSize;
-    private int selectedIndex;
+    private final List<String> lines;
+    private final TerminalSize maxSize;
+    private final int longestLine;
     private int scrollTopIndex;
 
-    public ListBox(final int columnWidth, final int rowHeight)
+    public StaticTextArea(TerminalSize maxSize, String text)
     {
-        this(new TerminalSize(columnWidth, rowHeight));
-    }
-
-    public ListBox(final TerminalSize preferredSize)
-    {
-        this.items = new ArrayList<Object>();
-        this.preferredSize = new TerminalSize(preferredSize);
-        this.selectedIndex = -1;
+        if(text == null)
+            text = "";
+        
+        this.lines = new ArrayList<String>();
+        this.maxSize = maxSize;
         this.scrollTopIndex = 0;
+        lines.addAll(Arrays.asList(text.split("\n")));
+        
+        int longestLine = 0;
+        for(String line: lines)
+            if(line.replace("\t", "    ").length() + 1 > longestLine)
+                longestLine = line.replace("\t", "    ").length() + 1;
+        this.longestLine = longestLine;
     }
 
     public TerminalSize getPreferredSize()
     {
-        return preferredSize;
-    }
-
-    public void addItem(Object item)
-    {
-        if(item == null)
-             return;
-
-        items.add(item);
-        if(selectedIndex == -1)
-            selectedIndex = 0;
-        invalidate();
-    }
-
-    public Object getItemAt(int index)
-    {
-        return items.get(index);
-    }
-
-    public int getNrOfItems()
-    {
-        return items.size();
-    }
-
-    public void setSelectedItem(int index)
-    {
-        selectedIndex = index;
-        invalidate();
-    }
-
-    public Object getSelectedItem()
-    {
-        if(selectedIndex == -1)
-            return null;
-        else
-            return items.get(selectedIndex);
+        return new TerminalSize(
+                maxSize.getColumns() < longestLine ? maxSize.getColumns() : longestLine, 
+                maxSize.getRows() < lines.size() ? maxSize.getRows() : lines.size());
     }
 
     public void repaint(TextGraphics graphics)
     {
-        if(selectedIndex != -1) {
-            if(selectedIndex < scrollTopIndex)
-                scrollTopIndex = selectedIndex;
-            else if(selectedIndex >= graphics.getHeight() + scrollTopIndex)
-                scrollTopIndex = selectedIndex - graphics.getHeight() + 1;
-        }
-
-        graphics.applyThemeItem(Category.ListItem);
+        graphics.applyThemeItem(Theme.Category.ListItem);
         graphics.fillArea(' ');
 
-        for(int i = scrollTopIndex; i < items.size(); i++) {
+        for(int i = scrollTopIndex; i < lines.size(); i++) {
             if(i - scrollTopIndex >= graphics.getHeight())
                 break;
 
-            if(i == selectedIndex)
-                graphics.applyThemeItem(Category.ListItemSelected);
-            else
-                graphics.applyThemeItem(Category.ListItem);
-            printItem(graphics, 0, 0 + i - scrollTopIndex, items.get(i).toString());
+            graphics.applyThemeItem(Theme.Category.ListItem);
+            printItem(graphics, 0, 0 + i - scrollTopIndex, lines.get(i));
         }
 
-        if(items.size() > graphics.getHeight()) {
-            graphics.applyThemeItem(Category.DialogArea);
+        if(lines.size() > graphics.getHeight()) {
+            graphics.applyThemeItem(Theme.Category.DialogArea);
             graphics.drawString(graphics.getWidth() - 1, 0, ACS.ARROW_UP + "");
 
-            graphics.applyThemeItem(Category.DialogArea);
+            graphics.applyThemeItem(Theme.Category.DialogArea);
             for(int i = 1; i < graphics.getHeight() - 1; i++)
                 graphics.drawString(graphics.getWidth() - 1, i, ACS.BLOCK_MIDDLE + "");
 
-            graphics.applyThemeItem(Category.DialogArea);
+            graphics.applyThemeItem(Theme.Category.DialogArea);
             graphics.drawString(graphics.getWidth() - 1, graphics.getHeight() - 1, ACS.ARROW_DOWN + "");
             
             //Finally print the 'tick'
-            int scrollableSize = items.size() - graphics.getHeight();
+            int scrollableSize = lines.size() - graphics.getHeight();
             double position = (double)scrollTopIndex / ((double)scrollableSize - 1.0);
             int tickPosition = (int)(((double)graphics.getHeight() - 3.0) * position);
 
-            graphics.applyThemeItem(Category.Shadow);
+            graphics.applyThemeItem(Theme.Category.Shadow);
             graphics.drawString(graphics.getWidth() - 1, 1 + tickPosition, " ");
+            setHotspot(graphics.translateToGlobalCoordinates(new TerminalPosition(graphics.getWidth() - 1, 1 + tickPosition)));
         }
-        if(selectedIndex == -1 || items.isEmpty())
-            setHotspot(new TerminalPosition(0, 0));
-        else
-            setHotspot(graphics.translateToGlobalCoordinates(new TerminalPosition(0, selectedIndex - scrollTopIndex)));
     }
 
     public void keyboardInteraction(Key key, InteractableResult result)
@@ -154,18 +115,12 @@ public class ListBox extends AbstractInteractableComponent
                 break;
 
             case ArrowDown:
-                if(items.isEmpty() || selectedIndex == items.size() - 1)
-                    return;
-
-                selectedIndex++;
+                if(scrollTopIndex < lines.size() - maxSize.getRows())
+                    scrollTopIndex++;
                 break;
 
             case ArrowUp:
-                if(items.isEmpty() || selectedIndex == 0)
-                    return;
-
-                selectedIndex--;
-                if(selectedIndex - scrollTopIndex < 0)
+                if(scrollTopIndex > 0)
                     scrollTopIndex--;
                 break;
         }
@@ -174,6 +129,9 @@ public class ListBox extends AbstractInteractableComponent
 
     private void printItem(TextGraphics graphics, int x, int y, String text)
     {
+        //TODO: fix this
+        text = text.replace("\t", "    ");
+        
         if(text.length() > graphics.getWidth())
             text = text.substring(0, graphics.getWidth());
         graphics.drawString(x, y, text);

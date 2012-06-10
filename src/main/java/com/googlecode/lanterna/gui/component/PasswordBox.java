@@ -17,29 +17,30 @@
  * Copyright (C) 2010-2012 Martin
  */
 
-package com.googlecode.lanterna.gui;
-
-import com.googlecode.lanterna.gui.Theme.Category;
-import com.googlecode.lanterna.terminal.TerminalSize;
+package com.googlecode.lanterna.gui.component;
 
 /**
  *
  * @author Martin
  */
-public class Separator extends AbstractComponent
+public class PasswordBox extends TextBox
 {
-    public Separator()
+    public PasswordBox()
     {
+        this(-1, "");
     }
 
-    public TerminalSize getPreferredSize()
+    public PasswordBox(int width, String initialContent)
     {
-        return new TerminalSize(1, 1);
+        super(width, initialContent);
     }
 
-    public void repaint(TextGraphics graphics)
+    @Override
+    protected String prerenderTransformation(String textboxString)
     {
-        graphics.applyThemeItem(Category.DialogArea);
-        graphics.fillArea('-');
+        String newString = "";
+        for(int i = 0; i < textboxString.length(); i++)
+            newString += "*";
+        return newString;
     }
 }

@@ -17,45 +17,46 @@
  * Copyright (C) 2010-2012 Martin
  */
 
-package com.googlecode.lanterna.gui;
+package com.googlecode.lanterna.gui.component;
+
 
 /**
  *
  * @author Martin
  */
-public class CheckBox extends CommonCheckBox
+public class RadioCheckBox extends CommonCheckBox
 {
-    private boolean selected;
+    private final RadioCheckBoxGroup group;
 
-    public CheckBox(final String label, final boolean initiallyChecked)
+    public RadioCheckBox(final String label, final RadioCheckBoxGroup group)
     {
         super(label);
-        this.selected = initiallyChecked;
+        this.group = group;
+        group.addRadioBox(this);
     }
 
     @Override
     protected char getSelectionCharacter()
     {
-        return 'x';
-    }
-
-    @Override
-    public boolean isSelected()
-    {
-        return selected;
-    }
-
-    @Override
-    protected void onActivated()
-    {
-        selected = !selected;
+        return 'o';
     }
 
     @Override
     protected String surroundCharacter(char character)
     {
-        return "[" + character + "]";
+        return "(" + character + ")";
     }
 
 
+    @Override
+    public boolean isSelected()
+    {
+        return group.isSelected(this);
+    }
+
+    @Override
+    protected void onActivated()
+    {
+        group.setSelected(this);
+    }
 }

@@ -17,7 +17,7 @@
  * Copyright (C) 2010-2012 Martin
  */
 
-package com.googlecode.lanterna.gui;
+package com.googlecode.lanterna.gui.component;
 
 import java.util.ArrayList;
 import java.util.List;

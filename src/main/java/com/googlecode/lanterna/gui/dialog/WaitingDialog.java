@@ -20,8 +20,8 @@
 package com.googlecode.lanterna.gui.dialog;
 
 import com.googlecode.lanterna.gui.Action;
-import com.googlecode.lanterna.gui.Label;
-import com.googlecode.lanterna.gui.Panel;
+import com.googlecode.lanterna.gui.component.Label;
+import com.googlecode.lanterna.gui.component.Panel;
 import com.googlecode.lanterna.gui.Window;
 
 /**

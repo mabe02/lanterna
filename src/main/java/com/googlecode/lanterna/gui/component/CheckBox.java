@@ -17,37 +17,45 @@
  * Copyright (C) 2010-2012 Martin
  */
 
-package com.googlecode.lanterna.gui;
-
-import com.googlecode.lanterna.gui.Theme.Category;
-import com.googlecode.lanterna.terminal.TerminalSize;
+package com.googlecode.lanterna.gui.component;
 
 /**
  *
  * @author Martin
  */
-public class EmptySpace extends AbstractComponent
+public class CheckBox extends CommonCheckBox
 {
-    private final TerminalSize size;
+    private boolean selected;
 
-    public EmptySpace()
+    public CheckBox(final String label, final boolean initiallyChecked)
     {
-        this(1, 1);
+        super(label);
+        this.selected = initiallyChecked;
     }
 
-    public EmptySpace(final int width, final int height)
+    @Override
+    protected char getSelectionCharacter()
     {
-        this.size = new TerminalSize(width, height);
+        return 'x';
     }
 
-    public TerminalSize getPreferredSize()
+    @Override
+    public boolean isSelected()
     {
-        return size;
+        return selected;
     }
 
-    public void repaint(TextGraphics graphics)
+    @Override
+    protected void onActivated()
     {
-        graphics.applyThemeItem(Category.DialogArea);
-        graphics.fillArea(' ');
+        selected = !selected;
     }
+
+    @Override
+    protected String surroundCharacter(char character)
+    {
+        return "[" + character + "]";
+    }
+
+
 }
