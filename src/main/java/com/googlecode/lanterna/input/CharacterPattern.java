@@ -22,15 +22,26 @@ package com.googlecode.lanterna.input;
 import java.util.List;
 
 /**
- *
+ * Used to compare a list of character if they match a particular pattern
  * @author mberglun
  */
 public interface CharacterPattern {
 
+    /**
+     * @return The {@code Key} that this pattern represents
+     */
     Key getResult();
 
+    /**
+     * Returns true if this pattern is a perfect match (all characters matching
+     * and the pattern has no more characters to match) of the supplied characters
+     */
     boolean isCompleteMatch(List<Character> currentMatching);
 
+    /**
+     * Returns true if this pattern partially or fully matches the supplied 
+     * characters
+     */
     boolean matches(List<Character> currentMatching);
 
 }
