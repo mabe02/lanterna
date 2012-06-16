@@ -145,15 +145,15 @@ public class CheckBoxList extends AbstractInteractableComponent
 
     public void repaint(TextGraphics graphics)
     {
-        graphics.applyThemeItem(Category.CheckBox);
+        graphics.applyTheme(Category.CheckBox);
         graphics.fillRectangle(' ', new TerminalPosition(0, 0), new TerminalSize(graphics.getWidth(), graphics.getHeight()));
 
         for(int i = 0; i < items.size(); i++)
         {
             if(selectedIndex == i)
-                graphics.applyThemeItem(Category.CheckBoxSelected);
+                graphics.applyTheme(Category.CheckBoxSelected);
             else
-                graphics.applyThemeItem(Category.CheckBox);
+                graphics.applyTheme(Category.CheckBox);
 
             
             String check = " ";

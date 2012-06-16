@@ -101,7 +101,7 @@ public class ListBox extends AbstractInteractableComponent
                 scrollTopIndex = selectedIndex - graphics.getHeight() + 1;
         }
 
-        graphics.applyThemeItem(Category.ListItem);
+        graphics.applyTheme(Category.ListItem);
         graphics.fillArea(' ');
 
         for(int i = scrollTopIndex; i < items.size(); i++) {
@@ -109,21 +109,21 @@ public class ListBox extends AbstractInteractableComponent
                 break;
 
             if(i == selectedIndex)
-                graphics.applyThemeItem(Category.ListItemSelected);
+                graphics.applyTheme(Category.ListItemSelected);
             else
-                graphics.applyThemeItem(Category.ListItem);
+                graphics.applyTheme(Category.ListItem);
             printItem(graphics, 0, 0 + i - scrollTopIndex, items.get(i).toString());
         }
 
         if(items.size() > graphics.getHeight()) {
-            graphics.applyThemeItem(Category.DialogArea);
+            graphics.applyTheme(Category.DialogArea);
             graphics.drawString(graphics.getWidth() - 1, 0, ACS.ARROW_UP + "");
 
-            graphics.applyThemeItem(Category.DialogArea);
+            graphics.applyTheme(Category.DialogArea);
             for(int i = 1; i < graphics.getHeight() - 1; i++)
                 graphics.drawString(graphics.getWidth() - 1, i, ACS.BLOCK_MIDDLE + "");
 
-            graphics.applyThemeItem(Category.DialogArea);
+            graphics.applyTheme(Category.DialogArea);
             graphics.drawString(graphics.getWidth() - 1, graphics.getHeight() - 1, ACS.ARROW_DOWN + "");
             
             //Finally print the 'tick'
@@ -131,7 +131,7 @@ public class ListBox extends AbstractInteractableComponent
             double position = (double)scrollTopIndex / ((double)scrollableSize - 1.0);
             int tickPosition = (int)(((double)graphics.getHeight() - 3.0) * position);
 
-            graphics.applyThemeItem(Category.Shadow);
+            graphics.applyTheme(Category.Shadow);
             graphics.drawString(graphics.getWidth() - 1, 1 + tickPosition, " ");
         }
         if(selectedIndex == -1 || items.isEmpty())

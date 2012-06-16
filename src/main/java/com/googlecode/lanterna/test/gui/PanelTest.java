@@ -89,7 +89,7 @@ public class PanelTest
         public void repaint(TextGraphics graphics)
         {
             StringBuilder sb = new StringBuilder();
-            graphics.applyThemeItem(Category.DialogArea);
+            graphics.applyTheme(Category.DialogArea);
             for(int i = 0; i < graphics.getWidth(); i++)
                 sb.append(fillCharacter);
             for(int i = 0; i < graphics.getHeight(); i++)

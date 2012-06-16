@@ -208,9 +208,9 @@ public class TextGraphics
      * string drawn after this call will have these settings applied
      * @param category Category to use
      */
-    public void applyThemeItem(Theme.Category category)
+    public void applyTheme(Theme.Category category)
     {
-        applyThemeItem(getTheme().getItem(category));
+        applyTheme(getTheme().getItem(category));
     }
     
 
@@ -220,7 +220,7 @@ public class TextGraphics
      * string drawn after this call will have these settings applied
      * @param themeItem Definition to use
      */
-    public void applyThemeItem(Theme.Definition themeItem)
+    public void applyTheme(Theme.Definition themeItem)
     {
         setForegroundColor(themeItem.foreground);
         setBackgroundColor(themeItem.background);

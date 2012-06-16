@@ -108,7 +108,7 @@ public class Label extends AbstractComponent
 
     public void repaint(TextGraphics graphics)
     {
-        graphics.applyThemeItem(graphics.getTheme().getItem(style));
+        graphics.applyTheme(graphics.getTheme().getItem(style));
         if(textColor != null)
             graphics.setForegroundColor(textColor);
         if(textBold != null) {

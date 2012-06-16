@@ -66,26 +66,26 @@ public class StaticTextArea  extends AbstractInteractableComponent
 
     public void repaint(TextGraphics graphics)
     {
-        graphics.applyThemeItem(Theme.Category.ListItem);
+        graphics.applyTheme(Theme.Category.ListItem);
         graphics.fillArea(' ');
 
         for(int i = scrollTopIndex; i < lines.size(); i++) {
             if(i - scrollTopIndex >= graphics.getHeight())
                 break;
 
-            graphics.applyThemeItem(Theme.Category.ListItem);
+            graphics.applyTheme(Theme.Category.ListItem);
             printItem(graphics, 0, 0 + i - scrollTopIndex, lines.get(i));
         }
 
         if(lines.size() > graphics.getHeight()) {
-            graphics.applyThemeItem(Theme.Category.DialogArea);
+            graphics.applyTheme(Theme.Category.DialogArea);
             graphics.drawString(graphics.getWidth() - 1, 0, ACS.ARROW_UP + "");
 
-            graphics.applyThemeItem(Theme.Category.DialogArea);
+            graphics.applyTheme(Theme.Category.DialogArea);
             for(int i = 1; i < graphics.getHeight() - 1; i++)
                 graphics.drawString(graphics.getWidth() - 1, i, ACS.BLOCK_MIDDLE + "");
 
-            graphics.applyThemeItem(Theme.Category.DialogArea);
+            graphics.applyTheme(Theme.Category.DialogArea);
             graphics.drawString(graphics.getWidth() - 1, graphics.getHeight() - 1, ACS.ARROW_DOWN + "");
             
             //Finally print the 'tick'
@@ -93,7 +93,7 @@ public class StaticTextArea  extends AbstractInteractableComponent
             double position = (double)scrollTopIndex / ((double)scrollableSize - 1.0);
             int tickPosition = (int)(((double)graphics.getHeight() - 3.0) * position);
 
-            graphics.applyThemeItem(Theme.Category.Shadow);
+            graphics.applyTheme(Theme.Category.Shadow);
             graphics.drawString(graphics.getWidth() - 1, 1 + tickPosition, " ");
             setHotspot(graphics.translateToGlobalCoordinates(new TerminalPosition(graphics.getWidth() - 1, 1 + tickPosition)));
         }

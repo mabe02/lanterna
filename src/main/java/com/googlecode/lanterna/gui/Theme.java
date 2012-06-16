@@ -22,7 +22,10 @@ package com.googlecode.lanterna.gui;
 import com.googlecode.lanterna.terminal.Terminal.Color;
 
 /**
- * Extend this class to create your own themes
+ * Extend this class to create your own themes. A {@code Theme} consists of
+ * several {@code Theme.Definition}s, one for each {@code Theme.Category} value.
+ * When components are setting their colors according to the theme, they do so
+ * by calling {@code TextGraphics.applyTheme}.
  * @author Martin
  */
 public class Theme

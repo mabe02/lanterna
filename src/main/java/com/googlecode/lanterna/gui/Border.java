@@ -44,7 +44,7 @@ public abstract class Border
         @Override
         public void drawBorder(TextGraphics graphics, TerminalSize actualSize, String title)
         {
-            graphics.applyThemeItem(graphics.getTheme().getItem(Theme.Category.Border));
+            graphics.applyTheme(graphics.getTheme().getItem(Theme.Category.Border));
             final int width = actualSize.getColumns();
             final int height = actualSize.getRows();
             
@@ -67,7 +67,7 @@ public abstract class Border
             graphics.drawString(width - 1, height - 1, ACS.LRCORNER + "");
             
             // Write the title
-            graphics.applyThemeItem(graphics.getTheme().getItem(Theme.Category.DialogArea));
+            graphics.applyTheme(graphics.getTheme().getItem(Theme.Category.DialogArea));
             graphics.setBoldMask(true);
             graphics.drawString(2, 0, title);
         }
@@ -124,31 +124,31 @@ public abstract class Border
             }
 
             //Top
-            graphics.applyThemeItem(upperLeft);
+            graphics.applyTheme(upperLeft);
             graphics.drawString(0, 0, ACS.ULCORNER + "");
             for(int i = 1; i < width - 1; i++)
                 graphics.drawString(i, 0, ACS.HLINE + "");
-            graphics.applyThemeItem(lowerRight);
+            graphics.applyTheme(lowerRight);
             graphics.drawString(width - 1, 0, ACS.URCORNER + "");
 
             //Each row
             for(int i = 1; i < height - 1; i++) {
-                graphics.applyThemeItem(upperLeft);
+                graphics.applyTheme(upperLeft);
                 graphics.drawString(0, i, ACS.VLINE + "");
-                graphics.applyThemeItem(lowerRight);
+                graphics.applyTheme(lowerRight);
                 graphics.drawString(width - 1, i, ACS.VLINE + "");
             }
 
             //Bottom
-            graphics.applyThemeItem(upperLeft);
+            graphics.applyTheme(upperLeft);
             graphics.drawString(0, height - 1, ACS.LLCORNER + "");
-            graphics.applyThemeItem(lowerRight);
+            graphics.applyTheme(lowerRight);
             for(int i = 1; i < width - 1; i++)
                 graphics.drawString(i, height - 1, ACS.HLINE + "");
             graphics.drawString(width - 1, height - 1, ACS.LRCORNER + "");
             
             // Write the title
-            graphics.applyThemeItem(graphics.getTheme().getItem(Theme.Category.DialogArea));
+            graphics.applyTheme(graphics.getTheme().getItem(Theme.Category.DialogArea));
             graphics.setBoldMask(true);
             graphics.drawString(2, 0, title);
         }

@@ -90,9 +90,9 @@ public class TextBox extends AbstractInteractableComponent
     public void repaint(TextGraphics graphics)
     {
         if(hasFocus())
-            graphics.applyThemeItem(Category.TextBoxFocused);
+            graphics.applyTheme(Category.TextBoxFocused);
         else
-            graphics.applyThemeItem(Category.TextBox);
+            graphics.applyTheme(Category.TextBox);
 
         graphics.fillArea(' ');
         String displayString = prerenderTransformation(backend).substring(visibleLeftPosition);
