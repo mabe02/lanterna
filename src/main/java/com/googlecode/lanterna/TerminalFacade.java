@@ -41,16 +41,34 @@ public class TerminalFacade {
     
     private static final Charset DEFAULT_CHARSET = Charset.forName(System.getProperty("file.encoding"));
     
+    /**
+     * This method will return a {@code SwingTerminal} if
+     * you are running the program on a system with a graphical environment
+     * available, otherwise a suitable text-based {@code Terminal}, all with 
+     * default settings.
+     */
     public static Terminal createTerminal() 
     {
         return createTerminal(DEFAULT_CHARSET);
     }
     
+    /**
+     * Creates a default terminal with a specified character set. 
+     * This method will return a {@code SwingTerminal} if
+     * you are running the program on a system with a graphical environment
+     * available, otherwise a suitable text-based {@code Terminal}.
+     */
     public static Terminal createTerminal(Charset terminalCharset)
     {
         return createTerminal(System.in, System.out, terminalCharset);
     }
     
+    /**
+     * Creates a default terminal with a specified input/output streams. This 
+     * method will return a {@code SwingTerminal} if
+     * you are running the program on a system with a graphical environment
+     * available, otherwise a suitable text-based {@code Terminal}.
+     */
     public static Terminal createTerminal(
                                     InputStream terminalInput, 
                                     OutputStream terminalOutput)
@@ -58,6 +76,12 @@ public class TerminalFacade {
         return createTerminal(terminalInput, terminalOutput, DEFAULT_CHARSET);
     }
     
+    /**
+     * Creates a default terminal with a specified character set and 
+     * input/output streams. This method will return a {@code SwingTerminal} if
+     * you are running the program on a system with a graphical environment
+     * available, otherwise a suitable text-based {@code Terminal}.
+     */
     public static Terminal createTerminal(
                                     InputStream terminalInput, 
                                     OutputStream terminalOutput,
@@ -69,26 +93,49 @@ public class TerminalFacade {
             return createSwingTerminal();
     }
     
+    /**
+     * Creates a new {@code SwingTerminal} object, a simple Swing terminal emulator,
+     * 100 columns wide and 30 rows high.
+     */
     public static SwingTerminal createSwingTerminal()
     {
         return createSwingTerminal(100, 30);
     }
     
+    /**
+     * Creates a new {@code SwingTerminal} object, a simple Swing terminal emulator,
+     * with specified dimensions.
+     * @param columns Width of the terminal window, in text columns <b>not</b> pixels
+     * @param rows Height of the terminal window, in text rows <b>not</b> pixels
+     */
     public static SwingTerminal createSwingTerminal(int columns, int rows)
     {
         return new SwingTerminal(columns, rows);
     }
     
+    /**
+     * Creates a {@code UnixTerminal} object using the default character set
+     * and {@code System.out} and {@code System.in} for input and output of the
+     * terminal.
+     */
     public static UnixTerminal createUnixTerminal() 
     {
         return createUnixTerminal(DEFAULT_CHARSET);
     }
     
+    /**
+     * Creates a {@code UnixTerminal} object that is using a supplied character
+     * set when converting characters to bytes.
+     */
     public static UnixTerminal createUnixTerminal(Charset terminalCharset)
     {
         return createUnixTerminal(System.in, System.out, terminalCharset);
     }
     
+    /**
+     * Creates a {@code UnixTerminal} object that is using supplied input and
+     * output streams for standard out and standard in.
+     */
     public static UnixTerminal createUnixTerminal(
                                     InputStream terminalInput, 
                                     OutputStream terminalOutput)
@@ -96,6 +143,11 @@ public class TerminalFacade {
         return createUnixTerminal(terminalInput, terminalOutput, DEFAULT_CHARSET);
     }
     
+    /**
+     * Creates a {@code UnixTerminal} object that is using supplied input and
+     * output streams for standard out and standard in, as well as a character
+     * set to be used when converting characters to bytes.
+     */
     public static UnixTerminal createUnixTerminal(
                                     InputStream terminalInput, 
                                     OutputStream terminalOutput,
@@ -164,22 +216,37 @@ public class TerminalFacade {
             return createUnixTerminal(terminalInput, terminalOutput, terminalCharset);
     }
     
+    /**
+     * Creates a {@code Screen} backed by a default terminal
+     */
     public static Screen createScreen() {
         return createScreen(createTerminal());
     }
     
+    /**
+     * Creates a {@code Screen} backed by a supplied {@code Terminal}
+     */
     public static Screen createScreen(Terminal terminal) {
         return new Screen(terminal);
     }
     
+    /**
+     * Creates a {@code GUIScreen} backed by a default terminal
+     */
     public static GUIScreen createGUIScreen() {
         return new GUIScreen(createScreen());
     }
     
+    /**
+     * Creates a {@code GUIScreen} backed by a supplied {@code Terminal}
+     */
     public static GUIScreen createGUIScreen(Terminal terminal) {
         return new GUIScreen(createScreen(terminal));
     }
     
+    /**
+     * Creates a {@code GUIScreen} backed by a supplied {@code Screen}
+     */
     public static GUIScreen createGUIScreen(Screen screen) {
         return new GUIScreen(screen);
     }
