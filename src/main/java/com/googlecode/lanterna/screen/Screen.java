@@ -104,12 +104,21 @@ public class Screen
         return cursorPosition;
     }
 
+    /**
+     * Moves the current cursor position
+     * @param position 0-indexed column and row numbers of the new position
+     */
     public void setCursorPosition(TerminalPosition position)
     {
         if(position != null)
             this.cursorPosition = new TerminalPosition(position);
     }
 
+    /**
+     * Moves the current cursor position
+     * @param column 0-indexed column number of the new position
+     * @param row 0-indexed row number of the new position
+     */
     public void setCursorPosition(int column, int row)
     {
         synchronized(mutex) {
@@ -120,15 +129,27 @@ public class Screen
         }
     }
 
+    /**
+     * Sets the behaviour for what to do about tab characters.
+     * @see TabBehaviour
+     */
     public void setTabBehaviour(TabBehaviour tabBehaviour) {
         if(tabBehaviour != null)
             this.tabBehaviour = tabBehaviour;
     }
 
+    /**
+     * Gets the behaviour for what to do about tab characters.
+     * @see TabBehaviour
+     */
     public TabBehaviour getTabBehaviour() {
         return tabBehaviour;
     }
     
+    /**
+     * Reads the next {@code Key} from the input queue, or returns null if there
+     * is nothing on the queue.
+     */
     public Key readInput()
     {
         return terminal.readInput();
@@ -173,6 +194,15 @@ public class Screen
         hasBeenActivated = false;
     }
 
+    /**
+     * Draws a string on the screen at a particular position
+     * @param x 0-indexed column number of where to put the first character in the string
+     * @param y 0-indexed row number of where to put the first character in the string
+     * @param string Text to put on the screen
+     * @param foregroundColor What color to use for the text
+     * @param backgroundColor What color to use for the background
+     * @param styles Additional styles to apply to the text
+     */
     public void putString(int x, int y, String string, Terminal.Color foregroundColor,
             Terminal.Color backgroundColor, ScreenCharacterStyle... styles)
     {
@@ -181,6 +211,15 @@ public class Screen
         putString(x, y, string, foregroundColor, backgroundColor, drawStyle);
     }
     
+    /**
+     * Draws a string on the screen at a particular position
+     * @param x 0-indexed column number of where to put the first character in the string
+     * @param y 0-indexed row number of where to put the first character in the string
+     * @param string Text to put on the screen
+     * @param foregroundColor What color to use for the text
+     * @param backgroundColor What color to use for the background
+     * @param styles Additional styles to apply to the text
+     */
     public void putString(int x, int y, String string, Terminal.Color foregroundColor,
             Terminal.Color backgroundColor, Set<ScreenCharacterStyle> styles)
     {    
