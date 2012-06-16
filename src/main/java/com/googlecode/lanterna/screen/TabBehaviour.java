@@ -20,7 +20,7 @@
 package com.googlecode.lanterna.screen;
 
 /**
- *
+ * What to do about the tab character when putting on a {@code Screen}
  * @author martin
  */
 public enum TabBehaviour {

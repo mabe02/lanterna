@@ -74,6 +74,13 @@ public class ScreenWriter
         }
     }
 
+    /**
+     * Draws a string on the screen at a particular position
+     * @param x 0-indexed column number of where to put the first character in the string
+     * @param y 0-indexed row number of where to put the first character in the string
+     * @param string Text to put on the screen
+     * @param styles Additional styles to apply to the text
+     */
     public void drawString(final int x, final int y, final String string, final ScreenCharacterStyle... styles)
     {
         currentPosition.setColumn(x);
