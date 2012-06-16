@@ -4,8 +4,9 @@
   <groupId>com.googlecode.lanterna</groupId>
   <artifactId>lanterna</artifactId>
   <packaging>jar</packaging>
+  <name>Lanterna</name>
+  <description>Java library for creating text-based terminal GUIs</description>
   <version>2.0-SNAPSHOT</version>
-  <name>lanterna</name>
   <url>http://code.google.com/p/lanterna/</url>
   
   <licenses>
@@ -16,14 +17,11 @@
     </license>
   </licenses>
   
-  <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+  <parent>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>7</version>
+  </parent>
   
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -35,4 +33,12 @@
     <developerConnection>scm:hg:http://code.google.com/p/lanterna</developerConnection>
     <url>http://code.google.com/p/lanterna</url>
   </scm>
+  
+  <developers>
+    <developer>
+      <id>Martin</id>
+      <name>Martin Berglund</name>
+      <email>mabe02@gmail.com</email>
+    </developer>
+  </developers>
 </project>
