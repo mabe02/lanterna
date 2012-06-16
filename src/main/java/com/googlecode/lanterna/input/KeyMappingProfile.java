@@ -22,7 +22,7 @@ package com.googlecode.lanterna.input;
 import java.util.Collection;
 
 /**
- *
+ * This class helps in creating input profiles
  * @author Martin
  */
 public abstract class KeyMappingProfile
