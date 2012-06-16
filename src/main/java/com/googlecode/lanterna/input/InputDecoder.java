@@ -26,7 +26,8 @@ import java.io.Reader;
 import java.util.*;
 
 /**
- *
+ * Used to read the input stream character by character and generate {@code Key}
+ * objects to be put in the input queue.
  * @author Martin
  */
 public class InputDecoder

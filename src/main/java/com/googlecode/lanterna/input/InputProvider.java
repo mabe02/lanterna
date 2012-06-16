@@ -22,7 +22,8 @@ package com.googlecode.lanterna.input;
 
 
 /**
- *
+ * Objects implementing this interface can read character streams and transform
+ * them into {@code Key} objects which can be read in a FIFO manner.
  * @author Martin
  */
 public interface InputProvider {
@@ -33,5 +34,10 @@ public interface InputProvider {
      * @param profile 
      */
     void addInputProfile(KeyMappingProfile profile);
+    
+    /**
+     * Returns the next {@code Key} off the input queue or null if there is no
+     * more input events available
+     */
     Key readInput();
 }
