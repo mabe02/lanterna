@@ -25,7 +25,8 @@ import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.input.KeyMappingProfile;
 
 /**
- *
+ * This is an abstract terminal that can also read input events (keys), with a
+ * default implementation of the methods from {@code InputProvider}.
  * @author Martin
  */
 public abstract class InputEnabledAbstractTerminal extends AbstractTerminal implements InputProvider {

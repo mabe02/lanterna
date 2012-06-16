@@ -20,7 +20,7 @@
 package com.googlecode.lanterna.terminal;
 
 /**
- * Terminal dimensions in 2-d space
+ * Terminal dimensions in 2-d space, measured in number of rows and columns
  * @author Martin
  */
 public class TerminalSize {

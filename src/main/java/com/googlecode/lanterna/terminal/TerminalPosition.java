@@ -20,7 +20,8 @@
 package com.googlecode.lanterna.terminal;
 
 /**
- * A 2-d position in 'terminal space'
+ * A 2-d position in 'terminal space'. Please note that the coordinates are 
+ * 0-indexed, meaning 0x0 is the top left corner of the terminal.
  * @author Martin
  */
 public class TerminalPosition {
