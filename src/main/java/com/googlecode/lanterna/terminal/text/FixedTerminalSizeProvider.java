@@ -22,7 +22,8 @@ package com.googlecode.lanterna.terminal.text;
 import com.googlecode.lanterna.terminal.TerminalSize;
 
 /**
- *
+ * Using this terminal size provider, your terminal will be set to a fixed size
+ * and will never resize.
  * @author martin
  */
 public class FixedTerminalSizeProvider implements UnixTerminalSizeQuerier {
