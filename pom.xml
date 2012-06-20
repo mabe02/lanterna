@@ -30,9 +30,9 @@
     </properties>
   
     <scm>
-        <connection>scm:hg:https://code.google.com/p/lanterna</connection>
-        <developerConnection>scm:hg:http://code.google.com/p/lanterna</developerConnection>
-        <url>http://code.google.com/p/lanterna</url>
+        <connection>scm:hg:https://code.google.com/p/lanterna/</connection>
+        <developerConnection>scm:hg:https://code.google.com/p/lanterna/</developerConnection>
+        <url>https://code.google.com/p/lanterna/</url>
     </scm>
   
     <build>
