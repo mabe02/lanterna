@@ -6,7 +6,7 @@
     <packaging>jar</packaging>
     <name>Lanterna</name>
     <description>Java library for creating text-based terminal GUIs</description>
-    <version>1.0.4</version>
+    <version>1.0.4-SNAPSHOT</version>
     <url>http://code.google.com/p/lanterna/</url>
   
     <licenses>
@@ -29,9 +29,9 @@
     </properties>
   
     <scm>
-        <connection>scm:hg:https://code.google.com/p/lanterna</connection>
-        <developerConnection>scm:hg:http://code.google.com/p/lanterna</developerConnection>
-        <url>http://code.google.com/p/lanterna</url>
+        <connection>scm:hg:https://code.google.com/p/lanterna/</connection>
+        <developerConnection>scm:hg:https://code.google.com/p/lanterna/</developerConnection>
+        <url>https://code.google.com/p/lanterna/</url>
     </scm>
   
     <build>
