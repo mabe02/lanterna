@@ -44,7 +44,7 @@ public abstract class Border
         @Override
         public void drawBorder(TextGraphics graphics, TerminalSize actualSize, String title)
         {
-            graphics.applyTheme(graphics.getTheme().getItem(Theme.Category.Border));
+            graphics.applyTheme(graphics.getTheme().getDefinition(Theme.Category.Border));
             final int width = actualSize.getColumns();
             final int height = actualSize.getRows();
             
@@ -67,7 +67,7 @@ public abstract class Border
             graphics.drawString(width - 1, height - 1, ACS.LRCORNER + "");
             
             // Write the title
-            graphics.applyTheme(graphics.getTheme().getItem(Theme.Category.DialogArea));
+            graphics.applyTheme(graphics.getTheme().getDefinition(Theme.Category.DialogArea));
             graphics.setBoldMask(true);
             graphics.drawString(2, 0, title);
         }
@@ -115,12 +115,12 @@ public abstract class Border
             final Theme.Definition lowerRight;
 
             if(raised) {
-                upperLeft = graphics.getTheme().getItem(Theme.Category.RaisedBorder);
-                lowerRight = graphics.getTheme().getItem(Theme.Category.Border);
+                upperLeft = graphics.getTheme().getDefinition(Theme.Category.RaisedBorder);
+                lowerRight = graphics.getTheme().getDefinition(Theme.Category.Border);
             }
             else {
-                upperLeft = graphics.getTheme().getItem(Theme.Category.Border);
-                lowerRight = graphics.getTheme().getItem(Theme.Category.RaisedBorder);
+                upperLeft = graphics.getTheme().getDefinition(Theme.Category.Border);
+                lowerRight = graphics.getTheme().getDefinition(Theme.Category.RaisedBorder);
             }
 
             //Top
@@ -148,7 +148,7 @@ public abstract class Border
             graphics.drawString(width - 1, height - 1, ACS.LRCORNER + "");
             
             // Write the title
-            graphics.applyTheme(graphics.getTheme().getItem(Theme.Category.DialogArea));
+            graphics.applyTheme(graphics.getTheme().getDefinition(Theme.Category.DialogArea));
             graphics.setBoldMask(true);
             graphics.drawString(2, 0, title);
         }

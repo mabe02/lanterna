@@ -1,0 +1,253 @@
+/*
+ * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * 
+ * lanterna is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * Copyright (C) 2010-2012 Martin
+ */
+
+package com.googlecode.lanterna.gui.component;
+
+import com.googlecode.lanterna.gui.Interactable;
+import com.googlecode.lanterna.gui.TextGraphics;
+import com.googlecode.lanterna.gui.Theme;
+import com.googlecode.lanterna.gui.Theme.Category;
+import com.googlecode.lanterna.input.Key;
+import com.googlecode.lanterna.terminal.ACS;
+import com.googlecode.lanterna.terminal.TerminalPosition;
+import com.googlecode.lanterna.terminal.TerminalSize;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Common base class for list-type components (check box list, action list, etc)
+ * @author Martin
+ */
+public abstract class AbstractListBox extends AbstractInteractableComponent {
+    private final List<Object> items;
+    private TerminalSize preferredSizeOverride;
+    private int selectedIndex;
+    private int scrollTopIndex;
+
+    public AbstractListBox() {
+        this(null);
+    }
+    
+    public AbstractListBox(TerminalSize preferredSize) {
+        this.items = new ArrayList<Object>();
+        this.preferredSizeOverride = preferredSize;
+        this.selectedIndex = -1;
+        this.scrollTopIndex = 0;
+    }
+
+    public TerminalSize getPreferredSize() {
+        int widthOverride = 0;
+        int heightOverride = 0;
+        
+        if(preferredSizeOverride != null) {
+            widthOverride = preferredSizeOverride.getColumns();
+            heightOverride = preferredSizeOverride.getRows();
+        }
+        
+        if(widthOverride == 0) {
+            //Calculate max width
+            int maxWidth = 5;   //Set it to something...
+            for(int i = 0; i < items.size(); i++) {
+                String itemString = createItemString(i);
+                if(itemString.length() > maxWidth)
+                    maxWidth = itemString.length();
+            }
+            widthOverride = maxWidth + 1;
+        }
+        return new TerminalSize(widthOverride, heightOverride == 0 ? items.size() : heightOverride);
+    }
+
+    public void addItem(Object item) {
+        if(item == null)
+             return;
+
+        items.add(item);
+        if(selectedIndex == -1)
+            selectedIndex = 0;
+        invalidate();
+    }
+    
+    public void clearItems() {
+        items.clear();
+        selectedIndex = -1;
+        invalidate();
+    }
+
+    public int indexOf(Object item) {
+        return items.indexOf(item);
+    }
+    
+    public int getSize() {
+        return items.size();
+    }
+    
+    public void setPreferredSize(TerminalSize preferredSizeOverride) {
+        this.preferredSizeOverride = preferredSizeOverride;
+        invalidate();
+    }
+
+    public TerminalSize getPreferredSizeOverride() {
+        return preferredSizeOverride;
+    }
+
+    public Object getItemAt(int index) {
+        return items.get(index);
+    }
+
+    public int getNrOfItems() {
+        return items.size();
+    }
+
+    public void setSelectedItem(int index) {
+        selectedIndex = index;
+        invalidate();
+    }
+
+    public int getSelectedIndex() {
+        return selectedIndex;
+    }
+
+    public Object getSelectedItem()
+    {
+        if(selectedIndex == -1)
+            return null;
+        else
+            return items.get(selectedIndex);
+    }
+
+    public void repaint(TextGraphics graphics) {
+        if(selectedIndex != -1) {
+            if(selectedIndex < scrollTopIndex)
+                scrollTopIndex = selectedIndex;
+            else if(selectedIndex >= graphics.getHeight() + scrollTopIndex)
+                scrollTopIndex = selectedIndex - graphics.getHeight() + 1;
+        }
+
+        graphics.applyTheme(getListItemThemeDefinition(graphics.getTheme()));
+        graphics.fillArea(' ');
+
+        for(int i = scrollTopIndex; i < items.size(); i++) {
+            if(i - scrollTopIndex >= graphics.getHeight())
+                break;
+
+            if(i == selectedIndex)
+                graphics.applyTheme(getSelectedListItemThemeDefinition(graphics.getTheme()));
+            else
+                graphics.applyTheme(getListItemThemeDefinition(graphics.getTheme()));
+            printItem(graphics, 0, 0 + i - scrollTopIndex, i);
+        }
+
+        if(items.size() > graphics.getHeight()) {
+            graphics.applyTheme(Theme.Category.DialogArea);
+            graphics.drawString(graphics.getWidth() - 1, 0, ACS.ARROW_UP + "");
+
+            graphics.applyTheme(Theme.Category.DialogArea);
+            for(int i = 1; i < graphics.getHeight() - 1; i++)
+                graphics.drawString(graphics.getWidth() - 1, i, ACS.BLOCK_MIDDLE + "");
+
+            graphics.applyTheme(Theme.Category.DialogArea);
+            graphics.drawString(graphics.getWidth() - 1, graphics.getHeight() - 1, ACS.ARROW_DOWN + "");
+            
+            //Finally print the 'tick'
+            int scrollableSize = items.size() - graphics.getHeight();
+            double position = (double)scrollTopIndex / ((double)scrollableSize - 1.0);
+            int tickPosition = (int)(((double)graphics.getHeight() - 3.0) * position);
+
+            graphics.applyTheme(Theme.Category.Shadow);
+            graphics.drawString(graphics.getWidth() - 1, 1 + tickPosition, " ");
+        }
+        if(selectedIndex == -1 || items.isEmpty())
+            setHotspot(new TerminalPosition(0, 0));
+        else
+            setHotspot(graphics.translateToGlobalCoordinates(new TerminalPosition(getHotSpotPositionOnLine(selectedIndex), selectedIndex - scrollTopIndex)));
+    }
+
+    @Override
+    protected void afterEnteredFocus(FocusChangeDirection direction) {
+        if(items.isEmpty())
+            return;
+        
+        if(direction == FocusChangeDirection.DOWN_OR_RIGHT)
+            selectedIndex = 0;
+        else if(direction == FocusChangeDirection.UP_OR_LEFT)
+            selectedIndex = items.size() - 1;
+    }
+
+    protected Theme.Definition getSelectedListItemThemeDefinition(Theme theme) {
+        return theme.getDefinition(Theme.Category.ListItemSelected);
+    }
+
+    protected Theme.Definition getListItemThemeDefinition(Theme theme) {
+        return theme.getDefinition(Category.ListItem);
+    }
+
+    public Result keyboardInteraction(Key key) {
+        try {
+            switch(key.getKind()) {
+                case Tab:
+                case ArrowRight:
+                    return Result.NEXT_INTERACTABLE;
+
+                case ReverseTab:
+                case ArrowLeft:
+                    return Result.PREVIOUS_INTERACTABLE;
+
+                case ArrowDown:
+                    if(items.isEmpty() || selectedIndex == items.size() - 1)
+                        return Result.NEXT_INTERACTABLE;
+
+                    selectedIndex++;
+                    break;
+
+                case ArrowUp:
+                    if(items.isEmpty() || selectedIndex == 0)
+                        return Result.PREVIOUS_INTERACTABLE;
+
+                    selectedIndex--;
+                    if(selectedIndex - scrollTopIndex < 0)
+                        scrollTopIndex--;
+                    break;
+                    
+                default:
+                    return unhandledKeyboardEvent(key);
+            }
+            return Result.DO_NOTHING;
+        }
+        finally {
+            invalidate();
+        }
+    }
+
+    private void printItem(TextGraphics graphics, int x, int y, int index) {
+        String asText = createItemString(index);
+        if(asText.length() > graphics.getWidth())
+            asText = asText.substring(0, graphics.getWidth());
+        graphics.drawString(x, y, asText);
+    }
+    
+    protected Interactable.Result unhandledKeyboardEvent(Key key) {
+        return Result.DO_NOTHING;
+    }
+
+    protected int getHotSpotPositionOnLine(int selectedIndex) {
+        return 0;
+    }
+
+    protected abstract String createItemString(int index);
+}

@@ -96,7 +96,7 @@ public class GUIScreen
         final TextGraphics textGraphics = new TextGraphics(new TerminalPosition(0, 0),
                 new TerminalSize(screen.getTerminalSize()), screen, guiTheme);
 
-        textGraphics.applyTheme(guiTheme.getItem(Theme.Category.ScreenBackground));
+        textGraphics.applyTheme(guiTheme.getDefinition(Theme.Category.ScreenBackground));
 
         //Clear the background
         textGraphics.fillRectangle(' ', new TerminalPosition(0, 0), new TerminalSize(screen.getTerminalSize()));
@@ -146,7 +146,7 @@ public class GUIScreen
                     new TerminalSize(preferredSize.getColumns(), preferredSize.getRows()));
 
             //First draw the shadow
-            textGraphics.applyTheme(guiTheme.getItem(Theme.Category.Shadow));
+            textGraphics.applyTheme(guiTheme.getDefinition(Theme.Category.Shadow));
             textGraphics.fillRectangle(' ', new TerminalPosition(topLeft.getColumn() + 2, topLeft.getRow() + 1),
                     new TerminalSize(subGraphics.getWidth(), subGraphics.getHeight()));
 

@@ -210,7 +210,7 @@ public class TextGraphics
      */
     public void applyTheme(Theme.Category category)
     {
-        applyTheme(getTheme().getItem(category));
+        applyTheme(getTheme().getDefinition(category));
     }
     
 

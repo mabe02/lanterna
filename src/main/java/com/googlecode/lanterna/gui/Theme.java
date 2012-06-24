@@ -119,7 +119,7 @@ public class Theme
         return new Theme();
     }
 
-    public Theme.Definition getItem(Category category)
+    public Theme.Definition getDefinition(Category category)
     {
         switch(category)
         {

@@ -52,9 +52,9 @@ public class Button extends AbstractInteractableComponent
     public void repaint(TextGraphics graphics)
     {
         if(hasFocus())
-            graphics.applyTheme(graphics.getTheme().getItem(Theme.Category.ButtonActive));
+            graphics.applyTheme(graphics.getTheme().getDefinition(Theme.Category.ButtonActive));
         else
-            graphics.applyTheme(graphics.getTheme().getItem(Theme.Category.ButtonInactive));
+            graphics.applyTheme(graphics.getTheme().getDefinition(Theme.Category.ButtonInactive));
 
         TerminalSize preferredSize = getPreferredSize();
 
