@@ -23,10 +23,7 @@ import com.googlecode.lanterna.gui.Action;
 import com.googlecode.lanterna.gui.Border;
 import com.googlecode.lanterna.gui.GUIScreen;
 import com.googlecode.lanterna.gui.Window;
-import com.googlecode.lanterna.gui.component.Button;
-import com.googlecode.lanterna.gui.component.EmptySpace;
-import com.googlecode.lanterna.gui.component.ListBox;
-import com.googlecode.lanterna.gui.component.Panel;
+import com.googlecode.lanterna.gui.component.*;
 import com.googlecode.lanterna.test.TestTerminalFactory;
 import java.util.Random;
 
@@ -47,7 +44,7 @@ public class ListBoxTest
         //window1.addComponent(new Widget(1, 1));
 
         Panel mainPanel = new Panel(new Border.Invisible(), Panel.Orientation.VERTICAL);
-        final ListBox listBox = new ListBox(10, 5);
+        final RadioCheckBoxList listBox = new RadioCheckBoxList();
 
         Thread thread = new Thread() {
             @Override
@@ -67,14 +64,6 @@ public class ListBoxTest
                     });
                     if(cancelThread)
                         break;
-                }
-                Random random = new Random();
-                while(!cancelThread) {
-                    try {
-                        Thread.sleep(2000);
-                    }
-                    catch(InterruptedException e) {}
-                    listBox.setSelectedItem(random.nextInt(15));
                 }
             }
         };
