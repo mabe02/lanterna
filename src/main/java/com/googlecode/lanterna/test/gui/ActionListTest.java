@@ -46,7 +46,7 @@ public class ActionListTest
         Panel mainPanel = new Panel(new Border.Invisible(), Panel.Orientation.VERTICAL);
         ActionListBox actionListBox = new ActionListBox();
         for(int i = 0; i < 5; i++)
-            actionListBox.addItem(new ActionListBoxItem(guiScreen));
+            actionListBox.addAction(new ActionListBoxItem(guiScreen));
         
         mainPanel.addComponent(actionListBox);
         window1.addComponent(mainPanel);
@@ -64,7 +64,7 @@ public class ActionListTest
         guiScreen.getScreen().stopScreen();
     }
     
-    private static class ActionListBoxItem implements ActionListBox.Item {
+    private static class ActionListBoxItem implements Action {
         private static int counter = 1;
         private GUIScreen owner;
         private int nr;

@@ -73,7 +73,7 @@ public abstract class AbstractListBox extends AbstractInteractableComponent {
         return new TerminalSize(widthOverride, heightOverride == 0 ? items.size() : heightOverride);
     }
 
-    public void addItem(Object item) {
+    protected void addItem(Object item) {
         if(item == null)
              return;
 

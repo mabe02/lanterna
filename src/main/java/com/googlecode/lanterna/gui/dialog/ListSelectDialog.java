@@ -19,45 +19,70 @@
 
 package com.googlecode.lanterna.gui.dialog;
 
-import com.googlecode.lanterna.gui.component.ActionListBox;
+import com.googlecode.lanterna.gui.Action;
 import com.googlecode.lanterna.gui.GUIScreen;
+import com.googlecode.lanterna.gui.component.ActionListBox;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * This dialog helper class can be used for easily giving the user a list of
+ * items to pick one from.
  * @author Martin
  */
 public class ListSelectDialog
 {
+    private ListSelectDialog() {}
+    
+    /**
+     * Presents the user with a dialog where a list of items is displayed and
+     * the user can select one of the items.
+     * 
+     * @param owner GUIScreen to draw the dialog on
+     * @param title Title of the dialog
+     * @param description Text describing the dialog and the list
+     * @param items Items to show in the list
+     * @return The item the user chose
+     */
     public static Object showDialog(final GUIScreen owner, final String title,
             final String description, final Object... items)
     {
-        return showDialog(owner, title, description, -1, items);
+        return showDialog(owner, title, description, 0, items);
     }
 
+    /**
+     * Presents the user with a dialog where a list of items is displayed and
+     * the user can select one of the items.
+     * 
+     * @param owner GUIScreen to draw the dialog on
+     * @param title Title of the dialog
+     * @param description Text describing the dialog and the list
+     * @param listWidth Width of the list, in columns
+     * @param items Items to show in the list
+     * @return The item the user chose
+     */
     public static Object showDialog(final GUIScreen owner, final String title,
             final String description, final int listWidth, final Object... items)
     {
         final List<Object> result = new ArrayList<Object>();
-        ActionListBox.Item []actionItems = new ActionListBox.Item[items.length];
+        Action []actionItems = new Action[items.length];
         for(int i = 0; i < items.length; i++) {
             final Object item = items[i];
-            actionItems[i] = new ActionListBox.Item() {
-                public String getTitle()
-                {
-                    return item.toString();
-                }
-
+            actionItems[i] = new Action() {
                 public void doAction()
                 {
                     result.add(item);
+                }
+
+                @Override
+                public String toString() {
+                    return item.toString();
                 }
             };
         }
 
         ActionListDialog.showActionListDialog(owner, title, description, listWidth, actionItems);
-        if(result.size() == 0)
+        if(result.isEmpty())
             return null;
         else
             return result.get(0);

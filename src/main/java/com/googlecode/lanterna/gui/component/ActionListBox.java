@@ -33,36 +33,33 @@ import java.util.List;
  *
  * @author Martin
  */
-public class ActionListBox extends AbstractInteractableComponent
-{
-    private final List<Item> itemList;
-    private final int forceWidth;
-    private int selectedIndex;
-
-    public ActionListBox()
-    {
-        this(-1);
+public class ActionListBox extends AbstractListBox {
+    
+    public ActionListBox() {
+        this(null);
     }
 
-    public ActionListBox(int forceWidth)
-    {
-        this.itemList = new ArrayList<Item>();
-        this.forceWidth = forceWidth;
-        this.selectedIndex = -1;
+    public ActionListBox(TerminalSize preferredSize) {
+        super(preferredSize);
     }
 
-    public void addItem(final Item item)
-    {
-        itemList.add(item);
-        if(selectedIndex == -1)
-            selectedIndex = 0;
+    /**
+     * Adds an action to the list, using toString() of the action as a label
+     * @param action Action to be performed when the user presses enter key
+     */
+    public void addAction(final Action action) {
+        addAction(action.toString(), action);
     }
 
-    public void addAction(final Action action)
-    {
-        addItem(new Item() {
+    /**
+     * Adds an action to the list, with a specified label
+     * @param label Label to be displayed, representing the action
+     * @param action Action to be performed when the user presses enter key
+     */
+    public void addAction(final String label, final Action action) {
+        super.addItem(new Item() {
             public String getTitle() {
-                return action.toString();
+                return label;
             }
 
             public void doAction() {
@@ -71,134 +68,20 @@ public class ActionListBox extends AbstractInteractableComponent
         });
     }
 
-    public void clearItems()
-    {
-        itemList.clear();
-        selectedIndex = -1;
-    }
-
-    public int getSelectedItemIndex()
-    {
-        return selectedIndex;
-    }
-
-    public Item getItem(int index)
-    {
-        return itemList.get(index);
-    }
-
-    public int getNrOfItems()
-    {
-        return itemList.size();
-    }
-
-    public void setSelectedIndex(int index)
-    {
-        if(index < -1)
-            index = -1;
-
-        if(index == -1 && getNrOfItems() > 0)
-            selectedIndex = 0;
-        else if(index != -1 && index >= getNrOfItems())
-            selectedIndex = getNrOfItems() - 1;
-        else
-            selectedIndex = index;
-        invalidate();
-    }
-
-    public void repaint(TextGraphics graphics)
-    {
-        for(int i = 0; i < itemList.size(); i++) {
-            if(selectedIndex == i && hasFocus())
-                graphics.applyTheme(Category.ListItemSelected);
-            else
-                graphics.applyTheme(Category.ListItem);
-
-            String title = itemList.get(i).getTitle();
-            if(title.length() > graphics.getWidth() && graphics.getWidth() > 3)
-                title = title.substring(0, graphics.getWidth() - 3) + "...";
-
-            graphics.drawString(0, i, title);
+    @Override
+    protected Result unhandledKeyboardEvent(Key key) {
+        if(key.getKind() == Key.Kind.Enter) {
+            ((Item)getSelectedItem()).doAction();
         }
-        if(selectedIndex == -1)
-            setHotspot(new TerminalPosition(0, 0));
-        else
-            setHotspot(graphics.translateToGlobalCoordinates(new TerminalPosition(0, selectedIndex)));
-    }
-
-    public TerminalSize getPreferredSize()
-    {
-        if(itemList.isEmpty())
-            return new TerminalSize(1,1);
-        
-        if(forceWidth != -1)
-            return new TerminalSize(forceWidth, itemList.size());
-
-        int maxLength = 0;
-        for(Item item: itemList) {
-            if(item.getTitle().length() > maxLength)
-                maxLength = item.getTitle().length();
-        }
-        return new TerminalSize(maxLength, itemList.size());
+        return Result.DO_NOTHING;
     }
     
     @Override
-    protected void afterEnteredFocus(FocusChangeDirection direction)
-    {
-        if(direction == FocusChangeDirection.DOWN)
-            selectedIndex = 0;
-        else if(direction == FocusChangeDirection.UP)
-            selectedIndex = itemList.size() - 1;
+    protected String createItemString(int index) {
+        return ((Item)getItemAt(index)).getTitle();
     }
 
-    public Interactable.Result keyboardInteraction(Key key)
-    {
-        try {
-            switch(key.getKind()) {
-                case Tab:
-                case ArrowRight:
-                    return Result.NEXT_INTERACTABLE_RIGHT;
-
-                case ReverseTab:
-                case ArrowLeft:
-                    return Result.PREVIOUS_INTERACTABLE_LEFT;
-
-                case ArrowDown:
-                    if(selectedIndex == itemList.size() - 1)
-                        return Result.NEXT_INTERACTABLE_DOWN;
-                    else
-                        selectedIndex++;
-                    break;
-
-                case ArrowUp:
-                    if(selectedIndex == 0)
-                        return Result.PREVIOUS_INTERACTABLE_UP;
-                    else
-                        selectedIndex--;
-                    break;
-
-                case Enter:
-                    if(selectedIndex != -1)
-                        itemList.get(selectedIndex).doAction();
-                    break;
-
-                case PageDown:
-                    selectedIndex = itemList.size() - 1;
-                    break;
-
-                case PageUp:
-                    selectedIndex = 0;
-                    break;
-            }
-            return Result.DO_NOTHING;
-        }
-        finally {
-            invalidate();
-        }
-    }
-
-    public static interface Item
-    {
+    private static interface Item {
         public String getTitle();
         public void doAction();
     }
