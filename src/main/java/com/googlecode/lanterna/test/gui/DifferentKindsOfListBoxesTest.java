@@ -23,10 +23,8 @@ import com.googlecode.lanterna.gui.Action;
 import com.googlecode.lanterna.gui.Border;
 import com.googlecode.lanterna.gui.GUIScreen;
 import com.googlecode.lanterna.gui.Window;
-import com.googlecode.lanterna.gui.component.Button;
-import com.googlecode.lanterna.gui.component.CheckBoxList;
-import com.googlecode.lanterna.gui.component.EmptySpace;
-import com.googlecode.lanterna.gui.component.Panel;
+import com.googlecode.lanterna.gui.component.*;
+import com.googlecode.lanterna.gui.dialog.MessageBox;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.test.TestTerminalFactory;
 
@@ -42,6 +40,8 @@ public class DifferentKindsOfListBoxesTest {
         final Window window1 = new Window("List boxes window");
         
         Panel mainPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORISONTAL);
+        mainPanel.setBetweenComponentsPadding(1);
+        
         final CheckBoxList checkBoxList = new CheckBoxList();
         checkBoxList.addItem("First");
         checkBoxList.addItem("Second");
@@ -58,9 +58,45 @@ public class DifferentKindsOfListBoxesTest {
         checkBoxList.addItem("San");
         checkBoxList.addItem("Yon");
         checkBoxList.addItem("Go");
-        checkBoxList.setPreferredSize(new TerminalSize(0, 7));
+        checkBoxList.setPreferredSize(new TerminalSize(0, 8));
+        
+        RadioCheckBoxList radioCheckBoxList = new RadioCheckBoxList();
+        radioCheckBoxList.addItem("First");
+        radioCheckBoxList.addItem("Second");
+        radioCheckBoxList.addItem("Third");
+        radioCheckBoxList.addItem("Fourth");
+        radioCheckBoxList.addItem("Fifth");
+        radioCheckBoxList.addItem("Första");
+        radioCheckBoxList.addItem("Andra");
+        radioCheckBoxList.addItem("Tredje");
+        radioCheckBoxList.addItem("Fjärde");
+        radioCheckBoxList.addItem("Femte");
+        radioCheckBoxList.addItem("Ichi");
+        radioCheckBoxList.addItem("Ni");
+        radioCheckBoxList.addItem("San");
+        radioCheckBoxList.addItem("Yon");
+        radioCheckBoxList.addItem("Go");
+        radioCheckBoxList.setPreferredSize(new TerminalSize(0, 8));
+        
+        ActionListBox actionListBox = new ActionListBox();
+        actionListBox.addAction(new RandomAction(guiScreen));
+        actionListBox.addAction(new RandomAction(guiScreen));
+        actionListBox.addAction(new RandomAction(guiScreen));
+        actionListBox.addAction(new RandomAction(guiScreen));
+        actionListBox.addAction(new RandomAction(guiScreen));
+        actionListBox.addAction(new RandomAction(guiScreen));
+        actionListBox.addAction(new RandomAction(guiScreen));
+        actionListBox.addAction(new RandomAction(guiScreen));
+        actionListBox.addAction(new RandomAction(guiScreen));
+        actionListBox.addAction(new RandomAction(guiScreen));
+        actionListBox.addAction(new RandomAction(guiScreen));
+        actionListBox.addAction(new RandomAction(guiScreen));
+        actionListBox.addAction(new RandomAction(guiScreen));
+        actionListBox.setPreferredSize(new TerminalSize(0, 8));   
         
         mainPanel.addComponent(checkBoxList);
+        mainPanel.addComponent(radioCheckBoxList);
+        mainPanel.addComponent(actionListBox);
         window1.addComponent(mainPanel);
 
         Panel buttonPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORISONTAL);
@@ -74,5 +110,26 @@ public class DifferentKindsOfListBoxesTest {
         window1.addComponent(buttonPanel);
         guiScreen.showWindow(window1, GUIScreen.Position.CENTER);
         guiScreen.getScreen().stopScreen();
+    }
+
+    private static class RandomAction implements Action {
+
+        private static int counter = 1;
+        private final String label;
+        private final GUIScreen guiScreen;
+
+        public RandomAction(GUIScreen guiScreen) {
+            this.label = "Action #" + (counter++);
+            this.guiScreen = guiScreen;
+        }
+        
+        public void doAction() {
+            MessageBox.showMessageBox(guiScreen, "Action", label + " selected");
+        }
+
+        @Override
+        public String toString() {
+            return label;
+        }
     }
 }
