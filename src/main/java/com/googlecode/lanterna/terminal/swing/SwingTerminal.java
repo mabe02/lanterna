@@ -43,6 +43,8 @@ import javax.swing.Timer;
  */
 public class SwingTerminal extends AbstractTerminal implements InputProvider
 {
+    private static final Font DEFAULT_TERMINAL_FONT = new Font("Courier New", Font.PLAIN, 14);
+    
     private final TerminalRenderer terminalRenderer;
     private final Font terminalFont;
     private final Timer blinkTimer;
@@ -61,17 +63,22 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
 
     public SwingTerminal()
     {
-        this(160, 40); //By default, create a 160x40 terminal (normal size * 2)
+        this(DEFAULT_TERMINAL_FONT, 160, 40); //By default, create a 160x40 terminal (normal size * 2)
     }
 
     public SwingTerminal(TerminalSize terminalSize) 
     {
-        this(terminalSize.getColumns(), terminalSize.getRows());
+        this(DEFAULT_TERMINAL_FONT, terminalSize.getColumns(), terminalSize.getRows());
     }
     
-    public SwingTerminal(int widthInColumns, int heightInRows)
+    public SwingTerminal(Font terminalFont)
     {
-        this.terminalFont = new Font("Courier New", Font.PLAIN, 14);
+        this(terminalFont, 160, 40);
+    }
+    
+    public SwingTerminal(Font terminalFont, int widthInColumns, int heightInRows)
+    {
+        this.terminalFont = terminalFont;
         this.terminalRenderer = new TerminalRenderer();
         this.blinkTimer = new Timer(500, new BlinkAction());
         this.textPosition = new TerminalPosition(0, 0);
