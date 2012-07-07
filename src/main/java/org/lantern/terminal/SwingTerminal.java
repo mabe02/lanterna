@@ -19,13 +19,7 @@
 
 package org.lantern.terminal;
 
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyAdapter;
@@ -70,9 +64,14 @@ public class SwingTerminal implements Terminal
 
     public SwingTerminal(TerminalSize terminalSize)
     {
+        this(getDefaultFont(), terminalSize);
+    }
+    
+    public SwingTerminal(Font terminalFont, TerminalSize terminalSize)
+    {
         this.resizeListeners = new ArrayList<ResizeListener>();
         this.terminalSize = terminalSize;
-        this.terminalFont = new Font("Courier New", Font.PLAIN, 14);
+        this.terminalFont = terminalFont;
         this.terminalRenderer = new TerminalRenderer();
         this.textPosition = new TerminalPosition(0, 0);
         this.characterMap = new TerminalCharacter[terminalSize.getRows()][terminalSize.getColumns()];
@@ -82,6 +81,15 @@ public class SwingTerminal implements Terminal
         this.keyQueue = new ConcurrentLinkedQueue<Key>();
         this.resizeMutex = new Object();
         clearScreen();
+    }
+    
+    private static Font getDefaultFont() {
+        //For windows, this is probably what we want to return
+        if(System.getProperty("org.lanterna.terminal.SwingTerminal.defaultFont") != null)
+            return new Font(System.getProperty("org.lanterna.terminal.SwingTerminal.defaultFont"), Font.PLAIN, 14);
+        else if(System.getProperty("os.name").toLowerCase().contains("win"))
+            return new Font("Courier New", Font.PLAIN, 14);
+        return new Font("Monospaced", Font.PLAIN, 14);
     }
 
     public void addInputProfile(KeyMappingProfile profile)
