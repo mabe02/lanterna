@@ -89,6 +89,14 @@ public abstract class AbstractContainer extends AbstractComponent implements Int
         }
     }
 
+    @Override
+    public boolean isScrollable() {
+        for(Component component: components)
+            if(component.isScrollable())
+                return true;
+        return false;
+    }
+
     protected Iterable<Component> components()
     {
         return components;

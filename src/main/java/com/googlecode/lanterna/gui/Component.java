@@ -60,6 +60,15 @@ public interface Component
     boolean isVisible();
     
     /**
+     * This method is used by the layout system when it needs to shrink components
+     * because the available space is too small. Scrollable components will be 
+     * shrunk first.
+     * @return True if this component has a scrollable area and can contain more
+     * text than fits on the screen
+     */
+    boolean isScrollable();
+    
+    /**
      * This method is called by the layout system to figure out how much space
      * each component will be assigned. Return the size you would like your 
      * component to use, for best presentation. There is no guarante that the

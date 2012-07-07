@@ -95,40 +95,81 @@ public abstract class AxisLayout implements ContainerLayout
         List<AxisLaidOutComponent> growingComponents = new ArrayList<AxisLaidOutComponent>();
 
         final int availableMinorAxisSpace = getMinorAxis(layoutArea);
-        int availableMajorAxisSpace = getMajorAxis(layoutArea);
+        final int availableMajorAxisSpace = getMajorAxis(layoutArea);
+        int usedMajorAxisSpace = 0;
 
+        //First, try to lay out all components and give them all the space they ask for
         for(AxisLayoutComponent axisLayoutComponent: componentList) {
             TerminalSize componentPreferredSize = axisLayoutComponent.component.getPreferredSize();
-            int componentPreferredMajorAxisSize = getMajorAxis(componentPreferredSize);
+            final int componentPreferredMajorAxisSize = getMajorAxis(componentPreferredSize);
             
-            if(availableMajorAxisSpace < componentPreferredMajorAxisSize)
-                break;
-            
+            //Skip these
             if(componentPreferredMajorAxisSize < 0)
                 continue;
 
             //This will be re-calculated later
             TerminalPosition componentTopLeft = new TerminalPosition(0, 0);
-
+            
             TerminalSize componentSize = new TerminalSize(0,0);
             setMinorAxis(componentSize, availableMinorAxisSpace);
-            setMajorAxis(componentSize, getMajorAxis(componentPreferredSize));
-            availableMajorAxisSpace -= (getMajorAxis(componentSize) + padding);
+            setMajorAxis(componentSize, componentPreferredMajorAxisSize);
+            usedMajorAxisSpace += (getMajorAxis(componentSize) + padding);
             
             AxisLaidOutComponent laidOutComponent = new AxisLaidOutComponent(axisLayoutComponent.component, componentSize, componentTopLeft);
             result.add(laidOutComponent);
             if(axisLayoutComponent.sizePolicy != SizePolicy.CONSTANT)
                 growingComponents.add(laidOutComponent);
         }
+        
+        //Now, if we have used too much space, start shrinking components until 
+        //they all fit, using scrollable components first
+        while(usedMajorAxisSpace > availableMajorAxisSpace) {
+            boolean foundSomethingToShrink = false;
+            for(AxisLaidOutComponent laidOutComponent: result) {
+                if(laidOutComponent.component.isScrollable() && 
+                        getMajorAxis(laidOutComponent.getSize()) > 0) {
+                    foundSomethingToShrink = true;
+                    setMajorAxis(laidOutComponent.getSize(), getMajorAxis(laidOutComponent.getSize()) - 1);
+                    usedMajorAxisSpace--;
+                    
+                    //Don't shrink more than necessary
+                    if(usedMajorAxisSpace <= availableMajorAxisSpace)
+                        break;
+                }
+            }
+            if(!foundSomethingToShrink)
+                break;  //There is nothing more to shrink
+        }
+        
+        //If we have still used too much space, start shrinking regular components
+        while(usedMajorAxisSpace > availableMajorAxisSpace) {
+            boolean foundSomethingToShrink = false;
+            for(AxisLaidOutComponent laidOutComponent: result) {
+                if(getMajorAxis(laidOutComponent.getSize()) > 0) {
+                    foundSomethingToShrink = true;
+                    setMajorAxis(laidOutComponent.getSize(), getMajorAxis(laidOutComponent.getSize()) - 1);
+                    usedMajorAxisSpace--;
+                    
+                    //Don't shrink more than necessary
+                    if(usedMajorAxisSpace <= availableMajorAxisSpace)
+                        break;
+                }
+            }
+            if(!foundSomethingToShrink)
+                break;  //There is nothing more to shrink
+        }
 
-        while(!growingComponents.isEmpty() && availableMajorAxisSpace > 0) {
+        //At this point, in case there is spare space to use, let's divide it
+        //between the growing components
+        while(!growingComponents.isEmpty() && availableMajorAxisSpace > usedMajorAxisSpace) {
             for(AxisLaidOutComponent laidOutComponent: growingComponents) {
                 setMajorAxis(laidOutComponent.size, getMajorAxis(laidOutComponent.size) + 1);
-                if(--availableMajorAxisSpace == 0)
+                if(availableMajorAxisSpace == usedMajorAxisSpace)
                     break;
             }
         }
 
+        //Finally, recalculate the topLeft position of each component
         int nextMajorPosition = 0;
         for(AxisLaidOutComponent laidOutComponent: result) {
             setMajorAxis(laidOutComponent.topLeftPosition, nextMajorPosition);

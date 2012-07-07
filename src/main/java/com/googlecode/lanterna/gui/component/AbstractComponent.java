@@ -76,7 +76,9 @@ public abstract class AbstractComponent implements Component
         this.visible = visible;
     }
 
-
+    public boolean isScrollable() {
+        return false;
+    }    
 
     protected void invalidate()
     {

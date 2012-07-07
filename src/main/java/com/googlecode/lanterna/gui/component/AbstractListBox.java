@@ -131,12 +131,25 @@ public abstract class AbstractListBox extends AbstractInteractableComponent {
             return items.get(selectedIndex);
     }
 
+    @Override
+    public boolean isScrollable() {
+        return true;
+    }
+    
     public void repaint(TextGraphics graphics) {
         if(selectedIndex != -1) {
             if(selectedIndex < scrollTopIndex)
                 scrollTopIndex = selectedIndex;
             else if(selectedIndex >= graphics.getHeight() + scrollTopIndex)
                 scrollTopIndex = selectedIndex - graphics.getHeight() + 1;
+        }
+        
+        //Do we need to recalculate the scroll position? 
+        //This code would be triggered by resizing the window when the scroll
+        //position is at the bottom
+        if(items.size() > graphics.getHeight() &&
+                items.size() - scrollTopIndex < graphics.getHeight()) {
+            scrollTopIndex = items.size() - graphics.getHeight();
         }
 
         graphics.applyTheme(getListItemThemeDefinition(graphics.getTheme()));
@@ -166,7 +179,7 @@ public abstract class AbstractListBox extends AbstractInteractableComponent {
             
             //Finally print the 'tick'
             int scrollableSize = items.size() - graphics.getHeight();
-            double position = (double)scrollTopIndex / ((double)scrollableSize - 1.0);
+            double position = (double)scrollTopIndex / ((double)scrollableSize);
             int tickPosition = (int)(((double)graphics.getHeight() - 3.0) * position);
 
             graphics.applyTheme(Theme.Category.Shadow);
