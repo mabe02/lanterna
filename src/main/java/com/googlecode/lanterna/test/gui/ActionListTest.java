@@ -74,12 +74,13 @@ public class ActionListTest
             this.owner = owner;
         }
         
-        public String getTitle() {
+        @Override
+        public String toString() {
             return "ActionListBox item #" + nr;
         }
 
         public void doAction() {
-            MessageBox.showMessageBox(owner, "Action", "Selected " + getTitle());
+            MessageBox.showMessageBox(owner, "Action", "Selected " + toString());
         }
     }
 }
