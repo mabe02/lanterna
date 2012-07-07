@@ -24,6 +24,7 @@ import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.swing.SwingTerminal;
 import com.googlecode.lanterna.terminal.text.CygwinTerminal;
 import com.googlecode.lanterna.terminal.text.UnixTerminal;
+import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -111,6 +112,30 @@ public class TerminalFacade {
     public static SwingTerminal createSwingTerminal(int columns, int rows)
     {
         return new SwingTerminal(columns, rows);
+    }
+    
+    /**
+     * Creates a new {@code SwingTerminal} object, a simple Swing terminal emulator,
+     * 100 columns wide and 30 rows high.
+     * @param terminalFont What font the terminal emulator should use to render text,
+     * you should only use monospaced fonts
+     */
+    public static SwingTerminal createSwingTerminal(Font terminalFont)
+    {
+        return createSwingTerminal(terminalFont, 100, 30);
+    }
+    
+    /**
+     * Creates a new {@code SwingTerminal} object, a simple Swing terminal emulator,
+     * with specified dimensions.
+     * @param terminalFont What font the terminal emulator should use to render text,
+     * you should only use monospaced fonts
+     * @param columns Width of the terminal window, in text columns <b>not</b> pixels
+     * @param rows Height of the terminal window, in text rows <b>not</b> pixels
+     */
+    public static SwingTerminal createSwingTerminal(Font terminalFont, int columns, int rows)
+    {
+        return new SwingTerminal(terminalFont, columns, rows);
     }
     
     /**
