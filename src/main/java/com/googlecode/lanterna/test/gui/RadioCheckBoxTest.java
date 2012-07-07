@@ -23,9 +23,11 @@ import com.googlecode.lanterna.gui.Action;
 import com.googlecode.lanterna.gui.Border;
 import com.googlecode.lanterna.gui.GUIScreen;
 import com.googlecode.lanterna.gui.Window;
-import com.googlecode.lanterna.gui.component.*;
+import com.googlecode.lanterna.gui.component.Button;
+import com.googlecode.lanterna.gui.component.EmptySpace;
+import com.googlecode.lanterna.gui.component.Panel;
+import com.googlecode.lanterna.gui.component.RadioCheckBoxList;
 import com.googlecode.lanterna.test.TestTerminalFactory;
-import java.util.Random;
 
 /**
  *
@@ -50,9 +52,9 @@ public class RadioCheckBoxTest
             @Override
             public void run()
             {
-                for(int i = 0; i < 15; i++) {
+                for(int i = 0; i < 30; i++) {
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(250);
                     }
                     catch(InterruptedException e) {}
                     final Integer count = i + 1;

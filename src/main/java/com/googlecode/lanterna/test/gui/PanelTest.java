@@ -86,6 +86,12 @@ public class PanelTest
             return new TerminalSize(preferredSize);
         }
 
+        @Override
+        public boolean isScrollable() 
+        {
+            return true;
+        }
+
         public void repaint(TextGraphics graphics)
         {
             StringBuilder sb = new StringBuilder();
@@ -95,6 +101,5 @@ public class PanelTest
             for(int i = 0; i < graphics.getHeight(); i++)
                 graphics.drawString(0, i, sb.toString());
         }
-
     }
 }
