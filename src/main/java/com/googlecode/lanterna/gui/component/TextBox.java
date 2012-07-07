@@ -113,13 +113,17 @@ public class TextBox extends AbstractInteractableComponent
         try {
             switch(key.getKind()) {
                 case Tab:
-                case ArrowDown:
                 case Enter:
-                    return Result.NEXT_INTERACTABLE;
+                    return Result.NEXT_INTERACTABLE_RIGHT;
+                    
+                case ArrowDown:
+                    return Result.NEXT_INTERACTABLE_DOWN;
 
                 case ReverseTab:
+                    return Result.PREVIOUS_INTERACTABLE_LEFT;
+                    
                 case ArrowUp:
-                    return Result.PREVIOUS_INTERACTABLE;
+                    return Result.PREVIOUS_INTERACTABLE_UP;
 
                 case ArrowRight:
                     if(editPosition == backend.length())

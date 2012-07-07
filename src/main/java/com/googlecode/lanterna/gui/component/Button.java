@@ -114,15 +114,20 @@ public class Button extends AbstractInteractableComponent
                 onPressEvent.doAction();
                 break;
 
-            case ArrowRight:
+                
             case ArrowDown:
+                return Result.NEXT_INTERACTABLE_DOWN;
+                
+            case ArrowRight:
             case Tab:
-                return Result.NEXT_INTERACTABLE;
+                return Result.NEXT_INTERACTABLE_RIGHT;
 
-            case ArrowLeft:
             case ArrowUp:
+                return Result.PREVIOUS_INTERACTABLE_UP;
+                
+            case ArrowLeft:
             case ReverseTab:
-                return Result.PREVIOUS_INTERACTABLE;
+                return Result.PREVIOUS_INTERACTABLE_LEFT;
         }
         return Result.DO_NOTHING;
     }

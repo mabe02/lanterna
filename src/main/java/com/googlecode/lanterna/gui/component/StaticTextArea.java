@@ -106,11 +106,11 @@ public class StaticTextArea  extends AbstractInteractableComponent
                 case Tab:
                 case ArrowRight:
                 case Enter:
-                    return Result.NEXT_INTERACTABLE;
+                    return Result.NEXT_INTERACTABLE_RIGHT;
 
                 case ReverseTab:
                 case ArrowLeft:
-                    return Result.PREVIOUS_INTERACTABLE;
+                    return Result.PREVIOUS_INTERACTABLE_LEFT;
 
                 case ArrowDown:
                     if(scrollTopIndex < lines.size() - maxSize.getRows())

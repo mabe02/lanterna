@@ -74,15 +74,19 @@ public abstract class CommonCheckBox extends AbstractInteractableComponent
         try {
             switch(key.getKind())
             {
-                case Tab:
                 case ArrowDown:
+                    return Result.NEXT_INTERACTABLE_DOWN;
+                    
+                case Tab:
                 case ArrowRight:
-                    return Result.NEXT_INTERACTABLE;
+                    return Result.NEXT_INTERACTABLE_RIGHT;
 
                 case ArrowUp:
+                    return Result.PREVIOUS_INTERACTABLE_UP;
+                    
                 case ReverseTab:
                 case ArrowLeft:
-                    return Result.PREVIOUS_INTERACTABLE;
+                    return Result.PREVIOUS_INTERACTABLE_LEFT;
 
                 case Enter:
                     onActivated();

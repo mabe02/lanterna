@@ -227,17 +227,17 @@ public class Window implements Container
     {
         if(currentlyInFocus != null) {
             Interactable.Result result =  currentlyInFocus.keyboardInteraction(key);
-            if(result == Interactable.Result.NEXT_INTERACTABLE) {
+            if(result.isNextInteractable()) {
                 Interactable nextItem = contentPane.nextFocus(currentlyInFocus);
                 if(nextItem == null)
                     nextItem = contentPane.nextFocus(null);
-                setFocus(nextItem, Interactable.FocusChangeDirection.DOWN_OR_RIGHT);
+                setFocus(nextItem, result.asFocusChangeDirection());
             }
-            if(result == Interactable.Result.PREVIOUS_INTERACTABLE) {
+            if(result.isPreviousInteractable()) {
                 Interactable prevItem = contentPane.previousFocus(currentlyInFocus);
                 if(prevItem == null)
                     prevItem = contentPane.previousFocus(null);
-                setFocus(prevItem, Interactable.FocusChangeDirection.UP_OR_LEFT);
+                setFocus(prevItem, result.asFocusChangeDirection());
             }
         }
     }

@@ -183,9 +183,9 @@ public abstract class AbstractListBox extends AbstractInteractableComponent {
         if(items.isEmpty())
             return;
         
-        if(direction == FocusChangeDirection.DOWN_OR_RIGHT)
+        if(direction == FocusChangeDirection.DOWN)
             selectedIndex = 0;
-        else if(direction == FocusChangeDirection.UP_OR_LEFT)
+        else if(direction == FocusChangeDirection.UP)
             selectedIndex = items.size() - 1;
     }
 
@@ -202,22 +202,22 @@ public abstract class AbstractListBox extends AbstractInteractableComponent {
             switch(key.getKind()) {
                 case Tab:
                 case ArrowRight:
-                    return Result.NEXT_INTERACTABLE;
+                    return Result.NEXT_INTERACTABLE_RIGHT;
 
                 case ReverseTab:
                 case ArrowLeft:
-                    return Result.PREVIOUS_INTERACTABLE;
+                    return Result.PREVIOUS_INTERACTABLE_LEFT;
 
                 case ArrowDown:
                     if(items.isEmpty() || selectedIndex == items.size() - 1)
-                        return Result.NEXT_INTERACTABLE;
+                        return Result.NEXT_INTERACTABLE_DOWN;
 
                     selectedIndex++;
                     break;
 
                 case ArrowUp:
                     if(items.isEmpty() || selectedIndex == 0)
-                        return Result.PREVIOUS_INTERACTABLE;
+                        return Result.PREVIOUS_INTERACTABLE_UP;
 
                     selectedIndex--;
                     if(selectedIndex - scrollTopIndex < 0)

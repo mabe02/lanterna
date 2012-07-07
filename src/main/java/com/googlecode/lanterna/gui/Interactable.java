@@ -66,13 +66,42 @@ public interface Interactable
          */
         DO_NOTHING,
         /**
-         * Move keyboard focus to the next component
+         * Move keyboard focus to the next component, going down
          */
-        NEXT_INTERACTABLE,
+        NEXT_INTERACTABLE_DOWN,
         /**
-         * Move keyboard focus to the previous component
+         * Move keyboard focus to the next component, going right
          */
-        PREVIOUS_INTERACTABLE
+        NEXT_INTERACTABLE_RIGHT,
+        /**
+         * Move keyboard focus to the previous component, going up
+         */
+        PREVIOUS_INTERACTABLE_UP,
+        /**
+         * Move keyboard focus to the previous component, going left
+         */
+        PREVIOUS_INTERACTABLE_LEFT,
+        ;
+        
+        boolean isNextInteractable() {
+            return this == NEXT_INTERACTABLE_DOWN || this == NEXT_INTERACTABLE_RIGHT;
+        }
+        
+        boolean isPreviousInteractable() {
+            return this == PREVIOUS_INTERACTABLE_LEFT || this == PREVIOUS_INTERACTABLE_UP;
+        }
+
+        FocusChangeDirection asFocusChangeDirection() {
+            if(this == NEXT_INTERACTABLE_DOWN)
+                return FocusChangeDirection.DOWN;
+            if(this == NEXT_INTERACTABLE_RIGHT)
+                return FocusChangeDirection.RIGHT;
+            if(this == PREVIOUS_INTERACTABLE_LEFT)
+                return FocusChangeDirection.LEFT;
+            if(this == PREVIOUS_INTERACTABLE_UP)
+                return FocusChangeDirection.UP;
+            return null;
+        }
     }
 
     /**
@@ -81,12 +110,21 @@ public interface Interactable
     public enum FocusChangeDirection
     {
         /**
-         * The next interactable component
+         * The next interactable component, going down
          */
-        DOWN_OR_RIGHT,
+        DOWN,
         /**
-         * The previous interactable component
+         * The next interactable component, going right
          */
-        UP_OR_LEFT
+        RIGHT,
+        /**
+         * The previous interactable component, going up
+         */
+        UP,
+        /**
+         * The previous interactable component, going left
+         */
+        LEFT,
+        
     }
 }

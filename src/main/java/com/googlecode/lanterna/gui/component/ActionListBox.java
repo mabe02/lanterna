@@ -145,9 +145,9 @@ public class ActionListBox extends AbstractInteractableComponent
     @Override
     protected void afterEnteredFocus(FocusChangeDirection direction)
     {
-        if(direction == FocusChangeDirection.DOWN_OR_RIGHT)
+        if(direction == FocusChangeDirection.DOWN)
             selectedIndex = 0;
-        else if(direction == FocusChangeDirection.UP_OR_LEFT)
+        else if(direction == FocusChangeDirection.UP)
             selectedIndex = itemList.size() - 1;
     }
 
@@ -157,22 +157,22 @@ public class ActionListBox extends AbstractInteractableComponent
             switch(key.getKind()) {
                 case Tab:
                 case ArrowRight:
-                    return Result.NEXT_INTERACTABLE;
+                    return Result.NEXT_INTERACTABLE_RIGHT;
 
                 case ReverseTab:
                 case ArrowLeft:
-                    return Result.PREVIOUS_INTERACTABLE;
+                    return Result.PREVIOUS_INTERACTABLE_LEFT;
 
                 case ArrowDown:
                     if(selectedIndex == itemList.size() - 1)
-                        return Result.NEXT_INTERACTABLE;
+                        return Result.NEXT_INTERACTABLE_DOWN;
                     else
                         selectedIndex++;
                     break;
 
                 case ArrowUp:
                     if(selectedIndex == 0)
-                        return Result.PREVIOUS_INTERACTABLE;
+                        return Result.PREVIOUS_INTERACTABLE_UP;
                     else
                         selectedIndex--;
                     break;

@@ -147,11 +147,11 @@ public class ListBox extends AbstractInteractableComponent
                 case Tab:
                 case ArrowRight:
                 case Enter:
-                    return Result.NEXT_INTERACTABLE;
+                    return Result.NEXT_INTERACTABLE_RIGHT;
 
                 case ReverseTab:
                 case ArrowLeft:
-                    return Result.PREVIOUS_INTERACTABLE;
+                    return Result.PREVIOUS_INTERACTABLE_LEFT;
 
                 case ArrowDown:
                     if(items.isEmpty() || selectedIndex == items.size() - 1)
