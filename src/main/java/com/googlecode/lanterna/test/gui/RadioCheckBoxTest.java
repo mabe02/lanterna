@@ -31,7 +31,7 @@ import java.util.Random;
  *
  * @author Martin
  */
-public class ListBoxTest
+public class RadioCheckBoxTest
 {
     public static boolean cancelThread = false;
     
