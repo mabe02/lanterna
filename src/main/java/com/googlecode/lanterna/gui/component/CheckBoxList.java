@@ -50,30 +50,26 @@ public class CheckBoxList extends AbstractListBox
     }
 
     @Override
-    public void addItem(Object object)
-    {
+    public void addItem(Object object) {
         itemStatus.add(Boolean.FALSE);
         super.addItem(object);
     }
 
-    public Boolean isChecked(Object object)
-    {
+    public Boolean isChecked(Object object) {
         if(indexOf(object) == -1)
             return null;
         
         return itemStatus.get(indexOf(object));
     }
     
-    public Boolean isChecked(int index)
-    {
+    public Boolean isChecked(int index) {
         if(index < 0 || index >= itemStatus.size())
             return null;
         
         return itemStatus.get(index);
     }
 
-    public void setChecked(Object object, boolean checked)
-    {
+    public void setChecked(Object object, boolean checked) {
         if(indexOf(object) == -1)
             return;
         
