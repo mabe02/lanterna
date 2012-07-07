@@ -99,6 +99,17 @@ public class Screen
         }
     }
 
+    /**
+     * @return The terminal which is the backend for this screen
+     */
+    public Terminal getTerminal() {
+        return terminal;
+    }
+
+    /**
+     * @return Position where the cursor will be located after the screen has
+     * been refreshed
+     */
     public TerminalPosition getCursorPosition()
     {
         return cursorPosition;
