@@ -63,12 +63,17 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
 
     public SwingTerminal()
     {
-        this(DEFAULT_TERMINAL_FONT, 160, 40); //By default, create a 160x40 terminal (normal size * 2)
+        this(160, 40); //By default, create a 160x40 terminal (normal size * 2)
     }
 
     public SwingTerminal(TerminalSize terminalSize) 
     {
-        this(DEFAULT_TERMINAL_FONT, terminalSize.getColumns(), terminalSize.getRows());
+        this(terminalSize.getColumns(), terminalSize.getRows());
+    }
+    
+    public SwingTerminal(int widthInColumns, int heightInRows)
+    {
+        this(DEFAULT_TERMINAL_FONT, widthInColumns, heightInRows);
     }
     
     public SwingTerminal(Font terminalFont)
