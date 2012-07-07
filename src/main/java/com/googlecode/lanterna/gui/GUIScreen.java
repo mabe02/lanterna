@@ -164,12 +164,14 @@ public class GUIScreen
         screen.refresh();
     }
 
-    private void update()
+    private boolean update()
     {
         if(needsRefresh || screen.resizePending()) {
             repaint();
             needsRefresh = false;
+            return true;
         }
+        return false;
     }
 
     /**
@@ -199,7 +201,7 @@ public class GUIScreen
                     nextAction.doAction();
             }
 
-            update();
+            boolean repainted = update();
 
             Key nextKey = screen.readInput();
             if(nextKey != null) {
@@ -207,10 +209,12 @@ public class GUIScreen
                 invalidate();
             }
             else {
-                try {
-                    Thread.sleep(5);
+                if(!repainted) {
+                    try {
+                        Thread.sleep(1);
+                    }
+                    catch(InterruptedException e) {}
                 }
-                catch(InterruptedException e) {}
             }
         }
     }
