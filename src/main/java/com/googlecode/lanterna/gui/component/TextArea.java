@@ -30,42 +30,66 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- *
+ * This component is designed for displaying large chunks of text. If the text
+ * is larger than the component, it will display scrollbars and letting the
+ * user scroll through the text using the arrow keys.
  * @author mberglun
  */
-public class StaticTextArea  extends AbstractInteractableComponent
+public class TextArea  extends AbstractInteractableComponent
 {
     private final List<String> lines;
-    private final TerminalSize maxSize;
+    private final TerminalSize preferredSize;
     private final int longestLine;
+    
+    private TerminalSize lastSize;
     private int scrollTopIndex;
+    private int scrollLeftIndex;
 
-    public StaticTextArea(TerminalSize maxSize, String text)
-    {
+    public TextArea(String text) {       
+        this(new TerminalSize(0, 0), text);
+    }
+    
+    public TextArea(TerminalSize preferredSize, String text) {
         if(text == null)
             text = "";
         
         this.lines = new ArrayList<String>();
-        this.maxSize = maxSize;
+        this.preferredSize = preferredSize;
         this.scrollTopIndex = 0;
+        this.scrollLeftIndex = 0;
+        this.lastSize = null;
         lines.addAll(Arrays.asList(text.split("\n")));
         
         int longestLine = 0;
         for(String line: lines)
-            if(line.replace("\t", "    ").length() + 1 > longestLine)
-                longestLine = line.replace("\t", "    ").length() + 1;
+            if(line.replace("\t", "    ").length() > longestLine)
+                longestLine = line.replace("\t", "    ").length();
         this.longestLine = longestLine;
     }
 
     public TerminalSize getPreferredSize()
     {
         return new TerminalSize(
-                maxSize.getColumns() < longestLine ? maxSize.getColumns() : longestLine, 
-                maxSize.getRows() < lines.size() ? maxSize.getRows() : lines.size());
+                preferredSize.getColumns() > 0 ? preferredSize.getColumns() : longestLine + 1,
+                preferredSize.getRows() > 0 ? preferredSize.getRows() : lines.size() + 1);
     }
 
     public void repaint(TextGraphics graphics)
     {
+        lastSize = new TerminalSize(graphics.getWidth(), graphics.getHeight());
+        
+        //Do we need to recalculate the scroll position? 
+        //This code would be triggered by resizing the window when the scroll
+        //position is at the bottom
+        if(lines.size() > graphics.getHeight() &&
+                lines.size() - scrollTopIndex < graphics.getHeight()) {
+            scrollTopIndex = lines.size() - graphics.getHeight();
+        }
+        if(longestLine > graphics.getWidth() &&
+                longestLine - scrollLeftIndex < graphics.getWidth()) {
+            scrollLeftIndex = longestLine - graphics.getWidth();
+        }
+        
         graphics.applyTheme(Theme.Category.ListItem);
         graphics.fillArea(' ');
 
@@ -90,13 +114,33 @@ public class StaticTextArea  extends AbstractInteractableComponent
             
             //Finally print the 'tick'
             int scrollableSize = lines.size() - graphics.getHeight();
-            double position = (double)scrollTopIndex / ((double)scrollableSize - 1.0);
+            double position = (double)scrollTopIndex / ((double)scrollableSize);
             int tickPosition = (int)(((double)graphics.getHeight() - 3.0) * position);
 
             graphics.applyTheme(Theme.Category.Shadow);
             graphics.drawString(graphics.getWidth() - 1, 1 + tickPosition, " ");
-            setHotspot(graphics.translateToGlobalCoordinates(new TerminalPosition(graphics.getWidth() - 1, 1 + tickPosition)));
         }
+        if(longestLine > graphics.getWidth()) {
+            graphics.applyTheme(Theme.Category.DialogArea);
+            graphics.drawString(0, graphics.getHeight() - 1, ACS.ARROW_LEFT + "");
+
+            graphics.applyTheme(Theme.Category.DialogArea);
+            for(int i = 1; i < graphics.getWidth() - 2; i++)
+                graphics.drawString(i, graphics.getHeight() - 1, ACS.BLOCK_MIDDLE + "");
+
+            graphics.applyTheme(Theme.Category.DialogArea);
+            graphics.drawString(graphics.getWidth() - 2, graphics.getHeight() - 1, ACS.ARROW_RIGHT + "");
+            
+            //Finally print the 'tick'
+            int scrollableSize = longestLine - graphics.getWidth();
+            double position = (double)scrollLeftIndex / ((double)scrollableSize);
+            int tickPosition = (int)(((double)graphics.getWidth() - 4.0) * position);
+
+            graphics.applyTheme(Theme.Category.Shadow);
+            graphics.drawString(1 + tickPosition, graphics.getHeight() - 1, " ");
+        }
+            
+        setHotspot(graphics.translateToGlobalCoordinates(new TerminalPosition(0, 0)));
     }
 
     public Result keyboardInteraction(Key key)
@@ -104,16 +148,24 @@ public class StaticTextArea  extends AbstractInteractableComponent
         try {
             switch(key.getKind()) {
                 case Tab:
-                case ArrowRight:
                 case Enter:
                     return Result.NEXT_INTERACTABLE_RIGHT;
 
                 case ReverseTab:
-                case ArrowLeft:
                     return Result.PREVIOUS_INTERACTABLE_LEFT;
 
+                case ArrowRight:
+                    if(lastSize != null && scrollLeftIndex < longestLine - lastSize.getColumns())
+                        scrollLeftIndex++;
+                    break;
+
+                case ArrowLeft:
+                    if(scrollLeftIndex > 0)
+                        scrollLeftIndex--;
+                    break;
+
                 case ArrowDown:
-                    if(scrollTopIndex < lines.size() - maxSize.getRows())
+                    if(lastSize != null && scrollTopIndex < lines.size() - lastSize.getRows())
                         scrollTopIndex++;
                     break;
 
@@ -129,10 +181,20 @@ public class StaticTextArea  extends AbstractInteractableComponent
         }
     }
 
+    @Override
+    public boolean isScrollable() {
+        return true;
+    }
+
     private void printItem(TextGraphics graphics, int x, int y, String text)
     {
         //TODO: fix this
         text = text.replace("\t", "    ");
+        
+        if(scrollLeftIndex >= text.length())
+            text = "";
+        else
+            text = text.substring(scrollLeftIndex);
         
         if(text.length() > graphics.getWidth())
             text = text.substring(0, graphics.getWidth());
