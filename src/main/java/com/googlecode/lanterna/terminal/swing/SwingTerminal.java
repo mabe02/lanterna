@@ -474,7 +474,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
                     graphics2D.drawString(character.toString(), col * charWidth, ((row + 1) * charHeight) - fontMetrics.getDescent());
                     
                     if(character.isBold())
-                        graphics2D.setFont(terminalFont);
+                        graphics2D.setFont(terminalFont);   //Restore the original font
                 }
             }
             graphics2D.dispose();
