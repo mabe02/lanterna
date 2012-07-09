@@ -161,6 +161,9 @@ public class Screen
         return terminal.readInput();
     }
 
+    /**
+     * @return Size of the screen
+     */
     public TerminalSize getTerminalSize()
     {
         synchronized(mutex) {
@@ -268,9 +271,9 @@ public class Screen
     }
 
     /**
-     * This method will check if there are any resize commands pending and
-     * apply them to the Screen
-     * @return true if the size is the same as before, false if the screen was resized
+     * This method will check if there are any resize commands pending. If true, 
+     * you need to call refresh() to perform the screen resize
+     * @return true if the size is the same as before, false if the screen should be resized
      */
     public boolean resizePending()
     {
