@@ -307,7 +307,7 @@ public class Screen
                 {
                     ScreenCharacter c = backbuffer[y][x];
                     if(!c.equals(visibleScreen[y][x]) || wholeScreenInvalid) {
-                        visibleScreen[y][x] = new ScreenCharacter(c);
+                        visibleScreen[y][x] = c;    //Remember, ScreenCharacter is immutable, we don't need to worry about it being modified
                         updateMap.put(new TerminalPosition(x, y), c);
                     }
                 }
