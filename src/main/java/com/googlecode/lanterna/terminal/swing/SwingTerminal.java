@@ -47,6 +47,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
     
     private final TerminalRenderer terminalRenderer;
     private final Font terminalFont;
+    private final Font boldTerminalFont;
     private final Timer blinkTimer;
     
     private JFrame terminalFrame;
@@ -56,6 +57,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
     private Color currentBackgroundColor;
     private boolean currentlyBold;
     private boolean currentlyBlinking;
+    private boolean currentlyUnderlined;
     private boolean blinkVisible;
     private Queue<Key> keyQueue;
     
@@ -78,12 +80,23 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
     
     public SwingTerminal(Font terminalFont)
     {
-        this(terminalFont, 160, 40);
+        this(terminalFont, terminalFont);
+    }
+    
+    public SwingTerminal(Font terminalFont, Font boldTerminalFont)
+    {
+        this(terminalFont, boldTerminalFont, 160, 40);
     }
     
     public SwingTerminal(Font terminalFont, int widthInColumns, int heightInRows)
     {
+        this(terminalFont, terminalFont, widthInColumns, heightInRows);
+    }
+    
+    public SwingTerminal(Font terminalFont, Font boldTerminalFont, int widthInColumns, int heightInRows)
+    {
         this.terminalFont = terminalFont;
+        this.boldTerminalFont = boldTerminalFont;
         this.terminalRenderer = new TerminalRenderer();
         this.blinkTimer = new Timer(500, new BlinkAction());
         this.textPosition = new TerminalPosition(0, 0);
@@ -92,6 +105,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
         this.currentBackgroundColor = Color.BLACK;
         this.currentlyBold = false;
         this.currentlyBlinking = false;
+        this.currentlyUnderlined = false;
         this.blinkVisible = false;
         this.keyQueue = new ConcurrentLinkedQueue<Key>();
         this.resizeMutex = new Object();
@@ -130,6 +144,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
             if(sgr == SGR.RESET_ALL) {
                 currentlyBold = false;
                 currentlyBlinking = false;
+                currentlyUnderlined = false;
                 currentForegroundColor = Color.DEFAULT;
                 currentBackgroundColor = Color.DEFAULT;
             }
@@ -141,6 +156,10 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
                 currentlyBlinking = true;
             else if(sgr == SGR.EXIT_BLINK)
                 currentlyBlinking = false;
+            else if(sgr == SGR.ENTER_UNDERLINE)
+                currentlyUnderlined = true;
+            else if(sgr == SGR.EXIT_UNDERLINE)
+                currentlyUnderlined = false;
         }
     }
 
@@ -149,7 +168,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
         synchronized(resizeMutex) {
             for(int y = 0; y < size().getRows(); y++)
                 for(int x = 0; x < size().getColumns(); x++)
-                    this.characterMap[y][x] = new TerminalCharacter(' ', Color.WHITE, Color.BLACK, false, false);
+                    this.characterMap[y][x] = new TerminalCharacter(' ', Color.WHITE, Color.BLACK, false, false, false);
             moveCursor(0,0);
         }
     }
@@ -200,7 +219,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
     public synchronized void putCharacter(char c)
     {
         characterMap[textPosition.getRow()][textPosition.getColumn()] =
-                new TerminalCharacter(c, currentForegroundColor, currentBackgroundColor, currentlyBold, currentlyBlinking);
+                new TerminalCharacter(c, currentForegroundColor, currentBackgroundColor, currentlyBold, currentlyBlinking, currentlyUnderlined);
         if(textPosition.getColumn() == size().getColumns() - 1 &&
                 textPosition.getRow() == size().getRows() - 1)
             moveCursor(0, textPosition.getRow());
@@ -221,7 +240,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
         TerminalCharacter [][]newCharacterMap = new TerminalCharacter[newSizeRows][newSizeColumns];
         for(int y = 0; y < newSizeRows; y++)
             for(int x = 0; x < newSizeColumns; x++)
-                newCharacterMap[y][x] = new TerminalCharacter(' ', Color.WHITE, Color.BLACK, false, false);
+                newCharacterMap[y][x] = new TerminalCharacter(' ', Color.WHITE, Color.BLACK, false, false, false);
 
         synchronized(resizeMutex) {
             for(int y = 0; y < size().getRows() && y < newSizeRows; y++) {
@@ -456,7 +475,18 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
                     else
                         graphics2D.setColor(character.getForegroundAsAWT());
                         
+                    if(character.isBold())
+                        graphics2D.setFont(boldTerminalFont);
+                    
+                    if(character.isUnderlined())
+                        graphics2D.drawLine(
+                                col * charWidth, ((row + 1) * charHeight) - 1, 
+                                (col+1) * charWidth, ((row + 1) * charHeight) - 1);
+                        
                     graphics2D.drawString(character.toString(), col * charWidth, ((row + 1) * charHeight) - fontMetrics.getDescent());
+                    
+                    if(character.isBold())
+                        graphics2D.setFont(terminalFont);   //Restore the original font
                 }
             }
             graphics2D.dispose();
@@ -465,19 +495,21 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
 
     private class TerminalCharacter
     {
-        private char character;
-        private Color foreground;
-        private Color background;
-        private boolean bold;
-        private boolean blinking;
+        private final char character;
+        private final Color foreground;
+        private final Color background;
+        private final boolean bold;
+        private final boolean blinking;
+        private final boolean underlined;
 
-        public TerminalCharacter(char character, Color foreground, Color background, boolean bold, boolean blinking)
+        public TerminalCharacter(char character, Color foreground, Color background, boolean bold, boolean blinking, boolean underlined)
         {
             this.character = character;
             this.foreground = foreground;
             this.background = background;
             this.bold = bold;
             this.blinking = blinking;
+            this.underlined = underlined;
         }
 
         public Color getBackground()
@@ -492,6 +524,10 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
 
         public boolean isBlinking() {
             return blinking;
+        }
+
+        public boolean isUnderlined() {
+            return underlined;
         }
         
         public char getCharacter()

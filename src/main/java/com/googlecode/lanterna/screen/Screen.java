@@ -90,13 +90,8 @@ public class Screen
 
         this.terminal.addResizeListener(new TerminalResizeListener());
 
-        ScreenCharacter background = new ScreenCharacter(new ScreenCharacter(' '));
-        for(int y = 0; y < terminalHeight; y++) {
-            for(int x = 0; x < terminalWidth; x++) {
-                visibleScreen[y][x] = new ScreenCharacter(background);
-                backbuffer[y][x] = new ScreenCharacter(background);
-            }
-        }
+        //Initialize the screen
+        clear();
     }
 
     /**
@@ -166,6 +161,9 @@ public class Screen
         return terminal.readInput();
     }
 
+    /**
+     * @return Size of the screen
+     */
     public TerminalSize getTerminalSize()
     {
         synchronized(mutex) {
@@ -205,6 +203,24 @@ public class Screen
         hasBeenActivated = false;
     }
 
+    /**
+     * Erases all the characters on the screen, effectively giving you a blank
+     * area. The default background color will be used, if you want to fill the
+     * screen with a different color you will need to do this manually.
+     */
+    public void clear() {        
+        //ScreenCharacter is immutable, so we can use it for every element
+        ScreenCharacter background = new ScreenCharacter(' ');
+        
+        synchronized(mutex) {
+            for(int y = 0; y < terminalSize.getRows(); y++) {
+                for(int x = 0; x < terminalSize.getColumns(); x++) {
+                    backbuffer[y][x] = background;
+                }
+            }
+        }
+    }
+    
     /**
      * Draws a string on the screen at a particular position
      * @param x 0-indexed column number of where to put the first character in the string
@@ -249,14 +265,16 @@ public class Screen
             if(y < 0 || y >= backbuffer.length || x < 0 || x >= backbuffer[0].length)
                 return;
 
-            backbuffer[y][x] = new ScreenCharacter(character);
+            //Only create a new character if the 
+            if(!backbuffer[y][x].equals(character))
+                backbuffer[y][x] = new ScreenCharacter(character);
         }
     }
 
     /**
-     * This method will check if there are any resize commands pending and
-     * apply them to the Screen
-     * @return true if the size is the same as before, false if the screen was resized
+     * This method will check if there are any resize commands pending. If true, 
+     * you need to call refresh() to perform the screen resize
+     * @return true if the size is the same as before, false if the screen should be resized
      */
     public boolean resizePending()
     {
@@ -288,7 +306,7 @@ public class Screen
                 {
                     ScreenCharacter c = backbuffer[y][x];
                     if(!c.equals(visibleScreen[y][x]) || wholeScreenInvalid) {
-                        visibleScreen[y][x] = new ScreenCharacter(c);
+                        visibleScreen[y][x] = c;    //Remember, ScreenCharacter is immutable, we don't need to worry about it being modified
                         updateMap.put(new TerminalPosition(x, y), c);
                     }
                 }
