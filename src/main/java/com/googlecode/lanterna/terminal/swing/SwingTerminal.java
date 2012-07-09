@@ -47,6 +47,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
     
     private final TerminalRenderer terminalRenderer;
     private final Font terminalFont;
+    private final Font boldTerminalFont;
     private final Timer blinkTimer;
     
     private JFrame terminalFrame;
@@ -78,12 +79,23 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
     
     public SwingTerminal(Font terminalFont)
     {
-        this(terminalFont, 160, 40);
+        this(terminalFont, terminalFont);
+    }
+    
+    public SwingTerminal(Font terminalFont, Font boldTerminalFont)
+    {
+        this(terminalFont, boldTerminalFont, 160, 40);
     }
     
     public SwingTerminal(Font terminalFont, int widthInColumns, int heightInRows)
     {
+        this(terminalFont, terminalFont, widthInColumns, heightInRows);
+    }
+    
+    public SwingTerminal(Font terminalFont, Font boldTerminalFont, int widthInColumns, int heightInRows)
+    {
         this.terminalFont = terminalFont;
+        this.boldTerminalFont = boldTerminalFont;
         this.terminalRenderer = new TerminalRenderer();
         this.blinkTimer = new Timer(500, new BlinkAction());
         this.textPosition = new TerminalPosition(0, 0);
@@ -456,7 +468,13 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
                     else
                         graphics2D.setColor(character.getForegroundAsAWT());
                         
+                    if(character.isBold())
+                        graphics2D.setFont(boldTerminalFont);
+                    
                     graphics2D.drawString(character.toString(), col * charWidth, ((row + 1) * charHeight) - fontMetrics.getDescent());
+                    
+                    if(character.isBold())
+                        graphics2D.setFont(terminalFont);
                 }
             }
             graphics2D.dispose();
