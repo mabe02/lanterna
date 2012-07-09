@@ -215,7 +215,6 @@ public class Screen
         synchronized(mutex) {
             for(int y = 0; y < terminalSize.getRows(); y++) {
                 for(int x = 0; x < terminalSize.getColumns(); x++) {
-                    visibleScreen[y][x] = background;
                     backbuffer[y][x] = background;
                 }
             }
