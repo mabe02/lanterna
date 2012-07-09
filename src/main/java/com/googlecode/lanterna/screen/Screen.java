@@ -266,7 +266,9 @@ public class Screen
             if(y < 0 || y >= backbuffer.length || x < 0 || x >= backbuffer[0].length)
                 return;
 
-            backbuffer[y][x] = new ScreenCharacter(character);
+            //Only create a new character if the 
+            if(!backbuffer[y][x].equals(character))
+                backbuffer[y][x] = new ScreenCharacter(character);
         }
     }
 
