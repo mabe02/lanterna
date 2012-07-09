@@ -22,6 +22,7 @@ package com.googlecode.lanterna.test.terminal;
 import com.googlecode.lanterna.TerminalFacade;
 import com.googlecode.lanterna.terminal.ACS;
 import com.googlecode.lanterna.terminal.Terminal;
+import java.awt.Font;
 
 /**
  *
@@ -30,7 +31,7 @@ import com.googlecode.lanterna.terminal.Terminal;
 public class SwingTerminalTest {
     public static void main(String[] args) throws InterruptedException
     {
-        Terminal terminal = TerminalFacade.createSwingTerminal();
+        Terminal terminal = TerminalFacade.createSwingTerminal(new Font("Courier New", Font.PLAIN, 14), new Font("Courier New", Font.BOLD, 14));
         terminal.enterPrivateMode();
         terminal.clearScreen();
         terminal.moveCursor(10, 5);
@@ -50,6 +51,25 @@ public class SwingTerminalTest {
         terminal.putCharacter(ACS.DOUBLE_LINE_T_DOWN);
         terminal.putCharacter(ACS.SINGLE_LINE_VERTICAL);
         terminal.putCharacter(ACS.SINGLE_LINE_HORIZONTAL);
+        terminal.moveCursor(10, 7);
+        terminal.applySGR(Terminal.SGR.ENTER_BOLD);
+        terminal.putCharacter('H');
+        terminal.putCharacter('e');
+        terminal.putCharacter('l');
+        terminal.putCharacter('l');
+        terminal.putCharacter('o');
+        terminal.putCharacter('!');
+        terminal.putCharacter(' ');
+        terminal.putCharacter(ACS.HEART);
+        terminal.putCharacter(ACS.SPADES);
+        terminal.putCharacter(ACS.CLUB);
+        terminal.putCharacter(ACS.DIAMOND);
+        terminal.putCharacter(ACS.DOUBLE_LINE_CROSS);
+        terminal.putCharacter(ACS.SINGLE_LINE_CROSS);
+        terminal.putCharacter(ACS.DOUBLE_LINE_T_DOWN);
+        terminal.putCharacter(ACS.SINGLE_LINE_VERTICAL);
+        terminal.putCharacter(ACS.SINGLE_LINE_HORIZONTAL);
+        terminal.applySGR(Terminal.SGR.RESET_ALL);
         terminal.moveCursor(0, 0);
 
         Thread.sleep(5000);
