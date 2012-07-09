@@ -90,7 +90,7 @@ public class Screen
 
         this.terminal.addResizeListener(new TerminalResizeListener());
 
-        ScreenCharacter background = new ScreenCharacter(new ScreenCharacter(' '));
+        ScreenCharacter background = new ScreenCharacter(' ');
         for(int y = 0; y < terminalHeight; y++) {
             for(int x = 0; x < terminalWidth; x++) {
                 visibleScreen[y][x] = new ScreenCharacter(background);
