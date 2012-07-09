@@ -127,6 +127,19 @@ public class TerminalFacade {
     
     /**
      * Creates a new {@code SwingTerminal} object, a simple Swing terminal emulator,
+     * 100 columns wide and 30 rows high.
+     * @param terminalFont What font the terminal emulator should use to render 
+     * normal text, this should be a monospaced font
+     * @param boldTerminalFont  What font the terminal emulator should use to render
+     * bold text, this should be a monospaced font
+     */
+    public static SwingTerminal createSwingTerminal(Font terminalFont, Font boldTerminalFont)
+    {
+        return createSwingTerminal(terminalFont, boldTerminalFont, 100, 30);
+    }
+    
+    /**
+     * Creates a new {@code SwingTerminal} object, a simple Swing terminal emulator,
      * with specified dimensions.
      * @param terminalFont What font the terminal emulator should use to render text,
      * you should only use monospaced fonts
@@ -142,7 +155,7 @@ public class TerminalFacade {
      * Creates a new {@code SwingTerminal} object, a simple Swing terminal emulator,
      * with specified dimensions.
      * @param terminalFont What font the terminal emulator should use to render 
-     * normal text, this should be a monospaced font     * 
+     * normal text, this should be a monospaced font
      * @param boldTerminalFont  What font the terminal emulator should use to render
      * bold text, this should be a monospaced font
      * @param columns Width of the terminal window, in text columns <b>not</b> pixels
