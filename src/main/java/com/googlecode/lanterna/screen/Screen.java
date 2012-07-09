@@ -90,13 +90,8 @@ public class Screen
 
         this.terminal.addResizeListener(new TerminalResizeListener());
 
-        ScreenCharacter background = new ScreenCharacter(' ');
-        for(int y = 0; y < terminalHeight; y++) {
-            for(int x = 0; x < terminalWidth; x++) {
-                visibleScreen[y][x] = new ScreenCharacter(background);
-                backbuffer[y][x] = new ScreenCharacter(background);
-            }
-        }
+        //Initialize the screen
+        clear();
     }
 
     /**
@@ -205,6 +200,25 @@ public class Screen
         hasBeenActivated = false;
     }
 
+    /**
+     * Erases all the characters on the screen, effectively giving you a blank
+     * area. The default background color will be used, if you want to fill the
+     * screen with a different color you will need to do this manually.
+     */
+    public void clear() {        
+        //ScreenCharacter is immutable, so we can use it for every element
+        ScreenCharacter background = new ScreenCharacter(' ');
+        
+        synchronized(mutex) {
+            for(int y = 0; y < terminalSize.getRows(); y++) {
+                for(int x = 0; x < terminalSize.getColumns(); x++) {
+                    visibleScreen[y][x] = background;
+                    backbuffer[y][x] = background;
+                }
+            }
+        }
+    }
+    
     /**
      * Draws a string on the screen at a particular position
      * @param x 0-indexed column number of where to put the first character in the string
