@@ -483,11 +483,11 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
 
     private class TerminalCharacter
     {
-        private char character;
-        private Color foreground;
-        private Color background;
-        private boolean bold;
-        private boolean blinking;
+        private final char character;
+        private final Color foreground;
+        private final Color background;
+        private final boolean bold;
+        private final boolean blinking;
 
         public TerminalCharacter(char character, Color foreground, Color background, boolean bold, boolean blinking)
         {
