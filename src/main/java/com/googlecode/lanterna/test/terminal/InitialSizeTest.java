@@ -19,7 +19,9 @@
 package com.googlecode.lanterna.test.terminal;
 
 import com.googlecode.lanterna.terminal.Terminal;
+import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.test.TestTerminalFactory;
+import java.util.concurrent.CountDownLatch;
 
 /**
  *
@@ -27,15 +29,33 @@ import com.googlecode.lanterna.test.TestTerminalFactory;
  */
 public class InitialSizeTest {
     public static void main(String[] args) {
-        Terminal rawTerminal = new TestTerminalFactory(args).createTerminal();
+        final Terminal rawTerminal = new TestTerminalFactory(args).createTerminal();
         rawTerminal.enterPrivateMode();
         rawTerminal.clearScreen();
+        
         rawTerminal.moveCursor(5, 5);
         printString(rawTerminal, "Waiting for initial size...");
-        while(rawTerminal.queryTerminalSize() == null) {
-            rawTerminal.flush();
-            Thread.yield();
+        rawTerminal.flush();
+        
+        final CountDownLatch resizeSignal = new CountDownLatch(1);
+        final TerminalSize initialSize = new TerminalSize(0, 0);
+        
+        new Thread(new Runnable() {
+            public void run() {
+                rawTerminal.addResizeListener(new Terminal.ResizeListener() {
+                    public void onResized(TerminalSize newSize) {
+                        initialSize.setColumns(newSize.getColumns());
+                        initialSize.setRows(newSize.getRows());
+                        resizeSignal.countDown();
+                    }
+                });
+            }
+        }).start();
+        rawTerminal.queryTerminalSize();        
+        try {
+            resizeSignal.await();
         }
+        catch(InterruptedException e) {}
         
         rawTerminal.clearScreen();
         rawTerminal.moveCursor(5, 5);
