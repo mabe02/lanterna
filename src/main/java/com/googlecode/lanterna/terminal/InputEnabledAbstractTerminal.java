@@ -19,10 +19,14 @@
 
 package com.googlecode.lanterna.terminal;
 
+import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.input.InputDecoder;
 import com.googlecode.lanterna.input.InputProvider;
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.input.KeyMappingProfile;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.Queue;
 
 /**
  * This is an abstract terminal that can also read input events (keys), with a
@@ -30,26 +34,69 @@ import com.googlecode.lanterna.input.KeyMappingProfile;
  * @author Martin
  */
 public abstract class InputEnabledAbstractTerminal extends AbstractTerminal implements InputProvider {
-    protected final InputDecoder inputDecoder;
+    private final InputDecoder inputDecoder;
+    private final Queue<Key> keyQueue;
+    private final Object readMutex;
 
     public InputEnabledAbstractTerminal(InputDecoder inputDecoder) {
         this.inputDecoder = inputDecoder;
+        this.keyQueue = new LinkedList<Key>();
+        this.readMutex = new Object();
     }
     
     public void addInputProfile(KeyMappingProfile profile) {
         inputDecoder.addProfile(profile);
     }
+    
+    protected TerminalSize waitForTerminalSizeReport(int timeoutMs) {
+        long startTime = System.currentTimeMillis();
+        synchronized(readMutex) {
+            while(System.currentTimeMillis() - startTime < timeoutMs) {
+                Key key = inputDecoder.getNextCharacter();
+                if(key == null) {
+                    try {
+                        Thread.sleep(1);
+                    }
+                    catch(InterruptedException e) {}
+                    continue;
+                }
+                
+                if(key.getKind() != Key.Kind.CursorLocation) {
+                    keyQueue.add(key);
+                }
+                else {
+                    TerminalPosition reportedTerminalPosition = inputDecoder.getLastReportedTerminalPosition();
+                    if(reportedTerminalPosition != null)
+                        onResized(reportedTerminalPosition.getColumn(), reportedTerminalPosition.getRow());
+                    else
+                        throw new LanternaException(new IOException("Unexpected: inputDecoder.getLastReportedTerminalPosition() "
+                                + "returned null after position was reported"));
+                    return new TerminalSize(reportedTerminalPosition.getColumn(), reportedTerminalPosition.getRow());
+                }                    
+            }
+        }
+        throw new LanternaException(
+                new IOException(
+                    "Timeout while waiting for terminal size report! "
+                    + "Maybe your terminal doesn't support cursor position report, please "
+                    + "consider using a custom size querier"));
+    }
 
     public Key readInput() {
-        Key key = inputDecoder.getNextCharacter();
-        if (key != null && key.getKind() == Key.Kind.CursorLocation) {
-            TerminalPosition reportedTerminalPosition = inputDecoder.getLastReportedTerminalPosition();
-            if (reportedTerminalPosition != null)
-                onResized(reportedTerminalPosition.getColumn(), reportedTerminalPosition.getRow());
+        synchronized(readMutex) {
+            if(!keyQueue.isEmpty())
+                return keyQueue.poll();
             
-            return readInput();
-        } else {
-            return key;
+            Key key = inputDecoder.getNextCharacter();
+            if (key != null && key.getKind() == Key.Kind.CursorLocation) {
+                TerminalPosition reportedTerminalPosition = inputDecoder.getLastReportedTerminalPosition();
+                if (reportedTerminalPosition != null)
+                    onResized(reportedTerminalPosition.getColumn(), reportedTerminalPosition.getRow());
+
+                return readInput();
+            } else {
+                return key;
+            }
         }
     }    
 }

@@ -20,6 +20,7 @@
 package com.googlecode.lanterna.terminal.text;
 
 import com.googlecode.lanterna.input.CommonProfile;
+import com.googlecode.lanterna.terminal.TerminalSize;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
@@ -40,6 +41,23 @@ public abstract class ANSITerminal extends StreamBasedTerminal
     private void CSI()
     {
         writeToTerminal((byte)0x1b, (byte)'[');
+    }
+    
+    @Deprecated
+    public TerminalSize queryTerminalSize()
+    {        
+        synchronized(writerMutex) {
+            saveCursorPosition();
+            moveCursor(5000, 5000);
+            reportPosition();
+            restoreCursorPosition();
+        }
+        return getLastKnownSize();
+    }
+
+    public TerminalSize getTerminalSize() {
+        queryTerminalSize();
+        return waitForTerminalSizeReport(1000); //Wait 1 second for the terminal size report to come, is this reasonable?
     }
 
     public void applyBackgroundColor(Color color)

@@ -71,18 +71,22 @@ public class UnixTerminal extends ANSITerminal
         }
     }
 
+    @Deprecated
+    @Override
     public TerminalSize queryTerminalSize()
     {
         if(terminalSizeQuerier != null)
             return terminalSizeQuerier.queryTerminalSize();
         
-        synchronized(writerMutex) {
-            saveCursorPosition();
-            moveCursor(5000, 5000);
-            reportPosition();
-            restoreCursorPosition();
-        }
-        return getLastKnownSize();
+        return super.queryTerminalSize();
+    }
+
+    @Override
+    public TerminalSize getTerminalSize() {
+        if(terminalSizeQuerier != null)
+            return terminalSizeQuerier.queryTerminalSize();
+        
+        return super.getTerminalSize();
     }
     
     @Override

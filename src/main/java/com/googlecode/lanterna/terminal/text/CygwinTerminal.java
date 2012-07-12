@@ -51,17 +51,6 @@ public class CygwinTerminal extends ANSITerminal {
         onResized(80, 20);
         resizeCheckTimer = null;
     }
-
-    public TerminalSize queryTerminalSize()
-    {        
-        synchronized(writerMutex) {
-            saveCursorPosition();
-            moveCursor(5000, 5000);
-            reportPosition();
-            restoreCursorPosition();
-        }
-        return getLastKnownSize();
-    }
     
     @Override
     public void enterPrivateMode()
