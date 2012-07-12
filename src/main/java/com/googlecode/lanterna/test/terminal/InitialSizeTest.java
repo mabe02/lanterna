@@ -37,31 +37,12 @@ public class InitialSizeTest {
         printString(rawTerminal, "Waiting for initial size...");
         rawTerminal.flush();
         
-        final CountDownLatch resizeSignal = new CountDownLatch(1);
-        final TerminalSize initialSize = new TerminalSize(0, 0);
-        
-        new Thread(new Runnable() {
-            public void run() {
-                rawTerminal.addResizeListener(new Terminal.ResizeListener() {
-                    public void onResized(TerminalSize newSize) {
-                        initialSize.setColumns(newSize.getColumns());
-                        initialSize.setRows(newSize.getRows());
-                        resizeSignal.countDown();
-                    }
-                });
-            }
-        }).start();
-        rawTerminal.queryTerminalSize();        
-        try {
-            resizeSignal.await();
-        }
-        catch(InterruptedException e) {}
-        
+        TerminalSize initialSize = rawTerminal.getTerminalSize();
         rawTerminal.clearScreen();
         rawTerminal.moveCursor(5, 5);
         printString(rawTerminal, "Initial size: ");
         rawTerminal.applySGR(Terminal.SGR.ENTER_BOLD);
-        printString(rawTerminal, rawTerminal.queryTerminalSize().toString());
+        printString(rawTerminal, initialSize.toString());
         rawTerminal.applySGR(Terminal.SGR.RESET_ALL);
         rawTerminal.flush();        
         
