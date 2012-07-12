@@ -123,8 +123,19 @@ public interface Terminal extends InputProvider
      * @return a {@code TerminalSize} object representing the size of the terminal
      * @throws LanternaException 
      * @see TerminalSize
+     * @deprecated Being deprecated since 2.0.1 in favor of getTerminalSize()
      */
+    @Deprecated
     public TerminalSize queryTerminalSize();
+    
+    /**
+     * Returns the size of the terminal, expressed as a {@code TerminalSize}
+     * object. Please bear in mind that depending on the {@code Terminal}
+     * implementation, this may or may not be accurate. See the implementing
+     * classes for more information.
+     * @return Size of the terminal
+     */
+    public TerminalSize getTerminalSize();
     
     /**
      * Calls {@code flush()} on the underlying {@code OutputStream} object, or
