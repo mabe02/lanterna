@@ -231,14 +231,12 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
 
     public TerminalSize queryTerminalSize()
     {
-        //Just bypass to size()
-        TerminalSize size = size();
-        
-        //We need to keep compatible with the text terminals, that will cause a
-        //resize event when you query for their size
-        onResized(size.getColumns(), size.getRows());
-        
-        return size;
+        //Just bypass to getTerminalSize()
+        return getTerminalSize();
+    }
+
+    public TerminalSize getTerminalSize() {
+        return size();
     }
 
     private synchronized void resize(int newSizeColumns, int newSizeRows)
