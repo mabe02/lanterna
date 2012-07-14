@@ -114,6 +114,22 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
         clearScreen();        
     }
     
+    /**
+     * This method will give you the underlying JFrame for this terminal.
+     * Please be careful when calling methods on the JFrame, especially if 
+     * you modify the rendering or content pane, since that may cause the
+     * terminal rendering to malfunction.
+     * 
+     * <p>Good uses of this method is to set the window title, window icon list
+     * and so on. If you add more logic to this JFrame, you should probably
+     * ask yourself why you are using Lanterna to begin with.
+     * 
+     * @return JFrame object used by this SwingTerminal
+     */
+    public JFrame getJFrame() {
+        return terminalFrame;
+    }
+    
     private class BlinkAction implements ActionListener 
     {
         public void actionPerformed(ActionEvent e) 
