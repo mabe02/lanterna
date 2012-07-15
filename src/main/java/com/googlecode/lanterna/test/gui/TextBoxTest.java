@@ -43,7 +43,7 @@ public class TextBoxTest
         for(int i = 0; i < 5; i++) {
             Panel editPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORISONTAL);
             editPanel.addComponent(new Label("TextBox " + (i+1) + ":"));
-            editPanel.addComponent(new TextBox(20, ""));
+            editPanel.addComponent(new TextBox("", 20));
             mainPanel.addComponent(editPanel);
         }
         window1.addComponent(mainPanel);
