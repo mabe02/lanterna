@@ -118,9 +118,16 @@ public class GUIScreen
         for(WindowPlacement windowPlacement: windowStack) {
             if(hasSoloWindowAbove(windowPlacement))
                 continue;
+            if(hasFullScreenWindowAbove(windowPlacement))
+                continue;
             
             TerminalPosition topLeft = windowPlacement.getTopLeft();
-            TerminalSize preferredSize = windowPlacement.getWindow().getPreferredSize();
+            TerminalSize preferredSize;
+            if(windowPlacement.getPositionPolicy() == Position.FULL_SCREEN)
+                preferredSize = new TerminalSize(screenSizeColumns, screenSizeRows);
+            else
+                preferredSize = windowPlacement.getWindow().getPreferredSize();
+            
             if(windowPlacement.positionPolicy == Position.CENTER) {
                 if(windowPlacement.getWindow().maximisesHorisontally())
                     topLeft.setColumn(2);
@@ -139,6 +146,11 @@ public class GUIScreen
                 preferredSize.setColumns(maxSizeWidth);
             if(preferredSize.getRows() > maxSizeHeight || windowPlacement.getWindow().maximisesVertically())
                 preferredSize.setRows(maxSizeHeight);
+            
+            if(windowPlacement.getPositionPolicy() == Position.FULL_SCREEN) {
+                preferredSize.setColumns(preferredSize.getColumns() + 1);
+                preferredSize.setRows(preferredSize.getRows() + 1);
+            }
             
             if(topLeft.getColumn() < 0)
                 topLeft.setColumn(0);
@@ -340,7 +352,12 @@ public class GUIScreen
         /**
          * At the center of the screen
          */
-        CENTER
+        CENTER,
+        /**
+         * The window will be maximized and take up the entire screen
+         */
+        FULL_SCREEN,
+        ;
     }
 
     private boolean hasSoloWindowAbove(WindowPlacement windowPlacement)
@@ -348,6 +365,15 @@ public class GUIScreen
         int index = windowStack.indexOf(windowPlacement);
         for(int i = index + 1; i < windowStack.size(); i++) {
             if(windowStack.get(i).window.isSoloWindow())
+                return true;
+        }
+        return false;
+    }
+    
+    private boolean hasFullScreenWindowAbove(WindowPlacement windowPlacement) {
+        int index = windowStack.indexOf(windowPlacement);
+        for(int i = index + 1; i < windowStack.size(); i++) {
+            if(windowStack.get(i).positionPolicy == Position.FULL_SCREEN)
                 return true;
         }
         return false;
@@ -383,6 +409,8 @@ public class GUIScreen
 
         public TerminalPosition getTopLeft()
         {
+            if(positionPolicy == Position.FULL_SCREEN)
+                return new TerminalPosition(0, 0);
             return topLeft;
         }
 
