@@ -46,11 +46,10 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
     private static final Font DEFAULT_TERMINAL_FONT = new Font("Courier New", Font.PLAIN, 14);
     
     private final TerminalRenderer terminalRenderer;
-    private final Font terminalFont;
-    private final Font boldTerminalFont;
     private final Timer blinkTimer;
     
     private JFrame terminalFrame;
+    private TerminalAppearance appearance;
     private TerminalCharacter [][]characterMap;
     private TerminalPosition textPosition;
     private Color currentForegroundColor;
@@ -75,28 +74,17 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
     
     public SwingTerminal(int widthInColumns, int heightInRows)
     {
-        this(DEFAULT_TERMINAL_FONT, widthInColumns, heightInRows);
+        this(TerminalAppearance.DEFAULT_APPEARANCE, widthInColumns, heightInRows);
     }
     
-    public SwingTerminal(Font terminalFont)
+    public SwingTerminal(TerminalAppearance appearance)
     {
-        this(terminalFont, terminalFont);
+        this(appearance, 160, 40);
     }
     
-    public SwingTerminal(Font terminalFont, Font boldTerminalFont)
+    public SwingTerminal(TerminalAppearance appearance, int widthInColumns, int heightInRows)
     {
-        this(terminalFont, boldTerminalFont, 160, 40);
-    }
-    
-    public SwingTerminal(Font terminalFont, int widthInColumns, int heightInRows)
-    {
-        this(terminalFont, terminalFont, widthInColumns, heightInRows);
-    }
-    
-    public SwingTerminal(Font terminalFont, Font boldTerminalFont, int widthInColumns, int heightInRows)
-    {
-        this.terminalFont = terminalFont;
-        this.boldTerminalFont = boldTerminalFont;
+        this.appearance = appearance;
         this.terminalRenderer = new TerminalRenderer();
         this.blinkTimer = new Timer(500, new BlinkAction());
         this.textPosition = new TerminalPosition(0, 0);
@@ -139,20 +127,24 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
         }
     }
 
+    @Override
     public void addInputProfile(KeyMappingProfile profile)
     {
     }
 
+    @Override
     public void applyBackgroundColor(Color color)
     {
         currentBackgroundColor = color;
     }
 
+    @Override
     public void applyForegroundColor(Color color)
     {
         currentForegroundColor = color;
     }
 
+    @Override
     public void applySGR(SGR... options)
     {
         for(SGR sgr: options)
@@ -179,6 +171,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
         }
     }
 
+    @Override
     public void clearScreen()
     {
         synchronized(resizeMutex) {
@@ -189,6 +182,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
         }
     }
 
+    @Override
     public void enterPrivateMode()
     {
         terminalFrame = new JFrame("Terminal");
@@ -206,6 +200,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
         blinkTimer.start();
     }
 
+    @Override
     public void exitPrivateMode()
     {
         if(terminalFrame == null)
@@ -216,6 +211,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
         terminalFrame.dispose();
     }
 
+    @Override
     public void moveCursor(int x, int y)
     {
         if(x < 0)
@@ -232,6 +228,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
         refreshScreen();
     }
 
+    @Override
     public synchronized void putCharacter(char c)
     {
         characterMap[textPosition.getRow()][textPosition.getColumn()] =
@@ -245,12 +242,14 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
             moveCursor(textPosition.getColumn() + 1, textPosition.getRow());
     }
 
+    @Override
     public TerminalSize queryTerminalSize()
     {
         //Just bypass to getTerminalSize()
         return getTerminalSize();
     }
 
+    @Override
     public TerminalSize getTerminalSize() {
         return size();
     }
@@ -287,13 +286,24 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
         return keyQueue.poll();
     }
 
+    @Override
     public void flush() {
         //Not needed
+    }
+    
+    /**
+     * Changes the current color palett to a new one supplied
+     * @param palette Palett to use
+     */
+    public void setTerminalPalette(TerminalPalette palette) {
+        appearance = appearance.withPalette(palette);
+        refreshScreen();
     }
 
     private void refreshScreen()
     {
         SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run()
             {
                 terminalRenderer.repaint();
@@ -311,64 +321,63 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
         return getLastKnownSize();
     }
     
-    private java.awt.Color convertColorToAWT(Color color, boolean bold)
+    private java.awt.Color convertColorToAWT(Color color, boolean bright)
     {
-        //Values below are shamelessly stolen from gnome terminal!
         switch(color)
         {
             case BLACK:
-                if(bold)
-                    return new java.awt.Color(85, 87, 83);
+                if(bright)
+                    return appearance.getColorPalette().getBrightBlack();
                 else
-                    return new java.awt.Color(46, 52, 54);
+                    return appearance.getColorPalette().getNormalBlack();
 
             case BLUE:
-                if(bold)
-                    return new java.awt.Color(114, 159, 207);
+                if(bright)
+                    return appearance.getColorPalette().getBrightBlue();
                 else
-                    return new java.awt.Color(52, 101, 164);
+                    return appearance.getColorPalette().getNormalBlue();
 
             case CYAN:
-                if(bold)
-                    return new java.awt.Color(52, 226, 226);
+                if(bright)
+                    return appearance.getColorPalette().getBrightCyan();
                 else
-                    return new java.awt.Color(6, 152, 154);
+                    return appearance.getColorPalette().getNormalCyan();
 
             case DEFAULT:
-                if(bold)
-                    return new java.awt.Color(238, 238, 236);
+                if(bright)
+                    return appearance.getColorPalette().getDefaultBrightColor();
                 else
-                    return new java.awt.Color(211, 215, 207);
+                    return appearance.getColorPalette().getDefaultColor();
 
             case GREEN:
-                if(bold)
-                    return new java.awt.Color(138, 226, 52);
+                if(bright)
+                    return appearance.getColorPalette().getBrightGreen();
                 else
-                    return new java.awt.Color(78, 154, 6);
+                    return appearance.getColorPalette().getNormalGreen();
 
             case MAGENTA:
-                if(bold)
-                    return new java.awt.Color(173, 127, 168);
+                if(bright)
+                    return appearance.getColorPalette().getBrightMagenta();
                 else
-                    return new java.awt.Color(117, 80, 123);
+                    return appearance.getColorPalette().getNormalMagenta();
 
             case RED:
-                if(bold)
-                    return new java.awt.Color(239, 41, 41);
+                if(bright)
+                    return appearance.getColorPalette().getBrightRed();
                 else
-                    return new java.awt.Color(204, 0, 0);
+                    return appearance.getColorPalette().getNormalRed();
 
             case WHITE:
-                if(bold)
-                    return new java.awt.Color(238, 238, 236);
+                if(bright)
+                    return appearance.getColorPalette().getBrightWhite();
                 else
-                    return new java.awt.Color(211, 215, 207);
+                    return appearance.getColorPalette().getNormalWhite();
 
             case YELLOW:
-                if(bold)
-                    return new java.awt.Color(252, 233, 79);
+                if(bright)
+                    return appearance.getColorPalette().getBrightYellow();
                 else
-                    return new java.awt.Color(196, 160, 0);
+                    return appearance.getColorPalette().getNormalYellow();
         }
         return java.awt.Color.PINK;
     }
@@ -441,7 +450,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
             int newWidth = contentPane.getWidth();
             int newHeight = contentPane.getHeight();
 
-            FontMetrics fontMetrics = frame.getGraphics().getFontMetrics(terminalFont);
+            FontMetrics fontMetrics = frame.getGraphics().getFontMetrics(appearance.getNormalTextFont());
             int consoleWidth = newWidth / fontMetrics.charWidth(' ');
             int consoleHeight = newHeight / fontMetrics.getHeight();
 
@@ -464,7 +473,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
         @Override
         public Dimension getPreferredSize()
         {
-            FontMetrics fontMetrics = getGraphics().getFontMetrics(terminalFont);
+            FontMetrics fontMetrics = getGraphics().getFontMetrics(appearance.getNormalTextFont());
             final int screenWidth = SwingTerminal.this.size().getColumns() * fontMetrics.charWidth(' ');
             final int screenHeight = SwingTerminal.this.size().getRows() * fontMetrics.getHeight();
             return new Dimension(screenWidth, screenHeight);
@@ -474,10 +483,10 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
         protected void paintComponent(Graphics g)
         {
             final Graphics2D graphics2D = (Graphics2D)g.create();
-            graphics2D.setFont(terminalFont);
+            graphics2D.setFont(appearance.getNormalTextFont());
             graphics2D.setColor(java.awt.Color.BLACK);
             graphics2D.fillRect(0, 0, getWidth(), getHeight());
-            final FontMetrics fontMetrics = getGraphics().getFontMetrics(terminalFont);
+            final FontMetrics fontMetrics = getGraphics().getFontMetrics(appearance.getNormalTextFont());
             final int charWidth = fontMetrics.charWidth(' ');
             final int charHeight = fontMetrics.getHeight();
             
@@ -496,7 +505,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
                         graphics2D.setColor(character.getForegroundAsAWT());
                         
                     if(character.isBold())
-                        graphics2D.setFont(boldTerminalFont);
+                        graphics2D.setFont(appearance.getBoldTextFont());
                     
                     if(character.isUnderlined())
                         graphics2D.drawLine(
@@ -506,7 +515,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
                     graphics2D.drawString(character.toString(), col * charWidth, ((row + 1) * charHeight) - fontMetrics.getDescent());
                     
                     if(character.isBold())
-                        graphics2D.setFont(terminalFont);   //Restore the original font
+                        graphics2D.setFont(appearance.getNormalTextFont());   //Restore the original font
                 }
             }
             graphics2D.dispose();
@@ -562,7 +571,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
 
         public java.awt.Color getForegroundAsAWT()
         {
-            return convertColorToAWT(foreground, bold);
+            return convertColorToAWT(foreground, bold && appearance.useBrightColorsOnBold());
         }
 
         public java.awt.Color getBackgroundAsAWT()

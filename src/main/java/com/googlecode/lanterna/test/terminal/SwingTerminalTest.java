@@ -22,7 +22,6 @@ package com.googlecode.lanterna.test.terminal;
 import com.googlecode.lanterna.TerminalFacade;
 import com.googlecode.lanterna.terminal.ACS;
 import com.googlecode.lanterna.terminal.Terminal;
-import java.awt.Font;
 
 /**
  *
@@ -31,7 +30,7 @@ import java.awt.Font;
 public class SwingTerminalTest {
     public static void main(String[] args) throws InterruptedException
     {
-        Terminal terminal = TerminalFacade.createSwingTerminal(new Font("Courier New", Font.PLAIN, 14), new Font("Courier New", Font.BOLD, 14));
+        Terminal terminal = TerminalFacade.createSwingTerminal();
         terminal.enterPrivateMode();
         terminal.clearScreen();
         terminal.moveCursor(10, 5);
