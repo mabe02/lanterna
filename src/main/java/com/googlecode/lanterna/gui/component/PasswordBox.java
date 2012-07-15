@@ -25,11 +25,23 @@ package com.googlecode.lanterna.gui.component;
  */
 public class PasswordBox extends TextBox
 {
+    /**
+     * Creates a password masked text box component, where the user can enter 
+     * text by typing on the keyboard and the characters will be represented by
+     * the * character. It will be initially empty and 10 columns wide.
+     */
     public PasswordBox()
     {
-        this(-1, "");
+        this(0, "");
     }
 
+    /**
+     * Creates a password masked text box component, where the user can enter 
+     * text by typing on the keyboard and the characters will be represented by
+     * the * character.
+     * @param width Width of the password box
+     * @param initialContent Initial text content
+     */
     public PasswordBox(int width, String initialContent)
     {
         super(width, initialContent);

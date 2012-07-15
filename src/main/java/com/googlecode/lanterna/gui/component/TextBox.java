@@ -37,20 +37,45 @@ public class TextBox extends AbstractInteractableComponent
     private int visibleLeftPosition;
     private int lastKnownWidth;
     
+    /**
+     * Creates a text box component, where the user can enter text by typing on
+     * the keyboard. It will be empty and 10 columns wide.
+     */
     public TextBox()
     {
         this("");
-    }
-    
+    }   
+
+    /**
+     * Creates a text box component, where the user can enter text by typing on
+     * the keyboard. The width of the text box will be calculated from the size
+     * of the initial content, passed in as the first argument. The text box 
+     * will at least be 10 columns wide, regardless of the content though.
+     * @param initialContent Initial text content of the text box
+     */
     public TextBox(String initialContent)
     {
-        this(-1, initialContent);
+        this(0, initialContent);
     }
 
+    /**
+     * Creates a text box component, where the user can enter text by typing on
+     * the keyboard. 
+     * @param forceWidth Width, in columns, of the text box. Set to 0 if you 
+     * want to autodetect the width based on initial content (will be set to 
+     * 10 columns in width at minimum)
+     * @param initialContent Initial text content of the text box
+     */
     public TextBox(int forceWidth, String initialContent)
     {
         if(initialContent == null)
             initialContent = "";
+        if(forceWidth <= 0) {
+            if(initialContent.length() > 10)
+                forceWidth = initialContent.length();
+            else
+                forceWidth = 10;
+        }
         
         this.forceWidth = forceWidth;
         this.backend = initialContent;
@@ -87,6 +112,7 @@ public class TextBox extends AbstractInteractableComponent
         return textboxString;
     }
 
+    @Override
     public void repaint(TextGraphics graphics)
     {
         if(hasFocus())
@@ -103,11 +129,13 @@ public class TextBox extends AbstractInteractableComponent
         lastKnownWidth = graphics.getWidth();
     }
 
+    @Override
     public TerminalSize getPreferredSize()
     {
         return new TerminalSize(forceWidth, 1);
     }
 
+    @Override
     public Result keyboardInteraction(Key key)
     {
         try {
