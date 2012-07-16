@@ -26,14 +26,13 @@ import com.googlecode.lanterna.gui.component.Button;
 import com.googlecode.lanterna.gui.component.EmptySpace;
 import com.googlecode.lanterna.gui.component.Panel;
 import com.googlecode.lanterna.gui.component.TextArea;
-import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.test.TestTerminalFactory;
 
 /**
  *
  * @author Martin
  */
-public class TextAreaTest {
+public class StaticTextAreaTest {
 
     public static void main(String[] args) {
         final GUIScreen guiScreen = new TestTerminalFactory(args).createGUIScreen();
