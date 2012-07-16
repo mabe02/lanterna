@@ -253,6 +253,18 @@ public class TextArea  extends AbstractInteractableComponent
         invalidate();
     }
     
+    public void setLine(int index, String line) {
+        String oldLine = lines.set(index, line);
+        if(oldLine.length() == longestLine) {
+            scanForLongestLine();
+        }
+        else {
+            if(line.length() > longestLine)
+                longestLine = line.length();            
+        }
+        invalidate();
+    }
+    
     public void removeLine(int lineNumber) {
         String line = lines.get(lineNumber);
         lines.remove(lineNumber);
