@@ -36,14 +36,20 @@ import java.util.List;
  * @author mberglun
  */
 public class TextArea  extends AbstractInteractableComponent
-{
+{ 
     private final List<String> lines;
     private final TerminalSize preferredSize;
-    private final int longestLine;
     
     private TerminalSize lastSize;
+    private TerminalSize maximumSize;
+    private TerminalSize minimumSize;
+    private int longestLine;
     private int scrollTopIndex;
     private int scrollLeftIndex;
+
+    public TextArea() {       
+        this("");
+    }
 
     public TextArea(String text) {       
         this(new TerminalSize(0, 0), text);
@@ -57,23 +63,34 @@ public class TextArea  extends AbstractInteractableComponent
         this.preferredSize = preferredSize;
         this.scrollTopIndex = 0;
         this.scrollLeftIndex = 0;
+        this.maximumSize = null;
+        this.minimumSize = new TerminalSize(10, 3);
         this.lastSize = null;
         lines.addAll(Arrays.asList(text.split("\n")));
-        
-        int longestLine = 0;
-        for(String line: lines)
-            if(line.replace("\t", "    ").length() > longestLine)
-                longestLine = line.replace("\t", "    ").length();
-        this.longestLine = longestLine;
+        scanForLongestLine();
     }
 
+    @Override
     public TerminalSize getPreferredSize()
     {
-        return new TerminalSize(
-                preferredSize.getColumns() > 0 ? preferredSize.getColumns() : longestLine + 1,
-                preferredSize.getRows() > 0 ? preferredSize.getRows() : lines.size() + 1);
+        int width = preferredSize.getColumns() > 0 ? preferredSize.getColumns() : longestLine + 1;
+        int height = preferredSize.getRows() > 0 ? preferredSize.getRows() : lines.size() + 1;
+        if(maximumSize != null) {
+            if(width > maximumSize.getColumns())
+                width = maximumSize.getColumns();
+            if(height > maximumSize.getRows())
+                height = maximumSize.getRows();
+        }
+        if(minimumSize != null) {
+            if(width < minimumSize.getColumns())
+                width = minimumSize.getColumns();
+            if(height < minimumSize.getRows())
+                height = minimumSize.getRows();
+        }
+        return new TerminalSize(width, height);
     }
 
+    @Override
     public void repaint(TextGraphics graphics)
     {
         lastSize = new TerminalSize(graphics.getWidth(), graphics.getHeight());
@@ -90,16 +107,20 @@ public class TextArea  extends AbstractInteractableComponent
             scrollLeftIndex = longestLine - graphics.getWidth();
         }
         
-        graphics.applyTheme(Theme.Category.ListItem);
+        if(hasFocus())
+            graphics.applyTheme(Theme.Category.TextBoxFocused);
+        else
+            graphics.applyTheme(Theme.Category.TextBox);
         graphics.fillArea(' ');
 
         for(int i = scrollTopIndex; i < lines.size(); i++) {
             if(i - scrollTopIndex >= graphics.getHeight())
                 break;
 
-            graphics.applyTheme(Theme.Category.ListItem);
             printItem(graphics, 0, 0 + i - scrollTopIndex, lines.get(i));
         }
+        
+        boolean hasSetHotSpot = false;
 
         if(lines.size() > graphics.getHeight()) {
             graphics.applyTheme(Theme.Category.DialogArea);
@@ -119,6 +140,11 @@ public class TextArea  extends AbstractInteractableComponent
 
             graphics.applyTheme(Theme.Category.Shadow);
             graphics.drawString(graphics.getWidth() - 1, 1 + tickPosition, " ");
+            
+            if(hasFocus()) {
+                setHotspot(graphics.translateToGlobalCoordinates(new TerminalPosition(graphics.getWidth() - 1, 1 + tickPosition)));
+                hasSetHotSpot = true;
+            }
         }
         if(longestLine > graphics.getWidth()) {
             graphics.applyTheme(Theme.Category.DialogArea);
@@ -140,7 +166,8 @@ public class TextArea  extends AbstractInteractableComponent
             graphics.drawString(1 + tickPosition, graphics.getHeight() - 1, " ");
         }
             
-        setHotspot(graphics.translateToGlobalCoordinates(new TerminalPosition(0, 0)));
+        if(!hasSetHotSpot)
+            setHotspot(graphics.translateToGlobalCoordinates(new TerminalPosition(0, 0)));
     }
 
     public Result keyboardInteraction(Key key)
@@ -186,6 +213,54 @@ public class TextArea  extends AbstractInteractableComponent
         return true;
     }
 
+    public void setMaximumSize(TerminalSize maximumSize) {
+        this.maximumSize = maximumSize;
+    }
+
+    public TerminalSize getMaximumSize() {
+        return maximumSize;
+    }
+
+    public void setMinimumSize(TerminalSize minimumSize) {
+        this.minimumSize = minimumSize;
+    }
+
+    public TerminalSize getMinimumSize() {
+        return minimumSize;
+    }
+    
+    public void clear() {
+        lines.clear();
+        lines.add("");
+        invalidate();
+    }
+    
+    public String getLine(int index) {
+        return lines.get(index);
+    }
+    
+    public void appendLine(String line) {
+        lines.add(line);
+        if(line.length() > longestLine)
+            longestLine = line.length();
+        invalidate();
+    }
+    
+    public void insertLine(int index, String line) {
+        lines.add(index, line);
+        if(line.length() > longestLine)
+            longestLine = line.length();
+        invalidate();
+    }
+    
+    public void removeLine(int index) {
+        String line = lines.get(index);
+        lines.remove(index);
+        if(line.length() >= longestLine)
+            scanForLongestLine();
+        invalidate();
+    }
+
     private void printItem(TextGraphics graphics, int x, int y, String text)
     {
         //TODO: fix this
@@ -199,6 +274,13 @@ public class TextArea  extends AbstractInteractableComponent
         if(text.length() > graphics.getWidth())
             text = text.substring(0, graphics.getWidth());
         graphics.drawString(x, y, text);
+    }
+
+    private void scanForLongestLine() {
+        longestLine = 0;
+        for(String line: lines)
+            if(line.replace("\t", "    ").length() > longestLine)
+                longestLine = line.replace("\t", "    ").length();
     }
 
 }
