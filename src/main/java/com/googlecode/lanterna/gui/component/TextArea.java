@@ -253,9 +253,9 @@ public class TextArea  extends AbstractInteractableComponent
         invalidate();
     }
     
-    public void removeLine(int index) {
-        String line = lines.get(index);
-        lines.remove(index);
+    public void removeLine(int lineNumber) {
+        String line = lines.get(lineNumber);
+        lines.remove(lineNumber);
         if(line.length() >= longestLine)
             scanForLongestLine();
         invalidate();
