@@ -24,6 +24,8 @@ import com.googlecode.lanterna.gui.Border;
 import com.googlecode.lanterna.gui.GUIScreen;
 import com.googlecode.lanterna.gui.Window;
 import com.googlecode.lanterna.gui.component.*;
+import com.googlecode.lanterna.gui.dialog.DialogButtons;
+import com.googlecode.lanterna.gui.dialog.MessageBox;
 import com.googlecode.lanterna.gui.layout.SizePolicy;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.test.TestTerminalFactory;
@@ -45,8 +47,8 @@ public class TextAreaTest {
         
         window1.addComponent(new EmptySpace(1, 1));
         
-        Panel editPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORISONTAL);
-        editPanel.setBetweenComponentsPadding(1);
+        Panel appendPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORISONTAL);
+        appendPanel.setBetweenComponentsPadding(1);
         final TextBox appendBox = new TextBox(30, "");
         Button appendButton = new Button("Append", new Action() {
             @Override
@@ -54,9 +56,35 @@ public class TextAreaTest {
                 textArea.appendLine(appendBox.getText());
             }
         });
-        editPanel.addComponent(appendBox);
-        editPanel.addComponent(appendButton);
-        window1.addComponent(editPanel);
+        appendPanel.addComponent(appendBox);
+        appendPanel.addComponent(appendButton);
+        window1.addComponent(appendPanel);
+        
+        Panel removePanel = new Panel(new Border.Invisible(), Panel.Orientation.HORISONTAL);
+        removePanel.setBetweenComponentsPadding(1);
+        final TextBox removeBox = new TextBox(5, "0");
+        Button removeButton = new Button("Remove line", new Action() {
+            @Override
+            public void doAction() {
+                try {
+                    int lineNumber = Integer.parseInt(removeBox.getText());
+                    textArea.removeLine(lineNumber);
+                }
+                catch(Exception e) {
+                    MessageBox.showMessageBox(guiScreen, e.getClass().getSimpleName(), e.getMessage(), DialogButtons.OK);
+                }
+            }
+        });
+        Button clearButton = new Button("Clear text", new Action() {
+            @Override
+            public void doAction() {
+                textArea.clear();
+            }
+        });
+        removePanel.addComponent(removeBox);
+        removePanel.addComponent(removeButton);
+        removePanel.addComponent(clearButton);
+        window1.addComponent(removePanel);
         
         window1.addComponent(new EmptySpace(1, 1));
         
