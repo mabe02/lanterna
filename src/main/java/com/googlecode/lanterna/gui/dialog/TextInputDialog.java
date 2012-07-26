@@ -37,14 +37,20 @@ public class TextInputDialog extends Window
     private String result;
 
     private TextInputDialog(final TextBoxFactory textBoxFactory, final String title, 
+            final String description, final String initialText) 
+    {
+        this(textBoxFactory, title, description, initialText, 0);
+    }
+
+    private TextInputDialog(final TextBoxFactory textBoxFactory, final String title, 
             final String description, final String initialText, int textBoxWidth)
     {
         super(title);
         Label descriptionLabel = new Label(description);
-        if(textBoxWidth == -1)
+        if(textBoxWidth == 0)
             textBoxWidth = descriptionLabel.getPreferredSize().getColumns();
 
-        textBox = textBoxFactory.createTextBox(textBoxWidth, initialText);
+        textBox = textBoxFactory.createTextBox(initialText, textBoxWidth);
         addComponent(descriptionLabel);
         addComponent(new EmptySpace(1, 1));
         addComponent(textBox);
@@ -76,7 +82,7 @@ public class TextInputDialog extends Window
     public static String showTextInputBox(final GUIScreen owner, final String title,
             final String description, final String initialText)
     {
-        return showTextInputBox(owner, title, description, initialText, -1);
+        return showTextInputBox(owner, title, description, initialText, 0);
     }
 
     public static String showTextInputBox(final GUIScreen owner, final String title,
@@ -91,7 +97,7 @@ public class TextInputDialog extends Window
     public static String showPasswordInputBox(final GUIScreen owner, final String title,
             final String description, final String initialText)
     {
-        return showPasswordInputBox(owner, title, description, initialText, -1);
+        return showPasswordInputBox(owner, title, description, initialText, 0);
     }
 
     public static String showPasswordInputBox(final GUIScreen owner, final String title,
@@ -104,20 +110,20 @@ public class TextInputDialog extends Window
 
     private static interface TextBoxFactory
     {
-        public TextBox createTextBox(int width, String initialContent);
+        public TextBox createTextBox(String initialContent, int width);
     }
 
     private static class NormalTextBoxFactory implements TextBoxFactory {
-        public TextBox createTextBox(int width, String initialContent)
+        public TextBox createTextBox(String initialContent, int width)
         {
-            return new TextBox(width, initialContent);
+            return new TextBox(initialContent, width);
         }
     }
 
     private static class PasswordTextBoxFactory implements TextBoxFactory {
-        public TextBox createTextBox(int width, String initialContent)
+        public TextBox createTextBox(String initialContent, int width)
         {
-            return new PasswordBox(width, initialContent);
+            return new PasswordBox(initialContent, width);
         }
     }
 }

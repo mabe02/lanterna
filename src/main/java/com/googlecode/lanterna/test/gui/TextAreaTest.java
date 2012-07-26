@@ -49,7 +49,7 @@ public class TextAreaTest {
         
         Panel appendPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORISONTAL);
         appendPanel.setBetweenComponentsPadding(1);
-        final TextBox appendBox = new TextBox(30, "");
+        final TextBox appendBox = new TextBox("", 30);
         Button appendButton = new Button("Append", new Action() {
             @Override
             public void doAction() {
@@ -62,7 +62,7 @@ public class TextAreaTest {
         
         Panel removePanel = new Panel(new Border.Invisible(), Panel.Orientation.HORISONTAL);
         removePanel.setBetweenComponentsPadding(1);
-        final TextBox removeBox = new TextBox(5, "0");
+        final TextBox removeBox = new TextBox("0", 5);
         Button removeButton = new Button("Remove line", new Action() {
             @Override
             public void doAction() {
