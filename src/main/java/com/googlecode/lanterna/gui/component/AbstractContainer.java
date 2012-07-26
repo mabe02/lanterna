@@ -134,6 +134,8 @@ public abstract class AbstractContainer extends AbstractComponent implements Int
         for(Component component: components())
         {
             if(chooseNextAvailable) {
+                if(!component.isVisible())
+                    continue;                    
                 if(component instanceof Interactable)
                     return (Interactable)component;
                 if(component instanceof InteractableContainer) {
@@ -175,6 +177,8 @@ public abstract class AbstractContainer extends AbstractComponent implements Int
         for(Component component: revComponents)
         {
             if(chooseNextAvailable) {
+                if(!component.isVisible())
+                    continue;
                 if(component instanceof Interactable)
                     return (Interactable)component;
                 if(component instanceof InteractableContainer) {
