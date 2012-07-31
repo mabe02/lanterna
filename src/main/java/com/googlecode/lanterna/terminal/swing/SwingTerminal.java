@@ -43,7 +43,13 @@ import javax.swing.Timer;
  */
 public class SwingTerminal extends AbstractTerminal implements InputProvider
 {
-    private static final Font DEFAULT_TERMINAL_FONT = new Font("Courier New", Font.PLAIN, 14);
+    private static final Font DEFAULT_TERMINAL_FONT = getDefaultFont();
+    private static Font getDefaultFont() {
+        if(System.getProperty("os.name","").toLowerCase().indexOf("win") >= 0)
+            return new Font("Courier New", Font.PLAIN, 14); //Monospaced can look pretty bad on Windows, so let's override it
+        else
+            return new Font("Monospaced", Font.PLAIN, 14);
+    }
     
     private final TerminalRenderer terminalRenderer;
     private final Font terminalFont;
