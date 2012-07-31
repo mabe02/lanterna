@@ -42,9 +42,7 @@ import javax.swing.Timer;
  * @author Martin
  */
 public class SwingTerminal extends AbstractTerminal implements InputProvider
-{
-    private static final Font DEFAULT_TERMINAL_FONT = new Font("Courier New", Font.PLAIN, 14);
-    
+{    
     private final TerminalRenderer terminalRenderer;
     private final Timer blinkTimer;
     

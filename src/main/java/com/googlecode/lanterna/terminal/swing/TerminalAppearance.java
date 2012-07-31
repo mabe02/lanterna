@@ -29,12 +29,29 @@ import java.awt.Font;
  * @author Martin
  */
 public class TerminalAppearance {
+    
+    public static final Font DEFAULT_NORMAL_FONT = createDefaultNormalFont();
+    public static final Font DEFAULT_BOLD_FONT = createDefaultBoldFont();    
     public static final TerminalAppearance DEFAULT_APPEARANCE 
             = new TerminalAppearance(
-                    new Font("Courier New", Font.PLAIN, 14),
-                    new Font("Courier New", Font.BOLD, 14),
+                    DEFAULT_NORMAL_FONT,
+                    DEFAULT_BOLD_FONT,
                     TerminalPalette.DEFAULT,
                     true);
+    
+    private static Font createDefaultNormalFont() {
+        if(System.getProperty("os.name","").toLowerCase().indexOf("win") >= 0)
+            return new Font("Courier New", Font.PLAIN, 14); //Monospaced can look pretty bad on Windows, so let's override it
+        else
+            return new Font("Monospaced", Font.PLAIN, 14);
+    }
+
+    private static Font createDefaultBoldFont() {
+        if(System.getProperty("os.name","").toLowerCase().indexOf("win") >= 0)
+            return new Font("Courier New", Font.BOLD, 14); //Monospaced can look pretty bad on Windows, so let's override it
+        else
+            return new Font("Monospaced", Font.BOLD, 14);
+    }
         
     private final Font normalTextFont;
     private final Font boldTextFont;
