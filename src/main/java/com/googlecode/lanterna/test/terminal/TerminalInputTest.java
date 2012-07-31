@@ -35,43 +35,33 @@ public class TerminalInputTest
         final Terminal rawTerminal = new TestTerminalFactory(args).createTerminal();
         rawTerminal.enterPrivateMode();
 
-        TerminalSize size = rawTerminal.queryTerminalSize();
-        if(size != null) {
-            String sizeString = size.toString();
-            for(int i = 0; i < sizeString.length(); i++)
-                rawTerminal.putCharacter(sizeString.charAt(i));
-        }
-
-        rawTerminal.addResizeListener(new Terminal.ResizeListener() {
-            public void onResized(TerminalSize newSize)
-            {
-                if(newSize != null) {
-                    String sizeString = " Resized: " + newSize.toString();
-                    for(int i = 0; i < sizeString.length(); i++)
-                        rawTerminal.putCharacter(sizeString.charAt(i));
-                }
+        int currentRow = 0;
+        rawTerminal.moveCursor(0, 0);
+        while(true) {
+            Key key = rawTerminal.readInput();
+            if(key == null) {
+                Thread.sleep(1);
+                continue;
             }
-        });
-
-        Key key = null;
-        while(key == null) {
-            Thread.sleep(400);
-            key = rawTerminal.readInput();
-        }
-
-        size = rawTerminal.queryTerminalSize();
-        if(size != null) {
-            String sizeString = size.toString();
-            for(int i = 0; i < sizeString.length(); i++)
-                rawTerminal.putCharacter(sizeString.charAt(i));
+            
+            if(key.getKind() == Key.Kind.Escape)
+                break;
+            
+            if(currentRow == 0)
+                rawTerminal.clearScreen();
+            
+            rawTerminal.moveCursor(0, currentRow++);
+            putString(rawTerminal, key.toString());
+            
+            if(currentRow >= rawTerminal.getTerminalSize().getRows())
+                currentRow = 0;
         }
         
-        Thread.sleep(3000);
         rawTerminal.exitPrivateMode();
-        do {
-            System.out.println(key.toString());
-            key = rawTerminal.readInput();
-        }
-        while(key != null);
+    }
+
+    private static void putString(Terminal rawTerminal, String string) {
+        for(int i = 0; i < string.length(); i++)
+            rawTerminal.putCharacter(string.charAt(i));
     }
 }
