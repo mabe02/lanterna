@@ -164,6 +164,7 @@ public abstract class AxisLayout implements ContainerLayout
         while(!growingComponents.isEmpty() && availableMajorAxisSpace > usedMajorAxisSpace) {
             for(AxisLaidOutComponent laidOutComponent: growingComponents) {
                 setMajorAxis(laidOutComponent.size, getMajorAxis(laidOutComponent.size) + 1);
+                usedMajorAxisSpace++;
                 if(availableMajorAxisSpace == usedMajorAxisSpace)
                     break;
             }
