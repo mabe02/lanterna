@@ -24,7 +24,16 @@ package com.googlecode.lanterna.gui.layout;
  * @author Martin
  */
 public enum SizePolicy {
+    /**
+     * Component will only use as much space as is preferred
+     */
     CONSTANT,
+    /**
+     * Component will grow to take up extra space, if there is any
+     */
     GROWING,
+    /**
+     * Component will take up as much space as is available on the screen
+     */
     MAXIMUM
 }
