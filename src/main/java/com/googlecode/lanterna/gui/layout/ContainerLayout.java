@@ -39,6 +39,9 @@ public interface ContainerLayout
 
     public void setPadding(int paddingSize);
 
+    public boolean maximisesVertically();
+    public boolean maximisesHorisontally();
+
     public interface LaidOutComponent
     {
         public Component getComponent();

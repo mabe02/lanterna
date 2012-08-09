@@ -20,6 +20,7 @@
 package com.googlecode.lanterna.gui.layout;
 
 import com.googlecode.lanterna.gui.Component;
+import com.googlecode.lanterna.gui.component.Panel;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import java.util.ArrayList;
@@ -61,15 +62,7 @@ public abstract class AxisLayout implements ContainerLayout
         }
     }
 
-    public boolean isMaximising()
-    {
-        for(AxisLayoutComponent axisLayoutComponent: componentList)
-            if(axisLayoutComponent.sizePolicy == SizePolicy.MAXIMUM)
-                return true;
-
-        return false;
-    }
-
+    @Override
     public void setPadding(int padding)
     {
         this.padding = padding;
@@ -186,6 +179,23 @@ public abstract class AxisLayout implements ContainerLayout
     protected abstract int getMajorAxis(TerminalSize terminalSize);
     protected abstract int getMinorAxis(TerminalSize terminalSize);
 
+    protected boolean hasDirectMaximisingComponent()
+    {
+        for(AxisLayoutComponent axisLayoutComponent: componentList)
+            if(axisLayoutComponent.sizePolicy == SizePolicy.MAXIMUM)
+                return true;
+
+        return false;
+    }
+    
+    protected List<Panel> getSubPanels() {
+        List<Panel> subPanels = new ArrayList<Panel>();
+        for(AxisLayoutComponent axisLayoutComponent: componentList)
+            if(axisLayoutComponent.component instanceof Panel)
+                subPanels.add((Panel)axisLayoutComponent.component);
+        return subPanels;
+    }
+    
     protected static class AxisLayoutComponent
     {
         public Component component;

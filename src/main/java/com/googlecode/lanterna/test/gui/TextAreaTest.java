@@ -95,7 +95,7 @@ public class TextAreaTest {
                 guiScreen.closeWindow();
             }
         });
-        lastPanel.addComponent(new EmptySpace(20, 1));
+        lastPanel.addComponent(new EmptySpace(1, 1), SizePolicy.GROWING);
         lastPanel.addComponent(exitButton);
         window1.addComponent(lastPanel);
         guiScreen.showWindow(window1, GUIScreen.Position.CENTER);

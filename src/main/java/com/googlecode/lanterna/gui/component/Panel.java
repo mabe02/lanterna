@@ -104,22 +104,17 @@ public class Panel extends AbstractContainer
         layoutManager.setPadding(paddingSize);
     }
 
-    protected boolean maximisesVertically()
+    public boolean maximisesVertically()
     {
-        if(layoutManager instanceof VerticalLayout == false)
-            return false;
-
-        return ((VerticalLayout)layoutManager).isMaximising();
+        return layoutManager.maximisesVertically();
     }
 
-    protected boolean maximisesHorisontally()
+    public boolean maximisesHorisontally()
     {
-        if(layoutManager instanceof HorisontalLayout == false)
-            return false;
-
-        return ((HorisontalLayout)layoutManager).isMaximising();
+        return layoutManager.maximisesHorisontally();
     }
 
+    @Override
     public void repaint(TextGraphics graphics)
     {
         border.drawBorder(graphics, new TerminalSize(graphics.getWidth(), graphics.getHeight()), title);

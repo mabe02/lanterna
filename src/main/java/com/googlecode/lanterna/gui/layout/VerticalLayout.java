@@ -19,6 +19,7 @@
 
 package com.googlecode.lanterna.gui.layout;
 
+import com.googlecode.lanterna.gui.component.Panel;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 
@@ -57,5 +58,24 @@ public class VerticalLayout extends AxisLayout
     protected void setMinorAxis(TerminalSize terminalSize, int minorAxisValue)
     {
         terminalSize.setColumns(minorAxisValue);
+    }
+
+    @Override
+    public boolean maximisesHorisontally() {
+        for(Panel subPanel: getSubPanels())
+            if(subPanel.maximisesHorisontally())
+                return true;
+        return false;
+    }
+
+    @Override
+    public boolean maximisesVertically() {
+        if(hasDirectMaximisingComponent())
+            return true;
+        
+        for(Panel subPanel: getSubPanels())
+            if(subPanel.maximisesVertically())
+                return true;
+        return false;
     }
 }

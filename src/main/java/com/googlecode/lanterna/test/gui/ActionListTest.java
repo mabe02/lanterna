@@ -84,3 +84,21 @@ public class ActionListTest
         }
     }
 }
+
+class MyWindow extends Window
+{
+    public MyWindow()
+    {
+        super("My Window!");
+        Panel horisontalPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORISONTAL);
+        Panel leftPanel = new Panel(new Border.Bevel(true), Panel.Orientation.HORISONTAL);
+        Panel middlePanel = new Panel(new Border.Bevel(true), Panel.Orientation.HORISONTAL);
+        Panel rightPanel = new Panel(new Border.Bevel(true), Panel.Orientation.HORISONTAL);
+
+        horisontalPanel.addComponent(leftPanel);
+        horisontalPanel.addComponent(middlePanel);
+        horisontalPanel.addComponent(rightPanel);
+
+        addComponent(horisontalPanel);
+    }
+}

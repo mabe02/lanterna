@@ -328,15 +328,5 @@ public class Window implements Container
             super(title);
             setParent(Window.this);
         }
-
-        @Override
-        protected boolean maximisesHorisontally() {
-            return super.maximisesHorisontally();
-        }
-
-        @Override
-        protected boolean maximisesVertically() {
-            return super.maximisesVertically();
-        }
     }
 }

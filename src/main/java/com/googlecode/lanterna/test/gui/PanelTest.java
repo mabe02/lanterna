@@ -44,20 +44,12 @@ public class PanelTest
         guiScreen.setTitle("GUI Test");
         final Window mainWindow = new Window("Window with panels");
         TextFillComponent oneComponent = new TextFillComponent(5,5, '1');
-        TextFillComponent twoComponent = new TextFillComponent(5,5, '2');
         TextFillComponent xComponent = new TextFillComponent(5,5, 'X');
-        TextFillComponent threeComponent = new TextFillComponent(5,5, '3');
-        TextFillComponent fourComponent = new TextFillComponent(5,5, '4');
-        TextFillComponent fiveComponent = new TextFillComponent(5,5, '5');
-        TextFillComponent sixComponent = new TextFillComponent(5,5, '6');
+        TextFillComponent twoComponent = new TextFillComponent(5,5, '2');
         Panel componentPanel = new Panel(Panel.Orientation.VERTICAL);
         componentPanel.addComponent(oneComponent);
-        componentPanel.addComponent(twoComponent);
         componentPanel.addComponent(xComponent, SizePolicy.MAXIMUM);
-        componentPanel.addComponent(threeComponent);
-        componentPanel.addComponent(fourComponent);
-        componentPanel.addComponent(fiveComponent);
-        componentPanel.addComponent(sixComponent);
+        componentPanel.addComponent(twoComponent);
         mainWindow.addComponent(componentPanel, SizePolicy.MAXIMUM);
         mainWindow.addComponent(new Button("Close", new Action() {
             public void doAction()
