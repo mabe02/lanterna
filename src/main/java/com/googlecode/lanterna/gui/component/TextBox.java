@@ -55,29 +55,29 @@ public class TextBox extends AbstractInteractableComponent
      */
     public TextBox(String initialContent)
     {
-        this(0, initialContent);
+        this(initialContent, 0);
     }
 
     /**
      * Creates a text box component, where the user can enter text by typing on
      * the keyboard. 
-     * @param forceWidth Width, in columns, of the text box. Set to 0 if you 
+     * @param initialContent Initial text content of the text box
+     * @param width Width, in columns, of the text box. Set to 0 if you 
      * want to autodetect the width based on initial content (will be set to 
      * 10 columns in width at minimum)
-     * @param initialContent Initial text content of the text box
      */
-    public TextBox(int forceWidth, String initialContent)
+    public TextBox(String initialContent, int width)
     {
         if(initialContent == null)
             initialContent = "";
-        if(forceWidth <= 0) {
+        if(width <= 0) {
             if(initialContent.length() > 10)
-                forceWidth = initialContent.length();
+                width = initialContent.length();
             else
-                forceWidth = 10;
+                width = 10;
         }
         
-        this.forceWidth = forceWidth;
+        this.forceWidth = width;
         this.backend = initialContent;
         this.editPosition = initialContent.length();
         this.visibleLeftPosition = 0;

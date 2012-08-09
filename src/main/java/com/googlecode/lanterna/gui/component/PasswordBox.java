@@ -32,19 +32,19 @@ public class PasswordBox extends TextBox
      */
     public PasswordBox()
     {
-        this(0, "");
+        this("", 0);
     }
 
     /**
      * Creates a password masked text box component, where the user can enter 
      * text by typing on the keyboard and the characters will be represented by
      * the * character.
-     * @param width Width of the password box
      * @param initialContent Initial text content
+     * @param width Width of the password box
      */
-    public PasswordBox(int width, String initialContent)
+    public PasswordBox(String initialContent, int width)
     {
-        super(width, initialContent);
+        super(initialContent, width);
     }
 
     @Override
