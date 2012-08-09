@@ -23,30 +23,28 @@ import com.googlecode.lanterna.gui.Action;
 import com.googlecode.lanterna.gui.Border;
 import com.googlecode.lanterna.gui.GUIScreen;
 import com.googlecode.lanterna.gui.Window;
-import com.googlecode.lanterna.gui.component.*;
+import com.googlecode.lanterna.gui.component.Button;
+import com.googlecode.lanterna.gui.component.EmptySpace;
+import com.googlecode.lanterna.gui.component.Label;
+import com.googlecode.lanterna.gui.component.Panel;
+import com.googlecode.lanterna.gui.layout.SizePolicy;
 import com.googlecode.lanterna.test.TestTerminalFactory;
 
 /**
  *
  * @author Martin
  */
-public class TextBoxTest
-{
-    public static void main(String[] args)
+public class FullScreenWindowTest {
+   public static void main(String[] args)
     {
         final GUIScreen guiScreen = new TestTerminalFactory(args).createGUIScreen();
         guiScreen.getScreen().startScreen();
-        final Window window1 = new Window("Text box window");
-        //window1.addComponent(new Widget(1, 1));
+        final Window window1 = new Window("Full screen window");
+        window1.setBorder(new Border.Invisible());
 
-        Panel mainPanel = new Panel(new Border.Invisible(), Panel.Orientation.VERTICAL);
-        for(int i = 0; i < 5; i++) {
-            Panel editPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORISONTAL);
-            editPanel.addComponent(new Label("TextBox " + (i+1) + ":"));
-            editPanel.addComponent(new TextBox("", 20));
-            mainPanel.addComponent(editPanel);
-        }
-        window1.addComponent(mainPanel);
+        window1.addComponent(new EmptySpace(1, 10), SizePolicy.CONSTANT);
+        window1.addComponent(new Label("Fullscreen window"));
+        window1.addComponent(new EmptySpace(1, 10), SizePolicy.CONSTANT);
 
         Panel buttonPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORISONTAL);
         Button exitButton = new Button("Exit", new Action() {
@@ -54,10 +52,10 @@ public class TextBoxTest
                     guiScreen.closeWindow();
                 }
             });
-        buttonPanel.addComponent(new EmptySpace(20, 1));
+        buttonPanel.addComponent(new EmptySpace(50, 1), SizePolicy.CONSTANT);
         buttonPanel.addComponent(exitButton);
         window1.addComponent(buttonPanel);
-        guiScreen.showWindow(window1, GUIScreen.Position.CENTER);
+        guiScreen.showWindow(window1, GUIScreen.Position.FULL_SCREEN);
         guiScreen.getScreen().stopScreen();
-    }
+    } 
 }
