@@ -19,6 +19,7 @@
 package com.googlecode.lanterna.test.gui.layout;
 
 import com.googlecode.lanterna.gui.Action;
+import com.googlecode.lanterna.gui.DefaultBackgroundRenderer;
 import com.googlecode.lanterna.gui.GUIScreen;
 import com.googlecode.lanterna.gui.Window;
 import com.googlecode.lanterna.gui.component.Button;
@@ -37,7 +38,7 @@ public class MaximizeTest {
     {
         final GUIScreen guiScreen = new TestTerminalFactory(args).createGUIScreen();
         guiScreen.getScreen().startScreen();
-        guiScreen.setTitle("GUI Test");
+        guiScreen.setBackgroundRenderer(new DefaultBackgroundRenderer("GUI Test"));
 
         final Window mainWindow = new Window("Window");
         

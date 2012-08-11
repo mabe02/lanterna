@@ -41,16 +41,27 @@ public class GUIScreen
     private final Screen screen;
     private final LinkedList<WindowPlacement> windowStack;
     private final Queue<Action> actionToRunInEventThread;
-    private String title;
-    private boolean showMemoryUsage;
+    private GUIScreenBackgroundRenderer backgroundRenderer;
     private Theme guiTheme;
     private boolean needsRefresh;
     private Thread eventThread;
 
-    public GUIScreen(final Screen screen)
+    public GUIScreen(Screen screen)
     {
-        this.title = "";
-        this.showMemoryUsage = false;
+        this(screen, "");
+    }
+    
+    public GUIScreen(Screen screen, String title)
+    {
+        this(screen, new DefaultBackgroundRenderer(title));
+    }
+    
+    public GUIScreen(Screen screen, GUIScreenBackgroundRenderer backgroundRenderer)
+    {
+        if(backgroundRenderer == null)
+            throw new IllegalArgumentException("backgroundRenderer cannot be null");
+        
+        this.backgroundRenderer = backgroundRenderer;
         this.screen = screen;
         this.guiTheme = Theme.getDefaultTheme();
         this.windowStack = new LinkedList<WindowPlacement>();
@@ -71,15 +82,16 @@ public class GUIScreen
         needsRefresh = true;
     }
 
-    /**
-     * @param title Title to be displayed in the top-left corner
-     */
-    public void setTitle(String title)
-    {
-        if(title == null)
-            title = "";
+    public void setBackgroundRenderer(GUIScreenBackgroundRenderer backgroundRenderer) {
+        if(backgroundRenderer == null)
+            throw new IllegalArgumentException("backgroundRenderer cannot be null");
         
-        this.title = title;
+        this.backgroundRenderer = backgroundRenderer;
+        needsRefresh = true;
+    }
+
+    public GUIScreenBackgroundRenderer getBackgroundRenderer() {
+        return backgroundRenderer;
     }
 
     /**
@@ -99,17 +111,7 @@ public class GUIScreen
         final TextGraphics textGraphics = new TextGraphics(new TerminalPosition(0, 0),
                 new TerminalSize(screen.getTerminalSize()), screen, guiTheme);
 
-        textGraphics.applyTheme(guiTheme.getDefinition(Theme.Category.ScreenBackground));
-
-        //Clear the background
-        textGraphics.fillRectangle(' ', new TerminalPosition(0, 0), new TerminalSize(screen.getTerminalSize()));
-
-        //Write the title
-        textGraphics.drawString(3, 0, title);
-
-        //Write memory usage
-        if(showMemoryUsage)
-            drawMemoryUsage(textGraphics);
+        backgroundRenderer.drawBackground(textGraphics);
         
         int screenSizeColumns = screen.getTerminalSize().getColumns();
         int screenSizeRows = screen.getTerminalSize().getRows();
@@ -321,20 +323,6 @@ public class GUIScreen
     }
 
     /**
-     * If true, will display the current memory usage in the bottom right corner,
-     * updated on every screen refresh
-     */
-    public void setShowMemoryUsage(boolean showMemoryUsage)
-    {
-        this.showMemoryUsage = showMemoryUsage;
-    }
-
-    public boolean isShowingMemoryUsage()
-    {
-        return showMemoryUsage;
-    }
-
-    /**
      * Where to position a window that is to be put on the screen
      */
     public enum Position
@@ -377,21 +365,6 @@ public class GUIScreen
                 return true;
         }
         return false;
-    }
-
-    private void drawMemoryUsage(TextGraphics textGraphics)
-    {
-        Runtime runtime = Runtime.getRuntime();
-        long freeMemory = runtime.freeMemory();
-        long totalMemory = runtime.totalMemory();
-        long usedMemory = totalMemory - freeMemory;
-
-        usedMemory /= (1024 * 1024);
-        totalMemory /= (1024 * 1024);
-
-        String memUsageString = "Memory usage: " + usedMemory + " MB of " + totalMemory + " MB";
-        textGraphics.drawString(screen.getTerminalSize().getColumns() - memUsageString.length() - 1,
-                screen.getTerminalSize().getRows() - 1, memUsageString);
     }
 
     private class WindowPlacement

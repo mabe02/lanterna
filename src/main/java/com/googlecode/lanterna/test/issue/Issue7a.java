@@ -21,6 +21,7 @@ package com.googlecode.lanterna.test.issue;
 
 import com.googlecode.lanterna.gui.Action;
 import com.googlecode.lanterna.gui.Border;
+import com.googlecode.lanterna.gui.DefaultBackgroundRenderer;
 import com.googlecode.lanterna.gui.GUIScreen;
 import com.googlecode.lanterna.gui.Window;
 import com.googlecode.lanterna.gui.component.Button;
@@ -40,7 +41,7 @@ public class Issue7a {
     public static void main(String[] args) {
         final GUIScreen textGUI = new TestTerminalFactory(args).createGUIScreen();
         textGUI.getScreen().startScreen();
-        textGUI.setTitle("GUI Test");
+        textGUI.setBackgroundRenderer(new DefaultBackgroundRenderer("GUI Test"));
         final Window mainWindow = new Window("Testing issue 7");
         mainWindow.addComponent(new EmptySpace(16, 1));
         Panel panel = new Panel("Panel");

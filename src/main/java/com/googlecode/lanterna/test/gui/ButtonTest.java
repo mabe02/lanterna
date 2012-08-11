@@ -20,6 +20,7 @@
 package com.googlecode.lanterna.test.gui;
 
 import com.googlecode.lanterna.gui.Action;
+import com.googlecode.lanterna.gui.DefaultBackgroundRenderer;
 import com.googlecode.lanterna.gui.GUIScreen;
 import com.googlecode.lanterna.gui.TextGraphics;
 import com.googlecode.lanterna.gui.Theme.Category;
@@ -40,10 +41,11 @@ public class ButtonTest
     {
         final GUIScreen guiScreen = new TestTerminalFactory(args).createGUIScreen();
         guiScreen.getScreen().startScreen();
-        guiScreen.setTitle("GUI Test");
+        guiScreen.setBackgroundRenderer(new DefaultBackgroundRenderer("GUI Test"));
 
         final Window mainWindow = new Window("Window with panels");
         mainWindow.addComponent(new AbstractComponent() {
+            @Override
             public void repaint(TextGraphics graphics)
             {
                 graphics.applyTheme(graphics.getTheme().getDefinition(Category.Shadow));
@@ -52,6 +54,7 @@ public class ButtonTest
                         graphics.drawString(x, y, "X");
             }
 
+            @Override
             public TerminalSize getPreferredSize()
             {
                 return new TerminalSize(20, 6);
@@ -59,6 +62,7 @@ public class ButtonTest
         });
         Panel buttonPanel = new Panel(Panel.Orientation.HORISONTAL);
         Button button1 = new Button("Button1", new Action() {
+            @Override
             public void doAction()
             {
                 guiScreen.closeWindow();

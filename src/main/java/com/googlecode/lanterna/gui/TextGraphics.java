@@ -182,6 +182,15 @@ public class TextGraphics
         return areaSize.getRows();
     }
 
+    /**
+     * Size of the area the {@code TextGraphics} can edit, as a {@code TerminalSize} object, 
+     * any attempts to draw outside of this area will be ignored.
+     * @return Size of the area the {@code TextGraphics} can edit, as a {@code TerminalSize} object
+     */
+    public TerminalSize getSize() {
+        return new TerminalSize(getWidth(), getHeight());
+    }
+
     public void setBoldMask(boolean enabledBoldMask)
     {
         currentlyBold = enabledBoldMask;
