@@ -16,7 +16,6 @@
  * 
  * Copyright (C) 2010-2012 Martin
  */
-
 package com.googlecode.lanterna.gui.layout;
 
 import com.googlecode.lanterna.gui.Component;
@@ -28,9 +27,9 @@ import java.util.List;
  *
  * @author Martin
  */
-public interface ContainerLayout
+public interface LayoutManager
 {
-    void addComponent(Component component, Object modifiers);
+    void addComponent(Component component, LayoutParameter... parameters);
     void removeComponent(Component component);
 
     TerminalSize getPreferredSize();
