@@ -28,7 +28,7 @@ import com.googlecode.lanterna.terminal.TerminalSize;
  * container will be the same as the broadest child.
  * @author Martin
  */
-public class VerticalLayout extends AxisLayout
+public class VerticalLayout extends LinearLayout
 {
     @Override
     protected int getMajorAxis(TerminalSize terminalSize)

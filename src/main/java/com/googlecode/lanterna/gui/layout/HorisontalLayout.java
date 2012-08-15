@@ -29,7 +29,7 @@ import com.googlecode.lanterna.terminal.TerminalSize;
  * container will be the same as the tallest child.
  * @author Martin
  */
-public class HorisontalLayout extends AxisLayout
+public class HorisontalLayout extends LinearLayout
 {
     @Override
     protected int getMajorAxis(TerminalSize terminalSize)

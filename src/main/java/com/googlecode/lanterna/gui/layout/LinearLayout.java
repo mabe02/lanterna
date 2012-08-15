@@ -31,12 +31,12 @@ import java.util.List;
  *
  * @author Martin
  */
-public abstract class AxisLayout implements LayoutManager
+public abstract class LinearLayout implements LayoutManager
 {
     private final List<AxisLayoutComponent> componentList;
     private int padding;
     
-    AxisLayout()
+    LinearLayout()
     {
         this.componentList = new ArrayList<AxisLayoutComponent>();
         this.padding = 0;
