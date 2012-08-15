@@ -30,22 +30,22 @@ import java.util.List;
  */
 public interface ContainerLayout
 {
-    public void addComponent(Component component, Object modifiers);
-    public void removeComponent(Component component);
+    void addComponent(Component component, Object modifiers);
+    void removeComponent(Component component);
 
-    public TerminalSize getPreferredSize();
+    TerminalSize getPreferredSize();
 
-    public List<LaidOutComponent> layout(TerminalSize layoutArea);
+    List<LaidOutComponent> layout(TerminalSize layoutArea);
 
-    public void setPadding(int paddingSize);
+    void setPadding(int paddingSize);
 
-    public boolean maximisesVertically();
-    public boolean maximisesHorisontally();
+    boolean maximisesVertically();
+    boolean maximisesHorisontally();
 
     public interface LaidOutComponent
     {
-        public Component getComponent();
-        public TerminalSize getSize();
-        public TerminalPosition getTopLeftPosition();
+        Component getComponent();
+        TerminalSize getSize();
+        TerminalPosition getTopLeftPosition();
     }
 }
