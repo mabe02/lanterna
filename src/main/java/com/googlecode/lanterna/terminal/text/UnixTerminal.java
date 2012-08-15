@@ -24,9 +24,10 @@ import com.googlecode.lanterna.input.GnomeTerminalProfile;
 import com.googlecode.lanterna.input.PuttyProfile;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import java.io.*;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.nio.charset.Charset;
-import sun.misc.Signal;
-import sun.misc.SignalHandler;
 
 /**
  * A common ANSI terminal extention with support for Unix resize signals and 
@@ -59,14 +60,31 @@ public class UnixTerminal extends ANSITerminal
         //Make sure to set an initial size
         onResized(80, 20);
         try {
+            Class signalClass = Class.forName("sun.misc.Signal");
+            for(Method m: signalClass.getDeclaredMethods()) {
+                if("handle".equals(m.getName())) {
+                    Object handler = Proxy.newProxyInstance(getClass().getClassLoader(), new Class[] {Class.forName("sun.misc.SignalHandler")}, new InvocationHandler() {
+                        @Override
+                        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                            if("handle".equals(method.getName())) {
+                                queryTerminalSize();
+                            }
+                            return null;
+                        }
+                    });
+                    m.invoke(null, signalClass.getConstructor(String.class).newInstance("WINCH"), handler);
+                }
+            }
+            /*
             Signal.handle(new Signal("WINCH"), new SignalHandler() {
                 public void handle(Signal signal)
                 {
                     queryTerminalSize();
                 }
             });
+            */
         }
-        catch(IllegalArgumentException e) {
+        catch(Throwable e) {
             System.err.println(e.getMessage());
         }
     }
