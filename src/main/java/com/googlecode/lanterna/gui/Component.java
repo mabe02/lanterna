@@ -88,16 +88,6 @@ public interface Component
     TerminalSize getMinimumSize();
     
     /**
-     * This method is called by the layout system to make sure a component isn't
-     * assigned more space than it can handle. The layout system will try to 
-     * accomodate the component and not set the size larger than what is 
-     * returned here.
-     * @return The absolutely largest space that will be assigned to this 
-     * component
-     */
-    TerminalSize getMaximumSize();
-    
-    /**
      * If called with a non-null parameter, it will override the component's 
      * own preferred size calculation and instead {@code getPreferredSize()} 
      * will return the value passed in. If called with {@code null}, the 
@@ -106,24 +96,4 @@ public interface Component
      * return instead of calculating it
      */
     void setPreferredSize(TerminalSize preferredSizeOverride);
-    
-    /**
-     * If called with a non-null parameter, it will override the component's 
-     * own minimum size preference and instead {@code getMinimumSize()} 
-     * will return the value passed in. If called with {@code null}, the 
-     * usual preference will be used again.
-     * @param minimumSizeOverride Value {@code getMinimumSize()} should 
-     * return instead of using the component's preference
-     */
-    void setMinimumSize(TerminalSize minimumSizeOverride);
-    
-    /**
-     * If called with a non-null parameter, it will override the component's 
-     * own maximum size preference and instead {@code getMaximumSize()} 
-     * will return the value passed in. If called with {@code null}, the 
-     * usual preference will be used again.
-     * @param maximumSizeOverride Value {@code getMaximumSize()} should 
-     * return instead of using the component's preference
-     */
-    void setMaximumSize(TerminalSize maximumSizeOverride);
 }
