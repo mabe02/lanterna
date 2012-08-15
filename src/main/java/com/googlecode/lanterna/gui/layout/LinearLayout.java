@@ -113,7 +113,8 @@ public abstract class LinearLayout implements LayoutManager {
         
         //Set minor axis - easy!
         for(LinearLaidOutComponent lloc: result) {
-            if(layoutParameterMap.get(lloc.component).contains(getMinorMaximizesParameter())) {
+            if(layoutParameterMap.get(lloc.component).contains(getMinorMaximizesParameter()) ||
+                    (lloc.component instanceof Panel && maximisesOnMinorAxis((Panel)lloc.component))) {
                 setMinorAxis(lloc.size, availableMinorAxisSpace);
             }
             else {
@@ -124,24 +125,34 @@ public abstract class LinearLayout implements LayoutManager {
         
         //Start dividing the major axis - hard!
         while(availableMajorAxisSpace > 0) {
+            boolean changedSomething = false;
             for(LinearLaidOutComponent lloc: result) {
                 int preferred = getMajorAxis(preferredSizeMap.get(lloc.component));
                 if(availableMajorAxisSpace > 0 && preferred > getMajorAxis(lloc.getSize())) {
                     availableMajorAxisSpace--;
                     setMajorAxis(lloc.getSize(), getMajorAxis(lloc.getSize()) + 1);
+                    changedSomething = true;
                 }
+            }
+            if(!changedSomething)
+                break;
+        }
+        
+        //Now try to accomodate the growing major axis components
+        List<LinearLaidOutComponent> growingComponents = new ArrayList<LinearLaidOutComponent>();
+        for(LinearLaidOutComponent lloc: result) {
+            if(layoutParameterMap.get(lloc.component).contains(getMajorMaximizesParameter()) ||
+                    layoutParameterMap.get(lloc.component).contains(getMajorGrowingParameter())) {
+                growingComponents.add(lloc);
+            }
+            
+            if(lloc.component instanceof Panel && maximisesOnMajorAxis((Panel)lloc.component)) {
+                growingComponents.add(lloc);
             }
         }
         
-        //Now try to accomodate the maximizing major axis components
-        List<LinearLaidOutComponent> maximizingComponents = new ArrayList<LinearLaidOutComponent>();
-        for(LinearLaidOutComponent lloc: result) {
-            if(layoutParameterMap.get(lloc.component).contains(getMajorMaximizesParameter()))
-                maximizingComponents.add(lloc);
-        }
-        
         while(availableMajorAxisSpace > 0) {
-            for(LinearLaidOutComponent lloc: maximizingComponents) {
+            for(LinearLaidOutComponent lloc: growingComponents) {
                 if(availableMajorAxisSpace > 0) {
                     availableMajorAxisSpace--;
                     setMajorAxis(lloc.getSize(), getMajorAxis(lloc.getSize()) + 1);
@@ -164,10 +175,6 @@ public abstract class LinearLayout implements LayoutManager {
             if(llc.layoutParameters.contains(MAXIMIZES_HORIZONTALLY))
                 return true;
         }
-        
-        for(Panel subPanel: getSubPanels())
-            if(subPanel.maximisesHorisontally())
-                return true;
         return false;
     }
 
@@ -177,12 +184,13 @@ public abstract class LinearLayout implements LayoutManager {
             if(llc.layoutParameters.contains(MAXIMIZES_VERTICALLY))
                 return true;
         }
-        for(Panel subPanel: getSubPanels())
-            if(subPanel.maximisesVertically())
-                return true;
         return false;
     }
 
+    protected abstract boolean maximisesOnMajorAxis(Panel panel);
+    
+    protected abstract boolean maximisesOnMinorAxis(Panel panel);
+    
     protected abstract void setMajorAxis(TerminalSize terminalSize, int majorAxisValue);
 
     protected abstract void setMinorAxis(TerminalSize terminalSize, int minorAxisValue);

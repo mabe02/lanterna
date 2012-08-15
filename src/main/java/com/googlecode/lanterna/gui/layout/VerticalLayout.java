@@ -19,6 +19,7 @@
 package com.googlecode.lanterna.gui.layout;
 
 import com.googlecode.lanterna.gui.Container;
+import com.googlecode.lanterna.gui.component.Panel;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 
@@ -73,5 +74,15 @@ public class VerticalLayout extends LinearLayout {
     @Override
     protected LayoutParameter getMinorGrowingParameter() {
         return LinearLayout.GROWS_HORIZONTALLY;
+    }
+
+    @Override
+    protected boolean maximisesOnMajorAxis(Panel panel) {
+        return panel.maximisesVertically();
+    }
+
+    @Override
+    protected boolean maximisesOnMinorAxis(Panel panel) {
+        return panel.maximisesHorisontally();
     }
 }
