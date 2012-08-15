@@ -116,6 +116,11 @@ public class Window implements Container
             listener.onWindowInvalidated(this);
     }
 
+    /**
+     * Don't use the method, call {@code addComponent(new EmptySpace(1, 1))} instead
+     * @deprecated
+     */
+    @Deprecated
     public void addEmptyLine()
     {
         addComponent(new EmptySpace(1, 1));
