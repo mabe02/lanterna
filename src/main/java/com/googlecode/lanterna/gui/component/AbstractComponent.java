@@ -24,6 +24,7 @@ import com.googlecode.lanterna.gui.Container;
 import com.googlecode.lanterna.gui.GUIScreen;
 import com.googlecode.lanterna.gui.Window;
 import com.googlecode.lanterna.gui.listener.ComponentListener;
+import com.googlecode.lanterna.terminal.TerminalSize;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -36,6 +37,7 @@ public abstract class AbstractComponent implements Component
 {
     private final List<ComponentListener> componentListeners;
     private Container parent;
+    private TerminalSize preferredSizeOverride;
     private boolean visible;
 
     public AbstractComponent()
@@ -43,8 +45,10 @@ public abstract class AbstractComponent implements Component
         componentListeners = new LinkedList<ComponentListener>();
         parent = null;
         visible = true;
+        preferredSizeOverride = null;
     }
 
+    @Override
     public Container getParent()
     {
         return parent;
@@ -55,31 +59,46 @@ public abstract class AbstractComponent implements Component
         this.parent = parent;
     }
 
+    @Override
     public void addComponentListener(ComponentListener cl)
     {
         if(cl != null)
             componentListeners.add(cl);
     }
 
+    @Override
     public void removeComponentListener(ComponentListener cl)
     {
         componentListeners.remove(cl);
     }
 
+    @Override
     public boolean isVisible()
     {
         return visible;
     }
 
+    @Override
     public void setVisible(boolean visible)
     {
         this.visible = visible;
     }
 
+    @Override
     public boolean isScrollable() {
         return false;
     }    
 
+    @Override
+    public void setPreferredSize(TerminalSize preferredSizeOverride) {
+        this.preferredSizeOverride = preferredSizeOverride;
+    }
+
+    @Override
+    public TerminalSize getMinimumSize() {
+        return new TerminalSize(1, 1);
+    }
+    
     protected void invalidate()
     {
         for(ComponentListener cl: componentListeners)
@@ -110,5 +129,9 @@ public abstract class AbstractComponent implements Component
         if(window == null)
             return null;
         return window.getOwner();
+    }
+
+    protected TerminalSize getPreferredSizeOverride() {
+        return preferredSizeOverride;
     }
 }
