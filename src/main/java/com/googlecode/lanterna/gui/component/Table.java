@@ -20,6 +20,7 @@
 package com.googlecode.lanterna.gui.component;
 
 import com.googlecode.lanterna.gui.*;
+import com.googlecode.lanterna.gui.layout.LinearLayout;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,7 +57,6 @@ public class Table extends AbstractComponent implements InteractableContainer
             mainPanel = new Panel(Panel.Orientation.HORISONTAL);
         else
             mainPanel = new Panel(title, Panel.Orientation.HORISONTAL);
-        mainPanel.setBetweenComponentsPadding(0);
 
         rows = new ArrayList<Component[]>();
 
@@ -67,7 +67,7 @@ public class Table extends AbstractComponent implements InteractableContainer
 
     public void setColumnPaddingSize(int size)
     {
-        mainPanel.setBetweenComponentsPadding(size);
+        ((LinearLayout)mainPanel.getLayoutManager()).setPadding(size);
     }
 
     public void addRow(Component ...components)

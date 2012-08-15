@@ -26,6 +26,7 @@ import com.googlecode.lanterna.gui.Window;
 import com.googlecode.lanterna.gui.component.*;
 import com.googlecode.lanterna.gui.dialog.DialogButtons;
 import com.googlecode.lanterna.gui.dialog.MessageBox;
+import com.googlecode.lanterna.gui.layout.LinearLayout;
 import com.googlecode.lanterna.gui.layout.SizePolicy;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.test.TestTerminalFactory;
@@ -48,7 +49,7 @@ public class TextAreaTest {
         window1.addComponent(new EmptySpace(1, 1));
         
         Panel appendPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORISONTAL);
-        appendPanel.setBetweenComponentsPadding(1);
+        ((LinearLayout)appendPanel.getLayoutManager()).setPadding(1);
         final TextBox appendBox = new TextBox("", 30);
         Button appendButton = new Button("Append", new Action() {
             @Override
@@ -61,7 +62,7 @@ public class TextAreaTest {
         window1.addComponent(appendPanel);
         
         Panel removePanel = new Panel(new Border.Invisible(), Panel.Orientation.HORISONTAL);
-        removePanel.setBetweenComponentsPadding(1);
+        ((LinearLayout)removePanel.getLayoutManager()).setPadding(1);
         final TextBox removeBox = new TextBox("0", 5);
         Button removeButton = new Button("Remove line", new Action() {
             @Override
@@ -95,7 +96,7 @@ public class TextAreaTest {
                 guiScreen.closeWindow();
             }
         });
-        lastPanel.addComponent(new EmptySpace(1, 1), SizePolicy.GROWING);
+        lastPanel.addComponent(new EmptySpace(1, 1), LinearLayout.GROWS_HORIZONTALLY);
         lastPanel.addComponent(exitButton);
         window1.addComponent(lastPanel);
         guiScreen.showWindow(window1, GUIScreen.Position.CENTER);

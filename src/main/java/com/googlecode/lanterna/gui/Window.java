@@ -22,6 +22,7 @@ package com.googlecode.lanterna.gui;
 import com.googlecode.lanterna.gui.Theme.Category;
 import com.googlecode.lanterna.gui.component.EmptySpace;
 import com.googlecode.lanterna.gui.component.Panel;
+import com.googlecode.lanterna.gui.layout.LayoutParameter;
 import com.googlecode.lanterna.gui.layout.SizePolicy;
 import com.googlecode.lanterna.gui.listener.ComponentAdapter;
 import com.googlecode.lanterna.gui.listener.ContainerListener;
@@ -119,18 +120,14 @@ public class Window implements Container
     {
         addComponent(new EmptySpace(1, 1));
     }
-
-    public void addComponent(Component component)
-    {
-        addComponent(component, SizePolicy.CONSTANT);
-    }
     
-    public void addComponent(Component component, SizePolicy sizePolicy)
+    @Override
+    public void addComponent(Component component, LayoutParameter... layoutParameters)
     {
         if(component == null)
             return;
 
-        contentPane.addComponent(component, sizePolicy);
+        contentPane.addComponent(component, layoutParameters);
         ComponentInvalidatorAlert invalidatorAlert = new ComponentInvalidatorAlert(component);
         invalidatorAlerts.add(invalidatorAlert);
         component.addComponentListener(invalidatorAlert);
@@ -141,16 +138,19 @@ public class Window implements Container
         invalidate();
     }
 
+    @Override
     public void addContainerListener(ContainerListener cl)
     {
         contentPane.addContainerListener(cl);
     }
 
+    @Override
     public void removeContainerListener(ContainerListener cl)
     {
         contentPane.removeContainerListener(cl);
     }
 
+    @Override
     public Component getComponentAt(int index)
     {
         return contentPane.getComponentAt(index);
@@ -159,6 +159,7 @@ public class Window implements Container
     /**
      * @return How many top-level components this window has
      */
+    @Override
     public int getComponentCount()
     {
         return contentPane.getComponentCount();
@@ -168,6 +169,7 @@ public class Window implements Container
      * Removes a top-level component from the window
      * @param component Top-level component to remove
      */
+    @Override
     public void removeComponent(Component component)
     {
         if(component instanceof InteractableContainer) {
@@ -204,15 +206,6 @@ public class Window implements Container
     {
         while(getComponentCount() > 0)
             removeComponent(getComponentAt(0));
-    }
-
-    /**
-     * Sets the amount of padding to put between components
-     * @param paddingSize Padding size, both horizontally and vertically
-     */
-    public void setBetweenComponentsPadding(int paddingSize)
-    {
-        contentPane.setBetweenComponentsPadding(paddingSize);
     }
 
     TerminalPosition getWindowHotspotPosition()

@@ -28,6 +28,7 @@ import com.googlecode.lanterna.gui.Window;
 import com.googlecode.lanterna.gui.component.AbstractComponent;
 import com.googlecode.lanterna.gui.component.Button;
 import com.googlecode.lanterna.gui.component.Panel;
+import com.googlecode.lanterna.gui.layout.LinearLayout;
 import com.googlecode.lanterna.gui.layout.SizePolicy;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.test.TestTerminalFactory;
@@ -49,9 +50,9 @@ public class PanelTest
         TextFillComponent twoComponent = new TextFillComponent(5,5, '2');
         Panel componentPanel = new Panel(Panel.Orientation.VERTICAL);
         componentPanel.addComponent(oneComponent);
-        componentPanel.addComponent(xComponent, SizePolicy.MAXIMUM);
+        componentPanel.addComponent(xComponent, LinearLayout.MAXIMIZES_VERTICALLY);
         componentPanel.addComponent(twoComponent);
-        mainWindow.addComponent(componentPanel, SizePolicy.MAXIMUM);
+        mainWindow.addComponent(componentPanel, LinearLayout.MAXIMIZES_VERTICALLY);
         mainWindow.addComponent(new Button("Close", new Action() {
             @Override
             public void doAction()

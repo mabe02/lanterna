@@ -22,9 +22,9 @@ package com.googlecode.lanterna.gui.component;
 import com.googlecode.lanterna.gui.Border;
 import com.googlecode.lanterna.gui.Component;
 import com.googlecode.lanterna.gui.TextGraphics;
-import com.googlecode.lanterna.gui.layout.ContainerLayout;
 import com.googlecode.lanterna.gui.layout.HorisontalLayout;
-import com.googlecode.lanterna.gui.layout.SizePolicy;
+import com.googlecode.lanterna.gui.layout.LayoutManager;
+import com.googlecode.lanterna.gui.layout.LayoutParameter;
 import com.googlecode.lanterna.gui.layout.VerticalLayout;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
@@ -37,7 +37,7 @@ import java.util.List;
 public class Panel extends AbstractContainer
 {
     private Border border;
-    private ContainerLayout layoutManager;
+    private LayoutManager layoutManager;
     private String title;
 
     public Panel()
@@ -97,13 +97,14 @@ public class Panel extends AbstractContainer
         this.title = (title != null ? title : "");
     }
 
-    public void setBetweenComponentsPadding(int paddingSize)
-    {
-        if(paddingSize < 0)
-            paddingSize = 0;
-        layoutManager.setPadding(paddingSize);
+    public void setLayoutManager(LayoutManager layoutManager) {
+        this.layoutManager = layoutManager;
     }
 
+    public LayoutManager getLayoutManager() {
+        return layoutManager;
+    }
+    
     public boolean maximisesVertically()
     {
         return layoutManager.maximisesVertically();
@@ -122,8 +123,8 @@ public class Panel extends AbstractContainer
         TerminalSize contentPaneSize = border.getInnerAreaSize(graphics.getWidth(), graphics.getHeight());
         TextGraphics subGraphics = graphics.subAreaGraphics(contentPaneTopLeft, contentPaneSize);
 
-        List<ContainerLayout.LaidOutComponent> laidOutComponents = layoutManager.layout(contentPaneSize);
-        for(ContainerLayout.LaidOutComponent laidOutComponent: laidOutComponents) {
+        List<? extends LayoutManager.LaidOutComponent> laidOutComponents = layoutManager.layout(contentPaneSize);
+        for(LayoutManager.LaidOutComponent laidOutComponent: laidOutComponents) {
             TextGraphics subSubGraphics = subGraphics.subAreaGraphics(
                     laidOutComponent.getTopLeftPosition(), laidOutComponent.getSize());
             
@@ -132,21 +133,17 @@ public class Panel extends AbstractContainer
         }
     }
 
+    @Override
     public TerminalSize getPreferredSize()
     {        
         return border.surroundAreaSize(layoutManager.getPreferredSize());
     }
-
-    @Override
-    public void addComponent(Component component)
-    {
-        addComponent(component, SizePolicy.CONSTANT);
-    }
     
-    public void addComponent(Component component, SizePolicy sizePolicy)
+    @Override
+    public void addComponent(Component component, LayoutParameter... layoutParameters)
     {
         super.addComponent(component);
-        layoutManager.addComponent(component, sizePolicy);
+        layoutManager.addComponent(component, layoutParameters);
     }
 
     @Override

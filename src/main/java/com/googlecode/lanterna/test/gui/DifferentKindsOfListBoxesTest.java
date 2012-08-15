@@ -25,6 +25,7 @@ import com.googlecode.lanterna.gui.GUIScreen;
 import com.googlecode.lanterna.gui.Window;
 import com.googlecode.lanterna.gui.component.*;
 import com.googlecode.lanterna.gui.dialog.MessageBox;
+import com.googlecode.lanterna.gui.layout.LinearLayout;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.test.TestTerminalFactory;
 
@@ -40,7 +41,7 @@ public class DifferentKindsOfListBoxesTest {
         final Window window1 = new Window("List boxes window");
         
         Panel mainPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORISONTAL);
-        mainPanel.setBetweenComponentsPadding(1);
+        ((LinearLayout)mainPanel.getLayoutManager()).setPadding(1);
         
         final CheckBoxList checkBoxList = new CheckBoxList();
         checkBoxList.addItem("First");

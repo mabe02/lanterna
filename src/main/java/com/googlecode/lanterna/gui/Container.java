@@ -19,6 +19,7 @@
 
 package com.googlecode.lanterna.gui;
 
+import com.googlecode.lanterna.gui.layout.LayoutParameter;
 import com.googlecode.lanterna.gui.listener.ContainerListener;
 
 /**
@@ -34,8 +35,9 @@ public interface Container
     /**
      * Adds a new subcomponent to this container.
      * @param component Component to add to this container
+     * @param layoutParameters Optional parameters to give hits to the layout manager
      */
-    void addComponent(Component component);
+    void addComponent(Component component, LayoutParameter... layoutParameters);
     
     /**
      * Removes a component from this container.

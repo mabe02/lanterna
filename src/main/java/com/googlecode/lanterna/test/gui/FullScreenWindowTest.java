@@ -42,9 +42,9 @@ public class FullScreenWindowTest {
         final Window window1 = new Window("Full screen window");
         window1.setBorder(new Border.Invisible());
 
-        window1.addComponent(new EmptySpace(1, 10), SizePolicy.CONSTANT);
+        window1.addComponent(new EmptySpace(1, 10));
         window1.addComponent(new Label("Fullscreen window"));
-        window1.addComponent(new EmptySpace(1, 10), SizePolicy.CONSTANT);
+        window1.addComponent(new EmptySpace(1, 10));
 
         Panel buttonPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORISONTAL);
         Button exitButton = new Button("Exit", new Action() {
@@ -52,7 +52,7 @@ public class FullScreenWindowTest {
                     guiScreen.closeWindow();
                 }
             });
-        buttonPanel.addComponent(new EmptySpace(50, 1), SizePolicy.CONSTANT);
+        buttonPanel.addComponent(new EmptySpace(50, 1));
         buttonPanel.addComponent(exitButton);
         window1.addComponent(buttonPanel);
         guiScreen.showWindow(window1, GUIScreen.Position.FULL_SCREEN);

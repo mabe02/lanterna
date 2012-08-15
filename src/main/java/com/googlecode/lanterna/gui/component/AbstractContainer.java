@@ -23,6 +23,7 @@ import com.googlecode.lanterna.gui.Component;
 import com.googlecode.lanterna.gui.Container;
 import com.googlecode.lanterna.gui.Interactable;
 import com.googlecode.lanterna.gui.InteractableContainer;
+import com.googlecode.lanterna.gui.layout.LayoutParameter;
 import com.googlecode.lanterna.gui.listener.ContainerListener;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,7 +46,7 @@ public abstract class AbstractContainer extends AbstractComponent implements Int
     }
 
     @Override
-    public void addComponent(Component component)
+    public void addComponent(Component component, LayoutParameter... layoutParameters)
     {
         if(component == null)
             return;

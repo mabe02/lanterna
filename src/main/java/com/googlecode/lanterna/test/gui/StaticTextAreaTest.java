@@ -26,6 +26,7 @@ import com.googlecode.lanterna.gui.component.Button;
 import com.googlecode.lanterna.gui.component.EmptySpace;
 import com.googlecode.lanterna.gui.component.Panel;
 import com.googlecode.lanterna.gui.component.TextArea;
+import com.googlecode.lanterna.gui.layout.LinearLayout;
 import com.googlecode.lanterna.gui.layout.SizePolicy;
 import com.googlecode.lanterna.test.TestTerminalFactory;
 
@@ -217,7 +218,7 @@ public class StaticTextAreaTest {
                 guiScreen.closeWindow();
             }
         });
-        buttonPanel.addComponent(new EmptySpace(), SizePolicy.GROWING);
+        buttonPanel.addComponent(new EmptySpace(), LinearLayout.MAXIMIZES_HORIZONTALLY);
         buttonPanel.addComponent(exitButton);
         window1.addComponent(buttonPanel);
         guiScreen.showWindow(window1, GUIScreen.Position.CENTER);
