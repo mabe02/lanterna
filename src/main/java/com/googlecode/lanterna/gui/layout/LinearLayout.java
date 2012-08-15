@@ -24,12 +24,12 @@ import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 /**
  *
@@ -51,7 +51,7 @@ public abstract class LinearLayout implements LayoutManager {
 
     @Override
     public void addComponent(Component component, LayoutParameter... layoutParameters) {
-        Set<LayoutParameter> asSet = new TreeSet<LayoutParameter>(Arrays.asList(layoutParameters));
+        Set<LayoutParameter> asSet = new HashSet<LayoutParameter>(Arrays.asList(layoutParameters));
         if(asSet.contains(MAXIMIZES_HORIZONTALLY) && asSet.contains(GROWS_HORIZONTALLY))
             throw new IllegalArgumentException("Component " + component + 
                     " cannot be both maximizing and growing horizontally at the same time");
