@@ -136,7 +136,10 @@ public class Panel extends AbstractContainer
     @Override
     public TerminalSize getPreferredSize()
     {        
-        return border.surroundAreaSize(layoutManager.getPreferredSize());
+        TerminalSize preferredSize = border.surroundAreaSize(layoutManager.getPreferredSize());
+        if(title.length() + 4 > preferredSize.getColumns())
+            preferredSize.setColumns(title.length() + 4);
+        return preferredSize;
     }
     
     @Override
