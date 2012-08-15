@@ -23,5 +23,5 @@ package com.googlecode.lanterna.gui.layout;
  * @author Martin
  */
 public class LayoutParameter {
-    protected LayoutParameter() {}
+    LayoutParameter() {}
 }

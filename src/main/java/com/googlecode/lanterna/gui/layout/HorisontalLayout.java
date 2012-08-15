@@ -16,67 +16,61 @@
  * 
  * Copyright (C) 2010-2012 Martin
  */
-
 package com.googlecode.lanterna.gui.layout;
 
-import com.googlecode.lanterna.gui.Component;
-import com.googlecode.lanterna.gui.component.Panel;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 
 /**
- * Layout which will put components along a horizontal line. The height of the
- * container will be the same as the tallest child.
+ * Layout which will put components along a horizontal line. The height of the container will be the
+ * same as the tallest child.
+ *
  * @author Martin
  */
-public class HorisontalLayout extends LinearLayout
-{
+public class HorisontalLayout extends LinearLayout {
+
     @Override
-    protected int getMajorAxis(TerminalSize terminalSize)
-    {
+    protected int getMajorAxis(TerminalSize terminalSize) {
         return terminalSize.getColumns();
     }
 
     @Override
-    protected int getMinorAxis(TerminalSize terminalSize)
-    {
+    protected int getMinorAxis(TerminalSize terminalSize) {
         return terminalSize.getRows();
     }
 
     @Override
-    protected void setMajorAxis(TerminalSize terminalSize, int majorAxisValue)
-    {
+    protected void setMajorAxis(TerminalSize terminalSize, int majorAxisValue) {
         terminalSize.setColumns(majorAxisValue);
     }
 
     @Override
-    protected void setMajorAxis(TerminalPosition terminalPosition, int majorAxisValue)
-    {
+    protected void setMajorAxis(TerminalPosition terminalPosition, int majorAxisValue) {
         terminalPosition.setColumn(majorAxisValue);
     }
 
     @Override
-    protected void setMinorAxis(TerminalSize terminalSize, int minorAxisValue)
-    {
+    protected void setMinorAxis(TerminalSize terminalSize, int minorAxisValue) {
         terminalSize.setRows(minorAxisValue);
     }
 
     @Override
-    public boolean maximisesHorisontally() {
-        if(hasDirectMaximisingComponent())
-            return true;
-        
-        for(Panel subPanel: getSubPanels())
-            if(subPanel.maximisesHorisontally())
-                return true;
-        return false;
+    protected LayoutParameter getMajorMaximizesParameter() {
+        return LinearLayout.MAXIMIZES_HORIZONTALLY;
     }
 
     @Override
-    public boolean maximisesVertically() {
-        for(Panel subPanel: getSubPanels())
-            if(subPanel.maximisesVertically())
-                return true;
-        return false;
+    protected LayoutParameter getMinorMaximizesParameter() {
+        return LinearLayout.MAXIMIZES_VERTICALLY;
+    }
+
+    @Override
+    protected LayoutParameter getMajorGrowingParameter() {
+        return LinearLayout.GROWS_HORIZONTALLY;
+    }
+
+    @Override
+    protected LayoutParameter getMinorGrowingParameter() {
+        return LinearLayout.GROWS_VERTICALLY;
     }
 }

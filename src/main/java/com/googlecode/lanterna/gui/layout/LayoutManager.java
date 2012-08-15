@@ -60,7 +60,7 @@ public interface LayoutManager
      * @param layoutArea Size that the layout is allowed to use
      * @return List of all components, laid out on the allowed area
      */
-    List<LaidOutComponent> layout(TerminalSize layoutArea);
+    List<? extends LaidOutComponent> layout(TerminalSize layoutArea);
 
     /**
      * @return True if there is a component within this layout that would like

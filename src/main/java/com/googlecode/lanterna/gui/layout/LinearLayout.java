@@ -16,7 +16,6 @@
  * 
  * Copyright (C) 2010-2012 Martin
  */
-
 package com.googlecode.lanterna.gui.layout;
 
 import com.googlecode.lanterna.gui.Component;
@@ -24,215 +23,227 @@ import com.googlecode.lanterna.gui.component.Panel;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  *
  * @author Martin
  */
-public abstract class LinearLayout implements LayoutManager
-{
-    private final List<AxisLayoutComponent> componentList;
+public abstract class LinearLayout implements LayoutManager {
+
+    public static final LayoutParameter MAXIMIZES_HORIZONTALLY = new LayoutParameter();
+    public static final LayoutParameter MAXIMIZES_VERTICALLY = new LayoutParameter();
+    public static final LayoutParameter GROWS_HORIZONTALLY = new LayoutParameter();
+    public static final LayoutParameter GROWS_VERTICALLY = new LayoutParameter();
+    private final List<LinearLayoutComponent> componentList;
     private int padding;
-    
-    LinearLayout()
-    {
-        this.componentList = new ArrayList<AxisLayoutComponent>();
+
+    LinearLayout() {
+        this.componentList = new ArrayList<LinearLayoutComponent>();
         this.padding = 0;
     }
 
     @Override
-    public void addComponent(Component component, Object modifiers)
-    {
-        if(modifiers instanceof SizePolicy == false)
-            modifiers = SizePolicy.CONSTANT;
-        componentList.add(new AxisLayoutComponent(component, (SizePolicy)modifiers));
+    public void addComponent(Component component, LayoutParameter... layoutParameters) {
+        Set<LayoutParameter> asSet = new TreeSet<LayoutParameter>(Arrays.asList(layoutParameters));
+        if(asSet.contains(MAXIMIZES_HORIZONTALLY) && asSet.contains(GROWS_HORIZONTALLY))
+            throw new IllegalArgumentException("Component " + component + 
+                    " cannot be both maximizing and growing horizontally at the same time");
+        
+        if(asSet.contains(MAXIMIZES_VERTICALLY) && asSet.contains(GROWS_VERTICALLY))
+            throw new IllegalArgumentException("Component " + component + 
+                    " cannot be both maximizing and growing vertically at the same time");
+        
+        componentList.add(new LinearLayoutComponent(component, asSet));
     }
 
     @Override
-    public void removeComponent(Component component)
-    {
-        Iterator<AxisLayoutComponent> iterator = componentList.iterator();
-        while(iterator.hasNext()) {
-            if(iterator.next().component == component) {
+    public void removeComponent(Component component) {
+        Iterator<LinearLayoutComponent> iterator = componentList.iterator();
+        while (iterator.hasNext()) {
+            if (iterator.next().component == component) {
                 iterator.remove();
                 return;
             }
         }
     }
 
-    @Override
-    public void setPadding(int padding)
-    {
+    public void setPadding(int padding) {
         this.padding = padding;
     }
 
     @Override
-    public TerminalSize getPreferredSize()
-    {
-        final TerminalSize preferredSize = new TerminalSize(0, 0);
-        for(AxisLayoutComponent axisLayoutComponent: componentList) {
+    public TerminalSize getPreferredSize() {
+        if(componentList.isEmpty())
+            return new TerminalSize(0, 0);
+        
+        TerminalSize preferredSize = new TerminalSize(0, 0);
+        for (LinearLayoutComponent axisLayoutComponent : componentList) {
             final TerminalSize componentPreferredSize = axisLayoutComponent.component.getPreferredSize();
             setMajorAxis(preferredSize, getMajorAxis(preferredSize) + getMajorAxis(componentPreferredSize));
             setMinorAxis(preferredSize, Math.max(getMinorAxis(preferredSize), getMinorAxis(componentPreferredSize)));
         }
-        setMajorAxis(preferredSize, getMajorAxis(preferredSize) + (padding * componentList.size()));
+        setMajorAxis(preferredSize, getMajorAxis(preferredSize) + (padding * (componentList.size() - 1)));
         return preferredSize;
     }
 
     @Override
-    public List<LaidOutComponent> layout(TerminalSize layoutArea)
-    {
-        List<AxisLaidOutComponent> result = new ArrayList<AxisLaidOutComponent>();
-        List<AxisLaidOutComponent> growingComponents = new ArrayList<AxisLaidOutComponent>();
-
-        final int availableMinorAxisSpace = getMinorAxis(layoutArea);
-        final int availableMajorAxisSpace = getMajorAxis(layoutArea);
-        int usedMajorAxisSpace = 0;
-
-        //First, try to lay out all components and give them all the space they ask for
-        for(AxisLayoutComponent axisLayoutComponent: componentList) {
-            TerminalSize componentPreferredSize = axisLayoutComponent.component.getPreferredSize();
-            final int componentPreferredMajorAxisSize = getMajorAxis(componentPreferredSize);
-            
-            //Skip these
-            if(componentPreferredMajorAxisSize < 0)
-                continue;
-
-            //This will be re-calculated later
-            TerminalPosition componentTopLeft = new TerminalPosition(0, 0);
-            
-            TerminalSize componentSize = new TerminalSize(0,0);
-            setMinorAxis(componentSize, availableMinorAxisSpace);
-            setMajorAxis(componentSize, componentPreferredMajorAxisSize);
-            usedMajorAxisSpace += (getMajorAxis(componentSize) + padding);
-            
-            AxisLaidOutComponent laidOutComponent = new AxisLaidOutComponent(axisLayoutComponent.component, componentSize, componentTopLeft);
-            result.add(laidOutComponent);
-            if(axisLayoutComponent.sizePolicy != SizePolicy.CONSTANT)
-                growingComponents.add(laidOutComponent);
+    public List<? extends LaidOutComponent> layout(TerminalSize layoutArea) {
+        List<LinearLaidOutComponent> result = new ArrayList<LinearLaidOutComponent>();
+        Map<Component, TerminalSize> minimumSizeMap = new IdentityHashMap<Component, TerminalSize>();
+        Map<Component, TerminalSize> preferredSizeMap = new IdentityHashMap<Component, TerminalSize>();
+        Map<Component, Set<LayoutParameter>> layoutParameterMap = new IdentityHashMap<Component, Set<LayoutParameter>>();
+        for(LinearLayoutComponent llc: componentList) {
+            minimumSizeMap.put(llc.component, llc.component.getMinimumSize());
+            preferredSizeMap.put(llc.component, llc.component.getPreferredSize());
+            layoutParameterMap.put(llc.component, llc.layoutParameters);
         }
         
-        //Now, if we have used too much space, start shrinking components until 
-        //they all fit, using scrollable components first
-        while(usedMajorAxisSpace > availableMajorAxisSpace) {
-            boolean foundSomethingToShrink = false;
-            for(AxisLaidOutComponent laidOutComponent: result) {
-                if(laidOutComponent.component.isScrollable() && 
-                        getMajorAxis(laidOutComponent.getSize()) > 0) {
-                    foundSomethingToShrink = true;
-                    setMajorAxis(laidOutComponent.getSize(), getMajorAxis(laidOutComponent.getSize()) - 1);
-                    usedMajorAxisSpace--;
-                    
-                    //Don't shrink more than necessary
-                    if(usedMajorAxisSpace <= availableMajorAxisSpace)
-                        break;
-                }
+        int availableMajorAxisSpace = getMajorAxis(layoutArea);
+        int availableMinorAxisSpace = getMinorAxis(layoutArea);
+        
+        for(LinearLayoutComponent llc: componentList) 
+            result.add(new LinearLaidOutComponent(llc.component, new TerminalSize(0, 0), new TerminalPosition(0, 0)));
+        
+        //Set minor axis - easy!
+        for(LinearLaidOutComponent lloc: result) {
+            if(layoutParameterMap.get(lloc.component).contains(getMinorMaximizesParameter())) {
+                setMinorAxis(lloc.size, availableMinorAxisSpace);
             }
-            if(!foundSomethingToShrink)
-                break;  //There is nothing more to shrink
+            else {
+                int preferred = getMinorAxis(preferredSizeMap.get(lloc.component));
+                setMinorAxis(lloc.size, preferred <= availableMinorAxisSpace ? preferred : availableMinorAxisSpace);
+            }            
         }
         
-        //If we have still used too much space, start shrinking regular components
-        while(usedMajorAxisSpace > availableMajorAxisSpace) {
-            boolean foundSomethingToShrink = false;
-            for(AxisLaidOutComponent laidOutComponent: result) {
-                if(getMajorAxis(laidOutComponent.getSize()) > 0) {
-                    foundSomethingToShrink = true;
-                    setMajorAxis(laidOutComponent.getSize(), getMajorAxis(laidOutComponent.getSize()) - 1);
-                    usedMajorAxisSpace--;
-                    
-                    //Don't shrink more than necessary
-                    if(usedMajorAxisSpace <= availableMajorAxisSpace)
-                        break;
+        //Start dividing the major axis - hard!
+        while(availableMajorAxisSpace > 0) {
+            for(LinearLaidOutComponent lloc: result) {
+                int preferred = getMajorAxis(preferredSizeMap.get(lloc.component));
+                if(availableMajorAxisSpace > 0 && preferred > getMajorAxis(lloc.getSize())) {
+                    availableMajorAxisSpace--;
+                    setMajorAxis(lloc.getSize(), getMajorAxis(lloc.getSize()) + 1);
                 }
             }
-            if(!foundSomethingToShrink)
-                break;  //There is nothing more to shrink
         }
-
-        //At this point, in case there is spare space to use, let's divide it
-        //between the growing components
-        while(!growingComponents.isEmpty() && availableMajorAxisSpace > usedMajorAxisSpace) {
-            for(AxisLaidOutComponent laidOutComponent: growingComponents) {
-                setMajorAxis(laidOutComponent.size, getMajorAxis(laidOutComponent.size) + 1);
-                usedMajorAxisSpace++;
-                if(availableMajorAxisSpace == usedMajorAxisSpace)
-                    break;
+        
+        //Now try to accomodate the maximizing major axis components
+        List<LinearLaidOutComponent> maximizingComponents = new ArrayList<LinearLaidOutComponent>();
+        for(LinearLaidOutComponent lloc: result) {
+            if(layoutParameterMap.get(lloc.component).contains(getMajorMaximizesParameter()))
+                maximizingComponents.add(lloc);
+        }
+        
+        while(availableMajorAxisSpace > 0) {
+            for(LinearLaidOutComponent lloc: maximizingComponents) {
+                if(availableMajorAxisSpace > 0) {
+                    availableMajorAxisSpace--;
+                    setMajorAxis(lloc.getSize(), getMajorAxis(lloc.getSize()) + 1);
+                }
             }
         }
-
+        
         //Finally, recalculate the topLeft position of each component
         int nextMajorPosition = 0;
-        for(AxisLaidOutComponent laidOutComponent: result) {
+        for(LinearLaidOutComponent laidOutComponent: result) {
             setMajorAxis(laidOutComponent.topLeftPosition, nextMajorPosition);
             nextMajorPosition += getMajorAxis(laidOutComponent.size) + padding;
+        }        
+        return result;
+    }
+    
+    @Override
+    public boolean maximisesHorisontally() {
+        for(LinearLayoutComponent llc: componentList) {
+            if(llc.layoutParameters.contains(MAXIMIZES_HORIZONTALLY))
+                return true;
         }
+        
+        for(Panel subPanel: getSubPanels())
+            if(subPanel.maximisesHorisontally())
+                return true;
+        return false;
+    }
 
-        return (List)result;
+    @Override
+    public boolean maximisesVertically() {
+        for(LinearLayoutComponent llc: componentList) {
+            if(llc.layoutParameters.contains(MAXIMIZES_VERTICALLY))
+                return true;
+        }
+        for(Panel subPanel: getSubPanels())
+            if(subPanel.maximisesVertically())
+                return true;
+        return false;
     }
 
     protected abstract void setMajorAxis(TerminalSize terminalSize, int majorAxisValue);
+
     protected abstract void setMinorAxis(TerminalSize terminalSize, int minorAxisValue);
+
     protected abstract void setMajorAxis(TerminalPosition terminalPosition, int majorAxisValue);
+
     protected abstract int getMajorAxis(TerminalSize terminalSize);
+
     protected abstract int getMinorAxis(TerminalSize terminalSize);
-
-    protected boolean hasDirectMaximisingComponent()
-    {
-        for(AxisLayoutComponent axisLayoutComponent: componentList)
-            if(axisLayoutComponent.sizePolicy == SizePolicy.MAXIMUM)
-                return true;
-
-        return false;
-    }
     
+    protected abstract LayoutParameter getMajorMaximizesParameter();
+    
+    protected abstract LayoutParameter getMinorMaximizesParameter();
+    
+    protected abstract LayoutParameter getMajorGrowingParameter();
+    
+    protected abstract LayoutParameter getMinorGrowingParameter();
+
     protected List<Panel> getSubPanels() {
         List<Panel> subPanels = new ArrayList<Panel>();
-        for(AxisLayoutComponent axisLayoutComponent: componentList)
-            if(axisLayoutComponent.component instanceof Panel)
-                subPanels.add((Panel)axisLayoutComponent.component);
+        for (LinearLayoutComponent axisLayoutComponent : componentList) {
+            if (axisLayoutComponent.component instanceof Panel) {
+                subPanels.add((Panel) axisLayoutComponent.component);
+            }
+        }
         return subPanels;
     }
-    
-    protected static class AxisLayoutComponent
-    {
-        public Component component;
-        public SizePolicy sizePolicy;
 
-        public AxisLayoutComponent(Component component, SizePolicy sizePolicy)
-        {
+    protected static class LinearLayoutComponent {
+        public Component component;
+        public Set<LayoutParameter> layoutParameters;
+
+        public LinearLayoutComponent(Component component, Set<LayoutParameter> layoutParameters) {
             this.component = component;
-            this.sizePolicy = sizePolicy;
+            this.layoutParameters = layoutParameters;
         }
     }
 
-    private class AxisLaidOutComponent implements LayoutManager.LaidOutComponent
-    {
+    private class LinearLaidOutComponent implements LayoutManager.LaidOutComponent {
         final Component component;
         final TerminalSize size;
         final TerminalPosition topLeftPosition;
 
-        public AxisLaidOutComponent(Component component, TerminalSize size, TerminalPosition topLeftPosition)
-        {
+        public LinearLaidOutComponent(Component component, TerminalSize size, TerminalPosition topLeftPosition) {
             this.component = component;
             this.size = size;
             this.topLeftPosition = topLeftPosition;
         }
 
-        public Component getComponent()
-        {
+        @Override
+        public Component getComponent() {
             return component;
         }
 
-        public TerminalSize getSize()
-        {
+        @Override
+        public TerminalSize getSize() {
             return size;
         }
 
-        public TerminalPosition getTopLeftPosition()
-        {
+        @Override
+        public TerminalPosition getTopLeftPosition() {
             return topLeftPosition;
         }
     }
