@@ -200,6 +200,26 @@ public class TextArea  extends AbstractInteractableComponent
                     if(scrollTopIndex > 0)
                         scrollTopIndex--;
                     break;
+                    
+                case PageUp:
+                    scrollTopIndex -= lastSize.getRows();
+                    if(scrollTopIndex < 0)
+                        scrollTopIndex = 0;
+                    break;
+                    
+                case PageDown:
+                    scrollTopIndex += lastSize.getRows();
+                    if(scrollTopIndex >= lines.size() - lastSize.getRows())
+                        scrollTopIndex = lines.size() - lastSize.getRows();
+                    break;
+                    
+                case Home:
+                    scrollTopIndex = 0;
+                    break;
+                    
+                case End:
+                    scrollTopIndex = lines.size() - lastSize.getRows();
+                    break;
             }
             return Result.DO_NOTHING;
         }
