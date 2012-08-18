@@ -98,17 +98,20 @@ public class DifferentKindsOfListBoxesTest {
         mainPanel.addComponent(checkBoxList);
         mainPanel.addComponent(radioCheckBoxList);
         mainPanel.addComponent(actionListBox);
-        window1.addComponent(mainPanel);
+        window1.addComponent(mainPanel);        
+        window1.addComponent(new EmptySpace());
+
 
         Panel buttonPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORISONTAL);
         Button exitButton = new Button("Exit", new Action() {
+                @Override
                 public void doAction()  {
                     guiScreen.closeWindow();
                 }
             });
-        buttonPanel.addComponent(new EmptySpace(20, 1));
+        buttonPanel.addComponent(new EmptySpace(1, 1), LinearLayout.GROWS_HORIZONTALLY);
         buttonPanel.addComponent(exitButton);
-        window1.addComponent(buttonPanel);
+        window1.addComponent(buttonPanel, LinearLayout.GROWS_HORIZONTALLY);
         guiScreen.showWindow(window1, GUIScreen.Position.CENTER);
         guiScreen.getScreen().stopScreen();
     }
@@ -124,6 +127,7 @@ public class DifferentKindsOfListBoxesTest {
             this.guiScreen = guiScreen;
         }
         
+        @Override
         public void doAction() {
             MessageBox.showMessageBox(guiScreen, "Action", label + " selected");
         }

@@ -114,6 +114,7 @@ public abstract class LinearLayout implements LayoutManager {
         //Set minor axis - easy!
         for(LinearLaidOutComponent lloc: result) {
             if(layoutParameterMap.get(lloc.component).contains(getMinorMaximizesParameter()) ||
+                    layoutParameterMap.get(lloc.component).contains(getMinorGrowingParameter()) ||
                     (lloc.component instanceof Panel && maximisesOnMinorAxis((Panel)lloc.component))) {
                 setMinorAxis(lloc.size, availableMinorAxisSpace);
             }
@@ -151,7 +152,7 @@ public abstract class LinearLayout implements LayoutManager {
             }
         }
         
-        while(availableMajorAxisSpace > 0) {
+        while(availableMajorAxisSpace > 0 && !growingComponents.isEmpty()) {
             for(LinearLaidOutComponent lloc: growingComponents) {
                 if(availableMajorAxisSpace > 0) {
                     availableMajorAxisSpace--;
