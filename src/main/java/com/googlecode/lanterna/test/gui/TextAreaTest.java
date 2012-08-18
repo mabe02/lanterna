@@ -27,7 +27,6 @@ import com.googlecode.lanterna.gui.component.*;
 import com.googlecode.lanterna.gui.dialog.DialogButtons;
 import com.googlecode.lanterna.gui.dialog.MessageBox;
 import com.googlecode.lanterna.gui.layout.LinearLayout;
-import com.googlecode.lanterna.gui.layout.SizePolicy;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.test.TestTerminalFactory;
 

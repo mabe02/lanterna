@@ -16,7 +16,6 @@ import com.googlecode.lanterna.gui.component.ProgressBar;
 import com.googlecode.lanterna.gui.component.Table;
 import com.googlecode.lanterna.gui.component.TextBox;
 import com.googlecode.lanterna.gui.layout.LinearLayout;
-import com.googlecode.lanterna.gui.layout.SizePolicy;
 import com.googlecode.lanterna.test.TestTerminalFactory;
 import java.util.Random;
 

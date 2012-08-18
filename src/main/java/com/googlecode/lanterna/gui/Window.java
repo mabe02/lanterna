@@ -23,7 +23,6 @@ import com.googlecode.lanterna.gui.Theme.Category;
 import com.googlecode.lanterna.gui.component.EmptySpace;
 import com.googlecode.lanterna.gui.component.Panel;
 import com.googlecode.lanterna.gui.layout.LayoutParameter;
-import com.googlecode.lanterna.gui.layout.SizePolicy;
 import com.googlecode.lanterna.gui.listener.ComponentAdapter;
 import com.googlecode.lanterna.gui.listener.ContainerListener;
 import com.googlecode.lanterna.gui.listener.WindowListener;
