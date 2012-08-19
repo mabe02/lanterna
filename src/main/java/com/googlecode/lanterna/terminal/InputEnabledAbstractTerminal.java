@@ -44,6 +44,7 @@ public abstract class InputEnabledAbstractTerminal extends AbstractTerminal impl
         this.readMutex = new Object();
     }
     
+    @Override
     public void addInputProfile(KeyMappingProfile profile) {
         inputDecoder.addProfile(profile);
     }
@@ -82,6 +83,7 @@ public abstract class InputEnabledAbstractTerminal extends AbstractTerminal impl
                     + "consider using a custom size querier"));
     }
 
+    @Override
     public Key readInput() {
         synchronized(readMutex) {
             if(!keyQueue.isEmpty())
