@@ -27,6 +27,8 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This class is trying to provide some special workarounds in order to function
@@ -35,6 +37,8 @@ import java.util.TimerTask;
  * @author Martin
  */
 public class CygwinTerminal extends ANSITerminal {
+    
+    private static final Pattern STTY_SIZE_PATTERN = Pattern.compile(".*rows ([0-9]+);.*columns ([0-9]+);.*");
     
     private Timer resizeCheckTimer;
     
@@ -50,6 +54,21 @@ public class CygwinTerminal extends ANSITerminal {
         //Make sure to set an initial size
         onResized(80, 20);
         resizeCheckTimer = null;
+    }
+
+    @Override
+    public TerminalSize getTerminalSize() {
+        try {
+            String stty = exec(findSTTY(), "-F", "/dev/pty0", "-a"); //exec(findShell(), "-c", "echo $PPID");
+            Matcher matcher = STTY_SIZE_PATTERN.matcher(stty);
+            if(matcher.matches())
+                return new TerminalSize(Integer.parseInt(matcher.group(2)), Integer.parseInt(matcher.group(1)));
+            else
+                return new TerminalSize(80, 20);
+        }
+        catch(LanternaException e) {
+            return new TerminalSize(80, 20);
+        }
     }
     
     @Override
@@ -89,20 +108,29 @@ public class CygwinTerminal extends ANSITerminal {
     
     private static void sttyKeyEcho(final boolean enable)
     {
+        exec(findSTTY(), (enable ? "echo" : "-echo"));
+        /*
         exec(findShell(), "-c",
                             "/bin/stty.exe " + (enable ? "echo" : "-echo") + " < /dev/tty");
+                            */ 
     }
 
     private static void sttyMinimumCharacterForRead(final int nrCharacters)
     {
+        exec(findSTTY(), "-F", "/dev/pty0", "min", nrCharacters + "");
+        /*
         exec(findShell(), "-c",
                             "/bin/stty.exe min " + nrCharacters + " < /dev/tty");
+                            */
     }
 
     private static void sttyICanon(final boolean enable)
     {
+        exec(findSTTY(), "-F", "/dev/pty0", (enable ? "-icanon" : "icanon"));
+        /*
         exec(findShell(), "-c",
                             "/bin/stty.exe " + (enable ? "-icanon" : "icanon") + " < /dev/tty");
+                            */ 
     }
     
     private static String findShell() {
