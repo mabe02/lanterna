@@ -82,7 +82,7 @@ public class CygwinTerminal extends ANSITerminal {
         resizeCheckTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                queryTerminalSize();
+                //queryTerminalSize();
             }            
         }, 1000, 1000);
     }
@@ -98,7 +98,7 @@ public class CygwinTerminal extends ANSITerminal {
 
     @Override
     public void setCBreak(boolean cbreakOn) {
-        sttyICanon(cbreakOn);
+        sttyCBreak(cbreakOn);
     }
 
     @Override
@@ -108,7 +108,7 @@ public class CygwinTerminal extends ANSITerminal {
     
     private static void sttyKeyEcho(final boolean enable)
     {
-        exec(findSTTY(), (enable ? "echo" : "-echo"));
+        exec(findSTTY(), "-F", "/dev/pty0", (enable ? "echo" : "-echo"));
         /*
         exec(findShell(), "-c",
                             "/bin/stty.exe " + (enable ? "echo" : "-echo") + " < /dev/tty");
@@ -124,9 +124,9 @@ public class CygwinTerminal extends ANSITerminal {
                             */
     }
 
-    private static void sttyICanon(final boolean enable)
+    private static void sttyCBreak(final boolean enable)
     {
-        exec(findSTTY(), "-F", "/dev/pty0", (enable ? "-icanon" : "icanon"));
+        exec(findSTTY(), "-F", "/dev/pty0", (enable ? "cbreak" : "icanon"));
         /*
         exec(findShell(), "-c",
                             "/bin/stty.exe " + (enable ? "-icanon" : "icanon") + " < /dev/tty");
