@@ -44,6 +44,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal
     }
     
     @Deprecated
+    @Override
     public TerminalSize queryTerminalSize()
     {        
         synchronized(writerMutex) {
@@ -55,11 +56,13 @@ public abstract class ANSITerminal extends StreamBasedTerminal
         return getLastKnownSize();
     }
 
+    @Override
     public TerminalSize getTerminalSize() {
         queryTerminalSize();
         return waitForTerminalSizeReport(1000); //Wait 1 second for the terminal size report to come, is this reasonable?
     }
 
+    @Override
     public void applyBackgroundColor(Color color)
     {
         synchronized(writerMutex) {
@@ -68,6 +71,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal
         }
     }
 
+    @Override
     public void applyForegroundColor(Color color)
     {
         synchronized(writerMutex) {
@@ -76,6 +80,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal
         }
     }
 
+    @Override
     public void applySGR(SGR... options)
     {
         synchronized(writerMutex) {
@@ -115,6 +120,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal
         }
     }
 
+    @Override
     public void clearScreen()
     {
         synchronized(writerMutex) {
@@ -123,6 +129,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal
         }
     }
 
+    @Override
     public void enterPrivateMode()
     {
         synchronized(writerMutex) {
@@ -131,6 +138,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal
         }
     }
 
+    @Override
     public void exitPrivateMode()
     {
         synchronized(writerMutex) {
@@ -161,6 +169,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal
      */
     public abstract void setCBreak(boolean cbreakOn);
 
+    @Override
     public void moveCursor(int x, int y)
     {
         synchronized(writerMutex) {
