@@ -38,12 +38,14 @@ public abstract class AbstractTerminal implements Terminal
         this.lastKnownSize = null;
     }
 
+    @Override
     public void addResizeListener(ResizeListener listener)
     {
         if(listener != null)
             resizeListeners.add(listener);
     }
 
+    @Override
     public void removeResizeListener(ResizeListener listener)
     {
         if(listener != null)
