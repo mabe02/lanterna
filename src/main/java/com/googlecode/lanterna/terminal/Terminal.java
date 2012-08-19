@@ -90,6 +90,21 @@ public interface Terminal extends InputProvider
     public void applyForegroundColor(Color color);
     
     /**
+     * Changes the foreground color for all the following characters put to the
+     * terminal. The foreground color is what color to draw the text in.<br>
+     * <b>Warning:</b> Only a few terminal support 24-bit color control codes, 
+     * please avoid using this unless you know all users will have compatible
+     * terminals. For details, please see 
+     * <a href="https://github.com/robertknight/konsole/blob/master/user-doc/README.moreColors">
+     * this</a> commit log.
+     * 
+     * @param r Red intensity, from 0 to 255
+     * @param g Green intensity, from 0 to 255
+     * @param b Blue intensity, from 0 to 255
+     */
+    public void applyForegroundColor(int r, int g, int b);
+    
+    /**
      * Changes the background color for all the following characters put to the 
      * terminal. The background color is the color surrounding the text being 
      * printed.
@@ -97,6 +112,22 @@ public interface Terminal extends InputProvider
      * @throws LanternaException 
      */    
     public void applyBackgroundColor(Color color);
+    
+    /**
+     * Changes the background color for all the following characters put to the
+     * terminal. The background color is the color surrounding the text being 
+     * printed.<br>
+     * <b>Warning:</b> Only a few terminal support 24-bit color control codes, 
+     * please avoid using this unless you know all users will have compatible
+     * terminals. For details, please see 
+     * <a href="https://github.com/robertknight/konsole/blob/master/user-doc/README.moreColors">
+     * this</a> commit log.
+     * 
+     * @param r Red intensity, from 0 to 255
+     * @param g Green intensity, from 0 to 255
+     * @param b Blue intensity, from 0 to 255
+     */
+    public void applyBackgroundColor(int r, int g, int b);
     
     /**
      * Adds a {@code ResizeListener} to be called when the terminal has changed

@@ -50,8 +50,8 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
     private TerminalAppearance appearance;
     private TerminalCharacter [][]characterMap;
     private TerminalPosition textPosition;
-    private Color currentForegroundColor;
-    private Color currentBackgroundColor;
+    private java.awt.Color currentForegroundColor;
+    private java.awt.Color currentBackgroundColor;
     private boolean currentlyBold;
     private boolean currentlyBlinking;
     private boolean currentlyUnderlined;
@@ -87,8 +87,8 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
         this.blinkTimer = new Timer(500, new BlinkAction());
         this.textPosition = new TerminalPosition(0, 0);
         this.characterMap = new TerminalCharacter[heightInRows][widthInColumns];
-        this.currentForegroundColor = Color.WHITE;
-        this.currentBackgroundColor = Color.BLACK;
+        this.currentForegroundColor = convertColorToAWT(Color.WHITE, false);
+        this.currentBackgroundColor = convertColorToAWT(Color.BLACK, false);
         this.currentlyBold = false;
         this.currentlyBlinking = false;
         this.currentlyUnderlined = false;
@@ -133,13 +133,26 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
     @Override
     public void applyBackgroundColor(Color color)
     {
-        currentBackgroundColor = color;
+        if(color == Color.DEFAULT)
+            currentBackgroundColor = java.awt.Color.BLACK;
+        else
+            currentBackgroundColor = convertColorToAWT(color);
+    }
+
+    @Override
+    public void applyBackgroundColor(int r, int g, int b) {
+        currentBackgroundColor = new java.awt.Color(r, g, b);
     }
 
     @Override
     public void applyForegroundColor(Color color)
     {
-        currentForegroundColor = color;
+        currentForegroundColor = convertColorToAWT(color);
+    }
+
+    @Override
+    public void applyForegroundColor(int r, int g, int b) {
+        currentForegroundColor = new java.awt.Color(r, g, b);
     }
 
     @Override
@@ -151,8 +164,8 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
                 currentlyBold = false;
                 currentlyBlinking = false;
                 currentlyUnderlined = false;
-                currentForegroundColor = Color.DEFAULT;
-                currentBackgroundColor = Color.DEFAULT;
+                currentForegroundColor = convertColorToAWT(Color.DEFAULT);
+                currentBackgroundColor = java.awt.Color.BLACK;
             }
             else if(sgr == SGR.ENTER_BOLD)
                 currentlyBold = true;
@@ -175,7 +188,13 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
         synchronized(resizeMutex) {
             for(int y = 0; y < size().getRows(); y++)
                 for(int x = 0; x < size().getColumns(); x++)
-                    this.characterMap[y][x] = new TerminalCharacter(' ', Color.WHITE, Color.BLACK, false, false, false);
+                    this.characterMap[y][x] = new TerminalCharacter(
+                            ' ', 
+                            convertColorToAWT(Color.WHITE, false), 
+                            convertColorToAWT(Color.BLACK, false), 
+                            false, 
+                            false, 
+                            false);
             moveCursor(0,0);
         }
     }
@@ -257,7 +276,13 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
         TerminalCharacter [][]newCharacterMap = new TerminalCharacter[newSizeRows][newSizeColumns];
         for(int y = 0; y < newSizeRows; y++)
             for(int x = 0; x < newSizeColumns; x++)
-                newCharacterMap[y][x] = new TerminalCharacter(' ', Color.WHITE, Color.BLACK, false, false, false);
+                newCharacterMap[y][x] = new TerminalCharacter(
+                        ' ', 
+                        convertColorToAWT(Color.WHITE, false), 
+                        convertColorToAWT(Color.BLACK, false), 
+                        false, 
+                        false, 
+                        false);
 
         synchronized(resizeMutex) {
             for(int y = 0; y < size().getRows() && y < newSizeRows; y++) {
@@ -318,6 +343,10 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
     {
         return getLastKnownSize();
     }
+    
+    private java.awt.Color convertColorToAWT(Color color) {
+        return convertColorToAWT(color, currentlyBold && appearance.useBrightColorsOnBold());
+    }           
     
     private java.awt.Color convertColorToAWT(Color color, boolean bright)
     {
@@ -492,15 +521,15 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
                 for(int col = 0; col < SwingTerminal.this.size().getColumns(); col++) {
                     TerminalCharacter character = characterMap[row][col];
                     if(row == textPosition.getRow() && col == textPosition.getColumn())
-                        graphics2D.setColor(character.getForegroundAsAWT());
+                        graphics2D.setColor(character.getForeground());
                     else
-                        graphics2D.setColor(character.getBackgroundAsAWT());
+                        graphics2D.setColor(character.getBackground());
                     graphics2D.fillRect(col * charWidth, row * charHeight, charWidth, charHeight);
                     if((row == textPosition.getRow() && col == textPosition.getColumn()) ||
                             (character.isBlinking() && !blinkVisible))
-                        graphics2D.setColor(character.getBackgroundAsAWT());
+                        graphics2D.setColor(character.getBackground());
                     else
-                        graphics2D.setColor(character.getForegroundAsAWT());
+                        graphics2D.setColor(character.getForeground());
                         
                     if(character.isBold())
                         graphics2D.setFont(appearance.getBoldTextFont());
@@ -523,13 +552,19 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
     private class TerminalCharacter
     {
         private final char character;
-        private final Color foreground;
-        private final Color background;
+        private final java.awt.Color foreground;
+        private final java.awt.Color background;
         private final boolean bold;
         private final boolean blinking;
         private final boolean underlined;
 
-        public TerminalCharacter(char character, Color foreground, Color background, boolean bold, boolean blinking, boolean underlined)
+        public TerminalCharacter(
+                char character, 
+                java.awt.Color foreground, 
+                java.awt.Color background, 
+                boolean bold, 
+                boolean blinking, 
+                boolean underlined)
         {
             this.character = character;
             this.foreground = foreground;
@@ -539,7 +574,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
             this.underlined = underlined;
         }
 
-        public Color getBackground()
+        public java.awt.Color getBackground()
         {
             return background;
         }
@@ -562,23 +597,9 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
             return character;
         }
 
-        public Color getForeground()
+        public java.awt.Color getForeground()
         {
             return foreground;
-        }
-
-        public java.awt.Color getForegroundAsAWT()
-        {
-            return convertColorToAWT(foreground, bold && appearance.useBrightColorsOnBold());
-        }
-
-        public java.awt.Color getBackgroundAsAWT()
-        {
-            //TODO: Fix the lookup method to handle color 'default' for background also
-            if (background == Color.DEFAULT)
-                return convertColorToAWT(Color.BLACK, false);
-            else
-                return convertColorToAWT(background, false);
         }
 
         @Override

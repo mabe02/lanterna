@@ -72,11 +72,45 @@ public abstract class ANSITerminal extends StreamBasedTerminal
     }
 
     @Override
+    public void applyBackgroundColor(int r, int g, int b) {
+        if(r < 0 || r > 255)
+            throw new IllegalArgumentException("applyForegroundColor: r is outside of valid range (0-255)");
+        if(g < 0 || g > 255)
+            throw new IllegalArgumentException("applyForegroundColor: g is outside of valid range (0-255)");
+        if(b < 0 || b > 255)
+            throw new IllegalArgumentException("applyForegroundColor: b is outside of valid range (0-255)");
+        
+        synchronized(writerMutex) {
+            CSI();
+            String asString = "48;2;" + r + ";" + g + ";" + b + "m";
+            for(int i = 0; i < asString.length(); i++)
+                writeToTerminal((byte)asString.charAt(i));
+        }
+    }
+
+    @Override
     public void applyForegroundColor(Color color)
     {
         synchronized(writerMutex) {
             CSI();
             writeToTerminal((byte)'3', (byte)((color.getIndex() + "").charAt(0)), (byte)'m');
+        }
+    }
+
+    @Override
+    public void applyForegroundColor(int r, int g, int b) {
+        if(r < 0 || r > 255)
+            throw new IllegalArgumentException("applyForegroundColor: r is outside of valid range (0-255)");
+        if(g < 0 || g > 255)
+            throw new IllegalArgumentException("applyForegroundColor: g is outside of valid range (0-255)");
+        if(b < 0 || b > 255)
+            throw new IllegalArgumentException("applyForegroundColor: b is outside of valid range (0-255)");
+        
+        synchronized(writerMutex) {
+            CSI();
+            String asString = "38;2;" + r + ";" + g + ";" + b + "m";
+            for(int i = 0; i < asString.length(); i++)
+                writeToTerminal((byte)asString.charAt(i));
         }
     }
 
