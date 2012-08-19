@@ -69,6 +69,7 @@ public abstract class StreamBasedTerminal extends InputEnabledAbstractTerminal {
      * @param c Character to write to the output stream
      * @throws LanternaException 
      */
+    @Override
     public void putCharacter(char c) {
         synchronized(writerMutex) {
             writeToTerminal(translateCharacter(c));
@@ -89,6 +90,7 @@ public abstract class StreamBasedTerminal extends InputEnabledAbstractTerminal {
         }
     }
 
+    @Override
     public void flush() {
         try {
             terminalOutput.flush();
