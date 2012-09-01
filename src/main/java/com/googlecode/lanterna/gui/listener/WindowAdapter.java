@@ -20,26 +20,30 @@
 package com.googlecode.lanterna.gui.listener;
 
 import com.googlecode.lanterna.gui.Window;
+import com.googlecode.lanterna.input.Key;
 
 /**
  *
  * @author Martin
  */
-public class WindowAdapter implements WindowListener
-{
-
-    public void onWindowInvalidated(Window window)
-    {
+public class WindowAdapter implements WindowListener {
+    @Override
+    public void onWindowInvalidated(Window window) {
         
     }
 
-    public void onWindowClosed(Window window)
-    {
+    @Override
+    public void onWindowClosed(Window window) {
         
     }
 
-    public void onWindowShown(Window window)
-    {
+    @Override
+    public void onWindowShown(Window window) {
+        
+    }
+
+    @Override
+    public void onUnhandledKeyboardInteraction(Window window, Key key) {
         
     }
 }

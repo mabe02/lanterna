@@ -230,13 +230,24 @@ public class Window implements Container
                     nextItem = contentPane.nextFocus(null);
                 setFocus(nextItem, result.asFocusChangeDirection());
             }
-            if(result.isPreviousInteractable()) {
+            else if(result.isPreviousInteractable()) {
                 Interactable prevItem = contentPane.previousFocus(currentlyInFocus);
                 if(prevItem == null)
                     prevItem = contentPane.previousFocus(null);
                 setFocus(prevItem, result.asFocusChangeDirection());
             }
+            else if(result == Interactable.Result.EVENT_NOT_HANDLED) {
+                onUnhandledKeyPress(key);
+            }
         }
+        else {
+            onUnhandledKeyPress(key);
+        }
+    }
+    
+    private void onUnhandledKeyPress(Key key) {
+        for(WindowListener listener: windowListeners)
+            listener.onUnhandledKeyboardInteraction(this, key);
     }
 
     public boolean isSoloWindow()

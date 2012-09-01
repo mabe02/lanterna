@@ -20,6 +20,7 @@
 package com.googlecode.lanterna.gui.listener;
 
 import com.googlecode.lanterna.gui.Window;
+import com.googlecode.lanterna.input.Key;
 
 /**
  *
@@ -30,4 +31,5 @@ public interface WindowListener
     public void onWindowInvalidated(Window window);
     public void onWindowShown(Window window);
     public void onWindowClosed(Window window);
+    public void onUnhandledKeyboardInteraction(Window window, Key key);
 }
