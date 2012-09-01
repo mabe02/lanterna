@@ -286,16 +286,16 @@ public class GUIScreen
         doEventLoop();
     }
 
-    /**
-     * Closes the currently active, top-level window. Making it go away from the
-     * screen and eventually returns control to whoever was calling showWindow
-     * on it
-     */
-    public void closeWindow()
+    void closeWindow(Window window)
     {
         if(windowStack.size() == 0)
             return;
 
+        if(windowStack.getLast().window != window) {
+            throw new IllegalStateException("Cannot close " + window.toString() + " because it's not "
+                    + "the top window");
+        }
+        
         WindowPlacement windowPlacement = windowStack.removeLast();
         windowPlacement.getWindow().onClosed();
     }

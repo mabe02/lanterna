@@ -56,7 +56,7 @@ public class TableTest {
         Button exitButton = new Button("Exit", new Action() {            
             @Override
             public void doAction() {
-                guiScreen.closeWindow();
+                window1.close();
             }
         });
         buttonPanel.addComponent(exitButton);

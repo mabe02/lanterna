@@ -53,7 +53,7 @@ public class MaximizeTest {
             @Override
             public void doAction()
             {
-                guiScreen.closeWindow();
+                mainWindow.close();
             }
         });
         buttonPanel.addComponent(button1);

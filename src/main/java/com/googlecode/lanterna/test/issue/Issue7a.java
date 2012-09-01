@@ -54,7 +54,7 @@ public class Issue7a {
         mainWindow.addComponent(new Button("Close", new Action() {
             public void doAction()
             {
-                textGUI.closeWindow();
+                mainWindow.close();
             }
         }));
 

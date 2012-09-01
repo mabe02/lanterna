@@ -65,7 +65,7 @@ public class ButtonTest
             @Override
             public void doAction()
             {
-                guiScreen.closeWindow();
+                mainWindow.close();
             }
         });
         Button button2 = new Button("Button2");

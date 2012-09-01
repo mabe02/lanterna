@@ -92,7 +92,7 @@ public class TextAreaTest {
         Button exitButton = new Button("Exit", new Action() {            
             @Override
             public void doAction() {
-                guiScreen.closeWindow();
+                window1.close();
             }
         });
         lastPanel.addComponent(new EmptySpace(1, 1), LinearLayout.GROWS_HORIZONTALLY);

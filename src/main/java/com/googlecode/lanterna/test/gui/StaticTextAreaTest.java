@@ -213,8 +213,9 @@ public class StaticTextAreaTest {
         Panel buttonPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORISONTAL);
         Button exitButton = new Button("Exit", new Action() {
 
+            @Override
             public void doAction() {
-                guiScreen.closeWindow();
+                window1.close();
             }
         });
         buttonPanel.addComponent(new EmptySpace(), LinearLayout.MAXIMIZES_HORIZONTALLY);

@@ -56,7 +56,7 @@ public class Issue33 {
         bottomPanel.addComponent(new Button("Close", new Action() {
             @Override
             public void doAction() {
-                mainWindow.getOwner().closeWindow();
+                mainWindow.close();
             }
         }));
         mainWindow.addComponent(bottomPanel);

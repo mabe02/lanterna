@@ -106,7 +106,7 @@ public class DifferentKindsOfListBoxesTest {
         Button exitButton = new Button("Exit", new Action() {
                 @Override
                 public void doAction()  {
-                    guiScreen.closeWindow();
+                    window1.close();
                 }
             });
         buttonPanel.addComponent(new EmptySpace(1, 1), LinearLayout.GROWS_HORIZONTALLY);

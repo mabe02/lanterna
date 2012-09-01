@@ -48,7 +48,7 @@ public class FullScreenWindowTest {
         Panel buttonPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORISONTAL);
         Button exitButton = new Button("Exit", new Action() {
                 public void doAction()  {
-                    guiScreen.closeWindow();
+                    window1.close();
                 }
             });
         buttonPanel.addComponent(new EmptySpace(50, 1));

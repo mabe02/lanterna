@@ -278,10 +278,10 @@ public class Window implements Container
         invalidate();
     }
 
-    protected void close()
+    public void close()
     {
         if(owner != null)
-            owner.closeWindow();
+            owner.closeWindow(this);
     }
 
     protected void onVisible()

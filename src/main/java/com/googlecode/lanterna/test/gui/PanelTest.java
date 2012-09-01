@@ -56,7 +56,7 @@ public class PanelTest
             @Override
             public void doAction()
             {
-                guiScreen.closeWindow();
+                mainWindow.close();
             }
         }));
 
