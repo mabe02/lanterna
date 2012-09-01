@@ -89,6 +89,19 @@ public abstract class ANSITerminal extends StreamBasedTerminal
     }
 
     @Override
+    public void applyBackgroundColor(int index) {
+        if(index < 0 || index > 255)
+            throw new IllegalArgumentException("applyBackgroundColor: index is outside of valid range (0-255)");
+        
+        synchronized(writerMutex) {
+            CSI();
+            String asString = "48;5;" + index + "m";
+            for(int i = 0; i < asString.length(); i++)
+                writeToTerminal((byte)asString.charAt(i));
+        }
+    }
+
+    @Override
     public void applyForegroundColor(Color color)
     {
         synchronized(writerMutex) {
@@ -109,6 +122,19 @@ public abstract class ANSITerminal extends StreamBasedTerminal
         synchronized(writerMutex) {
             CSI();
             String asString = "38;2;" + r + ";" + g + ";" + b + "m";
+            for(int i = 0; i < asString.length(); i++)
+                writeToTerminal((byte)asString.charAt(i));
+        }
+    }
+
+    @Override
+    public void applyForegroundColor(int index) {
+        if(index < 0 || index > 255)
+            throw new IllegalArgumentException("applyForegroundColor: index is outside of valid range (0-255)");
+        
+        synchronized(writerMutex) {
+            CSI();
+            String asString = "38;5;" + index + "m";
             for(int i = 0; i < asString.length(); i++)
                 writeToTerminal((byte)asString.charAt(i));
         }

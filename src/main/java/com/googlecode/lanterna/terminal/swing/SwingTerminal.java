@@ -25,6 +25,7 @@ import com.googlecode.lanterna.input.KeyMappingProfile;
 import com.googlecode.lanterna.terminal.AbstractTerminal;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
+import com.googlecode.lanterna.terminal.XTerm8bitIndexedColorUtils;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Arrays;
@@ -145,6 +146,11 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
     }
 
     @Override
+    public void applyBackgroundColor(int index) {
+        currentBackgroundColor = XTerm8bitIndexedColorUtils.getAWTColor(index, appearance.getColorPalette());
+    }
+
+    @Override
     public void applyForegroundColor(Color color)
     {
         currentForegroundColor = convertColorToAWT(color);
@@ -153,6 +159,11 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
     @Override
     public void applyForegroundColor(int r, int g, int b) {
         currentForegroundColor = new java.awt.Color(r, g, b);
+    }
+
+    @Override
+    public void applyForegroundColor(int index) {
+        currentForegroundColor = XTerm8bitIndexedColorUtils.getAWTColor(index, appearance.getColorPalette());
     }
 
     @Override

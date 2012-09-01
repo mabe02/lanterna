@@ -105,6 +105,22 @@ public interface Terminal extends InputProvider
     public void applyForegroundColor(int r, int g, int b);
     
     /**
+     * Changes the foreground color for all the following characters put to the
+     * terminal. The foreground color is what color to draw the text in.<br>
+     * <b>Warning:</b> This method will use the XTerm 256 color extension, it 
+     * may not be supported on all terminal emulators! The index values are 
+     * resolved as this:<br>
+     *   0 ..  15 - System color, these are taken from the schema.
+     *  16 .. 231 - Forms a 6x6x6 RGB color cube.<br>
+     * 232 .. 255 - A gray scale ramp without black and white.<br>
+     * 
+     * <p>For more details on this, please see <a href="https://github.com/robertknight/konsole/blob/master/user-doc/README.moreColors">
+     * this</a> commit message to Konsole.
+     * @param index Color index from the XTerm 256 color space
+     */
+    public void applyForegroundColor(int index);
+    
+    /**
      * Changes the background color for all the following characters put to the 
      * terminal. The background color is the color surrounding the text being 
      * printed.
@@ -128,6 +144,25 @@ public interface Terminal extends InputProvider
      * @param b Blue intensity, from 0 to 255
      */
     public void applyBackgroundColor(int r, int g, int b);
+    
+    /**
+     * Changes the background color for all the following characters put to the
+     * terminal. The background color is the color surrounding the text being 
+     * printed.<br>
+     * <b>Warning:</b> This method will use the XTerm 256 color extension, it 
+     * may not be supported on all terminal emulators! The index values are 
+     * resolved as this:<br>
+     *   0 ..  15 - System color, these are taken from the schema.
+     *  16 .. 231 - Forms a 6x6x6 RGB color cube.<br>
+     * 232 .. 255 - A gray scale ramp without black and white.<br>
+     * 
+     * <p>For more details on this, please see <a href="https://github.com/robertknight/konsole/blob/master/user-doc/README.moreColors">
+     * this</a> commit message to Konsole.
+     * @param r Red intensity, from 0 to 255
+     * @param g Green intensity, from 0 to 255
+     * @param b Blue intensity, from 0 to 255
+     */
+    public void applyBackgroundColor(int index);
     
     /**
      * Adds a {@code ResizeListener} to be called when the terminal has changed
