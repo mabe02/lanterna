@@ -82,6 +82,7 @@ public class Table extends AbstractComponent implements InteractableContainer
         rows.add(newRow);
         for(int i = 0; i < columns.length; i++)
             columns[i].addComponent(newRow[i]);
+        invalidate();
     }
 
     public int getNrOfRows()
