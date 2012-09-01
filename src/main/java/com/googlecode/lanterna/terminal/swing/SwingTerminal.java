@@ -51,8 +51,8 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
     private TerminalAppearance appearance;
     private TerminalCharacter [][]characterMap;
     private TerminalPosition textPosition;
-    private java.awt.Color currentForegroundColor;
-    private java.awt.Color currentBackgroundColor;
+    private TerminalCharacterColor currentForegroundColor;
+    private TerminalCharacterColor currentBackgroundColor;
     private boolean currentlyBold;
     private boolean currentlyBlinking;
     private boolean currentlyUnderlined;
@@ -88,8 +88,8 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
         this.blinkTimer = new Timer(500, new BlinkAction());
         this.textPosition = new TerminalPosition(0, 0);
         this.characterMap = new TerminalCharacter[heightInRows][widthInColumns];
-        this.currentForegroundColor = convertColorToAWT(Color.WHITE, false);
-        this.currentBackgroundColor = convertColorToAWT(Color.BLACK, false);
+        this.currentForegroundColor = new CharacterANSIColor(Color.WHITE);
+        this.currentBackgroundColor = new CharacterANSIColor(Color.BLACK);
         this.currentlyBold = false;
         this.currentlyBlinking = false;
         this.currentlyUnderlined = false;
@@ -132,38 +132,33 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
     }
 
     @Override
-    public void applyBackgroundColor(Color color)
-    {
-        if(color == Color.DEFAULT)
-            currentBackgroundColor = java.awt.Color.BLACK;
-        else
-            currentBackgroundColor = convertColorToAWT(color);
+    public void applyBackgroundColor(Color color) {
+        currentBackgroundColor = new CharacterANSIColor(color);
     }
 
     @Override
     public void applyBackgroundColor(int r, int g, int b) {
-        currentBackgroundColor = new java.awt.Color(r, g, b);
+        currentBackgroundColor = new Character24bitColor(new java.awt.Color(r, g, b));
     }
 
     @Override
     public void applyBackgroundColor(int index) {
-        currentBackgroundColor = XTerm8bitIndexedColorUtils.getAWTColor(index, appearance.getColorPalette());
+        currentBackgroundColor = new CharacterIndexedColor(index);
     }
 
     @Override
-    public void applyForegroundColor(Color color)
-    {
-        currentForegroundColor = convertColorToAWT(color);
+    public void applyForegroundColor(Color color) {
+        currentForegroundColor = new CharacterANSIColor(color);
     }
 
     @Override
     public void applyForegroundColor(int r, int g, int b) {
-        currentForegroundColor = new java.awt.Color(r, g, b);
+        currentForegroundColor = new Character24bitColor(new java.awt.Color(r, g, b));
     }
 
     @Override
     public void applyForegroundColor(int index) {
-        currentForegroundColor = XTerm8bitIndexedColorUtils.getAWTColor(index, appearance.getColorPalette());
+        currentForegroundColor = new CharacterIndexedColor(index);
     }
 
     @Override
@@ -175,8 +170,8 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
                 currentlyBold = false;
                 currentlyBlinking = false;
                 currentlyUnderlined = false;
-                currentForegroundColor = convertColorToAWT(Color.DEFAULT);
-                currentBackgroundColor = java.awt.Color.BLACK;
+                currentForegroundColor = new CharacterANSIColor(Color.DEFAULT);
+                currentBackgroundColor = new CharacterANSIColor(Color.BLACK);
             }
             else if(sgr == SGR.ENTER_BOLD)
                 currentlyBold = true;
@@ -201,8 +196,8 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
                 for(int x = 0; x < size().getColumns(); x++)
                     this.characterMap[y][x] = new TerminalCharacter(
                             ' ', 
-                            convertColorToAWT(Color.WHITE, false), 
-                            convertColorToAWT(Color.BLACK, false), 
+                            new CharacterANSIColor(Color.DEFAULT),
+                            new CharacterANSIColor(Color.BLACK),
                             false, 
                             false, 
                             false);
@@ -289,8 +284,8 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
             for(int x = 0; x < newSizeColumns; x++)
                 newCharacterMap[y][x] = new TerminalCharacter(
                         ' ', 
-                        convertColorToAWT(Color.WHITE, false), 
-                        convertColorToAWT(Color.BLACK, false), 
+                        new CharacterANSIColor(Color.WHITE), 
+                        new CharacterANSIColor(Color.BLACK), 
                         false, 
                         false, 
                         false);
@@ -353,71 +348,6 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
     private TerminalSize size()
     {
         return getLastKnownSize();
-    }
-    
-    private java.awt.Color convertColorToAWT(Color color) {
-        return convertColorToAWT(color, currentlyBold && appearance.useBrightColorsOnBold());
-    }           
-    
-    private java.awt.Color convertColorToAWT(Color color, boolean bright)
-    {
-        switch(color)
-        {
-            case BLACK:
-                if(bright)
-                    return appearance.getColorPalette().getBrightBlack();
-                else
-                    return appearance.getColorPalette().getNormalBlack();
-
-            case BLUE:
-                if(bright)
-                    return appearance.getColorPalette().getBrightBlue();
-                else
-                    return appearance.getColorPalette().getNormalBlue();
-
-            case CYAN:
-                if(bright)
-                    return appearance.getColorPalette().getBrightCyan();
-                else
-                    return appearance.getColorPalette().getNormalCyan();
-
-            case DEFAULT:
-                if(bright)
-                    return appearance.getColorPalette().getDefaultBrightColor();
-                else
-                    return appearance.getColorPalette().getDefaultColor();
-
-            case GREEN:
-                if(bright)
-                    return appearance.getColorPalette().getBrightGreen();
-                else
-                    return appearance.getColorPalette().getNormalGreen();
-
-            case MAGENTA:
-                if(bright)
-                    return appearance.getColorPalette().getBrightMagenta();
-                else
-                    return appearance.getColorPalette().getNormalMagenta();
-
-            case RED:
-                if(bright)
-                    return appearance.getColorPalette().getBrightRed();
-                else
-                    return appearance.getColorPalette().getNormalRed();
-
-            case WHITE:
-                if(bright)
-                    return appearance.getColorPalette().getBrightWhite();
-                else
-                    return appearance.getColorPalette().getNormalWhite();
-
-            case YELLOW:
-                if(bright)
-                    return appearance.getColorPalette().getBrightYellow();
-                else
-                    return appearance.getColorPalette().getNormalYellow();
-        }
-        return java.awt.Color.PINK;
     }
 
     private class KeyCapturer extends KeyAdapter
@@ -532,15 +462,15 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
                 for(int col = 0; col < SwingTerminal.this.size().getColumns(); col++) {
                     TerminalCharacter character = characterMap[row][col];
                     if(row == textPosition.getRow() && col == textPosition.getColumn())
-                        graphics2D.setColor(character.getForeground());
+                        graphics2D.setColor(character.getForegroundAsAWTColor(appearance.useBrightColorsOnBold()));
                     else
-                        graphics2D.setColor(character.getBackground());
+                        graphics2D.setColor(character.getBackgroundAsAWTColor());
                     graphics2D.fillRect(col * charWidth, row * charHeight, charWidth, charHeight);
                     if((row == textPosition.getRow() && col == textPosition.getColumn()) ||
                             (character.isBlinking() && !blinkVisible))
-                        graphics2D.setColor(character.getBackground());
+                        graphics2D.setColor(character.getBackgroundAsAWTColor());
                     else
-                        graphics2D.setColor(character.getForeground());
+                        graphics2D.setColor(character.getForegroundAsAWTColor(appearance.useBrightColorsOnBold()));
                         
                     if(character.isBold())
                         graphics2D.setFont(appearance.getBoldTextFont());
@@ -560,23 +490,22 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
         }
     }
 
-    private class TerminalCharacter
-    {
+    private static class TerminalCharacter {
+        
         private final char character;
-        private final java.awt.Color foreground;
-        private final java.awt.Color background;
+        private final TerminalCharacterColor foreground;
+        private final TerminalCharacterColor background;
         private final boolean bold;
         private final boolean blinking;
         private final boolean underlined;
 
-        public TerminalCharacter(
+        TerminalCharacter(
                 char character, 
-                java.awt.Color foreground, 
-                java.awt.Color background, 
+                TerminalCharacterColor foreground, 
+                TerminalCharacterColor background, 
                 boolean bold, 
                 boolean blinking, 
-                boolean underlined)
-        {
+                boolean underlined) {
             this.character = character;
             this.foreground = foreground;
             this.background = background;
@@ -585,13 +514,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
             this.underlined = underlined;
         }
 
-        public java.awt.Color getBackground()
-        {
-            return background;
-        }
-
-        public boolean isBold()
-        {
+        public boolean isBold() {
             return bold;
         }
 
@@ -603,20 +526,118 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
             return underlined;
         }
         
-        public char getCharacter()
-        {
-            return character;
+        private java.awt.Color getForegroundAsAWTColor(boolean useBrightOnBold) {
+            return foreground.getColor(isBold() && useBrightOnBold, true);
         }
 
-        public java.awt.Color getForeground()
-        {
-            return foreground;
+        private java.awt.Color getBackgroundAsAWTColor() {
+            return background.getColor(false, false);
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             return Character.toString(character);
+        }
+    }
+    
+    private static abstract class TerminalCharacterColor {
+        public abstract java.awt.Color getColor(boolean brightHint, boolean foregroundHint);
+    }
+    
+    private class CharacterANSIColor extends TerminalCharacterColor {
+
+        private final Color color;
+
+        CharacterANSIColor(Color color) {
+            this.color = color;
+        }
+        
+        @Override
+        public java.awt.Color getColor(boolean brightHint, boolean foregroundHint) {
+            switch(color) {
+                case BLACK:
+                    if(brightHint)
+                        return appearance.getColorPalette().getBrightBlack();
+                    else
+                        return appearance.getColorPalette().getNormalBlack();
+
+                case BLUE:
+                    if(brightHint)
+                        return appearance.getColorPalette().getBrightBlue();
+                    else
+                        return appearance.getColorPalette().getNormalBlue();
+
+                case CYAN:
+                    if(brightHint)
+                        return appearance.getColorPalette().getBrightCyan();
+                    else
+                        return appearance.getColorPalette().getNormalCyan();
+
+                case DEFAULT:
+                    if(brightHint)
+                        return appearance.getColorPalette().getDefaultBrightColor();
+                    else
+                        return appearance.getColorPalette().getDefaultColor();
+
+                case GREEN:
+                    if(brightHint)
+                        return appearance.getColorPalette().getBrightGreen();
+                    else
+                        return appearance.getColorPalette().getNormalGreen();
+
+                case MAGENTA:
+                    if(brightHint)
+                        return appearance.getColorPalette().getBrightMagenta();
+                    else
+                        return appearance.getColorPalette().getNormalMagenta();
+
+                case RED:
+                    if(brightHint)
+                        return appearance.getColorPalette().getBrightRed();
+                    else
+                        return appearance.getColorPalette().getNormalRed();
+
+                case WHITE:
+                    if(brightHint)
+                        return appearance.getColorPalette().getBrightWhite();
+                    else
+                        return appearance.getColorPalette().getNormalWhite();
+
+                case YELLOW:
+                    if(brightHint)
+                        return appearance.getColorPalette().getBrightYellow();
+                    else
+                        return appearance.getColorPalette().getNormalYellow();
+            }
+            return java.awt.Color.PINK;
+        }        
+    }
+    
+    private class CharacterIndexedColor extends TerminalCharacterColor {
+
+        private final int index;
+
+        CharacterIndexedColor(int index) {
+            this.index = index;
+        }
+        
+        @Override
+        public java.awt.Color getColor(boolean brightHint, boolean foregroundHint) {
+            return XTerm8bitIndexedColorUtils.getAWTColor(index, appearance.getColorPalette());
+        }        
+    }
+    
+    private static class Character24bitColor extends TerminalCharacterColor {
+        
+        private final java.awt.Color c;
+
+        Character24bitColor(java.awt.Color c) {
+            this.c = c;
+        }
+        
+        @Override
+        public java.awt.Color getColor(boolean brightHint, boolean foregroundHint) {
+            return c;
         }
     }
 }
