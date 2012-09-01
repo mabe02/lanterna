@@ -49,6 +49,7 @@ public class Button extends AbstractInteractableComponent
             this.onPressEvent = new Action() { public void doAction() {} };
     }
 
+    @Override
     public void repaint(TextGraphics graphics)
     {
         if(hasFocus())
@@ -91,6 +92,7 @@ public class Button extends AbstractInteractableComponent
         return buttonLabel.getText();
     }
 
+    @Override
     public TerminalSize getPreferredSize()
     {
         TerminalSize labelSize = buttonLabel.getPreferredSize();
@@ -107,13 +109,13 @@ public class Button extends AbstractInteractableComponent
         buttonLabel.setStyle(Theme.Category.ButtonLabelInactive);
     }
 
+    @Override
     public Interactable.Result keyboardInteraction(Key key)
     {
         switch(key.getKind()) {
             case Enter:
                 onPressEvent.doAction();
-                break;
-
+                return Result.EVENT_HANDLED;
                 
             case ArrowDown:
                 return Result.NEXT_INTERACTABLE_DOWN;
@@ -128,23 +130,9 @@ public class Button extends AbstractInteractableComponent
             case ArrowLeft:
             case ReverseTab:
                 return Result.PREVIOUS_INTERACTABLE_LEFT;
+                
+            default:
+                return Result.EVENT_NOT_HANDLED;
         }
-        return Result.DO_NOTHING;
     }
-
-    /*
-    public void keyPressed(int character)
-    {
-        if(character == '\r')
-            onPressEvent.doAction();
-        else if(character == '\t')
-            getEventReciever().onEvent(InteractionEvent.NEXT_INTERACTABLE);
-        else if(character == CKey.BTAB())
-            getEventReciever().onEvent(InteractionEvent.PREVIOUS_INTERACTABLE);
-        else if(character == CKey.RIGHT() || character == CKey.DOWN())
-            getEventReciever().onEvent(InteractionEvent.NEXT_INTERACTABLE);
-        else if(character == CKey.LEFT() || character == CKey.UP())
-            getEventReciever().onEvent(InteractionEvent.PREVIOUS_INTERACTABLE);
-    }
-     */
 }

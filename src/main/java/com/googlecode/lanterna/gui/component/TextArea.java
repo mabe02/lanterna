@@ -170,6 +170,7 @@ public class TextArea  extends AbstractInteractableComponent
             setHotspot(graphics.translateToGlobalCoordinates(new TerminalPosition(0, 0)));
     }
 
+    @Override
     public Result keyboardInteraction(Key key)
     {
         try {
@@ -220,8 +221,11 @@ public class TextArea  extends AbstractInteractableComponent
                 case End:
                     scrollTopIndex = lines.size() - lastSize.getRows();
                     break;
+                    
+                default:
+                    return Result.EVENT_NOT_HANDLED;
             }
-            return Result.DO_NOTHING;
+            return Result.EVENT_HANDLED;
         }
         finally {
             invalidate();

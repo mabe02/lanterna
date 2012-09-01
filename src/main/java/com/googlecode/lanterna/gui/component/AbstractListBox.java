@@ -240,7 +240,7 @@ public abstract class AbstractListBox extends AbstractInteractableComponent {
                 default:
                     return unhandledKeyboardEvent(key);
             }
-            return Result.DO_NOTHING;
+            return Result.EVENT_HANDLED;
         }
         finally {
             invalidate();
@@ -255,7 +255,7 @@ public abstract class AbstractListBox extends AbstractInteractableComponent {
     }
     
     protected Interactable.Result unhandledKeyboardEvent(Key key) {
-        return Result.DO_NOTHING;
+        return Result.EVENT_NOT_HANDLED;
     }
 
     protected int getHotSpotPositionOnLine(int selectedIndex) {

@@ -79,15 +79,16 @@ public class CheckBoxList extends AbstractListBox
     @Override
     protected Result unhandledKeyboardEvent(Key key) {
         if(getSelectedIndex() == -1)
-            return Result.DO_NOTHING;
+            return Result.EVENT_NOT_HANDLED;
         
         if(key.getKind() == Key.Kind.Enter || key.getCharacter() == ' ') {
             if(itemStatus.get(getSelectedIndex()) == true)
                 itemStatus.set(getSelectedIndex(), Boolean.FALSE);
             else
                 itemStatus.set(getSelectedIndex(), Boolean.TRUE);
+            return Result.EVENT_HANDLED;
         }
-        return Result.DO_NOTHING;
+        return Result.EVENT_NOT_HANDLED;
     }
 
     @Override

@@ -20,14 +20,8 @@
 package com.googlecode.lanterna.gui.component;
 
 import com.googlecode.lanterna.gui.Action;
-import com.googlecode.lanterna.gui.Interactable;
-import com.googlecode.lanterna.gui.TextGraphics;
-import com.googlecode.lanterna.gui.Theme.Category;
 import com.googlecode.lanterna.input.Key;
-import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -58,10 +52,12 @@ public class ActionListBox extends AbstractListBox {
      */
     public void addAction(final String label, final Action action) {
         super.addItem(new Item() {
+            @Override
             public String getTitle() {
                 return label;
             }
 
+            @Override
             public void doAction() {
                 action.doAction();
             }
@@ -72,8 +68,9 @@ public class ActionListBox extends AbstractListBox {
     protected Result unhandledKeyboardEvent(Key key) {
         if(key.getKind() == Key.Kind.Enter) {
             ((Item)getSelectedItem()).doAction();
+            return Result.EVENT_HANDLED;
         }
-        return Result.DO_NOTHING;
+        return Result.EVENT_NOT_HANDLED;
     }
     
     @Override

@@ -33,8 +33,9 @@ public interface Interactable
      * This method is called when this component has focus and the user has
      * pressed a key on the keyboard
      * @param key Key pressed on the keyboard
-     * @param result Change the value inside this object for the desired action
-     * to be taken by the GUI system as a result of this interaction
+     * @param result Result of this keyboard interaction, this can for example be a hint to the 
+     * parent container to move input focus to a different component or telling that the event was
+     * processed by the component and no extra action is required
      */
     public Result keyboardInteraction(Key key);
     
@@ -62,9 +63,13 @@ public interface Interactable
     public enum Result
     {
         /**
-         * The event has been dealt with, don't do anything special
+         * The event has been dealt with by this component, shouldn't be sent to the parent
          */
-        DO_NOTHING,
+        EVENT_HANDLED,
+        /**
+         * The component didn't have any action for this event, send it to the parent
+         */
+        EVENT_NOT_HANDLED,
         /**
          * Move keyboard focus to the next component, going down
          */

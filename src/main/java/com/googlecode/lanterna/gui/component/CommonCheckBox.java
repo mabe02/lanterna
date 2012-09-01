@@ -39,6 +39,7 @@ public abstract class CommonCheckBox extends AbstractInteractableComponent
         this.label = new Label(label);
     }
 
+    @Override
     public TerminalSize getPreferredSize()
     {
         TerminalSize labelSize = label.getPreferredSize();
@@ -46,6 +47,7 @@ public abstract class CommonCheckBox extends AbstractInteractableComponent
         return labelSize;
     }
 
+    @Override
     public void repaint(TextGraphics graphics)
     {
         graphics.applyTheme(Category.CheckBox);
@@ -69,6 +71,7 @@ public abstract class CommonCheckBox extends AbstractInteractableComponent
         setHotspot(graphics.translateToGlobalCoordinates(new TerminalPosition(1, 0)));
     }
 
+    @Override
     public Interactable.Result keyboardInteraction(Key key)
     {
         try {
@@ -90,14 +93,15 @@ public abstract class CommonCheckBox extends AbstractInteractableComponent
 
                 case Enter:
                     onActivated();
-                    break;
+                    return Result.EVENT_HANDLED;
 
                 default:
-                    if(key.getCharacter() == ' ' || key.getCharacter() == 'x')
+                    if(key.getCharacter() == ' ' || key.getCharacter() == 'x') {
                         onActivated();
-                    break;
+                        return Result.EVENT_HANDLED;
+                    }
+                    return Result.EVENT_NOT_HANDLED;
             }
-            return Result.DO_NOTHING;
         }
         finally {
             invalidate();

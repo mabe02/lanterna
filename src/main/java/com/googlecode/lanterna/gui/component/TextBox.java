@@ -205,8 +205,11 @@ public class TextBox extends AbstractInteractableComponent
                     if(editPosition - visibleLeftPosition >= lastKnownWidth)
                         visibleLeftPosition++;
                     break;
+                    
+                default:
+                    return Result.EVENT_NOT_HANDLED;
             }
-            return Result.DO_NOTHING;
+            return Result.EVENT_HANDLED;
         }
         finally {
             invalidate();

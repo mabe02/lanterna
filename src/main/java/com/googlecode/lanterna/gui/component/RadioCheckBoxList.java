@@ -80,12 +80,13 @@ public class RadioCheckBoxList extends AbstractListBox {
     @Override
     protected Interactable.Result unhandledKeyboardEvent(Key key) {
         if(getSelectedIndex() == -1)
-            return Interactable.Result.DO_NOTHING;
+            return Interactable.Result.EVENT_NOT_HANDLED;
         
         if(key.getKind() == Key.Kind.Enter || key.getCharacter() == ' ') {
             checkedIndex = getSelectedIndex();
+            return Result.EVENT_HANDLED;
         }
-        return Interactable.Result.DO_NOTHING;
+        return Result.EVENT_NOT_HANDLED;
     }
 
     @Override
