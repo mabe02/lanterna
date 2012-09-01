@@ -32,6 +32,7 @@ public class TableTest {
         final Window window1 = new Window("Text box window");
         
         final Table table = new Table(5, "My Test Table");
+        table.setColumnPaddingSize(1);
         table.addRow(new Label("Column 1 "),
                         new Label("Column 2 "),
                         new Label("Column 3 "),
