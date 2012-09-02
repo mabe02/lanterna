@@ -96,4 +96,33 @@ public interface Component
      * return instead of calculating it
      */
     void setPreferredSize(TerminalSize preferredSizeOverride);
+    
+    /**
+     * Sets the alignment property on the Component which will serve as a hint to the rendering code
+     * as to how to draw the component if it is assigned more space that it asked for. The behavior
+     * of this property is different between components, some may use it and some may not.
+     * 
+     * <p>The default alignment is also up to each component to decide, see the documentation for 
+     * the individual component you are using.
+     * @param alignment Alignment of the component
+     */
+    void setAlignment(Alignment alignment);
+    
+    /**
+     * @return Returns the alignment of this component
+     */
+    Alignment getAlignment();
+    
+    public static enum Alignment {
+        TOP_CENTER,
+        BOTTON_CENTER,
+        LEFT_CENTER,
+        RIGHT_CENTER,
+        CENTER,
+        FILL,
+        TOP_LEFT,
+        TOP_RIGHT,
+        BOTTOM_LEFT,
+        BOTTOM_RIGHT,
+    }
 }

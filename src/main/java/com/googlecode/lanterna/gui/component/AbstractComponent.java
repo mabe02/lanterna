@@ -22,8 +22,10 @@ package com.googlecode.lanterna.gui.component;
 import com.googlecode.lanterna.gui.Component;
 import com.googlecode.lanterna.gui.Container;
 import com.googlecode.lanterna.gui.GUIScreen;
+import com.googlecode.lanterna.gui.TextGraphics;
 import com.googlecode.lanterna.gui.Window;
 import com.googlecode.lanterna.gui.listener.ComponentListener;
+import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,6 +41,7 @@ public abstract class AbstractComponent implements Component
     private Container parent;
     private TerminalSize preferredSizeOverride;
     private boolean visible;
+    private Alignment alignment;
 
     public AbstractComponent()
     {
@@ -46,6 +49,7 @@ public abstract class AbstractComponent implements Component
         parent = null;
         visible = true;
         preferredSizeOverride = null;
+        alignment = Alignment.CENTER;
     }
 
     @Override
@@ -98,6 +102,20 @@ public abstract class AbstractComponent implements Component
     public TerminalSize getMinimumSize() {
         return new TerminalSize(1, 1);
     }
+
+    @Override
+    public Alignment getAlignment() {
+        return alignment;
+    }
+
+    @Override
+    public void setAlignment(Alignment alignment) {
+        if(alignment == null) {
+            throw new IllegalArgumentException("Alignment argument to "
+                    + "AbstractComponent.setAlignment(...) cannot be null");
+        }        
+        this.alignment = alignment;
+    }
     
     protected void invalidate()
     {
@@ -133,5 +151,39 @@ public abstract class AbstractComponent implements Component
 
     protected TerminalSize getPreferredSizeOverride() {
         return preferredSizeOverride;
+    }
+
+    /**
+     * Will create a sub-graphic area according to the alignment, if the assigned size is larger 
+     * than the preferred size.
+     */
+    protected TextGraphics transformAccordingToAlignment(TextGraphics graphics, TerminalSize preferredSize) {
+        if(graphics.getWidth() <= preferredSize.getColumns() &&
+                graphics.getHeight() <= preferredSize.getRows()) {
+            
+            //Don't do anything, return the original TextGraphics
+            return graphics;
+        }
+        if(alignment == Alignment.FILL) {
+            //For FILL, we also want to return it like it is
+            return graphics;
+        }
+        
+        int leftPosition = 0;
+        if(alignment == Alignment.TOP_CENTER || alignment == Alignment.CENTER || alignment == Alignment.BOTTON_CENTER) {
+            leftPosition = (graphics.getWidth() - preferredSize.getColumns()) / 2;
+        }
+        else if(alignment == Alignment.TOP_RIGHT || alignment == Alignment.RIGHT_CENTER || alignment == Alignment.BOTTOM_RIGHT) {
+            leftPosition = graphics.getWidth() - preferredSize.getColumns();
+        }
+        
+        int topPosition = 0;
+        if(alignment == Alignment.LEFT_CENTER || alignment == Alignment.CENTER || alignment == Alignment.RIGHT_CENTER) {
+            topPosition = (graphics.getHeight() - preferredSize.getRows()) / 2;
+        }
+        else if(alignment == Alignment.BOTTOM_LEFT || alignment == Alignment.BOTTON_CENTER || alignment == Alignment.BOTTOM_RIGHT) {
+            topPosition = graphics.getHeight() - preferredSize.getRows();
+        }
+        return graphics.subAreaGraphics(new TerminalPosition(leftPosition, topPosition), preferredSize);
     }
 }
