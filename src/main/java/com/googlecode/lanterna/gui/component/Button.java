@@ -57,7 +57,7 @@ public class Button extends AbstractInteractableComponent
         else
             graphics.applyTheme(graphics.getTheme().getDefinition(Theme.Category.ButtonInactive));
         
-        TerminalSize preferredSize = getPreferredSize();
+        TerminalSize preferredSize = calculatePreferredSize();
         graphics = transformAccordingToAlignment(graphics, preferredSize);
 
         if(graphics.getWidth() < preferredSize.getColumns()) {

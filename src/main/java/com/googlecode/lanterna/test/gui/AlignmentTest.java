@@ -19,6 +19,7 @@
 package com.googlecode.lanterna.test.gui;
 
 import com.googlecode.lanterna.gui.Action;
+import com.googlecode.lanterna.gui.Component;
 import com.googlecode.lanterna.gui.DefaultBackgroundRenderer;
 import com.googlecode.lanterna.gui.GUIScreen;
 import com.googlecode.lanterna.gui.TextGraphics;
@@ -28,6 +29,7 @@ import com.googlecode.lanterna.gui.component.AbstractComponent;
 import com.googlecode.lanterna.gui.component.Button;
 import com.googlecode.lanterna.gui.component.Label;
 import com.googlecode.lanterna.gui.component.Panel;
+import com.googlecode.lanterna.gui.dialog.ListSelectDialog;
 import com.googlecode.lanterna.gui.layout.LinearLayout;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.test.TestTerminalFactory;
@@ -40,14 +42,22 @@ public class AlignmentTest {
 
         final Window mainWindow = new Window("Alignment Test");
         final Label label = new Label("Aligned Label");
-        label.setPreferredSize(new TerminalSize(20, 10));
+        label.setPreferredSize(new TerminalSize(40, 10));
         mainWindow.addComponent(label);
         Panel buttonPanel = new Panel(Panel.Orientation.HORISONTAL);
         Button changeAlignmentButton = new Button("Change alignment", new Action() {
             @Override
             public void doAction() {
+                Component.Alignment a = (Component.Alignment)ListSelectDialog.showDialog(
+                        guiScreen, 
+                        "Choose alignment", 
+                        "Please choose an alignment for the label above", 
+                        (Object[])Component.Alignment.values());
+                if(a != null)
+                    label.setAlignment(a);
             }
         });
+        changeAlignmentButton.setAlignment(Component.Alignment.RIGHT_CENTER);
         Button exitButton = new Button("Exit", new Action() {
             @Override
             public void doAction() {

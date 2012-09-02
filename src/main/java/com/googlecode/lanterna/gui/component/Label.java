@@ -110,7 +110,7 @@ public class Label extends AbstractComponent
     public void repaint(TextGraphics graphics)
     {
         graphics.applyTheme(graphics.getTheme().getDefinition(style));
-        graphics = transformAccordingToAlignment(graphics, getPreferredSize());
+        graphics = transformAccordingToAlignment(graphics, calculatePreferredSize());
         
         if(textColor != null)
             graphics.setForegroundColor(textColor);
