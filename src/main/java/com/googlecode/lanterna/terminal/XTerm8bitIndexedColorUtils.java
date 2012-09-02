@@ -297,6 +297,15 @@ public class XTerm8bitIndexedColorUtils {
             new Entry(254, 0xe4, 0xe4, 0xe4),
             new Entry(255, 0xee, 0xee, 0xee)));
     
+    /**
+     * Given a RGB value, finds the closest color from the 8-bit palette. The calculation is done
+     * using distance in three dimensional space so it's not actually 100% accurate (color 
+     * similarity is a whole research area of its own) but it's a good approximation.
+     * @param red Red component value (0-255)
+     * @param green Green component value (0-255)
+     * @param blue Blue component value (0-255)
+     * @return Index of the closest color
+     */
     public static int getClosestColor(int red, int green, int blue) {
         if(red < 0 || red > 255)
             throw new IllegalArgumentException("getClosestColor: red is outside of valid range (0-255)");
