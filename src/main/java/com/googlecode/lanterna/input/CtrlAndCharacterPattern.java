@@ -28,17 +28,20 @@ public class CtrlAndCharacterPattern implements CharacterPattern {
     
     @Override
     public Key getResult(List<Character> matching) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        int firstCode = 'A' - 1;
+        return new Key((char)(firstCode + (int)matching.get(0).charValue()), true, false);
     }
 
     @Override
     public boolean isCompleteMatch(List<Character> currentMatching) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return matches(currentMatching);
     }
 
     @Override
     public boolean matches(List<Character> currentMatching) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-    
+        if(currentMatching.size() > 1)
+            return false;
+        
+        return currentMatching.get(0).charValue() <= 26;
+    }    
 }

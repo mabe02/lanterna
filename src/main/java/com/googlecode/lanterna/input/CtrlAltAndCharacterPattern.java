@@ -18,10 +18,41 @@
  */
 package com.googlecode.lanterna.input;
 
+import java.util.List;
+
 /**
  *
  * @author Martin
  */
-public class CtrlAltAndCharacterPattern {
+public class CtrlAltAndCharacterPattern  implements CharacterPattern {
     
+    @Override
+    public Key getResult(List<Character> matching) {
+        int firstCode = 'A' - 1;
+        return new Key((char)(firstCode + (int)matching.get(1).charValue()), true, true);
+    }
+
+    @Override
+    public boolean isCompleteMatch(List<Character> currentMatching) {
+        if(currentMatching.size() != 2)
+            return false;
+        if(currentMatching.get(0) != KeyMappingProfile.ESC_CODE)
+            return false;
+        if(currentMatching.get(1).charValue() > 26)
+            return false;
+        return true;
+    }
+
+    @Override
+    public boolean matches(List<Character> currentMatching) {
+        if(currentMatching.get(0) != KeyMappingProfile.ESC_CODE)
+            return false;
+        if(currentMatching.size() == 1)
+            return true;
+        if(currentMatching.get(1).charValue() > 26)
+            return false;
+        if(currentMatching.size() == 2)
+            return true;
+        return false;
+    }
 }
