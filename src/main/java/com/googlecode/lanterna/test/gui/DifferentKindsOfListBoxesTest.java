@@ -59,7 +59,7 @@ public class DifferentKindsOfListBoxesTest {
         checkBoxList.addItem("San");
         checkBoxList.addItem("Yon");
         checkBoxList.addItem("Go");
-        checkBoxList.setPreferredSize(new TerminalSize(0, 8));
+        checkBoxList.setPreferredSize(new TerminalSize(16, 8));
         
         RadioCheckBoxList radioCheckBoxList = new RadioCheckBoxList();
         radioCheckBoxList.addItem("First");
@@ -77,7 +77,7 @@ public class DifferentKindsOfListBoxesTest {
         radioCheckBoxList.addItem("San");
         radioCheckBoxList.addItem("Yon");
         radioCheckBoxList.addItem("Go");
-        radioCheckBoxList.setPreferredSize(new TerminalSize(0, 8));
+        radioCheckBoxList.setPreferredSize(new TerminalSize(16, 8));
         
         ActionListBox actionListBox = new ActionListBox();
         actionListBox.addAction(new RandomAction(guiScreen));
@@ -93,7 +93,7 @@ public class DifferentKindsOfListBoxesTest {
         actionListBox.addAction(new RandomAction(guiScreen));
         actionListBox.addAction(new RandomAction(guiScreen));
         actionListBox.addAction(new RandomAction(guiScreen));
-        actionListBox.setPreferredSize(new TerminalSize(0, 8));   
+        actionListBox.setPreferredSize(new TerminalSize(16, 8));   
         
         mainPanel.addComponent(checkBoxList);
         mainPanel.addComponent(radioCheckBoxList);
