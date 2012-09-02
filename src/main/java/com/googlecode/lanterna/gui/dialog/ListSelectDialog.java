@@ -21,7 +21,6 @@ package com.googlecode.lanterna.gui.dialog;
 
 import com.googlecode.lanterna.gui.Action;
 import com.googlecode.lanterna.gui.GUIScreen;
-import com.googlecode.lanterna.gui.component.ActionListBox;
 import java.util.ArrayList;
 import java.util.List;
 
