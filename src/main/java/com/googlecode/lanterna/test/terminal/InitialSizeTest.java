@@ -21,7 +21,6 @@ package com.googlecode.lanterna.test.terminal;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.test.TestTerminalFactory;
-import java.util.concurrent.CountDownLatch;
 
 /**
  *
