@@ -62,6 +62,9 @@ public class TextGraphics
                 new TerminalSize(areaSize.getColumns() < (graphics.getWidth() - topLeft.getColumn()) ? areaSize.getColumns() : (graphics.getWidth() - topLeft.getColumn()),
                     areaSize.getRows() < (graphics.getHeight() - topLeft.getRow()) ? areaSize.getRows() : (graphics.getHeight() - topLeft.getRow())),
                 graphics.screen, graphics.theme);
+        foregroundColor = graphics.foregroundColor;
+        backgroundColor = graphics.backgroundColor;
+        currentlyBold = graphics.currentlyBold;
     }
 
     /**
