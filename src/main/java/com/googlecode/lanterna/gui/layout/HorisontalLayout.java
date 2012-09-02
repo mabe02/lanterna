@@ -30,6 +30,11 @@ import com.googlecode.lanterna.terminal.TerminalSize;
  */
 public class HorisontalLayout extends LinearLayout {
 
+    public HorisontalLayout() {
+        super();
+        setPadding(1);  //By default set the padding to 1 for Horizontal layouts
+    }
+    
     @Override
     protected int getMajorAxis(TerminalSize terminalSize) {
         return terminalSize.getColumns();

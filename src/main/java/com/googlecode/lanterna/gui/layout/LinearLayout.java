@@ -139,6 +139,9 @@ public abstract class LinearLayout implements LayoutManager {
                 break;
         }
         
+        //Add padding, if any (this could cause availableMajorAxisSpace to go negative!! Beware!)
+        availableMajorAxisSpace -= ((result.size() - 1) * padding);
+        
         //Now try to accomodate the growing major axis components
         List<LinearLaidOutComponent> growingComponents = new ArrayList<LinearLaidOutComponent>();
         for(LinearLaidOutComponent lloc: result) {
@@ -165,7 +168,12 @@ public abstract class LinearLayout implements LayoutManager {
         int nextMajorPosition = 0;
         for(LinearLaidOutComponent laidOutComponent: result) {
             setMajorAxis(laidOutComponent.topLeftPosition, nextMajorPosition);
-            nextMajorPosition += getMajorAxis(laidOutComponent.size) + padding;
+            
+            //Make sure not to add padding to the last component
+            if(result.get(result.size() - 1) != laidOutComponent)
+                nextMajorPosition += getMajorAxis(laidOutComponent.size) + padding;
+            else
+                nextMajorPosition += getMajorAxis(laidOutComponent.size);
         }        
         return result;
     }
@@ -254,6 +262,11 @@ public abstract class LinearLayout implements LayoutManager {
         @Override
         public TerminalPosition getTopLeftPosition() {
             return topLeftPosition;
+        }
+
+        @Override
+        public String toString() {
+            return "[" + component + " @ " + topLeftPosition + " size " + size + "]";
         }
     }
 }
