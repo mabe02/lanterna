@@ -96,15 +96,6 @@ public abstract class AbstractListBox extends AbstractInteractableComponent {
     public int getSize() {
         return items.size();
     }
-    
-    public void setPreferredSize(TerminalSize preferredSizeOverride) {
-        this.preferredSizeOverride = preferredSizeOverride;
-        invalidate();
-    }
-
-    public TerminalSize getPreferredSizeOverride() {
-        return preferredSizeOverride;
-    }
 
     public Object getItemAt(int index) {
         return items.get(index);

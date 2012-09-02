@@ -96,6 +96,7 @@ public abstract class AbstractComponent implements Component
     @Override
     public void setPreferredSize(TerminalSize preferredSizeOverride) {
         this.preferredSizeOverride = preferredSizeOverride;
+        invalidate();
     }
 
     @Override
