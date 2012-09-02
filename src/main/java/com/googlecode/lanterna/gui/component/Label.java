@@ -98,6 +98,7 @@ public class Label extends AbstractComponent
         updateMetrics();
     }
 
+    @Override
     public TerminalSize getPreferredSize()
     {
         if(forceWidth == -1)
@@ -106,9 +107,12 @@ public class Label extends AbstractComponent
             return new TerminalSize(forceWidth, height);
     }
 
+    @Override
     public void repaint(TextGraphics graphics)
     {
         graphics.applyTheme(graphics.getTheme().getDefinition(style));
+        graphics = transformAccordingToAlignment(graphics, getPreferredSize());
+        
         if(textColor != null)
             graphics.setForegroundColor(textColor);
         if(textBold != null) {
