@@ -307,6 +307,11 @@ public class Window implements Container
             listener.onWindowClosed(this);
     }
 
+    @Override
+    public String toString() {
+        return contentPane.getTitle();
+    }
+
     private class ComponentInvalidatorAlert extends ComponentAdapter
     {
         private Component component;
