@@ -33,15 +33,21 @@ public class AltAndCharacterPattern implements CharacterPattern {
             return false;
         if(currentMatching.get(0) != KeyMappingProfile.ESC_CODE)
             return false;
+        if(!Character.isLetterOrDigit(currentMatching.get(1)))
+            return false;
         return true;
     }
 
     @Override
     public boolean matches(List<Character> currentMatching) {
-        if(currentMatching.size() > 2)
-            return false;
         if(currentMatching.get(0) != KeyMappingProfile.ESC_CODE)
             return false;
-        return true;
+        if(currentMatching.size() == 1)
+            return true;
+        if(!Character.isLetterOrDigit(currentMatching.get(1)))
+            return false;
+        if(currentMatching.size() == 2)
+            return true;
+        return false;
     }    
 }
