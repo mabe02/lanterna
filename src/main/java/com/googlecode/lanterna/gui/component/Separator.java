@@ -29,17 +29,13 @@ import com.googlecode.lanterna.terminal.TerminalSize;
  */
 public class Separator extends AbstractComponent
 {
-    public Separator()
-    {
-    }
-
-    public TerminalSize getPreferredSize()
-    {
+    @Override
+    protected TerminalSize calculatePreferredSize() {
         return new TerminalSize(1, 1);
     }
 
-    public void repaint(TextGraphics graphics)
-    {
+    @Override
+    public void repaint(TextGraphics graphics) {
         graphics.applyTheme(Category.DialogArea);
         graphics.fillArea('-');
     }

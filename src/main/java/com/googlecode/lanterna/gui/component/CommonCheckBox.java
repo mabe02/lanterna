@@ -40,8 +40,7 @@ public abstract class CommonCheckBox extends AbstractInteractableComponent
     }
 
     @Override
-    public TerminalSize getPreferredSize()
-    {
+    protected TerminalSize calculatePreferredSize() {
         TerminalSize labelSize = label.getPreferredSize();
         labelSize.setColumns(labelSize.getColumns() + 4);
         return labelSize;

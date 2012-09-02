@@ -100,6 +100,16 @@ public abstract class AbstractComponent implements Component
     }
 
     @Override
+    public TerminalSize getPreferredSize() {
+        if(preferredSizeOverride != null)
+            return preferredSizeOverride;
+        else
+            return calculatePreferredSize();            
+    }
+    
+    protected abstract TerminalSize calculatePreferredSize();
+
+    @Override
     public TerminalSize getMinimumSize() {
         return new TerminalSize(1, 1);
     }
@@ -148,10 +158,6 @@ public abstract class AbstractComponent implements Component
         if(window == null)
             return null;
         return window.getOwner();
-    }
-
-    protected TerminalSize getPreferredSizeOverride() {
-        return preferredSizeOverride;
     }
 
     /**

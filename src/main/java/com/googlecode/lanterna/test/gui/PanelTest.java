@@ -76,7 +76,7 @@ public class PanelTest
         }
 
         @Override
-        public TerminalSize getPreferredSize()
+        public TerminalSize calculatePreferredSize()
         {
             return new TerminalSize(preferredSize);
         }

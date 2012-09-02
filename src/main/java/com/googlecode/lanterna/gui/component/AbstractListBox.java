@@ -51,26 +51,15 @@ public abstract class AbstractListBox extends AbstractInteractableComponent {
         this.scrollTopIndex = 0;
     }
 
-    public TerminalSize getPreferredSize() {
-        int widthOverride = 0;
-        int heightOverride = 0;
-        
-        if(preferredSizeOverride != null) {
-            widthOverride = preferredSizeOverride.getColumns();
-            heightOverride = preferredSizeOverride.getRows();
+    @Override
+    protected TerminalSize calculatePreferredSize() {
+        int maxWidth = 5;   //Set it to something...
+        for(int i = 0; i < items.size(); i++) {
+            String itemString = createItemString(i);
+            if(itemString.length() > maxWidth)
+                maxWidth = itemString.length();
         }
-        
-        if(widthOverride == 0) {
-            //Calculate max width
-            int maxWidth = 5;   //Set it to something...
-            for(int i = 0; i < items.size(); i++) {
-                String itemString = createItemString(i);
-                if(itemString.length() > maxWidth)
-                    maxWidth = itemString.length();
-            }
-            widthOverride = maxWidth + 1;
-        }
-        return new TerminalSize(widthOverride, heightOverride == 0 ? items.size() : heightOverride);
+        return new TerminalSize(maxWidth + 1, items.size());
     }
 
     protected void addItem(Object item) {

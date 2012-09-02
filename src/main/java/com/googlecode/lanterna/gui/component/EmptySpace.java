@@ -41,11 +41,12 @@ public class EmptySpace extends AbstractComponent
         this.size = new TerminalSize(width, height);
     }
 
-    public TerminalSize getPreferredSize()
-    {
+    @Override
+    protected TerminalSize calculatePreferredSize() {
         return size;
     }
 
+    @Override
     public void repaint(TextGraphics graphics)
     {
         graphics.applyTheme(Category.DialogArea);

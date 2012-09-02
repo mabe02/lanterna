@@ -130,8 +130,7 @@ public class TextBox extends AbstractInteractableComponent
     }
 
     @Override
-    public TerminalSize getPreferredSize()
-    {
+    protected TerminalSize calculatePreferredSize() {
         return new TerminalSize(forceWidth, 1);
     }
 

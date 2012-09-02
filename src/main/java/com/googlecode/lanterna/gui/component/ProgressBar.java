@@ -40,11 +40,12 @@ public class ProgressBar extends AbstractComponent
         this.progress = 0.0;
     }
 
-    public TerminalSize getPreferredSize()
-    {
+    @Override
+    protected TerminalSize calculatePreferredSize() {
         return new TerminalSize(preferredWidth, 1);
     }
 
+    @Override
     public void repaint(TextGraphics graphics)
     {
         int totalWidth = graphics.getWidth();

@@ -55,8 +55,7 @@ public class ButtonTest
             }
 
             @Override
-            public TerminalSize getPreferredSize()
-            {
+            protected TerminalSize calculatePreferredSize() {
                 return new TerminalSize(20, 6);
             }
         });

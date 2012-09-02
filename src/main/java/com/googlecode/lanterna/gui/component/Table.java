@@ -121,11 +121,12 @@ public class Table extends AbstractComponent implements InteractableContainer
             columns[i].removeAllComponents();
     }
 
-    public TerminalSize getPreferredSize()
-    {
+    @Override
+    protected TerminalSize calculatePreferredSize() {
         return mainPanel.getPreferredSize();
     }
 
+    @Override
     public void repaint(TextGraphics graphics)
     {
         mainPanel.repaint(graphics);
@@ -140,16 +141,19 @@ public class Table extends AbstractComponent implements InteractableContainer
         mainPanel.setParent(getParent());
     }
 
+    @Override
     public boolean hasInteractable(Interactable interactable)
     {
         return mainPanel.hasInteractable(interactable);
     }
 
+    @Override
     public Interactable nextFocus(Interactable fromThis)
     {
         return mainPanel.nextFocus(fromThis);
     }
 
+    @Override
     public Interactable previousFocus(Interactable fromThis)
     {
         return mainPanel.previousFocus(fromThis);

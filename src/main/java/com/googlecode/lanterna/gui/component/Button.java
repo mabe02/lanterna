@@ -94,8 +94,7 @@ public class Button extends AbstractInteractableComponent
     }
 
     @Override
-    public TerminalSize getPreferredSize()
-    {
+    protected TerminalSize calculatePreferredSize() {
         TerminalSize labelSize = buttonLabel.getPreferredSize();
         return new TerminalSize(labelSize.getColumns() + 2 + 2, labelSize.getRows());
     }

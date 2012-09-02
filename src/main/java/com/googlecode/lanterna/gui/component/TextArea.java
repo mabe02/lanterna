@@ -71,8 +71,7 @@ public class TextArea  extends AbstractInteractableComponent
     }
 
     @Override
-    public TerminalSize getPreferredSize()
-    {
+    protected TerminalSize calculatePreferredSize() {
         int width = preferredSize.getColumns() > 0 ? preferredSize.getColumns() : longestLine + 1;
         int height = preferredSize.getRows() > 0 ? preferredSize.getRows() : lines.size() + 1;
         if(maximumSize != null) {

@@ -99,14 +99,13 @@ public class Label extends AbstractComponent
     }
 
     @Override
-    public TerminalSize getPreferredSize()
-    {
+    protected TerminalSize calculatePreferredSize() {
         if(forceWidth == -1)
             return new TerminalSize(width, height);
         else
             return new TerminalSize(forceWidth, height);
     }
-
+    
     @Override
     public void repaint(TextGraphics graphics)
     {
