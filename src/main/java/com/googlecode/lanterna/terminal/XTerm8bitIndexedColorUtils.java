@@ -25,7 +25,10 @@ import java.util.Collection;
 import java.util.Collections;
 
 /**
- *
+ * This class can help you convert to and from the 8-bit indexed color standard that is supported
+ * by some terminal emulators. For details on how this works, please see 
+ * <a href="https://github.com/robertknight/konsole/blob/master/user-doc/README.moreColors">this</a>
+ * commit log message.
  * @author Martin
  */
 public class XTerm8bitIndexedColorUtils {
@@ -326,10 +329,21 @@ public class XTerm8bitIndexedColorUtils {
         return closestIndex;
     }
     
+    /**
+     * Returns the supplied color index as a AWT Color object
+     * @param index Index of the color (0-255)
+     * @return AWT Color object representing the color
+     */
     public static Color getAWTColor(int index) {
         return getAWTColor(index, null);
     }
     
+    /**
+     * Returns the supplied color index as a AWT Color object
+     * @param index Index of the color (0-255)
+     * @param terminalPalette Palette to use for the initial 16 color values (index 0-15)
+     * @return AWT Color object representing the color
+     */
     public static Color getAWTColor(int index, TerminalPalette terminalPalette) {
         if(index < 0 || index > 255)
             throw new IllegalArgumentException("getClosestColor: red is outside of valid range (0-255)");
