@@ -16,7 +16,6 @@
  * 
  * Copyright (C) 2010-2012 Martin
  */
-
 package com.googlecode.lanterna.input;
 
 import java.util.Arrays;
@@ -46,7 +45,7 @@ class BasicCharacterPattern implements CharacterPattern
         return true;
     }
 
-    public Key getResult()
+    public Key getResult(List<Character> matching)
     {
         return result;
     }

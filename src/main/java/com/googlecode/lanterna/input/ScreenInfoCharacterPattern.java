@@ -41,7 +41,7 @@ public class ScreenInfoCharacterPattern implements CharacterPattern
     {
     }
 
-    public Key getResult()
+    public Key getResult(List<Character> matching)
     {
         return new Key(Key.Kind.CursorLocation);
     }

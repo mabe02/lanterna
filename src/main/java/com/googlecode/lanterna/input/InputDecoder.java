@@ -98,11 +98,11 @@ public class InputDecoder
                 for(CharacterPattern pattern: bytePatterns) {
                     if(pattern.matches(currentMatching)) {
                         if(pattern.isCompleteMatch(currentMatching)) {
-                            Key result = pattern.getResult();
+                            Key result = pattern.getResult(currentMatching);
                             if(result.getKind() == Key.Kind.CursorLocation)
                                 lastReportedTerminalPosition = ScreenInfoCharacterPattern.getCursorPosition(currentMatching);
                             currentMatching.clear();
-                            return pattern.getResult();
+                            return result;
                         }
                         else
                             canMatchWithOneMoreChar = true;

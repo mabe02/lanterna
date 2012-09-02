@@ -28,19 +28,27 @@ package com.googlecode.lanterna.input;
  */
 public class Key
 {
-    private Kind kind;
-    private char character;
+    private final Kind kind;
+    private final char character;
+    private final boolean altPressed;
+    private final boolean ctrlPressed;
 
-    public Key(char character)
-    {
+    public Key(char character) {
+        this(character, false, false);
+    }
+    
+    public Key(char character, boolean ctrlPressed, boolean altPressed) {
         this.character = character;
         this.kind = Kind.NormalKey;
+        this.ctrlPressed = ctrlPressed;
+        this.altPressed = altPressed;
     }
 
-    public Key(Kind kind)
-    {
+    public Key(Kind kind) {
         this.kind = kind;
         this.character = kind.getRepresentationKey();
+        this.altPressed = false;
+        this.ctrlPressed = false;
     }
 
     public Kind getKind()
@@ -102,7 +110,8 @@ public class Key
     @Override
     public String toString()
     {
-        return getKind().toString() + (getKind() == Kind.NormalKey ? ": " + character : "");
+        return getKind().toString() + (getKind() == Kind.NormalKey ? ": " + character : "") +
+                (ctrlPressed ? " (ctrl)" : "") + (altPressed ? " (alt)" : "");
     }
 
     @Override
