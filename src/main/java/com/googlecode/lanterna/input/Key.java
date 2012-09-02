@@ -61,6 +61,14 @@ public class Key
         return character;
     }
 
+    public boolean isAltPressed() {
+        return altPressed;
+    }
+
+    public boolean isCtrlPressed() {
+        return ctrlPressed;
+    }
+
     public enum Kind
     {
         NormalKey('N'),
