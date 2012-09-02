@@ -25,6 +25,7 @@ import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -286,18 +287,22 @@ public class GUIScreen
         doEventLoop();
     }
 
+    /**
+     * Used internally to close a window; API users should call Window.close() instead
+     */
     void closeWindow(Window window)
     {
         if(windowStack.size() == 0)
             return;
-
-        if(windowStack.getLast().window != window) {
-            throw new IllegalStateException("Cannot close " + window.toString() + " because it's not "
-                    + "the top window");
-        }
         
-        WindowPlacement windowPlacement = windowStack.removeLast();
-        windowPlacement.getWindow().onClosed();
+        for(Iterator<WindowPlacement> iterator = windowStack.iterator(); iterator.hasNext(); ) {
+            WindowPlacement placement = iterator.next();
+            if(placement.window == window) {
+                iterator.remove();
+                placement.window.onClosed();
+                return;
+            }
+        }
     }
 
     /**
