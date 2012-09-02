@@ -48,11 +48,11 @@ public class AlignmentTest {
         Button changeAlignmentButton = new Button("Change alignment", new Action() {
             @Override
             public void doAction() {
-                Component.Alignment a = (Component.Alignment)ListSelectDialog.showDialog(
+                Component.Alignment a = ListSelectDialog.<Component.Alignment>showDialog(
                         guiScreen, 
                         "Choose alignment", 
                         "Please choose an alignment for the label above", 
-                        (Object[])Component.Alignment.values());
+                        Component.Alignment.values());
                 if(a != null)
                     label.setAlignment(a);
             }
