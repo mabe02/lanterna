@@ -22,10 +22,7 @@ import com.googlecode.lanterna.gui.Action;
 import com.googlecode.lanterna.gui.Component;
 import com.googlecode.lanterna.gui.DefaultBackgroundRenderer;
 import com.googlecode.lanterna.gui.GUIScreen;
-import com.googlecode.lanterna.gui.TextGraphics;
-import com.googlecode.lanterna.gui.Theme;
 import com.googlecode.lanterna.gui.Window;
-import com.googlecode.lanterna.gui.component.AbstractComponent;
 import com.googlecode.lanterna.gui.component.Button;
 import com.googlecode.lanterna.gui.component.Label;
 import com.googlecode.lanterna.gui.component.Panel;
@@ -66,7 +63,7 @@ public class AlignmentTest {
         });
         buttonPanel.addComponent(changeAlignmentButton, LinearLayout.GROWS_HORIZONTALLY);
         buttonPanel.addComponent(exitButton);
-        mainWindow.addComponent(buttonPanel);
+        mainWindow.addComponent(buttonPanel, LinearLayout.GROWS_HORIZONTALLY);
 
         guiScreen.showWindow(mainWindow, GUIScreen.Position.CENTER);
         guiScreen.getScreen().stopScreen();
