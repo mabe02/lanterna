@@ -40,7 +40,6 @@ public class Label extends AbstractComponent
     private Boolean textBold;
     private Terminal.Color textColor;
     private Theme.Category style;
-    private Alignment textAlignment;
 
     public Label()
     {
@@ -50,11 +49,6 @@ public class Label extends AbstractComponent
     public Label(String text)
     {
         this(text, -1);
-    }
-
-    public Label(String text, Alignment textAlignment)
-    {
-        this(text, -1, textAlignment);
     }
 
     public Label(String text, Terminal.Color textColor)
@@ -69,20 +63,15 @@ public class Label extends AbstractComponent
 
     public Label(String text, Terminal.Color textColor, Boolean textBold)
     {
-        this(text, -1, textColor, textBold, Alignment.START);
+        this(text, -1, textColor, textBold);
     }
     
     public Label(String text, int fixedWidth)
     {
-        this(text, fixedWidth, null, null, Alignment.START);
+        this(text, fixedWidth, null, null);
     }
 
-    public Label(String text, int fixedWidth, Alignment textAlignment)
-    {
-        this(text, fixedWidth, null, null, textAlignment);
-    }
-
-    public Label(String text, int fixedWidth, Terminal.Color color, Boolean textBold, Alignment textAlignment)
+    public Label(String text, int fixedWidth, Terminal.Color color, Boolean textBold)
     {
         if(text == null)
             this.text = new String[] { "null" };
@@ -94,7 +83,6 @@ public class Label extends AbstractComponent
         this.width = 0;
         this.forceWidth = fixedWidth;
         this.style = Theme.Category.DialogArea;
-        this.textAlignment = textAlignment;
         updateMetrics();
     }
 
@@ -124,20 +112,7 @@ public class Label extends AbstractComponent
         if(text.length == 0)
             return;
 
-        int leftPosition = 0;
-        if(textAlignment == Alignment.MIDDLE || textAlignment == Alignment.END) {
-            int longestLine = 0;
-            for(String line: text)
-                longestLine = Math.max(longestLine, line.length());
-            if(longestLine < graphics.getWidth()) {
-                if(textAlignment == Alignment.MIDDLE)
-                    leftPosition = (graphics.getWidth() - longestLine) / 2;
-                else
-                    leftPosition = (graphics.getWidth() - longestLine);
-            }
-        }
-
-        
+        int leftPosition = 0;        
         for(int i = 0; i < text.length; i++) {
             if(forceWidth > -1) {
                 if(text[i].length() > forceWidth)
@@ -191,16 +166,6 @@ public class Label extends AbstractComponent
         invalidate();
     }
 
-    public Alignment getTextAlignment()
-    {
-        return textAlignment;
-    }
-
-    public void setTextAlignment(Alignment textAlignment)
-    {
-        this.textAlignment = textAlignment;
-    }
-
     private void updateMetrics()
     {
         height = text.length;
@@ -212,12 +177,5 @@ public class Label extends AbstractComponent
             if(line.length() > width)
                 width = line.length();
         }
-    }
-
-    public static enum Alignment
-    {
-        START,
-        MIDDLE,
-        END;
     }
 }
