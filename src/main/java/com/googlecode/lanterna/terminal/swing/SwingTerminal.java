@@ -358,10 +358,11 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
         @Override
         public void keyTyped(KeyEvent e)
         {
-            if(typedIgnore.contains(e.getKeyChar()))
-                return;
-            else
-                keyQueue.add(new Key(e.getKeyChar()));
+            boolean altDown = (e.getModifiersEx() & InputEvent.ALT_DOWN_MASK) != 0;
+            boolean ctrlDown = (e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0;
+            
+            if(!typedIgnore.contains(e.getKeyChar()))
+                keyQueue.add(new Key(e.getKeyChar(), altDown, ctrlDown));
         }
 
         @Override
