@@ -54,7 +54,9 @@ public class Theme {
         CHECKBOX,
         CHECKBOX_SELECTED,
         TEXTBOX,
-        TEXTBOX_FOCUSED
+        TEXTBOX_FOCUSED,
+        PROGRESS_BAR_COMPLETED,
+        PROGRESS_BAR_REMAINING
     }
 
     protected Theme()
@@ -74,6 +76,8 @@ public class Theme {
     	setDefinition(Category.CHECKBOX_SELECTED, SELECTED);
     	setDefinition(Category.TEXTBOX, SELECTED);
     	setDefinition(Category.TEXTBOX_FOCUSED, new Definition(Color.YELLOW, Color.BLUE, true));
+    	setDefinition(Category.PROGRESS_BAR_COMPLETED, new Definition(Color.GREEN, Color.BLACK, false));
+    	setDefinition(Category.PROGRESS_BAR_REMAINING, new Definition(Color.RED, Color.BLACK, false));
     }
 
     

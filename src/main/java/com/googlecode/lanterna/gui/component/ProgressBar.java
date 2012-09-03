@@ -33,6 +33,8 @@ public class ProgressBar extends AbstractComponent
 {
     private final int preferredWidth;
     private double progress;
+    private char fill_complete_char = ACS.BLOCK_SOLID;
+    private char fill_remaining_char = ' ';
 
     public ProgressBar(int preferredWidth)
     {
@@ -50,10 +52,10 @@ public class ProgressBar extends AbstractComponent
     {
         int totalWidth = graphics.getWidth();
         int highlightedBlocks = (int)(totalWidth * progress);
-        graphics.applyTheme(Category.LIST_ITEM_SELECTED);
-        graphics.fillRectangle(ACS.BLOCK_SOLID, new TerminalPosition(0, 0), new TerminalSize(highlightedBlocks, 1));
-        graphics.applyTheme(Category.LIST_ITEM);
-        graphics.fillRectangle(ACS.BLOCK_SOLID, new TerminalPosition(highlightedBlocks, 0), new TerminalSize(totalWidth - highlightedBlocks, 1));
+        graphics.applyTheme(Category.PROGRESS_BAR_COMPLETED);
+        graphics.fillRectangle(fill_complete_char, new TerminalPosition(0, 0), new TerminalSize(highlightedBlocks, 1));
+        graphics.applyTheme(Category.PROGRESS_BAR_REMAINING);
+        graphics.fillRectangle(fill_remaining_char, new TerminalPosition(highlightedBlocks, 0), new TerminalSize(totalWidth - highlightedBlocks, 1));
     }
 
     public double getProgress()
@@ -65,4 +67,27 @@ public class ProgressBar extends AbstractComponent
     {
         this.progress = progress;
     }
+    
+    /**
+    Sets the character used to fill the portion of the progress bar indicating the completed portion.
+    */
+    public void setCompleteFillChar(char fill) {
+    	fill_complete_char = fill;
+    }
+    
+    public char getCompleteFillChar() {
+    	return fill_complete_char;
+    }
+    
+    /**
+    Sets the character used to fill the portion of the progress bar indicating the incomplete portion.
+    */
+    public void setRemainingFillChar(char fill) {
+    	fill_remaining_char = fill;
+    }
+    
+    public char getRemainingFillChar() {
+    	return fill_remaining_char;
+    }
+    
 }
