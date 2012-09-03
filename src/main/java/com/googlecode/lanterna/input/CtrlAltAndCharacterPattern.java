@@ -28,7 +28,7 @@ public class CtrlAltAndCharacterPattern  implements CharacterPattern {
     
     @Override
     public Key getResult(List<Character> matching) {
-        int firstCode = 'A' - 1;
+        int firstCode = 'a' - 1;
         return new Key((char)(firstCode + (int)matching.get(1).charValue()), true, true);
     }
 
