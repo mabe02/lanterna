@@ -23,7 +23,7 @@ import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 
 /**
- * Any component which wants to recieve keyboard events must implement this
+ * Any component which wants to receive keyboard events must implement this
  * interface.
  * @author Martin
  */
@@ -31,7 +31,7 @@ public interface Interactable
 {
     /**
      * This method is called when this component has focus and the user has
-     * pressed a key on the keyboard
+     * pressed a key on the keyboard.
      * @param key Key pressed on the keyboard
      * @param result Result of this keyboard interaction, this can for example be a hint to the 
      * parent container to move input focus to a different component or telling that the event was
@@ -40,19 +40,19 @@ public interface Interactable
     public Result keyboardInteraction(Key key);
     
     /**
-     * Method called when this component gained keyboard focus
+     * Method called when this component gained keyboard focus.
      * @param direction What direction did the focus come from
      */
     public void onEnterFocus(FocusChangeDirection direction);
     /**
-     * Method called when this component leaves keyboard focus
+     * Method called when this component leaves keyboard focus.
      * @param direction What direction is focus going to
      */
     public void onLeaveFocus(FocusChangeDirection direction);
     
     /**
      * When the component has keyboard focus, this method is called by the GUI
-     * system to figure out where should the cursor be positioned
+     * system to figure out where should the cursor be positioned.
      * @return position of the cursor, in component-local coordinates
      */
     public TerminalPosition getHotspot();
@@ -63,27 +63,27 @@ public interface Interactable
     public enum Result
     {
         /**
-         * The event has been dealt with by this component, shouldn't be sent to the parent
+         * The event has been dealt with by this component, shouldn't be sent to the parent.
          */
         EVENT_HANDLED,
         /**
-         * The component didn't have any action for this event, send it to the parent
+         * The component didn't have any action for this event, send it to the parent.
          */
         EVENT_NOT_HANDLED,
         /**
-         * Move keyboard focus to the next component, going down
+         * Move keyboard focus to the next component, going down.
          */
         NEXT_INTERACTABLE_DOWN,
         /**
-         * Move keyboard focus to the next component, going right
+         * Move keyboard focus to the next component, going right.
          */
         NEXT_INTERACTABLE_RIGHT,
         /**
-         * Move keyboard focus to the previous component, going up
+         * Move keyboard focus to the previous component, going up.
          */
         PREVIOUS_INTERACTABLE_UP,
         /**
-         * Move keyboard focus to the previous component, going left
+         * Move keyboard focus to the previous component, going left.
          */
         PREVIOUS_INTERACTABLE_LEFT,
         ;
@@ -110,24 +110,24 @@ public interface Interactable
     }
 
     /**
-     * When focus has changed, which direction
+     * When focus has changed, which direction.
      */
     public enum FocusChangeDirection
     {
         /**
-         * The next interactable component, going down
+         * The next interactable component, going down.
          */
         DOWN,
         /**
-         * The next interactable component, going right
+         * The next interactable component, going right.
          */
         RIGHT,
         /**
-         * The previous interactable component, going up
+         * The previous interactable component, going up.
          */
         UP,
         /**
-         * The previous interactable component, going left
+         * The previous interactable component, going left.
          */
         LEFT,
         

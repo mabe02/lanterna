@@ -37,7 +37,9 @@ public class Theme {
 	private static final Definition SELECTED = new Definition(Color.WHITE, Color.BLUE, true);
 	private Map<Category,Definition> styles = new HashMap<Category,Definition>();
 	
-
+	/**
+	Represents things which can be styled.
+	*/
     public enum Category
     {
         DIALOG_AREA,
@@ -196,6 +198,9 @@ public class Theme {
         return DEFAULT_INSTANCE;
     }
 
+    /**
+    A style definition encompassing colors and effects.
+    */
     public static class Definition
     {
         private Color foreground;
