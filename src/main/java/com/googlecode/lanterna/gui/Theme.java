@@ -186,10 +186,10 @@ public class Theme {
 
     public static class Definition
     {
-        public Color foreground;
-        public Color background;
-        public boolean highlighted;
-        public boolean underlined;
+        private Color foreground;
+        private Color background;
+        private boolean highlighted;
+        private boolean underlined;
 
         public Definition(Color foreground, Color background)
         {
@@ -214,5 +214,22 @@ public class Theme {
             this.highlighted = highlighted;
             this.underlined = underlined;
         }
+        
+        public Color foreground() {
+        	return foreground;
+        }
+        
+        public Color background() {
+        	return background;
+        }
+        
+        public boolean isHighlighted() {
+        	return highlighted;
+        }
+        
+        public boolean isUnderlined() {
+        	return underlined;
+        }
+        
     }
 }

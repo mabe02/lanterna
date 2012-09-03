@@ -234,9 +234,9 @@ public class TextGraphics
      */
     public void applyTheme(Theme.Definition themeItem)
     {
-        setForegroundColor(themeItem.foreground);
-        setBackgroundColor(themeItem.background);
-        setBoldMask(themeItem.highlighted);
+        setForegroundColor(themeItem.foreground());
+        setBackgroundColor(themeItem.background());
+        setBoldMask(themeItem.isHighlighted());
     }
 
     /**
