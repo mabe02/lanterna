@@ -178,7 +178,7 @@ public class Theme {
 
     public Theme.Definition getDefinition(Category category)
     {
-    	if (styles.containsKey(category))
+    	if (styles.containsKey(category) && styles.get(category) != null)
     		return styles.get(category);
     	
     	return getDefault();
