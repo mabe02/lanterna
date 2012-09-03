@@ -101,6 +101,8 @@ public class Table extends AbstractComponent implements InteractableContainer
         rows.remove(index);
         for(int i = 0; i < columns.length; i++)
             columns[i].removeComponent(row[i]);
+
+        invalidate();
     }
 
     public final void alterTableStructure(int nrOfColumns)
@@ -119,6 +121,8 @@ public class Table extends AbstractComponent implements InteractableContainer
         rows.clear();
         for(int i = 0; i < columns.length; i++)
             columns[i].removeAllComponents();
+
+        invalidate();
     }
 
     @Override
