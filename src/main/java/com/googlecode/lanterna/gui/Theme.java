@@ -59,23 +59,39 @@ public class Theme {
 
     protected Theme()
     {
-    	styles.put(Category.DIALOG_AREA, DEFAULT);
-    	styles.put(Category.SCREEN_BACKGROUND, new Definition(Color.CYAN, Color.BLUE, true));
-    	styles.put(Category.SHADOW, new Definition(Color.BLACK, Color.BLACK, true));
-    	styles.put(Category.BORDER, new Definition(Color.BLACK, Color.WHITE, true));
-    	styles.put(Category.RAISED_BORDER, new Definition(Color.WHITE, Color.WHITE, true));
-    	styles.put(Category.BUTTON_LABEL_ACTIVE, new Definition(Color.YELLOW, Color.BLUE, true));
-    	styles.put(Category.BUTTON_LABEL_INACTIVE, new Definition(Color.BLACK, Color.WHITE, true));
-    	styles.put(Category.BUTTON_ACTIVE, SELECTED);
-    	styles.put(Category.BUTTON_INACTIVE, DEFAULT);
-    	styles.put(Category.LIST_ITEM, DEFAULT);
-    	styles.put(Category.LIST_ITEM_SELECTED, SELECTED);
-    	styles.put(Category.CHECKBOX, DEFAULT);
-    	styles.put(Category.CHECKBOX_SELECTED, SELECTED);
-    	styles.put(Category.TEXTBOX, SELECTED);
-    	styles.put(Category.TEXTBOX_FOCUSED, new Definition(Color.YELLOW, Color.BLUE, true));
+    	setDefinition(Category.DIALOG_AREA, DEFAULT);
+    	setDefinition(Category.SCREEN_BACKGROUND, new Definition(Color.CYAN, Color.BLUE, true));
+    	setDefinition(Category.SHADOW, new Definition(Color.BLACK, Color.BLACK, true));
+    	setDefinition(Category.BORDER, new Definition(Color.BLACK, Color.WHITE, true));
+    	setDefinition(Category.RAISED_BORDER, new Definition(Color.WHITE, Color.WHITE, true));
+    	setDefinition(Category.BUTTON_LABEL_ACTIVE, new Definition(Color.YELLOW, Color.BLUE, true));
+    	setDefinition(Category.BUTTON_LABEL_INACTIVE, new Definition(Color.BLACK, Color.WHITE, true));
+    	setDefinition(Category.BUTTON_ACTIVE, SELECTED);
+    	setDefinition(Category.BUTTON_INACTIVE, DEFAULT);
+    	setDefinition(Category.LIST_ITEM, DEFAULT);
+    	setDefinition(Category.LIST_ITEM_SELECTED, SELECTED);
+    	setDefinition(Category.CHECKBOX, DEFAULT);
+    	setDefinition(Category.CHECKBOX_SELECTED, SELECTED);
+    	setDefinition(Category.TEXTBOX, SELECTED);
+    	setDefinition(Category.TEXTBOX_FOCUSED, new Definition(Color.YELLOW, Color.BLUE, true));
     }
 
+    
+    public Theme.Definition getDefinition(Category category)
+    {
+    	if (styles.containsKey(category) && styles.get(category) != null)
+    		return styles.get(category);
+    	
+    	return getDefault();
+    }
+
+    protected void setDefinition(Category category, Definition def) {
+    	if (def == null)
+    		styles.remove(category);
+    	else
+    		styles.put(category, def);
+    }
+    
     protected Definition getDefault()
     {
         return DEFAULT;
@@ -174,14 +190,6 @@ public class Theme {
     public static Theme getDefaultTheme()
     {
         return DEFAULT_INSTANCE;
-    }
-
-    public Theme.Definition getDefinition(Category category)
-    {
-    	if (styles.containsKey(category) && styles.get(category) != null)
-    		return styles.get(category);
-    	
-    	return getDefault();
     }
 
     public static class Definition
