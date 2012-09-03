@@ -50,7 +50,7 @@ public class DefaultBackgroundRenderer implements GUIScreenBackgroundRenderer {
     @Override
     public void drawBackground(TextGraphics textGraphics) {
 
-        textGraphics.applyTheme(Theme.Category.ScreenBackground);
+        textGraphics.applyTheme(Theme.Category.SCREEN_BACKGROUND);
 
         //Clear the background
         textGraphics.fillRectangle(' ', new TerminalPosition(0, 0), textGraphics.getSize());

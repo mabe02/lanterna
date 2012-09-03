@@ -106,11 +106,11 @@ public class RadioCheckBoxList extends AbstractListBox {
 
     @Override
     protected Theme.Definition getListItemThemeDefinition(Theme theme) {
-        return theme.getDefinition(Theme.Category.TextBoxFocused);
+        return theme.getDefinition(Theme.Category.TEXTBOX_FOCUSED);
     }
 
     @Override
     protected Theme.Definition getSelectedListItemThemeDefinition(Theme theme) {
-        return theme.getDefinition(Theme.Category.TextBoxFocused);
+        return theme.getDefinition(Theme.Category.TEXTBOX_FOCUSED);
     }
 }

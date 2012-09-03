@@ -49,12 +49,12 @@ public abstract class CommonCheckBox extends AbstractInteractableComponent
     @Override
     public void repaint(TextGraphics graphics)
     {
-        graphics.applyTheme(Category.CheckBox);
+        graphics.applyTheme(Category.CHECKBOX);
 
         if(hasFocus())
-            graphics.applyTheme(Category.CheckBoxSelected);
+            graphics.applyTheme(Category.CHECKBOX_SELECTED);
         else
-            graphics.applyTheme(Category.CheckBox);
+            graphics.applyTheme(Category.CHECKBOX);
 
 
         char check = ' ';
@@ -62,7 +62,7 @@ public abstract class CommonCheckBox extends AbstractInteractableComponent
             check = getSelectionCharacter();
 
         graphics.drawString(0, 0, surroundCharacter(check));
-        graphics.applyTheme(Category.CheckBox);
+        graphics.applyTheme(Category.CHECKBOX);
         graphics.drawString(3, 0, " ");
         TextGraphics subArea = graphics.subAreaGraphics(new TerminalPosition(4, 0));
         label.repaint(subArea);

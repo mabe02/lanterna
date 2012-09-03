@@ -43,7 +43,7 @@ public class Button extends AbstractInteractableComponent
     public Button(String text, Action onPressEvent) {
         this.onPressEvent = onPressEvent;
         this.buttonLabel = new Label(text);
-        this.buttonLabel.setStyle(Theme.Category.ButtonLabelInactive);
+        this.buttonLabel.setStyle(Theme.Category.BUTTON_LABEL_INACTIVE);
 
         if(this.onPressEvent == null)
             this.onPressEvent = new Action() { public void doAction() {} };
@@ -53,9 +53,9 @@ public class Button extends AbstractInteractableComponent
     public void repaint(TextGraphics graphics)
     {
         if(hasFocus())
-            graphics.applyTheme(graphics.getTheme().getDefinition(Theme.Category.ButtonActive));
+            graphics.applyTheme(graphics.getTheme().getDefinition(Theme.Category.BUTTON_ACTIVE));
         else
-            graphics.applyTheme(graphics.getTheme().getDefinition(Theme.Category.ButtonInactive));
+            graphics.applyTheme(graphics.getTheme().getDefinition(Theme.Category.BUTTON_INACTIVE));
         
         TerminalSize preferredSize = calculatePreferredSize();
         graphics = transformAccordingToAlignment(graphics, preferredSize);
@@ -101,12 +101,12 @@ public class Button extends AbstractInteractableComponent
 
     @Override
     public void afterEnteredFocus(FocusChangeDirection direction) {
-        buttonLabel.setStyle(Theme.Category.ButtonLabelActive);
+        buttonLabel.setStyle(Theme.Category.BUTTON_LABEL_ACTIVE);
     }
 
     @Override
     public void afterLeftFocus(FocusChangeDirection direction) {
-        buttonLabel.setStyle(Theme.Category.ButtonLabelInactive);
+        buttonLabel.setStyle(Theme.Category.BUTTON_LABEL_INACTIVE);
     }
 
     @Override

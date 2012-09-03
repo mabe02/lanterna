@@ -104,7 +104,7 @@ public class Window implements Container
 
     void repaint(TextGraphics graphics)
     {
-        graphics.applyTheme(graphics.getTheme().getDefinition(Category.DialogArea));
+        graphics.applyTheme(graphics.getTheme().getDefinition(Category.DIALOG_AREA));
         graphics.fillRectangle(' ', new TerminalPosition(0, 0), new TerminalSize(graphics.getWidth(), graphics.getHeight()));
         contentPane.repaint(graphics);
     }

@@ -40,40 +40,40 @@ public class Theme {
 
     public enum Category
     {
-        DialogArea,
-        ScreenBackground,
-        Shadow,
-        RaisedBorder,
-        Border,
-        ButtonActive,
-        ButtonInactive,
-        ButtonLabelInactive,
-        ButtonLabelActive,
-        ListItem,
-        ListItemSelected,
-        CheckBox,
-        CheckBoxSelected,
-        TextBox,
-        TextBoxFocused
+        DIALOG_AREA,
+        SCREEN_BACKGROUND,
+        SHADOW,
+        RAISED_BORDER,
+        BORDER,
+        BUTTON_ACTIVE,
+        BUTTON_INACTIVE,
+        BUTTON_LABEL_INACTIVE,
+        BUTTON_LABEL_ACTIVE,
+        LIST_ITEM,
+        LIST_ITEM_SELECTED,
+        CHECKBOX,
+        CHECKBOX_SELECTED,
+        TEXTBOX,
+        TEXTBOX_FOCUSED
     }
 
     protected Theme()
     {
-    	styles.put(Category.DialogArea, DEFAULT);
-    	styles.put(Category.ScreenBackground, new Definition(Color.CYAN, Color.BLUE, true));
-    	styles.put(Category.Shadow, new Definition(Color.BLACK, Color.BLACK, true));
-    	styles.put(Category.Border, new Definition(Color.BLACK, Color.WHITE, true));
-    	styles.put(Category.RaisedBorder, new Definition(Color.WHITE, Color.WHITE, true));
-    	styles.put(Category.ButtonLabelActive, new Definition(Color.YELLOW, Color.BLUE, true));
-    	styles.put(Category.ButtonLabelInactive, new Definition(Color.BLACK, Color.WHITE, true));
-    	styles.put(Category.ButtonActive, SELECTED);
-    	styles.put(Category.ButtonInactive, DEFAULT);
-    	styles.put(Category.ListItem, DEFAULT);
-    	styles.put(Category.ListItemSelected, SELECTED);
-    	styles.put(Category.CheckBox, DEFAULT);
-    	styles.put(Category.CheckBoxSelected, SELECTED);
-    	styles.put(Category.TextBox, SELECTED);
-    	styles.put(Category.TextBoxFocused, new Definition(Color.YELLOW, Color.BLUE, true));
+    	styles.put(Category.DIALOG_AREA, DEFAULT);
+    	styles.put(Category.SCREEN_BACKGROUND, new Definition(Color.CYAN, Color.BLUE, true));
+    	styles.put(Category.SHADOW, new Definition(Color.BLACK, Color.BLACK, true));
+    	styles.put(Category.BORDER, new Definition(Color.BLACK, Color.WHITE, true));
+    	styles.put(Category.RAISED_BORDER, new Definition(Color.WHITE, Color.WHITE, true));
+    	styles.put(Category.BUTTON_LABEL_ACTIVE, new Definition(Color.YELLOW, Color.BLUE, true));
+    	styles.put(Category.BUTTON_LABEL_INACTIVE, new Definition(Color.BLACK, Color.WHITE, true));
+    	styles.put(Category.BUTTON_ACTIVE, SELECTED);
+    	styles.put(Category.BUTTON_INACTIVE, DEFAULT);
+    	styles.put(Category.LIST_ITEM, DEFAULT);
+    	styles.put(Category.LIST_ITEM_SELECTED, SELECTED);
+    	styles.put(Category.CHECKBOX, DEFAULT);
+    	styles.put(Category.CHECKBOX_SELECTED, SELECTED);
+    	styles.put(Category.TEXTBOX, SELECTED);
+    	styles.put(Category.TEXTBOX_FOCUSED, new Definition(Color.YELLOW, Color.BLUE, true));
     }
 
     protected Definition getDefault()
@@ -84,91 +84,91 @@ public class Theme {
     @Deprecated
     protected Definition getDialogEmptyArea()
     {
-    	return getDefinition(Category.DialogArea);
+    	return getDefinition(Category.DIALOG_AREA);
     }
 
 	@Deprecated
 	protected Definition getScreenBackground()
     {
-    	return getDefinition(Category.ScreenBackground);
+    	return getDefinition(Category.SCREEN_BACKGROUND);
     }
 
     @Deprecated
     protected Definition getShadow()
     {
-    	return getDefinition(Category.Shadow);
+    	return getDefinition(Category.SHADOW);
     }
 
     @Deprecated
     protected Definition getBorder()
     {
-    	return getDefinition(Category.Border);
+    	return getDefinition(Category.BORDER);
     }
 
     @Deprecated
     protected Definition getRaisedBorder()
     {
-        return getDefinition(Category.RaisedBorder);
+        return getDefinition(Category.RAISED_BORDER);
     }
 
     @Deprecated
     protected Definition getButtonLabelActive()
     {
-        return getDefinition(Category.ButtonLabelActive);
+        return getDefinition(Category.BUTTON_LABEL_ACTIVE);
     }
 
     @Deprecated
     protected Definition getButtonLabelInactive()
     {
-        return getDefinition(Category.ButtonLabelInactive);
+        return getDefinition(Category.BUTTON_LABEL_INACTIVE);
     }
 
     @Deprecated
     protected Definition getButtonActive()
     {
-        return getDefinition(Category.ButtonActive);
+        return getDefinition(Category.BUTTON_ACTIVE);
     }
 
     @Deprecated
     protected Definition getButtonInactive()
     {
-        return getDefinition(Category.ButtonInactive);
+        return getDefinition(Category.BUTTON_INACTIVE);
     }
     
     @Deprecated
     protected Definition getItem()
     {
-        return getDefinition(Category.ListItem);
+        return getDefinition(Category.LIST_ITEM);
     }
     
     @Deprecated
     protected Definition getItemSelected()
     {
-        return getDefinition(Category.ListItemSelected);
+        return getDefinition(Category.LIST_ITEM_SELECTED);
     }
 
     @Deprecated
     protected Definition getCheckBox()
     {
-        return getDefinition(Category.CheckBox);
+        return getDefinition(Category.CHECKBOX);
     }
 
     @Deprecated
     protected Definition getCheckBoxSelected()
     {
-        return getDefinition(Category.CheckBoxSelected);
+        return getDefinition(Category.CHECKBOX_SELECTED);
     }
 
     @Deprecated
     protected Definition getTextBoxFocused()
     {
-        return getDefinition(Category.TextBoxFocused);
+        return getDefinition(Category.TEXTBOX_FOCUSED);
     }
 
     @Deprecated
     protected Definition getTextBox()
     {
-        return getDefinition(Category.TextBox);
+        return getDefinition(Category.TEXTBOX);
     }
 
     public static Theme getDefaultTheme()
@@ -203,6 +203,12 @@ public class Theme {
 
         public Definition(Color foreground, Color background, boolean highlighted, boolean underlined)
         {
+        	if (foreground == null)
+        		throw new IllegalArgumentException("foreground color cannot be null");
+        	
+        	if (background == null)
+        		throw new IllegalArgumentException("background color cannot be null");
+        	
             this.foreground = foreground;
             this.background = background;
             this.highlighted = highlighted;

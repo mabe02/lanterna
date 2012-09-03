@@ -49,7 +49,7 @@ public class EmptySpace extends AbstractComponent
     @Override
     public void repaint(TextGraphics graphics)
     {
-        graphics.applyTheme(Category.DialogArea);
+        graphics.applyTheme(Category.DIALOG_AREA);
         graphics.fillArea(' ');
     }
 }

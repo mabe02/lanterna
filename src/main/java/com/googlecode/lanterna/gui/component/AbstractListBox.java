@@ -147,14 +147,14 @@ public abstract class AbstractListBox extends AbstractInteractableComponent {
         }
 
         if(items.size() > graphics.getHeight()) {
-            graphics.applyTheme(Theme.Category.DialogArea);
+            graphics.applyTheme(Theme.Category.DIALOG_AREA);
             graphics.drawString(graphics.getWidth() - 1, 0, ACS.ARROW_UP + "");
 
-            graphics.applyTheme(Theme.Category.DialogArea);
+            graphics.applyTheme(Theme.Category.DIALOG_AREA);
             for(int i = 1; i < graphics.getHeight() - 1; i++)
                 graphics.drawString(graphics.getWidth() - 1, i, ACS.BLOCK_MIDDLE + "");
 
-            graphics.applyTheme(Theme.Category.DialogArea);
+            graphics.applyTheme(Theme.Category.DIALOG_AREA);
             graphics.drawString(graphics.getWidth() - 1, graphics.getHeight() - 1, ACS.ARROW_DOWN + "");
             
             //Finally print the 'tick'
@@ -162,7 +162,7 @@ public abstract class AbstractListBox extends AbstractInteractableComponent {
             double position = (double)scrollTopIndex / ((double)scrollableSize);
             int tickPosition = (int)(((double)graphics.getHeight() - 3.0) * position);
 
-            graphics.applyTheme(Theme.Category.Shadow);
+            graphics.applyTheme(Theme.Category.SHADOW);
             graphics.drawString(graphics.getWidth() - 1, 1 + tickPosition, " ");
         }
         if(selectedIndex == -1 || items.isEmpty())
@@ -183,11 +183,11 @@ public abstract class AbstractListBox extends AbstractInteractableComponent {
     }
 
     protected Theme.Definition getSelectedListItemThemeDefinition(Theme theme) {
-        return theme.getDefinition(Theme.Category.ListItemSelected);
+        return theme.getDefinition(Theme.Category.LIST_ITEM_SELECTED);
     }
 
     protected Theme.Definition getListItemThemeDefinition(Theme theme) {
-        return theme.getDefinition(Category.ListItem);
+        return theme.getDefinition(Category.LIST_ITEM);
     }
 
     public Result keyboardInteraction(Key key) {

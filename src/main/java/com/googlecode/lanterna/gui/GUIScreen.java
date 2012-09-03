@@ -164,7 +164,7 @@ public class GUIScreen
                     new TerminalSize(preferredSize.getColumns(), preferredSize.getRows()));
 
             //First draw the shadow
-            textGraphics.applyTheme(guiTheme.getDefinition(Theme.Category.Shadow));
+            textGraphics.applyTheme(guiTheme.getDefinition(Theme.Category.SHADOW));
             textGraphics.fillRectangle(' ', new TerminalPosition(topLeft.getColumn() + 2, topLeft.getRow() + 1),
                     new TerminalSize(subGraphics.getWidth(), subGraphics.getHeight()));
 

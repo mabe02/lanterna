@@ -107,9 +107,9 @@ public class TextArea  extends AbstractInteractableComponent
         }
         
         if(hasFocus())
-            graphics.applyTheme(Theme.Category.TextBoxFocused);
+            graphics.applyTheme(Theme.Category.TEXTBOX_FOCUSED);
         else
-            graphics.applyTheme(Theme.Category.TextBox);
+            graphics.applyTheme(Theme.Category.TEXTBOX);
         graphics.fillArea(' ');
 
         for(int i = scrollTopIndex; i < lines.size(); i++) {
@@ -122,14 +122,14 @@ public class TextArea  extends AbstractInteractableComponent
         boolean hasSetHotSpot = false;
 
         if(lines.size() > graphics.getHeight()) {
-            graphics.applyTheme(Theme.Category.DialogArea);
+            graphics.applyTheme(Theme.Category.DIALOG_AREA);
             graphics.drawString(graphics.getWidth() - 1, 0, ACS.ARROW_UP + "");
 
-            graphics.applyTheme(Theme.Category.DialogArea);
+            graphics.applyTheme(Theme.Category.DIALOG_AREA);
             for(int i = 1; i < graphics.getHeight() - 1; i++)
                 graphics.drawString(graphics.getWidth() - 1, i, ACS.BLOCK_MIDDLE + "");
 
-            graphics.applyTheme(Theme.Category.DialogArea);
+            graphics.applyTheme(Theme.Category.DIALOG_AREA);
             graphics.drawString(graphics.getWidth() - 1, graphics.getHeight() - 1, ACS.ARROW_DOWN + "");
             
             //Finally print the 'tick'
@@ -137,7 +137,7 @@ public class TextArea  extends AbstractInteractableComponent
             double position = (double)scrollTopIndex / ((double)scrollableSize);
             int tickPosition = (int)(((double)graphics.getHeight() - 3.0) * position);
 
-            graphics.applyTheme(Theme.Category.Shadow);
+            graphics.applyTheme(Theme.Category.SHADOW);
             graphics.drawString(graphics.getWidth() - 1, 1 + tickPosition, " ");
             
             if(hasFocus()) {
@@ -146,14 +146,14 @@ public class TextArea  extends AbstractInteractableComponent
             }
         }
         if(longestLine > graphics.getWidth()) {
-            graphics.applyTheme(Theme.Category.DialogArea);
+            graphics.applyTheme(Theme.Category.DIALOG_AREA);
             graphics.drawString(0, graphics.getHeight() - 1, ACS.ARROW_LEFT + "");
 
-            graphics.applyTheme(Theme.Category.DialogArea);
+            graphics.applyTheme(Theme.Category.DIALOG_AREA);
             for(int i = 1; i < graphics.getWidth() - 2; i++)
                 graphics.drawString(i, graphics.getHeight() - 1, ACS.BLOCK_MIDDLE + "");
 
-            graphics.applyTheme(Theme.Category.DialogArea);
+            graphics.applyTheme(Theme.Category.DIALOG_AREA);
             graphics.drawString(graphics.getWidth() - 2, graphics.getHeight() - 1, ACS.ARROW_RIGHT + "");
             
             //Finally print the 'tick'
@@ -161,7 +161,7 @@ public class TextArea  extends AbstractInteractableComponent
             double position = (double)scrollLeftIndex / ((double)scrollableSize);
             int tickPosition = (int)(((double)graphics.getWidth() - 4.0) * position);
 
-            graphics.applyTheme(Theme.Category.Shadow);
+            graphics.applyTheme(Theme.Category.SHADOW);
             graphics.drawString(1 + tickPosition, graphics.getHeight() - 1, " ");
         }
             

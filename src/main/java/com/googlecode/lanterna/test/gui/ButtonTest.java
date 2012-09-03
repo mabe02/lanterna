@@ -48,7 +48,7 @@ public class ButtonTest
             @Override
             public void repaint(TextGraphics graphics)
             {
-                graphics.applyTheme(graphics.getTheme().getDefinition(Category.Shadow));
+                graphics.applyTheme(graphics.getTheme().getDefinition(Category.SHADOW));
                 for(int y = 0; y < graphics.getHeight(); y++)
                     for(int x = 0; x < graphics.getWidth(); x++)
                         graphics.drawString(x, y, "X");
