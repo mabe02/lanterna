@@ -35,6 +35,7 @@ public class ProgressBar extends AbstractComponent
     private double progress;
     private char fill_complete_char = ACS.BLOCK_SOLID;
     private char fill_remaining_char = ' ';
+    private boolean show_percentage = true;
 
     public ProgressBar(int preferredWidth)
     {
@@ -50,12 +51,28 @@ public class ProgressBar extends AbstractComponent
     @Override
     public void repaint(TextGraphics graphics)
     {
-        int totalWidth = graphics.getWidth();
-        int highlightedBlocks = (int)(totalWidth * progress);
+    	int bar_start = isCompletedPercentageShown() ? 5 : 0;
+        int total_width = graphics.getWidth() - bar_start;
+        int highlighted_blocks = (int) (total_width * progress);
+        
+        if (isCompletedPercentageShown()) {
+        	graphics.applyTheme(Category.BUTTON_LABEL_INACTIVE);
+        	Integer percentage = (int) Math.round(progress * 100);
+        	String perc_str;
+        	if (percentage == 100)
+        		perc_str = percentage + "%";
+        	else if (percentage >= 10)
+        		perc_str = " " + percentage + "%";
+        	else
+        		perc_str = "  " + percentage + "%";
+        	
+        	graphics.drawString(0, 0, perc_str);
+        }
+        
         graphics.applyTheme(Category.PROGRESS_BAR_COMPLETED);
-        graphics.fillRectangle(fill_complete_char, new TerminalPosition(0, 0), new TerminalSize(highlightedBlocks, 1));
+        graphics.fillRectangle(fill_complete_char, new TerminalPosition(bar_start, 0), new TerminalSize(bar_start + highlighted_blocks, 1));
         graphics.applyTheme(Category.PROGRESS_BAR_REMAINING);
-        graphics.fillRectangle(fill_remaining_char, new TerminalPosition(highlightedBlocks, 0), new TerminalSize(totalWidth - highlightedBlocks, 1));
+        graphics.fillRectangle(fill_remaining_char, new TerminalPosition(bar_start + highlighted_blocks, 0), new TerminalSize(total_width - highlighted_blocks, 1));
     }
 
     public double getProgress()
@@ -88,6 +105,17 @@ public class ProgressBar extends AbstractComponent
     
     public char getRemainingFillChar() {
     	return fill_remaining_char;
+    }
+    
+    /**
+    Controls whether the completion percentage will be shown to the left of the progress bar.
+    */
+    public void setCompletedPercentageShown(boolean flag) {
+    	show_percentage = flag;
+    }
+    
+    public boolean isCompletedPercentageShown() {
+    	return show_percentage;
     }
     
 }
