@@ -19,6 +19,8 @@
 
 package com.googlecode.lanterna.gui;
 
+import java.util.*;
+
 import com.googlecode.lanterna.terminal.Terminal.Color;
 
 /**
@@ -28,134 +30,13 @@ import com.googlecode.lanterna.terminal.Terminal.Color;
  * by calling {@code TextGraphics.applyTheme}.
  * @author Martin
  */
-public class Theme
-{
-    protected Theme()
-    {
-    }
-
-    protected Definition getDefault()
-    {
-        return getDialogEmptyArea();
-    }
-
-    protected Definition getDialogEmptyArea()
-    {
-        return new Definition(Color.BLACK, Color.WHITE, false);
-    }
-
-    protected Definition getScreenBackground()
-    {
-        return new Definition(Color.CYAN, Color.BLUE, true);
-    }
-
-    protected Definition getShadow()
-    {
-        return new Definition(Color.BLACK, Color.BLACK, true);
-    }
-
-    protected Definition getBorder()
-    {
-        return new Definition(Color.BLACK, Color.WHITE, true);
-    }
-
-    protected Definition getRaisedBorder()
-    {
-        return new Definition(Color.WHITE, Color.WHITE, true);
-    }
-
-    protected Definition getButtonLabelActive()
-    {
-        return new Definition(Color.YELLOW, Color.BLUE, true);
-    }
-
-    protected Definition getButtonLabelInactive()
-    {
-        return new Definition(Color.BLACK, Color.WHITE, true);
-    }
-
-    protected Definition getButtonActive()
-    {
-        return new Definition(Color.WHITE, Color.BLUE, true);
-    }
-
-    protected Definition getButtonInactive()
-    {
-        return new Definition(Color.BLACK, Color.WHITE, false);
-    }
-    
-    protected Definition getItem()
-    {
-        return new Definition(Color.BLACK, Color.WHITE, false);
-    }
-    
-    protected Definition getItemSelected()
-    {
-        return new Definition(Color.WHITE, Color.BLUE, true);
-    }
-
-    protected Definition getCheckBox()
-    {
-        return new Definition(Color.BLACK, Color.WHITE, false);
-    }
-
-    protected Definition getCheckBoxSelected()
-    {
-        return new Definition(Color.WHITE, Color.BLUE, true);
-    }
-
-    protected Definition getTextBoxFocused()
-    {
-        return new Definition(Color.YELLOW, Color.BLUE, true);
-    }
-
-    protected Definition getTextBox()
-    {
-        return new Definition(Color.WHITE, Color.BLUE, true);
-    }
-
-    public static Theme getDefaultTheme()
-    {
-        return new Theme();
-    }
-
-    public Theme.Definition getDefinition(Category category)
-    {
-        switch(category)
-        {
-            case DialogArea:
-                return getDialogEmptyArea();
-            case ScreenBackground:
-                return getScreenBackground();
-            case Shadow:
-                return getShadow();
-            case RaisedBorder:
-                return getRaisedBorder();
-            case Border:
-                return getBorder();
-            case ButtonLabelActive:
-                return getButtonLabelActive();
-            case ButtonLabelInactive:
-                return getButtonLabelInactive();
-            case ButtonActive:
-                return getButtonActive();
-            case ButtonInactive:
-                return getButtonInactive();
-            case ListItem:
-                return getItem();
-            case ListItemSelected:
-                return getItemSelected();
-            case CheckBox:
-                return getCheckBox();
-            case CheckBoxSelected:
-                return getCheckBoxSelected();
-            case TextBox:
-                return getTextBox();
-            case TextBoxFocused:
-                return getTextBoxFocused();
-        }
-        return getDefault();
-    }
+public class Theme {
+	private static final Theme DEFAULT_INSTANCE = new Theme();
+	
+	private static final Definition DEFAULT = new Definition(Color.BLACK, Color.WHITE, false);
+	private static final Definition SELECTED = new Definition(Color.WHITE, Color.BLUE, true);
+	private Map<Category,Definition> styles = new HashMap<Category,Definition>();
+	
 
     public enum Category
     {
@@ -176,7 +57,134 @@ public class Theme
         TextBoxFocused
     }
 
-    public class Definition
+    protected Theme()
+    {
+    	styles.put(Category.DialogArea, DEFAULT);
+    	styles.put(Category.ScreenBackground, new Definition(Color.CYAN, Color.BLUE, true));
+    	styles.put(Category.Shadow, new Definition(Color.BLACK, Color.BLACK, true));
+    	styles.put(Category.Border, new Definition(Color.BLACK, Color.WHITE, true));
+    	styles.put(Category.RaisedBorder, new Definition(Color.WHITE, Color.WHITE, true));
+    	styles.put(Category.ButtonLabelActive, new Definition(Color.YELLOW, Color.BLUE, true));
+    	styles.put(Category.ButtonLabelInactive, new Definition(Color.BLACK, Color.WHITE, true));
+    	styles.put(Category.ButtonActive, SELECTED);
+    	styles.put(Category.ButtonInactive, DEFAULT);
+    	styles.put(Category.ListItem, DEFAULT);
+    	styles.put(Category.ListItemSelected, SELECTED);
+    	styles.put(Category.CheckBox, DEFAULT);
+    	styles.put(Category.CheckBoxSelected, SELECTED);
+    	styles.put(Category.TextBox, SELECTED);
+    	styles.put(Category.TextBoxFocused, new Definition(Color.YELLOW, Color.BLUE, true));
+    }
+
+    protected Definition getDefault()
+    {
+        return DEFAULT;
+    }
+
+    @Deprecated
+    protected Definition getDialogEmptyArea()
+    {
+    	return getDefinition(Category.DialogArea);
+    }
+
+	@Deprecated
+	protected Definition getScreenBackground()
+    {
+    	return getDefinition(Category.ScreenBackground);
+    }
+
+    @Deprecated
+    protected Definition getShadow()
+    {
+    	return getDefinition(Category.Shadow);
+    }
+
+    @Deprecated
+    protected Definition getBorder()
+    {
+    	return getDefinition(Category.Border);
+    }
+
+    @Deprecated
+    protected Definition getRaisedBorder()
+    {
+        return getDefinition(Category.RaisedBorder);
+    }
+
+    @Deprecated
+    protected Definition getButtonLabelActive()
+    {
+        return getDefinition(Category.ButtonLabelActive);
+    }
+
+    @Deprecated
+    protected Definition getButtonLabelInactive()
+    {
+        return getDefinition(Category.ButtonLabelInactive);
+    }
+
+    @Deprecated
+    protected Definition getButtonActive()
+    {
+        return getDefinition(Category.ButtonActive);
+    }
+
+    @Deprecated
+    protected Definition getButtonInactive()
+    {
+        return getDefinition(Category.ButtonInactive);
+    }
+    
+    @Deprecated
+    protected Definition getItem()
+    {
+        return getDefinition(Category.ListItem);
+    }
+    
+    @Deprecated
+    protected Definition getItemSelected()
+    {
+        return getDefinition(Category.ListItemSelected);
+    }
+
+    @Deprecated
+    protected Definition getCheckBox()
+    {
+        return getDefinition(Category.CheckBox);
+    }
+
+    @Deprecated
+    protected Definition getCheckBoxSelected()
+    {
+        return getDefinition(Category.CheckBoxSelected);
+    }
+
+    @Deprecated
+    protected Definition getTextBoxFocused()
+    {
+        return getDefinition(Category.TextBoxFocused);
+    }
+
+    @Deprecated
+    protected Definition getTextBox()
+    {
+        return getDefinition(Category.TextBox);
+    }
+
+    public static Theme getDefaultTheme()
+    {
+        return DEFAULT_INSTANCE;
+    }
+
+    public Theme.Definition getDefinition(Category category)
+    {
+    	if (styles.containsKey(category))
+    		return styles.get(category);
+    	
+    	return getDefault();
+    }
+
+    public static class Definition
     {
         public Color foreground;
         public Color background;
