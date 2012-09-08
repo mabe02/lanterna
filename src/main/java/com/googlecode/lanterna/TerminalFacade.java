@@ -118,7 +118,7 @@ public class TerminalFacade {
     /**
      * Creates a new {@code SwingTerminal} object, a simple Swing terminal emulator,
      * 100 columns wide and 30 rows high.
-     * @param terminalFont What kind of appearance to use for the terminal
+     * @param appearance What kind of appearance to use for the terminal
      */
     public static SwingTerminal createSwingTerminal(TerminalAppearance appearance)
     {
