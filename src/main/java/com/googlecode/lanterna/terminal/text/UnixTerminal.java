@@ -194,6 +194,7 @@ public class UnixTerminal extends ANSITerminal
         super.exitPrivateMode();
         setCBreak(false);
         setEcho(true);
+        restoreEOFCtrlD();
     }
 
     @Override
@@ -205,7 +206,7 @@ public class UnixTerminal extends ANSITerminal
     public void setEcho(boolean echoOn) {
         sttyKeyEcho(echoOn);
     }
-    
+
     private static void sttyKeyEcho(final boolean enable)
     {
         exec("/bin/sh", "-c",
@@ -223,7 +224,13 @@ public class UnixTerminal extends ANSITerminal
         exec("/bin/sh", "-c",
                             "/bin/stty " + (enable ? "-icanon" : "icanon") + " < /dev/tty");
     }
-    
+
+    private static void restoreEOFCtrlD()
+    {
+        exec("/bin/sh", "-c",
+                            "/bin/stty eof ^d < /dev/tty");
+    }
+
     private static String exec(String ...cmd)
     {
         try {
