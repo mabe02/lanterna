@@ -157,10 +157,12 @@ public class UnixTerminal extends ANSITerminal
     public Key readInput() {
         //Check if we have ctrl+c coming
         Key key = super.readInput();
-        if(terminalBehaviour == Behaviour.CTRL_C_KILLS_APPLICATION &&
+        if(key != null &&
+                terminalBehaviour == Behaviour.CTRL_C_KILLS_APPLICATION &&
                 key.getCharacter() == 'c' && 
                 !key.isAltPressed() && 
                 key.isCtrlPressed()) {
+            
             exitPrivateMode();
             System.exit(1);
         }
