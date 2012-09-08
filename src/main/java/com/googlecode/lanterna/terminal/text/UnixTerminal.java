@@ -30,7 +30,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.nio.charset.Charset;
 import java.util.LinkedList;
-import java.util.Queue;
 
 /**
  * A common ANSI terminal extention with support for Unix resize signals and 
@@ -46,20 +45,17 @@ public class UnixTerminal extends ANSITerminal
      */
     public static enum Behaviour {
         /**
-         * This is the default mode for the UnixTerminal, SIGINT and SIGTSTP will be caught and
-         * presented as a normal keyboard interaction on the input stream
+         * Pressing ctrl+c doesn't kill the application, it will be added to the input queue as usual
          */
-        CATCH_SIGNALS,
+        DEFAULT,
+        
         /**
-         * Using this mode, SIGINT and SIGTSTP won't be caught be the program and the java process
-         * will behave normally when these signals are received. SIGINT will kill the process right
-         * then and there and SIGTSTP will suspend the process, just like with normal programs.
+         * Pressing ctrl+c will restore the terminal and kill the application
          */
-        DONT_CATCH_SIGNALS
+        CTRL_C_KILLS_APPLICATION,
     }
     
-    //Used internally so we can dynamically add stuff on the input queue
-    private final Queue<Key> extraInputQueue;
+    private final Behaviour terminalBehaviour;
             
     /**
      * Creates a UnixTerminal using a specified input stream, output stream and character set.
@@ -89,7 +85,7 @@ public class UnixTerminal extends ANSITerminal
             Charset terminalCharset,
             UnixTerminalSizeQuerier customSizeQuerier)
     {
-        this(terminalInput, terminalOutput, terminalCharset, customSizeQuerier, Behaviour.CATCH_SIGNALS);
+        this(terminalInput, terminalOutput, terminalCharset, customSizeQuerier, Behaviour.DEFAULT);
     }
     
     /**
@@ -111,7 +107,7 @@ public class UnixTerminal extends ANSITerminal
     {
         super(terminalInput, terminalOutput, terminalCharset);
         this.terminalSizeQuerier = customSizeQuerier;
-        this.extraInputQueue = new LinkedList<Key>();
+        this.terminalBehaviour = terminalBehaviour;
         addInputProfile(new GnomeTerminalProfile());
         addInputProfile(new PuttyProfile());
 
@@ -130,46 +126,9 @@ public class UnixTerminal extends ANSITerminal
                             return null;
                         }
                     });
-                    Object restoreTerminalOnInterruptHandler = Proxy.newProxyInstance(getClass().getClassLoader(), new Class[] {Class.forName("sun.misc.SignalHandler")}, new InvocationHandler() {
-                        @Override
-                        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                            exitPrivateMode();
-                            System.exit(1);
-                            return null;
-                        }
-                    });
-                    Object sendCtrlCOnInterruptHandler = Proxy.newProxyInstance(getClass().getClassLoader(), new Class[] {Class.forName("sun.misc.SignalHandler")}, new InvocationHandler() {
-                        @Override
-                        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                            extraInputQueue.add(new Key('c', true, false));
-                            return null;
-                        }
-                    });
-                    Object sendCtrlZOnSuspendHandler = Proxy.newProxyInstance(getClass().getClassLoader(), new Class[] {Class.forName("sun.misc.SignalHandler")}, new InvocationHandler() {
-                        @Override
-                        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                            extraInputQueue.add(new Key('z', true, false));
-                            return null;
-                        }
-                    });
                     m.invoke(null, signalClass.getConstructor(String.class).newInstance("WINCH"), windowResizeHandler);
-                    if(terminalBehaviour == Behaviour.CATCH_SIGNALS) {
-                        m.invoke(null, signalClass.getConstructor(String.class).newInstance("INT"), sendCtrlCOnInterruptHandler);
-                        m.invoke(null, signalClass.getConstructor(String.class).newInstance("TSTP"), sendCtrlZOnSuspendHandler);
-                    }
-                    else {
-                        m.invoke(null, signalClass.getConstructor(String.class).newInstance("INT"), restoreTerminalOnInterruptHandler);
-                    }
                 }
             }
-            /*
-            Signal.handle(new Signal("WINCH"), new SignalHandler() {
-                public void handle(Signal signal)
-                {
-                    queryTerminalSize();
-                }
-            });
-            */
         }
         catch(Throwable e) {
             System.err.println(e.getMessage());
@@ -196,15 +155,16 @@ public class UnixTerminal extends ANSITerminal
 
     @Override
     public Key readInput() {
-        //Check if we have ctrl+c or ctrl+z waiting
-        synchronized(extraInputQueue) {
-            Key key = extraInputQueue.poll();
-            if(key != null)
-                return key;
+        //Check if we have ctrl+c coming
+        Key key = super.readInput();
+        if(terminalBehaviour == Behaviour.CTRL_C_KILLS_APPLICATION &&
+                key.getCharacter() == 'c' && 
+                !key.isAltPressed() && 
+                key.isCtrlPressed()) {
+            exitPrivateMode();
+            System.exit(1);
         }
-        
-        //Otherwise return as usual
-        return super.readInput();
+        return key;
     }
     
     @Override
@@ -214,6 +174,7 @@ public class UnixTerminal extends ANSITerminal
         setCBreak(true);
         setEcho(false);
         sttyMinimumCharacterForRead(1);
+        disableSpecialCharacters();
     }
 
     @Override
@@ -223,6 +184,7 @@ public class UnixTerminal extends ANSITerminal
         setCBreak(false);
         setEcho(true);
         restoreEOFCtrlD();
+        restoreSpecialCharacters();
     }
 
     @Override
@@ -255,8 +217,23 @@ public class UnixTerminal extends ANSITerminal
 
     private static void restoreEOFCtrlD()
     {
-        exec("/bin/sh", "-c",
-                            "/bin/stty eof ^d < /dev/tty");
+        exec("/bin/sh", "-c", "/bin/stty eof ^d < /dev/tty");
+    }
+
+    private static void disableSpecialCharacters()
+    {
+        exec("/bin/sh", "-c", "/bin/stty intr undet < /dev/tty");
+        exec("/bin/sh", "-c", "/bin/stty start undet < /dev/tty");
+        exec("/bin/sh", "-c", "/bin/stty stop undet < /dev/tty");
+        exec("/bin/sh", "-c", "/bin/stty susp undet < /dev/tty");
+    }
+
+    private static void restoreSpecialCharacters()
+    {
+        exec("/bin/sh", "-c", "/bin/stty intr ^C < /dev/tty");
+        exec("/bin/sh", "-c", "/bin/stty start ^Q < /dev/tty");
+        exec("/bin/sh", "-c", "/bin/stty stop ^S < /dev/tty");
+        exec("/bin/sh", "-c", "/bin/stty susp ^Z < /dev/tty");
     }
 
     private static String exec(String ...cmd)

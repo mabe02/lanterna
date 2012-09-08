@@ -42,6 +42,10 @@ public class CtrlAndCharacterPattern implements CharacterPattern {
         if(currentMatching.size() > 1)
             return false;
         
+        if(currentMatching.get(0).charValue() == '\n' ||
+                currentMatching.get(0).charValue() == '\t')
+            return false;
+        
         return currentMatching.get(0).charValue() <= 26;
     }    
 }

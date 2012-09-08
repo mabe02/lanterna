@@ -46,7 +46,7 @@ public class ButtonTest
         Terminal terminal = new TestTerminalFactory(args).createTerminal();        
         if(terminal instanceof UnixTerminal) {
             terminal = new UnixTerminal(System.in, System.out, Charset.forName("UTF-8"), 
-                                            null, UnixTerminal.Behaviour.DONT_CATCH_SIGNALS);            
+                                            null, UnixTerminal.Behaviour.CTRL_C_KILLS_APPLICATION);            
         }        
         final GUIScreen guiScreen = new GUIScreen(new Screen(terminal));
         guiScreen.getScreen().startScreen();
