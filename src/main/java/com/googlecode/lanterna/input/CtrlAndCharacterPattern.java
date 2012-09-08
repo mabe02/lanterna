@@ -28,7 +28,7 @@ public class CtrlAndCharacterPattern implements CharacterPattern {
     
     @Override
     public Key getResult(List<Character> matching) {
-        int firstCode = 'A' - 1;
+        int firstCode = 'a' - 1;
         return new Key((char)(firstCode + (int)matching.get(0).charValue()), true, false);
     }
 
@@ -40,6 +40,10 @@ public class CtrlAndCharacterPattern implements CharacterPattern {
     @Override
     public boolean matches(List<Character> currentMatching) {
         if(currentMatching.size() > 1)
+            return false;
+        
+        if(currentMatching.get(0).charValue() == '\n' ||
+                currentMatching.get(0).charValue() == '\t')
             return false;
         
         return currentMatching.get(0).charValue() <= 26;

@@ -33,7 +33,7 @@ public interface Interactable
      * This method is called when this component has focus and the user has
      * pressed a key on the keyboard
      * @param key Key pressed on the keyboard
-     * @param result Result of this keyboard interaction, this can for example be a hint to the 
+     * @return Result of this keyboard interaction, this can for example be a hint to the 
      * parent container to move input focus to a different component or telling that the event was
      * processed by the component and no extra action is required
      */

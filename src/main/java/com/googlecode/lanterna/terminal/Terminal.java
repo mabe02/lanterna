@@ -158,9 +158,7 @@ public interface Terminal extends InputProvider
      * 
      * <p>For more details on this, please see <a href="https://github.com/robertknight/konsole/blob/master/user-doc/README.moreColors">
      * this</a> commit message to Konsole.
-     * @param r Red intensity, from 0 to 255
-     * @param g Green intensity, from 0 to 255
-     * @param b Blue intensity, from 0 to 255
+     * @param index Index of the color to use, from the XTerm 256 color extension
      */
     public void applyBackgroundColor(int index);
     
