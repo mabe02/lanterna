@@ -21,6 +21,7 @@ package com.googlecode.lanterna.terminal.text;
 
 import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.input.GnomeTerminalProfile;
+import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.input.PuttyProfile;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import java.io.*;
@@ -28,6 +29,8 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.nio.charset.Charset;
+import java.util.LinkedList;
+import java.util.Queue;
 
 /**
  * A common ANSI terminal extention with support for Unix resize signals and 
@@ -41,7 +44,7 @@ public class UnixTerminal extends ANSITerminal
     /**
      * This enum lets you control some more low-level behaviors of this terminal object.
      */
-    public static enum UnixTerminalMode {
+    public static enum Behaviour {
         /**
          * This is the default mode for the UnixTerminal, SIGINT and SIGTSTP will be caught and
          * presented as a normal keyboard interaction on the input stream
@@ -54,6 +57,9 @@ public class UnixTerminal extends ANSITerminal
          */
         DONT_CATCH_SIGNALS
     }
+    
+    //Used internally so we can dynamically add stuff on the input queue
+    private final Queue<Key> extraInputQueue;
             
     /**
      * Creates a UnixTerminal using a specified input stream, output stream and character set.
@@ -83,7 +89,7 @@ public class UnixTerminal extends ANSITerminal
             Charset terminalCharset,
             UnixTerminalSizeQuerier customSizeQuerier)
     {
-        this(terminalInput, terminalOutput, terminalCharset, customSizeQuerier, UnixTerminalMode.CATCH_SIGNALS);
+        this(terminalInput, terminalOutput, terminalCharset, customSizeQuerier, Behaviour.CATCH_SIGNALS);
     }
     
     /**
@@ -93,7 +99,7 @@ public class UnixTerminal extends ANSITerminal
      * @param terminalCharset Character set to use when converting characters to bytes
      * @param customSizeQuerier Object to use for looking up the size of the terminal, or null to
      * use the built-in method
-     * @param terminalMode Special settings on how the terminal will behave, see 
+     * @param terminalBehaviour Special settings on how the terminal will behave, see 
      * {@code UnixTerminalMode} for more details
      */  
     public UnixTerminal(
@@ -101,10 +107,11 @@ public class UnixTerminal extends ANSITerminal
             OutputStream terminalOutput, 
             Charset terminalCharset,
             UnixTerminalSizeQuerier customSizeQuerier,
-            UnixTerminalMode terminalMode)
+            Behaviour terminalBehaviour)
     {
         super(terminalInput, terminalOutput, terminalCharset);
         this.terminalSizeQuerier = customSizeQuerier;
+        this.extraInputQueue = new LinkedList<Key>();
         addInputProfile(new GnomeTerminalProfile());
         addInputProfile(new PuttyProfile());
 
@@ -131,16 +138,24 @@ public class UnixTerminal extends ANSITerminal
                             return null;
                         }
                     });
-                    Object doNothingHandler = Proxy.newProxyInstance(getClass().getClassLoader(), new Class[] {Class.forName("sun.misc.SignalHandler")}, new InvocationHandler() {
+                    Object sendCtrlCOnInterruptHandler = Proxy.newProxyInstance(getClass().getClassLoader(), new Class[] {Class.forName("sun.misc.SignalHandler")}, new InvocationHandler() {
                         @Override
                         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                            extraInputQueue.add(new Key('c', true, false));
+                            return null;
+                        }
+                    });
+                    Object sendCtrlZOnSuspendHandler = Proxy.newProxyInstance(getClass().getClassLoader(), new Class[] {Class.forName("sun.misc.SignalHandler")}, new InvocationHandler() {
+                        @Override
+                        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                            extraInputQueue.add(new Key('z', true, false));
                             return null;
                         }
                     });
                     m.invoke(null, signalClass.getConstructor(String.class).newInstance("WINCH"), windowResizeHandler);
-                    if(terminalMode == UnixTerminalMode.CATCH_SIGNALS) {
-                        m.invoke(null, signalClass.getConstructor(String.class).newInstance("INT"), doNothingHandler);
-                        m.invoke(null, signalClass.getConstructor(String.class).newInstance("TSTP"), doNothingHandler);
+                    if(terminalBehaviour == Behaviour.CATCH_SIGNALS) {
+                        m.invoke(null, signalClass.getConstructor(String.class).newInstance("INT"), sendCtrlCOnInterruptHandler);
+                        m.invoke(null, signalClass.getConstructor(String.class).newInstance("TSTP"), sendCtrlZOnSuspendHandler);
                     }
                     else {
                         m.invoke(null, signalClass.getConstructor(String.class).newInstance("INT"), restoreTerminalOnInterruptHandler);
@@ -177,6 +192,19 @@ public class UnixTerminal extends ANSITerminal
             return terminalSizeQuerier.queryTerminalSize();
         
         return super.getTerminalSize();
+    }
+
+    @Override
+    public Key readInput() {
+        //Check if we have ctrl+c or ctrl+z waiting
+        synchronized(extraInputQueue) {
+            Key key = extraInputQueue.poll();
+            if(key != null)
+                return key;
+        }
+        
+        //Otherwise return as usual
+        return super.readInput();
     }
     
     @Override
