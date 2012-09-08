@@ -222,10 +222,10 @@ public class UnixTerminal extends ANSITerminal
 
     private static void disableSpecialCharacters()
     {
-        exec("/bin/sh", "-c", "/bin/stty intr undet < /dev/tty");
-        exec("/bin/sh", "-c", "/bin/stty start undet < /dev/tty");
-        exec("/bin/sh", "-c", "/bin/stty stop undet < /dev/tty");
-        exec("/bin/sh", "-c", "/bin/stty susp undet < /dev/tty");
+        exec("/bin/sh", "-c", "/bin/stty intr undef < /dev/tty");
+        exec("/bin/sh", "-c", "/bin/stty start undef < /dev/tty");
+        exec("/bin/sh", "-c", "/bin/stty stop undef < /dev/tty");
+        exec("/bin/sh", "-c", "/bin/stty susp undef < /dev/tty");
     }
 
     private static void restoreSpecialCharacters()
