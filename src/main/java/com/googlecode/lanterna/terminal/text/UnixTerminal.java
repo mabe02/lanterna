@@ -37,7 +37,30 @@ import java.nio.charset.Charset;
 public class UnixTerminal extends ANSITerminal
 {
     private final UnixTerminalSizeQuerier terminalSizeQuerier;
+    
+    /**
+     * This enum lets you control some more low-level behaviors of this terminal object.
+     */
+    public static enum UnixTerminalMode {
+        /**
+         * This is the default mode for the UnixTerminal, SIGINT and SIGTSTP will be caught and
+         * presented as a normal keyboard interaction on the input stream
+         */
+        CATCH_SIGNALS,
+        /**
+         * Using this mode, SIGINT and SIGTSTP won't be caught be the program and the java process
+         * will behave normally when these signals are received. SIGINT will kill the process right
+         * then and there and SIGTSTP will suspend the process, just like with normal programs.
+         */
+        DONT_CATCH_SIGNALS
+    }
             
+    /**
+     * Creates a UnixTerminal using a specified input stream, output stream and character set.
+     * @param terminalInput Input stream to read terminal input from
+     * @param terminalOutput Output stream to write terminal output to
+     * @param terminalCharset Character set to use when converting characters to bytes
+     */
     public UnixTerminal(
             InputStream terminalInput, 
             OutputStream terminalOutput, 
@@ -45,12 +68,40 @@ public class UnixTerminal extends ANSITerminal
     {
         this(terminalInput, terminalOutput, terminalCharset, null);
     }
-            
+          
+    /**
+     * Creates a UnixTerminal using a specified input stream, output stream and character set.
+     * @param terminalInput Input stream to read terminal input from
+     * @param terminalOutput Output stream to write terminal output to
+     * @param terminalCharset Character set to use when converting characters to bytes
+     * @param customSizeQuerier Object to use for looking up the size of the terminal, or null to
+     * use the built-in method
+     */  
     public UnixTerminal(
             InputStream terminalInput, 
             OutputStream terminalOutput, 
             Charset terminalCharset,
             UnixTerminalSizeQuerier customSizeQuerier)
+    {
+        this(terminalInput, terminalOutput, terminalCharset, customSizeQuerier, UnixTerminalMode.CATCH_SIGNALS);
+    }
+    
+    /**
+     * Creates a UnixTerminal using a specified input stream, output stream and character set.
+     * @param terminalInput Input stream to read terminal input from
+     * @param terminalOutput Output stream to write terminal output to
+     * @param terminalCharset Character set to use when converting characters to bytes
+     * @param customSizeQuerier Object to use for looking up the size of the terminal, or null to
+     * use the built-in method
+     * @param terminalMode Special settings on how the terminal will behave, see 
+     * {@code UnixTerminalMode} for more details
+     */  
+    public UnixTerminal(
+            InputStream terminalInput, 
+            OutputStream terminalOutput, 
+            Charset terminalCharset,
+            UnixTerminalSizeQuerier customSizeQuerier,
+            UnixTerminalMode terminalMode)
     {
         super(terminalInput, terminalOutput, terminalCharset);
         this.terminalSizeQuerier = customSizeQuerier;
@@ -63,7 +114,7 @@ public class UnixTerminal extends ANSITerminal
             Class signalClass = Class.forName("sun.misc.Signal");
             for(Method m: signalClass.getDeclaredMethods()) {
                 if("handle".equals(m.getName())) {
-                    Object handler = Proxy.newProxyInstance(getClass().getClassLoader(), new Class[] {Class.forName("sun.misc.SignalHandler")}, new InvocationHandler() {
+                    Object windowResizeHandler = Proxy.newProxyInstance(getClass().getClassLoader(), new Class[] {Class.forName("sun.misc.SignalHandler")}, new InvocationHandler() {
                         @Override
                         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
                             if("handle".equals(method.getName())) {
@@ -72,7 +123,28 @@ public class UnixTerminal extends ANSITerminal
                             return null;
                         }
                     });
-                    m.invoke(null, signalClass.getConstructor(String.class).newInstance("WINCH"), handler);
+                    Object restoreTerminalOnInterruptHandler = Proxy.newProxyInstance(getClass().getClassLoader(), new Class[] {Class.forName("sun.misc.SignalHandler")}, new InvocationHandler() {
+                        @Override
+                        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                            exitPrivateMode();
+                            System.exit(1);
+                            return null;
+                        }
+                    });
+                    Object doNothingHandler = Proxy.newProxyInstance(getClass().getClassLoader(), new Class[] {Class.forName("sun.misc.SignalHandler")}, new InvocationHandler() {
+                        @Override
+                        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                            return null;
+                        }
+                    });
+                    m.invoke(null, signalClass.getConstructor(String.class).newInstance("WINCH"), windowResizeHandler);
+                    if(terminalMode == UnixTerminalMode.CATCH_SIGNALS) {
+                        m.invoke(null, signalClass.getConstructor(String.class).newInstance("INT"), doNothingHandler);
+                        m.invoke(null, signalClass.getConstructor(String.class).newInstance("TSTP"), doNothingHandler);
+                    }
+                    else {
+                        m.invoke(null, signalClass.getConstructor(String.class).newInstance("INT"), restoreTerminalOnInterruptHandler);
+                    }
                 }
             }
             /*
