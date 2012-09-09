@@ -20,6 +20,7 @@
 package com.googlecode.lanterna.gui.listener;
 
 import com.googlecode.lanterna.gui.Window;
+import com.googlecode.lanterna.gui.component.InteractableComponent;
 import com.googlecode.lanterna.input.Key;
 
 /**
@@ -45,5 +46,10 @@ public class WindowAdapter implements WindowListener {
     @Override
     public void onUnhandledKeyboardInteraction(Window window, Key key) {
         
+    }
+
+    @Override
+    public void onFocusChanged(Window window, InteractableComponent fromComponent, InteractableComponent toComponent) {
+
     }
 }

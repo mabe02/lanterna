@@ -19,7 +19,9 @@
 
 package com.googlecode.lanterna.gui.listener;
 
+import com.googlecode.lanterna.gui.Interactable;
 import com.googlecode.lanterna.gui.Window;
+import com.googlecode.lanterna.gui.component.InteractableComponent;
 import com.googlecode.lanterna.input.Key;
 
 /**
@@ -28,8 +30,36 @@ import com.googlecode.lanterna.input.Key;
  */
 public interface WindowListener
 {
+    /**
+     * Called when a window has been internally modified and needs to be repainted by the GUI system.
+     * @param window Window that was invalidated
+     */
     public void onWindowInvalidated(Window window);
+    
+    /**
+     * Called by the window when it has been added and showed up on a {@code GUIScreen}.
+     * @param window Window that has been displayed
+     */
     public void onWindowShown(Window window);
+    
+    /**
+     * Called by the window when it has been closed and removed from the {@code GUIScreen}.
+     * @param window Window that was closed and removed
+     */
     public void onWindowClosed(Window window);
+    
+    /**
+     * Called by the window when there was a keyboard input event that no component could handle
+     * @param window Window that recieved the input event
+     * @param key Key that couldn't be handled
+     */
     public void onUnhandledKeyboardInteraction(Window window, Key key);
+    
+    /**
+     * Called by the window whenever the input focus has changed from one component to another
+     * @param window Window that switched input focus
+     * @param fromComponent Component that lost focus, or {@code null} if no component was previously focused
+     * @param toComponent Component that received focus, or {@code null} if no component has focus
+     */
+    public void onFocusChanged(Window window, InteractableComponent fromComponent, InteractableComponent toComponent);
 }
