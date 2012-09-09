@@ -46,6 +46,7 @@ public class Window implements Container
     private GUIScreen owner;
     private final WindowContentPane contentPane;
     private Interactable currentlyInFocus;
+    private TerminalSize windowSizeOverride;
     private boolean soloWindow;
 
     /**
@@ -60,6 +61,7 @@ public class Window implements Container
         this.contentPane = new WindowContentPane(title);
         this.currentlyInFocus = null;
         this.soloWindow = false;
+        this.windowSizeOverride = null;
     }
 
     public void addWindowListener(WindowListener listener)
@@ -95,11 +97,33 @@ public class Window implements Container
     }
 
     /**
+     * Returns the current window size override or {@code null} if none is set
+     * @return Override for the window size or {@code null}
+     */
+    public TerminalSize getWindowSizeOverride() {
+        return windowSizeOverride;
+    }
+
+    /**
+     * Sets the size of the window to a fixed value, rather than using automatic size calculation. 
+     * If you call this method with {@code windowSizeOverride} parameter set to {@code null}, the
+     * automatic size calculation will be activated again.
+     * @param windowSizeOverride Size the window should have, or {@code null} if you want to use
+     * automatic size calculation
+     */
+    public void setWindowSizeOverride(TerminalSize windowSizeOverride) {
+        this.windowSizeOverride = windowSizeOverride;
+    }
+
+    /**
      * @return How big this window would like to be
      */
     TerminalSize getPreferredSize()
     {
-        return contentPane.getPreferredSize();
+        if(windowSizeOverride != null)
+            return windowSizeOverride;
+        else
+            return contentPane.getPreferredSize();  //Automatically calculate the size
     }
 
     void repaint(TextGraphics graphics)
