@@ -18,8 +18,8 @@
  */
 package com.googlecode.lanterna.gui.listener;
 
+import com.googlecode.lanterna.gui.Interactable;
 import com.googlecode.lanterna.gui.Window;
-import com.googlecode.lanterna.gui.component.InteractableComponent;
 import com.googlecode.lanterna.input.Key;
 
 /**
@@ -63,5 +63,5 @@ public interface WindowListener {
      * @param fromComponent Component that lost focus, or {@code null} if no component was previously focused
      * @param toComponent Component that received focus, or {@code null} if no component has focus
      */
-    void onFocusChanged(Window window, InteractableComponent fromComponent, InteractableComponent toComponent);
+    void onFocusChanged(Window window, Interactable fromComponent, Interactable toComponent);
 }
