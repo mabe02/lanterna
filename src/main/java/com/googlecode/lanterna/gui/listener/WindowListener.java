@@ -16,16 +16,18 @@
  * 
  * Copyright (C) 2010-2012 Martin
  */
-
 package com.googlecode.lanterna.gui.listener;
 
-import com.googlecode.lanterna.gui.Interactable;
 import com.googlecode.lanterna.gui.Window;
 import com.googlecode.lanterna.gui.component.InteractableComponent;
 import com.googlecode.lanterna.input.Key;
 
 /**
- *
+ * This listener class is for listening to events happening to a {@code Window}. If you want to 
+ * listen to window events but don't care about all the different event types, you can extend
+ * the {@code WindowAdapter} class instead.
+ * @see Window
+ * @see WindowAdapter
  * @author Martin
  */
 public interface WindowListener {

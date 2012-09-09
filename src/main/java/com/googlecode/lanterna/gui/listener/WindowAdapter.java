@@ -16,7 +16,6 @@
  * 
  * Copyright (C) 2010-2012 Martin
  */
-
 package com.googlecode.lanterna.gui.listener;
 
 import com.googlecode.lanterna.gui.Window;
@@ -24,10 +23,14 @@ import com.googlecode.lanterna.gui.component.InteractableComponent;
 import com.googlecode.lanterna.input.Key;
 
 /**
- *
+ * This adapter class is implementing {@code WindowListener} and provides an implementation for all
+ * the methods that does nothing. By extending this class, you can provide your own implementation
+ * to only the events you care about.
+ * @see WindowListener
  * @author Martin
  */
 public class WindowAdapter implements WindowListener {
+    
     @Override
     public void onWindowInvalidated(Window window) {
         
