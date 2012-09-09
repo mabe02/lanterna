@@ -20,6 +20,7 @@
 package com.googlecode.lanterna.gui.listener;
 
 import com.googlecode.lanterna.gui.Component;
+import com.googlecode.lanterna.gui.component.InteractableComponent;
 
 /**
  *
@@ -27,5 +28,22 @@ import com.googlecode.lanterna.gui.Component;
  */
 public interface ComponentListener
 {
+    /**
+     * Will be called when a component is signaling it's content has been invalidated and needs to
+     * be repainted by the GUI system.
+     * @param component Component that was invalidated
+     */
     void onComponentInvalidated(Component component);
+    
+    /**
+     * Will be called when a component has gained the input focus of the GUI system.
+     * @param interactableComponent Component that gained focus
+     */
+    void onComponentReceivedFocus(InteractableComponent interactableComponent);
+    
+    /**
+     * Will be called when input focus was taken away from a component by the GUI system.
+     * @param interactableComponent Component that lost focus
+     */
+    void onComponentLostFocus(InteractableComponent interactableComponent);
 }

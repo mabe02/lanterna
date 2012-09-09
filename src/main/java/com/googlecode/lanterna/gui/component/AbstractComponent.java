@@ -27,6 +27,8 @@ import com.googlecode.lanterna.gui.Window;
 import com.googlecode.lanterna.gui.listener.ComponentListener;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -136,6 +138,11 @@ public abstract class AbstractComponent implements Component
         if(parent != null && parent instanceof AbstractContainer) {
             ((AbstractContainer)parent).invalidate();
         }
+    }
+    
+    protected List<ComponentListener> getComponentListeners() {
+        //This isn't thread safe either, but at least the list can't be modified
+        return Collections.unmodifiableList(componentListeners);
     }
 
     protected Window getParentWindow()

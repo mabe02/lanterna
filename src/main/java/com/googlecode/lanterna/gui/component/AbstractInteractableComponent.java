@@ -19,55 +19,57 @@
 
 package com.googlecode.lanterna.gui.component;
 
-import com.googlecode.lanterna.gui.Interactable;
+import com.googlecode.lanterna.gui.listener.ComponentListener;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 
 /**
  *
  * @author Martin
  */
-public abstract class AbstractInteractableComponent extends AbstractComponent implements Interactable
-{
+public abstract class AbstractInteractableComponent extends AbstractComponent implements InteractableComponent {
     private boolean hasFocus;
     private TerminalPosition hotspot;
 
-    public AbstractInteractableComponent()
-    {
+    public AbstractInteractableComponent() {
         hotspot = new TerminalPosition(0, 0);
     }
 
-    public final void onEnterFocus(FocusChangeDirection direction)
-    {
+    @Override
+    public final void onEnterFocus(FocusChangeDirection direction) {
         hasFocus = true;
+        for(ComponentListener cl: getComponentListeners())
+            cl.onComponentReceivedFocus(this);
         afterEnteredFocus(direction);
     }
 
-    public final void onLeaveFocus(FocusChangeDirection direction)
-    {
+    @Override
+    public final void onLeaveFocus(FocusChangeDirection direction) {
         hasFocus = false;
+        for(ComponentListener cl: getComponentListeners())
+            cl.onComponentLostFocus(this);
         afterLeftFocus(direction);
     }
 
-    protected void afterEnteredFocus(FocusChangeDirection direction)
-    {
+    protected void afterEnteredFocus(FocusChangeDirection direction) {
     }
 
-    protected void afterLeftFocus(FocusChangeDirection direction)
-    {
+    protected void afterLeftFocus(FocusChangeDirection direction) {
     }
 
-    public boolean hasFocus()
-    {
+    /**
+     * This method will return true if the component currently has input focus in the GUI
+     * @return {@code true} if the component has input focus, otherwise {@code false}
+     */
+    public boolean hasFocus() {
         return hasFocus;
     }
 
-    public TerminalPosition getHotspot()
-    {
+    @Override
+    public TerminalPosition getHotspot() {
         return hotspot;
     }
 
-    protected void setHotspot(TerminalPosition point)
-    {
+    protected void setHotspot(TerminalPosition point) {
         this.hotspot = point;
     }
 }

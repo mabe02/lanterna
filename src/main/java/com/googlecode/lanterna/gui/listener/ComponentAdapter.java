@@ -16,18 +16,26 @@
  * 
  * Copyright (C) 2010-2012 Martin
  */
-
 package com.googlecode.lanterna.gui.listener;
 
 import com.googlecode.lanterna.gui.Component;
+import com.googlecode.lanterna.gui.component.InteractableComponent;
 
 /**
- *
+ * This adapter class can help you create component listeners that only needs a subset of the
+ * events required by the {@code ComponentListener}.
  * @author Martin
  */
-public class ComponentAdapter implements ComponentListener
-{
-    public void onComponentInvalidated(Component component)
-    {
+public class ComponentAdapter implements ComponentListener {
+    @Override
+    public void onComponentInvalidated(Component component) {
+    }
+
+    @Override
+    public void onComponentLostFocus(InteractableComponent interactableComponent) {
+    }
+
+    @Override
+    public void onComponentReceivedFocus(InteractableComponent interactableComponent) {
     }
 }
