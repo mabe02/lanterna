@@ -283,6 +283,12 @@ public class Window implements Container
     {
         if(currentlyInFocus != null)
             currentlyInFocus.onLeaveFocus(direction);
+        
+        //Fire the focus changed event
+        for(WindowListener listener: windowListeners) {
+            listener.onFocusChanged(this, currentlyInFocus, newFocus);
+        }
+        
         currentlyInFocus = newFocus;
         if(currentlyInFocus != null)
             currentlyInFocus.onEnterFocus(direction);
