@@ -20,7 +20,7 @@
 package com.googlecode.lanterna.gui.component;
 
 /**
- *
+ * A TextBox which masks the data entered into it.
  * @author Martin
  */
 public class PasswordBox extends TextBox

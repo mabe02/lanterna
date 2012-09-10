@@ -70,6 +70,9 @@ public class Table extends AbstractComponent implements InteractableContainer
         ((LinearLayout)mainPanel.getLayoutManager()).setPadding(size);
     }
 
+    /**
+    Adds a new row to this table, using the given components as its cells. 
+    */
     public void addRow(Component ...components)
     {
         Component[] newRow = new Component[columns.length];
@@ -116,6 +119,9 @@ public class Table extends AbstractComponent implements InteractableContainer
         }
     }
 
+    /**
+    Removes all rows from this table.
+    */
     public void removeAllRows()
     {
         rows.clear();
