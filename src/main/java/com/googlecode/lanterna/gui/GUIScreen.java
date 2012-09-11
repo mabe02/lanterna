@@ -70,6 +70,21 @@ public class GUIScreen
         this.needsRefresh = false;
         this.eventThread = Thread.currentThread();  //We'll be expecting the thread who created us is the same as will be the event thread later
     }
+    
+    /**
+     * @param title Title to be displayed in the top-left corner
+     * @deprecated Use a GUI background renderer instead
+     */
+    @Deprecated
+    public void setTitle(String title)
+    {
+        if(title == null)
+            title = "";
+        
+        if(backgroundRenderer instanceof DefaultBackgroundRenderer) {
+            ((DefaultBackgroundRenderer)backgroundRenderer).setTitle(title);
+        }
+    }
 
     /**
      * Sets a new Theme for the entire GUI
