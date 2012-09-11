@@ -14,9 +14,9 @@ public class SpinningActivityIndicator extends ActivityIndicator {
 	/** caret, greater-than, uppercase 'V', less-than */
 	public static char[] CHEVRONS = new char[] { '^', '>', 'V', '<' };
 	/** Unicode dice characters (not supported by all terminals) */
-	public static char[] DICE = new char[] { '\u2680', '\u2681', '\u2682', '\u2683', '\u2684', '\u2685' };
+	public static char[] DICE = new char[] { 0x2680, 0x2681, 0x2682, 0x2683, 0x2684, 0x2685 };
 	/** Unicode trigram characters (not supported by all terminals) */
-	public static char[] TRIGRAMS = new char[] { '\u2630', '\u2631', '\u2632', '\u2633', '\u2634', '\u2635', '\u2636', '\u2637' };
+	public static char[] TRIGRAMS = new char[] { 0x2630, 0x2631, 0x2632, 0x2633, 0x2634, 0x2635, 0x2636, 0x2637 };
 	
 	private static char[] states = BARS;
 	private static int index = 0;
