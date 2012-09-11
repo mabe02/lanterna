@@ -39,7 +39,10 @@ public class ActionListDialog extends Window
 
     private ActionListDialog(String title, String description, int width) {
         super(title);
-        addComponent(new Label(description));
+        
+        if (description != null)
+        	addComponent(new Label(description));
+        
         actionListBox = new ActionListBox(new TerminalSize(width, 0));
         addComponent(actionListBox);
         Panel cancelPanel = new Panel(new Invisible(), Panel.Orientation.HORISONTAL);
