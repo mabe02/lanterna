@@ -190,7 +190,7 @@ public class GUIScreen
         if(windowStack.size() > 0 && windowStack.getLast().getWindow().getWindowHotspotPosition() != null)
             screen.setCursorPosition(windowStack.getLast().getWindow().getWindowHotspotPosition());
         else
-            screen.setCursorPosition(new TerminalPosition(screenSizeColumns - 1, screenSizeRows - 1));
+            screen.setCursorPosition(null);
         screen.refresh();
     }
 

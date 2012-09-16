@@ -31,7 +31,7 @@ public abstract class AbstractInteractableComponent extends AbstractComponent im
     private TerminalPosition hotspot;
 
     public AbstractInteractableComponent() {
-        hotspot = new TerminalPosition(0, 0);
+        hotspot = null;
     }
 
     @Override
@@ -69,6 +69,13 @@ public abstract class AbstractInteractableComponent extends AbstractComponent im
         return hotspot;
     }
 
+    /**
+     * Sets the hotspot, in global coordinates, of where to put the text cursor when this component
+     * is active. If called with a {@code null} argument, the cursor will be hidden while this 
+     * component has focus.
+     * @param point Global coordinates of the hotspot position for this component, or {@code null}
+     * if the cursor is to be hidden
+     */
     protected void setHotspot(TerminalPosition point) {
         this.hotspot = point;
     }

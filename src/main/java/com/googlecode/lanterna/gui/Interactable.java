@@ -53,7 +53,8 @@ public interface Interactable
     /**
      * When the component has keyboard focus, this method is called by the GUI
      * system to figure out where should the cursor be positioned.
-     * @return position of the cursor, in component-local coordinates
+     * @return position of the cursor, in global coordinates, or {@code null} if the cursor should
+     * be hidden
      */
     public TerminalPosition getHotspot();
 
