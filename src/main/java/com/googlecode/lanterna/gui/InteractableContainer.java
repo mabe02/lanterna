@@ -25,6 +25,11 @@ package com.googlecode.lanterna.gui;
  */
 public interface InteractableContainer
 {
+    /**
+     * Returns true if this container contains the {@code interactable} passed in as the parameter
+     * @param interactable {@code interactable} to look for
+     * @return {@code true} if the container has {@code interactable}, otherwise {@code false}
+     */
     boolean hasInteractable(Interactable interactable);
     
     /**
