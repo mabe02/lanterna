@@ -241,6 +241,20 @@ public abstract class ANSITerminal extends StreamBasedTerminal
         }
     }
 
+    @Override
+    public void setCursorVisible(boolean visible) {
+        synchronized(writerMutex) {
+            CSI();
+            writeToTerminal((byte)'?');
+            writeToTerminal((byte)'2');
+            writeToTerminal((byte)'5');
+            if(visible)
+                writeToTerminal((byte)'h');
+            else
+                writeToTerminal((byte)'l');
+        }
+    }
+    
     /**
      * Synchronize with writerMutex externally!!!
      */

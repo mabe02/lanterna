@@ -57,6 +57,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
     private boolean currentlyBlinking;
     private boolean currentlyUnderlined;
     private boolean blinkVisible;
+    private boolean cursorVisible;
     private Queue<Key> keyQueue;
     
     private final Object resizeMutex;
@@ -94,6 +95,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
         this.currentlyBlinking = false;
         this.currentlyUnderlined = false;
         this.blinkVisible = false;
+        this.cursorVisible = true;
         this.keyQueue = new ConcurrentLinkedQueue<Key>();
         this.resizeMutex = new Object();
         
@@ -248,6 +250,12 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
 
         textPosition.setColumn(x);
         textPosition.setRow(y);
+        refreshScreen();
+    }
+
+    @Override
+    public void setCursorVisible(boolean visible) {
+        this.cursorVisible = visible;
         refreshScreen();
     }
 
@@ -462,12 +470,12 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
             for(int row = 0; row < SwingTerminal.this.size().getRows(); row++) {
                 for(int col = 0; col < SwingTerminal.this.size().getColumns(); col++) {
                     TerminalCharacter character = characterMap[row][col];
-                    if(row == textPosition.getRow() && col == textPosition.getColumn())
+                    if(cursorVisible && row == textPosition.getRow() && col == textPosition.getColumn())
                         graphics2D.setColor(character.getForegroundAsAWTColor(appearance.useBrightColorsOnBold()));
                     else
                         graphics2D.setColor(character.getBackgroundAsAWTColor());
                     graphics2D.fillRect(col * charWidth, row * charHeight, charWidth, charHeight);
-                    if((row == textPosition.getRow() && col == textPosition.getColumn()) ||
+                    if((cursorVisible && row == textPosition.getRow() && col == textPosition.getColumn()) ||
                             (character.isBlinking() && !blinkVisible))
                         graphics2D.setColor(character.getBackgroundAsAWTColor());
                     else

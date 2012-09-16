@@ -64,6 +64,12 @@ public interface Terminal extends InputProvider
     public void moveCursor(int x, int y);
     
     /**
+     * Hides or shows the text cursor
+     * @param visible Hides the text cursor if {@code false} and shows it if {@code true}
+     */
+    public void setCursorVisible(boolean visible);
+    
+    /**
      * Prints one character to the terminal at the current cursor location. Please
      * note that the cursor will then move one column to the right but if reached
      * the end of the line may move to the beginning of the next line.
