@@ -111,7 +111,8 @@ public class Screen
     }
 
     /**
-     * Moves the current cursor position or hides it
+     * Moves the current cursor position or hides it. If the cursor is hidden and given a new 
+     * position, it will be visible after this method call.
      * @param position 0-indexed column and row numbers of the new position, or if {@code null}, 
      * hides the cursor
      */
@@ -125,7 +126,8 @@ public class Screen
     }
 
     /**
-     * Moves the current cursor position
+     * Moves the current cursor position, and if the cursor was hidden it will be visible after this
+     * call
      * @param column 0-indexed column number of the new position
      * @param row 0-indexed row number of the new position
      */
