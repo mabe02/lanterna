@@ -103,7 +103,7 @@ public class Screen
 
     /**
      * @return Position where the cursor will be located after the screen has
-     * been refreshed
+     * been refreshed or {@code null} if the cursor is not visible
      */
     public TerminalPosition getCursorPosition()
     {
@@ -111,13 +111,17 @@ public class Screen
     }
 
     /**
-     * Moves the current cursor position
-     * @param position 0-indexed column and row numbers of the new position
+     * Moves the current cursor position or hides it
+     * @param position 0-indexed column and row numbers of the new position, or if {@code null}, 
+     * hides the cursor
      */
     public void setCursorPosition(TerminalPosition position)
     {
         if(position != null)
+            //TerminalPosition isn't immutable, so make a copy
             this.cursorPosition = new TerminalPosition(position);
+        else
+            this.cursorPosition = null;
     }
 
     /**
@@ -130,7 +134,7 @@ public class Screen
         synchronized(mutex) {
             if(column >= 0 && column < terminalSize.getColumns() &&
                     row >= 0 && row < terminalSize.getRows()) {
-                this.cursorPosition = new TerminalPosition(column, row);
+                setCursorPosition(new TerminalPosition(column, row));
             }
         }
     }
@@ -184,7 +188,12 @@ public class Screen
         hasBeenActivated = true;
         terminal.enterPrivateMode();
         terminal.clearScreen();
-        terminal.moveCursor(cursorPosition.getColumn(), cursorPosition.getRow());
+        if(cursorPosition != null) {
+            terminal.setCursorVisible(true);
+            terminal.moveCursor(cursorPosition.getColumn(), cursorPosition.getRow());
+        }
+        else
+            terminal.setCursorVisible(false);
         refresh();
     }
     
@@ -323,7 +332,13 @@ public class Screen
                 terminalWriter.writeCharacter(updateMap.get(nextUpdate));
                 previousPoint = nextUpdate;
             }
-            terminalWriter.setCursorPosition(getCursorPosition().getColumn(), getCursorPosition().getRow());
+            if(cursorPosition != null) {
+                terminalWriter.setCursorVisible(true);
+                terminalWriter.setCursorPosition(cursorPosition.getColumn(), cursorPosition.getRow());
+            }
+            else {
+                terminalWriter.setCursorVisible(false);
+            }
             wholeScreenInvalid = false;
         }
         terminal.flush();
@@ -399,6 +414,7 @@ public class Screen
         private boolean currentlyIsUnderline;
         private boolean currentlyIsNegative;
         private boolean currentlyIsBlinking;
+        private boolean currentlyCursorVisible;
         
         public Writer()
         {
@@ -408,11 +424,20 @@ public class Screen
             currentlyIsUnderline = false;
             currentlyIsNegative = false;
             currentlyIsBlinking = false;
+            currentlyCursorVisible = true;
         }
 
         void setCursorPosition(int x, int y)
         {
             terminal.moveCursor(x, y);
+        }
+
+        private void setCursorVisible(boolean visible) {
+            if(currentlyCursorVisible == visible)
+                return;
+            
+            terminal.setCursorVisible(visible);
+            currentlyCursorVisible = visible;
         }
 
         void writeCharacter(ScreenCharacter character)
