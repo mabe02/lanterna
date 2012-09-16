@@ -139,7 +139,7 @@ public abstract class AbstractListBox extends AbstractInteractableComponent {
             if(i - scrollTopIndex >= graphics.getHeight())
                 break;
 
-            if(i == selectedIndex)
+            if(i == selectedIndex && hasFocus())
                 graphics.applyTheme(getSelectedListItemThemeDefinition(graphics.getTheme()));
             else
                 graphics.applyTheme(getListItemThemeDefinition(graphics.getTheme()));

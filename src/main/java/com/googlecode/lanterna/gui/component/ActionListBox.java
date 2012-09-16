@@ -20,7 +20,9 @@
 package com.googlecode.lanterna.gui.component;
 
 import com.googlecode.lanterna.gui.Action;
+import com.googlecode.lanterna.gui.Theme;
 import com.googlecode.lanterna.input.Key;
+import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 
 /**
@@ -78,6 +80,21 @@ public class ActionListBox extends AbstractListBox {
         return ((Item)getItemAt(index)).getTitle();
     }
 
+    @Override
+    public TerminalPosition getHotspot() {
+        return null;    //No hotspot for ActionListBox:es
+    }
+
+    @Override
+    protected Theme.Definition getListItemThemeDefinition(Theme theme) {
+        return theme.getDefinition(Theme.Category.DIALOG_AREA);
+    }
+
+    @Override
+    protected Theme.Definition getSelectedListItemThemeDefinition(Theme theme) {
+        return theme.getDefinition(Theme.Category.TEXTBOX_FOCUSED);
+    }
+    
     private static interface Item {
         public String getTitle();
         public void doAction();

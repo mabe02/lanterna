@@ -67,7 +67,6 @@ public class Button extends AbstractInteractableComponent
             TextGraphics subGraphics = graphics.subAreaGraphics(new TerminalPosition(2, 0),
                     new TerminalSize(allowedSize, buttonLabel.getPreferredSize().getRows()));
             buttonLabel.repaint(subGraphics);
-            setHotspot(graphics.translateToGlobalCoordinates(new TerminalPosition(2, 0)));
         }
         else {
             int leftPosition = (graphics.getWidth() - preferredSize.getColumns()) / 2;
@@ -78,9 +77,8 @@ public class Button extends AbstractInteractableComponent
                     new TerminalSize(labelPrefSize.getColumns(), labelPrefSize.getRows()));
             buttonLabel.repaint(subGraphics);
             graphics.drawString(leftPosition + 2 + labelPrefSize.getColumns(), 0, " >");
-
-            setHotspot(graphics.translateToGlobalCoordinates(new TerminalPosition(leftPosition + 2, 0)));
-        }
+        }    
+        setHotspot(null);
     }
 
     public void setText(String text)
