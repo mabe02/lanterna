@@ -27,6 +27,7 @@ import com.googlecode.lanterna.gui.Theme;
 import com.googlecode.lanterna.gui.Window;
 import com.googlecode.lanterna.gui.component.AbstractComponent;
 import com.googlecode.lanterna.gui.component.Button;
+import com.googlecode.lanterna.gui.component.Label;
 import com.googlecode.lanterna.gui.component.Panel;
 import com.googlecode.lanterna.gui.dialog.MessageBox;
 import com.googlecode.lanterna.gui.layout.LinearLayout;
@@ -55,22 +56,12 @@ public class ShortcutTest {
         guiScreen.setBackgroundRenderer(new DefaultBackgroundRenderer("GUI Test"));
 
         final Window mainWindow = new Window("Window with panels");
-        mainWindow.addComponent(new AbstractComponent() {
-            @Override
-            public void repaint(TextGraphics graphics)
-            {
-                graphics.applyTheme(graphics.getTheme().getDefinition(Theme.Category.SHADOW));
-                for(int y = 0; y < graphics.getHeight(); y++)
-                    for(int x = 0; x < graphics.getWidth(); x++)
-                        graphics.drawString(x, y, "X");
-            }
-
-            @Override
-            protected TerminalSize calculatePreferredSize() {
-                return new TerminalSize(30, 10);
-            }
-        });
-        Panel buttonPanel = new Panel(Panel.Orientation.VERTICAL);
+        mainWindow.addComponent(new Label("Shortcuts to try:"));
+        mainWindow.addComponent(new Label("m"));
+        mainWindow.addComponent(new Label("ctrl + c"));
+        mainWindow.addComponent(new Label("alt + v"));
+        mainWindow.addComponent(new Label("ctrl + alt + x"));
+        Panel buttonPanel = new Panel(Panel.Orientation.HORISONTAL);
         Button button1 = new Button("Exit", new Action() {
             @Override
             public void doAction()
