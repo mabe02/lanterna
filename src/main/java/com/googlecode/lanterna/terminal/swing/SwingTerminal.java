@@ -366,11 +366,17 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
         @Override
         public void keyTyped(KeyEvent e)
         {
+            char character = e.getKeyChar();
             boolean altDown = (e.getModifiersEx() & InputEvent.ALT_DOWN_MASK) != 0;
             boolean ctrlDown = (e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0;
             
-            if(!typedIgnore.contains(e.getKeyChar()))
-                keyQueue.add(new Key(e.getKeyChar(), ctrlDown, altDown));
+            if(!typedIgnore.contains(character)) {
+                if(ctrlDown) {
+                    //We need to re-adjust the character if ctrl is pressed, just like for the AnsiTerminal
+                    character = (char)('a' - 1 + character);
+                }
+                keyQueue.add(new Key(character, ctrlDown, altDown));
+            }
         }
 
         @Override
@@ -407,6 +413,15 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
                     keyQueue.add(new Key(Key.Kind.ReverseTab));
                 else
                     keyQueue.add(new Key(Key.Kind.Tab));
+            }
+            else {
+                //keyTyped doesn't catch this scenario (for whatever reason...) so we have to do it here
+                boolean altDown = (e.getModifiersEx() & InputEvent.ALT_DOWN_MASK) != 0;
+                boolean ctrlDown = (e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0;
+                if(altDown && ctrlDown && e.getKeyCode() >= 'A' && e.getKeyCode() <= 'Z') {
+                    char asLowerCase = Character.toLowerCase((char)e.getKeyCode());
+                    keyQueue.add(new Key(asLowerCase, true, true));
+                }
             }
         }
     }
