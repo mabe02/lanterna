@@ -370,7 +370,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
             boolean ctrlDown = (e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0;
             
             if(!typedIgnore.contains(e.getKeyChar()))
-                keyQueue.add(new Key(e.getKeyChar(), altDown, ctrlDown));
+                keyQueue.add(new Key(e.getKeyChar(), ctrlDown, altDown));
         }
 
         @Override
