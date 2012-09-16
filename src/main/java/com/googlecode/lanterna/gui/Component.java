@@ -23,7 +23,7 @@ import com.googlecode.lanterna.gui.listener.ComponentListener;
 import com.googlecode.lanterna.terminal.TerminalSize;
 
 /**
- * The base component interface, which all components must implement
+ * The base component interface, which all components must implement.
  * @author Martin
  */
 public interface Component

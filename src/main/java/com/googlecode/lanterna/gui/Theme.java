@@ -37,7 +37,9 @@ public class Theme {
 	private static final Definition SELECTED = new Definition(Color.WHITE, Color.BLUE, true);
 	private Map<Category,Definition> styles = new HashMap<Category,Definition>();
 	
-
+	/**
+	Represents things which can be styled.
+	*/
     public enum Category
     {
         DIALOG_AREA,
@@ -96,95 +98,151 @@ public class Theme {
     		styles.put(category, def);
     }
     
-    protected Definition getDefault()
-    {
+	/**
+    Gets the default style to use when no Category-specific style is set.
+	*/
+	protected Definition getDefaultStyle() {
         return DEFAULT;
     }
+    
+    /**
+    @deprecated use @{code getDefaultStyle()} instead
+    */
+    @Deprecated
+    protected Definition getDefault()
+    {
+    	return getDefaultStyle();
+    }
 
+    /**
+    @deprecated use {@code getDefinition} instead.
+    */
     @Deprecated
     protected Definition getDialogEmptyArea()
     {
     	return getDefinition(Category.DIALOG_AREA);
     }
 
+	/**
+    @deprecated use {@code getDefinition} instead.
+    */
 	@Deprecated
 	protected Definition getScreenBackground()
     {
     	return getDefinition(Category.SCREEN_BACKGROUND);
     }
 
+	/**
+    @deprecated use {@code getDefinition} instead.
+    */
     @Deprecated
     protected Definition getShadow()
     {
     	return getDefinition(Category.SHADOW);
     }
 
-    @Deprecated
+    /**
+    @deprecated use {@code getDefinition} instead.
+    */
+	@Deprecated
     protected Definition getBorder()
     {
     	return getDefinition(Category.BORDER);
     }
 
+	/**
+    @deprecated use {@code getDefinition} instead.
+    */
     @Deprecated
     protected Definition getRaisedBorder()
     {
         return getDefinition(Category.RAISED_BORDER);
     }
 
+	/**
+    @deprecated use {@code getDefinition} instead.
+    */
     @Deprecated
     protected Definition getButtonLabelActive()
     {
         return getDefinition(Category.BUTTON_LABEL_ACTIVE);
     }
 
+	/**
+    @deprecated use {@code getDefinition} instead.
+    */
     @Deprecated
     protected Definition getButtonLabelInactive()
     {
         return getDefinition(Category.BUTTON_LABEL_INACTIVE);
     }
 
+	/**
+    @deprecated use {@code getDefinition} instead.
+    */
     @Deprecated
     protected Definition getButtonActive()
     {
         return getDefinition(Category.BUTTON_ACTIVE);
     }
 
+	/**
+    @deprecated use {@code getDefinition} instead.
+    */
     @Deprecated
     protected Definition getButtonInactive()
     {
         return getDefinition(Category.BUTTON_INACTIVE);
     }
     
+	/**
+    @deprecated use {@code getDefinition} instead.
+    */
     @Deprecated
     protected Definition getItem()
     {
         return getDefinition(Category.LIST_ITEM);
     }
     
+	/**
+    @deprecated use {@code getDefinition} instead.
+    */
     @Deprecated
     protected Definition getItemSelected()
     {
         return getDefinition(Category.LIST_ITEM_SELECTED);
     }
 
+	/**
+    @deprecated use {@code getDefinition} instead.
+    */
     @Deprecated
     protected Definition getCheckBox()
     {
         return getDefinition(Category.CHECKBOX);
     }
 
+	/**
+    @deprecated use {@code getDefinition} instead.
+    */
     @Deprecated
     protected Definition getCheckBoxSelected()
     {
         return getDefinition(Category.CHECKBOX_SELECTED);
     }
 
+	/**
+    @deprecated use {@code getDefinition} instead.
+    */
     @Deprecated
     protected Definition getTextBoxFocused()
     {
         return getDefinition(Category.TEXTBOX_FOCUSED);
     }
 
+	/**
+    @deprecated use {@code getDefinition} instead.
+    */
     @Deprecated
     protected Definition getTextBox()
     {
@@ -196,6 +254,9 @@ public class Theme {
         return DEFAULT_INSTANCE;
     }
 
+    /**
+    A style definition encompassing colors and effects.
+    */
     public static class Definition
     {
         private Color foreground;
