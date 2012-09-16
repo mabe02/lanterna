@@ -416,7 +416,6 @@ public class Screen
         private boolean currentlyIsUnderline;
         private boolean currentlyIsNegative;
         private boolean currentlyIsBlinking;
-        private boolean currentlyCursorVisible;
         
         public Writer()
         {
@@ -426,7 +425,6 @@ public class Screen
             currentlyIsUnderline = false;
             currentlyIsNegative = false;
             currentlyIsBlinking = false;
-            currentlyCursorVisible = true;
         }
 
         void setCursorPosition(int x, int y)
@@ -435,11 +433,7 @@ public class Screen
         }
 
         private void setCursorVisible(boolean visible) {
-            if(currentlyCursorVisible == visible)
-                return;
-            
             terminal.setCursorVisible(visible);
-            currentlyCursorVisible = visible;
         }
 
         void writeCharacter(ScreenCharacter character)
