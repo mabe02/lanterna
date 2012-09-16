@@ -224,27 +224,32 @@ public class GUIScreen
                 break;
             }
 
-            synchronized(actionToRunInEventThread) {
-                List<Action> actions = new ArrayList<Action>(actionToRunInEventThread);
-                actionToRunInEventThread.clear();
-                for(Action nextAction: actions)
-                    nextAction.doAction();
-            }
-
-            boolean repainted = update();
-
-            Key nextKey = screen.readInput();
-            if(nextKey != null) {
-                windowStack.getLast().window.onKeyPressed(nextKey);
-                invalidate();
-            }
-            else {
-                if(!repainted) {
-                    try {
-                        Thread.sleep(1);
-                    }
-                    catch(InterruptedException e) {}
+            try {
+                synchronized(actionToRunInEventThread) {
+                    List<Action> actions = new ArrayList<Action>(actionToRunInEventThread);
+                    actionToRunInEventThread.clear();
+                    for(Action nextAction: actions)
+                        nextAction.doAction();
                 }
+
+                boolean repainted = update();
+
+                Key nextKey = screen.readInput();
+                if(nextKey != null) {
+                    windowStack.getLast().window.onKeyPressed(nextKey);
+                    invalidate();
+                }
+                else {
+                    if(!repainted) {
+                        try {
+                            Thread.sleep(1);
+                        }
+                        catch(InterruptedException e) {}
+                    }
+                }
+            }
+            catch(Throwable e) {
+                e.printStackTrace();
             }
         }
     }
