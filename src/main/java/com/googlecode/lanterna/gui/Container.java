@@ -27,7 +27,7 @@ import com.googlecode.lanterna.gui.listener.ContainerListener;
  * subcomponents.
  * @author Martin
  */
-public interface Container
+public interface Container extends Component
 {
     void addContainerListener(ContainerListener cl);
     void removeContainerListener(ContainerListener cl);
