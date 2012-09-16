@@ -39,7 +39,7 @@ import java.util.List;
  * back until the window is closed.
  * @author Martin
  */
-public class Window implements Container
+public class Window
 {
     private final List<WindowListener> windowListeners;
     private final List<ComponentInvalidatorAlert> invalidatorAlerts;
@@ -149,7 +149,6 @@ public class Window implements Container
         addComponent(new EmptySpace(1, 1));
     }
     
-    @Override
     public void addComponent(Component component, LayoutParameter... layoutParameters)
     {
         if(component == null)
@@ -166,19 +165,16 @@ public class Window implements Container
         invalidate();
     }
 
-    @Override
     public void addContainerListener(ContainerListener cl)
     {
         contentPane.addContainerListener(cl);
     }
 
-    @Override
     public void removeContainerListener(ContainerListener cl)
     {
         contentPane.removeContainerListener(cl);
     }
 
-    @Override
     public Component getComponentAt(int index)
     {
         return contentPane.getComponentAt(index);
@@ -187,7 +183,6 @@ public class Window implements Container
     /**
      * @return How many top-level components this window has
      */
-    @Override
     public int getComponentCount()
     {
         return contentPane.getComponentCount();
@@ -197,7 +192,6 @@ public class Window implements Container
      * Removes a top-level component from the window
      * @param component Top-level component to remove
      */
-    @Override
     public void removeComponent(Component component)
     {
         if(component instanceof InteractableContainer) {
@@ -261,6 +255,21 @@ public class Window implements Container
                 setFocus(prevItem, result.asFocusChangeDirection());
             }
             else if(result == Interactable.Result.EVENT_NOT_HANDLED) {
+                //Try to find a shortcut
+                if(currentlyInFocus instanceof Component) {
+                    Container parentContainer = ((Component)currentlyInFocus).getParent();
+                    while(parentContainer != null) {
+                        if(parentContainer instanceof InteractableContainer) {
+                            //If we could fire off a shortcut, stop here
+                            if(((InteractableContainer)parentContainer).triggerShortcut(key))
+                                return;
+                        }
+                        //Otherwise try one level higher
+                        parentContainer = parentContainer.getParent();
+                    }
+                }
+                
+                //There was no shortcut
                 onUnhandledKeyPress(key);
             }
         }
@@ -369,7 +378,6 @@ public class Window implements Container
     private class WindowContentPane extends Panel {
         public WindowContentPane(String title) {
             super(title);
-            setParent(Window.this);
         }
     }
 }

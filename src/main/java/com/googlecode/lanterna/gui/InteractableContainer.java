@@ -18,6 +18,8 @@
  */
 package com.googlecode.lanterna.gui;
 
+import com.googlecode.lanterna.input.Key;
+
 /**
  * Containers containing interactable components must implement this interface
  * so that the GUI system knows how to switch between the different components.
@@ -49,4 +51,39 @@ public interface InteractableContainer
      * interactables in the list
      */
     Interactable previousFocus(Interactable fromThis);
+    
+    /**
+     * Adds a keyboard shortcut to be invoked when the {@code Interactable} component in focus 
+     * within this container didn't handle the keyboard event and the event matches the supplied
+     * {@code Key.Kind}. Please note that calling {@code addShortcut} with 
+     * {@code Key.Kind.NormalKey} will throw {@code IllegalArgumentException}; if you want to add
+     * a keyboard shortcut for a non-special key, please use 
+     * {@code addShortcut(char, boolean, boolean, Action)}.
+     * 
+     * @param key Kind of key to trigger the shortcut
+     * @param action Action to run, on the event thread, when the shortcut is triggered
+     */
+    void addShortcut(Key.Kind key, Action action);
+    
+    /**
+     * Adds a keyboard shortcut to be invoked when the {@code Interactable} component in focus 
+     * within this container didn't handle the keyboard event and the event matches the supplied
+     * character and control key status. If you want to add a keyboard shortcut for a special keys, 
+     * please use {@code addShortcut(Key.Kind, Action)}.
+     * 
+     * @param character Character types on the keyboard to trigger the shortcut
+     * @param withCtrl If {@code true}, ctrl key must be down when the key is typed to trigger; 
+     * if {@code false} the ctrl key must be up to trigger
+     * @param withAlt  If {@code true}, alt key must be down when the key is typed to trigger; 
+     * if {@code false} the alt key must be up to trigger
+     * @param action Action to run, on the event thread, when the shortcut is triggered
+     */
+    void addShortcut(char character, boolean withCtrl, boolean withAlt, Action action);
+    
+    /**
+     * Looks for a shortcut that matches this {@code key} and, if one is found, executes it. 
+     * @param key {@code Key} to check for matching shortcuts
+     * @return {@code true} if a shortcut was triggered and executed, {@code false} otherwise.
+     */
+    boolean triggerShortcut(Key key);
 }

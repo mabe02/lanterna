@@ -19,12 +19,16 @@
 
 package com.googlecode.lanterna.gui.component;
 
+import com.googlecode.lanterna.gui.Action;
 import com.googlecode.lanterna.gui.Component;
 import com.googlecode.lanterna.gui.Container;
 import com.googlecode.lanterna.gui.Interactable;
 import com.googlecode.lanterna.gui.InteractableContainer;
 import com.googlecode.lanterna.gui.layout.LayoutParameter;
 import com.googlecode.lanterna.gui.listener.ContainerListener;
+import com.googlecode.lanterna.gui.util.ShortcutHelper;
+import com.googlecode.lanterna.input.Key;
+import com.googlecode.lanterna.input.Key.Kind;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -38,11 +42,13 @@ public abstract class AbstractContainer extends AbstractComponent implements Int
 {
     private final List<ContainerListener> containerListeners;
     private final List<Component> components;
+    private final ShortcutHelper shortcutHelper;
 
     protected AbstractContainer()
     {
         components = new ArrayList<Component>();
         containerListeners = new LinkedList<ContainerListener>();
+        shortcutHelper = new ShortcutHelper();
     }
 
     @Override
@@ -218,5 +224,20 @@ public abstract class AbstractContainer extends AbstractComponent implements Int
             }
         }
         return null;
+    }
+
+    @Override
+    public void addShortcut(Kind key, Action action) {
+        shortcutHelper.addShortcut(key, action);
+    }
+
+    @Override
+    public void addShortcut(char character, boolean withCtrl, boolean withAlt, Action action) {
+        shortcutHelper.addShortcut(character, withCtrl, withAlt, action);
+    }
+
+    @Override
+    public boolean triggerShortcut(Key key) {
+        return shortcutHelper.triggerShortcut(key);
     }
 }

@@ -21,6 +21,9 @@ package com.googlecode.lanterna.gui.component;
 
 import com.googlecode.lanterna.gui.*;
 import com.googlecode.lanterna.gui.layout.LinearLayout;
+import com.googlecode.lanterna.gui.util.ShortcutHelper;
+import com.googlecode.lanterna.input.Key;
+import com.googlecode.lanterna.input.Key.Kind;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,6 +35,7 @@ import java.util.List;
  */
 public class Table extends AbstractComponent implements InteractableContainer
 {
+    private final ShortcutHelper shortcutHelper;
     private final Panel mainPanel;
     private final List<Component[]> rows;
     private Panel[] columns;
@@ -58,6 +62,7 @@ public class Table extends AbstractComponent implements InteractableContainer
         else
             mainPanel = new Panel(title, Panel.Orientation.HORISONTAL);
 
+        shortcutHelper = new ShortcutHelper();
         rows = new ArrayList<Component[]>();
 
         //Initialize to something to avoid null pointer exceptions
@@ -167,5 +172,20 @@ public class Table extends AbstractComponent implements InteractableContainer
     public Interactable previousFocus(Interactable fromThis)
     {
         return mainPanel.previousFocus(fromThis);
+    }
+
+    @Override
+    public void addShortcut(Kind key, Action action) {
+        shortcutHelper.addShortcut(key, action);
+    }
+
+    @Override
+    public void addShortcut(char character, boolean withCtrl, boolean withAlt, Action action) {
+        shortcutHelper.addShortcut(character, withCtrl, withAlt, action);
+    }
+
+    @Override
+    public boolean triggerShortcut(Key key) {
+        return shortcutHelper.triggerShortcut(key);
     }
 }
