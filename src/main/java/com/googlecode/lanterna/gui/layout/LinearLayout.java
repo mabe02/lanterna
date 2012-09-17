@@ -37,10 +37,10 @@ import java.util.Set;
  */
 public abstract class LinearLayout implements LayoutManager {
 
-    public static final LayoutParameter MAXIMIZES_HORIZONTALLY = new LayoutParameter();
-    public static final LayoutParameter MAXIMIZES_VERTICALLY = new LayoutParameter();
-    public static final LayoutParameter GROWS_HORIZONTALLY = new LayoutParameter();
-    public static final LayoutParameter GROWS_VERTICALLY = new LayoutParameter();
+    public static final LayoutParameter MAXIMIZES_HORIZONTALLY = new LayoutParameter("LinearLayout.MAXIMIZES_HORIZONTALLY");
+    public static final LayoutParameter MAXIMIZES_VERTICALLY = new LayoutParameter("LinearLayout.MAXIMIZES_VERTICALLY");
+    public static final LayoutParameter GROWS_HORIZONTALLY = new LayoutParameter("LinearLayout.GROWS_HORIZONTALLY");
+    public static final LayoutParameter GROWS_VERTICALLY = new LayoutParameter("LinearLayout.GROWS_VERTICALLY");
     private final List<LinearLayoutComponent> componentList;
     private int padding;
 
@@ -95,7 +95,7 @@ public abstract class LinearLayout implements LayoutManager {
 
     @Override
     public List<? extends LaidOutComponent> layout(TerminalSize layoutArea) {
-        List<LinearLaidOutComponent> result = new ArrayList<LinearLaidOutComponent>();
+        List<DefaultLaidOutComponent> result = new ArrayList<DefaultLaidOutComponent>();
         Map<Component, TerminalSize> minimumSizeMap = new IdentityHashMap<Component, TerminalSize>();
         Map<Component, TerminalSize> preferredSizeMap = new IdentityHashMap<Component, TerminalSize>();
         Map<Component, Set<LayoutParameter>> layoutParameterMap = new IdentityHashMap<Component, Set<LayoutParameter>>();
@@ -109,10 +109,10 @@ public abstract class LinearLayout implements LayoutManager {
         int availableMinorAxisSpace = getMinorAxis(layoutArea);
         
         for(LinearLayoutComponent llc: componentList) 
-            result.add(new LinearLaidOutComponent(llc.component, new TerminalSize(0, 0), new TerminalPosition(0, 0)));
+            result.add(new DefaultLaidOutComponent(llc.component, new TerminalSize(0, 0), new TerminalPosition(0, 0)));
         
         //Set minor axis - easy!
-        for(LinearLaidOutComponent lloc: result) {
+        for(DefaultLaidOutComponent lloc: result) {
             if(layoutParameterMap.get(lloc.component).contains(getMinorMaximizesParameter()) ||
                     layoutParameterMap.get(lloc.component).contains(getMinorGrowingParameter()) ||
                     (lloc.component instanceof Panel && maximisesOnMinorAxis((Panel)lloc.component))) {
@@ -127,7 +127,7 @@ public abstract class LinearLayout implements LayoutManager {
         //Start dividing the major axis - hard!
         while(availableMajorAxisSpace > 0) {
             boolean changedSomething = false;
-            for(LinearLaidOutComponent lloc: result) {
+            for(DefaultLaidOutComponent lloc: result) {
                 int preferred = getMajorAxis(preferredSizeMap.get(lloc.component));
                 if(availableMajorAxisSpace > 0 && preferred > getMajorAxis(lloc.getSize())) {
                     availableMajorAxisSpace--;
@@ -143,8 +143,8 @@ public abstract class LinearLayout implements LayoutManager {
         availableMajorAxisSpace -= ((result.size() - 1) * padding);
         
         //Now try to accomodate the growing major axis components
-        List<LinearLaidOutComponent> growingComponents = new ArrayList<LinearLaidOutComponent>();
-        for(LinearLaidOutComponent lloc: result) {
+        List<DefaultLaidOutComponent> growingComponents = new ArrayList<DefaultLaidOutComponent>();
+        for(DefaultLaidOutComponent lloc: result) {
             if(layoutParameterMap.get(lloc.component).contains(getMajorMaximizesParameter()) ||
                     layoutParameterMap.get(lloc.component).contains(getMajorGrowingParameter())) {
                 growingComponents.add(lloc);
@@ -156,7 +156,7 @@ public abstract class LinearLayout implements LayoutManager {
         }
         
         while(availableMajorAxisSpace > 0 && !growingComponents.isEmpty()) {
-            for(LinearLaidOutComponent lloc: growingComponents) {
+            for(DefaultLaidOutComponent lloc: growingComponents) {
                 if(availableMajorAxisSpace > 0) {
                     availableMajorAxisSpace--;
                     setMajorAxis(lloc.getSize(), getMajorAxis(lloc.getSize()) + 1);
@@ -166,7 +166,7 @@ public abstract class LinearLayout implements LayoutManager {
         
         //Finally, recalculate the topLeft position of each component
         int nextMajorPosition = 0;
-        for(LinearLaidOutComponent laidOutComponent: result) {
+        for(DefaultLaidOutComponent laidOutComponent: result) {
             setMajorAxis(laidOutComponent.topLeftPosition, nextMajorPosition);
             
             //Make sure not to add padding to the last component
@@ -235,38 +235,6 @@ public abstract class LinearLayout implements LayoutManager {
         public LinearLayoutComponent(Component component, Set<LayoutParameter> layoutParameters) {
             this.component = component;
             this.layoutParameters = layoutParameters;
-        }
-    }
-
-    private class LinearLaidOutComponent implements LayoutManager.LaidOutComponent {
-        final Component component;
-        final TerminalSize size;
-        final TerminalPosition topLeftPosition;
-
-        public LinearLaidOutComponent(Component component, TerminalSize size, TerminalPosition topLeftPosition) {
-            this.component = component;
-            this.size = size;
-            this.topLeftPosition = topLeftPosition;
-        }
-
-        @Override
-        public Component getComponent() {
-            return component;
-        }
-
-        @Override
-        public TerminalSize getSize() {
-            return size;
-        }
-
-        @Override
-        public TerminalPosition getTopLeftPosition() {
-            return topLeftPosition;
-        }
-
-        @Override
-        public String toString() {
-            return "[" + component + " @ " + topLeftPosition + " size " + size + "]";
         }
     }
 }

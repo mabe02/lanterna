@@ -19,9 +19,22 @@
 package com.googlecode.lanterna.gui.layout;
 
 /**
- *
+ * This class is used for giving instructions to different layout managers of how they should
+ * position various components. You never instantiate objects of this class directly, instead 
+ * you will use static final constants belonging to the LayoutManager you have chosen.
  * @author Martin
  */
 public class LayoutParameter {
-    LayoutParameter() {}
+    
+    //Give some meaningful description we can use in toString()
+    private final String description;
+
+    LayoutParameter(String description) {
+        this.description = description;
+    }
+
+    @Override
+    public String toString() {
+        return description;
+    }
 }
