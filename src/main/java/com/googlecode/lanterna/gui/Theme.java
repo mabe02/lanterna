@@ -102,7 +102,7 @@ public class Theme {
 
     /**
      * @deprecated use
-     * @{code getDefaultStyle()} instead
+     * {@code getDefaultStyle()} instead
      */
     @Deprecated
     protected Definition getDefault() {
