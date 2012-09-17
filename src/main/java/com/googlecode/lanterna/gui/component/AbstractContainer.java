@@ -74,6 +74,13 @@ public abstract class AbstractContainer extends AbstractComponent implements Int
     }
 
     @Override
+    public boolean containsComponent(Component component) {
+        synchronized(components) {
+            return components.contains(component);
+        }
+    }
+
+    @Override
     public int getComponentCount()
     {
         synchronized(components) {
@@ -82,13 +89,13 @@ public abstract class AbstractContainer extends AbstractComponent implements Int
     }
 
     @Override
-    public void removeComponent(Component component)
+    public boolean removeComponent(Component component)
     {
         if(component == null)
-            return;
+            return false;
         
         synchronized(components) {
-            components.remove(component);
+            return components.remove(component);
         }
     }
 

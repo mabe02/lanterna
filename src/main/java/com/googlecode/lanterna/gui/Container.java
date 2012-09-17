@@ -42,8 +42,9 @@ public interface Container extends Component
     /**
      * Removes a component from this container.
      * @param component Component to remove from this container
+     * @return {@code true} if a component was found and removed, {@code false} otherwise
      */
-    void removeComponent(Component component);
+    boolean removeComponent(Component component);
     
     /**
      * @return How many component this container currently has
@@ -55,4 +56,14 @@ public interface Container extends Component
      * @return Component at the specified index
      */
     Component getComponentAt(int index);
+    
+    /**
+     * This method can used to see if a particular component is contained with this objects list of
+     * immediate children. It will not search through sub-containers, you'll need to do that manually
+     * if you need this functionality.
+     * @param component Component to search for
+     * @return {@code true} is the component is found in this containers list of direct children,
+     * otherwise {@code false}
+     */
+    boolean containsComponent(Component component);
 }

@@ -149,10 +149,13 @@ public class Panel extends AbstractContainer
     }
 
     @Override
-    public void removeComponent(Component component)
+    public boolean removeComponent(Component component)
     {
-        super.removeComponent(component);
-        layoutManager.removeComponent(component);
+        if(super.removeComponent(component)) {
+            layoutManager.removeComponent(component);
+            return true;
+        }
+        return false;
     }
     
     public enum Orientation
