@@ -145,23 +145,18 @@ public abstract class AbstractComponent implements Component
         return Collections.unmodifiableList(componentListeners);
     }
 
-    protected Window getParentWindow()
+    @Override
+    public Window getWindow()
     {
         Container container = getParent();
-        while(container != null) {
-            if(container instanceof Window)
-                return ((Window)(container));
-            else if(container instanceof Component)
-                container = ((Component)container).getParent();
-            else
-                break;
-        }
+        if(container != null)
+            return container.getWindow();
         return null;
     }
 
     protected GUIScreen getGUIScreen()
     {
-        Window window = getParentWindow();
+        Window window = getWindow();
         if(window == null)
             return null;
         return window.getOwner();

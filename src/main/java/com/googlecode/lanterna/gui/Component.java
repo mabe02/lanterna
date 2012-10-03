@@ -32,6 +32,14 @@ public interface Component
      * @return Container which currently owns this component
      */
     Container getParent();
+    
+    /**
+     * Returns the window which is directly or indirectly containing this component. If the 
+     * component has not been placed on any window yet, it will return {@code null}.
+     * @return Window that contains this component or {@code null}
+     */
+    Window getWindow();
+    
     void addComponentListener(ComponentListener cl);
     void removeComponentListener(ComponentListener cl);
     
