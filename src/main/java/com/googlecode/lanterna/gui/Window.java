@@ -379,5 +379,10 @@ public class Window
         public WindowContentPane(String title) {
             super(title);
         }
+
+        @Override
+        public Window getWindow() {
+            return Window.this;
+        }
     }
 }
