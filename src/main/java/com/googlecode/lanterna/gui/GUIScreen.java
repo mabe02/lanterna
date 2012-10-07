@@ -306,6 +306,17 @@ public class GUIScreen
         needsRefresh = true;
         doEventLoop();
     }
+    
+    /**
+     * @deprecated Call getActiveWindow().close() instead
+     */
+    @Deprecated
+    public void closeWindow() {
+        Window activeWindow = getActiveWindow();
+        if(activeWindow != null) {
+            activeWindow.close();
+        }
+    }
 
     /**
      * Used internally to close a window; API users should call Window.close() instead
@@ -322,6 +333,19 @@ public class GUIScreen
                 placement.window.onClosed();
                 return;
             }
+        }
+    }
+    
+    /**
+     * Returns the top window in the window stack, the one which currently has user input focus.
+     * @return The uppermost window in the window stack, or null if there are no windows
+     */
+    public Window getActiveWindow() {
+        if(windowStack.isEmpty()) {
+            return null;
+        }
+        else {
+            return windowStack.getLast().getWindow();
         }
     }
 
