@@ -25,6 +25,7 @@ import com.googlecode.lanterna.gui.TextGraphics;
 import com.googlecode.lanterna.gui.layout.HorisontalLayout;
 import com.googlecode.lanterna.gui.layout.LayoutManager;
 import com.googlecode.lanterna.gui.layout.LayoutParameter;
+import com.googlecode.lanterna.gui.layout.LinearLayout;
 import com.googlecode.lanterna.gui.layout.VerticalLayout;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
@@ -113,6 +114,20 @@ public class Panel extends AbstractContainer
     public boolean maximisesHorisontally()
     {
         return layoutManager.maximisesHorisontally();
+    }
+
+    /**
+     * @deprecated Use the layout manager to set the padding between components
+     */
+    @Deprecated
+    public void setBetweenComponentsPadding(int paddingSize)
+    {
+        if(paddingSize < 0)
+            paddingSize = 0;
+        
+        if(layoutManager instanceof LinearLayout) {
+            ((LinearLayout)layoutManager).setPadding(paddingSize);
+        }
     }
 
     @Override

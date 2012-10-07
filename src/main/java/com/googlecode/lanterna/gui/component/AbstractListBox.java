@@ -53,6 +53,9 @@ public abstract class AbstractListBox extends AbstractInteractableComponent {
 
     @Override
     protected TerminalSize calculatePreferredSize() {
+        if(preferredSizeOverride != null)
+            return preferredSizeOverride;
+        
         int maxWidth = 5;   //Set it to something...
         for(int i = 0; i < items.size(); i++) {
             String itemString = createItemString(i);
