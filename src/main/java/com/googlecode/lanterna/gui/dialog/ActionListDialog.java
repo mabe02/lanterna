@@ -37,13 +37,13 @@ public class ActionListDialog extends Window
 {
     private final ActionListBox actionListBox;
 
-    private ActionListDialog(String title, String description, int width) {
+    private ActionListDialog(String title, String description, int actionListBoxWidth) {
         super(title);
         
         if (description != null)
         	addComponent(new Label(description));
         
-        actionListBox = new ActionListBox(new TerminalSize(width, 0));
+        actionListBox = new ActionListBox(new TerminalSize(actionListBoxWidth, 0));
         addComponent(actionListBox);
         Panel cancelPanel = new Panel(new Invisible(), Panel.Orientation.HORISONTAL);
         cancelPanel.addComponent(new Label("                "));
@@ -58,12 +58,14 @@ public class ActionListDialog extends Window
 
     private void addAction(final String title, final Action action) {
         actionListBox.addAction(title, new Action() {
-
+            @Override
             public void doAction() {
                 action.doAction();
                 close();
             }
         });
+        actionListBox.setPreferredSize(new TerminalSize(actionListBox.getPreferredSize().getColumns(), 
+                                                        actionListBox.getPreferredSize().getRows() + 1));
     }
 
     /**
