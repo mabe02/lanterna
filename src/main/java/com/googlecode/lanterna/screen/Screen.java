@@ -366,12 +366,12 @@ public class Screen
         {
             for(int x = 0; x < width; x++)
             {
-                if(x < backbuffer[0].length && y < backbuffer.length)
+                if(backbuffer.length > 0 && x < backbuffer[0].length && y < backbuffer.length)
                     newBackBuffer[y][x] = backbuffer[y][x];
                 else
                     newBackBuffer[y][x] = new ScreenCharacter(newAreaCharacter);
 
-                if(x < visibleScreen[0].length && y < visibleScreen.length)
+                if(visibleScreen.length > 0 && x < visibleScreen[0].length && y < visibleScreen.length)
                     newVisibleScreen[y][x] = visibleScreen[y][x];
                 else
                     newVisibleScreen[y][x] = new ScreenCharacter(newAreaCharacter);
