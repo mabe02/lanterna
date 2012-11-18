@@ -124,7 +124,7 @@ public class GUIScreen
         if(screen.resizePending())
             screen.refresh();   //Do an initial refresh if there are any resizes in the queue
         
-        final TextGraphics textGraphics = new TextGraphics(new TerminalPosition(0, 0),
+        final TextGraphics textGraphics = new TextGraphicsImpl(new TerminalPosition(0, 0),
                 new TerminalSize(screen.getTerminalSize()), screen, guiTheme);
 
         backgroundRenderer.drawBackground(textGraphics);
