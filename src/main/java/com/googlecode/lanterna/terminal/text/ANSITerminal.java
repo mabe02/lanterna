@@ -203,6 +203,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal
     {
         synchronized(writerMutex) {
             applySGR(SGR.RESET_ALL);
+            setCursorVisible(true);
             CSI();
             writeToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'4', (byte)'9', (byte)'l');
         }
