@@ -1,6 +1,6 @@
 /*
  * This file is part of lanterna (http://code.google.com/p/lanterna/).
- * 
+ *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Copyright (C) 2010-2012 Martin
  */
 
@@ -45,28 +45,29 @@ public abstract class Border
         public void drawBorder(TextGraphics graphics, TerminalSize actualSize, String title)
         {
             graphics.applyTheme(graphics.getTheme().getDefinition(Theme.Category.BORDER));
-            final int width = actualSize.getColumns();
-            final int height = actualSize.getRows();
-            
-            //Top
-            graphics.drawString(0, 0, ACS.ULCORNER + "");     
-            for(int x = 1; x < width - 1; x++)
-                graphics.drawString(x, 0, ACS.HLINE + "");
-            graphics.drawString(width - 1, 0, ACS.URCORNER + "");
 
-            //Each row
-            for(int i = 1; i < height - 1; i++) {
+            final int columnsWidth = actualSize.getColumns();
+            final int rowsHeight = actualSize.getRows();
+
+            // Top
+            graphics.drawString(0, 0, ACS.ULCORNER + "");
+            for(int x = 1; x < columnsWidth - 1; x++)
+                graphics.drawString(x, 0, ACS.HLINE + "");
+            graphics.drawString(columnsWidth - 1, 0, ACS.URCORNER + "");
+
+            // Each row
+            for(int i = 1; i < rowsHeight - 1; i++) {
                 graphics.drawString(0, i, ACS.VLINE + "");
-                graphics.drawString(0 + width - 1, i, ACS.VLINE + "");
+                graphics.drawString(0 + columnsWidth - 1, i, ACS.VLINE + "");
             }
 
-            //Bottom
-            graphics.drawString(0, height - 1, ACS.LLCORNER + "");
-            for(int x = 1; x < width - 1; x++)
-                graphics.drawString(x, height - 1, ACS.HLINE + "");
-            graphics.drawString(width - 1, height - 1, ACS.LRCORNER + "");
-            
-            // Write the title
+            // Bottom
+            graphics.drawString(0, rowsHeight - 1, ACS.LLCORNER + "");
+            for(int x = 1; x < columnsWidth - 1; x++)
+                graphics.drawString(x, rowsHeight - 1, ACS.HLINE + "");
+            graphics.drawString(columnsWidth - 1, rowsHeight - 1, ACS.LRCORNER + "");
+
+            // Title
             graphics.applyTheme(graphics.getTheme().getDefinition(Theme.Category.DIALOG_AREA));
             graphics.setBoldMask(true);
             graphics.drawString(2, 0, title);
@@ -91,64 +92,96 @@ public abstract class Border
         }
 
         @Override
-        public TerminalSize surroundAreaSize(TerminalSize TerminalSize)
+        public TerminalSize surroundAreaSize(TerminalSize terminalSize)
         {
-            return new TerminalSize(TerminalSize.getColumns() == Integer.MAX_VALUE ? Integer.MAX_VALUE : TerminalSize.getColumns() + 4,
-                    TerminalSize.getRows() == Integer.MAX_VALUE ? Integer.MAX_VALUE : TerminalSize.getRows() + 2);
+            final int surroundColumnStretch = 4;
+            final int surroundRowStretch = 2;
+
+            int terminalSizeColumns = terminalSize.getColumns();
+            int terminalSizeRows = terminalSize.getRows();
+
+            int surroundSizeColumns;
+            if (terminalSizeColumns == Integer.MAX_VALUE) {
+                surroundSizeColumns == terminalSizeColumns;
+            } else {
+                surroundSizeColumns == terminalSizeColumns + surroundColumnStretch;
+            }
+
+            int surroundSizeRows;
+            if (terminalSizeRows == Integer.MAX_VALUE) {
+                surroundSizeRows == terminalSizeRows;
+            } else {
+                surroundSizeRows == terminalSizeRows + surroundRowStretch;
+            }
+
+            TerminalSize surroundAreaTerminalSize = new TerminalSize(
+                surroundSizeColumns, surroundSizeRows);
+
+            return surroundAreaTerminalSize;
         }
     }
 
     public static class Bevel extends Border
     {
-        private boolean raised;
+        private boolean isRaised;
 
-        public Bevel(boolean raised) {
-            this.raised = raised;
+        public Bevel(boolean isRaised) {
+            this.isRaised = isRaised;
         }
 
         @Override
         public void drawBorder(TextGraphics graphics, TerminalSize actualSize, String title)
         {
-            final int width = actualSize.getColumns();
-            final int height = actualSize.getRows();
-            final Theme.Definition upperLeft;
-            final Theme.Definition lowerRight;
+            // Record current terminal size
+            final int columnsWidth = actualSize.getColumns();
+            final int rowsHeight = actualSize.getRows();
 
-            if(raised) {
-                upperLeft = graphics.getTheme().getDefinition(Theme.Category.RAISED_BORDER);
-                lowerRight = graphics.getTheme().getDefinition(Theme.Category.BORDER);
+            // Select current overall theme
+            final Theme theme = graphics.getTheme();
+
+            // Select the current theme's definition of upper-left and
+            // lower-right borders rendering, considering whether they should be
+            // displayed with raised looks as well
+            final Theme.Definition upperLeftTheme;
+            final Theme.Definition lowerRightTheme;
+            if(isRaised) {
+                upperLeftTheme = theme.getDefinition(Theme.Category.RAISED_BORDER);
+                lowerRightTheme = theme.getDefinition(Theme.Category.BORDER);
             }
             else {
-                upperLeft = graphics.getTheme().getDefinition(Theme.Category.BORDER);
-                lowerRight = graphics.getTheme().getDefinition(Theme.Category.RAISED_BORDER);
+                upperLeftTheme = theme.getDefinition(Theme.Category.BORDER);
+                lowerRightTheme = theme.getDefinition(Theme.Category.RAISED_BORDER);
             }
 
-            //Top
-            graphics.applyTheme(upperLeft);
+            // Select the current theme's dialog area style definition
+            final Theme.Definition dialogAreaTheme = theme.getDefinition(Theme.Category.DIALOG_AREA));
+
+            // Top
+            graphics.applyTheme(upperLeftTheme);
             graphics.drawString(0, 0, ACS.ULCORNER + "");
-            for(int i = 1; i < width - 1; i++)
+            for(int i = 1; i < columnsWidth - 1; i++)
                 graphics.drawString(i, 0, ACS.HLINE + "");
-            graphics.applyTheme(lowerRight);
-            graphics.drawString(width - 1, 0, ACS.URCORNER + "");
+            graphics.applyTheme(lowerRightTheme);
+            graphics.drawString(columnsWidth - 1, 0, ACS.URCORNER + "");
 
-            //Each row
-            for(int i = 1; i < height - 1; i++) {
-                graphics.applyTheme(upperLeft);
+            // Each row
+            for(int i = 1; i < rowsHeight - 1; i++) {
+                graphics.applyTheme(upperLeftTheme);
                 graphics.drawString(0, i, ACS.VLINE + "");
-                graphics.applyTheme(lowerRight);
-                graphics.drawString(width - 1, i, ACS.VLINE + "");
+                graphics.applyTheme(lowerRightTheme);
+                graphics.drawString(columnsWidth - 1, i, ACS.VLINE + "");
             }
 
-            //Bottom
-            graphics.applyTheme(upperLeft);
-            graphics.drawString(0, height - 1, ACS.LLCORNER + "");
-            graphics.applyTheme(lowerRight);
-            for(int i = 1; i < width - 1; i++)
-                graphics.drawString(i, height - 1, ACS.HLINE + "");
-            graphics.drawString(width - 1, height - 1, ACS.LRCORNER + "");
-            
-            // Write the title
-            graphics.applyTheme(graphics.getTheme().getDefinition(Theme.Category.DIALOG_AREA));
+            // Bottom
+            graphics.applyTheme(upperLeftTheme);
+            graphics.drawString(0, rowsHeight - 1, ACS.LLCORNER + "");
+            graphics.applyTheme(lowerRightTheme);
+            for(int i = 1; i < columnsWidth - 1; i++)
+                graphics.drawString(i, rowsHeight - 1, ACS.HLINE + "");
+            graphics.drawString(columnsWidth - 1, rowsHeight - 1, ACS.LRCORNER + "");
+
+            // Title
+            graphics.applyTheme(dialogAreaTheme);
             graphics.setBoldMask(true);
             graphics.drawString(2, 0, title);
         }
@@ -172,10 +205,32 @@ public abstract class Border
         }
 
         @Override
-        public TerminalSize surroundAreaSize(TerminalSize TerminalSize)
+        public TerminalSize surroundAreaSize(TerminalSize terminalSize)
         {
-            return new TerminalSize(TerminalSize.getColumns() == Integer.MAX_VALUE ? Integer.MAX_VALUE : TerminalSize.getColumns() + 4,
-                    TerminalSize.getRows() == Integer.MAX_VALUE ? Integer.MAX_VALUE : TerminalSize.getRows() + 2);
+            final int surroundColumnStretch = 4;
+            final int surroundRowStretch = 2;
+
+            int terminalSizeColumns = terminalSize.getColumns();
+            int terminalSizeRows = terminalSize.getRows();
+
+            int surroundSizeColumns;
+            if (terminalSizeColumns == Integer.MAX_VALUE) {
+                surroundSizeColumns == terminalSizeColumns;
+            } else {
+                surroundSizeColumns == terminalSizeColumns + surroundColumnStretch;
+            }
+
+            int surroundSizeRows;
+            if (terminalSizeRows == Integer.MAX_VALUE) {
+                surroundSizeRows == terminalSizeRows;
+            } else {
+                surroundSizeRows == terminalSizeRows + surroundRowStretch;
+            }
+
+            TerminalSize surroundAreaTerminalSize = new TerminalSize(
+                surroundSizeColumns, surroundSizeRows);
+
+            return surroundAreaTerminalSize;
         }
     }
 
