@@ -72,7 +72,7 @@ public class MessageBox extends Window
 
         int labelWidth = messageBoxLabel.getPreferredSize().getColumns();
         if(buttons == DialogButtons.OK) {
-            Panel buttonPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORISONTAL);
+            Panel buttonPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORIZONTAL);
             int leftPadding = 0;
             int buttonsWidth = okButton.getPreferredSize().getColumns();
             if(buttonsWidth < labelWidth)
@@ -83,7 +83,7 @@ public class MessageBox extends Window
             addComponent(buttonPanel);
         }
         else if(buttons == DialogButtons.OK_CANCEL) {
-            Panel buttonPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORISONTAL);
+            Panel buttonPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORIZONTAL);
             int leftPadding = 0;
             int buttonsWidth = okButton.getPreferredSize().getColumns() +
                     cancelButton.getPreferredSize().getColumns() + 1;
@@ -97,7 +97,7 @@ public class MessageBox extends Window
             setFocus(cancelButton);
         }
         else if(buttons == DialogButtons.YES_NO) {
-            Panel buttonPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORISONTAL);
+            Panel buttonPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORIZONTAL);
             int leftPadding = 0;
             int buttonsWidth = yesButton.getPreferredSize().getColumns() +
                     noButton.getPreferredSize().getColumns() + 1;
@@ -111,7 +111,7 @@ public class MessageBox extends Window
             setFocus(noButton);
         }
         else if(buttons == DialogButtons.YES_NO_CANCEL) {
-            Panel buttonPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORISONTAL);
+            Panel buttonPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORIZONTAL);
             int leftPadding = 0;
             int buttonsWidth = yesButton.getPreferredSize().getColumns() +
                     noButton.getPreferredSize().getColumns() + 1 +

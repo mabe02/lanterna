@@ -58,9 +58,9 @@ public class Table extends AbstractComponent implements InteractableContainer
     public Table(int nrOfColumns, String title)
     {
         if(title == null)
-            mainPanel = new Panel(Panel.Orientation.HORISONTAL);
+            mainPanel = new Panel(Panel.Orientation.HORIZONTAL);
         else
-            mainPanel = new Panel(title, Panel.Orientation.HORISONTAL);
+            mainPanel = new Panel(title, Panel.Orientation.HORIZONTAL);
 
         shortcutHelper = new ShortcutHelper();
         rows = new ArrayList<Component[]>();

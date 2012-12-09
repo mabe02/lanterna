@@ -61,7 +61,7 @@ public class TextInputDialog extends Window
         int space = (internalWidth - buttonWidth) / 2;
 
         addComponent(new EmptySpace(1, 1));
-        Panel okCancelPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORISONTAL);
+        Panel okCancelPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORIZONTAL);
         okCancelPanel.addComponent(new EmptySpace(space, 1));
         okCancelPanel.addComponent(new Button("OK", new Action() {
             public void doAction()

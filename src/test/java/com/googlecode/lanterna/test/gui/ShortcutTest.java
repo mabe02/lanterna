@@ -61,7 +61,7 @@ public class ShortcutTest {
         mainWindow.addComponent(new Label("ctrl + c"));
         mainWindow.addComponent(new Label("alt + v"));
         mainWindow.addComponent(new Label("ctrl + alt + x"));
-        Panel buttonPanel = new Panel(Panel.Orientation.HORISONTAL);
+        Panel buttonPanel = new Panel(Panel.Orientation.HORIZONTAL);
         Button button1 = new Button("Exit", new Action() {
             @Override
             public void doAction()
