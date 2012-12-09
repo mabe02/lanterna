@@ -102,16 +102,16 @@ public abstract class Border
 
             int surroundSizeColumns;
             if (terminalSizeColumns == Integer.MAX_VALUE) {
-                surroundSizeColumns == terminalSizeColumns;
+                surroundSizeColumns = terminalSizeColumns;
             } else {
-                surroundSizeColumns == terminalSizeColumns + surroundColumnStretch;
+                surroundSizeColumns = terminalSizeColumns + surroundColumnStretch;
             }
 
             int surroundSizeRows;
             if (terminalSizeRows == Integer.MAX_VALUE) {
-                surroundSizeRows == terminalSizeRows;
+                surroundSizeRows = terminalSizeRows;
             } else {
-                surroundSizeRows == terminalSizeRows + surroundRowStretch;
+                surroundSizeRows = terminalSizeRows + surroundRowStretch;
             }
 
             TerminalSize surroundAreaTerminalSize = new TerminalSize(
@@ -154,7 +154,7 @@ public abstract class Border
             }
 
             // Select the current theme's dialog area style definition
-            final Theme.Definition dialogAreaTheme = theme.getDefinition(Theme.Category.DIALOG_AREA));
+            final Theme.Definition dialogAreaTheme = theme.getDefinition(Theme.Category.DIALOG_AREA);
 
             // Top
             graphics.applyTheme(upperLeftTheme);
@@ -215,16 +215,16 @@ public abstract class Border
 
             int surroundSizeColumns;
             if (terminalSizeColumns == Integer.MAX_VALUE) {
-                surroundSizeColumns == terminalSizeColumns;
+                surroundSizeColumns = terminalSizeColumns;
             } else {
-                surroundSizeColumns == terminalSizeColumns + surroundColumnStretch;
+                surroundSizeColumns = terminalSizeColumns + surroundColumnStretch;
             }
 
             int surroundSizeRows;
             if (terminalSizeRows == Integer.MAX_VALUE) {
-                surroundSizeRows == terminalSizeRows;
+                surroundSizeRows = terminalSizeRows;
             } else {
-                surroundSizeRows == terminalSizeRows + surroundRowStretch;
+                surroundSizeRows = terminalSizeRows + surroundRowStretch;
             }
 
             TerminalSize surroundAreaTerminalSize = new TerminalSize(

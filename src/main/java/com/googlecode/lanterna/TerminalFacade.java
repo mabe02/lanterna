@@ -138,6 +138,7 @@ public class TerminalFacade {
     public static SwingTerminal createSwingTerminal(TerminalAppearance appearance, int columns, int rows)
     {
         return new SwingTerminal(appearance, columns, rows);
+    }
 
     
     /**
