@@ -26,6 +26,7 @@ import com.googlecode.lanterna.gui.component.Button;
 import com.googlecode.lanterna.gui.component.PasswordBox;
 import com.googlecode.lanterna.gui.component.TextBox;
 import com.googlecode.lanterna.gui.*;
+import com.googlecode.lanterna.gui.layout.LinearLayout;
 
 /**
  *
@@ -42,41 +43,38 @@ public class TextInputDialog extends Window
         this(textBoxFactory, title, description, initialText, 0);
     }
 
-    private TextInputDialog(final TextBoxFactory textBoxFactory, final String title, 
-            final String description, final String initialText, int textBoxWidth)
-    {
+    private TextInputDialog(final TextBoxFactory textBoxFactory, final String title,
+            final String description, final String initialText, int textBoxWidth) {
         super(title);
         Label descriptionLabel = new Label(description);
-        if(textBoxWidth == 0)
-            textBoxWidth = descriptionLabel.getPreferredSize().getColumns();
+        if(textBoxWidth == 0) {
+            textBoxWidth = Math.max(descriptionLabel.getPreferredSize().getColumns(), title.length());
+        }
 
         textBox = textBoxFactory.createTextBox(initialText, textBoxWidth);
         addComponent(descriptionLabel);
         addComponent(new EmptySpace(1, 1));
         addComponent(textBox);
 
-        int internalWidth = textBoxWidth > descriptionLabel.getPreferredSize().getColumns() ?
-            textBoxWidth : descriptionLabel.getPreferredSize().getColumns();
-        int buttonWidth = "OK".length() + 4 + "Cancel".length() + 4 + 1;
-        int space = (internalWidth - buttonWidth) / 2;
-
         addComponent(new EmptySpace(1, 1));
         Panel okCancelPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORIZONTAL);
-        okCancelPanel.addComponent(new EmptySpace(space, 1));
-        okCancelPanel.addComponent(new Button("OK", new Action() {
-            public void doAction()
-            {
+        Button okButton = new Button("OK", new Action() {
+            @Override
+            public void doAction() {
                 result = textBox.getText();
                 close();
             }
-        }));
-        okCancelPanel.addComponent(new Button("Cancel", new Action() {
-            public void doAction()
-            {
+        });
+        okButton.setAlignment(Component.Alignment.RIGHT_CENTER);
+        okCancelPanel.addComponent(okButton, LinearLayout.GROWS_HORIZONTALLY);
+        Button cancelButton = new Button("Cancel", new Action() {
+            @Override
+            public void doAction() {
                 close();
             }
-        }));
-        addComponent(okCancelPanel);
+        });
+        okCancelPanel.addComponent(cancelButton);
+        addComponent(okCancelPanel, LinearLayout.GROWS_HORIZONTALLY);
     }
 
     public static String showTextInputBox(final GUIScreen owner, final String title,
@@ -114,6 +112,7 @@ public class TextInputDialog extends Window
     }
 
     private static class NormalTextBoxFactory implements TextBoxFactory {
+        @Override
         public TextBox createTextBox(String initialContent, int width)
         {
             return new TextBox(initialContent, width);
@@ -121,6 +120,7 @@ public class TextInputDialog extends Window
     }
 
     private static class PasswordTextBoxFactory implements TextBoxFactory {
+        @Override
         public TextBox createTextBox(String initialContent, int width)
         {
             return new PasswordBox(initialContent, width);
