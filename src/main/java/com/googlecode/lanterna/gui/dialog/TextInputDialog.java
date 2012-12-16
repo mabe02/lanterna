@@ -19,13 +19,13 @@
 
 package com.googlecode.lanterna.gui.dialog;
 
+import com.googlecode.lanterna.gui.*;
+import com.googlecode.lanterna.gui.component.Button;
 import com.googlecode.lanterna.gui.component.EmptySpace;
 import com.googlecode.lanterna.gui.component.Label;
 import com.googlecode.lanterna.gui.component.Panel;
-import com.googlecode.lanterna.gui.component.Button;
 import com.googlecode.lanterna.gui.component.PasswordBox;
 import com.googlecode.lanterna.gui.component.TextBox;
-import com.googlecode.lanterna.gui.*;
 
 /**
  *
@@ -56,8 +56,9 @@ public class TextInputDialog extends Window
 
         addComponent(new EmptySpace(1, 1));
         Panel okCancelPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORISONTAL);
-        okCancelPanel.addComponent(new EmptySpace(space, 1));
+        okCancelPanel.addComponent(new EmptySpace(Math.max(space, 1), 1));
         okCancelPanel.addComponent(new Button("OK", new Action() {
+            @Override
             public void doAction()
             {
                 result = textBox.getText();
@@ -65,6 +66,7 @@ public class TextInputDialog extends Window
             }
         }));
         okCancelPanel.addComponent(new Button("Cancel", new Action() {
+            @Override
             public void doAction()
             {
                 close();
@@ -108,6 +110,7 @@ public class TextInputDialog extends Window
     }
 
     private static class NormalTextBoxFactory implements TextBoxFactory {
+        @Override
         public TextBox createTextBox(int width, String initialContent)
         {
             return new TextBox(width, initialContent);
@@ -115,6 +118,7 @@ public class TextInputDialog extends Window
     }
 
     private static class PasswordTextBoxFactory implements TextBoxFactory {
+        @Override
         public TextBox createTextBox(int width, String initialContent)
         {
             return new PasswordBox(width, initialContent);
