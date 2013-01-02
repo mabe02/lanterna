@@ -61,7 +61,7 @@ public class BorderLayoutTest {
         borderLayoutPanel.addComponent(rightComponent, BorderLayout.RIGHT);
         mainWindow.addComponent(borderLayoutPanel);
         
-        Panel buttonPanel = new Panel(Panel.Orientation.HORISONTAL);
+        Panel buttonPanel = new Panel(Panel.Orientation.HORIZONTAL);
         buttonPanel.addComponent(new EmptySpace(), LinearLayout.GROWS_HORIZONTALLY);
         Button toggleButton = new Button("Toggle components", new Action() {
             @Override
