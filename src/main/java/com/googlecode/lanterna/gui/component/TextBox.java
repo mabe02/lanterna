@@ -107,6 +107,10 @@ public class TextBox extends AbstractInteractableComponent
         invalidate();
     }
 
+    public int getEditPosition() {
+        return editPosition;
+    }
+
     protected String prerenderTransformation(String textboxString)
     {
         return textboxString;
