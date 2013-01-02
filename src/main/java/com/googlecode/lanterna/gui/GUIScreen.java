@@ -194,14 +194,17 @@ public class GUIScreen
         screen.refresh();
     }
 
-    private boolean update()
-    {
+    protected boolean update() {
         if(needsRefresh || screen.resizePending()) {
             repaint();
             needsRefresh = false;
             return true;
         }
         return false;
+    }
+
+    protected Queue<Action> getActionsToRunInEventThreadQueue() {
+        return actionToRunInEventThread;
     }
 
     /**
@@ -212,8 +215,7 @@ public class GUIScreen
         needsRefresh = true;
     }
 
-    private void doEventLoop()
-    {
+    protected void doEventLoop() {
         int currentStackLength = windowStack.size();
         if(currentStackLength == 0)
             return;
@@ -321,7 +323,7 @@ public class GUIScreen
     /**
      * Used internally to close a window; API users should call Window.close() instead
      */
-    void closeWindow(Window window)
+    protected void closeWindow(Window window)
     {
         if(windowStack.size() == 0)
             return;
