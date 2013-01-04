@@ -230,7 +230,17 @@ public abstract class AbstractListBox extends AbstractInteractableComponent {
         }
     }
 
-    private void printItem(TextGraphics graphics, int x, int y, int index) {
+    /**
+     * Draws an item in the ListBox at specific coordinates. If you override this method,
+     * please note that the x and y positions have been pre-calculated for you and you should use
+     * the values supplied instead of trying to figure out the position on your own based on the
+     * index of the item.
+     * @param graphics TextGraphics object to use when drawing the item
+     * @param x X-coordinate on the terminal of the item, pre-adjusted for scrolling
+     * @param y Y-coordinate on the terminal of the item, pre-adjusted for scrolling
+     * @param index Index of the item that is to be drawn
+     */
+    protected void printItem(TextGraphics graphics, int x, int y, int index) {
         String asText = createItemString(index);
         if(asText.length() > graphics.getWidth())
             asText = asText.substring(0, graphics.getWidth());

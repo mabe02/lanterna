@@ -29,7 +29,6 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.nio.charset.Charset;
-import java.util.LinkedList;
 
 /**
  * A common ANSI terminal extention with support for Unix resize signals and 
@@ -56,6 +55,7 @@ public class UnixTerminal extends ANSITerminal
     }
     
     private final Behaviour terminalBehaviour;
+    private String sttyStatusToRestore;
             
     /**
      * Creates a UnixTerminal using a specified input stream, output stream and character set.
@@ -108,6 +108,7 @@ public class UnixTerminal extends ANSITerminal
         super(terminalInput, terminalOutput, terminalCharset);
         this.terminalSizeQuerier = customSizeQuerier;
         this.terminalBehaviour = terminalBehaviour;
+        this.sttyStatusToRestore = null;
         addInputProfile(new GnomeTerminalProfile());
         addInputProfile(new PuttyProfile());
 
@@ -173,6 +174,7 @@ public class UnixTerminal extends ANSITerminal
     public void enterPrivateMode()
     {
         super.enterPrivateMode();
+        saveSTTY();
         setCBreak(true);
         setEcho(false);
         sttyMinimumCharacterForRead(1);
@@ -183,10 +185,7 @@ public class UnixTerminal extends ANSITerminal
     public void exitPrivateMode()
     {
         super.exitPrivateMode();
-        setCBreak(false);
-        setEcho(true);
-        restoreEOFCtrlD();
-        restoreSpecialCharacters();
+        restoreSTTY();
     }
 
     @Override
@@ -236,6 +235,20 @@ public class UnixTerminal extends ANSITerminal
         exec("/bin/sh", "-c", "/bin/stty start ^Q < /dev/tty");
         exec("/bin/sh", "-c", "/bin/stty stop ^S < /dev/tty");
         exec("/bin/sh", "-c", "/bin/stty susp ^Z < /dev/tty");
+    }
+    
+    private void saveSTTY() {
+        sttyStatusToRestore = exec("/bin/sh", "-c", "stty -g < /dev/tty").trim();
+    }
+    
+    private void restoreSTTY() {
+        if(sttyStatusToRestore == null) {
+            //Nothing to restore
+            return;
+        }
+        
+        exec("/bin/sh", "-c", "stty " + sttyStatusToRestore + " < /dev/tty");
+        sttyStatusToRestore = null;
     }
 
     private static String exec(String ...cmd)

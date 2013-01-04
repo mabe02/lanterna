@@ -49,7 +49,7 @@ public class ShortcutTest {
         Terminal terminal = new TestTerminalFactory(args).createTerminal();        
         if(terminal instanceof UnixTerminal) {
             terminal = new UnixTerminal(System.in, System.out, Charset.forName("UTF-8"), 
-                                            null, UnixTerminal.Behaviour.CTRL_C_KILLS_APPLICATION);            
+                                            null, UnixTerminal.Behaviour.DEFAULT);            
         }        
         final GUIScreen guiScreen = new GUIScreen(new Screen(terminal));
         guiScreen.getScreen().startScreen();
