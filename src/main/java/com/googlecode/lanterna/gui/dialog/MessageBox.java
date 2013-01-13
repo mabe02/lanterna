@@ -32,7 +32,7 @@ import com.googlecode.lanterna.gui.*;
 public class MessageBox extends Window
 {
     private DialogResult dialogResult;
-    private MessageBox(String title, String message, DialogButtons buttons)
+    protected MessageBox(String title, String message, DialogButtons buttons)
     {
         super(title);
         dialogResult = DialogResult.CANCEL;

@@ -296,7 +296,7 @@ public class TextArea  extends AbstractInteractableComponent
         invalidate();
     }
 
-    private void printItem(TextGraphics graphics, int x, int y, String text)
+    protected void printItem(TextGraphics graphics, int x, int y, String text)
     {
         //TODO: fix this
         text = text.replace("\t", "    ");

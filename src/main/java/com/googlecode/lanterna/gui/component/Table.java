@@ -188,4 +188,12 @@ public class Table extends AbstractComponent implements InteractableContainer
     public boolean triggerShortcut(Key key) {
         return shortcutHelper.triggerShortcut(key);
     }
+    
+    public String getTitle() {
+        return mainPanel.getTitle();
+    }
+    
+    public void setTitle(String title) {
+        mainPanel.setTitle(title);
+    }
 }

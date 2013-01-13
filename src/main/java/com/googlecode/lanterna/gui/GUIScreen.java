@@ -41,7 +41,7 @@ public class GUIScreen
 {
     private final Screen screen;
     private final LinkedList<WindowPlacement> windowStack;
-    private final Queue<Action> actionToRunInEventThread;
+    protected final Queue<Action> actionToRunInEventThread;
     private GUIScreenBackgroundRenderer backgroundRenderer;
     private Theme guiTheme;
     private boolean needsRefresh;
