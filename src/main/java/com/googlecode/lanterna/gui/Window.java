@@ -238,7 +238,7 @@ public class Window
             return currentlyInFocus.getHotspot();
     }
 
-    void onKeyPressed(Key key)
+    protected void onKeyPressed(Key key)
     {
         if(currentlyInFocus != null) {
             Interactable.Result result =  currentlyInFocus.keyboardInteraction(key);
