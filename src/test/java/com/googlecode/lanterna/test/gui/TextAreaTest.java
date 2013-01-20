@@ -47,7 +47,7 @@ public class TextAreaTest {
         
         window1.addComponent(new EmptySpace(1, 1));
         
-        Panel appendPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORISONTAL);
+        Panel appendPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORIZONTAL);
         ((LinearLayout)appendPanel.getLayoutManager()).setPadding(1);
         final TextBox appendBox = new TextBox("", 30);
         Button appendButton = new Button("Append", new Action() {
@@ -60,7 +60,7 @@ public class TextAreaTest {
         appendPanel.addComponent(appendButton);
         window1.addComponent(appendPanel);
         
-        Panel removePanel = new Panel(new Border.Invisible(), Panel.Orientation.HORISONTAL);
+        Panel removePanel = new Panel(new Border.Invisible(), Panel.Orientation.HORIZONTAL);
         ((LinearLayout)removePanel.getLayoutManager()).setPadding(1);
         final TextBox removeBox = new TextBox("0", 5);
         Button removeButton = new Button("Remove line", new Action() {
@@ -88,7 +88,7 @@ public class TextAreaTest {
         
         window1.addComponent(new EmptySpace(1, 1));
         
-        Panel lastPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORISONTAL);
+        Panel lastPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORIZONTAL);
         Button exitButton = new Button("Exit", new Action() {            
             @Override
             public void doAction() {

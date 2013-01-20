@@ -278,7 +278,7 @@ public class Window
         }
     }
     
-    private void onUnhandledKeyPress(Key key) {
+    protected void onUnhandledKeyPress(Key key) {
         for(WindowListener listener: windowListeners)
             listener.onUnhandledKeyboardInteraction(this, key);
     }
@@ -297,12 +297,12 @@ public class Window
         this.soloWindow = soloWindow;
     }
 
-    boolean maximisesVertically()
+    protected boolean maximisesVertically()
     {
         return contentPane.maximisesVertically();
     }
 
-    boolean maximisesHorisontally()
+    protected boolean maximisesHorisontally()
     {
         return contentPane.maximisesHorisontally();
     }

@@ -51,7 +51,7 @@ public class Issue33 {
                         new Label("Column 4"));
         mainWindow.addComponent(table);
         
-        Panel bottomPanel = new Panel(Panel.Orientation.HORISONTAL);
+        Panel bottomPanel = new Panel(Panel.Orientation.HORIZONTAL);
         bottomPanel.addComponent(new EmptySpace(), LinearLayout.GROWS_HORIZONTALLY);
         bottomPanel.addComponent(new Button("Close", new Action() {
             @Override
