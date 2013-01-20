@@ -361,7 +361,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
     private class KeyCapturer extends KeyAdapter
     {
         private Set<Character> typedIgnore = new HashSet<Character>(
-                Arrays.asList('\n', '\t', '\r', '\b'));
+                Arrays.asList('\n', '\t', '\r', '\b', '\33'));
 
         @Override
         public void keyTyped(KeyEvent e)
