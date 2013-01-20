@@ -51,7 +51,7 @@ public class TableTest {
         
         
         window1.addComponent(table);
-        Panel buttonPanel = new Panel(Panel.Orientation.HORISONTAL);
+        Panel buttonPanel = new Panel(Panel.Orientation.HORIZONTAL);
         buttonPanel.addComponent(new EmptySpace(1, 1), LinearLayout.MAXIMIZES_HORIZONTALLY);
         Button exitButton = new Button("Exit", new Action() {            
             @Override

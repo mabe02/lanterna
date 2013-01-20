@@ -38,7 +38,7 @@ public class WaitingDialog extends Window
     {
         super(title);
         spinLabel = new Label("-");
-        final Panel panel = new Panel(Panel.Orientation.HORISONTAL);
+        final Panel panel = new Panel(Panel.Orientation.HORIZONTAL);
         panel.addComponent(new Label(description));
         panel.addComponent(spinLabel);
         addComponent(panel);

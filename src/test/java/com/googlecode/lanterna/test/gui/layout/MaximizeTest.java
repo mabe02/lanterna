@@ -43,11 +43,11 @@ public class MaximizeTest {
         final Window mainWindow = new Window("Window");
         
         Label maximizedLabel = new Label("This label is taking up all horizontal space in the window");
-        Panel horizontalPanel = new Panel(Panel.Orientation.HORISONTAL);
+        Panel horizontalPanel = new Panel(Panel.Orientation.HORIZONTAL);
         horizontalPanel.addComponent(maximizedLabel, LinearLayout.MAXIMIZES_HORIZONTALLY);
         mainWindow.addComponent(horizontalPanel);
         
-        Panel buttonPanel = new Panel(Panel.Orientation.HORISONTAL);
+        Panel buttonPanel = new Panel(Panel.Orientation.HORIZONTAL);
         buttonPanel.addComponent(new EmptySpace(), LinearLayout.GROWS_HORIZONTALLY);
         Button button1 = new Button("Exit", new Action() {
             @Override
