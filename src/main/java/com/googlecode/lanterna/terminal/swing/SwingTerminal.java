@@ -484,6 +484,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
             
             for(int row = 0; row < SwingTerminal.this.size().getRows(); row++) {
                 for(int col = 0; col < SwingTerminal.this.size().getColumns(); col++) {
+                    boolean needToResetFont = false;
                     TerminalCharacter character = characterMap[row][col];
                     if(cursorVisible && row == textPosition.getRow() && col == textPosition.getColumn())
                         graphics2D.setColor(character.getForegroundAsAWTColor(appearance.useBrightColorsOnBold()));
@@ -496,17 +497,24 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
                     else
                         graphics2D.setColor(character.getForegroundAsAWTColor(appearance.useBrightColorsOnBold()));
                         
-                    if(character.isBold())
+                    if(character.isBold()) {
                         graphics2D.setFont(appearance.getBoldTextFont());
+                        needToResetFont = true;
+                    }
                     
                     if(character.isUnderlined())
                         graphics2D.drawLine(
                                 col * charWidth, ((row + 1) * charHeight) - 1, 
                                 (col+1) * charWidth, ((row + 1) * charHeight) - 1);
-                        
+                    
+                    if(!graphics2D.getFont().canDisplay(character.character)) {
+                        graphics2D.setFont(appearance.getCJKFont());
+                        needToResetFont = true;
+                    }
+                    
                     graphics2D.drawString(character.toString(), col * charWidth, ((row + 1) * charHeight) - fontMetrics.getDescent());
                     
-                    if(character.isBold())
+                    if(needToResetFont)
                         graphics2D.setFont(appearance.getNormalTextFont());   //Restore the original font
                 }
             }

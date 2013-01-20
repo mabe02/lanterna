@@ -20,6 +20,9 @@
 package com.googlecode.lanterna.terminal.swing;
 
 import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.GraphicsEnvironment;
+import java.awt.image.BufferedImage;
 
 /**
  * This class will describe how a {@code SwingTerminal} is to be visually presented. 
@@ -31,7 +34,7 @@ import java.awt.Font;
 public class TerminalAppearance {
     
     public static final Font DEFAULT_NORMAL_FONT = createDefaultNormalFont();
-    public static final Font DEFAULT_BOLD_FONT = createDefaultBoldFont();    
+    public static final Font DEFAULT_BOLD_FONT = createDefaultBoldFont();
     public static final TerminalAppearance DEFAULT_APPEARANCE 
             = new TerminalAppearance(
                     DEFAULT_NORMAL_FONT,
@@ -55,6 +58,7 @@ public class TerminalAppearance {
         
     private final Font normalTextFont;
     private final Font boldTextFont;
+    private final Font cjkFont;
     private final TerminalPalette colorPalette;
     private final boolean useBrightColorsOnBold;
 
@@ -68,6 +72,20 @@ public class TerminalAppearance {
         this.boldTextFont = boldTextFont;
         this.colorPalette = colorPalette;
         this.useBrightColorsOnBold = useBrightColorsOnBold;
+        this.cjkFont = deriveCJKFont('桜');
+    }
+    
+    private Font deriveCJKFont(char character) {
+        BufferedImage bi = new BufferedImage(5, 5, BufferedImage.TYPE_INT_RGB);
+        int targetWidth = bi.getGraphics().getFontMetrics(normalTextFont).charWidth('W');
+        int startSize = normalTextFont.getSize();
+        for(int size = startSize; size > 0; size--) {
+            Font font = new Font("Monospaced", Font.PLAIN, size);
+            int characterWidth = bi.getGraphics().getFontMetrics(font).charWidth(character);
+            if(characterWidth <= targetWidth)
+                return font;
+        }
+        return normalTextFont;
     }
 
     public Font getNormalTextFont() {
@@ -76,6 +94,10 @@ public class TerminalAppearance {
 
     public Font getBoldTextFont() {
         return boldTextFont;
+    }
+
+    public Font getCJKFont() {
+        return cjkFont;
     }
 
     public TerminalPalette getColorPalette() {
