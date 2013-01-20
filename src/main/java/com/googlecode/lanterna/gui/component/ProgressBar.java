@@ -83,6 +83,7 @@ public class ProgressBar extends AbstractComponent
     public void setProgress(double progress)
     {
         this.progress = progress;
+        invalidate();
     }
     
     /**
@@ -90,6 +91,7 @@ public class ProgressBar extends AbstractComponent
     */
     public void setCompleteFillChar(char fill) {
     	fill_complete_char = fill;
+        invalidate();
     }
     
     public char getCompleteFillChar() {
@@ -101,6 +103,7 @@ public class ProgressBar extends AbstractComponent
     */
     public void setRemainingFillChar(char fill) {
     	fill_remaining_char = fill;
+        invalidate();
     }
     
     public char getRemainingFillChar() {
@@ -112,6 +115,7 @@ public class ProgressBar extends AbstractComponent
     */
     public void setCompletedPercentageShown(boolean flag) {
     	show_percentage = flag;
+        invalidate();
     }
     
     public boolean isCompletedPercentageShown() {
