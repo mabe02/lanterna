@@ -22,6 +22,7 @@ package com.googlecode.lanterna.terminal.text;
 import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.input.GnomeTerminalProfile;
 import com.googlecode.lanterna.input.Key;
+import com.googlecode.lanterna.input.OSXKeyMappingProfile;
 import com.googlecode.lanterna.input.PuttyProfile;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import java.io.*;
@@ -111,6 +112,7 @@ public class UnixTerminal extends ANSITerminal
         this.sttyStatusToRestore = null;
         addInputProfile(new GnomeTerminalProfile());
         addInputProfile(new PuttyProfile());
+        addInputProfile(new OSXKeyMappingProfile());
 
         //Make sure to set an initial size
         onResized(80, 20);

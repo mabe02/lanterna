@@ -51,6 +51,13 @@ public class Key
         this.ctrlPressed = false;
     }
 
+    public Key(Kind kind, boolean ctrlPressed, boolean altPressed) {
+        this.kind = kind;
+        this.character = kind.getRepresentationKey();
+        this.altPressed = altPressed;
+        this.ctrlPressed = ctrlPressed;
+    }
+
     public Kind getKind()
     {
         return kind;
