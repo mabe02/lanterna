@@ -43,6 +43,7 @@ public class CtrlAndCharacterPattern implements CharacterPattern {
             return false;
         
         if(currentMatching.get(0).charValue() == '\n' ||
+                currentMatching.get(0).charValue() == '\r' ||
                 currentMatching.get(0).charValue() == '\t')
             return false;
         
