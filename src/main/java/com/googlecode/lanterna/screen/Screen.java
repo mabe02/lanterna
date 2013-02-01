@@ -40,6 +40,7 @@ public class Screen
     private TerminalSize terminalSize;
     private ScreenCharacter [][] visibleScreen;
     private ScreenCharacter [][] backbuffer;
+    private ScreenCharacter paddingCharacter;
     private boolean wholeScreenInvalid;
     private boolean hasBeenActivated;
     
@@ -82,6 +83,7 @@ public class Screen
         this.terminalSize = new TerminalSize(terminalWidth, terminalHeight);
         this.visibleScreen = new ScreenCharacter[terminalHeight][terminalWidth];
         this.backbuffer = new ScreenCharacter[terminalHeight][terminalWidth];
+        this.paddingCharacter = new ScreenCharacter('X', Terminal.Color.GREEN, Terminal.Color.BLACK);
         this.resizeQueue = new LinkedList<TerminalSize>();
         this.wholeScreenInvalid = false;
         this.hasBeenActivated = false;
@@ -150,6 +152,15 @@ public class Screen
             this.tabBehaviour = tabBehaviour;
     }
 
+    public void setPaddingCharacter(
+            char character, 
+            Terminal.Color foregroundColor, 
+            Terminal.Color backgroundColor, 
+            ScreenCharacterStyle... style) {
+        
+        this.paddingCharacter = new ScreenCharacter(character, foregroundColor, backgroundColor, new HashSet<ScreenCharacterStyle>(Arrays.asList(style)));
+    }
+    
     /**
      * Gets the behaviour for what to do about tab characters.
      * @see TabBehaviour
@@ -361,7 +372,6 @@ public class Screen
         int width = newSize.getColumns();
         ScreenCharacter [][]newBackBuffer = new ScreenCharacter[height][width];
         ScreenCharacter [][]newVisibleScreen = new ScreenCharacter[height][width];
-        ScreenCharacter newAreaCharacter = new ScreenCharacter('X', Terminal.Color.GREEN, Terminal.Color.BLACK);
         for(int y = 0; y < height; y++)
         {
             for(int x = 0; x < width; x++)
@@ -369,12 +379,12 @@ public class Screen
                 if(backbuffer.length > 0 && x < backbuffer[0].length && y < backbuffer.length)
                     newBackBuffer[y][x] = backbuffer[y][x];
                 else
-                    newBackBuffer[y][x] = new ScreenCharacter(newAreaCharacter);
+                    newBackBuffer[y][x] = new ScreenCharacter(paddingCharacter);
 
                 if(visibleScreen.length > 0 && x < visibleScreen[0].length && y < visibleScreen.length)
                     newVisibleScreen[y][x] = visibleScreen[y][x];
                 else
-                    newVisibleScreen[y][x] = new ScreenCharacter(newAreaCharacter);
+                    newVisibleScreen[y][x] = new ScreenCharacter(paddingCharacter);
             }
         }
 
