@@ -51,7 +51,7 @@ public class LayoutTest {
         window1.addComponent(actionListBox);
         window1.addComponent(new EmptySpace());
 
-        Panel buttonPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORISONTAL);
+        Panel buttonPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORIZONTAL);
         Button exitButton = new Button("Exit", new Action() {
             @Override
             public void doAction() {

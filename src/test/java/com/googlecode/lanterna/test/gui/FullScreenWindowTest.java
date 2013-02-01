@@ -45,7 +45,7 @@ public class FullScreenWindowTest {
         window1.addComponent(new Label("Fullscreen window"));
         window1.addComponent(new EmptySpace(1, 10));
 
-        Panel buttonPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORISONTAL);
+        Panel buttonPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORIZONTAL);
         Button exitButton = new Button("Exit", new Action() {
                 public void doAction()  {
                     window1.close();
