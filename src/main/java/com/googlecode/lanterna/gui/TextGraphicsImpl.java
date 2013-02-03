@@ -22,7 +22,8 @@ package com.googlecode.lanterna.gui;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.ScreenCharacterStyle;
 import com.googlecode.lanterna.screen.TabBehaviour;
-import com.googlecode.lanterna.terminal.Terminal.Color;
+import com.googlecode.lanterna.terminal.TextColor;
+import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import java.util.Arrays;
@@ -41,8 +42,8 @@ class TextGraphicsImpl implements TextGraphics
     private final TerminalSize areaSize;
     private final Screen screen;
     private Theme theme;
-    private Color foregroundColor;
-    private Color backgroundColor;
+    private Terminal.Color foregroundColor;
+    private Terminal.Color backgroundColor;
     private boolean currentlyBold;
 
     TextGraphicsImpl(final TerminalPosition topLeft, final TerminalSize areaSize, final Screen screen, final Theme theme)
@@ -52,8 +53,8 @@ class TextGraphicsImpl implements TextGraphics
         this.screen = screen;
         this.theme = theme;
         this.currentlyBold = false;
-        this.foregroundColor = Color.DEFAULT;
-        this.backgroundColor = Color.DEFAULT;
+        this.foregroundColor = Terminal.Color.DEFAULT;
+        this.backgroundColor = Terminal.Color.DEFAULT;
     }
 
     private TextGraphicsImpl(final TextGraphicsImpl graphics, final TerminalPosition topLeft, final TerminalSize areaSize)
@@ -149,30 +150,35 @@ class TextGraphicsImpl implements TextGraphics
         if(currentlyBold)
             stylesSet.add(ScreenCharacterStyle.Bold);
 
-        screen.putString(column + topLeft.getColumn(), row + topLeft.getRow(), string,
-                foregroundColor, backgroundColor, stylesSet);
+        screen.putString(
+                column + topLeft.getColumn(), 
+                row + topLeft.getRow(), 
+                string,
+                TextColor.fromOldFormat(foregroundColor), 
+                TextColor.fromOldFormat(backgroundColor), 
+                stylesSet);
     }
 
     @Override
-    public Color getBackgroundColor()
+    public Terminal.Color getBackgroundColor()
     {
         return backgroundColor;
     }
 
     @Override
-    public Color getForegroundColor()
+    public Terminal.Color getForegroundColor()
     {
         return foregroundColor;
     }
 
     @Override
-    public void setBackgroundColor(Color backgroundColor)
+    public void setBackgroundColor(Terminal.Color backgroundColor)
     {
         this.backgroundColor = backgroundColor;
     }
 
     @Override
-    public void setForegroundColor(Color foregroundColor)
+    public void setForegroundColor(Terminal.Color foregroundColor)
     {
         this.foregroundColor = foregroundColor;
     }
@@ -308,10 +314,10 @@ class TextGraphicsImpl implements TextGraphics
         public void fillRectangle(char character, TerminalPosition topLeft, TerminalSize rectangleSize) { }
 
         @Override
-        public Color getBackgroundColor() { return Color.DEFAULT; }
+        public Terminal.Color getBackgroundColor() { return Terminal.Color.DEFAULT; }
 
         @Override
-        public Color getForegroundColor() { return Color.DEFAULT; }
+        public Terminal.Color getForegroundColor() { return Terminal.Color.DEFAULT; }
 
         @Override
         public int getHeight() { return 0; }
@@ -326,13 +332,13 @@ class TextGraphicsImpl implements TextGraphics
         public int getWidth() { return 0; }
 
         @Override
-        public void setBackgroundColor(Color backgroundColor) { }
+        public void setBackgroundColor(Terminal.Color backgroundColor) { }
 
         @Override
         public void setBoldMask(boolean enabledBoldMask) { }
 
         @Override
-        public void setForegroundColor(Color foregroundColor) { }
+        public void setForegroundColor(Terminal.Color foregroundColor) { }
 
         @Override
         public TextGraphics subAreaGraphics(TerminalPosition terminalPosition) { 

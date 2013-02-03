@@ -19,8 +19,8 @@
 
 package com.googlecode.lanterna.screen;
 
+import com.googlecode.lanterna.terminal.TextColor;
 import com.googlecode.lanterna.terminal.Terminal;
-import com.googlecode.lanterna.terminal.Terminal.Color;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 
 /**
@@ -31,33 +31,33 @@ public class ScreenWriter
 {
     private final Screen targetScreen;
     private final TerminalPosition currentPosition;
-    private Terminal.Color foregroundColor;
-    private Terminal.Color backgroundColor;
+    private TextColor foregroundColor;
+    private TextColor backgroundColor;
 
     public ScreenWriter(final Screen targetScreen)
     {
-        this.foregroundColor = Color.DEFAULT;
-        this.backgroundColor = Color.DEFAULT;
+        this.foregroundColor = TextColor.ANSI.DEFAULT;
+        this.backgroundColor = TextColor.ANSI.DEFAULT;
         this.targetScreen = targetScreen;
         this.currentPosition = new TerminalPosition(0, 0);
     }
 
-    public Color getBackgroundColor()
+    public TextColor getBackgroundColor()
     {
         return backgroundColor;
     }
 
-    public void setBackgroundColor(final Color backgroundColor)
+    public void setBackgroundColor(final TextColor backgroundColor)
     {
         this.backgroundColor = backgroundColor;
     }
 
-    public Color getForegroundColor()
+    public TextColor getForegroundColor()
     {
         return foregroundColor;
     }
 
-    public void setForegroundColor(final Color foregroundColor)
+    public void setForegroundColor(final TextColor foregroundColor)
     {
         this.foregroundColor = foregroundColor;
     }
