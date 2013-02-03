@@ -19,6 +19,7 @@
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.gui2.WindowManager.Hint;
+import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.TextColor;
 
@@ -30,9 +31,12 @@ public class DialogsTextGUI implements TextGUI {
     
     private final Screen screen;
     private final AreaRenderer backgroundRenderer;
+    private Status status;
+    private Thread textGUIThread;
 
     public DialogsTextGUI(Screen screen) {
         this.screen = screen;
+        this.status = Status.CREATED;
         this.backgroundRenderer = new AreaRenderer() {
             @Override
             public void draw(TextGUIGraphics graphics) {
@@ -44,13 +48,42 @@ public class DialogsTextGUI implements TextGUI {
     }
 
     @Override
-    public void start() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public synchronized void start() {
+        if(status == Status.STARTED) {
+            throw new IllegalStateException("DialogsTextGUI is already started");
+        }
+        
+        status = Status.STARTED;
+        textGUIThread = Thread.currentThread();
+        
+        while(status == Status.STARTED) {
+            Key key = screen.readInput();
+            if(key != null) {
+                //Handle input
+                if(key.getKind() == Key.Kind.Escape) {
+                    stop();
+                }
+            }
+            if(key != null || screen.resizePending()) {
+                
+                screen.refresh();
+            }
+            else {
+                try {
+                    Thread.sleep(1);
+                }
+                catch(InterruptedException e) {}
+            }
+        }
     }
 
     @Override
-    public void stop() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public synchronized void stop() {
+        if(status == Status.CREATED || status == Status.STOPPED) {
+            return;
+        }
+        
+        status = Status.STOPPED;
     }
 
     @Override

@@ -16,27 +16,27 @@
  * 
  * Copyright (C) 2010-2012 Martin
  */
-package com.googlecode.lanterna.gui2;
+package com.googlecode.lanterna.test.gui2;
+
+import com.googlecode.lanterna.gui2.DialogsTextGUI;
+import com.googlecode.lanterna.gui2.TextGUI;
+import com.googlecode.lanterna.screen.Screen;
+import com.googlecode.lanterna.test.TestTerminalFactory;
 
 /**
  *
  * @author Martin
  */
-public interface TextGUI {
-    
-    void start();
-    void stop();
-    
-    void setWindowManager();
-    WindowManager getWindowManager();
-    
-    void addWindow(Window window, WindowManager.Hint... windowManagerHints);
-    void removeWindow(Window window);
-    
-    public static enum Status {
-        CREATED,
-        STARTED,
-        STOPPED,
-        ;
+public class DialogsTextGUIBasicTest {
+    public static void main(String[] args) {
+        Screen screen = new TestTerminalFactory(args).createScreen();
+        screen.startScreen();
+        
+        TextGUI textGUI = new DialogsTextGUI(screen);
+        textGUI.start();
+        
+        //This text GUI will terminate itself, so we don't need to
+        
+        screen.stopScreen();
     }
 }
