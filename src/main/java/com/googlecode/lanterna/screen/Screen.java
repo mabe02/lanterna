@@ -301,12 +301,30 @@ public class Screen
             return !resizeQueue.isEmpty();
         }
     }
+    
+    /**
+     * This method will check if there is a resize pending and, in that case, 
+     * resize the internal buffer of the Screen to match the new dimensions. 
+     * Please note that this method call won't update the content of the 
+     * terminal, you will need to call {@code refresh()} in order to do this.
+     * You would typically call this method first, then draw whatever you 
+     * need to the screen and finally call {@code refresh()} to make the 
+     * changes visible.
+     */
+    public void doResize() {
+        synchronized(mutex) {
+            resizeScreenIfNeeded();
+        }
+    }
 
     /**
      * Call this method to make changes done through {@code putCharacter(...)},
      * {@code putString(...)} visible on the terminal. The screen will calculate
      * the changes that are required and send the necessary characters and
-     * control sequences to make it so.
+     * control sequences to make it so. If the terminal has been resized since the
+     * last refresh, and no call to {@code doResize()} has been made, this method
+     * will resize the internal buffer and fill the extra space with a padding 
+     * character.
      */
     public void refresh()
     {
