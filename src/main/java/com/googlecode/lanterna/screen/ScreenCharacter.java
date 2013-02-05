@@ -30,6 +30,8 @@ import java.util.Set;
  */
 class ScreenCharacter
 {
+    static final ScreenCharacter CJK_PADDING_CHARACTER = new ScreenCharacter('\0');
+    
     private final char character;
     private final TextColor foregroundColor;
     private final TextColor backgroundColor;
@@ -120,8 +122,12 @@ class ScreenCharacter
 
     @Override
     public boolean equals(Object obj) {
-        if(obj instanceof ScreenCharacter == false)
+        if(obj == this) {
+            return true;
+        }
+        if(obj instanceof ScreenCharacter == false) {
             return false;
+        }
 
         ScreenCharacter other = ((ScreenCharacter)(obj));
         return character == other.getCharacter() &&

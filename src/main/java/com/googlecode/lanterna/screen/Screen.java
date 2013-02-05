@@ -19,6 +19,7 @@
 
 package com.googlecode.lanterna.screen;
 
+import com.googlecode.lanterna.LanternaUtils;
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.terminal.TextColor;
 import com.googlecode.lanterna.terminal.Terminal;
@@ -270,12 +271,13 @@ public class Screen
             TextColor backgroundColor, Set<ScreenCharacterStyle> styles)
     {    
     	string = tabBehaviour.replaceTabs(string, x);  	
-    	for(int i = 0; i < string.length(); i++)
-    		putCharacter(x + i, y, 
-                        new ScreenCharacter(string.charAt(i), 
-                                            foregroundColor, 
-                                            backgroundColor,
-                                            styles));
+    	for(int i = 0; i < string.length(); i++) {
+            char character = string.charAt(i);
+            putCharacter(x + i, y, new ScreenCharacter(character, foregroundColor, backgroundColor, styles));
+            if(LanternaUtils.isCharCJK(character)) {
+                putCharacter(x + ++i, y, ScreenCharacter.CJK_PADDING_CHARACTER);
+            }
+        }
     }
 
     void putCharacter(int x, int y, ScreenCharacter character)
@@ -285,8 +287,9 @@ public class Screen
                 return;
 
             //Only create a new character if the 
-            if(!backbuffer[y][x].equals(character))
-                backbuffer[y][x] = new ScreenCharacter(character);
+            if(!backbuffer[y][x].equals(character)) {
+                backbuffer[y][x] = character;
+            }
         }
     }
 
@@ -357,7 +360,9 @@ public class Screen
                         previousPoint.getColumn() + 1 != nextUpdate.getColumn()) {
                     terminalWriter.setCursorPosition(nextUpdate.getColumn(), nextUpdate.getRow());
                 }
-                terminalWriter.writeCharacter(updateMap.get(nextUpdate));
+                if(updateMap.get(nextUpdate) != ScreenCharacter.CJK_PADDING_CHARACTER) {
+                    terminalWriter.writeCharacter(updateMap.get(nextUpdate));
+                }
                 previousPoint = nextUpdate;
             }
             if(cursorPosition != null) {
