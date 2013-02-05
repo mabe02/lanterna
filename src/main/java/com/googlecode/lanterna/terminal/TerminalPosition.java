@@ -16,60 +16,74 @@
  * 
  * Copyright (C) 2010-2012 Martin
  */
-
 package com.googlecode.lanterna.terminal;
 
 /**
- * A 2-d position in 'terminal space'. Please note that the coordinates are 
- * 0-indexed, meaning 0x0 is the top left corner of the terminal.
+ * A 2-d position in 'terminal space'. Please note that the coordinates are 0-indexed, meaning 0x0 is the top left
+ * corner of the terminal.
+ *
  * @author Martin
  */
 public class TerminalPosition {
-    private int row;
-    private int column;
 
-    public TerminalPosition(TerminalPosition position)
-    {
-        this(position.getColumn(), position.getRow());
-    }
+    private final int row;
+    private final int column;
 
-    public TerminalPosition(int column, int row)
-    {
+    public TerminalPosition(int column, int row) {
+        if (column < 0) {
+            throw new IllegalArgumentException("TerminalPosition.columns cannot be less than 0!");
+        }
+        if (row < 0) {
+            throw new IllegalArgumentException("TerminalPosition.rows cannot be less than 0!");
+        }
         this.row = row;
         this.column = column;
     }
 
-    public int getColumn()
-    {
+    public int getColumn() {
         return column;
     }
 
-    public int getRow()
-    {
+    public int getRow() {
         return row;
     }
-
-    public void setColumn(int column)
-    {
-        this.column = column;
+    
+    public TerminalPosition withRow(int row) {
+        return new TerminalPosition(this.column, row);
     }
-
-    public void setRow(int row)
-    {
-        this.row = row;
-    }
-
-    public void ensurePositivePosition()
-    {
-        if(row < 0)
-            row = 0;
-        if(column < 0)
-            column = 0;
+    
+    public TerminalPosition withColumn(int column) {
+        return new TerminalPosition(column, this.row);
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "[" + column + ":" + row + "]";
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 23 * hash + this.row;
+        hash = 23 * hash + this.column;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final TerminalPosition other = (TerminalPosition) obj;
+        if (this.row != other.row) {
+            return false;
+        }
+        if (this.column != other.column) {
+            return false;
+        }
+        return true;
     }
 }

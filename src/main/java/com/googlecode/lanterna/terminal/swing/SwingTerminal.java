@@ -248,8 +248,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
         if(y >= size().getRows())
             y = size().getRows() - 1;
 
-        textPosition.setColumn(x);
-        textPosition.setRow(y);
+        textPosition = textPosition.withColumn(x).withRow(y);
         refreshScreen();
     }
 

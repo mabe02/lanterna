@@ -80,10 +80,9 @@ class TextGraphicsImpl implements TextGraphics
     @Override
     public TextGraphics subAreaGraphics(final TerminalPosition terminalPosition)
     {
-        terminalPosition.ensurePositivePosition();
-        TerminalSize newArea = new TerminalSize(areaSize);
-        newArea.setColumns(newArea.getColumns() - terminalPosition.getColumn());
-        newArea.setRows(newArea.getRows() - terminalPosition.getRow());
+        TerminalSize newArea;
+        newArea = areaSize.withColumns(areaSize.getColumns() - terminalPosition.getColumn());
+        newArea = newArea.withRows(areaSize.getRows() - terminalPosition.getRow());
         return subAreaGraphics(terminalPosition, newArea);
     }
 
@@ -99,26 +98,17 @@ class TextGraphicsImpl implements TextGraphics
      * this
      */
     @Override
-    public TextGraphics subAreaGraphics(final TerminalPosition topLeft, final TerminalSize subAreaSize)
+    public TextGraphics subAreaGraphics(TerminalPosition topLeft, TerminalSize subAreaSize)
     {
-        if(topLeft.getColumn() < 0)
-            topLeft.setColumn(0);
-        if(topLeft.getRow() < 0)
-            topLeft.setRow(0);
-        if(subAreaSize.getColumns() < 0)
-            subAreaSize.setColumns(-subAreaSize.getColumns());
-        if(subAreaSize.getRows() < 0)
-            subAreaSize.setRows(-subAreaSize.getRows());
-
         if(topLeft.getColumn() >= areaSize.getColumns() ||
                 topLeft.getRow() >= areaSize.getRows()) {
             return new NullTextGraphics();  //Return something that doesn't do anything
         }
         
         if(topLeft.getColumn() + subAreaSize.getColumns() > areaSize.getColumns())
-            subAreaSize.setColumns(areaSize.getColumns() - topLeft.getColumn());
+            subAreaSize = subAreaSize.withColumns(areaSize.getColumns() - topLeft.getColumn());
         if(topLeft.getRow() + subAreaSize.getRows() > areaSize.getRows())
-            subAreaSize.setRows(areaSize.getRows() - topLeft.getRow());
+            subAreaSize = subAreaSize.withRows(areaSize.getRows() - topLeft.getRow());
 
         return new TextGraphicsImpl(this, topLeft, subAreaSize);
     }
@@ -272,7 +262,7 @@ class TextGraphicsImpl implements TextGraphics
     @Override
     public void fillArea(char character)
     {
-        fillRectangle(character, new TerminalPosition(0, 0), new TerminalSize(areaSize));
+        fillRectangle(character, new TerminalPosition(0, 0), areaSize);
     }
 
     /**

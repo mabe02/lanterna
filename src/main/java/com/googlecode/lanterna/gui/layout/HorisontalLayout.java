@@ -46,18 +46,18 @@ public class HorisontalLayout extends LinearLayout {
     }
 
     @Override
-    protected void setMajorAxis(TerminalSize terminalSize, int majorAxisValue) {
-        terminalSize.setColumns(majorAxisValue);
+    protected TerminalSize setMajorAxis(TerminalSize terminalSize, int majorAxisValue) {
+        return terminalSize.withColumns(majorAxisValue);
     }
 
     @Override
-    protected void setMajorAxis(TerminalPosition terminalPosition, int majorAxisValue) {
-        terminalPosition.setColumn(majorAxisValue);
+    protected TerminalPosition setMajorAxis(TerminalPosition terminalPosition, int majorAxisValue) {
+        return terminalPosition.withColumn(majorAxisValue);
     }
 
     @Override
-    protected void setMinorAxis(TerminalSize terminalSize, int minorAxisValue) {
-        terminalSize.setRows(minorAxisValue);
+    protected TerminalSize setMinorAxis(TerminalSize terminalSize, int minorAxisValue) {
+        return terminalSize.withRows(minorAxisValue);
     }
 
     @Override

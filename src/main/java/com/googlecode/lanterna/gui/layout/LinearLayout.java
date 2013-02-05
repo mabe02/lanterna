@@ -86,10 +86,10 @@ public abstract class LinearLayout implements LayoutManager {
         TerminalSize preferredSize = new TerminalSize(0, 0);
         for (LinearLayoutComponent axisLayoutComponent : componentList) {
             final TerminalSize componentPreferredSize = axisLayoutComponent.component.getPreferredSize();
-            setMajorAxis(preferredSize, getMajorAxis(preferredSize) + getMajorAxis(componentPreferredSize));
-            setMinorAxis(preferredSize, Math.max(getMinorAxis(preferredSize), getMinorAxis(componentPreferredSize)));
+            preferredSize = setMajorAxis(preferredSize, getMajorAxis(preferredSize) + getMajorAxis(componentPreferredSize));
+            preferredSize = setMinorAxis(preferredSize, Math.max(getMinorAxis(preferredSize), getMinorAxis(componentPreferredSize)));
         }
-        setMajorAxis(preferredSize, getMajorAxis(preferredSize) + (padding * (componentList.size() - 1)));
+        preferredSize = setMajorAxis(preferredSize, getMajorAxis(preferredSize) + (padding * (componentList.size() - 1)));
         return preferredSize;
     }
 
@@ -116,11 +116,11 @@ public abstract class LinearLayout implements LayoutManager {
             if(layoutParameterMap.get(lloc.component).contains(getMinorMaximizesParameter()) ||
                     layoutParameterMap.get(lloc.component).contains(getMinorGrowingParameter()) ||
                     (lloc.component instanceof Panel && maximisesOnMinorAxis((Panel)lloc.component))) {
-                setMinorAxis(lloc.size, availableMinorAxisSpace);
+                lloc.size = setMinorAxis(lloc.size, availableMinorAxisSpace);
             }
             else {
                 int preferred = getMinorAxis(preferredSizeMap.get(lloc.component));
-                setMinorAxis(lloc.size, preferred <= availableMinorAxisSpace ? preferred : availableMinorAxisSpace);
+                lloc.size = setMinorAxis(lloc.size, preferred <= availableMinorAxisSpace ? preferred : availableMinorAxisSpace);
             }            
         }
         
@@ -131,7 +131,7 @@ public abstract class LinearLayout implements LayoutManager {
                 int preferred = getMajorAxis(preferredSizeMap.get(lloc.component));
                 if(availableMajorAxisSpace > 0 && preferred > getMajorAxis(lloc.getSize())) {
                     availableMajorAxisSpace--;
-                    setMajorAxis(lloc.getSize(), getMajorAxis(lloc.getSize()) + 1);
+                    lloc.size = setMajorAxis(lloc.getSize(), getMajorAxis(lloc.getSize()) + 1);
                     changedSomething = true;
                 }
             }
@@ -159,7 +159,7 @@ public abstract class LinearLayout implements LayoutManager {
             for(DefaultLaidOutComponent lloc: growingComponents) {
                 if(availableMajorAxisSpace > 0) {
                     availableMajorAxisSpace--;
-                    setMajorAxis(lloc.getSize(), getMajorAxis(lloc.getSize()) + 1);
+                    lloc.size = setMajorAxis(lloc.getSize(), getMajorAxis(lloc.getSize()) + 1);
                 }
             }
         }
@@ -167,7 +167,7 @@ public abstract class LinearLayout implements LayoutManager {
         //Finally, recalculate the topLeft position of each component
         int nextMajorPosition = 0;
         for(DefaultLaidOutComponent laidOutComponent: result) {
-            setMajorAxis(laidOutComponent.topLeftPosition, nextMajorPosition);
+            laidOutComponent.topLeftPosition = setMajorAxis(laidOutComponent.topLeftPosition, nextMajorPosition);
             
             //Make sure not to add padding to the last component
             if(result.get(result.size() - 1) != laidOutComponent)
@@ -200,11 +200,11 @@ public abstract class LinearLayout implements LayoutManager {
     
     protected abstract boolean maximisesOnMinorAxis(Panel panel);
     
-    protected abstract void setMajorAxis(TerminalSize terminalSize, int majorAxisValue);
+    protected abstract TerminalSize setMajorAxis(TerminalSize terminalSize, int majorAxisValue);
 
-    protected abstract void setMinorAxis(TerminalSize terminalSize, int minorAxisValue);
+    protected abstract TerminalSize setMinorAxis(TerminalSize terminalSize, int minorAxisValue);
 
-    protected abstract void setMajorAxis(TerminalPosition terminalPosition, int majorAxisValue);
+    protected abstract TerminalPosition setMajorAxis(TerminalPosition terminalPosition, int majorAxisValue);
 
     protected abstract int getMajorAxis(TerminalSize terminalSize);
 

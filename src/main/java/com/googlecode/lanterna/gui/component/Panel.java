@@ -152,7 +152,7 @@ public class Panel extends AbstractContainer
     protected TerminalSize calculatePreferredSize() {
         TerminalSize preferredSize = border.surroundAreaSize(layoutManager.getPreferredSize());
         if(title.length() + 4 > preferredSize.getColumns())
-            preferredSize.setColumns(title.length() + 4);
+            preferredSize = preferredSize.withColumns(title.length() + 4);
         return preferredSize;
     }
     

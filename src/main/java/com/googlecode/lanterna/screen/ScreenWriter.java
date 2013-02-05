@@ -30,7 +30,7 @@ import com.googlecode.lanterna.terminal.TerminalPosition;
 public class ScreenWriter
 {
     private final Screen targetScreen;
-    private final TerminalPosition currentPosition;
+    private TerminalPosition currentPosition;
     private TextColor foregroundColor;
     private TextColor backgroundColor;
 
@@ -83,10 +83,9 @@ public class ScreenWriter
      */
     public void drawString(final int x, final int y, final String string, final ScreenCharacterStyle... styles)
     {
-        currentPosition.setColumn(x);
-        currentPosition.setRow(y);        
+        currentPosition = currentPosition.withColumn(x).withRow(y);
         targetScreen.putString(x, y, string, foregroundColor, backgroundColor, styles);
-        currentPosition.setColumn(currentPosition.getColumn() + string.length());
+        currentPosition = currentPosition.withColumn(currentPosition.getColumn() + string.length());
     }
 
     @Override

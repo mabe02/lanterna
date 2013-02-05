@@ -121,11 +121,7 @@ public class Screen
      */
     public void setCursorPosition(TerminalPosition position)
     {
-        if(position != null)
-            //TerminalPosition isn't immutable, so make a copy
-            this.cursorPosition = new TerminalPosition(position);
-        else
-            this.cursorPosition = null;
+        this.cursorPosition = position;
     }
 
     /**
@@ -392,7 +388,7 @@ public class Screen
         backbuffer = newBackBuffer;
         visibleScreen = newVisibleScreen;
         wholeScreenInvalid = true;
-        terminalSize = new TerminalSize(newSize);
+        terminalSize = newSize;
     }
 
     private static class ScreenPointComparator implements Comparator<TerminalPosition>

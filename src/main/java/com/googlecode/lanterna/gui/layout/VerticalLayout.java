@@ -42,18 +42,18 @@ public class VerticalLayout extends LinearLayout {
     }
 
     @Override
-    protected void setMajorAxis(TerminalSize terminalSize, int majorAxisValue) {
-        terminalSize.setRows(majorAxisValue);
+    protected TerminalSize setMajorAxis(TerminalSize terminalSize, int majorAxisValue) {
+        return terminalSize.withRows(majorAxisValue);
     }
 
     @Override
-    protected void setMajorAxis(TerminalPosition terminalPosition, int majorAxisValue) {
-        terminalPosition.setRow(majorAxisValue);
+    protected TerminalPosition setMajorAxis(TerminalPosition terminalPosition, int majorAxisValue) {
+        return terminalPosition.withRow(majorAxisValue);
     }
 
     @Override
-    protected void setMinorAxis(TerminalSize terminalSize, int minorAxisValue) {
-        terminalSize.setColumns(minorAxisValue);
+    protected TerminalSize setMinorAxis(TerminalSize terminalSize, int minorAxisValue) {
+        return terminalSize.withColumns(minorAxisValue);
     }
 
     @Override
