@@ -19,6 +19,7 @@
 
 package com.googlecode.lanterna.terminal.swing;
 
+import com.googlecode.lanterna.LanternaUtils;
 import com.googlecode.lanterna.input.InputProvider;
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.input.KeyMappingProfile;
@@ -263,13 +264,18 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
     {
         characterMap[textPosition.getRow()][textPosition.getColumn()] =
                 new TerminalCharacter(c, currentForegroundColor, currentBackgroundColor, currentlyBold, currentlyBlinking, currentlyUnderlined);
-        if(textPosition.getColumn() == size().getColumns() - 1 &&
-                textPosition.getRow() == size().getRows() - 1)
+        int nextCharacterDistance = LanternaUtils.isCharCJK(c) ? 2 : 1;
+        
+        if(textPosition.getColumn() >= size().getColumns() - nextCharacterDistance &&
+                textPosition.getRow() == size().getRows() - 1) {
             moveCursor(0, textPosition.getRow());
-        if(textPosition.getColumn() == size().getColumns() - 1)
+        }
+        else if(textPosition.getColumn() >= size().getColumns() - nextCharacterDistance) {
             moveCursor(0, textPosition.getRow() + 1);
-        else
-            moveCursor(textPosition.getColumn() + 1, textPosition.getRow());
+        }
+        else {
+            moveCursor(textPosition.getColumn() + nextCharacterDistance, textPosition.getRow());
+        }
     }
 
     @Override
@@ -485,11 +491,12 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
                 for(int col = 0; col < SwingTerminal.this.size().getColumns(); col++) {
                     boolean needToResetFont = false;
                     TerminalCharacter character = characterMap[row][col];
+                    boolean isCJKCharacter = LanternaUtils.isCharCJK(character.character);
                     if(cursorVisible && row == textPosition.getRow() && col == textPosition.getColumn())
                         graphics2D.setColor(character.getForegroundAsAWTColor(appearance.useBrightColorsOnBold()));
                     else
                         graphics2D.setColor(character.getBackgroundAsAWTColor());
-                    graphics2D.fillRect(col * charWidth, row * charHeight, charWidth, charHeight);
+                    graphics2D.fillRect(col * charWidth, row * charHeight, charWidth * (isCJKCharacter ? 2 : 1), charHeight);
                     if((cursorVisible && row == textPosition.getRow() && col == textPosition.getColumn()) ||
                             (character.isBlinking() && !blinkVisible))
                         graphics2D.setColor(character.getBackgroundAsAWTColor());
@@ -506,15 +513,19 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
                                 col * charWidth, ((row + 1) * charHeight) - 1, 
                                 (col+1) * charWidth, ((row + 1) * charHeight) - 1);
                     
-                    if(!graphics2D.getFont().canDisplay(character.character)) {
+                    if(LanternaUtils.isCharCJK(character.character)) {
                         graphics2D.setFont(appearance.getCJKFont());
                         needToResetFont = true;
                     }
                     
                     graphics2D.drawString(character.toString(), col * charWidth, ((row + 1) * charHeight) - fontMetrics.getDescent());
                     
-                    if(needToResetFont)
+                    if(needToResetFont) {
                         graphics2D.setFont(appearance.getNormalTextFont());   //Restore the original font
+                    }
+                    if(isCJKCharacter) {
+                        col++;  //Skip a column to make space for the padding
+                    }
                 }
             }
             graphics2D.dispose();
