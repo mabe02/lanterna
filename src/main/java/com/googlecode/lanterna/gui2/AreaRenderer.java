@@ -24,4 +24,5 @@ package com.googlecode.lanterna.gui2;
  */
 public interface AreaRenderer {
     void draw(TextGUIGraphics graphics);
+    boolean isInvalid();
 }

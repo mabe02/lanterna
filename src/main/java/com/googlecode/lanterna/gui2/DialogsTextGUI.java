@@ -30,6 +30,7 @@ import com.googlecode.lanterna.terminal.TextColor;
 public class DialogsTextGUI implements TextGUI {
     
     private final Screen screen;
+    private final WindowManager windowManager;
     private final AreaRenderer backgroundRenderer;
     private Status status;
     private Thread textGUIThread;
@@ -37,12 +38,18 @@ public class DialogsTextGUI implements TextGUI {
     public DialogsTextGUI(Screen screen) {
         this.screen = screen;
         this.status = Status.CREATED;
+        this.windowManager = null;
         this.backgroundRenderer = new AreaRenderer() {
             @Override
             public void draw(TextGUIGraphics graphics) {
                 graphics.setForegroundColor(TextColor.ANSI.CYAN);
                 graphics.setBackgroundColor(TextColor.ANSI.BLUE);
-                graphics.fill();
+                graphics.fill(' ');
+            }
+
+            @Override
+            public boolean isInvalid() {
+                return false;
             }
         };
     }
@@ -58,14 +65,25 @@ public class DialogsTextGUI implements TextGUI {
         
         while(status == Status.STARTED) {
             Key key = screen.readInput();
+            boolean needsRefresh = false;
+            if(screen.resizePending()) {
+                screen.doResize();
+                needsRefresh = true;
+            }
             if(key != null) {
                 //Handle input
                 if(key.getKind() == Key.Kind.Escape) {
                     stop();
                 }
+                needsRefresh = true;
             }
-            if(key != null || screen.resizePending()) {
-                
+            if(backgroundRenderer.isInvalid()) {
+                needsRefresh = true;
+            }
+            
+            if(needsRefresh) {
+                TextGUIGraphics graphics = new ScreenBackendTextGUIGraphics(screen);
+                backgroundRenderer.draw(graphics);
                 screen.refresh();
             }
             else {

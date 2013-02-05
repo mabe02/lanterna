@@ -26,9 +26,27 @@ import com.googlecode.lanterna.terminal.TextColor;
  */
 public interface TextGUIGraphics {
 
-    public void setForegroundColor(TextColor color);
+    void setForegroundColor(TextColor color);
 
-    public void setBackgroundColor(TextColor color);
+    void setBackgroundColor(TextColor color);
 
-    public void fill();
+    boolean isStyleBlink();
+
+    boolean isStyleBold();
+
+    boolean isStyleReverse();
+
+    boolean isStyleUnderline();
+
+    void resetCharacterStyles();
+
+    void setStyleBlink(boolean isBlinking);
+
+    void setStyleBold(boolean isBold);
+
+    void setStyleReverse(boolean isReverse);
+
+    void setStyleUnderline(boolean isUnderlined);
+
+    void fill(char character);
 }
