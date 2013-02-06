@@ -49,4 +49,6 @@ public interface TextGUIGraphics {
     void setStyleUnderline(boolean isUnderlined);
 
     void fill(char character);
+    
+    void drawString(int xOffset, int yOffset, String text);
 }

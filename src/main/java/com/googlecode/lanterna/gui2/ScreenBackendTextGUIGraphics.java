@@ -136,15 +136,31 @@ public class ScreenBackendTextGUIGraphics implements TextGUIGraphics {
     public void fill(char character) {
         StringBuilder sb = new StringBuilder(drawableAreaSize.getColumns());
         for(int i = 0; i < drawableAreaSize.getColumns(); i++) {
-            sb.append(' ');
+            sb.append(character);
         }
         String emptyLine = sb.toString();
         for(int row = 0; row < drawableAreaSize.getRows(); row++) {
-            putText(0, row, emptyLine);
+            drawString(0, row, emptyLine);
         }
     }
-    
-    private void putText(int xOffset, int yOffset, String text) {
+
+    @Override
+    public void drawString(int xOffset, int yOffset, String text) {
+        
+        if(yOffset < 0 || yOffset >= drawableAreaSize.getRows()) {
+            return;
+        }
+        if(xOffset >= drawableAreaSize.getColumns()) {
+            return;
+        }
+        
+        if(xOffset < 0) {
+            text = text.substring(Math.min(text.length(), Math.abs(xOffset)));
+        }
+        if(xOffset + text.length() > drawableAreaSize.getColumns()) {
+            text = text.substring(0, drawableAreaSize.getColumns() - xOffset);
+        }
+        
         screen.putString(
                 xOffset + topLeftPosition.getColumn(), 
                 yOffset + topLeftPosition.getRow(), 
