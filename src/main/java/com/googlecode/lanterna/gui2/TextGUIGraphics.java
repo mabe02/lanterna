@@ -18,6 +18,8 @@
  */
 package com.googlecode.lanterna.gui2;
 
+import com.googlecode.lanterna.terminal.TerminalPosition;
+import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.terminal.TextColor;
 
 /**
@@ -51,4 +53,6 @@ public interface TextGUIGraphics {
     void fill(char character);
     
     void drawString(int xOffset, int yOffset, String text);
+    
+    TextGUIGraphics clone(TerminalPosition newTopLeft, TerminalSize newSize);
 }

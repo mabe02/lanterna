@@ -169,4 +169,38 @@ public class ScreenBackendTextGUIGraphics implements TextGUIGraphics {
                 backgroundColor, 
                 enabledCharacterStyles);
     }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return clone(null, null);
+    }
+    
+    @Override
+    public TextGUIGraphics clone(TerminalPosition newTopLeft, TerminalSize newSize) {
+        
+        if(newSize.getColumns() == 0 || newSize.getRows() == 0) {
+            return new NullTextGUIGraphics();
+        }
+        
+        //Resize the cloned graphics area if necessary, to make sure it fits within this graphics area
+        //We have to do this before converting newTopLeft to global coordinates
+        if(newTopLeft.getColumn() + newSize.getColumns() >= drawableAreaSize.getColumns()) {
+            newSize = newSize.withColumns(drawableAreaSize.getColumns() - newTopLeft.getColumn());
+        }
+        if(newTopLeft.getRow() + newSize.getRows() >= drawableAreaSize.getRows()) {
+            newSize = newSize.withRows(drawableAreaSize.getRows() - newTopLeft.getRow());
+        }
+        
+        //Recalculate to global coordinates
+        newTopLeft = new TerminalPosition(
+            topLeftPosition.getColumn() + newTopLeft.getColumn(),
+            topLeftPosition.getRow() + newTopLeft.getRow());
+        
+        if(newTopLeft.getColumn() >= drawableAreaSize.getColumns() ||
+                newTopLeft.getRow() >= drawableAreaSize.getRows()) {
+            return new NullTextGUIGraphics();
+        }
+        
+        return new ScreenBackendTextGUIGraphics(screen, newTopLeft, newSize);
+    }
 }
