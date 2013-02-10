@@ -22,15 +22,7 @@ package com.googlecode.lanterna.gui2;
  *
  * @author Martin
  */
-public interface TextGUI {
-    
-    void start();
-    void stop();
-    
-    public static enum Status {
-        CREATED,
-        STARTED,
-        STOPPED,
-        ;
-    }
+public interface WindowBasedTextGUI extends TextGUI {
+    void addWindow(Window window, WindowManager.Hint... windowManagerHints);
+    void removeWindow(Window window);
 }

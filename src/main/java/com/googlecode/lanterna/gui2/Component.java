@@ -18,19 +18,12 @@
  */
 package com.googlecode.lanterna.gui2;
 
+import com.googlecode.lanterna.terminal.TerminalSize;
+
 /**
  *
  * @author Martin
  */
-public interface TextGUI {
-    
-    void start();
-    void stop();
-    
-    public static enum Status {
-        CREATED,
-        STARTED,
-        STOPPED,
-        ;
-    }
+public interface Component extends GUIElement {
+    TerminalSize getPreferredSize();
 }

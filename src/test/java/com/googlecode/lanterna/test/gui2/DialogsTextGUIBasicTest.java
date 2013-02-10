@@ -18,9 +18,12 @@
  */
 package com.googlecode.lanterna.test.gui2;
 
-import com.googlecode.lanterna.gui2.DialogsTextGUI;
+import com.googlecode.lanterna.gui2.DefaultWindowTextGUI;
+import com.googlecode.lanterna.gui2.GUIElement;
 import com.googlecode.lanterna.gui2.TextGUI;
+import com.googlecode.lanterna.gui2.TextGUIGraphics;
 import com.googlecode.lanterna.screen.Screen;
+import com.googlecode.lanterna.terminal.TextColor;
 import com.googlecode.lanterna.test.TestTerminalFactory;
 
 /**
@@ -32,7 +35,18 @@ public class DialogsTextGUIBasicTest {
         Screen screen = new TestTerminalFactory(args).createScreen();
         screen.startScreen();
         
-        TextGUI textGUI = new DialogsTextGUI(screen);
+        TextGUI textGUI = new DefaultWindowTextGUI(screen, null, new GUIElement() {
+            @Override
+            public void draw(TextGUIGraphics graphics) {
+                graphics.setBackgroundColor(TextColor.ANSI.BLUE);
+                graphics.fill(' ');
+            }
+
+            @Override
+            public boolean isInvalid() {
+                return false;
+            }
+        });
         textGUI.start();
         
         //This text GUI will terminate itself, so we don't need to

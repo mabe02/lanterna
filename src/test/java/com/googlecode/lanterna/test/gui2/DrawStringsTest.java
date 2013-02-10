@@ -16,21 +16,12 @@
  * 
  * Copyright (C) 2010-2012 Martin
  */
-package com.googlecode.lanterna.gui2;
+package com.googlecode.lanterna.test.gui2;
 
 /**
  *
  * @author Martin
  */
-public interface TextGUI {
-    
-    void start();
-    void stop();
-    
-    public static enum Status {
-        CREATED,
-        STARTED,
-        STOPPED,
-        ;
-    }
+public class DrawStringsTest {
+
 }

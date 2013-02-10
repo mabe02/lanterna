@@ -22,15 +22,18 @@ package com.googlecode.lanterna.gui2;
  *
  * @author Martin
  */
-public interface TextGUI {
+public interface LayoutManager {
     
-    void start();
-    void stop();
+    void addComponent(Component component, LayoutManager.Parameter... layoutParameters);
+    void removeComponent(Component component);
     
-    public static enum Status {
-        CREATED,
-        STARTED,
-        STOPPED,
-        ;
+    boolean containsComponent(Component component);
+    int getComponentIndex(Component component);
+    Component getComponentAt(int index);
+    int getNumberOfComponents();
+    
+    public static class Parameter {
+        protected Parameter() {
+        }
     }
 }

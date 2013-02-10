@@ -18,51 +18,35 @@
  */
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.gui2.WindowManager.Hint;
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.screen.Screen;
-import com.googlecode.lanterna.terminal.TextColor;
 
 /**
  *
  * @author Martin
  */
-public class DialogsTextGUI implements TextGUI {
-    
+public abstract class AbstractTextGUI implements TextGUI {
     private final Screen screen;
-    private final WindowManager windowManager;
-    private final GUIElement backgroundRenderer;
     private Status status;
     private Thread textGUIThread;
 
-    public DialogsTextGUI(Screen screen) {
+    public AbstractTextGUI(Screen screen) {
         this.screen = screen;
         this.status = Status.CREATED;
-        this.windowManager = null;
-        this.backgroundRenderer = new GUIElement() {
-            @Override
-            public void draw(TextGUIGraphics graphics) {
-                graphics.setForegroundColor(TextColor.ANSI.CYAN);
-                graphics.setBackgroundColor(TextColor.ANSI.BLUE);
-                graphics.fill(' ');
-            }
-
-            @Override
-            public boolean isInvalid() {
-                return false;
-            }
-        };
+        this.textGUIThread = null;
     }
-
+    
     @Override
     public synchronized void start() {
         if(status == Status.STARTED) {
-            throw new IllegalStateException("DialogsTextGUI is already started");
+            throw new IllegalStateException("TextGUI is already started");
         }
         
         status = Status.STARTED;
         textGUIThread = Thread.currentThread();
         
+        //Draw initial screen, after this only draw when the GUI is marked as invalid
+        drawGUI();
         while(status == Status.STARTED) {
             Key key = screen.readInput();
             boolean needsRefresh = false;
@@ -77,14 +61,12 @@ public class DialogsTextGUI implements TextGUI {
                 }
                 needsRefresh = true;
             }
-            if(backgroundRenderer.isInvalid()) {
+            if(isInvalid()) {
                 needsRefresh = true;
             }
             
             if(needsRefresh) {
-                TextGUIGraphics graphics = new ScreenBackendTextGUIGraphics(screen);
-                backgroundRenderer.draw(graphics);
-                screen.refresh();
+                drawGUI();
             }
             else {
                 try {
@@ -104,24 +86,16 @@ public class DialogsTextGUI implements TextGUI {
         status = Status.STOPPED;
     }
 
-    @Override
-    public void setWindowManager() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    private void drawGUI() {
+        TextGUIGraphics graphics = new ScreenBackendTextGUIGraphics(screen);
+        drawGUI(graphics);
+        screen.refresh();
     }
 
-    @Override
-    public WindowManager getWindowManager() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    protected Thread getTextGUIThread() {
+        return textGUIThread;
     }
 
-    @Override
-    public void addWindow(Window window, Hint... windowManagerHints) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void removeWindow(Window window) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-    
+    protected abstract boolean isInvalid();
+    protected abstract void drawGUI(TextGUIGraphics graphics);
 }
