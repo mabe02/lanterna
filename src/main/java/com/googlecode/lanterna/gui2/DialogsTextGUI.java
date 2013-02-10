@@ -31,7 +31,7 @@ public class DialogsTextGUI implements TextGUI {
     
     private final Screen screen;
     private final WindowManager windowManager;
-    private final AreaRenderer backgroundRenderer;
+    private final GUIElement backgroundRenderer;
     private Status status;
     private Thread textGUIThread;
 
@@ -39,7 +39,7 @@ public class DialogsTextGUI implements TextGUI {
         this.screen = screen;
         this.status = Status.CREATED;
         this.windowManager = null;
-        this.backgroundRenderer = new AreaRenderer() {
+        this.backgroundRenderer = new GUIElement() {
             @Override
             public void draw(TextGUIGraphics graphics) {
                 graphics.setForegroundColor(TextColor.ANSI.CYAN);

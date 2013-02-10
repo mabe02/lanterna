@@ -22,7 +22,7 @@ package com.googlecode.lanterna.gui2;
  *
  * @author Martin
  */
-public interface AreaRenderer {
+public interface GUIElement {
     void draw(TextGUIGraphics graphics);
     boolean isInvalid();
 }
