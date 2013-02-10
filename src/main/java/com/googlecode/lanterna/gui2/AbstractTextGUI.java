@@ -59,7 +59,9 @@ public abstract class AbstractTextGUI implements TextGUI {
                 if(key.getKind() == Key.Kind.Escape) {
                     stop();
                 }
-                needsRefresh = true;
+                if(handleInput(key)) {
+                    needsRefresh = true;
+                }
             }
             if(isInvalid()) {
                 needsRefresh = true;
@@ -98,4 +100,5 @@ public abstract class AbstractTextGUI implements TextGUI {
 
     protected abstract boolean isInvalid();
     protected abstract void drawGUI(TextGUIGraphics graphics);
+    protected abstract boolean handleInput(Key key);
 }

@@ -30,7 +30,7 @@ public interface WindowManager {
     void removeWindow(Window window);
     
     Window getActiveWindow();
-    void handleInput(Key key);
+    boolean handleInput(Key key);
     
     public static class Hint {
         protected Hint() {

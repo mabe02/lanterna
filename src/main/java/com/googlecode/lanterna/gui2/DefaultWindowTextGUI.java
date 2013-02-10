@@ -19,6 +19,7 @@
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.gui2.WindowManager.Hint;
+import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.screen.Screen;
 
 /**
@@ -43,6 +44,11 @@ public class DefaultWindowTextGUI extends AbstractTextGUI implements WindowBased
     @Override
     protected void drawGUI(TextGUIGraphics graphics) {
         background.draw(graphics);
+    }
+
+    @Override
+    protected boolean handleInput(Key key) {
+        return windowManager.handleInput(key);
     }
 
     @Override

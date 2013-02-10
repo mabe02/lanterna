@@ -19,31 +19,87 @@
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.input.Key;
+import com.googlecode.lanterna.terminal.TerminalPosition;
+import java.util.LinkedList;
 
 /**
  *
  * @author Martin
  */
 public class StackedModalWindowManager implements WindowManager {
+    
+    public static final Hint LOCATION_CENTERED = new Hint();
+    public static final Hint LOCATION_CASCADE = new Hint();
+    private static final int CASCADE_SHIFT_RIGHT = 2;
+    private static final int CASCADE_SHIFT_DOWN = 1;
+    
+    private final LinkedList<Window> windowStack;
+    private final LinkedList<TerminalPosition> topLeftPositions;
+    private TerminalPosition nextTopLeftPosition;
+
+    public StackedModalWindowManager() {
+        this.windowStack = new LinkedList<Window>();
+        this.topLeftPositions = new LinkedList<TerminalPosition>();
+        nextTopLeftPosition = new TerminalPosition(CASCADE_SHIFT_RIGHT, CASCADE_SHIFT_DOWN);
+    }    
 
     @Override
-    public void addWindow(Window window, Hint... windowManagerHints) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public synchronized void addWindow(Window window, Hint... windowManagerHints) {
+        if(window == null) {
+            throw new IllegalArgumentException("Cannot call addWindow(...) with null window");
+        }
+        windowStack.add(window);
+        if(isCentered(windowManagerHints)) {
+            topLeftPositions.add(null);
+        }
+        else {
+            topLeftPositions.add(nextTopLeftPosition);
+            nextTopLeftPosition = nextTopLeftPosition
+                                    .withColumn(nextTopLeftPosition.getColumn() + CASCADE_SHIFT_RIGHT)
+                                    .withRow(nextTopLeftPosition.getRow() + CASCADE_SHIFT_DOWN);
+        }
     }
 
     @Override
-    public void removeWindow(Window window) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public synchronized void removeWindow(Window window) {
+        if(window == null) {
+            throw new IllegalArgumentException("Cannot call removeWindow(...) with null window");
+        }
+        int index = windowStack.indexOf(window);
+        if(index == -1) {
+            throw new IllegalArgumentException("Unknown window passed to removeWindow(...), this window manager doesn't"
+                    + " contain " + window);
+        }
+        topLeftPositions.remove(index);
+        windowStack.remove(index);
     }
 
     @Override
-    public Window getActiveWindow() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public synchronized Window getActiveWindow() {
+        if(windowStack.isEmpty()) {
+            return null;
+        }
+        else {
+            return windowStack.getLast();
+        }
     }
 
     @Override
-    public void handleInput(Key key) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public synchronized boolean handleInput(Key key) {
+        if(windowStack.isEmpty()) {
+            return false;
+        }
+        
+        return windowStack.getLast().handleInput(key);
+    }
+
+    private boolean isCentered(Hint... windowManagerHints) {
+        for(Hint hint: windowManagerHints) {
+            if(hint == LOCATION_CENTERED) {
+                return true;
+            }
+        }
+        return false;
     }
     
 }
