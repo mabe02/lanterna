@@ -22,13 +22,26 @@ package com.googlecode.lanterna.gui2;
  *
  * @author Martin
  */
-public interface Container extends Component {
-    void addComponent(Component component, LayoutManager.Parameter... layoutParameters);
-    void removeComponent(Component component);
-    void removeAllComponents();
+public abstract class AbstractComponent implements Component {
+
+    private boolean invalid;
+
+    public AbstractComponent() {
+        invalid = true;
+    }
     
-    boolean containsComponent(Component component);
-    int getComponentIndex(Component component);
-    Component getComponentAt(int index);
-    int getNumberOfComponents();
+    protected void invalidate() {
+        invalid = true;
+    }
+
+    @Override
+    public void draw(TextGUIGraphics graphics) {
+        invalid = false;
+    }
+    
+    @Override
+    public boolean isInvalid() {
+        return invalid;
+    }
+    
 }
