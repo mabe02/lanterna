@@ -18,22 +18,26 @@
  */
 package com.googlecode.lanterna.gui2;
 
+import com.googlecode.lanterna.terminal.TerminalPosition;
+import com.googlecode.lanterna.terminal.TerminalSize;
+import java.util.List;
+
 /**
  *
  * @author Martin
  */
 public interface LayoutManager {
     
-    void addComponent(Component component, LayoutManager.Parameter... layoutParameters);
-    void removeComponent(Component component);
-    
-    boolean containsComponent(Component component);
-    int getComponentIndex(Component component);
-    Component getComponentAt(int index);
-    int getNumberOfComponents();
+    List<LaidOutComponent> doLayout(TerminalSize area, List<Component> components, List<Parameter[]> layoutParameters);
     
     public static class Parameter {
         protected Parameter() {
         }
+    }
+    
+    public static interface LaidOutComponent {
+        TerminalPosition getTopLeftCorner();
+        TerminalSize getSize();
+        Component getComponent();
     }
 }

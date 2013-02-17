@@ -18,7 +18,6 @@
  */
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.gui2.LayoutManager.Parameter;
 
 /**
  *
@@ -31,33 +30,7 @@ public abstract class LayoutManagedContainer implements Container {
         this.layoutManager = layoutManager;
     }
 
-    @Override
-    public void addComponent(Component component, Parameter... layoutParameters) {
-        layoutManager.addComponent(component, layoutParameters);
+    public LayoutManager getLayoutManager() {
+        return layoutManager;
     }
-
-    @Override
-    public void removeComponent(Component component) {
-        layoutManager.removeComponent(component);
-    }
-
-    @Override
-    public boolean containsComponent(Component component) {
-        return layoutManager.containsComponent(component);
-    }
-
-    @Override
-    public int getComponentIndex(Component component) {
-        return layoutManager.getComponentIndex(component);
-    }
-
-    @Override
-    public Component getComponentAt(int index) {
-        return layoutManager.getComponentAt(index);
-    }
-
-    @Override
-    public int getNumberOfComponents() {
-        return layoutManager.getNumberOfComponents();
-    }   
 }
