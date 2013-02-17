@@ -606,10 +606,15 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
                         return appearance.getColorPalette().getNormalCyan();
 
                 case DEFAULT:
-                    if(brightHint)
-                        return appearance.getColorPalette().getDefaultBrightColor();
-                    else
-                        return appearance.getColorPalette().getDefaultColor();
+                    if(foregroundHint) {
+                        if(brightHint)
+                            return appearance.getColorPalette().getDefaultBrightColor();
+                        else
+                            return appearance.getColorPalette().getDefaultColor();
+                    }
+                    else {
+                        return appearance.getColorPalette().getNormalBlack();
+                    }
 
                 case GREEN:
                     if(brightHint)
