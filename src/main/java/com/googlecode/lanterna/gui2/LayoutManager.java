@@ -39,5 +39,6 @@ public interface LayoutManager {
         TerminalPosition getTopLeftCorner();
         TerminalSize getSize();
         Component getComponent();
+        boolean isVisible();
     }
 }
