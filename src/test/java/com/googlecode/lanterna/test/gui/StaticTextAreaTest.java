@@ -210,7 +210,7 @@ public class StaticTextAreaTest {
 
         window1.addComponent(staticTextArea);
 
-        Panel buttonPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORISONTAL);
+        Panel buttonPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORIZONTAL);
         Button exitButton = new Button("Exit", new Action() {
 
             @Override
