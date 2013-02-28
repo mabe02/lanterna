@@ -61,12 +61,15 @@ public class Button extends AbstractInteractableComponent
         graphics = transformAccordingToAlignment(graphics, preferredSize);
 
         if(graphics.getWidth() < preferredSize.getColumns()) {
-            int allowedSize = graphics.getWidth() - 4;
             graphics.drawString(0, 0, "< ");
             graphics.drawString(graphics.getWidth() - 2, 0, " >");
-            TextGraphics subGraphics = graphics.subAreaGraphics(new TerminalPosition(2, 0),
-                    new TerminalSize(allowedSize, buttonLabel.getPreferredSize().getRows()));
-            buttonLabel.repaint(subGraphics);
+            
+            int allowedSize = graphics.getWidth() - 4;
+            if(allowedSize > 0) {
+                TextGraphics subGraphics = graphics.subAreaGraphics(new TerminalPosition(2, 0),
+                        new TerminalSize(allowedSize, buttonLabel.getPreferredSize().getRows()));
+                buttonLabel.repaint(subGraphics);
+            }
         }
         else {
             int leftPosition = (graphics.getWidth() - preferredSize.getColumns()) / 2;
