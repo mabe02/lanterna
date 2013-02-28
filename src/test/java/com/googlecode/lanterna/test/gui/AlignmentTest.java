@@ -41,7 +41,7 @@ public class AlignmentTest {
         final Label label = new Label("Aligned Label");
         label.setPreferredSize(new TerminalSize(40, 10));
         mainWindow.addComponent(label);
-        Panel buttonPanel = new Panel(Panel.Orientation.HORISONTAL);
+        Panel buttonPanel = new Panel(Panel.Orientation.HORIZONTAL);
         Button changeAlignmentButton = new Button("Change alignment", new Action() {
             @Override
             public void doAction() {
