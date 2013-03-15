@@ -311,7 +311,7 @@ public class Screen
      * calls to the underlying Terminal) and you want to make sure that the content of Screen
      * is completely pushed to the terminal.
      */
-    public void completeRedraw() {
+    public void completeRefresh() {
         wholeScreenInvalid = true;
         refresh();
     }
