@@ -306,6 +306,17 @@ public class Screen
     }
 
     /**
+     * Clears the terminal and repaints with the whole content of the Screen. This is useful of 
+     * something has written to the terminal outside of the Screen (System.out or through direct
+     * calls to the underlying Terminal) and you want to make sure that the content of Screen
+     * is completely pushed to the terminal.
+     */
+    public void completeRedraw() {
+        wholeScreenInvalid = true;
+        refresh();
+    }
+    
+    /**
      * Call this method to make changes done through {@code putCharacter(...)},
      * {@code putString(...)} visible on the terminal. The screen will calculate
      * the changes that are required and send the necessary characters and
