@@ -43,6 +43,13 @@ public class MultiWindowTest {
                     MessageBox.showMessageBox(getOwner(), "Hello", "You selected the button with an action attached to it!");
                 }
             }));
+            addComponent(new Button("MessageBox close", new Action() {
+                @Override
+                public void doAction() {
+                    MessageBox.showMessageBox(getOwner(), "Information", "When you close this dialog, the owner window will close too");
+                    MyWindow.this.close();
+                }
+            }));
             addComponent(new Button("New window", new Action() {
                 @Override
                 public void doAction() {
