@@ -3,3 +3,5 @@
  * Overlapping windows - X-Y offset
  * ListBox pageup/pagedown
  * Menus
+ * TextBox fill character (Issue 66)
+ * Telnet support
