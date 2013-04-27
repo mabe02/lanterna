@@ -51,7 +51,7 @@ public class ActionListTest
         mainPanel.addComponent(actionListBox);
         window1.addComponent(mainPanel);
 
-        Panel buttonPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORISONTAL);
+        Panel buttonPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORIZONTAL);
         Button exitButton = new Button("Exit", new Action() {
                 public void doAction()  {
                     window1.close();
@@ -90,10 +90,10 @@ class MyWindow extends Window
     public MyWindow()
     {
         super("My Window!");
-        Panel horisontalPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORISONTAL);
-        Panel leftPanel = new Panel(new Border.Bevel(true), Panel.Orientation.HORISONTAL);
-        Panel middlePanel = new Panel(new Border.Bevel(true), Panel.Orientation.HORISONTAL);
-        Panel rightPanel = new Panel(new Border.Bevel(true), Panel.Orientation.HORISONTAL);
+        Panel horisontalPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORIZONTAL);
+        Panel leftPanel = new Panel(new Border.Bevel(true), Panel.Orientation.HORIZONTAL);
+        Panel middlePanel = new Panel(new Border.Bevel(true), Panel.Orientation.HORIZONTAL);
+        Panel rightPanel = new Panel(new Border.Bevel(true), Panel.Orientation.HORIZONTAL);
 
         horisontalPanel.addComponent(leftPanel);
         horisontalPanel.addComponent(middlePanel);

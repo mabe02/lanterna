@@ -22,52 +22,28 @@ import com.googlecode.lanterna.gui.Action;
 import com.googlecode.lanterna.gui.Component;
 import com.googlecode.lanterna.gui.GUIScreen;
 import com.googlecode.lanterna.gui.Window;
-import com.googlecode.lanterna.gui.component.ActionListBox;
 import com.googlecode.lanterna.gui.component.Button;
 import com.googlecode.lanterna.gui.component.EmptySpace;
-import com.googlecode.lanterna.gui.component.Label;
 import com.googlecode.lanterna.gui.component.Panel;
-import com.googlecode.lanterna.gui.component.TextBox;
-import com.googlecode.lanterna.gui.dialog.MessageBox;
 import com.googlecode.lanterna.gui.layout.LinearLayout;
+import com.googlecode.lanterna.gui.layout.VerticalLayout;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.test.TestTerminalFactory;
 
-/**
- *
- * @author Martin
- */
-public class Issue43 {
+public class Issue46 {
     public static void main(String[] args) {
         final GUIScreen guiScreen = new TestTerminalFactory(args).createGUIScreen();
-        final Window window = new Window("Testing issue 43");
-        window.addComponent(new Label("Here's an ActionListBox with fixed width"));
-        final ActionListBox actionListBox = new ActionListBox(new TerminalSize(20, 10));
-        window.addComponent(actionListBox);
-        window.addComponent(new EmptySpace());
-        window.addComponent(new Label("Add new item"));
+        final Window window = new Window("Testing issue 46");
+        Panel panel = new Panel("Panel with a right-aligned button");
+        panel.setPreferredSize(new TerminalSize(50, 3));
+        panel.setLayoutManager(new VerticalLayout());
+        Button button = new Button("Button");
+        button.setAlignment(Component.Alignment.RIGHT_CENTER);
+        panel.addComponent(button, LinearLayout.GROWS_HORIZONTALLY);
         
-        Panel panel = new Panel(Panel.Orientation.HORIZONTAL);
-        final TextBox textBox = new TextBox();
-        panel.addComponent(textBox, LinearLayout.GROWS_HORIZONTALLY);
-        panel.addComponent(new Button("Add", new Action() {
-            @Override
-            public void doAction() {
-                if(textBox.getText().trim().length() == 0)
-                    return;
-                
-                final String text = textBox.getText().trim();
-                actionListBox.addAction(text, new Action() {
-                    @Override
-                    public void doAction() {
-                        MessageBox.showMessageBox(guiScreen, "Action selected", "You selected:\n" + text);
-                    }
-                });
-            }
-        }));
-        window.addComponent(panel, LinearLayout.GROWS_HORIZONTALLY);
-        
+        window.addComponent(panel);
         window.addComponent(new EmptySpace());
+        
         Button quitButton = new Button("Exit", new Action() {
             @Override
             public void doAction() {
@@ -80,5 +56,5 @@ public class Issue43 {
         guiScreen.getScreen().startScreen();
         guiScreen.showWindow(window);
         guiScreen.getScreen().stopScreen();
-    }
+    } 
 }
