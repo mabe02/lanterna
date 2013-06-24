@@ -210,30 +210,41 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
     @Override
     public void enterPrivateMode()
     {
-        terminalFrame = new JFrame("Terminal");
-        terminalFrame.addComponentListener(new FrameResizeListener());
-        terminalFrame.getContentPane().setLayout(new BorderLayout());
-        terminalFrame.getContentPane().add(terminalRenderer, BorderLayout.CENTER);
-        terminalFrame.addKeyListener(new KeyCapturer());
-        terminalFrame.pack();
-        terminalFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        terminalFrame.setLocationByPlatform(true);
-        terminalFrame.setVisible(true);
-        terminalFrame.setFocusTraversalKeysEnabled(false);
-        //terminalEmulator.setSize(terminalEmulator.getPreferredSize());
-        terminalFrame.pack();
-        blinkTimer.start();
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                terminalFrame = new JFrame("Terminal");
+                terminalFrame.addComponentListener(new FrameResizeListener());
+                terminalFrame.getContentPane().setLayout(new BorderLayout());
+                terminalFrame.getContentPane().add(terminalRenderer, BorderLayout.CENTER);
+                terminalFrame.addKeyListener(new KeyCapturer());
+                terminalFrame.pack();
+                terminalFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+                terminalFrame.setLocationByPlatform(true);
+                terminalFrame.setVisible(true);
+                terminalFrame.setFocusTraversalKeysEnabled(false);
+                //terminalEmulator.setSize(terminalEmulator.getPreferredSize());
+                terminalFrame.pack();
+                blinkTimer.start();
+            }
+        });
     }
 
     @Override
     public void exitPrivateMode()
-    {
-        if(terminalFrame == null)
-            return;
-        
-        blinkTimer.stop();
-        terminalFrame.setVisible(false);
-        terminalFrame.dispose();
+    {        
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                if(terminalFrame == null)
+                    return;
+                
+                blinkTimer.stop();
+                terminalFrame.setVisible(false);
+                terminalFrame.dispose();
+                terminalFrame = null;
+            }
+        });
     }
 
     @Override
