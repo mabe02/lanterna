@@ -63,6 +63,14 @@ public class InputDecoder
 
     public Key getNextCharacter()
     {
+        if(System.getProperty("com.googlecode.lanterna.input.enable-new-decoder", "false").equals("true")) {
+            try {
+                return getNextCharacter2();
+            }
+            catch(IOException e) {
+                throw new LanternaException(e);
+            }
+        }
         if(leftOverQueue.size() > 0) {
             Character first = leftOverQueue.poll();
             //HACK!!!
@@ -126,5 +134,61 @@ public class InputDecoder
     public TerminalPosition getLastReportedTerminalPosition()
     {
         return lastReportedTerminalPosition;
+    }
+
+    private Key getNextCharacter2() throws IOException {
+        try {
+            while(source.ready()) {
+                int readChar = source.read();
+                if(readChar == -1)
+                    return null;
+
+                inputBuffer.add((char)readChar);
+            }
+        }
+        catch(IOException e) {
+            throw new LanternaException(e);
+        }
+
+        if(inputBuffer.size() == 0) {
+            return null;
+        }
+
+        int largestMatchCharacters = -1;
+        Key largestMatch = null;
+        LinkedList<CharacterPattern> candidates = new LinkedList<CharacterPattern>(bytePatterns);
+        
+        while(!candidates.isEmpty()) {
+            //Check all patterns
+            Character nextChar = inputBuffer.poll();
+            if(nextChar == null) {
+                break;
+            }
+            currentMatching.add(nextChar);
+            
+            Iterator<CharacterPattern> iterator = candidates.iterator();
+            while(iterator.hasNext()) {
+                CharacterPattern pattern = iterator.next();
+                if(!pattern.matches(currentMatching)) {
+                    iterator.remove();
+                    continue;
+                }
+                if(pattern.isCompleteMatch(currentMatching)) {
+                    Key result = pattern.getResult(currentMatching);
+                    largestMatchCharacters = currentMatching.size();
+                    largestMatch = result;
+                    if(result.getKind() == Key.Kind.CursorLocation)
+                        lastReportedTerminalPosition = ScreenInfoCharacterPattern.getCursorPosition(currentMatching);
+                }
+            }
+        }
+        
+        if(largestMatch == null) {
+            return null;
+        }
+        for(int i = 0; i < largestMatchCharacters; i++) {
+            currentMatching.remove(0);
+        }
+        return largestMatch;
     }
 }

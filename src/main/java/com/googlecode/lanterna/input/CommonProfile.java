@@ -90,6 +90,7 @@ public class CommonProfile extends KeyMappingProfile
                     new BasicCharacterPattern(new Key(Key.Kind.F10, false, true), ESC_CODE, ESC_CODE, '[', '2', '1', '~'),
                     new BasicCharacterPattern(new Key(Key.Kind.F11, false, true), ESC_CODE, ESC_CODE, '[', '2', '3', '~'),
                     new BasicCharacterPattern(new Key(Key.Kind.F12, false, true), ESC_CODE, ESC_CODE, '[', '2', '4', '~'),
+                    new NormalCharacterPattern(),
                     new AltAndCharacterPattern(),
                     new CtrlAndCharacterPattern(),
                     new CtrlAltAndCharacterPattern(),
