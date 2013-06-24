@@ -208,9 +208,8 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
     }
 
     @Override
-    public void enterPrivateMode()
-    {
-        SwingUtilities.invokeLater(new Runnable() {
+    public void enterPrivateMode() {
+        Runnable runnable = new Runnable() {
             @Override
             public void run() {
                 terminalFrame = new JFrame("Terminal");
@@ -227,24 +226,50 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
                 terminalFrame.pack();
                 blinkTimer.start();
             }
-        });
+        };
+        if(SwingUtilities.isEventDispatchThread()) {
+            runnable.run();
+        }
+        else {
+            try {
+                SwingUtilities.invokeAndWait(runnable);
+            }
+            catch(Exception e) {
+                throw new RuntimeException(
+                        "Unexpected " + e.getClass().getSimpleName() + 
+                            " while creating SwingTerminal JFrame", e);
+            }
+        }
     }
 
     @Override
-    public void exitPrivateMode()
-    {        
-        SwingUtilities.invokeLater(new Runnable() {
+    public void exitPrivateMode() {
+        Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                if(terminalFrame == null)
+                if (terminalFrame == null) {
                     return;
-                
+                }
+
                 blinkTimer.stop();
                 terminalFrame.setVisible(false);
                 terminalFrame.dispose();
                 terminalFrame = null;
             }
-        });
+        };
+        if (SwingUtilities.isEventDispatchThread()) {
+            runnable.run();
+        }
+        else {
+            try {
+                SwingUtilities.invokeAndWait(runnable);
+            }
+            catch (Exception e) {
+                throw new RuntimeException(
+                        "Unexpected " + e.getClass().getSimpleName()
+                        + " while disposing SwingTerminal JFrame", e);
+            }
+        }
     }
 
     @Override
@@ -320,7 +345,9 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
             SwingUtilities.invokeLater(new Runnable() {
                 public void run()
                 {
-                    terminalFrame.pack();
+                    if(terminalFrame != null) {
+                        terminalFrame.pack();
+                    }
                 }
             });
 
