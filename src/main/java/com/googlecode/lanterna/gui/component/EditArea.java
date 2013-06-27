@@ -18,93 +18,109 @@
  */
 package com.googlecode.lanterna.gui.component;
 
+import java.util.Scanner;
+
 import com.googlecode.lanterna.gui.Interactable;
 import com.googlecode.lanterna.gui.TextGraphics;
 import com.googlecode.lanterna.gui.Theme;
+import com.googlecode.lanterna.gui.component.TextGrid.DataGridCel;
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.terminal.Terminal.Color;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
-import java.util.Scanner;
 
 /**
- *
+ * Multi-line text edit component
  * @author David John Truman
+ * @author Nicolas Pellegrin
  */
 public class EditArea extends AbstractInteractableComponent {
-    private TerminalSize prefferedSize;
-    private TerminalSize requestedSize;
-    private TerminalSize maximumSize;
-    private TerminalSize minimumSize;
-    private int numberOfCols;
-    private int numberOfRows;
-    private StringBuilder dataBuffer;
     private int minimumCols = 20;
     private int minimumRows = 5;
-    private char nullChar = 1;
     private int charlimit = 0;
-    private int curx = 0;
-    private int cury = 0;
-    private TextGrid grid;
+    private int currentCol = 0;
+    private int currentRow = 0;
     private int rowOffset = 0;
     private int colOffset = 0;
     private boolean lockPreferredSize = false;
-    private boolean solution1 = false;
+
+    private TerminalSize requestedSize;
+    private int numberOfCols;
+    private int numberOfRows;
+    private StringBuilder dataBuffer;
+    private TextGrid grid;
 
     public EditArea() {
         this(null);
     }
 
-    public void fix_issue() {
-        if (curx < 0) {
-            curx = 0;
-        }
-    }
-
-    public void setCharacterLimit(int limit) {
-        charlimit = limit;
-    }
-
-    public TerminalSize getDataSize() {
-        int dataWidth = 0;
-        int dataHeight = 0;
-        String Line;
-        Scanner scan = new Scanner(dataBuffer.toString());
-
-        while (scan.hasNext()) {
-            Line = scan.nextLine();
-            if (Line.length() > dataWidth) {
-                dataWidth = Line.length();
-            }
-            dataHeight++;
-        }
-
-        return new TerminalSize(dataWidth, dataHeight);
+    public EditArea(TerminalSize preferredSize) {
+        this(preferredSize, "");
     }
 
     public EditArea(TerminalSize preferredSize, String text) {
-        //TextGrid.countLFchars(text);
         dataBuffer = new StringBuilder(text);
         requestedSize = preferredSize;
 
         if (preferredSize == null) {
             preferredSize = calculatePreferredSize();
         }
-        this.prefferedSize = preferredSize;
-
-        minimumSize = new TerminalSize(minimumCols, minimumRows);
-        maximumSize = null;
-
         grid = new TextGrid(text);
     }
 
-    public EditArea(TerminalSize preferredSize, String text, boolean lockPreferredSize) {
+    public EditArea(TerminalSize preferredSize, String text,
+            boolean lockPreferredSize) {
         this(preferredSize, text);
         this.lockPreferredSize = lockPreferredSize;
     }
 
-    public EditArea(TerminalSize preferredSize) {
-        this(preferredSize, "");
+    /**
+     * Action for "Backspace" key
+     * */
+    public void backspace() {
+        TextGrid.DataGridCel cel;
+
+        // Do nothing if we are at the beginning
+        if (rowOffset + colOffset + currentCol + currentRow == 0) {
+            return;
+        }
+
+        if ((currentCol + colOffset) == 0 && (currentRow + rowOffset) != 0) {
+            // Get a \n in the previous line (user pressed backspace at the first character of the line)
+            cel = grid.getCel(currentRow + rowOffset - 1, grid.getLineLength(currentRow + rowOffset - 1));
+
+            if (currentRow > 0) {
+                // Move cursor upwards
+                currentRow--;
+            } else {
+                // Move up if we are at the top
+                scrollUp();
+            }
+
+            // Go at the end of line
+            end();
+
+            int hack = colOffset;
+
+            if (cel == null) {
+                cel = grid.getCel(currentRow + rowOffset, currentCol - 1);
+            }
+
+            while (cel.getCharacter() != 0x0a) {
+                cel = grid.getCel(currentRow + rowOffset, hack);
+                hack++;
+            }
+        } else {
+            // Get a single character
+            cel = grid.getCel(currentRow + rowOffset, currentCol + colOffset - 1);
+            if (colOffset > 0) {
+                colOffset--;
+            } else {
+                currentCol--;
+            }
+        }
+        // Remove the character
+        grid.removeChar(cel.getBufferIndex());
     }
 
     @Override
@@ -130,16 +146,74 @@ public class EditArea extends AbstractInteractableComponent {
         return ts;
     }
 
+    /**
+     * Action for "Del" key.
+     * */
+    public void delete() {
+        TextGrid.DataGridCel cel;
+        TextGrid.DataGridCel nextCel;
+        cel = grid.getCel(currentRow + rowOffset, currentCol + colOffset);
+
+        if (currentRow + rowOffset == numberOfRows - 1) {
+            nextCel = grid.getCel(currentRow + rowOffset, currentCol
+                    + colOffset + 1);
+            if (nextCel != null
+                    && nextCel.getCharacter() != DataGridCel.NullChar) {
+                grid.removeChar(cel.getBufferIndex());
+            }
+        } else {
+            if (cel.getCharacter() != DataGridCel.NullChar) {
+                grid.removeChar(cel.getBufferIndex());
+            }
+        }
+    }
+
+    /**
+     * Action for "Arrow down" key.
+     * */
+    private void down() {
+        if ((currentRow + rowOffset) < grid.getNumRows() - 1) {
+            if (grid.getLineLength(currentRow + rowOffset + 1) <= currentCol
+                    + colOffset) {
+
+                if (colOffset > grid.getLineLength(currentRow + rowOffset + 1)) {
+                    colOffset = grid.getLineLength(currentRow + rowOffset + 1)
+                            - numberOfCols;
+                    if (colOffset < 0) {
+                        colOffset = 0;
+                        currentCol = grid.getLineLength(currentRow + rowOffset
+                                + 1) - 1;
+                    } else {
+                        currentCol = numberOfCols - 1;
+                    }
+                } else {
+                    currentCol = grid.getLineLength(currentRow + rowOffset + 1)
+                            - colOffset - 1;
+                }
+            }
+            if (currentRow < (numberOfRows - 1)) {
+                currentRow++;
+            } else {
+                scrollDown();
+            }
+
+        }
+    }
+
     protected void drawDisplay(TextGraphics g) {
         int width = g.getWidth();
         int height = g.getHeight();
 
-        Color fg = Theme.getDefaultTheme().getDefinition(Theme.Category.TEXTBOX).foreground();
-        Color bg = Theme.getDefaultTheme().getDefinition(Theme.Category.TEXTBOX).background();
+        Color fg = Theme.getDefaultTheme()
+                .getDefinition(Theme.Category.TEXTBOX).foreground();
+        Color bg = Theme.getDefaultTheme()
+                .getDefinition(Theme.Category.TEXTBOX).background();
 
         if (hasFocus()) {
-            fg = Theme.getDefaultTheme().getDefinition(Theme.Category.TEXTBOX_FOCUSED).foreground();
-            bg = Theme.getDefaultTheme().getDefinition(Theme.Category.TEXTBOX_FOCUSED).background();
+            fg = Theme.getDefaultTheme()
+                    .getDefinition(Theme.Category.TEXTBOX_FOCUSED).foreground();
+            bg = Theme.getDefaultTheme()
+                    .getDefinition(Theme.Category.TEXTBOX_FOCUSED).background();
         }
 
         for (int r = 0; r < height; r++) {
@@ -151,175 +225,170 @@ public class EditArea extends AbstractInteractableComponent {
         }
     }
 
-    @Override
-    public void repaint(TextGraphics graphics) {
-        numberOfCols = graphics.getWidth();
-        numberOfRows = graphics.getHeight();
-        drawDisplay(graphics);
-        setHotspot(graphics.translateToGlobalCoordinates(new TerminalPosition(curx, cury)));
+    /**
+     * Action for "End" key
+     * */
+    private void end() {
+        int linelen = grid.getLineLength(currentRow + rowOffset);
+
+        grid.getCel(currentRow + rowOffset, linelen);
+
+        if (linelen < numberOfCols) {
+            colOffset = 0;
+            currentCol = linelen;
+        } else {
+            currentCol = numberOfCols - 1;
+            colOffset = linelen - numberOfCols + 1;
+        }
     }
 
-    private void right() {
-        TextGrid.DataGridCel cel = grid.getCel(cury + rowOffset, curx + colOffset + 1);
-        if (cel == null) {
+    /**
+     * Action for "Enter" key
+     * */
+    private void enter(Key key) {
+        if (limitReached()) {
             return;
         }
 
+        TextGrid.DataGridCel cel = grid.getCel(currentRow + rowOffset,
+                currentCol + colOffset);
 
-        if (cel.getBufferIndex() != -1) {
-            if (curx < (numberOfCols - 1)) {
-                curx++;
+        if (cel == null) {
+            grid.appendChar((char) 0x0a);
+        } else {
+            if (cel.getBufferIndex() != -1) {
+                grid.insertChar(cel.getBufferIndex(), (char) 0x0a);
+            } else {
+                grid.appendChar((char) 0x0a);
             }
-            else {
-                scroll_right();
-            }
         }
-        else {
-        }
-    }
-
-    public void scroll_right() {
-        if ((numberOfCols + colOffset) < grid.getLineLength(rowOffset + cury) + 1) {
-            colOffset++;
-        }
-    }
-
-    public void scroll_left() {
-        if (colOffset > 0) {
-            colOffset--;
-        }
-    }
-
-    public void setData(String data) {
-        grid.setBufferData(data);
-        curx = 0;
         colOffset = 0;
-        rowOffset = 0;
-        cury = 0;
-        invalidate();
+        currentCol = 0;
+        if (currentRow == numberOfRows - 1) {
+            scrollDown();
+        } else {
+            currentRow++;
+        }
+    }
 
+    // FIXME: why this ?
+    public void fix_issue() {
+        if (currentCol < 0) {
+            currentCol = 0;
+        }
     }
 
     public String getData() {
         return grid.getDataBuffer();
     }
 
+    public TerminalSize getDataSize() {
+        int dataWidth = 0;
+        int dataHeight = 0;
+        String Line;
+        Scanner scan = new Scanner(dataBuffer.toString());
+
+        while (scan.hasNext()) {
+            Line = scan.nextLine();
+            if (Line.length() > dataWidth) {
+                dataWidth = Line.length();
+            }
+            dataHeight++;
+        }
+
+        // Resource leaked
+        scan.close();
+
+        return new TerminalSize(dataWidth, dataHeight);
+    }
+
+    /**
+     * Action for "Home" key
+     * */
     private void home() {
         colOffset = 0;
-        curx = 0;
+        currentCol = 0;
     }
 
-    private void page_up() {
-        TextGrid.DataGridCel cel;
+    @Override
+    public Interactable.Result keyboardInteraction(Key key) {
+        try {
+            switch (key.getKind()) {
+            case Tab:
+                return Interactable.Result.NEXT_INTERACTABLE_RIGHT;
+            case Backspace:
+                backspace();
+                break;
+            case ArrowDown:
+                down();
+                break;
+            case ArrowUp:
+                up();
+                break;
+            case ArrowLeft:
+                left();
+                break;
+            case ArrowRight:
+                right();
+                break;
+            case Enter:
+                enter(key);
+                break;
+            case Delete:
+                delete();
+                break;
+            case End:
+                end();
+                break;
+            case Home:
+                home();
+                break;
+            case PageDown:
+                pageDown();
+                break;
+            case PageUp:
+                pageUp();
+                break;
+            case NormalKey:
+                normal(key);
+                break;
+            default:
+                return Interactable.Result.EVENT_NOT_HANDLED;
 
-        if (rowOffset < numberOfRows) {
-            cury = 0;
-            rowOffset = 0;
-        }
-        else {
-            rowOffset = rowOffset - numberOfRows;
-        }
-
-        cel = grid.getCel(cury + rowOffset, curx + colOffset);
-        if (cel.getCharater() == cel.NullChar) {
-            end();
-        }
-    }
-
-    private void page_down() {
-        TextGrid.DataGridCel cel;
-        if (rowOffset + numberOfRows > grid.getNumRows()) {
-            cury = grid.getNumRows() - rowOffset;
-            /* do nothing */
-        }
-        else {
-            if (grid.getNumRows() < numberOfRows) {
-                rowOffset = 0;
-                cury = grid.getNumRows() - 1;
-            }
-            else {
-                if ((rowOffset + numberOfRows) >= grid.getNumRows()) {
-                    rowOffset = grid.getNumRows() - numberOfRows;
-                    cury = numberOfRows - 1;
-                }
-                else {
-                    rowOffset = rowOffset + numberOfRows;
-                }
-            }
-        }
-
-        cel = grid.getCel(cury + rowOffset, curx + colOffset);
-        while (cel == null) {
-            cury--;
-            cel = grid.getCel(cury + rowOffset, curx + colOffset);
-        }
-
-        if (cel.getCharater() == cel.NullChar) {
-            end();
-        }
-    }
-
-    private void end() {
-        int linelen = grid.getLineLength(cury + rowOffset);
-
-        TextGrid.DataGridCel test = grid.getCel(cury + rowOffset, linelen);
-
-        if (linelen < numberOfCols) {
-            colOffset = 0;
-            curx = linelen;
-        }
-        else {
-            curx = (numberOfCols - 1);
-            colOffset = (linelen - numberOfCols) + 1;
+            } // End switch
+            return Interactable.Result.EVENT_HANDLED;
+        } // try
+        finally {
+            fix_issue();
+            invalidate();
         }
     }
 
+    /**
+     * Action for the "Arrow left" key.
+     * */
     private void left() {
-        if (curx > 0) {
-            curx--;
-        }
-        else {
-            if (colOffset > 0) {
-                scroll_left();
-            }
+        if (currentCol > 0) {
+            currentCol--;
+        } else {
+            // Unnecessary colOffset > 0 : done in scrollLeft.
+            scrollLeft();
         }
     }
 
+    /**
+     * Checks if the line limit is reached.
+     * */
     private boolean limitReached() {
-        if ((charlimit > 0) && (grid.size() >= charlimit)) {
+        if (charlimit > 0 && grid.size() >= charlimit) {
             return true;
         }
         return false;
     }
 
-    private void enter(Key key) {
-        if (limitReached()) {
-            return;
-        }
-
-        TextGrid.DataGridCel cel = grid.getCel(cury + rowOffset, curx + colOffset);
-
-        if (cel == null) {
-            grid.appendChar((char) 0x0a);
-        }
-        else {
-            if (cel.getBufferIndex() != -1) {
-                grid.insertChar(cel.getBufferIndex(), (char) 0x0a);
-            }
-            else {
-                grid.appendChar((char) 0x0a);
-            }
-        }
-        colOffset = 0;
-        curx = 0;
-        if (cury == numberOfRows - 1) {
-            scroll_down();
-        }
-        else {
-            cury++;
-        }
-    }
-
+    /**
+     * Action for "normal" key (a-z, 0-9, and symbols).
+     * */
     private void normal(Key key) {
         if (limitReached()) {
             return;
@@ -330,208 +399,180 @@ public class EditArea extends AbstractInteractableComponent {
             return;
         }
 
-        TextGrid.DataGridCel cel = grid.getCel(cury + rowOffset, curx + colOffset);
+        TextGrid.DataGridCel cel = grid.getCel(currentRow + rowOffset,
+                currentCol + colOffset);
 
-        if ((cel != null) && (cel.getBufferIndex() != -1)) {
+        if (cel != null && cel.getBufferIndex() != -1) {
             grid.insertChar(cel.getBufferIndex(), key.getCharacter());
-        }
-        else {
+        } else {
             grid.appendChar(key.getCharacter());
         }
 
-        if (curx == numberOfCols - 1) {
+        if (currentCol == numberOfCols - 1) {
             colOffset++;
-        }
-        else {
-            curx++;
+        } else {
+            currentCol++;
         }
     }
 
-    public void delete() {
+    /**
+     * Action for the "Page down" key.
+     * */
+    private void pageDown() {
         TextGrid.DataGridCel cel;
-        TextGrid.DataGridCel nextCel;
-        cel = grid.getCel(cury + rowOffset, curx + colOffset);
-
-
-        if (cury + rowOffset == numberOfRows - 1) {
-            nextCel = grid.getCel(cury + rowOffset, curx + colOffset + 1);
-            if ((nextCel != null) && (nextCel.getCharater() != nextCel.NullChar)) {
-                grid.removeChar(cel.getBufferIndex());
-            }
-        }
-        else {
-            if (cel.getCharater() == cel.NullChar) {
-                // Don't do anything
-            }
-            else {
-                grid.removeChar(cel.getBufferIndex());
+        if (rowOffset + numberOfRows > grid.getNumRows()) {
+            currentRow = grid.getNumRows() - rowOffset;
+        } else {
+            if (grid.getNumRows() < numberOfRows) {
+                rowOffset = 0;
+                currentRow = grid.getNumRows() - 1;
+            } else {
+                if ((rowOffset + numberOfRows) >= grid.getNumRows()) {
+                    rowOffset = grid.getNumRows() - numberOfRows;
+                    currentRow = numberOfRows - 1;
+                } else {
+                    rowOffset = rowOffset + numberOfRows;
+                }
             }
         }
 
-    }
-
-    public void backspace() {
-        TextGrid.DataGridCel cel;
-
-        if (rowOffset + colOffset + curx + cury == 0) {
-            return;
+        cel = grid.getCel(currentRow + rowOffset, currentCol + colOffset);
+        while (cel == null) {
+            currentRow--;
+            cel = grid.getCel(currentRow + rowOffset, currentCol + colOffset);
         }
 
-        if (((curx + colOffset) == 0) && ((cury + rowOffset) != 0)) {
-            
-            cel = grid.getCel(cury + rowOffset - 1, grid.getLineLength(cury + rowOffset - 1));
-            cury--;
+        if (cel.getCharacter() == DataGridCel.NullChar) {
             end();
-
-            int hack = colOffset;
-
-
-            if (cel == null) {
-                cel = grid.getCel(cury + rowOffset, curx - 1);
-            }
-
-
-            while (cel.getCharater() != 0x0a) {
-                try {
-                    cel = grid.getCel(cury + rowOffset, hack);
-                }
-                catch (Exception e) {
-                }
-                hack++;
-            }
         }
-        else {
-            cel = grid.getCel(cury + rowOffset, curx + colOffset - 1);
-            if (colOffset > 0) {
-                colOffset--;
-            }
-            else {
-                curx--;
-            }
+    }
+
+    /**
+     * Action for the "Page up" key.
+     * */
+    private void pageUp() {
+        TextGrid.DataGridCel cel;
+
+        if (rowOffset < numberOfRows) {
+            currentRow = 0;
+            rowOffset = 0;
+        } else {
+            rowOffset = rowOffset - numberOfRows;
         }
-        grid.removeChar(cel.getBufferIndex());
+
+        cel = grid.getCel(currentRow + rowOffset, currentCol + colOffset);
+        if (cel.getCharacter() == DataGridCel.NullChar) {
+            end();
+        }
     }
 
     @Override
-    public Interactable.Result keyboardInteraction(Key key) {
-        try {
-            switch (key.getKind()) {
-                case Tab:
-                    return Interactable.Result.NEXT_INTERACTABLE_RIGHT;
-                case Backspace:
-                    backspace();
-                    break;
-                case ArrowDown:
-                    down();
-                    break;
-                case ArrowUp:
-                    up();
-                    break;
-                case ArrowLeft:
-                    left();
-                    break;
-                case ArrowRight:
-                    right();
-                    break;
-                case Enter:
-                    enter(key);
-                    break;
-                case Delete:
-                    delete();
-                    break;
-                case End:
-                    end();
-                    break;
-                case Home:
-                    home();
-                    break;
-                case PageDown:
-                    page_down();
-                    break;
-                case PageUp:
-                    page_up();
-                    break;
-                case NormalKey:
-                    normal(key);
-                    break;
-                default:
-                    return Interactable.Result.EVENT_NOT_HANDLED;
+    public void repaint(TextGraphics graphics) {
+        numberOfCols = graphics.getWidth();
+        numberOfRows = graphics.getHeight();
+        drawDisplay(graphics);
+        setHotspot(graphics.translateToGlobalCoordinates(new TerminalPosition(
+                currentCol, currentRow)));
+    }
 
-            } // switch  
-            return Interactable.Result.EVENT_HANDLED;
-        } // try
-        finally {
-            fix_issue();
-            invalidate();
+    /**
+     * Action for the "Arrow right" key.
+     * */
+    private void right() {
+        TextGrid.DataGridCel cel = grid.getCel(currentRow + rowOffset,
+                currentCol + colOffset + 1);
+        if (cel == null) {
+            return;
+        }
+
+        if (cel.getBufferIndex() != -1) {
+            if (currentCol < (numberOfCols - 1)) {
+                currentCol++;
+            } else {
+                scrollRight();
+            }
         }
     }
 
-    private void scroll_up() {
+    /**
+     * Scroll down all text in the area.
+     * */
+    private void scrollDown() {
+        if ((numberOfRows + rowOffset) < grid.getNumRows()) {
+            rowOffset++;
+        }
+    }
+
+    /**
+     * Scroll left all text in the area.
+     * */
+    public void scrollLeft() {
+        if (colOffset > 0) {
+            colOffset--;
+        }
+    }
+
+    /**
+     * Scroll right all text in the area.
+     * */
+    public void scrollRight() {
+        if ((numberOfCols + colOffset) < grid.getLineLength(rowOffset + currentRow) + 1) {
+            colOffset++;
+        }
+    }
+
+    /**
+     * Scroll up all text in the area.
+     * */
+    private void scrollUp() {
         if (rowOffset > 0) {
             rowOffset--;
         }
     }
 
+   /**
+    * Set the line limit.
+    */
+    public void setCharacterLimit(int limit) {
+        charlimit = limit;
+    }
+
+    /**
+     * Change all the text in the area.
+     * */
+    public void setData(String data) {
+        grid.setBufferData(data);
+        currentCol = 0;
+        colOffset = 0;
+        rowOffset = 0;
+        currentRow = 0;
+        invalidate();
+    }
+
+    /**
+     * Action for the "Arrow up" key.
+     * */
     private void up() {
-        if (cury > 0) {
-            cury--;
-        }
-        else {
-            if (rowOffset > 0) {
-                scroll_up();
-            }
+        if (currentRow > 0) {
+            currentRow--;
+        } else {
+            // Unnecessary check rowOffset > 0 : done in scrollUp.
+            scrollUp();
         }
 
-        if (grid.getLineLength(cury + rowOffset) <= curx + colOffset) {
+        if (grid.getLineLength(currentRow + rowOffset) <= currentCol + colOffset) {
 
-            if (colOffset > grid.getLineLength(cury + rowOffset)) {
-                colOffset = grid.getLineLength(cury + rowOffset) - numberOfCols;
+            if (colOffset > grid.getLineLength(currentRow + rowOffset)) {
+                colOffset = grid.getLineLength(currentRow + rowOffset) - numberOfCols;
                 if (colOffset < 0) {
                     colOffset = 0;
-                    curx = grid.getLineLength(cury + rowOffset) - 1;
+                    currentCol = grid.getLineLength(currentRow + rowOffset) - 1;
+                } else {
+                    currentCol = numberOfCols - 1;
                 }
-                else {
-                    curx = numberOfCols - 1;
-                }
+            } else {
+                currentCol = grid.getLineLength(currentRow + rowOffset) - colOffset - 1;
             }
-            else {
-                curx = grid.getLineLength(cury + rowOffset) - colOffset - 1;
-            }
-        }
-
-    }
-
-    private void down() {
-        if ((cury + rowOffset) < grid.getNumRows() - 1) {
-            if (grid.getLineLength(cury + rowOffset + 1) <= curx + colOffset) {
-
-                if (colOffset > grid.getLineLength(cury + rowOffset + 1)) {
-                    colOffset = grid.getLineLength(cury + rowOffset + 1) - numberOfCols;
-                    if (colOffset < 0) {
-                        colOffset = 0;
-                        curx = grid.getLineLength(cury + rowOffset + 1) - 1;
-                    }
-                    else {
-                        curx = numberOfCols - 1;
-                    }
-                }
-                else {
-                    curx = grid.getLineLength(cury + rowOffset + 1) - colOffset - 1;
-                }
-            }
-            if (cury < (numberOfRows - 1)) {
-                cury++;
-            }
-            else {
-                scroll_down();
-            }
-
-        }
-    }
-
-    private void scroll_down() {
-        if ((numberOfRows + rowOffset) < grid.getNumRows()) {
-            rowOffset++;
         }
     }
 }

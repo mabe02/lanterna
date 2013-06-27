@@ -27,8 +27,8 @@ import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.test.TestTerminalFactory;
 
 /**
- *
- * @author Martin
+ * @author Martin Berglund
+ * @author Nicolas Pellegrin
  */
 public class EditAreaTest
 {
@@ -37,9 +37,7 @@ public class EditAreaTest
         final GUIScreen guiScreen = new TestTerminalFactory(args).createGUIScreen();
         guiScreen.getScreen().startScreen();
         final Window window1 = new Window("EditArea window");
-        //window1.addComponent(new Widget(1, 1));
 
-        Panel mainPanel = new Panel(new Border.Invisible(), Panel.Orientation.VERTICAL);
         window1.addComponent(new Label("Multiline EditArea"));
         window1.addComponent(new EditArea(new TerminalSize(45, 15)));
 
