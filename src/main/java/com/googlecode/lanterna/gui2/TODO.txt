@@ -6,3 +6,4 @@
  * TextBox fill character (Issue 66)
  * Telnet support
  * Proper Table class
+ * Manual setFocus() for components
