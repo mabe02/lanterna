@@ -72,4 +72,30 @@ public class TerminalPosition {
     {
         return "[" + column + ":" + row + "]";
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 53 * hash + this.row;
+        hash = 53 * hash + this.column;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj == null) {
+            return false;
+        }
+        if(getClass() != obj.getClass()) {
+            return false;
+        }
+        final TerminalPosition other = (TerminalPosition) obj;
+        if(this.row != other.row) {
+            return false;
+        }
+        if(this.column != other.column) {
+            return false;
+        }
+        return true;
+    }
 }
