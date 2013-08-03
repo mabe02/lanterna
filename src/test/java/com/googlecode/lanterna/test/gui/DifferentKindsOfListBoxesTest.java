@@ -40,7 +40,7 @@ public class DifferentKindsOfListBoxesTest {
         
         final Window window1 = new Window("List boxes window");
         
-        Panel mainPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORISONTAL);
+        Panel mainPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORIZONTAL);
         ((LinearLayout)mainPanel.getLayoutManager()).setPadding(1);
         
         final CheckBoxList checkBoxList = new CheckBoxList();
@@ -102,7 +102,7 @@ public class DifferentKindsOfListBoxesTest {
         window1.addComponent(new EmptySpace());
 
 
-        Panel buttonPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORISONTAL);
+        Panel buttonPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORIZONTAL);
         Button exitButton = new Button("Exit", new Action() {
                 @Override
                 public void doAction()  {

@@ -41,7 +41,7 @@ public class EditAreaTest
         window1.addComponent(new Label("Multiline EditArea"));
         window1.addComponent(new EditArea(new TerminalSize(45, 15)));
 
-        Panel buttonPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORISONTAL);
+        Panel buttonPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORIZONTAL);
         Button exitButton = new Button("Exit", new Action() {
                 @Override
                 public void doAction()  {
