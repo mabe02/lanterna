@@ -200,7 +200,12 @@ public class Screen
 
         hasBeenActivated = true;
         terminal.enterPrivateMode();
+        terminal.getTerminalSize();
+        synchronized(mutex) {
+            resizeScreenIfNeeded();
+        }
         terminal.clearScreen();
+        clear();
         if(cursorPosition != null) {
             terminal.setCursorVisible(true);
             terminal.moveCursor(cursorPosition.getColumn(), cursorPosition.getRow());
@@ -303,6 +308,22 @@ public class Screen
         synchronized(resizeQueue) {
             return !resizeQueue.isEmpty();
         }
+    }
+    
+    /**
+     * Calling this method will check if the terminal has changed since and in that case update the dimensions of this
+     * Screen to match. 
+     * @return Will return true if dimensions were changed, otherwise false. You probably want to clear and 
+     * redraw the entire screen if this method returns true.
+     */
+    public boolean updateScreenSize() {
+        if(!resizePending()) {
+            return false;
+        }
+        synchronized(mutex) {
+            resizeScreenIfNeeded();
+        }
+        return true;
     }
 
     /**
@@ -421,10 +442,13 @@ public class Screen
 
     private class TerminalResizeListener implements Terminal.ResizeListener
     {
+        @Override
         public void onResized(TerminalSize newSize)
         {
             synchronized(resizeQueue) {
-                resizeQueue.add(newSize);
+                if(!terminalSize.equals(newSize)) {
+                    resizeQueue.add(newSize);
+                }
             }
         }
     }
