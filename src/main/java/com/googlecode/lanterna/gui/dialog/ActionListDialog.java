@@ -48,7 +48,7 @@ public class ActionListDialog extends Window
         this.actionListBox = new ActionListBox(new TerminalSize(actionListBoxWidth, 0));
         
         addComponent(actionListBox);
-        Panel cancelPanel = new Panel(new Invisible(), Panel.Orientation.HORISONTAL);
+        Panel cancelPanel = new Panel(new Invisible(), Panel.Orientation.HORIZONTAL);
         cancelPanel.addComponent(new Label("                "));
         cancelPanel.addComponent(new Button("Close", new Action() {
             public void doAction()
