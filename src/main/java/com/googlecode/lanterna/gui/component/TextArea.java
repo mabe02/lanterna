@@ -218,7 +218,7 @@ public class TextArea  extends AbstractInteractableComponent
                     break;
                     
                 case End:
-                    scrollTopIndex = lines.size() - lastSize.getRows();
+                    scrollTopIndex = Math.max(0, lines.size() - lastSize.getRows());
                     break;
                     
                 default:
