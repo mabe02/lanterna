@@ -31,6 +31,7 @@ public interface Window {
     TerminalSize getMinimumSize();
     TerminalSize getMaximumSize();
     boolean isVisible();
+    boolean isInvalid();
     void redraw(TextGUIGraphics graphics);
     boolean handleInput(Key key);
     void close();

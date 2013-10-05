@@ -39,7 +39,7 @@ public class DefaultWindowTextGUI extends AbstractTextGUI implements WindowBased
 
     @Override
     protected boolean isInvalid() {
-        return background.isInvalid();
+        return background.isInvalid() || windowManager.isInvalid();
     }
 
     @Override

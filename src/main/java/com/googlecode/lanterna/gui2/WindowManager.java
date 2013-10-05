@@ -33,6 +33,7 @@ public interface WindowManager {
     Collection<Window> getWindows();
     Window getActiveWindow();
     boolean handleInput(Key key);
+    boolean isInvalid();
     
     public static class Hint {
         protected Hint() {

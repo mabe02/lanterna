@@ -100,6 +100,16 @@ public class StackedModalWindowManager implements WindowManager {
         return windowStack.getLast().handleInput(key);
     }
 
+    @Override
+    public boolean isInvalid() {
+        for(Window window: windowStack) {
+            if(window.isInvalid()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private boolean isCentered(Hint... windowManagerHints) {
         for(Hint hint: windowManagerHints) {
             if(hint == LOCATION_CENTERED) {
