@@ -42,9 +42,26 @@ public abstract class AbstractTextGUI implements TextGUI {
             throw new IllegalStateException("TextGUI is already started");
         }
         
+        textGUIThread = new Thread("LanternaGUI") {
+            @Override
+            public void run() {
+                mainGUILoop();
+            }
+        };
+        textGUIThread.start();
         status = Status.STARTED;
-        textGUIThread = Thread.currentThread();
+    }
+
+    @Override
+    public void stop() {
+        if(status == Status.CREATED || status == Status.STOPPED) {
+            return;
+        }
         
+        status = Status.STOPPED;
+    }
+    
+    private void mainGUILoop() {
         //Draw initial screen, after this only draw when the GUI is marked as invalid
         drawGUI();
         while(status == Status.STARTED) {
@@ -56,6 +73,7 @@ public abstract class AbstractTextGUI implements TextGUI {
             }
             if(key != null) {
                 //Handle input
+                //TODO: Remove this after more testing
                 if(key.getKind() == Key.Kind.Escape) {
                     stop();
                 }
@@ -77,15 +95,6 @@ public abstract class AbstractTextGUI implements TextGUI {
                 catch(InterruptedException e) {}
             }
         }
-    }
-
-    @Override
-    public synchronized void stop() {
-        if(status == Status.CREATED || status == Status.STOPPED) {
-            return;
-        }
-        
-        status = Status.STOPPED;
     }
 
     private void drawGUI() {
