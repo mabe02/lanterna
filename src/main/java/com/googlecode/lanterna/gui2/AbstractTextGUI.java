@@ -20,6 +20,9 @@ package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.screen.Screen;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CountDownLatch;
 
 /**
  *
@@ -27,11 +30,17 @@ import com.googlecode.lanterna.screen.Screen;
  */
 public abstract class AbstractTextGUI implements TextGUI {
     private final Screen screen;
+    private final Queue<Runnable> customTasks;
+    
     private Status status;
-    private Thread textGUIThread;
+    private Thread textGUIThread;   
+    private CountDownLatch waitLatch; 
 
     public AbstractTextGUI(Screen screen) {
         this.screen = screen;
+        this.waitLatch = new CountDownLatch(0);
+        this.customTasks = new ConcurrentLinkedQueue<Runnable>();
+        
         this.status = Status.CREATED;
         this.textGUIThread = null;
     }
@@ -50,6 +59,7 @@ public abstract class AbstractTextGUI implements TextGUI {
         };
         textGUIThread.start();
         status = Status.STARTED;
+        this.waitLatch = new CountDownLatch(1);
     }
 
     @Override
@@ -60,53 +70,79 @@ public abstract class AbstractTextGUI implements TextGUI {
         
         status = Status.STOPPED;
     }
+
+    @Override
+    public void waitForStop() throws InterruptedException {
+        waitLatch.await();
+    }
     
     private void mainGUILoop() {
-        //Draw initial screen, after this only draw when the GUI is marked as invalid
-        drawGUI();
-        while(status == Status.STARTED) {
-            Key key = screen.readInput();
-            boolean needsRefresh = false;
-            if(screen.resizePending()) {
-                screen.updateScreenSize();
-                needsRefresh = true;
-            }
-            if(key != null) {
-                //Handle input
-                //TODO: Remove this after more testing
-                if(key.getKind() == Key.Kind.Escape) {
-                    stop();
-                }
-                if(handleInput(key)) {
+        try {
+            //Draw initial screen, after this only draw when the GUI is marked as invalid
+            drawGUI();
+            while(status == Status.STARTED) {
+                Key key = screen.readInput();
+                boolean needsRefresh = false;
+                if(screen.resizePending()) {
+                    screen.updateScreenSize();
                     needsRefresh = true;
                 }
-            }
-            if(isInvalid()) {
-                needsRefresh = true;
-            }
-            
-            if(needsRefresh) {
-                drawGUI();
-            }
-            else {
-                try {
-                    Thread.sleep(1);
+                if(key != null) {
+                    //Handle input
+                    //TODO: Remove this after more testing
+                    if(key.getKind() == Key.Kind.Escape) {
+                        stop();
+                    }
+                    if(handleInput(key)) {
+                        needsRefresh = true;
+                    }
                 }
-                catch(InterruptedException e) {}
+                while(!customTasks.isEmpty()) {
+                    Runnable r = customTasks.poll();
+                    if(r != null) {
+                        try {
+                            r.run();
+                        }
+                        catch(Throwable t) {
+                            t.printStackTrace();
+                        }
+                    }
+                }
+                if(isInvalid()) {
+                    needsRefresh = true;
+                }
+
+                if(needsRefresh) {
+                    drawGUI();
+                }
+                else {
+                    try {
+                        Thread.sleep(1);
+                    }
+                    catch(InterruptedException e) {}
+                }
             }
+        }
+        finally {
+            waitLatch.countDown();
         }
     }
 
     private void drawGUI() {
-        TextGUIGraphics graphics = new ScreenBackendTextGUIGraphics(screen);
-        drawGUI(graphics);
-        screen.refresh();
+        try {
+            TextGUIGraphics graphics = new ScreenBackendTextGUIGraphics(screen);
+            drawGUI(graphics);
+            screen.refresh();
+        }
+        catch(Throwable t) {
+            t.printStackTrace();
+        }
     }
 
     protected Thread getTextGUIThread() {
         return textGUIThread;
     }
-
+    
     protected abstract boolean isInvalid();
     protected abstract void drawGUI(TextGUIGraphics graphics);
     protected abstract boolean handleInput(Key key);

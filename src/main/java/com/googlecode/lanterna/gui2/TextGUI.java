@@ -26,6 +26,7 @@ public interface TextGUI {
     
     void start();
     void stop();
+    void waitForStop() throws InterruptedException;
     
     public static enum Status {
         CREATED,
