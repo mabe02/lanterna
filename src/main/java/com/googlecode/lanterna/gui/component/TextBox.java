@@ -123,7 +123,14 @@ public class TextBox extends AbstractInteractableComponent
             graphics.applyTheme(Category.TEXTBOX_FOCUSED);
         else
             graphics.applyTheme(Category.TEXTBOX);
-
+        
+        if(visibleLeftPosition >= backend.length()) {
+            visibleLeftPosition = backend.length() - 1;
+            if(visibleLeftPosition < 0) {
+                visibleLeftPosition = 0;
+            }
+        }
+        
         graphics.fillArea(' ');
         String displayString = prerenderTransformation(backend).substring(visibleLeftPosition);
         if(displayString.length() > graphics.getWidth())

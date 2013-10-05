@@ -16,25 +16,32 @@
  * 
  * Copyright (C) 2010-2012 Martin
  */
-package com.googlecode.lanterna.gui.layout;
+package com.googlecode.lanterna.input;
 
-/**
- * This class is used for giving instructions to different layout managers of how they should
- * position various components. You never instantiate objects of this class directly, instead 
- * you will use static final constants belonging to the LayoutManager you have chosen.
- * @author Martin
- */
-public class LayoutParameter {
+import java.util.List;
+
+public class NormalCharacterPattern implements CharacterPattern {
     
-    //Give some meaningful description we can use in toString()
-    private final String description;
-
-    protected LayoutParameter(String description) {
-        this.description = description;
+    @Override
+    public Key getResult(List<Character> matching) {
+        return new Key(matching.get(0), false, false);
     }
 
     @Override
-    public String toString() {
-        return description;
+    public boolean isCompleteMatch(List<Character> currentMatching) {
+        if(currentMatching.size() != 1)
+            return false;
+        if(!Character.isISOControl(currentMatching.get(0)))
+            return false;
+        return true;
     }
+
+    @Override
+    public boolean matches(List<Character> currentMatching) {
+        if(currentMatching.size() != 1)
+            return false;
+        if(!Character.isLetterOrDigit(currentMatching.get(0)))
+            return false;
+        return true;
+    }    
 }

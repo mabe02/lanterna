@@ -29,7 +29,7 @@ package com.googlecode.lanterna.input;
 public class Key
 {
     private final Kind kind;
-    private final char character;
+    private final Character character;
     private final boolean altPressed;
     private final boolean ctrlPressed;
 
@@ -58,13 +58,17 @@ public class Key
         this.ctrlPressed = ctrlPressed;
     }
 
-    public Kind getKind()
-    {
+    /**
+     * What kind of key was pressed? This is a bit misleading as we consider 'normal' keys one kind
+     * but then have one kind per special keys. So, "Page Up" is one kind, "Insert" is one kind but
+     * "G" is a normal key. If getKind() returns Kind.NormalKey, you can use getCharacter() to see
+     * exactly which character was typed in.
+     */
+    public Kind getKind() {
         return kind;
     }
 
-    public char getCharacter()
-    {
+    public Character getCharacter() {
         return character;
     }
 
@@ -78,72 +82,90 @@ public class Key
 
     public enum Kind
     {
-        NormalKey('N'),
-        Escape('\\'),
-        Backspace('B'),
-        ArrowLeft('L'),
-        ArrowRight('R'),
-        ArrowUp('U'),
-        ArrowDown('D'),
-        Insert('I'),
-        Delete('T'),
-        Home('H'),
-        End('E'),
-        PageUp('P'),
-        PageDown('O'),
+        NormalKey,
+        Escape,
+        Backspace,
+        ArrowLeft,
+        ArrowRight,
+        ArrowUp,
+        ArrowDown,
+        Insert,
+        Delete,
+        Home,
+        End,
+        PageUp,
+        PageDown,
         Tab('\t'),
-        ReverseTab('/'),
+        ReverseTab,
         Enter('\n'),
-        F1('1'),
-        F2('2'),
-        F3('3'),
-        F4('4'),
-        F5('5'),
-        F6('6'),
-        F7('7'),
-        F8('8'),
-        F9('9'),
-        F10('Q'),   //No idea what to pick here, but it doesn't really matter
-        F11('W'),   //No idea what to pick here, but it doesn't really matter
-        F12('Y'),   //No idea what to pick here, but it doesn't really matter
-        Unknown('!'),
-        CursorLocation('£');
+        F1,
+        F2,
+        F3,
+        F4,
+        F5,
+        F6,
+        F7,
+        F8,
+        F9,
+        F10,   //No idea what to pick here, but it doesn't really matter
+        F11,   //No idea what to pick here, but it doesn't really matter
+        F12,   //No idea what to pick here, but it doesn't really matter
+        Unknown,
+        CursorLocation,
+        ;
 
-        private char representationKey;
+        private Character representationKey;
 
-        private Kind(char representationKey)
-        {
+        private Kind() {
+            this(null);
+        }
+        
+        private Kind(Character representationKey) {
             this.representationKey = representationKey;
         }
 
-        public char getRepresentationKey()
-        {
+        public Character getRepresentationKey() {
             return representationKey;
         }
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return getKind().toString() + (getKind() == Kind.NormalKey ? ": " + character : "") +
                 (ctrlPressed ? " (ctrl)" : "") + (altPressed ? " (alt)" : "");
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
-        if(obj == null)
+    public boolean equals(Object obj) {
+        if (obj == null) {
             return false;
-        if(obj.getClass() != getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
-        return character == ((Key)(obj)).character;
+        }
+        final Key other = (Key) obj;
+        if (this.kind != other.kind) {
+            return false;
+        }
+        if (this.character != other.character) {
+            return false;
+        }
+        if (this.altPressed != other.altPressed) {
+            return false;
+        }
+        if (this.ctrlPressed != other.ctrlPressed) {
+            return false;
+        }
+        return true;
     }
 
     @Override
-    public int hashCode()
-    {
-        int hash = 3;
-        hash = 73 * hash + this.character;
+    public int hashCode() {
+        int hash = 7;
+        hash = 19 * hash + (this.kind != null ? this.kind.hashCode() : 0);
+        hash = 19 * hash + this.character;
+        hash = 19 * hash + (this.altPressed ? 1 : 0);
+        hash = 19 * hash + (this.ctrlPressed ? 1 : 0);
         return hash;
     }
 }

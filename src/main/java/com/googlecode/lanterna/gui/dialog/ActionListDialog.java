@@ -36,14 +36,17 @@ import com.googlecode.lanterna.terminal.TerminalSize;
 public class ActionListDialog extends Window
 {
     private final ActionListBox actionListBox;
+    private final boolean closeBeforeAction;
 
-    private ActionListDialog(String title, String description, int actionListBoxWidth) {
+    private ActionListDialog(String title, String description, int actionListBoxWidth, boolean closeBeforeAction) {
         super(title);
         
         if (description != null)
         	addComponent(new Label(description));
         
-        actionListBox = new ActionListBox(new TerminalSize(actionListBoxWidth, 0));
+        this.closeBeforeAction = closeBeforeAction;
+        this.actionListBox = new ActionListBox(new TerminalSize(actionListBoxWidth, 0));
+        
         addComponent(actionListBox);
         Panel cancelPanel = new Panel(new Invisible(), Panel.Orientation.HORIZONTAL);
         cancelPanel.addComponent(new Label("                "));
@@ -60,8 +63,13 @@ public class ActionListDialog extends Window
         actionListBox.addAction(title, new Action() {
             @Override
             public void doAction() {
+                if(closeBeforeAction) {
+                    close();
+                }
                 action.doAction();
-                close();
+                if(!closeBeforeAction) {
+                    close();
+                }
             }
         });
         actionListBox.setPreferredSize(new TerminalSize(actionListBox.getPreferredSize().getColumns(), 
@@ -90,13 +98,29 @@ public class ActionListDialog extends Window
      */
     public static void showActionListDialog(GUIScreen owner, String title, String description, int itemWidth, Action... actions)
     {
+        showActionListDialog(owner, title, description, itemWidth, false, actions);
+    }
+    
+    /**
+     * Will display a dialog prompting the user to select an action from a list.
+     * The label of each action will be the result of calling toString() on each
+     * Action object.
+     * @param owner Screen to display the dialog on
+     * @param title Title of the dialog
+     * @param description Description label inside the dialog
+     * @param itemWidth Width of the labels in the list, this will effectively set how wide the dialog is
+     * @param closeBeforeAction When an action in chosen, should the dialog be closed before the action is executed?
+     * @param actions List of actions inside the dialog
+     */
+    public static void showActionListDialog(GUIScreen owner, String title, String description, int itemWidth, boolean closeBeforeAction, Action... actions)
+    {
         //Autodetect width?
         if(itemWidth == 0) {
             showActionListDialog(owner, title, description, actions);
             return;
         }
         
-        ActionListDialog actionListDialog = new ActionListDialog(title, description, itemWidth);
+        ActionListDialog actionListDialog = new ActionListDialog(title, description, itemWidth, closeBeforeAction);
         for(Action action: actions)
             actionListDialog.addAction(action.toString(), action);
         owner.showWindow(actionListDialog, GUIScreen.Position.CENTER);

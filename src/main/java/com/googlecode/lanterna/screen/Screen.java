@@ -198,7 +198,12 @@ public class Screen
 
         hasBeenActivated = true;
         terminal.enterPrivateMode();
+        terminal.getTerminalSize();
+        synchronized(mutex) {
+            resizeScreenIfNeeded();
+        }
         terminal.clearScreen();
+        clear();
         if(cursorPosition != null) {
             terminal.setCursorVisible(true);
             terminal.moveCursor(cursorPosition.getColumn(), cursorPosition.getRow());
@@ -306,20 +311,32 @@ public class Screen
     }
     
     /**
-     * This method will check if there is a resize pending and, in that case, 
-     * resize the internal buffer of the Screen to match the new dimensions. 
-     * Please note that this method call won't update the content of the 
-     * terminal, you will need to call {@code refresh()} in order to do this.
-     * You would typically call this method first, then draw whatever you 
-     * need to the screen and finally call {@code refresh()} to make the 
-     * changes visible.
+     * Calling this method will check if the terminal has changed since and in that case update the dimensions of this
+     * Screen to match. 
+     * @return Will return true if dimensions were changed, otherwise false. You probably want to clear and 
+     * redraw the entire screen if this method returns true.
      */
-    public void doResize() {
+    public boolean updateScreenSize() {
+        if(!resizePending()) {
+            return false;
+        }
         synchronized(mutex) {
             resizeScreenIfNeeded();
         }
+        return true;
     }
 
+    /**
+     * Clears the terminal and repaints with the whole content of the Screen. This is useful of 
+     * something has written to the terminal outside of the Screen (System.out or through direct
+     * calls to the underlying Terminal) and you want to make sure that the content of Screen
+     * is completely pushed to the terminal.
+     */
+    public void completeRefresh() {
+        wholeScreenInvalid = true;
+        refresh();
+    }
+    
     /**
      * Call this method to make changes done through {@code putCharacter(...)},
      * {@code putString(...)} visible on the terminal. The screen will calculate
@@ -430,10 +447,13 @@ public class Screen
 
     private class TerminalResizeListener implements Terminal.ResizeListener
     {
+        @Override
         public void onResized(TerminalSize newSize)
         {
             synchronized(resizeQueue) {
-                resizeQueue.add(newSize);
+                if(!terminalSize.equals(newSize)) {
+                    resizeQueue.add(newSize);
+                }
             }
         }
     }

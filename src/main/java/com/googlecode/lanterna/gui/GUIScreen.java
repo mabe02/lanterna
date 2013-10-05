@@ -227,12 +227,19 @@ public class GUIScreen
             }
 
             try {
+                List<Action> actions = null;
                 synchronized(actionToRunInEventThread) {
-                    List<Action> actions = new ArrayList<Action>(actionToRunInEventThread);
-                    actionToRunInEventThread.clear();
-                    for(Action nextAction: actions)
-                        nextAction.doAction();
+                    if(!actionToRunInEventThread.isEmpty()) {
+                        actions = new ArrayList<Action>(actionToRunInEventThread);
+                        actionToRunInEventThread.clear();
+                    }
                 }
+                
+                if(actions != null) {
+                    for(Action nextAction: actions) {
+                        nextAction.doAction();
+                    }
+                }                
 
                 boolean repainted = update();
 

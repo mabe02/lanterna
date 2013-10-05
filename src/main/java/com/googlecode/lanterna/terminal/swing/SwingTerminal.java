@@ -209,32 +209,68 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
     }
 
     @Override
-    public void enterPrivateMode()
-    {
-        terminalFrame = new JFrame("Terminal");
-        terminalFrame.addComponentListener(new FrameResizeListener());
-        terminalFrame.getContentPane().setLayout(new BorderLayout());
-        terminalFrame.getContentPane().add(terminalRenderer, BorderLayout.CENTER);
-        terminalFrame.addKeyListener(new KeyCapturer());
-        terminalFrame.pack();
-        terminalFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        terminalFrame.setLocationByPlatform(true);
-        terminalFrame.setVisible(true);
-        terminalFrame.setFocusTraversalKeysEnabled(false);
-        //terminalEmulator.setSize(terminalEmulator.getPreferredSize());
-        terminalFrame.pack();
-        blinkTimer.start();
+    public void enterPrivateMode() {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                terminalFrame = new JFrame("Terminal");
+                terminalFrame.addComponentListener(new FrameResizeListener());
+                terminalFrame.getContentPane().setLayout(new BorderLayout());
+                terminalFrame.getContentPane().add(terminalRenderer, BorderLayout.CENTER);
+                terminalFrame.addKeyListener(new KeyCapturer());
+                terminalFrame.pack();
+                terminalFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+                terminalFrame.setLocationByPlatform(true);
+                terminalFrame.setVisible(true);
+                terminalFrame.setFocusTraversalKeysEnabled(false);
+                //terminalEmulator.setSize(terminalEmulator.getPreferredSize());
+                terminalFrame.pack();
+                blinkTimer.start();
+            }
+        };
+        if(SwingUtilities.isEventDispatchThread()) {
+            runnable.run();
+        }
+        else {
+            try {
+                SwingUtilities.invokeAndWait(runnable);
+            }
+            catch(Exception e) {
+                throw new RuntimeException(
+                        "Unexpected " + e.getClass().getSimpleName() + 
+                            " while creating SwingTerminal JFrame", e);
+            }
+        }
     }
 
     @Override
-    public void exitPrivateMode()
-    {
-        if(terminalFrame == null)
-            return;
-        
-        blinkTimer.stop();
-        terminalFrame.setVisible(false);
-        terminalFrame.dispose();
+    public void exitPrivateMode() {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                if (terminalFrame == null) {
+                    return;
+                }
+
+                blinkTimer.stop();
+                terminalFrame.setVisible(false);
+                terminalFrame.dispose();
+                terminalFrame = null;
+            }
+        };
+        if (SwingUtilities.isEventDispatchThread()) {
+            runnable.run();
+        }
+        else {
+            try {
+                SwingUtilities.invokeAndWait(runnable);
+            }
+            catch (Exception e) {
+                throw new RuntimeException(
+                        "Unexpected " + e.getClass().getSimpleName()
+                        + " while disposing SwingTerminal JFrame", e);
+            }
+        }
     }
 
     @Override
@@ -314,7 +350,9 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
             SwingUtilities.invokeLater(new Runnable() {
                 public void run()
                 {
-                    terminalFrame.pack();
+                    if(terminalFrame != null) {
+                        terminalFrame.pack();
+                    }
                 }
             });
 
@@ -616,10 +654,15 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
                         return appearance.getColorPalette().getNormalCyan();
 
                 case DEFAULT:
-                    if(brightHint)
-                        return appearance.getColorPalette().getDefaultBrightColor();
-                    else
-                        return appearance.getColorPalette().getDefaultColor();
+                    if(foregroundHint) {
+                        if(brightHint)
+                            return appearance.getColorPalette().getDefaultBrightColor();
+                        else
+                            return appearance.getColorPalette().getDefaultColor();
+                    }
+                    else {
+                        return appearance.getColorPalette().getNormalBlack();
+                    }
 
                 case GREEN:
                     if(brightHint)
