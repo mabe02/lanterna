@@ -19,6 +19,7 @@
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.input.Key;
+import java.util.Collection;
 
 /**
  *
@@ -29,6 +30,7 @@ public interface WindowManager {
     void addWindow(Window window, Hint... windowManagerHints);
     void removeWindow(Window window);
     
+    Collection<Window> getWindows();
     Window getActiveWindow();
     boolean handleInput(Key key);
     

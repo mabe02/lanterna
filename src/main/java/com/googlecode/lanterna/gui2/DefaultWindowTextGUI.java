@@ -21,6 +21,7 @@ package com.googlecode.lanterna.gui2;
 import com.googlecode.lanterna.gui2.WindowManager.Hint;
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.screen.Screen;
+import java.util.Collection;
 
 /**
  *
@@ -59,5 +60,10 @@ public class DefaultWindowTextGUI extends AbstractTextGUI implements WindowBased
     @Override
     public void removeWindow(Window window) {
         windowManager.removeWindow(window);
+    }
+
+    @Override
+    public Collection<Window> getWindows() {
+        return windowManager.getWindows();
     }
 }

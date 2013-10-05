@@ -18,6 +18,8 @@
  */
 package com.googlecode.lanterna.gui2;
 
+import java.util.Collection;
+
 /**
  *
  * @author Martin
@@ -25,4 +27,5 @@ package com.googlecode.lanterna.gui2;
 public interface WindowBasedTextGUI extends TextGUI {
     void addWindow(Window window, WindowManager.Hint... windowManagerHints);
     void removeWindow(Window window);
+    Collection<Window> getWindows();
 }

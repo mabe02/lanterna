@@ -20,6 +20,8 @@ package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.terminal.TerminalPosition;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 
 /**
@@ -72,6 +74,11 @@ public class StackedModalWindowManager implements WindowManager {
         }
         topLeftPositions.remove(index);
         windowStack.remove(index);
+    }
+
+    @Override
+    public Collection<Window> getWindows() {
+        return new ArrayList<Window>(windowStack);
     }
 
     @Override
