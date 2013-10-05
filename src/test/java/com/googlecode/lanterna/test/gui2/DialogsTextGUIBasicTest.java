@@ -48,7 +48,10 @@ public class DialogsTextGUIBasicTest {
             }
         });
         textGUI.start();
-        
+        try {
+            textGUI.waitForStop();
+        }
+        catch(InterruptedException e) {}
         //This text GUI will terminate itself, so we don't need to
         
         screen.stopScreen();
