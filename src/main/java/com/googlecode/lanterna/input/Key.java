@@ -21,8 +21,7 @@ package com.googlecode.lanterna.input;
 
 /**
  * Represents a key pressed. Use getKind() to see if it's a normal alpha-numeric
- * key or any special key. Currently the function keys F1 - F12 are not implemented.
- * Also, sorry if the special keys are sort of european-language centered, that's
+ * key or any special key. Sorry if the special keys are sort of european-language centered, that's
  * unfortunately the only keyboard I have to test this with.
  * @author Martin
  */
