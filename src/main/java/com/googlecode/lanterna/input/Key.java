@@ -107,9 +107,9 @@ public class Key
         F7,
         F8,
         F9,
-        F10,   //No idea what to pick here, but it doesn't really matter
-        F11,   //No idea what to pick here, but it doesn't really matter
-        F12,   //No idea what to pick here, but it doesn't really matter
+        F10,
+        F11,
+        F12,
         Unknown,
         CursorLocation,
         ;
