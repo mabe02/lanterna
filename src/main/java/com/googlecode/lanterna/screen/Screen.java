@@ -226,6 +226,9 @@ public class Screen
         if(!hasBeenActivated)
             return;
 
+        while(readInput() != null) {
+            //Drain the input queue before exiting private mode and closing the Screen.
+        }
         terminal.exitPrivateMode();
         hasBeenActivated = false;
     }
