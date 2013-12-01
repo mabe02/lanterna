@@ -13,12 +13,16 @@ import com.googlecode.lanterna.terminal.Terminal;
  * @author martin
  */
 public class Issue78 {
-    public static void main(String[] args) throws InterruptedException {
-        Terminal terminal = TerminalFacade.createTextTerminal();
-        Screen screen = new Screen(terminal);
-        Thread.sleep(1000);
-        while(terminal.readInput() != null) {
-            ;
+    public static void main(String[] args) {
+        Terminal t = TerminalFacade.createTextTerminal();
+        t.enterPrivateMode();
+        Screen s = new Screen(t);
+        s.startScreen();
+        try {
+            Thread.sleep(1000);
         }
+        catch(InterruptedException e) {}
+        s.stopScreen();
+        t.exitPrivateMode();
     }
 }
