@@ -120,8 +120,9 @@ public class Window
      */
     TerminalSize getPreferredSize()
     {
-        if(windowSizeOverride != null)
-            return windowSizeOverride;
+        TerminalSize override = getWindowSizeOverride();
+        if(override != null)
+            return override;
         else
             return contentPane.getPreferredSize();  //Automatically calculate the size
     }
