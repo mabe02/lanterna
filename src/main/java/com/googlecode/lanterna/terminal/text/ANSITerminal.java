@@ -32,7 +32,7 @@ import java.nio.charset.Charset;
  */
 public abstract class ANSITerminal extends StreamBasedTerminal
 {
-    ANSITerminal(InputStream terminalInput, OutputStream terminalOutput, Charset terminalCharset)
+    public ANSITerminal(InputStream terminalInput, OutputStream terminalOutput, Charset terminalCharset)
     {
         super(terminalInput, terminalOutput, terminalCharset);
         addInputProfile(new CommonProfile());
