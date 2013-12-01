@@ -57,6 +57,7 @@ public class UnixTerminal extends ANSITerminal
     
     private final Behaviour terminalBehaviour;
     private String sttyStatusToRestore;
+    private boolean inPrivateMode;
             
     /**
      * Creates a UnixTerminal using a specified input stream, output stream and character set.
@@ -110,6 +111,8 @@ public class UnixTerminal extends ANSITerminal
         this.terminalSizeQuerier = customSizeQuerier;
         this.terminalBehaviour = terminalBehaviour;
         this.sttyStatusToRestore = null;
+        this.inPrivateMode = false;
+        
         addInputProfile(new GnomeTerminalProfile());
         addInputProfile(new PuttyProfile());
         addInputProfile(new OSXKeyMappingProfile());
@@ -175,8 +178,12 @@ public class UnixTerminal extends ANSITerminal
     @Override
     public void enterPrivateMode()
     {
-        super.enterPrivateMode();
+        if(inPrivateMode) {
+            return;
+        }
+        inPrivateMode = true;
         saveSTTY();
+        super.enterPrivateMode();
         setCBreak(true);
         setEcho(false);
         sttyMinimumCharacterForRead(1);
@@ -188,6 +195,7 @@ public class UnixTerminal extends ANSITerminal
     {
         super.exitPrivateMode();
         restoreSTTY();
+        inPrivateMode = false;
     }
 
     @Override
