@@ -39,6 +39,7 @@ public abstract class AbstractListBox extends AbstractInteractableComponent {
     private TerminalSize preferredSizeOverride;
     private int selectedIndex;
     private int scrollTopIndex;
+    private int pageSize;
 
     public AbstractListBox() {
         this(null);
@@ -49,6 +50,7 @@ public abstract class AbstractListBox extends AbstractInteractableComponent {
         this.preferredSizeOverride = preferredSize;
         this.selectedIndex = -1;
         this.scrollTopIndex = 0;
+        this.pageSize = 1;
     }
 
     @Override
@@ -120,6 +122,9 @@ public abstract class AbstractListBox extends AbstractInteractableComponent {
     }
     
     public void repaint(TextGraphics graphics) {
+        //update the page size, used for page up and page down keys
+        pageSize = graphics.getHeight();
+        
         if(selectedIndex != -1) {
             if(selectedIndex < scrollTopIndex)
                 scrollTopIndex = selectedIndex;
@@ -193,6 +198,7 @@ public abstract class AbstractListBox extends AbstractInteractableComponent {
         return theme.getDefinition(Category.LIST_ITEM);
     }
 
+    @Override
     public Result keyboardInteraction(Key key) {
         try {
             switch(key.getKind()) {
@@ -218,6 +224,28 @@ public abstract class AbstractListBox extends AbstractInteractableComponent {
                     selectedIndex--;
                     if(selectedIndex - scrollTopIndex < 0)
                         scrollTopIndex--;
+                    break;
+                    
+                case Home:
+                    selectedIndex = 0;
+                    break;
+                    
+                case End:
+                    selectedIndex = items.size() - 1;
+                    break;
+                    
+                case PageUp:
+                    selectedIndex -= pageSize;
+                    if(selectedIndex < 0) {
+                        selectedIndex = 0;
+                    }
+                    break;
+                    
+                case PageDown:
+                    selectedIndex += pageSize;
+                    if(selectedIndex > items.size() - 1) {
+                        selectedIndex = items.size() - 1;
+                    }
                     break;
                     
                 default:
