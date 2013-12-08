@@ -29,7 +29,7 @@ public class LayoutParameter {
     //Give some meaningful description we can use in toString()
     private final String description;
 
-    protected LayoutParameter(String description) {
+    public LayoutParameter(String description) {
         this.description = description;
     }
 
