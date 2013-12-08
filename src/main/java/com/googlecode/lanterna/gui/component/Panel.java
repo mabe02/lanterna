@@ -69,7 +69,7 @@ public class Panel extends AbstractContainer
     public Panel(String title, Border border, Orientation panelOrientation)
     {
         this.border = border;
-        if(panelOrientation == Orientation.HORISONTAL)
+        if(panelOrientation == Orientation.HORIZONTAL)
             layoutManager = new HorisontalLayout();
         else
             layoutManager = new VerticalLayout();
@@ -152,7 +152,7 @@ public class Panel extends AbstractContainer
     protected TerminalSize calculatePreferredSize() {
         TerminalSize preferredSize = border.surroundAreaSize(layoutManager.getPreferredSize());
         if(title.length() + 4 > preferredSize.getColumns())
-            preferredSize.setColumns(title.length() + 4);
+            preferredSize = preferredSize.withColumns(title.length() + 4);
         return preferredSize;
     }
     
@@ -175,7 +175,7 @@ public class Panel extends AbstractContainer
     
     public enum Orientation
     {
-        HORISONTAL,
+        HORIZONTAL,
         VERTICAL
     }
 

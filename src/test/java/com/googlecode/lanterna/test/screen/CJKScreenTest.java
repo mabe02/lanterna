@@ -8,6 +8,7 @@ import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.ScreenCharacterStyle;
 import com.googlecode.lanterna.screen.ScreenWriter;
 import com.googlecode.lanterna.terminal.Terminal;
+import com.googlecode.lanterna.terminal.TextColor;
 import com.googlecode.lanterna.test.TestTerminalFactory;
 
 /**
@@ -20,8 +21,8 @@ public class CJKScreenTest {
         screen.startScreen();
 
         ScreenWriter writer = new ScreenWriter(screen);
-        writer.setForegroundColor(Terminal.Color.DEFAULT);
-        writer.setBackgroundColor(Terminal.Color.DEFAULT);
+        writer.setForegroundColor(TextColor.ANSI.DEFAULT);
+        writer.setBackgroundColor(TextColor.ANSI.DEFAULT);
         writer.drawString(5, 5,  "Chinese (simplified):  斯瓦尔巴群岛是位于北极地区的群岛，为挪威最北界的国土范围。");
         writer.drawString(5, 7,  "Chinese (traditional): 斯瓦巴群島是位於北極地區的群島，為挪威最北界的國土範圍。");
         writer.drawString(5, 9,  "Japanese:              スヴァールバル諸島は、北極圏のバレンツ海にある群島。");

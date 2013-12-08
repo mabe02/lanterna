@@ -16,74 +16,64 @@
  * 
  * Copyright (C) 2010-2012 Martin
  */
-
 package com.googlecode.lanterna.terminal;
 
 /**
- * Terminal dimensions in 2-d space, measured in number of rows and columns
+ * Terminal dimensions in 2-d space, measured in number of rows and columns. This class is immutable and cannot change
+ * its internal state after creation.
+ *
  * @author Martin
  */
 public class TerminalSize {
-    private int columns;
-    private int rows;
 
-    public TerminalSize(int columns, int rows)
-    {
-        setColumns(columns);
-        setRows(rows);
-    }
+    private final int columns;
+    private final int rows;
 
-    public TerminalSize(TerminalSize terminalSize)
-    {
-        this(terminalSize.getColumns(), terminalSize.getRows());
-    }
-
-    public int getColumns()
-    {
-        return columns;
-    }
-
-    public void setColumns(int columns)
-    {
-        if(columns < 0)
+    public TerminalSize(int columns, int rows) {
+        if (columns < 0) {
             throw new IllegalArgumentException("TerminalSize.columns cannot be less than 0!");
-
-        this.columns = columns;
-    }
-
-    public int getRows()
-    {
-        return rows;
-    }
-
-    public void setRows(int rows)
-    {
-        if(rows < 0)
+        }
+        if (rows < 0) {
             throw new IllegalArgumentException("TerminalSize.rows cannot be less than 0!");
-        
+        }
+        this.columns = columns;
         this.rows = rows;
     }
 
+    public int getColumns() {
+        return columns;
+    }
+
+    public TerminalSize withColumns(int columns) {
+        return new TerminalSize(columns, this.rows);
+    }
+
+    public int getRows() {
+        return rows;
+    }
+
+    public TerminalSize withRows(int rows) {
+        return new TerminalSize(this.columns, rows);
+    }
+
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "{" + columns + "x" + rows + "}";
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
-        if(obj instanceof TerminalSize == false)
+    public boolean equals(Object obj) {
+        if (obj instanceof TerminalSize == false) {
             return false;
+        }
 
-        TerminalSize other = (TerminalSize)obj;
-        return columns == other.columns &&
-                rows == other.rows;
+        TerminalSize other = (TerminalSize) obj;
+        return columns == other.columns
+                && rows == other.rows;
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         int hash = 5;
         hash = 53 * hash + this.columns;
         hash = 53 * hash + this.rows;

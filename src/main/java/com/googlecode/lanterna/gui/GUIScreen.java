@@ -125,7 +125,7 @@ public class GUIScreen
             screen.refresh();   //Do an initial refresh if there are any resizes in the queue
         
         final TextGraphics textGraphics = new TextGraphicsImpl(new TerminalPosition(0, 0),
-                new TerminalSize(screen.getTerminalSize()), screen, guiTheme);
+                screen.getTerminalSize(), screen, guiTheme);
 
         backgroundRenderer.drawBackground(textGraphics);
         
@@ -148,32 +148,32 @@ public class GUIScreen
             
             if(windowPlacement.positionPolicy == Position.CENTER) {
                 if(windowPlacement.getWindow().maximisesHorisontally())
-                    topLeft.setColumn(2);
+                    topLeft = topLeft.withColumn(2);
                 else
-                    topLeft.setColumn((screenSizeColumns / 2) - (preferredSize.getColumns() / 2));
+                    topLeft = topLeft.withColumn((screenSizeColumns / 2) - (preferredSize.getColumns() / 2));
 
                 if(windowPlacement.getWindow().maximisesVertically())
-                    topLeft.setRow(1);
+                    topLeft = topLeft.withRow(1);
                 else
-                    topLeft.setRow((screenSizeRows / 2) - (preferredSize.getRows() / 2));
+                    topLeft = topLeft.withRow((screenSizeRows / 2) - (preferredSize.getRows() / 2));
             }            
             int maxSizeWidth = screenSizeColumns - windowPlacement.getTopLeft().getColumn() - 1;
             int maxSizeHeight = screenSizeRows - windowPlacement.getTopLeft().getRow() - 1;
 
             if(preferredSize.getColumns() > maxSizeWidth || windowPlacement.getWindow().maximisesHorisontally())
-                preferredSize.setColumns(maxSizeWidth);
+                preferredSize = preferredSize.withColumns(maxSizeWidth);
             if(preferredSize.getRows() > maxSizeHeight || windowPlacement.getWindow().maximisesVertically())
-                preferredSize.setRows(maxSizeHeight);
+                preferredSize = preferredSize.withRows(maxSizeHeight);
             
             if(windowPlacement.getPositionPolicy() == Position.FULL_SCREEN) {
-                preferredSize.setColumns(preferredSize.getColumns() + 1);
-                preferredSize.setRows(preferredSize.getRows() + 1);
+                preferredSize = preferredSize.withColumns(preferredSize.getColumns() + 1);
+                preferredSize = preferredSize.withRows(preferredSize.getRows() + 1);
             }
             
             if(topLeft.getColumn() < 0)
-                topLeft.setColumn(0);
+                topLeft = topLeft.withColumn(0);
             if(topLeft.getRow() < 0)
-                topLeft.setRow(0);
+                topLeft = topLeft.withRow(0);
 
             TextGraphics subGraphics = textGraphics.subAreaGraphics(topLeft,
                     new TerminalSize(preferredSize.getColumns(), preferredSize.getRows()));

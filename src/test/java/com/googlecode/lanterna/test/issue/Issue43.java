@@ -47,7 +47,7 @@ public class Issue43 {
         window.addComponent(new EmptySpace());
         window.addComponent(new Label("Add new item"));
         
-        Panel panel = new Panel(Panel.Orientation.HORISONTAL);
+        Panel panel = new Panel(Panel.Orientation.HORIZONTAL);
         final TextBox textBox = new TextBox();
         panel.addComponent(textBox, LinearLayout.GROWS_HORIZONTALLY);
         panel.addComponent(new Button("Add", new Action() {

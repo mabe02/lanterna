@@ -25,6 +25,7 @@ import com.googlecode.lanterna.screen.ScreenWriter;
 import com.googlecode.lanterna.screen.TabBehaviour;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalPosition;
+import com.googlecode.lanterna.terminal.TextColor;
 import com.googlecode.lanterna.test.TestTerminalFactory;
 
 /**
@@ -56,12 +57,12 @@ public class ScreenTabTest {
     private void drawStrings(String topTitle)
     {
         ScreenWriter writer = new ScreenWriter(screen);
-        writer.setForegroundColor(Terminal.Color.DEFAULT);
-        writer.setBackgroundColor(Terminal.Color.DEFAULT);
+        writer.setForegroundColor(TextColor.ANSI.DEFAULT);
+        writer.setBackgroundColor(TextColor.ANSI.DEFAULT);
         writer.fillScreen(' ');
 
-        writer.setForegroundColor(Terminal.Color.DEFAULT);
-        writer.setBackgroundColor(Terminal.Color.DEFAULT);
+        writer.setForegroundColor(TextColor.ANSI.DEFAULT);
+        writer.setBackgroundColor(TextColor.ANSI.DEFAULT);
         writer.drawString(0, 0, topTitle, ScreenCharacterStyle.Blinking);
         screen.setTabBehaviour(TabBehaviour.CONVERT_TO_ONE_SPACE);
         writer.drawString(10, 1, "TabBehaviour.CONVERT_TO_ONE_SPACE:    |\t|\t|\t|\t|");

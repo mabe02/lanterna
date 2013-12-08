@@ -68,7 +68,7 @@ public class ButtonTest
                 return new TerminalSize(20, 6);
             }
         });
-        Panel buttonPanel = new Panel(Panel.Orientation.HORISONTAL);
+        Panel buttonPanel = new Panel(Panel.Orientation.HORIZONTAL);
         Button button1 = new Button("Button1", new Action() {
             @Override
             public void doAction()

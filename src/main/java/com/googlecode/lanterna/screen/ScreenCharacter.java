@@ -19,6 +19,7 @@
 
 package com.googlecode.lanterna.screen;
 
+import com.googlecode.lanterna.terminal.TextColor;
 import com.googlecode.lanterna.terminal.Terminal;
 import java.util.EnumSet;
 import java.util.Set;
@@ -29,22 +30,24 @@ import java.util.Set;
  */
 class ScreenCharacter
 {
+    static final ScreenCharacter CJK_PADDING_CHARACTER = new ScreenCharacter('\0');
+    
     private final char character;
-    private final Terminal.Color foregroundColor;
-    private final Terminal.Color backgroundColor;
+    private final TextColor foregroundColor;
+    private final TextColor backgroundColor;
     private final boolean bold;
     private final boolean underline;
     private final boolean reverse;
     private final boolean blinking;
     
     ScreenCharacter(char character) {
-        this(character, Terminal.Color.DEFAULT, Terminal.Color.DEFAULT);
+        this(character, TextColor.ANSI.DEFAULT, TextColor.ANSI.DEFAULT);
     }
     
     ScreenCharacter(
             char character, 
-            Terminal.Color foregroundColor, 
-            Terminal.Color backgroundColor) {
+            TextColor foregroundColor, 
+            TextColor backgroundColor) {
         this(character, foregroundColor, backgroundColor, EnumSet.noneOf(ScreenCharacterStyle.class));
     }
     
@@ -55,13 +58,15 @@ class ScreenCharacter
      */
     ScreenCharacter(
             char character, 
-            Terminal.Color foregroundColor, 
-            Terminal.Color backgroundColor,
+            TextColor foregroundColor, 
+            TextColor backgroundColor,
             Set<ScreenCharacterStyle> style) {
-    	if(foregroundColor == null)
-            foregroundColor = Terminal.Color.DEFAULT;
-        if(backgroundColor == null)
-            backgroundColor = Terminal.Color.DEFAULT;
+    	if(foregroundColor == null) {
+                    foregroundColor = TextColor.ANSI.DEFAULT;
+                }
+        if(backgroundColor == null) {
+                    backgroundColor = TextColor.ANSI.DEFAULT;
+                }
         
         this.character = character;
         this.foregroundColor = foregroundColor;
@@ -91,7 +96,7 @@ class ScreenCharacter
         return character;
     }
 
-    Terminal.Color getBackgroundColor() {
+    TextColor getBackgroundColor() {
         return backgroundColor;
     }
 
@@ -99,7 +104,7 @@ class ScreenCharacter
         return bold;
     }
 
-    Terminal.Color getForegroundColor() {
+    TextColor getForegroundColor() {
         return foregroundColor;
     }
 
@@ -117,8 +122,12 @@ class ScreenCharacter
 
     @Override
     public boolean equals(Object obj) {
-        if(obj instanceof ScreenCharacter == false)
+        if(obj == this) {
+            return true;
+        }
+        if(obj instanceof ScreenCharacter == false) {
             return false;
+        }
 
         ScreenCharacter other = ((ScreenCharacter)(obj));
         return character == other.getCharacter() &&

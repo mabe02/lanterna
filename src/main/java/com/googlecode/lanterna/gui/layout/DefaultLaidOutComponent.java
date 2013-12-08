@@ -28,8 +28,8 @@ import com.googlecode.lanterna.terminal.TerminalSize;
  */
 public class DefaultLaidOutComponent implements LayoutManager.LaidOutComponent {
     final Component component;
-    final TerminalSize size;
-    final TerminalPosition topLeftPosition;
+    TerminalSize size;
+    TerminalPosition topLeftPosition;
 
     public DefaultLaidOutComponent(Component component, TerminalSize size, TerminalPosition topLeftPosition) {
         this.component = component;

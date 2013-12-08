@@ -244,6 +244,7 @@ public interface Terminal extends InputProvider
         EXIT_BLINK
     }
 
+    @Deprecated
     public enum Color
     {
         BLACK(0),

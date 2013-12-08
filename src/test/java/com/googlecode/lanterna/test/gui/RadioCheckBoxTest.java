@@ -73,7 +73,7 @@ public class RadioCheckBoxTest
         mainPanel.addComponent(listBox);
         window1.addComponent(mainPanel);
 
-        Panel buttonPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORISONTAL);
+        Panel buttonPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORIZONTAL);
         Button exitButton = new Button("Exit", new Action() {
                 public void doAction()  {
                     window1.close();

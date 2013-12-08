@@ -130,17 +130,17 @@ public class EditArea extends AbstractInteractableComponent {
         }
         TerminalSize ts = getDataSize();
         if (ts.getColumns() < minimumCols) {
-            ts.setColumns(minimumCols);
+            ts = ts.withColumns(minimumCols);
         }
         if (ts.getRows() < minimumRows) {
-            ts.setRows(minimumRows);
+            ts = ts.withRows(minimumRows);
         }
 
         if (ts.getColumns() < requestedSize.getColumns()) {
-            ts.setColumns(requestedSize.getColumns());
+            ts = ts.withColumns(requestedSize.getColumns());
         }
         if (ts.getRows() < requestedSize.getRows()) {
-            ts.setRows(requestedSize.getRows());
+            ts = ts.withRows(requestedSize.getRows());
         }
 
         return ts;

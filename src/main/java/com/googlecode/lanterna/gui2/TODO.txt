@@ -1,0 +1,9 @@
+ * Label background color
+ * Editable TextArea
+ * Overlapping windows - X-Y offset
+ * ListBox pageup/pagedown
+ * Menus
+ * TextBox fill character (Issue 66)
+ * Telnet support
+ * Proper Table class
+ * Manual setFocus() for components

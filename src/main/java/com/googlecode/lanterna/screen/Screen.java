@@ -19,7 +19,9 @@
 
 package com.googlecode.lanterna.screen;
 
+import com.googlecode.lanterna.LanternaUtils;
 import com.googlecode.lanterna.input.Key;
+import com.googlecode.lanterna.terminal.TextColor;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
@@ -83,7 +85,7 @@ public class Screen
         this.terminalSize = new TerminalSize(terminalWidth, terminalHeight);
         this.visibleScreen = new ScreenCharacter[terminalHeight][terminalWidth];
         this.backbuffer = new ScreenCharacter[terminalHeight][terminalWidth];
-        this.paddingCharacter = new ScreenCharacter('X', Terminal.Color.GREEN, Terminal.Color.BLACK);
+        this.paddingCharacter = new ScreenCharacter('X', TextColor.ANSI.GREEN, TextColor.ANSI.BLACK);
         this.resizeQueue = new LinkedList<TerminalSize>();
         this.wholeScreenInvalid = false;
         this.hasBeenActivated = false;
@@ -120,11 +122,7 @@ public class Screen
      */
     public void setCursorPosition(TerminalPosition position)
     {
-        if(position != null)
-            //TerminalPosition isn't immutable, so make a copy
-            this.cursorPosition = new TerminalPosition(position);
-        else
-            this.cursorPosition = null;
+        this.cursorPosition = position;
     }
 
     /**
@@ -154,8 +152,8 @@ public class Screen
 
     public void setPaddingCharacter(
             char character, 
-            Terminal.Color foregroundColor, 
-            Terminal.Color backgroundColor, 
+            TextColor foregroundColor, 
+            TextColor backgroundColor, 
             ScreenCharacterStyle... style) {
         
         this.paddingCharacter = new ScreenCharacter(character, foregroundColor, backgroundColor, new HashSet<ScreenCharacterStyle>(Arrays.asList(style)));
@@ -260,8 +258,8 @@ public class Screen
      * @param backgroundColor What color to use for the background
      * @param styles Additional styles to apply to the text
      */
-    public void putString(int x, int y, String string, Terminal.Color foregroundColor,
-            Terminal.Color backgroundColor, ScreenCharacterStyle... styles)
+    public void putString(int x, int y, String string, TextColor foregroundColor,
+            TextColor backgroundColor, ScreenCharacterStyle... styles)
     {
         Set<ScreenCharacterStyle> drawStyle = EnumSet.noneOf(ScreenCharacterStyle.class);
         drawStyle.addAll(Arrays.asList(styles));
@@ -277,16 +275,17 @@ public class Screen
      * @param backgroundColor What color to use for the background
      * @param styles Additional styles to apply to the text
      */
-    public void putString(int x, int y, String string, Terminal.Color foregroundColor,
-            Terminal.Color backgroundColor, Set<ScreenCharacterStyle> styles)
+    public void putString(int x, int y, String string, TextColor foregroundColor,
+            TextColor backgroundColor, Set<ScreenCharacterStyle> styles)
     {    
     	string = tabBehaviour.replaceTabs(string, x);  	
-    	for(int i = 0; i < string.length(); i++)
-    		putCharacter(x + i, y, 
-                        new ScreenCharacter(string.charAt(i), 
-                                            foregroundColor, 
-                                            backgroundColor,
-                                            styles));
+    	for(int i = 0; i < string.length(); i++) {
+            char character = string.charAt(i);
+            putCharacter(x + i, y, new ScreenCharacter(character, foregroundColor, backgroundColor, styles));
+            if(LanternaUtils.isCharCJK(character)) {
+                putCharacter(x + ++i, y, ScreenCharacter.CJK_PADDING_CHARACTER);
+            }
+        }
     }
 
     void putCharacter(int x, int y, ScreenCharacter character)
@@ -296,8 +295,9 @@ public class Screen
                 return;
 
             //Only create a new character if the 
-            if(!backbuffer[y][x].equals(character))
-                backbuffer[y][x] = new ScreenCharacter(character);
+            if(!backbuffer[y][x].equals(character)) {
+                backbuffer[y][x] = character;
+            }
         }
     }
 
@@ -344,7 +344,10 @@ public class Screen
      * Call this method to make changes done through {@code putCharacter(...)},
      * {@code putString(...)} visible on the terminal. The screen will calculate
      * the changes that are required and send the necessary characters and
-     * control sequences to make it so.
+     * control sequences to make it so. If the terminal has been resized since the
+     * last refresh, and no call to {@code doResize()} has been made, this method
+     * will resize the internal buffer and fill the extra space with a padding 
+     * character.
      */
     public void refresh()
     {
@@ -377,7 +380,9 @@ public class Screen
                         previousPoint.getColumn() + 1 != nextUpdate.getColumn()) {
                     terminalWriter.setCursorPosition(nextUpdate.getColumn(), nextUpdate.getRow());
                 }
-                terminalWriter.writeCharacter(updateMap.get(nextUpdate));
+                if(updateMap.get(nextUpdate) != ScreenCharacter.CJK_PADDING_CHARACTER) {
+                    terminalWriter.writeCharacter(updateMap.get(nextUpdate));
+                }
                 previousPoint = nextUpdate;
             }
             if(cursorPosition != null) {
@@ -426,7 +431,7 @@ public class Screen
         backbuffer = newBackBuffer;
         visibleScreen = newVisibleScreen;
         wholeScreenInvalid = true;
-        terminalSize = new TerminalSize(newSize);
+        terminalSize = newSize;
     }
 
     private static class ScreenPointComparator implements Comparator<TerminalPosition>
@@ -458,8 +463,8 @@ public class Screen
 
     private class Writer
     {
-        private Terminal.Color currentForegroundColor;
-        private Terminal.Color currentBackgroundColor;
+        private TextColor currentForegroundColor;
+        private TextColor currentBackgroundColor;
         private boolean currentlyIsBold;
         private boolean currentlyIsUnderline;
         private boolean currentlyIsNegative;
@@ -467,8 +472,8 @@ public class Screen
         
         public Writer()
         {
-            currentForegroundColor = Terminal.Color.DEFAULT;
-            currentBackgroundColor = Terminal.Color.DEFAULT;
+            currentForegroundColor = TextColor.ANSI.DEFAULT;
+            currentBackgroundColor = TextColor.ANSI.DEFAULT;
             currentlyIsBold = false;
             currentlyIsUnderline = false;
             currentlyIsNegative = false;
@@ -493,8 +498,8 @@ public class Screen
                 }
                 else {
                     terminal.applySGR(Terminal.SGR.RESET_ALL);
-                    terminal.applyBackgroundColor(character.getBackgroundColor());
-                    terminal.applyForegroundColor(character.getForegroundColor());
+                    character.getBackgroundColor().applyAsBackground(terminal);
+                    character.getForegroundColor().applyAsForeground(terminal);
 
                     // emulating "stop_blink_mode" so that previous formatting is preserved
                     currentlyIsBold = false;
@@ -503,12 +508,14 @@ public class Screen
                     currentlyIsBlinking = false;
                 }
             }
-            if(currentForegroundColor != character.getForegroundColor()) {
-                terminal.applyForegroundColor(character.getForegroundColor());
+            if(currentForegroundColor != character.getForegroundColor() &&
+                    !currentForegroundColor.equals(character.getForegroundColor())) {
+                character.getForegroundColor().applyAsForeground(terminal);
                 currentForegroundColor = character.getForegroundColor();
             }
-            if(currentBackgroundColor != character.getBackgroundColor()) {
-                terminal.applyBackgroundColor(character.getBackgroundColor());
+            if(currentBackgroundColor != character.getBackgroundColor() &&
+                    !currentBackgroundColor.equals(character.getBackgroundColor())) {
+                character.getBackgroundColor().applyAsBackground(terminal);
                 currentBackgroundColor = character.getBackgroundColor();
             }
             if(currentlyIsBold != character.isBold()) {
@@ -549,8 +556,8 @@ public class Screen
             terminal.applySGR(Terminal.SGR.RESET_ALL);
             terminal.moveCursor(0, 0);
 
-            currentBackgroundColor = Terminal.Color.DEFAULT;
-            currentForegroundColor = Terminal.Color.DEFAULT;
+            currentBackgroundColor = TextColor.ANSI.DEFAULT;
+            currentForegroundColor = TextColor.ANSI.DEFAULT;
             currentlyIsBold = false;
             currentlyIsNegative = false;
             currentlyIsUnderline = false;
