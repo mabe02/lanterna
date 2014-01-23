@@ -20,9 +20,8 @@
 package com.googlecode.lanterna.terminal.swing;
 
 import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.GraphicsEnvironment;
 import java.awt.image.BufferedImage;
+import com.googlecode.lanterna.terminal.swing.TerminalAppearance;
 
 /**
  * This class will describe how a {@code SwingTerminal} is to be visually presented. 
@@ -40,7 +39,9 @@ public class TerminalAppearance {
                     DEFAULT_NORMAL_FONT,
                     DEFAULT_BOLD_FONT,
                     TerminalPalette.DEFAULT,
-                    true);
+                    true,
+                    true
+                    );
     
     private static Font createDefaultNormalFont() {
         if(System.getProperty("os.name","").toLowerCase().indexOf("win") >= 0)
@@ -61,17 +62,21 @@ public class TerminalAppearance {
     private final Font cjkFont;
     private final TerminalPalette colorPalette;
     private final boolean useBrightColorsOnBold;
+    private final boolean useAntiAliasing;
 
     public TerminalAppearance(
             Font normalTextFont, 
             Font boldTextFont, 
             TerminalPalette colorPalette,
-            boolean useBrightColorsOnBold) {
+            boolean useBrightColorsOnBold,
+            boolean useAntiAliasing
+            ) {
         
         this.normalTextFont = normalTextFont;
         this.boldTextFont = boldTextFont;
         this.colorPalette = colorPalette;
         this.useBrightColorsOnBold = useBrightColorsOnBold;
+        this.useAntiAliasing = useAntiAliasing;
         this.cjkFont = deriveCJKFont('桜');
     }
     
@@ -108,20 +113,28 @@ public class TerminalAppearance {
         return useBrightColorsOnBold;
     }
     
+    public boolean useAntiAliasing() {
+    	return useAntiAliasing;
+    }
+    
     public TerminalAppearance withFont(Font textFont) {
         return withFont(textFont, textFont);
     }
     
     public TerminalAppearance withFont(Font normalTextFont, Font boldTextFont) {
-        return new TerminalAppearance(normalTextFont, boldTextFont, colorPalette, useBrightColorsOnBold);
+        return new TerminalAppearance(normalTextFont, boldTextFont, colorPalette, useBrightColorsOnBold, useAntiAliasing);
     }
     
     public TerminalAppearance withPalette(TerminalPalette palette) {
-        return new TerminalAppearance(normalTextFont, boldTextFont, palette, useBrightColorsOnBold);
+        return new TerminalAppearance(normalTextFont, boldTextFont, palette, useBrightColorsOnBold, useAntiAliasing);
     }
     
     public TerminalAppearance withUseBrightColors(boolean useBrightColorsOnBold) {
-        return new TerminalAppearance(normalTextFont, boldTextFont, colorPalette, useBrightColorsOnBold);
+        return new TerminalAppearance(normalTextFont, boldTextFont, colorPalette, useBrightColorsOnBold, useAntiAliasing);
+    }
+
+    public TerminalAppearance withUseAntiAliasing(boolean useAntiAliasing) {
+        return new TerminalAppearance(normalTextFont, boldTextFont, colorPalette, useBrightColorsOnBold, useAntiAliasing);
     }
 
     @Override
@@ -145,6 +158,9 @@ public class TerminalAppearance {
         if (this.useBrightColorsOnBold != other.useBrightColorsOnBold) {
             return false;
         }
+        if (this.useAntiAliasing != other.useAntiAliasing) {
+            return false;
+        }
         return true;
     }
 
@@ -155,6 +171,7 @@ public class TerminalAppearance {
         hash = 37 * hash + (this.boldTextFont != null ? this.boldTextFont.hashCode() : 0);
         hash = 37 * hash + (this.colorPalette != null ? this.colorPalette.hashCode() : 0);
         hash = 37 * hash + (this.useBrightColorsOnBold ? 1 : 0);
+        hash = 37 * hash + (this.useAntiAliasing ? 1 : 0);
         return hash;
     }
 
@@ -164,6 +181,7 @@ public class TerminalAppearance {
                   "normalTextFont=" + normalTextFont + 
                 ", boldTextFont=" + boldTextFont + 
                 ", colorPalette=" + colorPalette + 
-                ", useBrightColorsOnBold=" + useBrightColorsOnBold + '}';
+                ", useBrightColorsOnBold=" + useBrightColorsOnBold + 
+                ", useAntiAliasing=" + useAntiAliasing + '}';
     }
 }

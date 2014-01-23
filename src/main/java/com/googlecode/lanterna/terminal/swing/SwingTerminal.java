@@ -19,6 +19,31 @@
 
 package com.googlecode.lanterna.terminal.swing;
 
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Queue;
+import java.util.Set;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
+
 import com.googlecode.lanterna.LanternaUtils;
 import com.googlecode.lanterna.input.InputProvider;
 import com.googlecode.lanterna.input.Key;
@@ -27,17 +52,6 @@ import com.googlecode.lanterna.terminal.AbstractTerminal;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.terminal.XTerm8bitIndexedColorUtils;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Queue;
-import java.util.Set;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
 
 /**
  * A Swing-based text terminal emulator
@@ -86,7 +100,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
     public SwingTerminal(TerminalAppearance appearance, int widthInColumns, int heightInRows)
     {
         this.appearance = appearance;
-        this.terminalRenderer = new TerminalRenderer();
+        this.terminalRenderer = new TerminalRenderer(appearance.useAntiAliasing());
         this.blinkTimer = new Timer(500, new BlinkAction());
         this.textPosition = new TerminalPosition(0, 0);
         this.characterMap = new TerminalCharacter[heightInRows][widthInColumns];
@@ -501,11 +515,17 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
 
     private class TerminalRenderer extends JComponent
     {
-        public TerminalRenderer()
+        private boolean useAntiAliasing;
+
+		public TerminalRenderer()
         {
         }
 
-        @Override
+        public TerminalRenderer(boolean useAntiAliasing) {
+        	this.useAntiAliasing = useAntiAliasing;
+		}
+
+		@Override
         public Dimension getPreferredSize()
         {
             FontMetrics fontMetrics = getGraphics().getFontMetrics(appearance.getNormalTextFont());
@@ -521,6 +541,10 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
             graphics2D.setFont(appearance.getNormalTextFont());
             graphics2D.setColor(java.awt.Color.BLACK);
             graphics2D.fillRect(0, 0, getWidth(), getHeight());
+            if (useAntiAliasing) {
+            	graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            	graphics2D.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+            }
             final FontMetrics fontMetrics = getGraphics().getFontMetrics(appearance.getNormalTextFont());
             final int charWidth = fontMetrics.charWidth(' ');
             final int charHeight = fontMetrics.getHeight();
