@@ -465,6 +465,30 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
                 keyQueue.add(new Key(Key.Kind.PageUp));
             else if(e.getKeyCode() == KeyEvent.VK_PAGE_DOWN)
                 keyQueue.add(new Key(Key.Kind.PageDown));
+            else if(e.getKeyCode() == KeyEvent.VK_F1)
+                keyQueue.add(new Key(Key.Kind.F1));
+            else if(e.getKeyCode() == KeyEvent.VK_F2)
+                keyQueue.add(new Key(Key.Kind.F2));
+            else if(e.getKeyCode() == KeyEvent.VK_F3)
+                keyQueue.add(new Key(Key.Kind.F3));
+            else if(e.getKeyCode() == KeyEvent.VK_F4)
+                keyQueue.add(new Key(Key.Kind.F4));
+            else if(e.getKeyCode() == KeyEvent.VK_F5)
+                keyQueue.add(new Key(Key.Kind.F5));
+            else if(e.getKeyCode() == KeyEvent.VK_F6)
+                keyQueue.add(new Key(Key.Kind.F6));
+            else if(e.getKeyCode() == KeyEvent.VK_F7)
+                keyQueue.add(new Key(Key.Kind.F7));
+            else if(e.getKeyCode() == KeyEvent.VK_F8)
+                keyQueue.add(new Key(Key.Kind.F8));
+            else if(e.getKeyCode() == KeyEvent.VK_F9)
+                keyQueue.add(new Key(Key.Kind.F9));
+            else if(e.getKeyCode() == KeyEvent.VK_F10)
+                keyQueue.add(new Key(Key.Kind.F10));
+            else if(e.getKeyCode() == KeyEvent.VK_F11)
+                keyQueue.add(new Key(Key.Kind.F11));
+            else if(e.getKeyCode() == KeyEvent.VK_F12)
+                keyQueue.add(new Key(Key.Kind.F12));
             else if(e.getKeyCode() == KeyEvent.VK_TAB) {
                 if(e.isShiftDown())
                     keyQueue.add(new Key(Key.Kind.ReverseTab));
@@ -749,4 +773,5 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
             return c;
         }
     }
+
 }
