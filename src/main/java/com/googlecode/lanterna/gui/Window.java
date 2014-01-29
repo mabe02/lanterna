@@ -19,6 +19,9 @@
 
 package com.googlecode.lanterna.gui;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.googlecode.lanterna.gui.Theme.Category;
 import com.googlecode.lanterna.gui.component.EmptySpace;
 import com.googlecode.lanterna.gui.component.Panel;
@@ -29,8 +32,6 @@ import com.googlecode.lanterna.gui.listener.WindowListener;
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * The Window class is the basis for Lanternas GUI system. The workflow is to
@@ -308,7 +309,7 @@ public class Window
         return contentPane.maximisesHorisontally();
     }
 
-    protected void setFocus(Interactable newFocus)
+    public void setFocus(Interactable newFocus)
     {
         setFocus(newFocus, null);
     }
