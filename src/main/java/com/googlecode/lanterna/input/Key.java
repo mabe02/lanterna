@@ -19,6 +19,9 @@
 
 package com.googlecode.lanterna.input;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  * Represents a key pressed. Use getKind() to see if it's a normal alpha-numeric
  * key or any special key. Sorry if the special keys are sort of european-language centered, that's
@@ -31,7 +34,6 @@ public class Key
     private final Character character;
     private final boolean altPressed;
     private final boolean ctrlPressed;
-
     public Key(char character) {
         this(character, false, false);
     }
@@ -127,6 +129,71 @@ public class Key
             return representationKey;
         }
     }
+    
+    /**
+ 	 * Creates a Key from a string representation in Vim's key notation.
+     * @param keyStr
+     * @return
+	 * @author kba
+     */
+    public static Key fromString(String keyStr) {
+    	String keyStrLC = keyStr.toLowerCase();
+    	Key k;
+    	if (keyStr.length() == 1) {
+    		k = new Key(keyStr.charAt(0), false, false);
+    	} else if (keyStr.startsWith("<") && keyStr.endsWith(">")) {
+    		if (keyStrLC.equals("<s-tab>")) {
+    			k = new Key(Key.Kind.ReverseTab);
+    		} else if (keyStr.contains("-")) {
+    			ArrayList<String> segments = new ArrayList<String>(Arrays.asList(keyStr.substring(1, keyStr.length()-1).split("-")));
+    			if (segments.size() < 2) throw new IllegalArgumentException("Invalid vim notation: "  + keyStr);
+    			String characterStr = segments.remove(segments.size() - 1);
+    			boolean altPressed = false;
+    			boolean ctrlPressed = false;
+    			for (String modifier : segments) {
+    				if ("c".equals(modifier.toLowerCase())) ctrlPressed = true;
+    				else if ("a".equals(modifier.toLowerCase())) altPressed = true;
+    				else if ("s".equals(modifier.toLowerCase())) characterStr = characterStr.toUpperCase();
+    			}
+    			k = new Key(characterStr.charAt(0), ctrlPressed, altPressed);
+    		} else {
+				if (keyStrLC.startsWith("<esc")) k = new Key(Key.Kind.Escape);
+				else if (keyStrLC.equals("<cr>") || keyStrLC.equals("<enter>") || keyStrLC.equals("<return>"))  k = new Key(Key.Kind.Enter);
+				else if (keyStrLC.equals("<bs>")) k = new Key(Key.Kind.Backspace);
+				else if (keyStrLC.equals("<tab>"))  k = new Key(Key.Kind.Tab);
+				else if (keyStrLC.equals("<space>")) k = new Key(' ', false, false);
+				else if (keyStrLC.equals("<up>"))	k = new Key(Key.Kind.ArrowUp);
+				else if (keyStrLC.equals("<down>"))	k = new Key(Key.Kind.ArrowDown);
+				else if (keyStrLC.equals("<left>"))	k = new Key(Key.Kind.ArrowLeft);
+				else if (keyStrLC.equals("<right>")) k = new Key(Key.Kind.ArrowRight);
+				else if (keyStrLC.equals("<insert>")) k = new Key(Key.Kind.Insert);
+				else if (keyStrLC.equals("<del>"))	k = new Key(Key.Kind.Delete);
+				else if (keyStrLC.equals("<home>"))	k = new Key(Key.Kind.Home);
+				else if (keyStrLC.equals("<end>"))	k = new Key(Key.Kind.End);
+				else if (keyStrLC.equals("<pageup>"))  k = new Key(Key.Kind.PageUp);
+				else if (keyStrLC.equals("<pagedown>")) k = new Key(Key.Kind.PageDown);
+				else if (keyStrLC.equals("<f1>"))	k = new Key(Key.Kind.F1);
+				else if (keyStrLC.equals("<f2>"))	k = new Key(Key.Kind.F2);
+				else if (keyStrLC.equals("<f3>"))	k = new Key(Key.Kind.F3);
+				else if (keyStrLC.equals("<f4>"))	k = new Key(Key.Kind.F4);
+				else if (keyStrLC.equals("<f5>"))	k = new Key(Key.Kind.F5);
+				else if (keyStrLC.equals("<f6>"))	k = new Key(Key.Kind.F6);
+				else if (keyStrLC.equals("<f7>"))	k = new Key(Key.Kind.F7);
+				else if (keyStrLC.equals("<f8>"))	k = new Key(Key.Kind.F8);
+				else if (keyStrLC.equals("<f9>"))	k = new Key(Key.Kind.F9);
+				else if (keyStrLC.equals("<f10>"))  k = new Key(Key.Kind.F10);
+				else if (keyStrLC.equals("<f11>"))  k = new Key(Key.Kind.F11);
+				else if (keyStrLC.equals("<f12>"))  k = new Key(Key.Kind.F12);
+				else throw new IllegalArgumentException("Invalid vim notation: "  + keyStr);
+			}
+    	} else throw new IllegalArgumentException("Invalid vim notation: "  + keyStr);
+    	return k;
+    }
+    
+    public boolean equalsString(String keyStr) {
+    	return equals(Key.fromString(keyStr));
+    }
+
 
     @Override
     public String toString() {
