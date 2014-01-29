@@ -22,6 +22,7 @@ package com.googlecode.lanterna.terminal.swing;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -327,6 +328,11 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
             moveCursor(textPosition.getColumn() + nextCharacterDistance, textPosition.getRow());
         }
     }
+	@Override
+	public char getCharacter(int x, int y) 
+	{
+		return characterMap[y][x].character;
+	}
 
     @Override
     public TerminalSize queryTerminalSize()
@@ -603,9 +609,17 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
                         graphics2D.setFont(appearance.getCJKFont());
                         needToResetFont = true;
                     }
+                    if (! graphics2D.getFont().canDisplay(character.toString().charAt(0))) {
+                    	for (Font fallbackFont : appearance.getFallbackFonts()) {
+                    		if (fallbackFont.canDisplay(character.toString().charAt(0))) {
+                    			graphics2D.setFont(fallbackFont);
+                    			needToResetFont = true;
+                    			break;
+                    		}
+                    	}
+                    }
                     
                     graphics2D.drawString(character.toString(), col * charWidth, ((row + 1) * charHeight) - fontMetrics.getDescent());
-                    
                     if(needToResetFont) {
                         graphics2D.setFont(appearance.getNormalTextFont());   //Restore the original font
                     }
