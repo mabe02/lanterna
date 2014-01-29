@@ -608,8 +608,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
                     if(LanternaUtils.isCharCJK(character.character)) {
                         graphics2D.setFont(appearance.getCJKFont());
                         needToResetFont = true;
-                    }
-                    if (! graphics2D.getFont().canDisplay(character.toString().charAt(0))) {
+                    } else if (! graphics2D.getFont().canDisplay(character.toString().charAt(0))) {
                     	for (Font fallbackFont : appearance.getFallbackFonts()) {
                     		if (fallbackFont.canDisplay(character.toString().charAt(0))) {
                     			graphics2D.setFont(fallbackFont);
@@ -617,6 +616,10 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
                     			break;
                     		}
                     	}
+                    } 
+                    if (LanternaUtils.isWideChar(graphics2D.getFontMetrics(graphics2D.getFont()), character.character)) {
+                        graphics2D.setFont(appearance.getWideFont());
+                        needToResetFont = true;
                     }
                     
                     graphics2D.drawString(character.toString(), col * charWidth, ((row + 1) * charHeight) - fontMetrics.getDescent());

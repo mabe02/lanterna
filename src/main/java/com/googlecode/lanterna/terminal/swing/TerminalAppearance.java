@@ -40,7 +40,8 @@ public class TerminalAppearance {
                     DEFAULT_BOLD_FONT,
                     TerminalPalette.DEFAULT,
                     true,
-                    true
+                    true,
+                    DEFAULT_NORMAL_FONT
                     );
     
     private static Font createDefaultNormalFont() {
@@ -64,6 +65,7 @@ public class TerminalAppearance {
     private final TerminalPalette colorPalette;
     private final boolean useBrightColorsOnBold;
     private final boolean useAntiAliasing;
+	private final Font wideFont;
 
     public TerminalAppearance(
             Font normalTextFont, 
@@ -71,6 +73,7 @@ public class TerminalAppearance {
             TerminalPalette colorPalette,
             boolean useBrightColorsOnBold,
             boolean useAntiAliasing,
+            Font wideFont,
             Font... fallbackFonts
             ) {
         
@@ -80,6 +83,7 @@ public class TerminalAppearance {
         this.useBrightColorsOnBold = useBrightColorsOnBold;
         this.useAntiAliasing = useAntiAliasing;
         this.cjkFont = deriveCJKFont('桜');
+        this.wideFont = wideFont;
         this.fallbackFonts = fallbackFonts;
     }
     
@@ -108,6 +112,10 @@ public class TerminalAppearance {
         return cjkFont;
     }
 
+	public Font getWideFont() {
+		return wideFont;
+	}
+
 	public Font[] getFallbackFonts() {
 		return fallbackFonts;
 	}
@@ -129,23 +137,26 @@ public class TerminalAppearance {
     }
     
     public TerminalAppearance withFont(Font normalTextFont, Font boldTextFont) {
-        return new TerminalAppearance(normalTextFont, boldTextFont, colorPalette, useBrightColorsOnBold, useAntiAliasing, fallbackFonts);
+        return new TerminalAppearance(normalTextFont, boldTextFont, colorPalette, useBrightColorsOnBold, useAntiAliasing, wideFont, fallbackFonts);
     }
 
 	public TerminalAppearance withFallbackFonts(Font... fallbackFonts) {
-        return new TerminalAppearance(normalTextFont, boldTextFont, colorPalette, useBrightColorsOnBold, useAntiAliasing, fallbackFonts);
+        return new TerminalAppearance(normalTextFont, boldTextFont, colorPalette, useBrightColorsOnBold, useAntiAliasing, wideFont, fallbackFonts);
 	}
     
     public TerminalAppearance withPalette(TerminalPalette palette) {
-        return new TerminalAppearance(normalTextFont, boldTextFont, palette, useBrightColorsOnBold, useAntiAliasing, fallbackFonts);
+        return new TerminalAppearance(normalTextFont, boldTextFont, palette, useBrightColorsOnBold, useAntiAliasing, wideFont, fallbackFonts);
     }
     
     public TerminalAppearance withUseBrightColors(boolean useBrightColorsOnBold) {
-        return new TerminalAppearance(normalTextFont, boldTextFont, colorPalette, useBrightColorsOnBold, useAntiAliasing, fallbackFonts);
+        return new TerminalAppearance(normalTextFont, boldTextFont, colorPalette, useBrightColorsOnBold, useAntiAliasing, wideFont, fallbackFonts);
     }
 
     public TerminalAppearance withUseAntiAliasing(boolean useAntiAliasing) {
-        return new TerminalAppearance(normalTextFont, boldTextFont, colorPalette, useBrightColorsOnBold, useAntiAliasing, fallbackFonts);
+        return new TerminalAppearance(normalTextFont, boldTextFont, colorPalette, useBrightColorsOnBold, useAntiAliasing, wideFont, fallbackFonts);
+    }
+    public TerminalAppearance withWideFont(Font wideFont) {
+        return new TerminalAppearance(normalTextFont, boldTextFont, colorPalette, useBrightColorsOnBold, useAntiAliasing, wideFont, fallbackFonts);
     }
 
     @Override
@@ -195,6 +206,7 @@ public class TerminalAppearance {
                 ", useBrightColorsOnBold=" + useBrightColorsOnBold + 
                 ", useAntiAliasing=" + useAntiAliasing + '}';
     }
+
 
 
 }

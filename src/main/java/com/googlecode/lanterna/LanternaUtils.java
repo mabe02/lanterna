@@ -18,11 +18,16 @@
  */
 package com.googlecode.lanterna;
 
+import java.awt.FontMetrics;
+
 /**
  *
  * @author Martin
  */
 public class LanternaUtils {
+	
+	public static final int COMPARE_CHAR = (int) '.';
+
     //Shamelessly stolen from http://stackoverflow.com/questions/1499804/how-can-i-detect-japanese-text-in-a-java-string
     //Contributed there by user Rakesh N
     public static boolean isCharCJK(final char c) {
@@ -37,5 +42,9 @@ public class LanternaUtils {
             return true;
         }
         return false;
+    }
+    
+    public static boolean isWideChar(FontMetrics metrics, final char c) {
+    	return metrics.charWidth((int)c) > metrics.charWidth(COMPARE_CHAR);
     }
 }
