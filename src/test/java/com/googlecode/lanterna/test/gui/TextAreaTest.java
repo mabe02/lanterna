@@ -40,7 +40,7 @@ public class TextAreaTest {
         guiScreen.getScreen().startScreen();
         final Window window1 = new Window("Text window");
         //window1.addComponent(new Widget(1, 1));
-
+        
         final TextArea textArea = new TextArea("TextArea");
         textArea.setMaximumSize(new TerminalSize(80, 10));
         window1.addComponent(textArea);
