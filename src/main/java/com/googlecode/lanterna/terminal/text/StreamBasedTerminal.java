@@ -19,16 +19,17 @@
 
 package com.googlecode.lanterna.terminal.text;
 
-import com.googlecode.lanterna.LanternaException;
-import com.googlecode.lanterna.input.InputDecoder;
-import com.googlecode.lanterna.terminal.ACS;
-import com.googlecode.lanterna.terminal.InputEnabledAbstractTerminal;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
+
+import com.googlecode.lanterna.LanternaException;
+import com.googlecode.lanterna.input.InputDecoder;
+import com.googlecode.lanterna.terminal.ACS;
+import com.googlecode.lanterna.terminal.InputEnabledAbstractTerminal;
 
 /**
  * An abstract terminal implementing functionality for terminals using
@@ -186,5 +187,8 @@ public abstract class StreamBasedTerminal extends InputEnabledAbstractTerminal {
         buffer[0] = input;
         return terminalCharset.encode(CharBuffer.wrap(buffer)).array();
     }
+    
+    @Override
+    public char getCharacter(int x, int y) { return Character.MIN_VALUE; }
     
 }

@@ -19,6 +19,7 @@
 
 package com.googlecode.lanterna.terminal;
 
+import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.input.InputProvider;
 
 /**
@@ -77,6 +78,15 @@ public interface Terminal extends InputProvider
      * @throws LanternaException 
      */
     public void putCharacter(char c);
+    
+    /**
+     * Returns the character currently buffered for position x/y.
+     * @param x
+     * @param y
+     * @return
+     * @author kba
+     */
+    public char getCharacter(int x, int y);
     
     /**
      * Activates an {@code SGR} code for all the following characters put to the 
@@ -244,7 +254,7 @@ public interface Terminal extends InputProvider
         EXIT_BLINK
     }
 
-    @Deprecated
+//    @Deprecated
     public enum Color
     {
         BLACK(0),

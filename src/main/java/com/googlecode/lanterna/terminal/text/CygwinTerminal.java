@@ -176,4 +176,5 @@ public class CygwinTerminal extends ANSITerminal {
             throw new LanternaException(e);
         }
     }
+
 }
