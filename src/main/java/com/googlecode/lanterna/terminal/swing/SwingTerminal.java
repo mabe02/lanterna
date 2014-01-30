@@ -19,6 +19,7 @@
 
 package com.googlecode.lanterna.terminal.swing;
 
+import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -27,6 +28,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -46,6 +48,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 import com.googlecode.lanterna.LanternaUtils;
+import com.googlecode.lanterna.gui.Theme.Definition;
 import com.googlecode.lanterna.input.InputProvider;
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.input.KeyMappingProfile;
@@ -72,6 +75,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
     private boolean currentlyBold;
     private boolean currentlyBlinking;
     private boolean currentlyUnderlined;
+    private boolean currentlyBordered;
     private boolean blinkVisible;
     private boolean cursorVisible;
     private Queue<Key> keyQueue;
@@ -110,6 +114,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
         this.currentlyBold = false;
         this.currentlyBlinking = false;
         this.currentlyUnderlined = false;
+        this.currentlyBordered = false;
         this.blinkVisible = false;
         this.cursorVisible = true;
         this.keyQueue = new ConcurrentLinkedQueue<Key>();
@@ -188,6 +193,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
                 currentlyBold = false;
                 currentlyBlinking = false;
                 currentlyUnderlined = false;
+                currentlyBordered = false;
                 currentForegroundColor = new CharacterANSIColor(Color.DEFAULT);
                 currentBackgroundColor = new CharacterANSIColor(Color.BLACK);
             }
@@ -203,6 +209,10 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
                 currentlyUnderlined = true;
             else if(sgr == SGR.EXIT_UNDERLINE)
                 currentlyUnderlined = false;
+            else if(sgr == SGR.ENTER_BORDERED)
+                currentlyBordered = true;
+            else if(sgr == SGR.EXIT_BORDERED)
+                currentlyBordered = false;
         }
     }
 
@@ -218,7 +228,9 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
                             new CharacterANSIColor(Color.BLACK),
                             false, 
                             false, 
-                            false);
+                            false,
+                            false
+                            );
             moveCursor(0,0);
         }
     }
@@ -314,7 +326,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
     public synchronized void putCharacter(char c)
     {
         characterMap[textPosition.getRow()][textPosition.getColumn()] =
-                new TerminalCharacter(c, currentForegroundColor, currentBackgroundColor, currentlyBold, currentlyBlinking, currentlyUnderlined);
+                new TerminalCharacter(c, currentForegroundColor, currentBackgroundColor, currentlyBold, currentlyBlinking, currentlyUnderlined, currentlyBordered);
         int nextCharacterDistance = LanternaUtils.isCharCJK(c) ? 2 : 1;
         
         if(textPosition.getColumn() >= size().getColumns() - nextCharacterDistance &&
@@ -357,7 +369,9 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
                         new CharacterANSIColor(Color.BLACK), 
                         false, 
                         false, 
-                        false);
+                        false,
+                        false
+                        );
 
         synchronized(resizeMutex) {
             for(int y = 0; y < size().getRows() && y < newSizeRows; y++) {
@@ -605,6 +619,18 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
                                 col * charWidth, ((row + 1) * charHeight) - 1, 
                                 (col+1) * charWidth, ((row + 1) * charHeight) - 1);
                     
+                    if(character.isBordered()) {
+                        int left = col * charWidth;
+						int top = ((row) * charHeight) - 1;
+
+						// TODO make this configurable
+						java.awt.Color oldColor = graphics2D.getColor();
+						graphics2D.setStroke(new BasicStroke(3));
+						graphics2D.setColor(new java.awt.Color(200, 0, 0));
+						graphics2D.drawRect(left, top, charWidth -1, charHeight -1);
+						graphics2D.setColor(oldColor);
+                    }
+                    
                     if(LanternaUtils.isCharCJK(character.character)) {
                         graphics2D.setFont(appearance.getCJKFont());
                         needToResetFont = true;
@@ -643,6 +669,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
         private final boolean bold;
         private final boolean blinking;
         private final boolean underlined;
+        private final boolean bordered;
 
         TerminalCharacter(
                 char character, 
@@ -650,13 +677,15 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
                 TerminalCharacterColor background, 
                 boolean bold, 
                 boolean blinking, 
-                boolean underlined) {
+                boolean underlined,
+                boolean bordered) {
             this.character = character;
             this.foreground = foreground;
             this.background = background;
             this.bold = bold;
             this.blinking = blinking;
             this.underlined = underlined;
+            this.bordered =  bordered;
         }
 
         public boolean isBold() {
@@ -670,6 +699,10 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
         public boolean isUnderlined() {
             return underlined;
         }
+        
+        public boolean isBordered() {
+			return bordered;
+		}
         
         private java.awt.Color getForegroundAsAWTColor(boolean useBrightOnBold) {
             return foreground.getColor(isBold() && useBrightOnBold, true);

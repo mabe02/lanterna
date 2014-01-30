@@ -244,6 +244,7 @@ public interface Terminal extends InputProvider
         ENTER_BOLD,
         ENTER_REVERSE,
         ENTER_UNDERLINE,
+        ENTER_BORDERED,
         /**
          * This code may not be supported by all terminals/terminal emulators
          */
@@ -251,7 +252,8 @@ public interface Terminal extends InputProvider
         EXIT_BOLD,
         EXIT_REVERSE,
         EXIT_UNDERLINE,
-        EXIT_BLINK
+        EXIT_BLINK,
+        EXIT_BORDERED,
     }
 
 //    @Deprecated

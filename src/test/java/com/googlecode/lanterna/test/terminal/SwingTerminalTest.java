@@ -89,6 +89,19 @@ public class SwingTerminalTest {
         terminal.putCharacter(ACS.DOUBLE_LINE_T_DOWN);
         terminal.putCharacter(ACS.SINGLE_LINE_VERTICAL);
         terminal.putCharacter(ACS.SINGLE_LINE_HORIZONTAL);
+        terminal.moveCursor(10, 11);
+        terminal.applySGR(Terminal.SGR.ENTER_BORDERED);
+        terminal.putCharacter('!');
+        terminal.putCharacter(' ');
+        terminal.putCharacter(ACS.HEART);
+        terminal.putCharacter(ACS.SPADES);
+        terminal.putCharacter(ACS.CLUB);
+        terminal.putCharacter(ACS.DIAMOND);
+        terminal.putCharacter(ACS.DOUBLE_LINE_CROSS);
+        terminal.putCharacter(ACS.SINGLE_LINE_CROSS);
+        terminal.putCharacter(ACS.DOUBLE_LINE_T_DOWN);
+        terminal.putCharacter(ACS.SINGLE_LINE_VERTICAL);
+        terminal.putCharacter(ACS.SINGLE_LINE_HORIZONTAL);
         terminal.applySGR(Terminal.SGR.RESET_ALL);
         terminal.moveCursor(0, 0);
 

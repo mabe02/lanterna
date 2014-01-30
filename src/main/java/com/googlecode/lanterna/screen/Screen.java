@@ -469,6 +469,7 @@ public class Screen
         private boolean currentlyIsUnderline;
         private boolean currentlyIsNegative;
         private boolean currentlyIsBlinking;
+        private boolean currentlyIsBordered;
         
         public Writer()
         {
@@ -478,6 +479,7 @@ public class Screen
             currentlyIsUnderline = false;
             currentlyIsNegative = false;
             currentlyIsBlinking = false;
+            currentlyIsBordered = false;
         }
 
         void setCursorPosition(int x, int y)
@@ -506,6 +508,7 @@ public class Screen
                     currentlyIsUnderline = false;
                     currentlyIsNegative = false;
                     currentlyIsBlinking = false;
+                    currentlyIsBordered = false;
                 }
             }
             if(currentForegroundColor != character.getForegroundColor() &&
@@ -548,6 +551,16 @@ public class Screen
                     currentlyIsNegative = false;
                 }
             }
+            if(currentlyIsBordered != character.isBordered()) {
+                if(character.isBordered()) {
+                    terminal.applySGR(Terminal.SGR.ENTER_BORDERED);
+                    currentlyIsBordered = true;
+                }
+                else {
+                    terminal.applySGR(Terminal.SGR.EXIT_BORDERED);
+                    currentlyIsBordered = false;
+                }
+            }
             terminal.putCharacter(character.getCharacter());
         }
 
@@ -561,6 +574,7 @@ public class Screen
             currentlyIsBold = false;
             currentlyIsNegative = false;
             currentlyIsUnderline = false;
+            currentlyIsBordered = false;
         }
     }
 }
