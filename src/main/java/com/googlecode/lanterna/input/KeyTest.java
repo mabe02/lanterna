@@ -38,6 +38,8 @@ public class KeyTest {
 			assertEquals(true, k.isAltPressed());
 		}
 		assertEquals(Key.Kind.ReverseTab, Key.fromString("<s-tab>").getKind());
+		assertEquals(Key.Kind.ReverseTab, Key.fromString("<S-tab>").getKind());
+		assertEquals(Key.Kind.ReverseTab, Key.fromString("<S-Tab>").getKind());
 		assertEquals(Key.Kind.Enter, Key.fromString("<cr>").getKind());
 		assertEquals(Key.Kind.PageUp, Key.fromString("<PageUp>").getKind());
 	}
