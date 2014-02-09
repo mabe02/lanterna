@@ -19,11 +19,14 @@
 package com.googlecode.lanterna.gui.dialog;
 
 import com.googlecode.lanterna.gui.Action;
+import com.googlecode.lanterna.gui.Border;
 import com.googlecode.lanterna.gui.GUIScreen;
+import com.googlecode.lanterna.gui.Theme;
 import com.googlecode.lanterna.gui.Window;
 import com.googlecode.lanterna.gui.component.ActionListBox;
 import com.googlecode.lanterna.gui.component.Button;
 import com.googlecode.lanterna.gui.component.EmptySpace;
+import com.googlecode.lanterna.gui.component.Label;
 import com.googlecode.lanterna.gui.component.Panel;
 import com.googlecode.lanterna.gui.component.TextBox;
 import com.googlecode.lanterna.gui.layout.BorderLayout;
@@ -56,6 +59,7 @@ public class FileDialog extends Window {
         ;
     }
     
+    private final Label labelCurrentDirectory;
     private final TextBox fileText;
     private final ActionListBox dirView;
     private final ActionListBox fileView;
@@ -67,8 +71,8 @@ public class FileDialog extends Window {
         this.selectedFile = null;
         
         Panel panelFileDir = new Panel(Panel.Orientation.HORISONTAL);
-        fileView = new ActionListBox();
-        dirView = new ActionListBox();
+        fileView = createFileListBox();
+        dirView = createFileListBox();
         fileText = new TextBox();
         Panel panelButtons = new Panel(Panel.Orientation.HORISONTAL);
         Button okButton = new Button(kind.name(), new Action() {
@@ -85,9 +89,11 @@ public class FileDialog extends Window {
             }
         });
                 
+        labelCurrentDirectory = new Label();
+        addComponent(labelCurrentDirectory, LinearLayout.GROWS_HORIZONTALLY);
         panelFileDir.setLayoutManager(new BorderLayout());
-        panelFileDir.addComponent(fileView, BorderLayout.CENTER);
-        panelFileDir.addComponent(dirView, BorderLayout.RIGHT);
+        panelFileDir.addComponent(fileView.addBorder(new Border.Bevel(true), "Files"), BorderLayout.CENTER);
+        panelFileDir.addComponent(dirView.addBorder(new Border.Bevel(true), "Directories"), BorderLayout.RIGHT);
         addComponent(panelFileDir, LinearLayout.GROWS_HORIZONTALLY);
         addComponent(new EmptySpace(40,1));
         addComponent(fileText, LinearLayout.GROWS_HORIZONTALLY);
@@ -103,6 +109,7 @@ public class FileDialog extends Window {
         this.currentDirectory = directory.getAbsoluteFile();
         dirView.clearItems();
         fileView.clearItems();
+        labelCurrentDirectory.setText(currentDirectory.getAbsolutePath());
         File []entries = directory.listFiles();
         Arrays.sort(entries, new Comparator<File>() {
             @Override
@@ -139,5 +146,19 @@ public class FileDialog extends Window {
 
     private File getSelectedFile() {
         return selectedFile;
+    }
+
+    private ActionListBox createFileListBox() {
+        return new ActionListBox() {
+            @Override
+            protected Theme.Definition getListItemThemeDefinition(Theme theme) {
+                return theme.getDefinition(Theme.Category.TEXTBOX);
+            }
+
+            @Override
+            protected Theme.Definition getSelectedListItemThemeDefinition(Theme theme) {
+                return theme.getDefinition(Theme.Category.TEXTBOX_FOCUSED);
+            }
+        };
     }
 }
