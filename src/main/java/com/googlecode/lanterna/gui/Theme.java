@@ -21,7 +21,7 @@ package com.googlecode.lanterna.gui;
 import java.util.EnumMap;
 import java.util.Map;
 
-import com.googlecode.lanterna.terminal.Terminal.Color;
+import com.googlecode.lanterna.terminal.TextColor;
 
 /**
  * Extend this class to create your own themes. A {@code Theme} consists of several
@@ -31,8 +31,8 @@ import com.googlecode.lanterna.terminal.Terminal.Color;
  * @author Martin
  */
 public class Theme {
-    private static final Definition DEFAULT = new Definition(Color.BLACK, Color.WHITE, false);
-    private static final Definition SELECTED = new Definition(Color.WHITE, Color.BLUE, true);
+    private static final Definition DEFAULT = new Definition(TextColor.ANSI.BLACK, TextColor.ANSI.WHITE, false);
+    private static final Definition SELECTED = new Definition(TextColor.ANSI.WHITE, TextColor.ANSI.BLUE, true);
     private Map<Category, Definition> styles = new EnumMap<Category, Definition>(Category.class);
     private static final Theme DEFAULT_INSTANCE = new Theme();
 
@@ -61,12 +61,12 @@ public class Theme {
 
     protected Theme() {
         setDefinition(Category.DIALOG_AREA, DEFAULT);
-        setDefinition(Category.SCREEN_BACKGROUND, new Definition(Color.CYAN, Color.BLUE, true));
-        setDefinition(Category.SHADOW, new Definition(Color.BLACK, Color.BLACK, true));
-        setDefinition(Category.BORDER, new Definition(Color.BLACK, Color.WHITE, true));
-        setDefinition(Category.RAISED_BORDER, new Definition(Color.WHITE, Color.WHITE, true));
-        setDefinition(Category.BUTTON_LABEL_ACTIVE, new Definition(Color.YELLOW, Color.BLUE, true));
-        setDefinition(Category.BUTTON_LABEL_INACTIVE, new Definition(Color.BLACK, Color.WHITE, true));
+        setDefinition(Category.SCREEN_BACKGROUND, new Definition(TextColor.ANSI.CYAN, TextColor.ANSI.BLUE, true));
+        setDefinition(Category.SHADOW, new Definition(TextColor.ANSI.BLACK, TextColor.ANSI.BLACK, true));
+        setDefinition(Category.BORDER, new Definition(TextColor.ANSI.BLACK, TextColor.ANSI.WHITE, true));
+        setDefinition(Category.RAISED_BORDER, new Definition(TextColor.ANSI.WHITE, TextColor.ANSI.WHITE, true));
+        setDefinition(Category.BUTTON_LABEL_ACTIVE, new Definition(TextColor.ANSI.YELLOW, TextColor.ANSI.BLUE, true));
+        setDefinition(Category.BUTTON_LABEL_INACTIVE, new Definition(TextColor.ANSI.BLACK, TextColor.ANSI.WHITE, true));
         setDefinition(Category.BUTTON_ACTIVE, SELECTED);
         setDefinition(Category.BUTTON_INACTIVE, DEFAULT);
         setDefinition(Category.LIST_ITEM, DEFAULT);
@@ -74,9 +74,9 @@ public class Theme {
         setDefinition(Category.CHECKBOX, DEFAULT);
         setDefinition(Category.CHECKBOX_SELECTED, SELECTED);
         setDefinition(Category.TEXTBOX, SELECTED);
-        setDefinition(Category.TEXTBOX_FOCUSED, new Definition(Color.YELLOW, Color.BLUE, true));
-        setDefinition(Category.PROGRESS_BAR_COMPLETED, new Definition(Color.GREEN, Color.BLACK, false));
-        setDefinition(Category.PROGRESS_BAR_REMAINING, new Definition(Color.RED, Color.BLACK, false));
+        setDefinition(Category.TEXTBOX_FOCUSED, new Definition(TextColor.ANSI.YELLOW, TextColor.ANSI.BLUE, true));
+        setDefinition(Category.PROGRESS_BAR_COMPLETED, new Definition(TextColor.ANSI.GREEN, TextColor.ANSI.BLACK, false));
+        setDefinition(Category.PROGRESS_BAR_REMAINING, new Definition(TextColor.ANSI.RED, TextColor.ANSI.BLACK, false));
     }
 
     public Theme.Definition getDefinition(Category category) {
@@ -240,26 +240,26 @@ public class Theme {
      */
     public static class Definition {
 
-        private Color foreground;
-        private Color background;
+        private TextColor foreground;
+        private TextColor background;
         private boolean highlighted;
         private boolean underlined;
 
-        public Definition(Color foreground, Color background) {
+        public Definition(TextColor foreground, TextColor background) {
             this(foreground, background, false);
         }
 
-        public Definition(Color foreground, Color background, boolean highlighted) {
+        public Definition(TextColor foreground, TextColor background, boolean highlighted) {
             this(foreground, background, highlighted, false);
         }
 
-        public Definition(Color foreground, Color background, boolean highlighted, boolean underlined) {
+        public Definition(TextColor foreground, TextColor background, boolean highlighted, boolean underlined) {
             if (foreground == null) {
-                throw new IllegalArgumentException("foreground color cannot be null");
+                throw new IllegalArgumentException("foreground TextColor cannot be null");
             }
 
             if (background == null) {
-                throw new IllegalArgumentException("background color cannot be null");
+                throw new IllegalArgumentException("background TextColor cannot be null");
             }
 
             this.foreground = foreground;
@@ -268,11 +268,11 @@ public class Theme {
             this.underlined = underlined;
         }
 
-        public Color foreground() {
+        public TextColor foreground() {
             return foreground;
         }
 
-        public Color background() {
+        public TextColor background() {
             return background;
         }
 
