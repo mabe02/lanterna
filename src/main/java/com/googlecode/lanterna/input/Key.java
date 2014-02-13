@@ -132,9 +132,8 @@ public class Key
     
     /**
  	 * Creates a Key from a string representation in Vim's key notation.
-     * @param keyStr
-     * @return
-	 * @author kba
+     * @param keyStr the string representation of this key
+     * @return the created {@link Key}
      */
     public static Key fromString(String keyStr) {
     	String keyStrLC = keyStr.toLowerCase();
@@ -190,8 +189,15 @@ public class Key
     	return k;
     }
     
-    public boolean equalsString(String keyStr) {
-    	return equals(Key.fromString(keyStr));
+    public boolean equalsString(String... keyStrs) {
+    	boolean match = false;
+		for (String keyStr : keyStrs) {
+    		if(equals(Key.fromString(keyStr))) {
+    			match =true;
+    			break;
+    		}
+    	}
+		return match;
     }
 
 
