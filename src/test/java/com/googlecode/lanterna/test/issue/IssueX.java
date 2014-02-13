@@ -24,7 +24,8 @@ class IssueX {
         private int current_y = 1;
         private int default_x = 3;
 
-        private boolean conversionFinished = false;
+        @SuppressWarnings("unused")
+		private boolean conversionFinished = false;
 
         public LanternaTerminalWriter(String[] args) {
             screen = new TestTerminalFactory(args).createScreen();

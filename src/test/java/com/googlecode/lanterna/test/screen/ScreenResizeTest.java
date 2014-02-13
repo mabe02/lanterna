@@ -38,7 +38,8 @@ public class ScreenResizeTest
     }
 
     private Screen screen;
-    private boolean willResize;
+    @SuppressWarnings("unused")
+	private boolean willResize;
 
     public ScreenResizeTest(String[] args) throws InterruptedException
     {

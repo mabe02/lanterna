@@ -23,6 +23,7 @@ import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.input.GnomeTerminalProfile;
 import com.googlecode.lanterna.input.PuttyProfile;
 import com.googlecode.lanterna.terminal.TerminalSize;
+
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.Timer;
@@ -133,7 +134,8 @@ public class CygwinTerminal extends ANSITerminal {
                             */ 
     }
     
-    private static String findShell() {
+    @SuppressWarnings("unused")
+	private static String findShell() {
         return findProgram("sh.exe");
     }
     

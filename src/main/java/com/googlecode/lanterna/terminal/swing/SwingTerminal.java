@@ -28,7 +28,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -48,7 +47,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 import com.googlecode.lanterna.LanternaUtils;
-import com.googlecode.lanterna.gui.Theme.Definition;
 import com.googlecode.lanterna.input.InputProvider;
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.input.KeyMappingProfile;
@@ -561,6 +559,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
     {
         private boolean useAntiAliasing;
 
+		@SuppressWarnings("unused")
 		public TerminalRenderer()
         {
         }
