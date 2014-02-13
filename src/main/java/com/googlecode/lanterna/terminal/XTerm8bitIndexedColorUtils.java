@@ -18,11 +18,12 @@
  */
 package com.googlecode.lanterna.terminal;
 
-import com.googlecode.lanterna.terminal.swing.TerminalPalette;
 import java.awt.Color;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
+
+import com.googlecode.lanterna.terminal.swing.TerminalPalette;
 
 /**
  * This class can help you convert to and from the 8-bit indexed color standard that is supported
@@ -38,7 +39,7 @@ public class XTerm8bitIndexedColorUtils {
     /**
      * I didn't make this myself, it is from http://www.vim.org/scripts/script.php?script_id=1349
      */
-    private static final Collection<Entry> colorEntries = Collections.unmodifiableList(
+    private static final List<Entry> colorEntries = Collections.unmodifiableList(
             Arrays.asList(
             //These are the standard 16-color VGA palette entries
             new Entry(0, 0, 0, 0),
@@ -301,25 +302,43 @@ public class XTerm8bitIndexedColorUtils {
             new Entry(255, 0xee, 0xee, 0xee)));
     
     /**
+     * @see #getClosestColor(int, int, int, int)
+     */
+    public static int getClosestColor(int red, int green, int blue) {
+    	return getClosestColor(red, green, blue, 255);
+    }
+
+    /**
+     * @see #getClosestColor(int, int, int, int)
+     */
+    public static int getClosestColorANSI(int red, int green, int blue) {
+    	return getClosestColor(red, green, blue, 15);
+    }
+
+    /**
      * Given a RGB value, finds the closest color from the 8-bit palette. The calculation is done
      * using distance in three dimensional space so it's not actually 100% accurate (color 
      * similarity is a whole research area of its own) but it's a good approximation.
      * @param red Red component value (0-255)
      * @param green Green component value (0-255)
      * @param blue Blue component value (0-255)
+     * @param maxIndex The maximum number of colors to consider
      * @return Index of the closest color
      */
-    public static int getClosestColor(int red, int green, int blue) {
+    public static int getClosestColor(int red, int green, int blue, int maxIndex) {
         if(red < 0 || red > 255)
             throw new IllegalArgumentException("getClosestColor: red is outside of valid range (0-255)");
         if(green < 0 || green > 255)
             throw new IllegalArgumentException("getClosestColor: green is outside of valid range (0-255)");
         if(blue < 0 || blue > 255)
             throw new IllegalArgumentException("getClosestColor: blue is outside of valid range (0-255)");
-        
+        if (maxIndex < 0 || maxIndex > 255)
+            throw new IllegalArgumentException("getClosestColor: maxIndex is outside the valid range (0-255)");
+        	
         double closestMatch = Double.MAX_VALUE;
         int closestIndex = 0;
-        for(Entry entry : colorEntries) {
+        for (int i = 0; i <= maxIndex ; i++) {
+        	Entry entry = colorEntries.get(i);
             double distance = entry.distanceTo(red, green, blue);
             if(distance < closestMatch) {
                 closestIndex = entry.index;
