@@ -180,6 +180,9 @@ public abstract class ANSITerminal extends StreamBasedTerminal
                     case RESET_ALL:
                         writeToTerminal((byte)'0');
                         break;
+                    case EXIT_BLINK:
+                    default:
+                    	break;
                 }
                 if(index++ < options.length - 1)
                     writeToTerminal((byte)';');
