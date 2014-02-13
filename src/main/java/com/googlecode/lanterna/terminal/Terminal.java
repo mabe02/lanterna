@@ -80,10 +80,9 @@ public interface Terminal extends InputProvider
     public void putCharacter(char c);
     
     /**
-     * Returns the character currently buffered for position x/y.
      * @param x
      * @param y
-     * @return
+     * @return the character currently buffered for position x/y.
      * @author kba
      */
     public char getCharacter(int x, int y);
@@ -244,16 +243,22 @@ public interface Terminal extends InputProvider
         ENTER_BOLD,
         ENTER_REVERSE,
         ENTER_UNDERLINE,
-        ENTER_BORDERED,
         /**
          * This code may not be supported by all terminals/terminal emulators
          */
+        ENTER_BORDERED, // 51: Framed
+        EXIT_BORDERED,
+//        ENTER_FRAKTUR, // TODO :) maybe add an addiitional font in Swingterminal
+//        EXIT_FRAKTUR, // TODO :)
+//        ENTER_CROSSEDOUT, // TODO render strike-through in SwingTerminal
+//        EXIT_CROSSEDOUT, // TODO
+//        ENTER_CIRCLED, // TODO Maybe a wide circle to notify users about a certain char
+//        EXIT_CIRCLED, // TODO
         ENTER_BLINK,
         EXIT_BOLD,
         EXIT_REVERSE,
         EXIT_UNDERLINE,
         EXIT_BLINK,
-        EXIT_BORDERED,
     }
 
 //    @Deprecated
