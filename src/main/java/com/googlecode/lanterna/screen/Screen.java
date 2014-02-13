@@ -57,7 +57,7 @@ public class Screen
      */
     public Screen(Terminal terminal)
     {
-        this(terminal, terminal.queryTerminalSize());
+        this(terminal, terminal.getTerminalSize());
     }
 
     /**

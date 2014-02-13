@@ -42,7 +42,7 @@ public class MessageBox extends Window
 
         Label messageBoxLabel = new Label(message);
         addComponent(messageBoxLabel);
-        addEmptyLine();
+        addComponent(new EmptySpace(1, 1));
 
         Button okButton = new Button("OK", new Action() {
             public void doAction()
