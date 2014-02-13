@@ -21,7 +21,11 @@ public class PopupCheckBoxList extends RadioCheckBoxList {
 		if (poppedUp) {
 			return super.createItemString(index);
 		}
-		return ACS.ARROW_DOWN + this.getItemAt(index).toString();
+		if (getCheckedItemIndex() > -1) {
+			return ACS.ARROW_DOWN + this.getItemAt(index).toString();
+		} else {
+			return EMPTY_SELECT;
+		}
 	}
 	
 	@Override
@@ -42,12 +46,14 @@ public class PopupCheckBoxList extends RadioCheckBoxList {
 			if (key.equalsString("<cr>") || key.equalsString("<space>")) {
 				poppedUp = false;
 				invalidate();
+				valueChanged();
 				return parentRet;
 			}
 		} 
 		if (key.equalsString("<cr>")) {
 			poppedUp = true;
 			invalidate();
+			valueChanged();
 		} else if (key.equalsString("<Tab>")) {
 			return Result.NEXT_INTERACTABLE_DOWN;
 		} else if (key.equalsString("<S-Tab>")) {
@@ -61,7 +67,9 @@ public class PopupCheckBoxList extends RadioCheckBoxList {
 		if (poppedUp) {
 			return super.getPreferredSize();
 		}
-		int width = getSelectedIndex() > -1 ? createItemString(getSelectedIndex()).length() : EMPTY_SELECT.length();
+		// TODO size is not correct because of getCheckedItemIndex returning -1
+//		System.out.println("" + getCheckedItemIndex());
+		int width = getCheckedItemIndex() > -1 ? createItemString(getSelectedIndex()).length() : EMPTY_SELECT.length();
 		return new TerminalSize(width+1, 1);
 	}
 	

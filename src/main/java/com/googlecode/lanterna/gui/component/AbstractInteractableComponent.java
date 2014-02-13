@@ -35,6 +35,14 @@ public abstract class AbstractInteractableComponent extends AbstractComponent im
     }
 
     @Override
+    public final void valueChanged()
+    {
+        for(ComponentListener cl: getComponentListeners())
+            cl.onComponentValueChanged(this);
+        
+    }
+
+    @Override
     public final void onEnterFocus(FocusChangeDirection direction) {
         hasFocus = true;
         for(ComponentListener cl: getComponentListeners())

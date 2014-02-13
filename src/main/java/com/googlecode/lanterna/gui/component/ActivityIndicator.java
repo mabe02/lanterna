@@ -1,6 +1,5 @@
 package com.googlecode.lanterna.gui.component;
 
-import com.googlecode.lanterna.gui.*;
                
 /**
 For indicating that the program is working on something and not frozen.

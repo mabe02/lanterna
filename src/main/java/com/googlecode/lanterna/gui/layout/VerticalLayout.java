@@ -18,7 +18,6 @@
  */
 package com.googlecode.lanterna.gui.layout;
 
-import com.googlecode.lanterna.gui.Container;
 import com.googlecode.lanterna.gui.component.Panel;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;

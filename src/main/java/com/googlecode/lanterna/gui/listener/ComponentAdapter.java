@@ -38,4 +38,9 @@ public class ComponentAdapter implements ComponentListener {
     @Override
     public void onComponentReceivedFocus(InteractableComponent interactableComponent) {
     }
+
+	@Override
+	public void onComponentValueChanged(InteractableComponent component) {
+		
+	}
 }
