@@ -19,15 +19,16 @@
 
 package com.googlecode.lanterna.gui;
 
+import java.util.Arrays;
+import java.util.EnumSet;
+
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.ScreenCharacterStyle;
 import com.googlecode.lanterna.screen.TabBehaviour;
-import com.googlecode.lanterna.terminal.TextColor;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
-import java.util.Arrays;
-import java.util.EnumSet;
+import com.googlecode.lanterna.terminal.TextColor;
 
 /**
  * This class works as a kind of 'pencil', able to output text graphics. The 
@@ -42,8 +43,8 @@ class TextGraphicsImpl implements TextGraphics
     private final TerminalSize areaSize;
     private final Screen screen;
     private Theme theme;
-    private Terminal.Color foregroundColor;
-    private Terminal.Color backgroundColor;
+    private TextColor foregroundColor;
+    private TextColor backgroundColor;
     private boolean currentlyBold;
 
     TextGraphicsImpl(final TerminalPosition topLeft, final TerminalSize areaSize, final Screen screen, final Theme theme)
@@ -53,8 +54,8 @@ class TextGraphicsImpl implements TextGraphics
         this.screen = screen;
         this.theme = theme;
         this.currentlyBold = false;
-        this.foregroundColor = Terminal.Color.DEFAULT;
-        this.backgroundColor = Terminal.Color.DEFAULT;
+        this.foregroundColor = TextColor.fromOldFormat(Terminal.Color.DEFAULT);
+        this.backgroundColor = TextColor.fromOldFormat(Terminal.Color.DEFAULT);
     }
 
     private TextGraphicsImpl(final TextGraphicsImpl graphics, final TerminalPosition topLeft, final TerminalSize areaSize)
@@ -144,31 +145,31 @@ class TextGraphicsImpl implements TextGraphics
                 column + topLeft.getColumn(), 
                 row + topLeft.getRow(), 
                 string,
-                TextColor.fromOldFormat(foregroundColor), 
-                TextColor.fromOldFormat(backgroundColor), 
+                foregroundColor, 
+                backgroundColor, 
                 stylesSet);
     }
 
     @Override
-    public Terminal.Color getBackgroundColor()
+    public TextColor getBackgroundColor()
     {
         return backgroundColor;
     }
 
     @Override
-    public Terminal.Color getForegroundColor()
+    public TextColor getForegroundColor()
     {
         return foregroundColor;
     }
 
     @Override
-    public void setBackgroundColor(Terminal.Color backgroundColor)
+    public void setBackgroundColor(TextColor backgroundColor)
     {
         this.backgroundColor = backgroundColor;
     }
 
     @Override
-    public void setForegroundColor(Terminal.Color foregroundColor)
+    public void setForegroundColor(TextColor foregroundColor)
     {
         this.foregroundColor = foregroundColor;
     }
@@ -304,10 +305,10 @@ class TextGraphicsImpl implements TextGraphics
         public void fillRectangle(char character, TerminalPosition topLeft, TerminalSize rectangleSize) { }
 
         @Override
-        public Terminal.Color getBackgroundColor() { return Terminal.Color.DEFAULT; }
+        public TextColor getBackgroundColor() { return TextColor.ANSI.BLACK; }
 
         @Override
-        public Terminal.Color getForegroundColor() { return Terminal.Color.DEFAULT; }
+        public TextColor getForegroundColor() { return TextColor.ANSI.WHITE; }
 
         @Override
         public int getHeight() { return 0; }
@@ -322,13 +323,13 @@ class TextGraphicsImpl implements TextGraphics
         public int getWidth() { return 0; }
 
         @Override
-        public void setBackgroundColor(Terminal.Color backgroundColor) { }
+        public void setBackgroundColor(TextColor backgroundColor) { }
 
         @Override
         public void setBoldMask(boolean enabledBoldMask) { }
 
         @Override
-        public void setForegroundColor(Terminal.Color foregroundColor) { }
+        public void setForegroundColor(TextColor foregroundColor) { }
 
         @Override
         public TextGraphics subAreaGraphics(TerminalPosition terminalPosition) { 
@@ -343,6 +344,8 @@ class TextGraphicsImpl implements TextGraphics
         @Override
         public TerminalPosition translateToGlobalCoordinates(TerminalPosition pointInArea) {
             return new TerminalPosition(0, 0);
-        }   
+        }
+
     }
+
 }
