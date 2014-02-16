@@ -123,7 +123,7 @@ public interface Component
     
     public static enum Alignment {
         TOP_CENTER,
-        BOTTON_CENTER,
+        BOTTOM_CENTER,
         LEFT_CENTER,
         RIGHT_CENTER,
         CENTER,
