@@ -7,3 +7,4 @@
  * Telnet support
  * Proper Table class
  * Manual setFocus() for components
+ * Resize terminal (http://invisible-island.net/xterm/ctlseqs/ctlseqs.html)
