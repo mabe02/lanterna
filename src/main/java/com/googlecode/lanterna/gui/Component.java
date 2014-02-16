@@ -121,6 +121,13 @@ public interface Component
      */
     Alignment getAlignment();
     
+    /**
+     * Surrounds this component with a specified border
+     * @param border Border to use
+     * @return New component which contains the original wrapped with the specified border
+     */
+    Component addBorder(Border border, String title);
+    
     public static enum Alignment {
         TOP_CENTER,
         BOTTOM_CENTER,

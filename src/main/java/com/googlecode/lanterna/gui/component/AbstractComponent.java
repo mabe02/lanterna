@@ -19,11 +19,13 @@
 
 package com.googlecode.lanterna.gui.component;
 
+import com.googlecode.lanterna.gui.Border;
 import com.googlecode.lanterna.gui.Component;
 import com.googlecode.lanterna.gui.Container;
 import com.googlecode.lanterna.gui.GUIScreen;
 import com.googlecode.lanterna.gui.TextGraphics;
 import com.googlecode.lanterna.gui.Window;
+import com.googlecode.lanterna.gui.layout.LinearLayout;
 import com.googlecode.lanterna.gui.listener.ComponentListener;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
@@ -160,6 +162,13 @@ public abstract class AbstractComponent implements Component
         if(window == null)
             return null;
         return window.getOwner();
+    }
+
+    @Override
+    public Component addBorder(Border border, String title) {
+        Panel panel = new Panel(title, border, Panel.Orientation.VERTICAL);
+        panel.addComponent(this, LinearLayout.GROWS_HORIZONTALLY, LinearLayout.GROWS_VERTICALLY);
+        return panel;
     }
 
     /**
