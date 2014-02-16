@@ -241,6 +241,9 @@ public class GUIScreen
                     }
                 }                
 
+                //Make sure we have a component in focus if there is one available
+                windowStack.getLast().window.checkFocus();
+                        
                 boolean repainted = update();
 
                 Key nextKey = screen.readInput();

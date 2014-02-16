@@ -159,11 +159,20 @@ public class Window
         ComponentInvalidatorAlert invalidatorAlert = new ComponentInvalidatorAlert(component);
         invalidatorAlerts.add(invalidatorAlert);
         component.addComponentListener(invalidatorAlert);
-
-        if(currentlyInFocus == null)
-            setFocus(contentPane.nextFocus(null));
-
+        checkFocus();
         invalidate();
+    }
+
+    /**
+     * This method will, if nothing is in focus, scan through all components
+     * again and find something to focus on.
+     */
+    void checkFocus() 
+    {
+        if(currentlyInFocus == null) {
+            setFocus(contentPane.nextFocus(null));
+            invalidate();
+        }
     }
 
     public void addContainerListener(ContainerListener cl)
