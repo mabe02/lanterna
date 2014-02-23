@@ -188,7 +188,7 @@ public abstract class AbstractComponent implements Component
         }
         
         int leftPosition = 0;
-        if(alignment == Alignment.TOP_CENTER || alignment == Alignment.CENTER || alignment == Alignment.BOTTON_CENTER) {
+        if(alignment == Alignment.TOP_CENTER || alignment == Alignment.CENTER || alignment == Alignment.BOTTOM_CENTER) {
             leftPosition = (graphics.getWidth() - preferredSize.getColumns()) / 2;
         }
         else if(alignment == Alignment.TOP_RIGHT || alignment == Alignment.RIGHT_CENTER || alignment == Alignment.BOTTOM_RIGHT) {
@@ -199,7 +199,7 @@ public abstract class AbstractComponent implements Component
         if(alignment == Alignment.LEFT_CENTER || alignment == Alignment.CENTER || alignment == Alignment.RIGHT_CENTER) {
             topPosition = (graphics.getHeight() - preferredSize.getRows()) / 2;
         }
-        else if(alignment == Alignment.BOTTOM_LEFT || alignment == Alignment.BOTTON_CENTER || alignment == Alignment.BOTTOM_RIGHT) {
+        else if(alignment == Alignment.BOTTOM_LEFT || alignment == Alignment.BOTTOM_CENTER || alignment == Alignment.BOTTOM_RIGHT) {
             topPosition = graphics.getHeight() - preferredSize.getRows();
         }
         return graphics.subAreaGraphics(new TerminalPosition(leftPosition, topPosition), preferredSize);

@@ -70,11 +70,11 @@ public class FileDialog extends Window {
         super(title);
         this.selectedFile = null;
         
-        Panel panelFileDir = new Panel(Panel.Orientation.HORISONTAL);
+        Panel panelFileDir = new Panel(Panel.Orientation.HORIZONTAL);
         fileView = createFileListBox();
         dirView = createFileListBox();
         fileText = new TextBox();
-        Panel panelButtons = new Panel(Panel.Orientation.HORISONTAL);
+        Panel panelButtons = new Panel(Panel.Orientation.HORIZONTAL);
         Button okButton = new Button(kind.name(), new Action() {
             @Override
             public void doAction() {
