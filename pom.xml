@@ -33,6 +33,14 @@
         <developerConnection>scm:hg:https://code.google.com/p/lanterna/</developerConnection>
         <url>https://code.google.com/p/lanterna/</url>
     </scm>
+    
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+        </dependency>
+    </dependencies>
   
     <build>
         <plugins>

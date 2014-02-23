@@ -1,5 +1,6 @@
-package com.googlecode.lanterna.input;
+package com.googlecode.lanterna.test.terminal;
 
+import com.googlecode.lanterna.input.Key;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
