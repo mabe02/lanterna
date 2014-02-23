@@ -19,7 +19,10 @@
 
 package com.googlecode.lanterna.gui.component;
 
-import com.googlecode.lanterna.gui.Border;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
 import com.googlecode.lanterna.gui.Component;
 import com.googlecode.lanterna.gui.Container;
 import com.googlecode.lanterna.gui.GUIScreen;
@@ -29,10 +32,6 @@ import com.googlecode.lanterna.gui.layout.LinearLayout;
 import com.googlecode.lanterna.gui.listener.ComponentListener;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 
 
 /**
@@ -131,6 +130,7 @@ public abstract class AbstractComponent implements Component
         }        
         this.alignment = alignment;
     }
+
     
     protected void invalidate()
     {

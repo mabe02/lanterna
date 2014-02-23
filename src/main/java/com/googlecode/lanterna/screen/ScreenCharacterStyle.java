@@ -28,5 +28,6 @@ public enum ScreenCharacterStyle {
     Bold, 
     Underline, 
     Reverse, 
-    Blinking
+    Blinking,
+    Bordered
 }

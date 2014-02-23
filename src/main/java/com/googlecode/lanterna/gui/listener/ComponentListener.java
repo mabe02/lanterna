@@ -29,6 +29,14 @@ import com.googlecode.lanterna.gui.component.InteractableComponent;
 public interface ComponentListener
 {
     /**
+	 * Will be called when a component is signaling that a value it is
+	 * presenting has been changed
+	 * 
+	 * @param component the Component that's value changed
+	 */
+    void onComponentValueChanged(InteractableComponent component);
+
+    /**
      * Will be called when a component is signaling it's content has been invalidated and needs to
      * be repainted by the GUI system.
      * @param component Component that was invalidated

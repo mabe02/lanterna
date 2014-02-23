@@ -25,9 +25,9 @@ import com.googlecode.lanterna.gui.TextGraphics;
 import com.googlecode.lanterna.gui.Theme;
 import com.googlecode.lanterna.gui.component.TextGrid.DataGridCel;
 import com.googlecode.lanterna.input.Key;
-import com.googlecode.lanterna.terminal.Terminal.Color;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
+import com.googlecode.lanterna.terminal.TextColor;
 
 /**
  * Multi-line text edit component
@@ -204,9 +204,9 @@ public class EditArea extends AbstractInteractableComponent {
         int width = g.getWidth();
         int height = g.getHeight();
 
-        Color fg = Theme.getDefaultTheme()
+        TextColor fg = Theme.getDefaultTheme()
                 .getDefinition(Theme.Category.TEXTBOX).foreground();
-        Color bg = Theme.getDefaultTheme()
+        TextColor bg = Theme.getDefaultTheme()
                 .getDefinition(Theme.Category.TEXTBOX).background();
 
         if (hasFocus()) {

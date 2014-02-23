@@ -19,13 +19,14 @@
 
 package com.googlecode.lanterna.gui.component;
 
+import java.util.Arrays;
+
 import com.googlecode.lanterna.gui.TextGraphics;
 import com.googlecode.lanterna.gui.Theme;
 import com.googlecode.lanterna.gui.Theme.Category;
-import com.googlecode.lanterna.terminal.Terminal;
-import com.googlecode.lanterna.terminal.Terminal.Color;
+import com.googlecode.lanterna.screen.ScreenCharacterStyle;
 import com.googlecode.lanterna.terminal.TerminalSize;
-import java.util.Arrays;
+import com.googlecode.lanterna.terminal.TextColor;
 
 /**
  *
@@ -38,8 +39,10 @@ public class Label extends AbstractComponent
     private int width;
     private int forceWidth;
     private Boolean textBold;
-    private Terminal.Color textColor;
+    private TextColor textColor;
+    private TextColor backgroundColor;
     private Theme.Category style;
+    private ScreenCharacterStyle charStyle;
 
     public Label()
     {
@@ -51,33 +54,38 @@ public class Label extends AbstractComponent
         this(text, -1);
     }
 
-    public Label(String text, Terminal.Color textColor)
+    public Label(String text, TextColor textColor)
     {
         this(text, textColor, null);
+    }
+    public Label(String text, TextColor textColor, TextColor backgroundColor)
+    {
+        this(text, textColor, backgroundColor, null);
     }
 
     public Label(String text, Boolean textBold)
     {
-        this(text, null, textBold);
+        this(text, null, null, textBold);
     }
 
-    public Label(String text, Terminal.Color textColor, Boolean textBold)
+    public Label(String text, TextColor textColor, TextColor backgroundColor, Boolean textBold)
     {
-        this(text, -1, textColor, textBold);
+        this(text, -1, textColor, null, textBold);
     }
     
     public Label(String text, int fixedWidth)
     {
-        this(text, fixedWidth, null, null);
+        this(text, fixedWidth, null, null, null);
     }
 
-    public Label(String text, int fixedWidth, Terminal.Color color, Boolean textBold)
+    public Label(String text, int fixedWidth, TextColor textColor, TextColor backgroundColor, Boolean textBold)
     {
         if(text == null)
             this.text = new String[] { "null" };
         else
             this.text = text.split("\n");
-        this.textColor = color;
+        this.textColor = textColor;
+        this.backgroundColor = backgroundColor;
         this.textBold = textBold;
         this.height = 0;
         this.width = 0;
@@ -102,6 +110,8 @@ public class Label extends AbstractComponent
         
         if(textColor != null)
             graphics.setForegroundColor(textColor);
+        if(backgroundColor != null)
+            graphics.setBackgroundColor(backgroundColor);
         if(textBold != null) {
             if(textBold)
                 graphics.setBoldMask(true);
@@ -111,17 +121,19 @@ public class Label extends AbstractComponent
         
         if(text.length == 0)
             return;
-
+        
         int leftPosition = 0;        
         for(int i = 0; i < text.length; i++) {
+        	String stringToDraw = text[i];
             if(forceWidth > -1) {
-                if(text[i].length() > forceWidth)
-                    graphics.drawString(leftPosition, i, text[i].substring(0, forceWidth - 3) + "...");
-                else
-                    graphics.drawString(leftPosition, i, text[i]);
+                if(text[i].length() > forceWidth) {
+                	stringToDraw = text[i].substring(0, forceWidth - 3) + "...";
+				}
             }
-            else
-                graphics.drawString(leftPosition, i, text[i]);
+            if (charStyle != null)
+            	graphics.drawString(leftPosition, i, stringToDraw, charStyle);
+            else 
+            	graphics.drawString(leftPosition, i, stringToDraw);
         }
     }
 
@@ -155,16 +167,25 @@ public class Label extends AbstractComponent
         return style;
     }
 
-    public Color getTextColor()
+    public TextColor getTextColor()
     {
         return textColor;
     }
 
-    public void setTextColor(Color textColor)
+    public void setTextColor(TextColor textColor)
     {
         this.textColor = textColor;
         invalidate();
     }
+    
+    public TextColor getBackgroundColor() {
+		return backgroundColor;
+	}
+    
+    public void setBackgroundColor(TextColor backgroundColor) {
+		this.backgroundColor = backgroundColor;
+		invalidate();
+	}
 
     private void updateMetrics()
     {
@@ -178,4 +199,12 @@ public class Label extends AbstractComponent
                 width = line.length();
         }
     }
+
+	public ScreenCharacterStyle getCharStyle() {
+		return charStyle;
+	}
+
+	public void setCharStyle(ScreenCharacterStyle charStyle) {
+		this.charStyle = charStyle;
+	}
 }

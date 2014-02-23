@@ -20,6 +20,8 @@
 package com.googlecode.lanterna.terminal.swing;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class specifies the palette of colors the terminal will use for the 
@@ -309,6 +311,35 @@ public class TerminalPalette {
 
     public Color getNormalYellow() {
         return normalYellow;
+    }
+
+    public Color get(int index) {
+    	switch (index) {
+    	case 0: return normalBlack;
+    	case 1: return normalRed;
+    	case 2: return normalGreen;
+    	case 3: return normalYellow;
+    	case 4: return normalBlue;
+    	case 5: return normalMagenta;
+    	case 6: return normalCyan;
+    	case 7: return normalWhite;
+    	case 8: return brightBlack;
+    	case 9: return brightRed;
+    	case 10: return brightGreen;
+    	case 11: return brightYellow;
+    	case 12: return brightBlue;
+    	case 13: return brightMagenta;
+    	case 14: return brightCyan;
+    	case 15: return brightWhite;
+    	default:throw new IllegalArgumentException("Color index must be in the range [0 .. 15]");
+    	}
+    }
+    
+    public List<Color> asList() {
+    	List<Color> list = new ArrayList<Color>();
+    	for (int i = 0; i < 16 ; i++)
+    		list.add(get(i));
+    	return list;
     }
 
     @Override

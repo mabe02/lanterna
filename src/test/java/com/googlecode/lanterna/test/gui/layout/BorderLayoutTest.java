@@ -88,7 +88,7 @@ public class BorderLayoutTest {
         buttonPanel.addComponent(closeButton);
         mainWindow.addComponent(buttonPanel, LinearLayout.GROWS_HORIZONTALLY);
 
-        guiScreen.showWindow(mainWindow, GUIScreen.Position.CENTER);
+        guiScreen.showWindow(mainWindow, GUIScreen.Position.FULL_SCREEN);
         guiScreen.getScreen().stopScreen();
     }
     

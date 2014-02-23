@@ -19,11 +19,14 @@
 
 package com.googlecode.lanterna.gui.dialog;
 
+import com.googlecode.lanterna.gui.Action;
+import com.googlecode.lanterna.gui.Border;
+import com.googlecode.lanterna.gui.GUIScreen;
+import com.googlecode.lanterna.gui.Window;
+import com.googlecode.lanterna.gui.component.Button;
 import com.googlecode.lanterna.gui.component.EmptySpace;
 import com.googlecode.lanterna.gui.component.Label;
 import com.googlecode.lanterna.gui.component.Panel;
-import com.googlecode.lanterna.gui.component.Button;
-import com.googlecode.lanterna.gui.*;
 
 /**
  *
@@ -39,7 +42,7 @@ public class MessageBox extends Window
 
         Label messageBoxLabel = new Label(message);
         addComponent(messageBoxLabel);
-        addEmptyLine();
+        addComponent(new EmptySpace(1, 1));
 
         Button okButton = new Button("OK", new Action() {
             public void doAction()

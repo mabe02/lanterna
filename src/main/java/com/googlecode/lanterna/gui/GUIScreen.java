@@ -24,6 +24,7 @@ import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -448,7 +449,8 @@ public class GUIScreen
             return topLeft;
         }
 
-        public void setTopLeft(TerminalPosition topLeft)
+        @SuppressWarnings("unused")
+		public void setTopLeft(TerminalPosition topLeft)
         {
             this.topLeft = topLeft;
         }
@@ -458,7 +460,8 @@ public class GUIScreen
             return window;
         }
 
-        public void setWindow(Window window)
+        @SuppressWarnings("unused")
+		public void setWindow(Window window)
         {
             this.window = window;
         }

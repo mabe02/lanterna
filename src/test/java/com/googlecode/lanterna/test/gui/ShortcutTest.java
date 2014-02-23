@@ -18,14 +18,13 @@
  */
 package com.googlecode.lanterna.test.gui;
 
+import java.nio.charset.Charset;
+
 import com.googlecode.lanterna.gui.Action;
 import com.googlecode.lanterna.gui.Component;
 import com.googlecode.lanterna.gui.DefaultBackgroundRenderer;
 import com.googlecode.lanterna.gui.GUIScreen;
-import com.googlecode.lanterna.gui.TextGraphics;
-import com.googlecode.lanterna.gui.Theme;
 import com.googlecode.lanterna.gui.Window;
-import com.googlecode.lanterna.gui.component.AbstractComponent;
 import com.googlecode.lanterna.gui.component.Button;
 import com.googlecode.lanterna.gui.component.Label;
 import com.googlecode.lanterna.gui.component.Panel;
@@ -34,10 +33,8 @@ import com.googlecode.lanterna.gui.layout.LinearLayout;
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.Terminal;
-import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.terminal.text.UnixTerminal;
 import com.googlecode.lanterna.test.TestTerminalFactory;
-import java.nio.charset.Charset;
 
 /**
  *

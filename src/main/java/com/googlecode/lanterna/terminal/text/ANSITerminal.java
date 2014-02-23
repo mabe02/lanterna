@@ -157,6 +157,10 @@ public abstract class ANSITerminal extends StreamBasedTerminal
                     case ENTER_UNDERLINE:
                         writeToTerminal((byte)'4');
                         break;
+                    // BORDERED == UNDERLINE in ANSI Terminal
+                    case ENTER_BORDERED:
+                        writeToTerminal((byte)'4');
+                        break;
                     case EXIT_BOLD:
                         writeToTerminal((byte)'2', (byte)'2');
                         break;
@@ -166,12 +170,19 @@ public abstract class ANSITerminal extends StreamBasedTerminal
                     case EXIT_UNDERLINE:
                         writeToTerminal((byte)'2', (byte)'4');
                         break;
+                    // BORDERED == UNDERLINE in ANSI Terminal
+                    case EXIT_BORDERED:
+                        writeToTerminal((byte)'2', (byte)'4');
+                        break;
                     case ENTER_BLINK:
                         writeToTerminal((byte)'5');
                         break;
                     case RESET_ALL:
                         writeToTerminal((byte)'0');
                         break;
+                    case EXIT_BLINK:
+                    default:
+                    	break;
                 }
                 if(index++ < options.length - 1)
                     writeToTerminal((byte)';');

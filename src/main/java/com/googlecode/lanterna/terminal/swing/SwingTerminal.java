@@ -19,6 +19,33 @@
 
 package com.googlecode.lanterna.terminal.swing;
 
+import java.awt.BasicStroke;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Queue;
+import java.util.Set;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
+
 import com.googlecode.lanterna.LanternaUtils;
 import com.googlecode.lanterna.input.InputProvider;
 import com.googlecode.lanterna.input.Key;
@@ -27,17 +54,6 @@ import com.googlecode.lanterna.terminal.AbstractTerminal;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.terminal.XTerm8bitIndexedColorUtils;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Queue;
-import java.util.Set;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
 
 /**
  * A Swing-based text terminal emulator
@@ -57,6 +73,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
     private boolean currentlyBold;
     private boolean currentlyBlinking;
     private boolean currentlyUnderlined;
+    private boolean currentlyBordered;
     private boolean blinkVisible;
     private boolean cursorVisible;
     private Queue<Key> keyQueue;
@@ -86,7 +103,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
     public SwingTerminal(TerminalAppearance appearance, int widthInColumns, int heightInRows)
     {
         this.appearance = appearance;
-        this.terminalRenderer = new TerminalRenderer();
+        this.terminalRenderer = new TerminalRenderer(appearance.useAntiAliasing());
         this.blinkTimer = new Timer(500, new BlinkAction());
         this.textPosition = new TerminalPosition(0, 0);
         this.characterMap = new TerminalCharacter[heightInRows][widthInColumns];
@@ -95,6 +112,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
         this.currentlyBold = false;
         this.currentlyBlinking = false;
         this.currentlyUnderlined = false;
+        this.currentlyBordered = false;
         this.blinkVisible = false;
         this.cursorVisible = true;
         this.keyQueue = new ConcurrentLinkedQueue<Key>();
@@ -173,6 +191,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
                 currentlyBold = false;
                 currentlyBlinking = false;
                 currentlyUnderlined = false;
+                currentlyBordered = false;
                 currentForegroundColor = new CharacterANSIColor(Color.DEFAULT);
                 currentBackgroundColor = new CharacterANSIColor(Color.BLACK);
             }
@@ -188,6 +207,10 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
                 currentlyUnderlined = true;
             else if(sgr == SGR.EXIT_UNDERLINE)
                 currentlyUnderlined = false;
+            else if(sgr == SGR.ENTER_BORDERED)
+                currentlyBordered = true;
+            else if(sgr == SGR.EXIT_BORDERED)
+                currentlyBordered = false;
         }
     }
 
@@ -203,7 +226,9 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
                             new CharacterANSIColor(Color.BLACK),
                             false, 
                             false, 
-                            false);
+                            false,
+                            false
+                            );
             moveCursor(0,0);
         }
     }
@@ -299,7 +324,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
     public synchronized void putCharacter(char c)
     {
         characterMap[textPosition.getRow()][textPosition.getColumn()] =
-                new TerminalCharacter(c, currentForegroundColor, currentBackgroundColor, currentlyBold, currentlyBlinking, currentlyUnderlined);
+                new TerminalCharacter(c, currentForegroundColor, currentBackgroundColor, currentlyBold, currentlyBlinking, currentlyUnderlined, currentlyBordered);
         int nextCharacterDistance = LanternaUtils.isCharCJK(c) ? 2 : 1;
         
         if(textPosition.getColumn() >= size().getColumns() - nextCharacterDistance &&
@@ -313,6 +338,11 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
             moveCursor(textPosition.getColumn() + nextCharacterDistance, textPosition.getRow());
         }
     }
+	@Override
+	public char getCharacter(int x, int y) 
+	{
+		return characterMap[y][x].character;
+	}
 
     @Override
     public TerminalSize queryTerminalSize()
@@ -337,7 +367,9 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
                         new CharacterANSIColor(Color.BLACK), 
                         false, 
                         false, 
-                        false);
+                        false,
+                        false
+                        );
 
         synchronized(resizeMutex) {
             for(int y = 0; y < size().getRows() && y < newSizeRows; y++) {
@@ -525,11 +557,18 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
 
     private class TerminalRenderer extends JComponent
     {
-        public TerminalRenderer()
+        private boolean useAntiAliasing;
+
+		@SuppressWarnings("unused")
+		public TerminalRenderer()
         {
         }
 
-        @Override
+        public TerminalRenderer(boolean useAntiAliasing) {
+        	this.useAntiAliasing = useAntiAliasing;
+		}
+
+		@Override
         public Dimension getPreferredSize()
         {
             FontMetrics fontMetrics = getGraphics().getFontMetrics(appearance.getNormalTextFont());
@@ -545,6 +584,10 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
             graphics2D.setFont(appearance.getNormalTextFont());
             graphics2D.setColor(java.awt.Color.BLACK);
             graphics2D.fillRect(0, 0, getWidth(), getHeight());
+            if (useAntiAliasing) {
+            	graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            	graphics2D.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+            }
             final FontMetrics fontMetrics = getGraphics().getFontMetrics(appearance.getNormalTextFont());
             final int charWidth = fontMetrics.charWidth(' ');
             final int charHeight = fontMetrics.getHeight();
@@ -575,13 +618,36 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
                                 col * charWidth, ((row + 1) * charHeight) - 1, 
                                 (col+1) * charWidth, ((row + 1) * charHeight) - 1);
                     
+                    if(character.isBordered()) {
+                        int left = col * charWidth;
+						int top = ((row) * charHeight) - 1;
+
+						// TODO make this configurable
+						java.awt.Color oldColor = graphics2D.getColor();
+						graphics2D.setStroke(new BasicStroke(3));
+						graphics2D.setColor(new java.awt.Color(200, 0, 0));
+						graphics2D.drawRect(left, top, charWidth -1, charHeight -1);
+						graphics2D.setColor(oldColor);
+                    }
+                    
                     if(LanternaUtils.isCharCJK(character.character)) {
                         graphics2D.setFont(appearance.getCJKFont());
+                        needToResetFont = true;
+                    } else if (! graphics2D.getFont().canDisplay(character.toString().charAt(0))) {
+                    	for (Font fallbackFont : appearance.getFallbackFonts()) {
+                    		if (fallbackFont.canDisplay(character.toString().charAt(0))) {
+                    			graphics2D.setFont(fallbackFont);
+                    			needToResetFont = true;
+                    			break;
+                    		}
+                    	}
+                    } 
+                    if (LanternaUtils.isWideChar(graphics2D.getFontMetrics(graphics2D.getFont()), character.character)) {
+                        graphics2D.setFont(appearance.getWideFont());
                         needToResetFont = true;
                     }
                     
                     graphics2D.drawString(character.toString(), col * charWidth, ((row + 1) * charHeight) - fontMetrics.getDescent());
-                    
                     if(needToResetFont) {
                         graphics2D.setFont(appearance.getNormalTextFont());   //Restore the original font
                     }
@@ -602,6 +668,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
         private final boolean bold;
         private final boolean blinking;
         private final boolean underlined;
+        private final boolean bordered;
 
         TerminalCharacter(
                 char character, 
@@ -609,13 +676,15 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
                 TerminalCharacterColor background, 
                 boolean bold, 
                 boolean blinking, 
-                boolean underlined) {
+                boolean underlined,
+                boolean bordered) {
             this.character = character;
             this.foreground = foreground;
             this.background = background;
             this.bold = bold;
             this.blinking = blinking;
             this.underlined = underlined;
+            this.bordered =  bordered;
         }
 
         public boolean isBold() {
@@ -629,6 +698,10 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
         public boolean isUnderlined() {
             return underlined;
         }
+        
+        public boolean isBordered() {
+			return bordered;
+		}
         
         private java.awt.Color getForegroundAsAWTColor(boolean useBrightOnBold) {
             return foreground.getColor(isBold() && useBrightOnBold, true);
@@ -749,4 +822,5 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
             return c;
         }
     }
+
 }

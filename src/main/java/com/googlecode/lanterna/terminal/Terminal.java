@@ -19,6 +19,7 @@
 
 package com.googlecode.lanterna.terminal;
 
+import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.input.InputProvider;
 
 /**
@@ -77,6 +78,14 @@ public interface Terminal extends InputProvider
      * @throws LanternaException 
      */
     public void putCharacter(char c);
+    
+    /**
+     * @param x
+     * @param y
+     * @return the character currently buffered for position x/y.
+     * @author kba
+     */
+    public char getCharacter(int x, int y);
     
     /**
      * Activates an {@code SGR} code for all the following characters put to the 
@@ -237,14 +246,22 @@ public interface Terminal extends InputProvider
         /**
          * This code may not be supported by all terminals/terminal emulators
          */
+        ENTER_BORDERED, // 51: Framed
+        EXIT_BORDERED,
+//        ENTER_FRAKTUR, // TODO :) maybe add an addiitional font in Swingterminal
+//        EXIT_FRAKTUR, // TODO :)
+//        ENTER_CROSSEDOUT, // TODO render strike-through in SwingTerminal
+//        EXIT_CROSSEDOUT, // TODO
+//        ENTER_CIRCLED, // TODO Maybe a wide circle to notify users about a certain char
+//        EXIT_CIRCLED, // TODO
         ENTER_BLINK,
         EXIT_BOLD,
         EXIT_REVERSE,
         EXIT_UNDERLINE,
-        EXIT_BLINK
+        EXIT_BLINK,
     }
 
-    @Deprecated
+//    @Deprecated
     public enum Color
     {
         BLACK(0),

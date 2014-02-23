@@ -133,4 +133,6 @@ public interface Interactable
         LEFT,
         
     }
+
+	void valueChanged();
 }

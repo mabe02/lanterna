@@ -29,10 +29,11 @@ import java.util.Properties;
  */
 public class Environment
 {
-    public static void main(String[] args)
+	public static void main(String[] args)
     {
         Properties properties = System.getProperties();
-        ArrayList<String> keys = new ArrayList(properties.keySet());
+        @SuppressWarnings({ "unchecked", "rawtypes" })
+		ArrayList<String> keys = new ArrayList(properties.keySet());
         Collections.sort(keys);
         for(String key: keys)
             System.out.println(key + " = " + properties.getProperty(key));

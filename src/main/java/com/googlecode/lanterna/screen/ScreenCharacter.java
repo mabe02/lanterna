@@ -19,18 +19,18 @@
 
 package com.googlecode.lanterna.screen;
 
-import com.googlecode.lanterna.terminal.TextColor;
-import com.googlecode.lanterna.terminal.Terminal;
 import java.util.EnumSet;
 import java.util.Set;
+
+import com.googlecode.lanterna.terminal.TextColor;
 
 /**
  *
  * @author martin
  */
-class ScreenCharacter
+public class ScreenCharacter
 {
-    static final ScreenCharacter CJK_PADDING_CHARACTER = new ScreenCharacter('\0');
+    public static final ScreenCharacter CJK_PADDING_CHARACTER = new ScreenCharacter('\0');
     
     private final char character;
     private final TextColor foregroundColor;
@@ -39,12 +39,13 @@ class ScreenCharacter
     private final boolean underline;
     private final boolean reverse;
     private final boolean blinking;
+    private final boolean bordered;
     
-    ScreenCharacter(char character) {
+    public ScreenCharacter(char character) {
         this(character, TextColor.ANSI.DEFAULT, TextColor.ANSI.DEFAULT);
     }
     
-    ScreenCharacter(
+    public ScreenCharacter(
             char character, 
             TextColor foregroundColor, 
             TextColor backgroundColor) {
@@ -56,7 +57,7 @@ class ScreenCharacter
      * this constructor, please check the other one to make sure you're not missing 
      * anything!
      */
-    ScreenCharacter(
+    public ScreenCharacter(
             char character, 
             TextColor foregroundColor, 
             TextColor backgroundColor,
@@ -75,6 +76,7 @@ class ScreenCharacter
         this.underline = style.contains(ScreenCharacterStyle.Underline);
         this.reverse = style.contains(ScreenCharacterStyle.Reverse);
         this.blinking = style.contains(ScreenCharacterStyle.Blinking);
+        this.bordered = style.contains(ScreenCharacterStyle.Bordered);
     }
 
     /**
@@ -82,7 +84,7 @@ class ScreenCharacter
      * this constructor, please check the other one to make sure you're not missing 
      * anything!
      */
-    ScreenCharacter(final ScreenCharacter character) {
+    public ScreenCharacter(final ScreenCharacter character) {
         this.character = character.character;
         this.foregroundColor = character.foregroundColor;
         this.backgroundColor = character.backgroundColor;
@@ -90,34 +92,39 @@ class ScreenCharacter
         this.underline = character.underline;
         this.reverse = character.reverse;
         this.blinking = character.blinking;
+        this.bordered = character.bordered;
     }
 
-    char getCharacter() {
+    public char getCharacter() {
         return character;
     }
 
-    TextColor getBackgroundColor() {
+    public TextColor getBackgroundColor() {
         return backgroundColor;
     }
 
-    boolean isBold() {
+    public boolean isBold() {
         return bold;
     }
 
-    TextColor getForegroundColor() {
+    public TextColor getForegroundColor() {
         return foregroundColor;
     }
 
-    boolean isNegative() {
+    public boolean isNegative() {
         return reverse;
     }
 
-    boolean isUnderline() {
+    public boolean isUnderline() {
         return underline;
     }
     
-    boolean isBlinking() {
+    public boolean isBlinking() {
     	return blinking;
+    }
+    
+    public boolean isBordered() {
+    	return bordered;
     }
 
     @Override
@@ -136,7 +143,8 @@ class ScreenCharacter
                 isBold() == other.isBold() &&
                 isNegative() == other.isNegative() &&
                 isUnderline() == other.isUnderline() &&
-                isBlinking() == other.isBlinking();
+                isBlinking() == other.isBlinking() &&
+                isBordered() == other.isBordered();
     }
 
     @Override

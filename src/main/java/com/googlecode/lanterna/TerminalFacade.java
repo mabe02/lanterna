@@ -18,6 +18,11 @@
  */
 package com.googlecode.lanterna;
 
+import java.awt.GraphicsEnvironment;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
+
 import com.googlecode.lanterna.gui.GUIScreen;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.Terminal;
@@ -25,11 +30,6 @@ import com.googlecode.lanterna.terminal.swing.SwingTerminal;
 import com.googlecode.lanterna.terminal.swing.TerminalAppearance;
 import com.googlecode.lanterna.terminal.text.CygwinTerminal;
 import com.googlecode.lanterna.terminal.text.UnixTerminal;
-import java.awt.Font;
-import java.awt.GraphicsEnvironment;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.charset.Charset;
 
 /**
  * This class gives an easy facade over the whole Lanterna terminal construction

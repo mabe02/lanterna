@@ -25,6 +25,7 @@ import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.input.OSXKeyMappingProfile;
 import com.googlecode.lanterna.input.PuttyProfile;
 import com.googlecode.lanterna.terminal.TerminalSize;
+
 import java.io.*;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -100,7 +101,8 @@ public class UnixTerminal extends ANSITerminal
      * @param terminalBehaviour Special settings on how the terminal will behave, see 
      * {@code UnixTerminalMode} for more details
      */  
-    public UnixTerminal(
+    @SuppressWarnings("unchecked")
+	public UnixTerminal(
             InputStream terminalInput, 
             OutputStream terminalOutput, 
             Charset terminalCharset,
@@ -120,7 +122,8 @@ public class UnixTerminal extends ANSITerminal
         //Make sure to set an initial size
         onResized(80, 20);
         try {
-            Class signalClass = Class.forName("sun.misc.Signal");
+            @SuppressWarnings("rawtypes")
+			Class signalClass = Class.forName("sun.misc.Signal");
             for(Method m: signalClass.getDeclaredMethods()) {
                 if("handle".equals(m.getName())) {
                     Object windowResizeHandler = Proxy.newProxyInstance(getClass().getClassLoader(), new Class[] {Class.forName("sun.misc.SignalHandler")}, new InvocationHandler() {
@@ -226,7 +229,8 @@ public class UnixTerminal extends ANSITerminal
                             "/bin/stty " + (enable ? "-icanon" : "icanon") + " < /dev/tty");
     }
 
-    private static void restoreEOFCtrlD()
+    @SuppressWarnings("unused")
+	private static void restoreEOFCtrlD()
     {
         exec("/bin/sh", "-c", "/bin/stty eof ^d < /dev/tty");
     }
@@ -239,7 +243,8 @@ public class UnixTerminal extends ANSITerminal
         exec("/bin/sh", "-c", "/bin/stty susp undef < /dev/tty");
     }
 
-    private static void restoreSpecialCharacters()
+    @SuppressWarnings("unused")
+	private static void restoreSpecialCharacters()
     {
         exec("/bin/sh", "-c", "/bin/stty intr ^C < /dev/tty");
         exec("/bin/sh", "-c", "/bin/stty start ^Q < /dev/tty");

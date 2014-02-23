@@ -19,9 +19,12 @@
 
 package com.googlecode.lanterna.screen;
 
-import com.googlecode.lanterna.terminal.TextColor;
-import com.googlecode.lanterna.terminal.Terminal;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import com.googlecode.lanterna.terminal.TerminalPosition;
+import com.googlecode.lanterna.terminal.TextColor;
 
 /**
  * Helper class to write to a Screen, a bit like a pen in graphical environments.
@@ -57,6 +60,10 @@ public class ScreenWriter
         return foregroundColor;
     }
 
+    public Screen getTargetScreen() {
+		return targetScreen;
+	}
+
     public void setForegroundColor(final TextColor foregroundColor)
     {
         this.foregroundColor = foregroundColor;
@@ -83,10 +90,30 @@ public class ScreenWriter
      */
     public void drawString(final int x, final int y, final String string, final ScreenCharacterStyle... styles)
     {
-        currentPosition = currentPosition.withColumn(x).withRow(y);
-        targetScreen.putString(x, y, string, foregroundColor, backgroundColor, styles);
-        currentPosition = currentPosition.withColumn(currentPosition.getColumn() + string.length());
+    	if (! string.contains("\n") && ! string.contains("\r")) { 
+    		currentPosition = currentPosition.withColumn(x).withRow(y);
+    		targetScreen.putString(x, y, string, foregroundColor, backgroundColor, styles);
+    		currentPosition = currentPosition.withColumn(currentPosition.getColumn() + string.length());
+    	} else {
+    		currentPosition = currentPosition.withColumn(x).withRow(y);
+    		int lines=1;
+    		for (String line : string.split("[\n\r]")) {
+    			lines++;
+    			targetScreen.putString(x, y+lines, line, foregroundColor, backgroundColor, styles);
+    		}
+    		currentPosition = currentPosition
+    				.withRow(currentPosition.getRow() + lines)
+    				.withColumn(currentPosition.getColumn() + string.length());
+    	}
     }
+
+    public void drawCharacter(final int x, final int y, final char character, final ScreenCharacterStyle... styles) {
+    	Set<ScreenCharacterStyle> styleSet = new HashSet<ScreenCharacterStyle>();
+    	styleSet.addAll(Arrays.asList(styles));
+    	ScreenCharacter screenCharacter = new ScreenCharacter(character, getForegroundColor(), getBackgroundColor(), styleSet);
+    	targetScreen.putCharacter(x, y, screenCharacter);
+    }
+
 
     @Override
     public int hashCode()

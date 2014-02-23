@@ -60,7 +60,7 @@ public class PanelTest
             }
         }));
 
-        guiScreen.showWindow(mainWindow, GUIScreen.Position.CENTER);
+        guiScreen.showWindow(mainWindow, GUIScreen.Position.FULL_SCREEN);
         guiScreen.getScreen().stopScreen();
     }
 

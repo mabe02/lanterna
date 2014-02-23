@@ -4,12 +4,10 @@
  */
 package com.googlecode.lanterna.gui;
 
-import com.googlecode.lanterna.gui.Theme.Category;
-import com.googlecode.lanterna.gui.Theme.Definition;
 import com.googlecode.lanterna.screen.ScreenCharacterStyle;
-import com.googlecode.lanterna.terminal.Terminal.Color;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
+import com.googlecode.lanterna.terminal.TextColor;
 
 /**
  *
@@ -57,9 +55,9 @@ public interface TextGraphics {
      */
     void fillRectangle(char character, TerminalPosition topLeft, TerminalSize rectangleSize);
 
-    Color getBackgroundColor();
+    TextColor getBackgroundColor();
 
-    Color getForegroundColor();
+    TextColor getForegroundColor();
 
     /**
      * Height, in rows, of the TextGraphics drawing area. Attemps to draw
@@ -84,11 +82,11 @@ public interface TextGraphics {
      */
     int getWidth();
 
-    void setBackgroundColor(Color backgroundColor);
+    void setBackgroundColor(TextColor backgroundColor);
 
     void setBoldMask(boolean enabledBoldMask);
 
-    void setForegroundColor(Color foregroundColor);
+	void setForegroundColor(TextColor foregroundColor);
 
     /**
      * Creates a new TextGraphics object using the same area or smaller. Use the
@@ -119,4 +117,5 @@ public interface TextGraphics {
      * @return The point in global coordinates
      */
     TerminalPosition translateToGlobalCoordinates(TerminalPosition pointInArea);
+
 }
