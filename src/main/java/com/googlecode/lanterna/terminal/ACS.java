@@ -1,6 +1,6 @@
 /*
  * This file is part of lanterna (http://code.google.com/p/lanterna/).
- * 
+ *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,20 +13,20 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Copyright (C) 2010-2012 Martin
  */
 
 package com.googlecode.lanterna.terminal;
 
 /**
- * Some text graphics, taken from http://en.wikipedia.org/wiki/Codepage_437
- * but converted to its UTF-8 counterpart.
+ * Some text graphics, taken from http://en.wikipedia.org/wiki/Codepage_437 but converted to its UTF-8 counterpart.
+ * This class it mostly here to help out with building text GUIs when you don't have a handy Unicode chart available.
  * @author martin
  */
 public class ACS {
     private ACS() {}
-    
+
     public static final char ULCORNER = 0x250C;
     public static final char URCORNER = 0x2510;
     public static final char LLCORNER = 0x2514;
@@ -40,7 +40,13 @@ public class ACS {
     public static final char DIAMOND = 0x2666;
     public static final char SPADES = 0x2660;
     public static final char DOT = 0x2022;
-    
+    public static final char BULLET = DOT;
+    public static final char INVERSE_BULLET = 0x25d8;
+    public static final char WHITE_CIRCLE = 0x25cd;
+    public static final char INVERSE_WHITE_CIRCLE = 0x25d9;
+    public static final char FEMALE = 0x2640;
+    public static final char MALE = 0x2642;
+
     public static final char ARROW_UP = 0x2191;
     public static final char ARROW_DOWN = 0x2193;
     public static final char ARROW_RIGHT = 0x2192;
