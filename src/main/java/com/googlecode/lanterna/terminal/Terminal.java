@@ -18,7 +18,6 @@
  */
 package com.googlecode.lanterna.terminal;
 
-import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.input.InputProvider;
 
 /**
@@ -115,81 +114,20 @@ public interface Terminal extends InputProvider {
      *
      * @param color Color to use for foreground
      */
-    public void applyForegroundColor(Color color);
-
-    /**
-     * Changes the foreground color for all the following characters put to the terminal. The foreground color is what
-     * color to draw the text in.<br>
-     * <b>Warning:</b> Only a few terminal support 24-bit color control codes, please avoid using this unless you know
-     * all users will have compatible terminals. For details, please see
-     * <a href="https://github.com/robertknight/konsole/blob/master/user-doc/README.moreColors">
-     * this</a> commit log.
-     *
-     * @param r Red intensity, from 0 to 255
-     * @param g Green intensity, from 0 to 255
-     * @param b Blue intensity, from 0 to 255
-     */
-    public void applyForegroundColor(int r, int g, int b);
-
-    /**
-     * Changes the foreground color for all the following characters put to the terminal. The foreground color is what
-     * color to draw the text in.<br>
-     * <b>Warning:</b> This method will use the XTerm 256 color extension, it may not be supported on all terminal
-     * emulators! The index values are resolved as this:<br>
-     * 0 .. 15 - System color, these are taken from the schema. 16 .. 231 - Forms a 6x6x6 RGB color cube.<br>
-     * 232 .. 255 - A gray scale ramp without black and white.<br>
-     *
-     * <p>
-     * For more details on this, please see <a
-     * href="https://github.com/robertknight/konsole/blob/master/user-doc/README.moreColors">
-     * this</a> commit message to Konsole.
-     *
-     * @param index Color index from the XTerm 256 color space
-     */
-    public void applyForegroundColor(int index);
+    public void applyForegroundColor(TextColor color);
 
     /**
      * Changes the background color for all the following characters put to the terminal. The background color is the
      * color surrounding the text being printed.
      *
      * @param color Color to use for the background
-     * @throws LanternaException
      */
-    public void applyBackgroundColor(Color color);
+    public void applyBackgroundColor(TextColor color);
 
     /**
-     * Changes the background color for all the following characters put to the terminal. The background color is the
-     * color surrounding the text being printed.<br>
-     * <b>Warning:</b> Only a few terminal support 24-bit color control codes, please avoid using this unless you know
-     * all users will have compatible terminals. For details, please see
-     * <a href="https://github.com/robertknight/konsole/blob/master/user-doc/README.moreColors">
-     * this</a> commit log.
-     *
-     * @param r Red intensity, from 0 to 255
-     * @param g Green intensity, from 0 to 255
-     * @param b Blue intensity, from 0 to 255
-     */
-    public void applyBackgroundColor(int r, int g, int b);
-
-    /**
-     * Changes the background color for all the following characters put to the terminal. The background color is the
-     * color surrounding the text being printed.<br>
-     * <b>Warning:</b> This method will use the XTerm 256 color extension, it may not be supported on all terminal
-     * emulators! The index values are resolved as this:<br>
-     * 0 .. 15 - System color, these are taken from the schema. 16 .. 231 - Forms a 6x6x6 RGB color cube.<br>
-     * 232 .. 255 - A gray scale ramp without black and white.<br>
-     *
-     * <p>
-     * For more details on this, please see <a
-     * href="https://github.com/robertknight/konsole/blob/master/user-doc/README.moreColors">
-     * this</a> commit message to Konsole.
-     *
-     * @param index Index of the color to use, from the XTerm 256 color extension
-     */
-    public void applyBackgroundColor(int index);
-
-    /**
-     * Adds a {@code ResizeListener} to be called when the terminal has changed size.
+     * Adds a {@code ResizeListener} to be called when the terminal has changed size. There are no guarantees on what
+     * thread the call will be made on, so please be careful with what kind of operation you perform in this callback.
+     * You should probably not take too long to return.
      *
      * @see ResizeListener
      * @param listener Listener object to be called when the terminal has been changed
@@ -205,20 +143,6 @@ public interface Terminal extends InputProvider {
     public void removeResizeListener(ResizeListener listener);
 
     /**
-     * Will ask the terminal of its current size dimensions, represented by a {@code TerminalSize} object. Please note
-     * that the default way of figuring this information out is asynchorous and so you will be given the last known
-     * dimensions. With proper resize listeners set up, this will only be a problem for figuring out the initial size of
-     * the terminal.
-     *
-     * @return a {@code TerminalSize} object representing the size of the terminal
-     * @throws LanternaException
-     * @see TerminalSize
-     * @deprecated Being deprecated since 2.0.1 in favor of getTerminalSize()
-     */
-    @Deprecated
-    public TerminalSize queryTerminalSize();
-
-    /**
      * Returns the size of the terminal, expressed as a {@code TerminalSize} object. Please bear in mind that depending
      * on the {@code Terminal} implementation, this may or may not be accurate. See the implementing classes for more
      * information.
@@ -229,9 +153,8 @@ public interface Terminal extends InputProvider {
 
     /**
      * Calls {@code flush()} on the underlying {@code OutputStream} object, or whatever other implementation this
-     * terminal is built around.
-     *
-     * @throws LanternaException
+     * terminal is built around. Some implementing classes of this interface (like SwingTerminal) doesn't do anything
+     * as it doesn't really apply to them.
      */
     public void flush();
 
@@ -271,34 +194,20 @@ public interface Terminal extends InputProvider {
         EXIT_BLINK,
     }
 
-//    @Deprecated
-    public enum Color {
-
-        BLACK(0),
-        RED(1),
-        GREEN(2),
-        YELLOW(3),
-        BLUE(4),
-        MAGENTA(5),
-        CYAN(6),
-        WHITE(7),
-        DEFAULT(9);
-
-        private int index;
-
-        private Color(int index) {
-            this.index = index;
-        }
-
-        public int getIndex() {
-            return index;
-        }
-    }
-
     /**
      * Listener interface that can be used to be alerted on terminal resizing
      */
     public interface ResizeListener {
-        public void onResized(TerminalSize newSize);
+        /**
+         * The terminal has changed its size, most likely because the user has resized the window. This callback is
+         * invoked by something inside the lanterna library, it could be a signal handler thread, it could be the AWT
+         * thread, it could be something else, so please be careful with what kind of operation you do in here. Also,
+         * make sure not to take too long before returning. Best practice would be to update an internal status in your
+         * program to mark that the terminal has been resized (possibly along with the new size) and then in your main
+         * loop you deal with this at the beginning of each redraw.
+         * @param terminal Terminal that was resized
+         * @param newSize Size of the terminal after the resize
+         */
+        public void onResized(Terminal terminal, TerminalSize newSize);
     }
 }
