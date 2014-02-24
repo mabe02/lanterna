@@ -46,7 +46,7 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
-import com.googlecode.lanterna.LanternaUtils;
+import com.googlecode.lanterna.CJKUtils;
 import com.googlecode.lanterna.input.InputProvider;
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.input.KeyMappingProfile;
@@ -325,7 +325,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
     {
         characterMap[textPosition.getRow()][textPosition.getColumn()] =
                 new TerminalCharacter(c, currentForegroundColor, currentBackgroundColor, currentlyBold, currentlyBlinking, currentlyUnderlined, currentlyBordered);
-        int nextCharacterDistance = LanternaUtils.isCharCJK(c) ? 2 : 1;
+        int nextCharacterDistance = CJKUtils.isCharCJK(c) ? 2 : 1;
         
         if(textPosition.getColumn() >= size().getColumns() - nextCharacterDistance &&
                 textPosition.getRow() == size().getRows() - 1) {
@@ -596,7 +596,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
                 for(int col = 0; col < SwingTerminal.this.size().getColumns(); col++) {
                     boolean needToResetFont = false;
                     TerminalCharacter character = characterMap[row][col];
-                    boolean isCJKCharacter = LanternaUtils.isCharCJK(character.character);
+                    boolean isCJKCharacter = CJKUtils.isCharCJK(character.character);
                     if(cursorVisible && row == textPosition.getRow() && col == textPosition.getColumn())
                         graphics2D.setColor(character.getForegroundAsAWTColor(appearance.useBrightColorsOnBold()));
                     else
@@ -630,7 +630,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
 						graphics2D.setColor(oldColor);
                     }
                     
-                    if(LanternaUtils.isCharCJK(character.character)) {
+                    if(CJKUtils.isCharCJK(character.character)) {
                         graphics2D.setFont(appearance.getCJKFont());
                         needToResetFont = true;
                     } else if (! graphics2D.getFont().canDisplay(character.toString().charAt(0))) {
@@ -642,7 +642,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
                     		}
                     	}
                     } 
-                    if (LanternaUtils.isWideChar(graphics2D.getFontMetrics(graphics2D.getFont()), character.character)) {
+                    if (isWideChar(graphics2D.getFontMetrics(graphics2D.getFont()), character.character)) {
                         graphics2D.setFont(appearance.getWideFont());
                         needToResetFont = true;
                     }
@@ -658,6 +658,10 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
             }
             graphics2D.dispose();
         }
+    }
+    
+    private boolean isWideChar(FontMetrics metrics, final char c) {
+        return metrics.charWidth((int) c) > metrics.charWidth('.');
     }
 
     private static class TerminalCharacter {

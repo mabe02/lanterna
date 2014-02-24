@@ -19,7 +19,7 @@
 
 package com.googlecode.lanterna.screen;
 
-import com.googlecode.lanterna.LanternaUtils;
+import com.googlecode.lanterna.CJKUtils;
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.terminal.TextColor;
 import com.googlecode.lanterna.terminal.Terminal;
@@ -282,7 +282,7 @@ public class Screen
     	for(int i = 0; i < string.length(); i++) {
             char character = string.charAt(i);
             putCharacter(x + i, y, new ScreenCharacter(character, foregroundColor, backgroundColor, styles));
-            if(LanternaUtils.isCharCJK(character)) {
+            if(CJKUtils.isCharCJK(character)) {
                 putCharacter(x + ++i, y, ScreenCharacter.CJK_PADDING_CHARACTER);
             }
         }
