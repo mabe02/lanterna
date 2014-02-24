@@ -1,6 +1,6 @@
 /*
  * This file is part of lanterna (http://code.google.com/p/lanterna/).
- * 
+ *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Copyright (C) 2010-2012 Martin
  */
 
@@ -33,14 +33,14 @@ import java.lang.reflect.Proxy;
 import java.nio.charset.Charset;
 
 /**
- * A common ANSI terminal extention with support for Unix resize signals and 
+ * A common ANSI terminal extention with support for Unix resize signals and
  * the stty program to control cbreak and key echo
  * @author Martin
  */
 public class UnixTerminal extends ANSITerminal
 {
     private final UnixTerminalSizeQuerier terminalSizeQuerier;
-    
+
     /**
      * This enum lets you control some more low-level behaviors of this terminal object.
      */
@@ -49,17 +49,16 @@ public class UnixTerminal extends ANSITerminal
          * Pressing ctrl+c doesn't kill the application, it will be added to the input queue as usual
          */
         DEFAULT,
-        
+
         /**
          * Pressing ctrl+c will restore the terminal and kill the application
          */
         CTRL_C_KILLS_APPLICATION,
     }
-    
+
     private final Behaviour terminalBehaviour;
     private String sttyStatusToRestore;
-    private boolean inPrivateMode;
-            
+
     /**
      * Creates a UnixTerminal using a specified input stream, output stream and character set.
      * @param terminalInput Input stream to read terminal input from
@@ -67,13 +66,13 @@ public class UnixTerminal extends ANSITerminal
      * @param terminalCharset Character set to use when converting characters to bytes
      */
     public UnixTerminal(
-            InputStream terminalInput, 
-            OutputStream terminalOutput, 
+            InputStream terminalInput,
+            OutputStream terminalOutput,
             Charset terminalCharset)
     {
         this(terminalInput, terminalOutput, terminalCharset, null);
     }
-          
+
     /**
      * Creates a UnixTerminal using a specified input stream, output stream and character set.
      * @param terminalInput Input stream to read terminal input from
@@ -81,16 +80,16 @@ public class UnixTerminal extends ANSITerminal
      * @param terminalCharset Character set to use when converting characters to bytes
      * @param customSizeQuerier Object to use for looking up the size of the terminal, or null to
      * use the built-in method
-     */  
+     */
     public UnixTerminal(
-            InputStream terminalInput, 
-            OutputStream terminalOutput, 
+            InputStream terminalInput,
+            OutputStream terminalOutput,
             Charset terminalCharset,
             UnixTerminalSizeQuerier customSizeQuerier)
     {
         this(terminalInput, terminalOutput, terminalCharset, customSizeQuerier, Behaviour.DEFAULT);
     }
-    
+
     /**
      * Creates a UnixTerminal using a specified input stream, output stream and character set.
      * @param terminalInput Input stream to read terminal input from
@@ -98,13 +97,13 @@ public class UnixTerminal extends ANSITerminal
      * @param terminalCharset Character set to use when converting characters to bytes
      * @param customSizeQuerier Object to use for looking up the size of the terminal, or null to
      * use the built-in method
-     * @param terminalBehaviour Special settings on how the terminal will behave, see 
+     * @param terminalBehaviour Special settings on how the terminal will behave, see
      * {@code UnixTerminalMode} for more details
-     */  
+     */
     @SuppressWarnings("unchecked")
 	public UnixTerminal(
-            InputStream terminalInput, 
-            OutputStream terminalOutput, 
+            InputStream terminalInput,
+            OutputStream terminalOutput,
             Charset terminalCharset,
             UnixTerminalSizeQuerier customSizeQuerier,
             Behaviour terminalBehaviour)
@@ -113,8 +112,7 @@ public class UnixTerminal extends ANSITerminal
         this.terminalSizeQuerier = customSizeQuerier;
         this.terminalBehaviour = terminalBehaviour;
         this.sttyStatusToRestore = null;
-        this.inPrivateMode = false;
-        
+
         addInputProfile(new GnomeTerminalProfile());
         addInputProfile(new PuttyProfile());
         addInputProfile(new OSXKeyMappingProfile());
@@ -150,7 +148,7 @@ public class UnixTerminal extends ANSITerminal
     {
         if(terminalSizeQuerier != null)
             return terminalSizeQuerier.queryTerminalSize();
-        
+
         return super.queryTerminalSize();
     }
 
@@ -158,7 +156,7 @@ public class UnixTerminal extends ANSITerminal
     public TerminalSize getTerminalSize() {
         if(terminalSizeQuerier != null)
             return terminalSizeQuerier.queryTerminalSize();
-        
+
         return super.getTerminalSize();
     }
 
@@ -168,23 +166,22 @@ public class UnixTerminal extends ANSITerminal
         Key key = super.readInput();
         if(key != null &&
                 terminalBehaviour == Behaviour.CTRL_C_KILLS_APPLICATION &&
-                key.getCharacter() == 'c' && 
-                !key.isAltPressed() && 
+                key.getCharacter() == 'c' &&
+                !key.isAltPressed() &&
                 key.isCtrlPressed()) {
-            
+
             exitPrivateMode();
             System.exit(1);
         }
         return key;
     }
-    
+
     @Override
     public void enterPrivateMode()
     {
-        if(inPrivateMode) {
-            return;
+        if(isInPrivateMode()) {
+            super.enterPrivateMode();   //This will throw IllegalStateException
         }
-        inPrivateMode = true;
         saveSTTY();
         super.enterPrivateMode();
         setCBreak(true);
@@ -196,9 +193,11 @@ public class UnixTerminal extends ANSITerminal
     @Override
     public void exitPrivateMode()
     {
+        if(!isInPrivateMode()) {
+            super.exitPrivateMode();   //This will throw IllegalStateException
+        }
         super.exitPrivateMode();
         restoreSTTY();
-        inPrivateMode = false;
     }
 
     @Override
@@ -251,17 +250,17 @@ public class UnixTerminal extends ANSITerminal
         exec("/bin/sh", "-c", "/bin/stty stop ^S < /dev/tty");
         exec("/bin/sh", "-c", "/bin/stty susp ^Z < /dev/tty");
     }
-    
+
     private void saveSTTY() {
         sttyStatusToRestore = exec("/bin/sh", "-c", "stty -g < /dev/tty").trim();
     }
-    
+
     private void restoreSTTY() {
         if(sttyStatusToRestore == null) {
             //Nothing to restore
             return;
         }
-        
+
         exec("/bin/sh", "-c", "stty " + sttyStatusToRestore + " < /dev/tty");
         sttyStatusToRestore = null;
     }

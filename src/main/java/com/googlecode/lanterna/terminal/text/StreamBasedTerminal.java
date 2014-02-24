@@ -1,6 +1,6 @@
 /*
  * This file is part of lanterna (http://code.google.com/p/lanterna/).
- * 
+ *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Copyright (C) 2010-2012 Martin
  */
 
@@ -37,7 +37,7 @@ import com.googlecode.lanterna.terminal.InputEnabledAbstractTerminal;
  * @author Martin
  */
 public abstract class StreamBasedTerminal extends InputEnabledAbstractTerminal {
-    
+
     private static Charset UTF8_REFERENCE;
     static {
         try {
@@ -47,11 +47,11 @@ public abstract class StreamBasedTerminal extends InputEnabledAbstractTerminal {
             UTF8_REFERENCE = null;
         }
     }
-    
+
     private final OutputStream terminalOutput;
     private final Charset terminalCharset;
     protected final Object writerMutex;
-    
+
     public StreamBasedTerminal(final InputStream terminalInput, final OutputStream terminalOutput,
             final Charset terminalCharset)
     {
@@ -68,7 +68,7 @@ public abstract class StreamBasedTerminal extends InputEnabledAbstractTerminal {
      * Outputs a single character to the terminal output stream, translating any
      * UTF-8 graphical symbol if necessary
      * @param c Character to write to the output stream
-     * @throws LanternaException 
+     * @throws LanternaException
      */
     @Override
     public void putCharacter(char c) {
@@ -80,7 +80,7 @@ public abstract class StreamBasedTerminal extends InputEnabledAbstractTerminal {
     /**
      * Allow subclasses (that are supposed to know what they're doing) to write directly to the terminal<br>
      * Warning! Be sure to call this method INSIDE of a synchronize(writeMutex) block!!!<br>
-     * The reason is that many control sequences are a group of bytes and we want to 
+     * The reason is that many control sequences are a group of bytes and we want to
      * synchronize the whole thing rather than each character one by one.
      */
     protected void writeToTerminal(final byte... bytes) {
@@ -187,8 +187,4 @@ public abstract class StreamBasedTerminal extends InputEnabledAbstractTerminal {
         buffer[0] = input;
         return terminalCharset.encode(CharBuffer.wrap(buffer)).array();
     }
-    
-    @Override
-    public char getCharacter(int x, int y) { return Character.MIN_VALUE; }
-    
 }
