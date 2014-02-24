@@ -16,7 +16,6 @@
  * 
  * Copyright (C) 2010-2012 Martin
  */
-
 package com.googlecode.lanterna;
 
 import java.io.IOException;
@@ -24,66 +23,59 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 
 /**
- * This is a general exception class used by all of Lanterna, mostly for 
+ * This is a general exception class used by all of Lanterna, mostly for
  * wrapping IOException:s. These IOException are quite rare and comes from
  * problems with stdin or stdout normally, so it is a RuntimeException since
  * Lanterna 2.0.
+ *
  * @author Martin
  */
 public class LanternaException extends RuntimeException {
-    private IOException cause;
 
-    public LanternaException(IOException cause)
-    {
+    private final IOException cause;
+
+    public LanternaException(IOException cause) {
         super(cause.getMessage(), cause);
         this.cause = cause;
     }
 
     @Override
-    public Throwable getCause()
-    {
+    public Throwable getCause() {
         return cause;
     }
 
     @Override
-    public String getLocalizedMessage()
-    {
+    public String getLocalizedMessage() {
         return cause.getLocalizedMessage();
     }
 
     @Override
-    public String getMessage()
-    {
+    public String getMessage() {
         return cause.getMessage();
     }
 
     @Override
-    public StackTraceElement[] getStackTrace()
-    {
+    public StackTraceElement[] getStackTrace() {
         return cause.getStackTrace();
     }
 
     @Override
-    public void printStackTrace()
-    {
+    public void printStackTrace() {
         cause.printStackTrace();
     }
 
     @Override
-    public void printStackTrace(PrintStream s)
-    {
+    public void printStackTrace(PrintStream s) {
         cause.printStackTrace(s);
     }
 
     @Override
-    public void printStackTrace(PrintWriter s)
-    {
+    public void printStackTrace(PrintWriter s) {
         cause.printStackTrace(s);
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return cause.toString();
     }
 }

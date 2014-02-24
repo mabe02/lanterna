@@ -35,11 +35,13 @@ import com.googlecode.lanterna.terminal.text.UnixTerminal;
  * This class gives an easy facade over the whole Lanterna terminal construction
  * system. You can invoke methods in this class if you quickly want a Terminal,
  * Screen or GUIScreen object with default settings applied.
+ *
  * @author Martin
  */
 public class TerminalFacade {
 
-    private TerminalFacade() {}
+    private TerminalFacade() {
+    }
 
     private static final Charset DEFAULT_CHARSET = Charset.forName(System.getProperty("file.encoding"));
 
@@ -47,37 +49,33 @@ public class TerminalFacade {
     private static final int DEFAULT_TERMINAL_COLUMN_HEIGHT = 30;
 
     /**
-     * This method will return a {@code SwingTerminal} if
-     * you are running the program on a system with a graphical environment
-     * available, otherwise a suitable text-based {@code Terminal}, all with
-     * default settings.
+     * This method will return a {@code SwingTerminal} if you are running the
+     * program on a system with a graphical environment available, otherwise a
+     * suitable text-based {@code Terminal}, all with default settings.
      */
-    public static Terminal createTerminal()
-    {
+    public static Terminal createTerminal() {
         return createTerminal(DEFAULT_CHARSET);
     }
 
     /**
-     * Creates a default terminal with a specified character set.
-     * This method will return a {@code SwingTerminal} if
-     * you are running the program on a system with a graphical environment
-     * available, otherwise a suitable text-based {@code Terminal}.
+     * Creates a default terminal with a specified character set. This method
+     * will return a {@code SwingTerminal} if you are running the program on a
+     * system with a graphical environment available, otherwise a suitable
+     * text-based {@code Terminal}.
      */
-    public static Terminal createTerminal(Charset terminalCharset)
-    {
+    public static Terminal createTerminal(Charset terminalCharset) {
         return createTerminal(System.in, System.out, terminalCharset);
     }
 
     /**
      * Creates a default terminal with a specified input/output streams. This
-     * method will return a {@code SwingTerminal} if
-     * you are running the program on a system with a graphical environment
-     * available, otherwise a suitable text-based {@code Terminal}.
+     * method will return a {@code SwingTerminal} if you are running the program
+     * on a system with a graphical environment available, otherwise a suitable
+     * text-based {@code Terminal}.
      */
     public static Terminal createTerminal(
-                                    InputStream terminalInput,
-                                    OutputStream terminalOutput)
-    {
+            InputStream terminalInput,
+            OutputStream terminalOutput) {
         return createTerminal(terminalInput, terminalOutput, DEFAULT_CHARSET);
     }
 
@@ -88,66 +86,67 @@ public class TerminalFacade {
      * available, otherwise a suitable text-based {@code Terminal}.
      */
     public static Terminal createTerminal(
-                                    InputStream terminalInput,
-                                    OutputStream terminalOutput,
-                                    Charset terminalCharset)
-    {
-        if(GraphicsEnvironment.isHeadless())
+            InputStream terminalInput,
+            OutputStream terminalOutput,
+            Charset terminalCharset) {
+        if (GraphicsEnvironment.isHeadless()) {
             return createTextTerminal(terminalInput, terminalOutput, terminalCharset);
-        else
+        } else {
             return createSwingTerminal();
+        }
     }
 
     /**
-     * Creates a new {@code SwingTerminal} object, a simple Swing terminal emulator,
-     * DEFAULT_TERMINAL_COLUMN_WIDTH columns wide and DEFAULT_TERMINAL_COLUMN_HEIGHT rows high.
+     * Creates a new {@code SwingTerminal} object, a simple Swing terminal
+     * emulator, DEFAULT_TERMINAL_COLUMN_WIDTH columns wide and
+     * DEFAULT_TERMINAL_COLUMN_HEIGHT rows high.
      */
-    public static SwingTerminal createSwingTerminal()
-    {
+    public static SwingTerminal createSwingTerminal() {
         return createSwingTerminal(DEFAULT_TERMINAL_COLUMN_WIDTH, DEFAULT_TERMINAL_COLUMN_HEIGHT);
     }
 
     /**
-     * Creates a new {@code SwingTerminal} object, a simple Swing terminal emulator,
-     * with specified dimensions.
-     * @param columns Width of the terminal window, in text columns <b>not</b> pixels
+     * Creates a new {@code SwingTerminal} object, a simple Swing terminal
+     * emulator, with specified dimensions.
+     *
+     * @param columns Width of the terminal window, in text columns <b>not</b>
+     * pixels
      * @param rows Height of the terminal window, in text rows <b>not</b> pixels
      */
-    public static SwingTerminal createSwingTerminal(int columns, int rows)
-    {
+    public static SwingTerminal createSwingTerminal(int columns, int rows) {
         return new SwingTerminal(columns, rows);
     }
 
     /**
-     * Creates a new {@code SwingTerminal} object, a simple Swing terminal emulator,
-     * DEFAULT_TERMINAL_COLUMN_WIDTH columns wide and DEFAULT_TERMINAL_COLUMN_HEIGHT rows high.
+     * Creates a new {@code SwingTerminal} object, a simple Swing terminal
+     * emulator, DEFAULT_TERMINAL_COLUMN_WIDTH columns wide and
+     * DEFAULT_TERMINAL_COLUMN_HEIGHT rows high.
+     *
      * @param appearance The kind of appearance to use for the terminal
      */
-    public static SwingTerminal createSwingTerminal(TerminalAppearance appearance)
-    {
+    public static SwingTerminal createSwingTerminal(TerminalAppearance appearance) {
         return createSwingTerminal(appearance, DEFAULT_TERMINAL_COLUMN_WIDTH, DEFAULT_TERMINAL_COLUMN_HEIGHT);
     }
 
     /**
-     * Creates a new {@code SwingTerminal} object, a simple Swing terminal emulator,
-     * with specified dimensions.
+     * Creates a new {@code SwingTerminal} object, a simple Swing terminal
+     * emulator, with specified dimensions.
+     *
      * @param appearance The kind of appearance to use for the terminal
-     * @param columns Width of the terminal window, in text columns <b>not</b> pixels
+     * @param columns Width of the terminal window, in text columns <b>not</b>
+     * pixels
      * @param rows Height of the terminal window, in text rows <b>not</b> pixels
      */
-    public static SwingTerminal createSwingTerminal(TerminalAppearance appearance, int columns, int rows)
-    {
+    public static SwingTerminal createSwingTerminal(TerminalAppearance appearance, int columns, int rows) {
         return new SwingTerminal(appearance, columns, rows);
     }
 
-    
     /**
-     * Creates a {@code UnixTerminal} object using the default character set
-     * and {@code System.out} and {@code System.in} for input and output of the
+     * Creates a {@code UnixTerminal} object using the default character set and
+     * {@code System.out} and {@code System.in} for input and output of the
      * terminal.
      */
-    public static UnixTerminal createUnixTerminal()
-    {
+    public static UnixTerminal createUnixTerminal() {
         return createUnixTerminal(DEFAULT_CHARSET);
     }
 
@@ -155,8 +154,7 @@ public class TerminalFacade {
      * Creates a {@code UnixTerminal} object that is using a supplied character
      * set when converting characters to bytes.
      */
-    public static UnixTerminal createUnixTerminal(Charset terminalCharset)
-    {
+    public static UnixTerminal createUnixTerminal(Charset terminalCharset) {
         return createUnixTerminal(System.in, System.out, terminalCharset);
     }
 
@@ -165,9 +163,8 @@ public class TerminalFacade {
      * output streams for standard out and standard in.
      */
     public static UnixTerminal createUnixTerminal(
-                                    InputStream terminalInput,
-                                    OutputStream terminalOutput)
-    {
+            InputStream terminalInput,
+            OutputStream terminalOutput) {
         return createUnixTerminal(terminalInput, terminalOutput, DEFAULT_CHARSET);
     }
 
@@ -177,26 +174,23 @@ public class TerminalFacade {
      * character set for byte conversion.
      */
     public static UnixTerminal createUnixTerminal(
-                                    InputStream terminalInput,
-                                    OutputStream terminalOutput,
-                                    Charset terminalCharset)
-    {
+            InputStream terminalInput,
+            OutputStream terminalOutput,
+            Charset terminalCharset) {
         return new UnixTerminal(terminalInput, terminalOutput, terminalCharset);
     }
 
     /**
      * <b>Experimental</b> Cygwin support!
      */
-    public static CygwinTerminal createCygwinTerminal()
-    {
+    public static CygwinTerminal createCygwinTerminal() {
         return createCygwinTerminal(DEFAULT_CHARSET);
     }
 
     /**
      * <b>Experimental</b> Cygwin support!
      */
-    public static CygwinTerminal createCygwinTerminal(Charset terminalCharset)
-    {
+    public static CygwinTerminal createCygwinTerminal(Charset terminalCharset) {
         return createCygwinTerminal(System.in, System.out, terminalCharset);
     }
 
@@ -204,9 +198,8 @@ public class TerminalFacade {
      * <b>Experimental</b> Cygwin support!
      */
     public static CygwinTerminal createCygwinTerminal(
-                                    InputStream terminalInput,
-                                    OutputStream terminalOutput)
-    {
+            InputStream terminalInput,
+            OutputStream terminalOutput) {
         return createCygwinTerminal(terminalInput, terminalOutput, DEFAULT_CHARSET);
     }
 
@@ -214,18 +207,16 @@ public class TerminalFacade {
      * <b>Experimental</b> Cygwin support!
      */
     public static CygwinTerminal createCygwinTerminal(
-                                    InputStream terminalInput,
-                                    OutputStream terminalOutput,
-                                    Charset terminalCharset)
-    {
+            InputStream terminalInput,
+            OutputStream terminalOutput,
+            Charset terminalCharset) {
         return new CygwinTerminal(terminalInput, terminalOutput, terminalCharset);
     }
 
     /*
      * Creates a suitable text terminal for the running environment.
      */
-    public static Terminal createTextTerminal()
-    {
+    public static Terminal createTextTerminal() {
         return createTextTerminal(System.in, System.out, DEFAULT_CHARSET);
     }
 
@@ -233,13 +224,13 @@ public class TerminalFacade {
      * Creates a suitable text terminal for the running environment.
      */
     public static Terminal createTextTerminal(InputStream terminalInput,
-                                    OutputStream terminalOutput,
-                                    Charset terminalCharset)
-    {
-        if(isOperatingSystemWindows())
+            OutputStream terminalOutput,
+            Charset terminalCharset) {
+        if (isOperatingSystemWindows()) {
             return createCygwinTerminal(terminalInput, terminalOutput, terminalCharset);
-        else
+        } else {
             return createUnixTerminal(terminalInput, terminalOutput, terminalCharset);
+        }
     }
 
     /**
