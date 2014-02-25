@@ -218,9 +218,13 @@ public interface Terminal extends InputProvider {
     public void applyBackgroundColor(int r, int g, int b);
     
     /**
-     * Adds a {@code ResizeListener} to be called when the terminal has changed size. There are no guarantees on what
-     * thread the call will be made on, so please be careful with what kind of operation you perform in this callback.
-     * You should probably not take too long to return.
+     * Adds a {@code ResizeListener} to be called when the terminal has changed size. There is no guarantee that this
+     * listener will really be invoked when the terminal has changed size, at all depends on the terminal emulator
+     * implementation. Normally on Unix systems the WINCH signal will be sent to the process and lanterna can intercept 
+     * this.
+     * </p>
+     * There are no guarantees on what thread the call will be made on, so please be careful with what kind of operation 
+     * you perform in this callback. You should probably not take too long to return.
      *
      * @see ResizeListener
      * @param listener Listener object to be called when the terminal has been changed
@@ -238,7 +242,12 @@ public interface Terminal extends InputProvider {
     /**
      * Returns the size of the terminal, expressed as a {@code TerminalSize} object. Please bear in mind that depending
      * on the {@code Terminal} implementation, this may or may not be accurate. See the implementing classes for more
-     * information.
+     * information. Most commonly, calling getTerminalSize() will involve some kind of hack to retrieve the size of the
+     * terminal, like moving the cursor to position 5000x5000 and then read back the location, unless the terminal
+     * implementation has a more smooth way of getting this data. Keep this in mind and see if you can avoid calling 
+     * this method too often. There is a helper class, SimpleTerminalResizeListener, that you can use to cache the size
+     * and update it only when resize events are received (which depends on resizes being detectable, which they are not
+     * on all platforms).
      *
      * @return Size of the terminal
      */
