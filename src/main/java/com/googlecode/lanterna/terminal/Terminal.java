@@ -288,19 +288,28 @@ public interface Terminal extends InputProvider {
         EXIT_BLINK,
         
         /**
-         * This code may not be supported by all terminals/terminal emulators
+         * Not widely supported
          */
-        ENTER_BORDERED, // 51: Framed
+        ENTER_BORDERED,
         EXIT_BORDERED,
+       
+        /**
+         * Not widely supported
+         */
+        ENTER_FRAKTUR,
+        EXIT_FRAKTUR,
         
-        ENTER_FRAKTUR, // TODO :) maybe add an additional font in Swingterminal
-        EXIT_FRAKTUR, // TODO :)
+        /**
+         * Not widely supported
+         */
+        ENTER_CROSSEDOUT,
+        EXIT_CROSSEDOUT,
         
-        ENTER_CROSSEDOUT, // TODO render strike-through in SwingTerminal
-        EXIT_CROSSEDOUT, // TODO
-        
-        ENTER_CIRCLED, // TODO Maybe a wide circle to notify users about a certain char
-        EXIT_CIRCLED, // TODO
+        /**
+         * Not widely supported
+         */
+        ENTER_CIRCLED,
+        EXIT_CIRCLED,
     }
 
     /**
