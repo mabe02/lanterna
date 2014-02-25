@@ -128,7 +128,7 @@ public class UnixTerminal extends ANSITerminal
                         @Override
                         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
                             if("handle".equals(method.getName())) {
-                                queryTerminalSize();
+                                getTerminalSize();
                             }
                             return null;
                         }
@@ -140,16 +140,6 @@ public class UnixTerminal extends ANSITerminal
         catch(Throwable e) {
             System.err.println(e.getMessage());
         }
-    }
-
-    @Deprecated
-    @Override
-    public TerminalSize queryTerminalSize()
-    {
-        if(terminalSizeQuerier != null)
-            return terminalSizeQuerier.queryTerminalSize();
-
-        return super.queryTerminalSize();
     }
 
     @Override

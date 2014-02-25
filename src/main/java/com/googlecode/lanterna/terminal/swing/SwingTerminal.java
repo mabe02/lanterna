@@ -341,13 +341,6 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
     }
 
     @Override
-    public TerminalSize queryTerminalSize()
-    {
-        //Just bypass to getTerminalSize()
-        return getTerminalSize();
-    }
-
-    @Override
     public TerminalSize getTerminalSize() {
         return size();
     }
