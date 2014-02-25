@@ -37,6 +37,11 @@ public class TestACS
         System.out.println("DIAMOND = " + ACS.DIAMOND);
         System.out.println("SPADES = " + ACS.SPADES);
         System.out.println("DOT = " + ACS.DOT);
+        System.out.println("INVERSE_BULLET = " + ACS.INVERSE_BULLET);
+        System.out.println("WHITE_CIRCLE = " + ACS.WHITE_CIRCLE);
+        System.out.println("INVERSE_WHITE_CIRCLE = " + ACS.INVERSE_WHITE_CIRCLE);
+        System.out.println("FEMALE = " + ACS.FEMALE);
+        System.out.println("MALE = " + ACS.MALE);
         System.out.println();
         System.out.println("ARROW_UP = " + ACS.ARROW_UP);
         System.out.println("ARROW_DOWN = " + ACS.ARROW_DOWN);
