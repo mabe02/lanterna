@@ -141,40 +141,64 @@ public abstract class ANSITerminal extends StreamBasedTerminal
         synchronized(writerMutex) {
             CSI();
             switch(sgr) {
+                case ENTER_BLINK:
+                    writeToTerminal((byte)'5');
+                    break;
+                case EXIT_BLINK:
+                    writeToTerminal((byte)'2', (byte)'5');
+                    break;
+                    
                 case ENTER_BOLD:
                     writeToTerminal((byte)'1');
-                    break;
-                case ENTER_REVERSE:
-                    writeToTerminal((byte)'7');
-                    break;
-                case ENTER_UNDERLINE:
-                    writeToTerminal((byte)'4');
-                    break;
-                // BORDERED == UNDERLINE in ANSI Terminal
-                case ENTER_BORDERED:
-                    writeToTerminal((byte)'4');
                     break;
                 case EXIT_BOLD:
                     writeToTerminal((byte)'2', (byte)'2');
                     break;
+                    
+                case ENTER_BORDERED:
+                    writeToTerminal((byte)'5', (byte)'1');
+                    break;
+                case EXIT_BORDERED:
+                    writeToTerminal((byte)'5', (byte)'4');
+                    break;
+                    
+                case ENTER_CIRCLED:
+                    writeToTerminal((byte)'5', (byte)'2');
+                    break;
+                case EXIT_CIRCLED:
+                    writeToTerminal((byte)'5', (byte)'4');
+                    break;
+                    
+                case ENTER_CROSSEDOUT:
+                    writeToTerminal((byte)'9');
+                    break;
+                case EXIT_CROSSEDOUT:
+                    writeToTerminal((byte)'2', (byte)'9');
+                    break;
+                    
+                case ENTER_FRAKTUR:
+                    writeToTerminal((byte)'2', (byte)'0');
+                    break;
+                case EXIT_FRAKTUR:
+                    writeToTerminal((byte)'2', (byte)'3');
+                    break;
+                    
+                case ENTER_REVERSE:
+                    writeToTerminal((byte)'7');
+                    break;
                 case EXIT_REVERSE:
                     writeToTerminal((byte)'2', (byte)'7');
+                    break;
+                    
+                case ENTER_UNDERLINE:
+                    writeToTerminal((byte)'4');
                     break;
                 case EXIT_UNDERLINE:
                     writeToTerminal((byte)'2', (byte)'4');
                     break;
-                // BORDERED == UNDERLINE in ANSI Terminal
-                case EXIT_BORDERED:
-                    writeToTerminal((byte)'2', (byte)'4');
-                    break;
-                case ENTER_BLINK:
-                    writeToTerminal((byte)'5');
-                    break;
+                    
                 case RESET_ALL:
                     writeToTerminal((byte)'0');
-                    break;
-                case EXIT_BLINK:
-                default:
                     break;
             }
             writeToTerminal((byte)'m');
