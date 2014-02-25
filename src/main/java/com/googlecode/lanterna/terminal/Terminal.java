@@ -109,21 +109,114 @@ public interface Terminal extends InputProvider {
 
     /**
      * Changes the foreground color for all the following characters put to the terminal. The foreground color is what
-     * color to draw the text in. This way of applying a foreground color, compared with the other applyForegroundColor
-     * overloads, is the most safe and compatible.
-     *
+     * color to draw the text in, as opposed to the background color which is the color surrounding the characters.
+     * </p>
+     * This overload is using the TextColor class to define a color, which is a layer of abstraction above the three
+     * different color formats supported (ANSI, indexed and RGB). The other applyForegroundColor(..) overloads gives
+     * you direct access to set one of those three. 
+     * </p>
+     * Note to implementers of this interface, just make this method call <b>color.applyAsForeground(this);</b>
+     * 
      * @param color Color to use for foreground
      */
     public void applyForegroundColor(TextColor color);
+    
+    /**
+     * Changes the foreground color for all the following characters put to the terminal. The foreground color is what
+     * color to draw the text in, as opposed to the background color which is the color surrounding the characters. This 
+     * way of setting the foreground color, compared with the other applyForegroundColor(..) overloads, is the most safe 
+     * and compatible.
+     *
+     * @param color Color to use for foreground
+     */
+    public void applyForegroundColor(ANSIColor color);
+
+    
+    /**
+     * Changes the foreground color for all the following characters put to the terminal. The foreground color is what
+     * color to draw the text in, as opposed to the background color which is the color surrounding the characters.<br>
+     * <b>Warning:</b> This method will use the XTerm 256 color extension, it may not be supported on all terminal
+     * emulators! The index values are resolved as this:<br>
+     * 0 .. 15 - System color, these are taken from the schema. 16 .. 231 - Forms a 6x6x6 RGB color cube.<br>
+     * 232 .. 255 - A gray scale ramp without black and white.<br>
+     *
+     * <p>
+     * For more details on this, please see <a
+     * href="https://github.com/robertknight/konsole/blob/master/user-doc/README.moreColors">
+     * this</a> commit message to Konsole.
+     *
+     * @param index Color index from the XTerm 256 color space
+     */
+    public void applyForegroundColor(int index);
+    
+    /**
+     * Changes the foreground color for all the following characters put to the terminal. The foreground color is what
+     * color to draw the text in, as opposed to the background color which is the color surrounding the characters.<br>
+     * <b>Warning:</b> Only a few terminal support 24-bit color control codes, please avoid using this unless you know
+     * all users will have compatible terminals. For details, please see
+     * <a href="https://github.com/robertknight/konsole/blob/master/user-doc/README.moreColors">
+     * this</a> commit log.
+     *
+     * @param r Red intensity, from 0 to 255
+     * @param g Green intensity, from 0 to 255
+     * @param b Blue intensity, from 0 to 255
+     */
+    public void applyForegroundColor(int r, int g, int b);
 
     /**
      * Changes the background color for all the following characters put to the terminal. The background color is the
      * color surrounding the text being printed.
-     *
+     * </p>
+     * This overload is using the TextColor class to define a color, which is a layer of abstraction above the three
+     * different color formats supported (ANSI, indexed and RGB). The other applyBackgroundColor(..) overloads gives
+     * you direct access to set one of those three. 
+     * </p>
+     * Note to implementers of this interface, just make this method call <b>color.applyAsBackground(this);</b>
+     * 
      * @param color Color to use for the background
      */
     public void applyBackgroundColor(TextColor color);
 
+    /**
+     * Changes the background color for all the following characters put to the terminal. The background color is the
+     * color surrounding the text being printed. This way of setting the background color, compared with the other 
+     * applyBackgroundColor(..) overloads, is the most safe and compatible.
+     *
+     * @param color Color to use for the background
+     */
+    public void applyBackgroundColor(ANSIColor color);
+
+    /**
+     * Changes the background color for all the following characters put to the terminal. The background color is the
+     * color surrounding the text being printed.<br>
+     * <b>Warning:</b> This method will use the XTerm 256 color extension, it may not be supported on all terminal
+     * emulators! The index values are resolved as this:<br>
+     * 0 .. 15 - System color, these are taken from the schema. 16 .. 231 - Forms a 6x6x6 RGB color cube.<br>
+     * 232 .. 255 - A gray scale ramp without black and white.<br>
+     *
+     * <p>
+     * For more details on this, please see <a
+     * href="https://github.com/robertknight/konsole/blob/master/user-doc/README.moreColors">
+     * this</a> commit message to Konsole.
+     *
+     * @param index Index of the color to use, from the XTerm 256 color extension
+     */
+    public void applyBackgroundColor(int index);
+
+    /**
+     * Changes the background color for all the following characters put to the terminal. The background color is the
+     * color surrounding the text being printed.<br>
+     * <b>Warning:</b> Only a few terminal support 24-bit color control codes, please avoid using this unless you know
+     * all users will have compatible terminals. For details, please see
+     * <a href="https://github.com/robertknight/konsole/blob/master/user-doc/README.moreColors">
+     * this</a> commit log.
+     *
+     * @param r Red intensity, from 0 to 255
+     * @param g Green intensity, from 0 to 255
+     * @param b Blue intensity, from 0 to 255
+     */
+    public void applyBackgroundColor(int r, int g, int b);
+    
     /**
      * Adds a {@code ResizeListener} to be called when the terminal has changed size. There are no guarantees on what
      * thread the call will be made on, so please be careful with what kind of operation you perform in this callback.
@@ -174,24 +267,31 @@ public interface Terminal extends InputProvider {
          * a slightly different color
          */
         ENTER_BOLD,
+        EXIT_BOLD,
+        
         ENTER_REVERSE,
+        EXIT_REVERSE,
+        
         ENTER_UNDERLINE,
+        EXIT_UNDERLINE,
+        
+        ENTER_BLINK,
+        EXIT_BLINK,
+        
         /**
          * This code may not be supported by all terminals/terminal emulators
          */
         ENTER_BORDERED, // 51: Framed
         EXIT_BORDERED,
-        //        ENTER_FRAKTUR, // TODO :) maybe add an additional font in Swingterminal
-        //        EXIT_FRAKTUR, // TODO :)
-        //        ENTER_CROSSEDOUT, // TODO render strike-through in SwingTerminal
-        //        EXIT_CROSSEDOUT, // TODO
-        //        ENTER_CIRCLED, // TODO Maybe a wide circle to notify users about a certain char
-        //        EXIT_CIRCLED, // TODO
-        ENTER_BLINK,
-        EXIT_BOLD,
-        EXIT_REVERSE,
-        EXIT_UNDERLINE,
-        EXIT_BLINK,
+        
+        ENTER_FRAKTUR, // TODO :) maybe add an additional font in Swingterminal
+        EXIT_FRAKTUR, // TODO :)
+        
+        ENTER_CROSSEDOUT, // TODO render strike-through in SwingTerminal
+        EXIT_CROSSEDOUT, // TODO
+        
+        ENTER_CIRCLED, // TODO Maybe a wide circle to notify users about a certain char
+        EXIT_CIRCLED, // TODO
     }
 
     /**
@@ -209,5 +309,31 @@ public interface Terminal extends InputProvider {
          * @param newSize Size of the terminal after the resize
          */
         public void onResized(Terminal terminal, TerminalSize newSize);
+    }
+    
+    /**
+     * This enum represents the standard ANSI terminal colors.
+     * @se http://en.wikipedia.org/wiki/File:Ansi.png
+     */
+    public static enum ANSIColor {
+        BLACK(0),
+        RED(1),
+        GREEN(2),
+        YELLOW(3),
+        BLUE(4),
+        MAGENTA(5),
+        CYAN(6),
+        WHITE(7),
+        DEFAULT(9);
+
+        private final int index;
+
+        private ANSIColor(int index) {
+            this.index = index;
+        }
+
+        public int getIndex() {
+            return index;
+        }
     }
 }

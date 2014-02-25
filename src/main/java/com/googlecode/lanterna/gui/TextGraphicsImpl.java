@@ -54,8 +54,8 @@ class TextGraphicsImpl implements TextGraphics
         this.screen = screen;
         this.theme = theme;
         this.currentlyBold = false;
-        this.foregroundColor = TextColor.fromOldFormat(Terminal.Color.DEFAULT);
-        this.backgroundColor = TextColor.fromOldFormat(Terminal.Color.DEFAULT);
+        this.foregroundColor = TextColor.fromOldFormat(Terminal.ANSIColor.DEFAULT);
+        this.backgroundColor = TextColor.fromOldFormat(Terminal.ANSIColor.DEFAULT);
     }
 
     private TextGraphicsImpl(final TextGraphicsImpl graphics, final TerminalPosition topLeft, final TerminalSize areaSize)

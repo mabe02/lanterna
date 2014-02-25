@@ -25,6 +25,9 @@ package com.googlecode.lanterna.terminal;
 public abstract class TextColor {
 
     protected TextColor() {}
+    
+    public abstract void applyAsForeground(Terminal terminal);
+    public abstract void applyAsBackground(Terminal terminal);
 
     /**
      * This class represent classic ANSI colors that are likely to be very compatible with most terminal
@@ -32,20 +35,30 @@ public abstract class TextColor {
      * will slightly alter the color, giving it a bit brighter tone, so in total this will give you 16 (+1) colors.
      */
     public static class ANSI extends TextColor {
-        public static final ANSI BLACK = new ANSI(0);
-        public static final ANSI RED = new ANSI(1);
-        public static final ANSI GREEN = new ANSI(2);
-        public static final ANSI YELLOW = new ANSI(3);
-        public static final ANSI BLUE = new ANSI(4);
-        public static final ANSI MAGENTA = new ANSI(5);
-        public static final ANSI CYAN = new ANSI(6);
-        public static final ANSI WHITE = new ANSI(7);
-        public static final ANSI DEFAULT = new ANSI(9);
+        public static final ANSI BLACK = new ANSI(Terminal.ANSIColor.BLACK);
+        public static final ANSI RED = new ANSI(Terminal.ANSIColor.RED);
+        public static final ANSI GREEN = new ANSI(Terminal.ANSIColor.GREEN);
+        public static final ANSI YELLOW = new ANSI(Terminal.ANSIColor.YELLOW);
+        public static final ANSI BLUE = new ANSI(Terminal.ANSIColor.BLUE);
+        public static final ANSI MAGENTA = new ANSI(Terminal.ANSIColor.MAGENTA);
+        public static final ANSI CYAN = new ANSI(Terminal.ANSIColor.CYAN);
+        public static final ANSI WHITE = new ANSI(Terminal.ANSIColor.WHITE);
+        public static final ANSI DEFAULT = new ANSI(Terminal.ANSIColor.DEFAULT);
+        
+        private final Terminal.ANSIColor ansiColor;
+        
+        private ANSI(Terminal.ANSIColor ansiColor) {
+            this.ansiColor = ansiColor;
+        }
 
-        private final int ansiColorOffset;
+        @Override
+        public void applyAsForeground(Terminal terminal) {
+            terminal.applyForegroundColor(ansiColor);
+        }
 
-        private ANSI(int ansiColorOffset) {
-            this.ansiColorOffset = ansiColorOffset;
+        @Override
+        public void applyAsBackground(Terminal terminal) {
+            terminal.applyBackgroundColor(ansiColor);
         }
     }
 
@@ -79,6 +92,16 @@ public abstract class TextColor {
 
         public int getColorIndex() {
             return colorIndex;
+        }
+
+        @Override
+        public void applyAsForeground(Terminal terminal) {
+            terminal.applyForegroundColor(colorIndex);
+        }
+
+        @Override
+        public void applyAsBackground(Terminal terminal) {
+            terminal.applyBackgroundColor(colorIndex);
         }
     }
 
@@ -130,6 +153,16 @@ public abstract class TextColor {
 
         public int getBlue() {
             return b;
+        }
+
+        @Override
+        public void applyAsForeground(Terminal terminal) {
+            terminal.applyForegroundColor(r, g, b);
+        }
+
+        @Override
+        public void applyAsBackground(Terminal terminal) {
+            terminal.applyBackgroundColor(r, g, b);
         }
     }
 }

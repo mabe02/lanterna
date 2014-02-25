@@ -31,7 +31,7 @@ public class BlinkTest {
         Terminal rawTerminal = new TestTerminalFactory(args).createTerminal();
         rawTerminal.enterPrivateMode();
         rawTerminal.clearScreen();
-        rawTerminal.applyForegroundColor(Terminal.Color.RED);
+        rawTerminal.applyForegroundColor(Terminal.ANSIColor.RED);
         rawTerminal.applySGR(Terminal.SGR.ENTER_BLINK);
         rawTerminal.moveCursor(10, 10);
         rawTerminal.putCharacter('H');

@@ -16,64 +16,72 @@
  * 
  * Copyright (C) 2010-2014 Martin
  */
-
 package com.googlecode.lanterna.terminal;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Containing a some very fundamental implementations that should be common for
- * all terminals
+ * Containing a some very fundamental implementations that should be common for all terminals
+ *
  * @author Martin
  */
-public abstract class AbstractTerminal implements Terminal
-{
+public abstract class AbstractTerminal implements Terminal {
+
     private final List<ResizeListener> resizeListeners;
     private TerminalSize lastKnownSize;
 
-    public AbstractTerminal()
-    {
+    public AbstractTerminal() {
         this.resizeListeners = new ArrayList<ResizeListener>();
         this.lastKnownSize = null;
     }
 
     @Override
-    public void addResizeListener(ResizeListener listener)
-    {
-        if(listener != null)
+    public void addResizeListener(ResizeListener listener) {
+        if (listener != null) {
             resizeListeners.add(listener);
+        }
     }
 
     @Override
-    public void removeResizeListener(ResizeListener listener)
-    {
-        if(listener != null)
+    public void removeResizeListener(ResizeListener listener) {
+        if (listener != null) {
             resizeListeners.remove(listener);
+        }
     }
 
     /**
-     * Call this method when the terminal has been resized or the initial size
-     * of the terminal has been discovered. It will trigger all resize listeners,
-     * but only if the size has changed from before.
+     * Call this method when the terminal has been resized or the initial size of the terminal has been discovered. It
+     * will trigger all resize listeners, but only if the size has changed from before.
+     *
      * @param columns
-     * @param rows 
+     * @param rows
      */
-    protected synchronized void onResized(int columns, int rows) 
-    {
+    protected synchronized void onResized(int columns, int rows) {
         TerminalSize newSize = new TerminalSize(columns, rows);
-        if(lastKnownSize == null || !lastKnownSize.equals(newSize)) {
+        if (lastKnownSize == null || !lastKnownSize.equals(newSize)) {
             lastKnownSize = newSize;
-            for(ResizeListener resizeListener: resizeListeners)
-                resizeListener.onResized(lastKnownSize);
+            for (ResizeListener resizeListener : resizeListeners) {
+                resizeListener.onResized(this, lastKnownSize);
+            }
         }
     }
-    
+
+    @Override
+    public void applyForegroundColor(TextColor color) {
+        color.applyAsForeground(this);
+    }
+
+    @Override
+    public void applyBackgroundColor(TextColor color) {
+        color.applyAsBackground(this);
+    }
+
     /**
      * Used internally to get the last size known to the terminal
+     * @return 
      */
-    protected TerminalSize getLastKnownSize() 
-    {
+    protected TerminalSize getLastKnownSize() {
         return lastKnownSize;
     }
 }

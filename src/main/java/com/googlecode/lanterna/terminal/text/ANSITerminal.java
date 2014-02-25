@@ -46,27 +46,19 @@ public abstract class ANSITerminal extends StreamBasedTerminal
         writeToTerminal((byte)0x1b, (byte)'[');
     }
 
-    @Deprecated
     @Override
-    public TerminalSize queryTerminalSize()
-    {
+    public TerminalSize getTerminalSize() {
         synchronized(writerMutex) {
             saveCursorPosition();
             moveCursor(5000, 5000);
             reportPosition();
             restoreCursorPosition();
         }
-        return getLastKnownSize();
-    }
-
-    @Override
-    public TerminalSize getTerminalSize() {
-        queryTerminalSize();
         return waitForTerminalSizeReport(1000); //Wait 1 second for the terminal size report to come, is this reasonable?
     }
 
     @Override
-    public void applyBackgroundColor(Color color)
+    public void applyBackgroundColor(ANSIColor color)
     {
         synchronized(writerMutex) {
             CSI();
@@ -105,7 +97,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal
     }
 
     @Override
-    public void applyForegroundColor(Color color)
+    public void applyForegroundColor(ANSIColor color)
     {
         synchronized(writerMutex) {
             CSI();
