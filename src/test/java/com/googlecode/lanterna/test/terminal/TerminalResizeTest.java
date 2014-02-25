@@ -57,7 +57,8 @@ public class TerminalResizeTest implements Terminal.ResizeListener
         terminal.exitPrivateMode();
     }
 
-    public void onResized(TerminalSize newSize)
+    @Override
+    public void onResized(Terminal terminal, TerminalSize newSize)
     {
         terminal.moveCursor(0, 0);
         String string = newSize.getColumns() + "x" + newSize.getRows() + "                     ";

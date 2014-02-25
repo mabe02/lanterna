@@ -451,7 +451,7 @@ public class Screen
     private class TerminalResizeListener implements Terminal.ResizeListener
     {
         @Override
-        public void onResized(TerminalSize newSize)
+        public void onResized(Terminal terminal, TerminalSize newSize)
         {
             synchronized(resizeQueue) {
                 if(!terminalSize.equals(newSize)) {
