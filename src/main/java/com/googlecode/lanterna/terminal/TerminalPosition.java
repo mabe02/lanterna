@@ -20,7 +20,8 @@ package com.googlecode.lanterna.terminal;
 
 /**
  * A 2-d position in 'terminal space'. Please note that the coordinates are 0-indexed, meaning 0x0 is the top left
- * corner of the terminal.
+ * corner of the terminal. This object is immutable so you cannot change it after it has been created. Instead, you
+ * can easily create modified 'clones' by using the 'with' methods.
  *
  * @author Martin
  */
@@ -29,6 +30,14 @@ public class TerminalPosition {
     private final int row;
     private final int column;
 
+    /**
+     * Creates a new TerminalPosition object, which represents a location on the screen. You cannot represent negative 
+     * locations but there is no check to verify that the position you specified is within the size of the current
+     * terminal.
+     * 
+     * @param column Column of the location, or the "x" coordinate, zero indexed (the first column is 0)
+     * @param row Row of the location, or the "y" coordinate, zero indexed (the first row is 0)
+     */
     public TerminalPosition(int column, int row) {
         if (column < 0) {
             throw new IllegalArgumentException("TerminalPosition.columns cannot be less than 0!");
@@ -40,18 +49,38 @@ public class TerminalPosition {
         this.column = column;
     }
 
+    /**
+     * Returns the index of the column this position is representing, zero indexed (the first column has index 0).
+     * @return Index of the column this position has
+     */
     public int getColumn() {
         return column;
     }
 
+    /**
+     * Returns the index of the row this position is representing, zero indexed (the first row has index 0)
+     * @return Index of the row this position has
+     */
     public int getRow() {
         return row;
     }
     
+    /**
+     * Creates a new TerminalPosition object representing a position with the same column index as this but with a 
+     * supplied row index.
+     * @param row Index of the row for the new position
+     * @return A TerminalPosition object with the same column as this but with a specified row index
+     */
     public TerminalPosition withRow(int row) {
         return new TerminalPosition(this.column, row);
     }
     
+    /**
+     * Creates a new TerminalPosition object representing a position with the same row index as this but with a 
+     * supplied column index.
+     * @param column Index of the column for the new position
+     * @return A TerminalPosition object with the same row as this but with a specified column index
+     */
     public TerminalPosition withColumn(int column) {
         return new TerminalPosition(column, this.row);
     }
