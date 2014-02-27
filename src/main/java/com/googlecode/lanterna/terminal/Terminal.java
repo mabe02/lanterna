@@ -284,29 +284,32 @@ public interface Terminal extends InputProvider {
         ENTER_UNDERLINE,
         EXIT_UNDERLINE,
         
+        /**
+         * Not widely supported
+         */
         ENTER_BLINK,
         EXIT_BLINK,
         
         /**
-         * Not widely supported
+         * Rarely supported
          */
         ENTER_BORDERED,
         EXIT_BORDERED,
        
         /**
-         * Not widely supported
+         * Exotic extension, please send me a reference screenshot!
          */
         ENTER_FRAKTUR,
         EXIT_FRAKTUR,
         
         /**
-         * Not widely supported
+         * Rarely supported
          */
         ENTER_CROSSEDOUT,
         EXIT_CROSSEDOUT,
         
         /**
-         * Not widely supported
+         * Rarely supported
          */
         ENTER_CIRCLED,
         EXIT_CIRCLED,
