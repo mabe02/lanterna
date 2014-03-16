@@ -68,11 +68,16 @@ public abstract class InputEnabledAbstractTerminal extends AbstractTerminal impl
                     continue;
                 }
 
-                if(key.getKind() != Key.Kind.CursorLocation) {
+                //If we got CTRL+F3, it's probably a size report instead!!!
+                if(key.getKind() != Key.Kind.CursorLocation &&
+                        !(key.getKind() == Key.Kind.F3 && key.isCtrlPressed() && !key.isAltPressed())) {
                     keyQueue.add(key);
                 }
                 else {
                     TerminalPosition reportedTerminalPosition = inputDecoder.getLastReportedTerminalPosition();
+                    if(key.getKind() == Key.Kind.F3 && key.isCtrlPressed() && !key.isAltPressed()) {
+                        reportedTerminalPosition = new TerminalPosition(5, 1);
+                    }
                     if(reportedTerminalPosition != null)
                         onResized(reportedTerminalPosition.getColumn(), reportedTerminalPosition.getRow());
                     else

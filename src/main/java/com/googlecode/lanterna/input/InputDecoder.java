@@ -96,7 +96,14 @@ public class InputDecoder {
         }
 
         if (bestMatch.getKind() == Key.Kind.CursorLocation) {
-            lastReportedTerminalPosition = ScreenInfoCharacterPattern.getCursorPosition(currentMatching.subList(0, nrOfCharactersMatched));
+            TerminalPosition cursorPosition = ScreenInfoCharacterPattern.getCursorPosition(currentMatching.subList(0, nrOfCharactersMatched));
+            if(cursorPosition.getColumn() == 5 && cursorPosition.getRow() == 1) {
+                //Special case for CTRL + F3
+                bestMatch = new Key(Key.Kind.F3, true, false);
+            }
+            else {
+                lastReportedTerminalPosition = cursorPosition;
+            }
         }
 
         currentMatching.subList(0, nrOfCharactersMatched).clear();
