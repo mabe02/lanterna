@@ -1,6 +1,6 @@
 /*
  * This file is part of lanterna (http://code.google.com/p/lanterna/).
- * 
+ *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Copyright (C) 2010-2014 Martin
  */
 
@@ -21,7 +21,7 @@ package com.googlecode.lanterna.test.terminal;
 
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalSize;
-import com.googlecode.lanterna.terminal.XTerm8bitIndexedColorUtils;
+import com.googlecode.lanterna.terminal.TextColor;
 import com.googlecode.lanterna.test.TestTerminalFactory;
 import java.util.Random;
 
@@ -37,21 +37,21 @@ public class Terminal8bitIndexedColorTest {
         terminal.enterPrivateMode();
         terminal.clearScreen();
         TerminalSize size = terminal.getTerminalSize();
-        
+
         while(true) {
             if(terminal.readInput() != null) {
                 terminal.exitPrivateMode();
                 return;
             }
-            
-            int foregroundIndex = XTerm8bitIndexedColorUtils.getClosestColor(random.nextInt(255), random.nextInt(255), random.nextInt(255));
-            int backgroundIndex = XTerm8bitIndexedColorUtils.getClosestColor(random.nextInt(255), random.nextInt(255), random.nextInt(255));
-            
+
+            TextColor.Indexed foregroundIndex = TextColor.Indexed.fromRGB(random.nextInt(255), random.nextInt(255), random.nextInt(255));
+            TextColor.Indexed backgroundIndex = TextColor.Indexed.fromRGB(random.nextInt(255), random.nextInt(255), random.nextInt(255));
+
             terminal.applyForegroundColor(foregroundIndex);
             terminal.applyBackgroundColor(backgroundIndex);
             terminal.moveCursor(random.nextInt(size.getColumns() - string.length()), random.nextInt(size.getRows()));
             printString(terminal, string);
-            
+
             try {
                 Thread.sleep(200);
             }
@@ -59,9 +59,9 @@ public class Terminal8bitIndexedColorTest {
             }
         }
     }
-    
+
     private static void printString(Terminal terminal, String string) {
         for(int i = 0; i < string.length(); i++)
             terminal.putCharacter(string.charAt(i));
-    }            
+    }
 }
