@@ -32,10 +32,7 @@ public class NormalCharacterPattern implements CharacterPattern {
         if (currentMatching.size() != 1) {
             return false;
         }
-        if (!Character.isISOControl(currentMatching.get(0))) {
-            return false;
-        }
-        return true;
+        return !Character.isISOControl(currentMatching.get(0));
     }
 
     @Override
@@ -43,9 +40,6 @@ public class NormalCharacterPattern implements CharacterPattern {
         if (currentMatching.size() != 1) {
             return false;
         }
-        if (!Character.isLetterOrDigit(currentMatching.get(0))) {
-            return false;
-        }
-        return true;
+        return Character.isLetterOrDigit(currentMatching.get(0));
     }
 }
