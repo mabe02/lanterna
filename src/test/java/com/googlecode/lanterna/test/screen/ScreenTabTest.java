@@ -1,6 +1,6 @@
 /*
  * This file is part of lanterna (http://code.google.com/p/lanterna/).
- * 
+ *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Copyright (C) 2010-2014 Martin
  */
 
@@ -26,20 +26,21 @@ import com.googlecode.lanterna.screen.TabBehaviour;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TextColor;
 import com.googlecode.lanterna.test.TestTerminalFactory;
+import java.io.IOException;
 
 /**
  *
  * @author martin
  */
 public class ScreenTabTest {
-    public static void main(String[] args) throws InterruptedException
+    public static void main(String[] args) throws InterruptedException, IOException, IOException
     {
         new ScreenTabTest(args);
     }
 
     private Screen screen;
 
-    public ScreenTabTest(String[] args) throws InterruptedException
+    public ScreenTabTest(String[] args) throws InterruptedException, IOException
     {
         screen = new TestTerminalFactory(args).createScreen();
         screen.startScreen();

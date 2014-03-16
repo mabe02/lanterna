@@ -30,6 +30,7 @@ import com.googlecode.lanterna.terminal.swing.SwingTerminal;
 import com.googlecode.lanterna.terminal.swing.TerminalAppearance;
 import com.googlecode.lanterna.terminal.text.CygwinTerminal;
 import com.googlecode.lanterna.terminal.text.UnixTerminal;
+import java.io.IOException;
 
 /**
  * This class gives an easy facade over the whole Lanterna terminal construction
@@ -236,28 +237,28 @@ public class TerminalFacade {
     /**
      * Creates a {@code Screen} backed by a default terminal
      */
-    public static Screen createScreen() {
+    public static Screen createScreen() throws IOException {
         return createScreen(createTerminal());
     }
 
     /**
      * Creates a {@code Screen} backed by the supplied {@code Terminal}
      */
-    public static Screen createScreen(Terminal terminal) {
+    public static Screen createScreen(Terminal terminal) throws IOException {
         return new Screen(terminal);
     }
 
     /**
      * Creates a {@code GUIScreen} backed by the default terminal
      */
-    public static GUIScreen createGUIScreen() {
+    public static GUIScreen createGUIScreen() throws IOException {
         return new GUIScreen(createScreen());
     }
 
     /**
      * Creates a {@code GUIScreen} backed by the supplied {@code Terminal}
      */
-    public static GUIScreen createGUIScreen(Terminal terminal) {
+    public static GUIScreen createGUIScreen(Terminal terminal) throws IOException {
         return new GUIScreen(createScreen(terminal));
     }
 

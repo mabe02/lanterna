@@ -1,6 +1,6 @@
 /*
  * This file is part of lanterna (http://code.google.com/p/lanterna/).
- * 
+ *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Copyright (C) 2010-2014 Martin
  */
 package com.googlecode.lanterna.test.gui.layout;
@@ -33,13 +33,14 @@ import com.googlecode.lanterna.gui.layout.LinearLayout;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.test.TestTerminalFactory;
 import com.googlecode.lanterna.test.gui.MockComponent;
+import java.io.IOException;
 
 /**
  *
  * @author Martin
  */
 public class BorderLayoutTest {
-    public static void main(String[] args)
+    public static void main(String[] args) throws IOException
     {
         final GUIScreen guiScreen = new TestTerminalFactory(args).createGUIScreen();
         guiScreen.getScreen().startScreen();
@@ -53,14 +54,14 @@ public class BorderLayoutTest {
         final Component leftComponent = new MockComponent('L', new TerminalSize(6, 3));
         final Component rightComponent = new MockComponent('R', new TerminalSize(6, 3));
         final Component bottomComponent = new MockComponent('B', new TerminalSize(50, 3));
-        
+
         borderLayoutPanel.addComponent(topComponent, BorderLayout.TOP);
         borderLayoutPanel.addComponent(centerComponent, BorderLayout.CENTER);
         borderLayoutPanel.addComponent(bottomComponent, BorderLayout.BOTTOM);
         borderLayoutPanel.addComponent(leftComponent, BorderLayout.LEFT);
         borderLayoutPanel.addComponent(rightComponent, BorderLayout.RIGHT);
         mainWindow.addComponent(borderLayoutPanel);
-        
+
         Panel buttonPanel = new Panel(Panel.Orientation.HORIZONTAL);
         buttonPanel.addComponent(new EmptySpace(), LinearLayout.GROWS_HORIZONTALLY);
         Button toggleButton = new Button("Toggle components", new Action() {
@@ -91,7 +92,7 @@ public class BorderLayoutTest {
         guiScreen.showWindow(mainWindow, GUIScreen.Position.FULL_SCREEN);
         guiScreen.getScreen().stopScreen();
     }
-    
+
     private static class ToggleAction implements Action {
         private final String description;
         private final Panel panel;
@@ -118,6 +119,6 @@ public class BorderLayoutTest {
         @Override
         public String toString() {
             return description;
-        }        
+        }
     }
 }

@@ -1,6 +1,6 @@
 /*
  * This file is part of lanterna (http://code.google.com/p/lanterna/).
- * 
+ *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Copyright (C) 2010-2014 Martin
  */
 
@@ -23,6 +23,7 @@ import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.test.TestTerminalFactory;
+import java.io.IOException;
 
 /**
  *
@@ -31,8 +32,8 @@ import com.googlecode.lanterna.test.TestTerminalFactory;
 public class TerminalResizeTest implements Terminal.ResizeListener
 {
     private static Terminal terminal;
-    
-    public static void main(String[] args) throws InterruptedException
+
+    public static void main(String[] args) throws InterruptedException, IOException, IOException
     {
         terminal = new TestTerminalFactory(args).createTerminal();
         terminal.enterPrivateMode();

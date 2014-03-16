@@ -6,10 +6,11 @@ import com.googlecode.lanterna.gui.GUIScreen;
 import com.googlecode.lanterna.gui.Window;
 import com.googlecode.lanterna.gui.component.Button;
 import com.googlecode.lanterna.gui.component.Label;
+import java.io.IOException;
 
 public class Issue2 {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         GUIScreen textGUI = TerminalFacade.createGUIScreen();
         if (textGUI == null) {

@@ -1,6 +1,6 @@
 /*
  * This file is part of lanterna (http://code.google.com/p/lanterna/).
- * 
+ *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Copyright (C) 2010-2014 Martin
  */
 
@@ -43,13 +43,13 @@ public abstract class InputEnabledAbstractTerminal extends AbstractTerminal impl
         this.keyQueue = new LinkedList<Key>();
         this.readMutex = new Object();
     }
-    
+
     @Override
     public void addInputProfile(KeyMappingProfile profile) {
         inputDecoder.addProfile(profile);
     }
-    
-    protected TerminalSize waitForTerminalSizeReport(int timeoutMs) {
+
+    protected TerminalSize waitForTerminalSizeReport(int timeoutMs) throws IOException {
         long startTime = System.currentTimeMillis();
         synchronized(readMutex) {
             while(System.currentTimeMillis() - startTime < timeoutMs) {
@@ -61,7 +61,7 @@ public abstract class InputEnabledAbstractTerminal extends AbstractTerminal impl
                     catch(InterruptedException e) {}
                     continue;
                 }
-                
+
                 if(key.getKind() != Key.Kind.CursorLocation) {
                     keyQueue.add(key);
                 }
@@ -70,25 +70,24 @@ public abstract class InputEnabledAbstractTerminal extends AbstractTerminal impl
                     if(reportedTerminalPosition != null)
                         onResized(reportedTerminalPosition.getColumn(), reportedTerminalPosition.getRow());
                     else
-                        throw new LanternaException(new IOException("Unexpected: inputDecoder.getLastReportedTerminalPosition() "
-                                + "returned null after position was reported"));
+                        throw new IOException("Unexpected: inputDecoder.getLastReportedTerminalPosition() "
+                                + "returned null after position was reported");
                     return new TerminalSize(reportedTerminalPosition.getColumn(), reportedTerminalPosition.getRow());
-                }                    
+                }
             }
         }
-        throw new LanternaException(
-                new IOException(
+        throw new IOException(
                     "Timeout while waiting for terminal size report! "
                     + "Maybe your terminal doesn't support cursor position report, please "
-                    + "consider using a custom size querier"));
+                    + "consider using a custom size querier");
     }
 
     @Override
-    public Key readInput() {
+    public Key readInput() throws IOException {
         synchronized(readMutex) {
             if(!keyQueue.isEmpty())
                 return keyQueue.poll();
-            
+
             Key key = inputDecoder.getNextCharacter();
             if (key != null && key.getKind() == Key.Kind.CursorLocation) {
                 TerminalPosition reportedTerminalPosition = inputDecoder.getLastReportedTerminalPosition();
@@ -100,5 +99,5 @@ public abstract class InputEnabledAbstractTerminal extends AbstractTerminal impl
                 return key;
             }
         }
-    }    
+    }
 }

@@ -1,6 +1,6 @@
 /*
  * This file is part of lanterna (http://code.google.com/p/lanterna/).
- * 
+ *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Copyright (C) 2010-2014 Martin
  */
 
@@ -24,6 +24,7 @@ import com.googlecode.lanterna.screen.ScreenCharacterStyle;
 import com.googlecode.lanterna.screen.ScreenWriter;
 import com.googlecode.lanterna.terminal.TextColor;
 import com.googlecode.lanterna.test.TestTerminalFactory;
+import java.io.IOException;
 
 /**
  *
@@ -31,7 +32,7 @@ import com.googlecode.lanterna.test.TestTerminalFactory;
  */
 public class TerminalColorTest
 {
-    public static void main(String[] args)
+    public static void main(String[] args) throws IOException 
     {
         Screen screen = new TestTerminalFactory(args).createScreen();
         screen.startScreen();
@@ -110,7 +111,7 @@ public class TerminalColorTest
         writer.setBackgroundColor(TextColor.ANSI.BLUE);
         writer.drawString(17, 27, "Hello World", ScreenCharacterStyle.Bold);
         screen.refresh();
-        
+
         try
         {
             Thread.sleep(5000);

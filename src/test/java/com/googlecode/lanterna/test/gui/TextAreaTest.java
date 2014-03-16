@@ -1,6 +1,6 @@
 /*
  * This file is part of lanterna (http://code.google.com/p/lanterna/).
- * 
+ *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Copyright (C) 2010-2014 Martin
  */
 
@@ -29,24 +29,25 @@ import com.googlecode.lanterna.gui.dialog.MessageBox;
 import com.googlecode.lanterna.gui.layout.LinearLayout;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.test.TestTerminalFactory;
+import java.io.IOException;
 
 /**
  *
  * @author Martin
  */
 public class TextAreaTest {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         final GUIScreen guiScreen = new TestTerminalFactory(args).createGUIScreen();
         guiScreen.getScreen().startScreen();
         final Window window1 = new Window("Text window");
         //window1.addComponent(new Widget(1, 1));
-        
+
         final TextArea textArea = new TextArea("TextArea");
         textArea.setMaximumSize(new TerminalSize(80, 10));
         window1.addComponent(textArea);
-        
+
         window1.addComponent(new EmptySpace(1, 1));
-        
+
         Panel appendPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORIZONTAL);
         ((LinearLayout)appendPanel.getLayoutManager()).setPadding(1);
         final TextBox appendBox = new TextBox("", 30);
@@ -59,7 +60,7 @@ public class TextAreaTest {
         appendPanel.addComponent(appendBox);
         appendPanel.addComponent(appendButton);
         window1.addComponent(appendPanel);
-        
+
         Panel removePanel = new Panel(new Border.Invisible(), Panel.Orientation.HORIZONTAL);
         ((LinearLayout)removePanel.getLayoutManager()).setPadding(1);
         final TextBox removeBox = new TextBox("0", 5);
@@ -85,11 +86,11 @@ public class TextAreaTest {
         removePanel.addComponent(removeButton);
         removePanel.addComponent(clearButton);
         window1.addComponent(removePanel);
-        
+
         window1.addComponent(new EmptySpace(1, 1));
-        
+
         Panel lastPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORIZONTAL);
-        Button exitButton = new Button("Exit", new Action() {            
+        Button exitButton = new Button("Exit", new Action() {
             @Override
             public void doAction() {
                 window1.close();

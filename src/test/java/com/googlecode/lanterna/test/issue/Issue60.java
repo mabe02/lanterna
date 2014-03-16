@@ -7,6 +7,7 @@ import com.googlecode.lanterna.gui.component.AbstractInteractableComponent;
 import com.googlecode.lanterna.input.Key;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.test.TestTerminalFactory;
+import java.io.IOException;
 
 public class Issue60 extends Window {
 
@@ -22,11 +23,11 @@ public class Issue60 extends Window {
             public Result keyboardInteraction(Key key) {
                 System.out.println("Char value:" + (key.getCharacter() + 0));
                 System.out.println("Key kind:" + key.getKind());
-                
+
                 if(key.getCharacter() == 'q') {
                     close();
                 }
-                
+
                 return Result.EVENT_HANDLED;
             }
 
@@ -42,7 +43,7 @@ public class Issue60 extends Window {
     /**
      * @param args
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         final GUIScreen guiScreen = new TestTerminalFactory(args).createGUIScreen();
         guiScreen.getScreen().startScreen();
         guiScreen.showWindow(new Issue60("Issue 60 - Press q to quit"));

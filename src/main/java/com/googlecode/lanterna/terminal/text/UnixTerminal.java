@@ -143,7 +143,7 @@ public class UnixTerminal extends ANSITerminal
     }
 
     @Override
-    public TerminalSize getTerminalSize() {
+    public TerminalSize getTerminalSize() throws IOException {
         if(terminalSizeQuerier != null)
             return terminalSizeQuerier.queryTerminalSize();
 
@@ -151,7 +151,7 @@ public class UnixTerminal extends ANSITerminal
     }
 
     @Override
-    public Key readInput() {
+    public Key readInput() throws IOException {
         //Check if we have ctrl+c coming
         Key key = super.readInput();
         if(key != null &&

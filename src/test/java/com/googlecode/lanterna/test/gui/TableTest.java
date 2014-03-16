@@ -17,6 +17,7 @@ import com.googlecode.lanterna.gui.component.Table;
 import com.googlecode.lanterna.gui.component.TextBox;
 import com.googlecode.lanterna.gui.layout.LinearLayout;
 import com.googlecode.lanterna.test.TestTerminalFactory;
+import java.io.IOException;
 import java.util.Random;
 
 /**
@@ -24,13 +25,13 @@ import java.util.Random;
  * @author Martin
  */
 public class TableTest {
-    
-    public static void main(String[] args)
+
+    public static void main(String[] args) throws IOException
     {
         final GUIScreen guiScreen = new TestTerminalFactory(args).createGUIScreen();
         guiScreen.getScreen().startScreen();
         final Window window1 = new Window("Text box window");
-        
+
         final Table table = new Table(5, "My Test Table");
         table.setColumnPaddingSize(1);
         table.addRow(new Label("Column 1 "),
@@ -48,12 +49,12 @@ public class TableTest {
                 ((ProgressBar)table.getRow(1)[2]).setProgress(new Random().nextDouble());
             }
         }));
-        
-        
+
+
         window1.addComponent(table);
         Panel buttonPanel = new Panel(Panel.Orientation.HORIZONTAL);
         buttonPanel.addComponent(new EmptySpace(1, 1), LinearLayout.MAXIMIZES_HORIZONTALLY);
-        Button exitButton = new Button("Exit", new Action() {            
+        Button exitButton = new Button("Exit", new Action() {
             @Override
             public void doAction() {
                 window1.close();

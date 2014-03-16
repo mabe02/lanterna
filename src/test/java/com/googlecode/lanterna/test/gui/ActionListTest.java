@@ -1,6 +1,6 @@
 /*
  * This file is part of lanterna (http://code.google.com/p/lanterna/).
- * 
+ *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Copyright (C) 2010-2014 Martin
  */
 
@@ -29,6 +29,7 @@ import com.googlecode.lanterna.gui.component.EmptySpace;
 import com.googlecode.lanterna.gui.component.Panel;
 import com.googlecode.lanterna.gui.dialog.MessageBox;
 import com.googlecode.lanterna.test.TestTerminalFactory;
+import java.io.IOException;
 
 /**
  *
@@ -36,7 +37,7 @@ import com.googlecode.lanterna.test.TestTerminalFactory;
  */
 public class ActionListTest
 {
-    public static void main(String[] args)
+    public static void main(String[] args) throws IOException
     {
         final GUIScreen guiScreen = new TestTerminalFactory(args).createGUIScreen();
         guiScreen.getScreen().startScreen();
@@ -47,7 +48,7 @@ public class ActionListTest
         ActionListBox actionListBox = new ActionListBox();
         for(int i = 0; i < 5; i++)
             actionListBox.addAction(new ActionListBoxItem(guiScreen));
-        
+
         mainPanel.addComponent(actionListBox);
         window1.addComponent(mainPanel);
 
@@ -63,7 +64,7 @@ public class ActionListTest
         guiScreen.showWindow(window1, GUIScreen.Position.CENTER);
         guiScreen.getScreen().stopScreen();
     }
-    
+
     private static class ActionListBoxItem implements Action {
         private static int counter = 1;
         private GUIScreen owner;
@@ -73,7 +74,7 @@ public class ActionListTest
             this.nr = counter++;
             this.owner = owner;
         }
-        
+
         @Override
         public String toString() {
             return "ActionListBox item #" + nr;

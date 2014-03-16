@@ -18,6 +18,8 @@
  */
 package com.googlecode.lanterna.input;
 
+import java.io.IOException;
+
 /**
  * Objects implementing this interface can read character streams and transform them into {@code Key} objects which can
  * be read in a FIFO manner.
@@ -36,6 +38,8 @@ public interface InputProvider {
 
     /**
      * Returns the next {@code Key} off the input queue or null if there is no more input events available
+     * @return Key object which represents a keystroke coming in through the input stream
+     * @throws java.io.IOException Propagated error if the underlying stream gave errors
      */
-    Key readInput();
+    Key readInput() throws IOException;
 }

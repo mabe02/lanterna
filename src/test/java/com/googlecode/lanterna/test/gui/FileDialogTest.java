@@ -10,13 +10,14 @@ import com.googlecode.lanterna.gui.GUIScreen;
 import com.googlecode.lanterna.gui.dialog.FileDialog;
 import com.googlecode.lanterna.test.TestTerminalFactory;
 import java.io.File;
+import java.io.IOException;
 
 /**
  *
  * @author martin
  */
 public class FileDialogTest {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         final GUIScreen guiScreen = new TestTerminalFactory(args).createGUIScreen();
         guiScreen.getScreen().startScreen();
         FileDialog.showOpenFileDialog(guiScreen, new File("."), "Open dialog sample");

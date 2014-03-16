@@ -1,6 +1,6 @@
 /*
  * This file is part of lanterna (http://code.google.com/p/lanterna/).
- * 
+ *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,10 +13,9 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Copyright (C) 2010-2014 Martin
  */
-
 package com.googlecode.lanterna.screen;
 
 import com.googlecode.lanterna.CJKUtils;
@@ -25,6 +24,7 @@ import com.googlecode.lanterna.terminal.TextColor;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -45,17 +45,17 @@ public class Screen
     private ScreenCharacter paddingCharacter;
     private boolean wholeScreenInvalid;
     private boolean hasBeenActivated;
-    
+
     //How to deal with \t characters
     private TabBehaviour tabBehaviour;
-    
+
     /**
      * Creates a new Screen on top of a supplied terminal, will query the terminal
      * for its size. The screen is initially blank.
      * @param terminal
-     * @throws LanternaException 
+     * @throws LanternaException
      */
-    public Screen(Terminal terminal)
+    public Screen(Terminal terminal) throws IOException
     {
         this(terminal, terminal.getTerminalSize());
     }
@@ -64,7 +64,7 @@ public class Screen
      * Creates a new Screen on top of a supplied terminal and will set the size
      * of the screen to a supplied value. The screen is initially blank.
      * @param terminal
-     * @param terminalSize 
+     * @param terminalSize
      */
     public Screen(Terminal terminal, TerminalSize terminalSize)
     {
@@ -115,9 +115,9 @@ public class Screen
     }
 
     /**
-     * Moves the current cursor position or hides it. If the cursor is hidden and given a new 
+     * Moves the current cursor position or hides it. If the cursor is hidden and given a new
      * position, it will be visible after this method call.
-     * @param position 0-indexed column and row numbers of the new position, or if {@code null}, 
+     * @param position 0-indexed column and row numbers of the new position, or if {@code null},
      * hides the cursor
      */
     public void setCursorPosition(TerminalPosition position)
@@ -151,14 +151,14 @@ public class Screen
     }
 
     public void setPaddingCharacter(
-            char character, 
-            TextColor foregroundColor, 
-            TextColor backgroundColor, 
+            char character,
+            TextColor foregroundColor,
+            TextColor backgroundColor,
             ScreenCharacterStyle... style) {
-        
+
         this.paddingCharacter = new ScreenCharacter(character, foregroundColor, backgroundColor, new HashSet<ScreenCharacterStyle>(Arrays.asList(style)));
     }
-    
+
     /**
      * Gets the behaviour for what to do about tab characters.
      * @see TabBehaviour
@@ -166,12 +166,12 @@ public class Screen
     public TabBehaviour getTabBehaviour() {
         return tabBehaviour;
     }
-    
+
     /**
      * Reads the next {@code Key} from the input queue, or returns null if there
      * is nothing on the queue.
      */
-    public Key readInput()
+    public Key readInput() throws IOException
     {
         return terminal.readInput();
     }
@@ -187,11 +187,11 @@ public class Screen
     }
 
     /**
-     * Calling this method will put the underlying terminal in private mode, 
+     * Calling this method will put the underlying terminal in private mode,
      * clear the screen, move the cursor and refresh.
-     * @throws LanternaException 
+     * @throws LanternaException
      */
-    public void startScreen()
+    public void startScreen() throws IOException
     {
         if(hasBeenActivated)
             return;
@@ -212,14 +212,14 @@ public class Screen
             terminal.setCursorVisible(false);
         refresh();
     }
-    
+
     /**
      * Calling this method will make the underlying terminal leave private mode,
-     * effectively going back to whatever state the terminal was in before 
+     * effectively going back to whatever state the terminal was in before
      * calling {@code startScreen()}
-     * @throws LanternaException 
+     * @throws LanternaException
      */
-    public void stopScreen()
+    public void stopScreen() throws IOException
     {
         if(!hasBeenActivated)
             return;
@@ -236,10 +236,10 @@ public class Screen
      * area. The default background color will be used, if you want to fill the
      * screen with a different color you will need to do this manually.
      */
-    public void clear() {        
+    public void clear() {
         //ScreenCharacter is immutable, so we can use it for every element
         ScreenCharacter background = new ScreenCharacter(' ');
-        
+
         synchronized(mutex) {
             for(int y = 0; y < terminalSize.getRows(); y++) {
                 for(int x = 0; x < terminalSize.getColumns(); x++) {
@@ -248,7 +248,7 @@ public class Screen
             }
         }
     }
-    
+
     /**
      * Draws a string on the screen at a particular position
      * @param x 0-indexed column number of where to put the first character in the string
@@ -265,7 +265,7 @@ public class Screen
         drawStyle.addAll(Arrays.asList(styles));
         putString(x, y, string, foregroundColor, backgroundColor, drawStyle);
     }
-    
+
     /**
      * Draws a string on the screen at a particular position
      * @param x 0-indexed column number of where to put the first character in the string
@@ -277,8 +277,8 @@ public class Screen
      */
     public void putString(int x, int y, String string, TextColor foregroundColor,
             TextColor backgroundColor, Set<ScreenCharacterStyle> styles)
-    {    
-    	string = tabBehaviour.replaceTabs(string, x);  	
+    {
+    	string = tabBehaviour.replaceTabs(string, x);
     	for(int i = 0; i < string.length(); i++) {
             char character = string.charAt(i);
             putCharacter(x + i, y, new ScreenCharacter(character, foregroundColor, backgroundColor, styles));
@@ -294,7 +294,7 @@ public class Screen
             if(y < 0 || y >= backbuffer.length || x < 0 || x >= backbuffer[0].length)
                 return;
 
-            //Only create a new character if the 
+            //Only create a new character if the
             if(!backbuffer[y][x].equals(character)) {
                 backbuffer[y][x] = character;
             }
@@ -302,7 +302,7 @@ public class Screen
     }
 
     /**
-     * This method will check if there are any resize commands pending. If true, 
+     * This method will check if there are any resize commands pending. If true,
      * you need to call refresh() to perform the screen resize
      * @return true if the size is the same as before, false if the screen should be resized
      */
@@ -312,11 +312,11 @@ public class Screen
             return !resizeQueue.isEmpty();
         }
     }
-    
+
     /**
      * Calling this method will check if the terminal has changed since and in that case update the dimensions of this
-     * Screen to match. 
-     * @return Will return true if dimensions were changed, otherwise false. You probably want to clear and 
+     * Screen to match.
+     * @return Will return true if dimensions were changed, otherwise false. You probably want to clear and
      * redraw the entire screen if this method returns true.
      */
     public boolean updateScreenSize() {
@@ -330,7 +330,7 @@ public class Screen
     }
 
     /**
-     * Clears the terminal and repaints with the whole content of the Screen. This is useful of 
+     * Clears the terminal and repaints with the whole content of the Screen. This is useful of
      * something has written to the terminal outside of the Screen (System.out or through direct
      * calls to the underlying Terminal) and you want to make sure that the content of Screen
      * is completely pushed to the terminal.
@@ -339,27 +339,27 @@ public class Screen
         wholeScreenInvalid = true;
         refresh();
     }
-    
+
     /**
      * Call this method to make changes done through {@code putCharacter(...)},
      * {@code putString(...)} visible on the terminal. The screen will calculate
      * the changes that are required and send the necessary characters and
      * control sequences to make it so. If the terminal has been resized since the
      * last refresh, and no call to {@code doResize()} has been made, this method
-     * will resize the internal buffer and fill the extra space with a padding 
+     * will resize the internal buffer and fill the extra space with a padding
      * character.
      */
     public void refresh()
     {
         if(!hasBeenActivated)
             return;
-        
+
         synchronized(mutex) {
             //If any resize operations are in the queue, execute them
             resizeScreenIfNeeded();
 
             Map<TerminalPosition, ScreenCharacter> updateMap = new TreeMap<TerminalPosition, ScreenCharacter>(new ScreenPointComparator());
-            
+
             for(int y = 0; y < terminalSize.getRows(); y++)
             {
                 for(int x = 0; x < terminalSize.getColumns(); x++)
@@ -470,7 +470,7 @@ public class Screen
         private boolean currentlyIsNegative;
         private boolean currentlyIsBlinking;
         private boolean currentlyIsBordered;
-        
+
         public Writer()
         {
             currentForegroundColor = TextColor.ANSI.DEFAULT;

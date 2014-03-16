@@ -1,6 +1,6 @@
 /*
  * This file is part of lanterna (http://code.google.com/p/lanterna/).
- * 
+ *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Copyright (C) 2010-2014 Martin
  */
 
@@ -23,6 +23,7 @@ import com.googlecode.lanterna.TerminalFacade;
 import com.googlecode.lanterna.gui.GUIScreen;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.Terminal;
+import java.io.IOException;
 
 /**
  * This class provides a unified way for the test program to get their terminal
@@ -30,25 +31,25 @@ import com.googlecode.lanterna.terminal.Terminal;
  * @author Martin
  */
 public class TestTerminalFactory {
-    
+
     private final boolean forceUnixTerminal;
-    
+
     public TestTerminalFactory(String[] args) {
         forceUnixTerminal = args.length > 0 && "--no-swing".equals(args[0]);
     }
-    
+
     public Terminal createTerminal() {
         if(forceUnixTerminal)
             return TerminalFacade.createTextTerminal();
         else
             return TerminalFacade.createTerminal();
     }
-    
-    public Screen createScreen() {
+
+    public Screen createScreen() throws IOException {
         return TerminalFacade.createScreen(createTerminal());
     }
-    
-    public GUIScreen createGUIScreen() {
+
+    public GUIScreen createGUIScreen() throws IOException {
         return TerminalFacade.createGUIScreen(createScreen());
     }
 }

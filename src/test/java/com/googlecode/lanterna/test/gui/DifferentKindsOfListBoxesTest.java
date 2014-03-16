@@ -1,6 +1,6 @@
 /*
  * This file is part of lanterna (http://code.google.com/p/lanterna/).
- * 
+ *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Copyright (C) 2010-2014 Martin
  */
 
@@ -28,21 +28,22 @@ import com.googlecode.lanterna.gui.dialog.MessageBox;
 import com.googlecode.lanterna.gui.layout.LinearLayout;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.test.TestTerminalFactory;
+import java.io.IOException;
 
 /**
  *
  * @author Martin
  */
 public class DifferentKindsOfListBoxesTest {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         final GUIScreen guiScreen = new TestTerminalFactory(args).createGUIScreen();
         guiScreen.getScreen().startScreen();
-        
+
         final Window window1 = new Window("List boxes window");
-        
+
         Panel mainPanel = new Panel(new Border.Invisible(), Panel.Orientation.HORIZONTAL);
         ((LinearLayout)mainPanel.getLayoutManager()).setPadding(1);
-        
+
         final CheckBoxList checkBoxList = new CheckBoxList();
         checkBoxList.addItem("First");
         checkBoxList.addItem("Second");
@@ -60,7 +61,7 @@ public class DifferentKindsOfListBoxesTest {
         checkBoxList.addItem("Yon");
         checkBoxList.addItem("Go");
         checkBoxList.setPreferredSize(new TerminalSize(16, 8));
-        
+
         RadioCheckBoxList radioCheckBoxList = new RadioCheckBoxList();
         radioCheckBoxList.addItem("First");
         radioCheckBoxList.addItem("Second");
@@ -78,7 +79,7 @@ public class DifferentKindsOfListBoxesTest {
         radioCheckBoxList.addItem("Yon");
         radioCheckBoxList.addItem("Go");
         radioCheckBoxList.setPreferredSize(new TerminalSize(16, 8));
-        
+
         ActionListBox actionListBox = new ActionListBox();
         actionListBox.addAction(new RandomAction(guiScreen));
         actionListBox.addAction(new RandomAction(guiScreen));
@@ -93,12 +94,12 @@ public class DifferentKindsOfListBoxesTest {
         actionListBox.addAction(new RandomAction(guiScreen));
         actionListBox.addAction(new RandomAction(guiScreen));
         actionListBox.addAction(new RandomAction(guiScreen));
-        actionListBox.setPreferredSize(new TerminalSize(16, 8));   
-        
+        actionListBox.setPreferredSize(new TerminalSize(16, 8));
+
         mainPanel.addComponent(checkBoxList);
         mainPanel.addComponent(radioCheckBoxList);
         mainPanel.addComponent(actionListBox);
-        window1.addComponent(mainPanel);        
+        window1.addComponent(mainPanel);
         window1.addComponent(new EmptySpace());
 
 
@@ -126,7 +127,7 @@ public class DifferentKindsOfListBoxesTest {
             this.label = "Action #" + (counter++);
             this.guiScreen = guiScreen;
         }
-        
+
         @Override
         public void doAction() {
             MessageBox.showMessageBox(guiScreen, "Action", label + " selected");

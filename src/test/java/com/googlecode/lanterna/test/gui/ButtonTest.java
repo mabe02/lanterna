@@ -1,6 +1,6 @@
 /*
  * This file is part of lanterna (http://code.google.com/p/lanterna/).
- * 
+ *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Copyright (C) 2010-2014 Martin
  */
 
@@ -33,6 +33,7 @@ import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.terminal.text.UnixTerminal;
 import com.googlecode.lanterna.test.TestTerminalFactory;
+import java.io.IOException;
 import java.nio.charset.Charset;
 
 /**
@@ -41,13 +42,13 @@ import java.nio.charset.Charset;
  */
 public class ButtonTest
 {
-    public static void main(String[] args)
+    public static void main(String[] args) throws IOException
     {
-        Terminal terminal = new TestTerminalFactory(args).createTerminal();        
+        Terminal terminal = new TestTerminalFactory(args).createTerminal();
         if(terminal instanceof UnixTerminal) {
-            terminal = new UnixTerminal(System.in, System.out, Charset.forName("UTF-8"), 
-                                            null, UnixTerminal.Behaviour.CTRL_C_KILLS_APPLICATION);            
-        }        
+            terminal = new UnixTerminal(System.in, System.out, Charset.forName("UTF-8"),
+                                            null, UnixTerminal.Behaviour.CTRL_C_KILLS_APPLICATION);
+        }
         final GUIScreen guiScreen = new GUIScreen(new Screen(terminal));
         guiScreen.getScreen().startScreen();
         guiScreen.setBackgroundRenderer(new DefaultBackgroundRenderer("GUI Test"));

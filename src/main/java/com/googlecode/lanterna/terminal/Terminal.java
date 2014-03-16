@@ -19,6 +19,7 @@
 package com.googlecode.lanterna.terminal;
 
 import com.googlecode.lanterna.input.InputProvider;
+import java.io.IOException;
 
 /**
  * This is the main terminal interface, at the lowest level supported by Lanterna. You can implement your own
@@ -251,7 +252,7 @@ public interface Terminal extends InputProvider {
      *
      * @return Size of the terminal
      */
-    public TerminalSize getTerminalSize();
+    public TerminalSize getTerminalSize() throws IOException;
 
     /**
      * Calls {@code flush()} on the underlying {@code OutputStream} object, or whatever other implementation this
@@ -283,7 +284,7 @@ public interface Terminal extends InputProvider {
          */
         ENTER_REVERSE,
         EXIT_REVERSE,
-        
+
         /**
          * Not widely supported
          */

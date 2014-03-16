@@ -7,10 +7,11 @@ import com.googlecode.lanterna.gui.GUIScreen;
 import com.googlecode.lanterna.gui.Window;
 import com.googlecode.lanterna.gui.component.Button;
 import com.googlecode.lanterna.gui.component.Panel;
+import java.io.IOException;
 
 public class Issue98 {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         GUIScreen textGUI = TerminalFacade.createGUIScreen();
 
@@ -36,12 +37,17 @@ public class Issue98 {
 
             panel.addComponent(new Button("Exit (inside panel)", new Action() {
                 public void doAction() {
-                    getOwner().getScreen().stopScreen();
+                    try {
+                        getOwner().getScreen().stopScreen();
+                    }
+                    catch(IOException e) {
+                        e.printStackTrace();
+                    }
                     System.exit(0);
                 }
             }));
 
-            
+
             /*
             //If lines below are uncommented, both buttons will be working
             addComponent(new Button("Exit (outside panel)", new Action() {

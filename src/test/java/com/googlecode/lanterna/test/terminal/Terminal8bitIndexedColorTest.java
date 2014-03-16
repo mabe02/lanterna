@@ -23,6 +23,7 @@ import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.terminal.TextColor;
 import com.googlecode.lanterna.test.TestTerminalFactory;
+import java.io.IOException;
 import java.util.Random;
 
 /**
@@ -30,7 +31,7 @@ import java.util.Random;
  * @author Martin
  */
 public class Terminal8bitIndexedColorTest {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         final String string = "Hello!";
         Random random = new Random();
         Terminal terminal = new TestTerminalFactory(args).createTerminal();

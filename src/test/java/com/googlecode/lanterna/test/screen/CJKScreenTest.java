@@ -8,13 +8,14 @@ import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.ScreenWriter;
 import com.googlecode.lanterna.terminal.TextColor;
 import com.googlecode.lanterna.test.TestTerminalFactory;
+import java.io.IOException;
 
 /**
  *
  * @author Martin
  */
 public class CJKScreenTest {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         Screen screen = new TestTerminalFactory(args).createScreen();
         screen.startScreen();
 
@@ -26,10 +27,10 @@ public class CJKScreenTest {
         writer.drawString(5, 9,  "Japanese:              スヴァールバル諸島は、北極圏のバレンツ海にある群島。");
         writer.drawString(5, 11, "Korean:                스발바르 제도 는 유럽 본토의 북부, 대서양에 위치한 군도이다.");
         screen.refresh();
-        
+
         try {
             Thread.sleep(5000);
-        } 
+        }
         catch (InterruptedException e) {
         }
         screen.stopScreen();

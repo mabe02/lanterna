@@ -1,6 +1,6 @@
 /*
  * This file is part of lanterna (http://code.google.com/p/lanterna/).
- * 
+ *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Copyright (C) 2010-2014 Martin
  */
 
@@ -22,6 +22,7 @@ package com.googlecode.lanterna.test.terminal;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.test.TestTerminalFactory;
+import java.io.IOException;
 import java.util.Random;
 
 /**
@@ -29,7 +30,7 @@ import java.util.Random;
  * @author Martin
  */
 public class Terminal24bitColorTest {
-    public static void main(String[] args)
+    public static void main(String[] args) throws IOException
     {
         final String string = "Hello!";
         Random random = new Random();
@@ -37,18 +38,18 @@ public class Terminal24bitColorTest {
         terminal.enterPrivateMode();
         terminal.clearScreen();
         TerminalSize size = terminal.getTerminalSize();
-        
+
         while(true) {
             if(terminal.readInput() != null) {
                 terminal.exitPrivateMode();
                 return;
             }
-            
+
             terminal.applyForegroundColor(random.nextInt(255), random.nextInt(255), random.nextInt(255));
             terminal.applyBackgroundColor(random.nextInt(255), random.nextInt(255), random.nextInt(255));
             terminal.moveCursor(random.nextInt(size.getColumns() - string.length()), random.nextInt(size.getRows()));
             printString(terminal, string);
-            
+
             try {
                 Thread.sleep(200);
             }
@@ -56,9 +57,9 @@ public class Terminal24bitColorTest {
             }
         }
     }
-    
+
     private static void printString(Terminal terminal, String string) {
         for(int i = 0; i < string.length(); i++)
             terminal.putCharacter(string.charAt(i));
-    }            
+    }
 }

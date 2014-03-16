@@ -9,6 +9,7 @@ import com.googlecode.lanterna.gui.Action;
 import com.googlecode.lanterna.gui.GUIScreen;
 import com.googlecode.lanterna.gui.Window;
 import com.googlecode.lanterna.gui.dialog.WaitingDialog;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -17,7 +18,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class Issue82 {
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, IOException {
         // Construct the screen
         final GUIScreen guiScreen = TerminalFacade.createGUIScreen();
         guiScreen.getScreen().startScreen();

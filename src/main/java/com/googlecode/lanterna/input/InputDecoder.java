@@ -30,10 +30,8 @@ import java.util.*;
  * @author Martin
  */
 public class InputDecoder {
-
     private final Reader source;
     private final Queue<Character> inputBuffer;
-    private final Queue<Character> leftOverQueue;
     private final Set<CharacterPattern> bytePatterns;
     private final List<Character> currentMatching;
     private TerminalPosition lastReportedTerminalPosition;
@@ -41,7 +39,6 @@ public class InputDecoder {
     public InputDecoder(final Reader source) {
         this.source = source;
         this.inputBuffer = new LinkedList<Character>();
-        this.leftOverQueue = new LinkedList<Character>();
         this.bytePatterns = new HashSet<CharacterPattern>();
         this.currentMatching = new ArrayList<Character>();
         this.lastReportedTerminalPosition = null;
@@ -58,84 +55,12 @@ public class InputDecoder {
         }
     }
 
-    public Key getNextCharacter() {
-        if (System.getProperty("com.googlecode.lanterna.input.enable-new-decoder", "false").equals("true")) {
-            try {
-                return getNextCharacter2();
-            } catch (IOException e) {
-                throw new LanternaException(e);
-            }
-        }
-        if (leftOverQueue.size() > 0) {
-            Character first = leftOverQueue.poll();
-            //HACK!!!
-            if (first == 0x1b) {
-                return new Key(Key.Kind.Escape);
-            }
-
-            return new Key(first.charValue());
-        }
-
-        try {
-            while (source.ready()) {
-                int readChar = source.read();
-                if (readChar == -1) {
-                    return null;
-                }
-
-                inputBuffer.add((char) readChar);
-            }
-        } catch (IOException e) {
-            throw new LanternaException(e);
-        }
-
-        if (inputBuffer.size() == 0) {
-            return null;
-        }
-
-        while (true) {
-            //Check all patterns
-            Character nextChar = inputBuffer.poll();
-            boolean canMatchWithOneMoreChar = false;
-
-            if (nextChar != null) {
-                currentMatching.add(nextChar);
-                for (CharacterPattern pattern : bytePatterns) {
-                    if (pattern.matches(currentMatching)) {
-                        if (pattern.isCompleteMatch(currentMatching)) {
-                            Key result = pattern.getResult(currentMatching);
-                            if (result.getKind() == Key.Kind.CursorLocation) {
-                                lastReportedTerminalPosition = ScreenInfoCharacterPattern.getCursorPosition(currentMatching);
-                            }
-                            currentMatching.clear();
-                            return result;
-                        } else {
-                            canMatchWithOneMoreChar = true;
-                        }
-                    }
-                }
-            }
-            if (!canMatchWithOneMoreChar) {
-                for (Character c : currentMatching) {
-                    leftOverQueue.add(c);
-                }
-                currentMatching.clear();
-                Character first = leftOverQueue.poll();
-
-                //HACK!!!
-                if (first == 0x1b) {
-                    return new Key(Key.Kind.Escape);
-                }
-                return new Key(first.charValue());
-            }
-        }
-    }
-
-    public TerminalPosition getLastReportedTerminalPosition() {
-        return lastReportedTerminalPosition;
-    }
-
-    private Key getNextCharacter2() throws IOException {
+    /**
+     *
+     * @return
+     * @throws IOException
+     */
+    public Key getNextCharacter() throws IOException {
         try {
             while (source.ready()) {
                 int readChar = source.read();
@@ -190,5 +115,9 @@ public class InputDecoder {
             currentMatching.remove(0);
         }
         return largestMatch;
+    }
+
+    public TerminalPosition getLastReportedTerminalPosition() {
+        return lastReportedTerminalPosition;
     }
 }
