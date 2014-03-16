@@ -24,11 +24,13 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Common key press profiles that seems to be shared by most terminals/terminal emulators.
+ * This profile attempts to collect as many code combinations as possible without causing any collisions between 
+ * patterns. The patterns in here are tested with Linux terminal, XTerm, Gnome terminal, XFCE terminal, Cygwin and 
+ * Mac OS X terminal.
  *
  * @author Martin
  */
-public class CommonProfile extends KeyMappingProfile {
+public class DefaultKeyDecodingProfile implements KeyDecodingProfile {
 
     private static final List<CharacterPattern> COMMON_PATTERNS
             = new ArrayList<CharacterPattern>(Arrays.asList(
@@ -44,6 +46,7 @@ public class CommonProfile extends KeyMappingProfile {
                                 new BasicCharacterPattern(new Key(Key.Kind.ArrowLeft, false, true), ESC_CODE, ESC_CODE, '[', 'D'),
                                 new BasicCharacterPattern(new Key(Key.Kind.Tab), '\t'),
                                 new BasicCharacterPattern(new Key(Key.Kind.Enter), '\n'),
+                                new BasicCharacterPattern(new Key(Key.Kind.Enter), '\r', '\u0000'), //OS X
                                 new BasicCharacterPattern(new Key(Key.Kind.ReverseTab), ESC_CODE, '[', 'Z'),
                                 new BasicCharacterPattern(new Key(Key.Kind.Backspace), (char) 0x7f),
                                 new BasicCharacterPattern(new Key(Key.Kind.Insert), ESC_CODE, '[', '2', '~'),
@@ -52,8 +55,12 @@ public class CommonProfile extends KeyMappingProfile {
                                 new BasicCharacterPattern(new Key(Key.Kind.Delete, false, true), ESC_CODE, ESC_CODE, '[', '3', '~'),
                                 new BasicCharacterPattern(new Key(Key.Kind.Home), ESC_CODE, '[', 'H'),
                                 new BasicCharacterPattern(new Key(Key.Kind.Home, false, true), ESC_CODE, ESC_CODE, '[', 'H'),
+                                new BasicCharacterPattern(new Key(Key.Kind.Home), ESC_CODE, 'O', 'H'),  //Gnome terminal
+                                new BasicCharacterPattern(new Key(Key.Kind.Home), ESC_CODE, '[', '1', '~'), //Putty
                                 new BasicCharacterPattern(new Key(Key.Kind.End), ESC_CODE, '[', 'F'),
                                 new BasicCharacterPattern(new Key(Key.Kind.End, false, true), ESC_CODE, ESC_CODE, '[', 'F'),
+                                new BasicCharacterPattern(new Key(Key.Kind.End), ESC_CODE, 'O', 'F'),   //Gnome terminal
+                                new BasicCharacterPattern(new Key(Key.Kind.End), ESC_CODE, '[', '4', '~'),  //Putty
                                 new BasicCharacterPattern(new Key(Key.Kind.PageUp), ESC_CODE, '[', '5', '~'),
                                 new BasicCharacterPattern(new Key(Key.Kind.PageUp, false, true), ESC_CODE, ESC_CODE, '[', '5', '~'),
                                 new BasicCharacterPattern(new Key(Key.Kind.PageDown), ESC_CODE, '[', '6', '~'),
@@ -120,7 +127,7 @@ public class CommonProfile extends KeyMappingProfile {
                             }));
 
     @Override
-    Collection<CharacterPattern> getPatterns() {
+    public Collection<CharacterPattern> getPatterns() {
         return new ArrayList<CharacterPattern>(COMMON_PATTERNS);
     }
 

@@ -38,16 +38,18 @@ public class ScreenInfoCharacterPattern implements CharacterPattern {
     public ScreenInfoCharacterPattern() {
     }
 
+    @Override
     public Key getResult(List<Character> matching) {
         return new Key(Key.Kind.CursorLocation);
     }
 
+    @Override
     public boolean isCompleteMatch(List<Character> currentMatching) {
         if (currentMatching.isEmpty()) {
             return false;
         }
 
-        if (currentMatching.get(0) != KeyMappingProfile.ESC_CODE) {
+        if (currentMatching.get(0) != KeyDecodingProfile.ESC_CODE) {
             return false;
         }
 
@@ -64,12 +66,13 @@ public class ScreenInfoCharacterPattern implements CharacterPattern {
         return true;
     }
 
+    @Override
     public boolean matches(List<Character> currentMatching) {
         if (currentMatching.isEmpty()) {
             return true;
         }
 
-        if (currentMatching.get(0) != KeyMappingProfile.ESC_CODE) {
+        if (currentMatching.get(0) != KeyDecodingProfile.ESC_CODE) {
             return false;
         }
         if (currentMatching.size() == 1) {
@@ -116,7 +119,7 @@ public class ScreenInfoCharacterPattern implements CharacterPattern {
             return null;
         }
 
-        if (currentMatching.get(0) != KeyMappingProfile.ESC_CODE) {
+        if (currentMatching.get(0) != KeyDecodingProfile.ESC_CODE) {
             return null;
         }
 

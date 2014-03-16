@@ -32,18 +32,15 @@ public class AltAndCharacterPattern implements CharacterPattern {
         if (currentMatching.size() != 2) {
             return false;
         }
-        if (currentMatching.get(0) != KeyMappingProfile.ESC_CODE) {
+        if (currentMatching.get(0) != KeyDecodingProfile.ESC_CODE) {
             return false;
         }
-        if (!Character.isLetterOrDigit(currentMatching.get(1))) {
-            return false;
-        }
-        return true;
+        return Character.isLetterOrDigit(currentMatching.get(1));
     }
 
     @Override
     public boolean matches(List<Character> currentMatching) {
-        if (currentMatching.get(0) != KeyMappingProfile.ESC_CODE) {
+        if (currentMatching.get(0) != KeyDecodingProfile.ESC_CODE) {
             return false;
         }
         if (currentMatching.size() == 1) {
@@ -52,9 +49,6 @@ public class AltAndCharacterPattern implements CharacterPattern {
         if (!Character.isLetterOrDigit(currentMatching.get(1))) {
             return false;
         }
-        if (currentMatching.size() == 2) {
-            return true;
-        }
-        return false;
+        return currentMatching.size() == 2;
     }
 }

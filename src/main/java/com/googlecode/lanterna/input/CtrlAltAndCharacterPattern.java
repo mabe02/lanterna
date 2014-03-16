@@ -37,7 +37,7 @@ public class CtrlAltAndCharacterPattern implements CharacterPattern {
         if (currentMatching.size() != 2) {
             return false;
         }
-        if (currentMatching.get(0) != KeyMappingProfile.ESC_CODE) {
+        if (currentMatching.get(0) != KeyDecodingProfile.ESC_CODE) {
             return false;
         }
         if (currentMatching.get(1).charValue() > 26) {
@@ -48,7 +48,7 @@ public class CtrlAltAndCharacterPattern implements CharacterPattern {
 
     @Override
     public boolean matches(List<Character> currentMatching) {
-        if (currentMatching.get(0) != KeyMappingProfile.ESC_CODE) {
+        if (currentMatching.get(0) != KeyDecodingProfile.ESC_CODE) {
             return false;
         }
         if (currentMatching.size() == 1) {

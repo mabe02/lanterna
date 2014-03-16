@@ -20,8 +20,6 @@
 package com.googlecode.lanterna.terminal.text;
 
 import com.googlecode.lanterna.LanternaException;
-import com.googlecode.lanterna.input.GnomeTerminalProfile;
-import com.googlecode.lanterna.input.PuttyProfile;
 import com.googlecode.lanterna.terminal.TerminalSize;
 
 import java.io.*;
@@ -49,8 +47,6 @@ public class CygwinTerminal extends ANSITerminal {
             Charset terminalCharset)
     {
         super(terminalInput, terminalOutput, terminalCharset);
-        addInputProfile(new GnomeTerminalProfile());
-        addInputProfile(new PuttyProfile());
 
         //Make sure to set an initial size
         onResized(80, 20);

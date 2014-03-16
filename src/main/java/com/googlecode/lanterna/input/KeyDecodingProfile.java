@@ -21,17 +21,16 @@ package com.googlecode.lanterna.input;
 import java.util.Collection;
 
 /**
- * Adds some codes from the gnome-terminal, commonly used in Ubuntu.
+ * In order to convert a stream of characters into objects representing keystrokes, we need to apply logic on this
+ * stream to detect special characters. In lanterna, this is done by using a set of character patterns which are matched
+ * against the stream until we've found the best match. This interface represents a set of such patterns, a 'profile' 
+ * with is used when decoding the input. There is a default profile, DefaultKeyDecodingProfile, which will probably
+ * do what you need but you can also extend and define your own patterns.
  *
  * @author Martin
  */
-public class GnomeTerminalProfile extends CommonProfile {
+public interface KeyDecodingProfile {
+    public static final char ESC_CODE = (char) 0x1b;
 
-    @Override
-    Collection<CharacterPattern> getPatterns() {
-        Collection<CharacterPattern> gnomePatterns = super.getPatterns();
-        gnomePatterns.add(new BasicCharacterPattern(new Key(Key.Kind.Home), ESC_CODE, 'O', 'H'));
-        gnomePatterns.add(new BasicCharacterPattern(new Key(Key.Kind.End), ESC_CODE, 'O', 'F'));
-        return gnomePatterns;
-    }
+    Collection<CharacterPattern> getPatterns();
 }

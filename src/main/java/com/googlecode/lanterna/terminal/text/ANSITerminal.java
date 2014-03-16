@@ -19,7 +19,7 @@
 
 package com.googlecode.lanterna.terminal.text;
 
-import com.googlecode.lanterna.input.CommonProfile;
+import com.googlecode.lanterna.input.DefaultKeyDecodingProfile;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,7 +39,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal
     {
         super(terminalInput, terminalOutput, terminalCharset);
         this.inPrivateMode = false;
-        addInputProfile(new CommonProfile());
+        addInputProfile(new DefaultKeyDecodingProfile());
     }
 
     private void CSI()

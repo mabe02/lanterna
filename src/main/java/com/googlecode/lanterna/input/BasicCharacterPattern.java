@@ -22,15 +22,15 @@ import java.util.Arrays;
 import java.util.List;
 
 class BasicCharacterPattern implements CharacterPattern {
-
-    private Key result;
-    private char[] pattern;
+    private final Key result;
+    private final char[] pattern;
 
     BasicCharacterPattern(Key result, char... pattern) {
         this.result = result;
         this.pattern = pattern;
     }
 
+    @Override
     public boolean matches(List<Character> currentMatching) {
         int minSize = Math.min(currentMatching.size(), pattern.length);
         for (int i = 0; i < minSize; i++) {
@@ -41,10 +41,12 @@ class BasicCharacterPattern implements CharacterPattern {
         return true;
     }
 
+    @Override
     public Key getResult(List<Character> matching) {
         return result;
     }
 
+    @Override
     public boolean isCompleteMatch(List<Character> currentMatching) {
         return pattern.length == currentMatching.size();
     }

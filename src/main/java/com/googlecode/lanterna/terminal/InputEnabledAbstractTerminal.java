@@ -23,7 +23,7 @@ import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.input.InputDecoder;
 import com.googlecode.lanterna.input.InputProvider;
 import com.googlecode.lanterna.input.Key;
-import com.googlecode.lanterna.input.KeyMappingProfile;
+import com.googlecode.lanterna.input.KeyDecodingProfile;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -45,7 +45,7 @@ public abstract class InputEnabledAbstractTerminal extends AbstractTerminal impl
     }
 
     @Override
-    public void addInputProfile(KeyMappingProfile profile) {
+    public void addInputProfile(KeyDecodingProfile profile) {
         inputDecoder.addProfile(profile);
     }
 

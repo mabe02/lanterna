@@ -21,13 +21,16 @@ package com.googlecode.lanterna.input;
 import java.util.List;
 
 /**
- * Used to compare a list of character if they match a particular pattern
+ * Used to compare a list of character if they match a particular pattern, and in that case, return the kind of 
+ * keystroke this pattern represents
  *
  * @author mberglun
  */
 public interface CharacterPattern {
 
     /**
+     * Given a list of characters that this pattern is matching, which keystroke does it map to?
+     * @param matching List of characters
      * @return The {@code Key} that this pattern represents
      */
     Key getResult(List<Character> matching);
@@ -35,11 +38,15 @@ public interface CharacterPattern {
     /**
      * Returns true if this pattern is a perfect match (all characters matching and the pattern has no more characters
      * to match) of the supplied characters
+     * @param currentMatching List of characters
+     * @return True if the list of characters makes a complete (non-partial) match of this pattern
      */
     boolean isCompleteMatch(List<Character> currentMatching);
 
     /**
      * Returns true if this pattern partially or fully matches the supplied characters
+     * @param currentMatching List of characters
+     * @return True if this pattern matches fully or partially the supplied list of characters
      */
     boolean matches(List<Character> currentMatching);
 

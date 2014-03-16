@@ -29,15 +29,16 @@ import java.io.IOException;
 public interface InputProvider {
 
     /**
-     * Adds a KeyMappingProfile to be used when converting raw user input bytes to {@code Key} objects.
+     * Adds a KeyDecodingProfile to be used when converting raw user input characters to {@code Key} objects.
      *
-     * @see KeyMappingProfile
+     * @see KeyDecodingProfile
      * @param profile
      */
-    void addInputProfile(KeyMappingProfile profile);
+    void addInputProfile(KeyDecodingProfile profile);
 
     /**
-     * Returns the next {@code Key} off the input queue or null if there is no more input events available
+     * Returns the next {@code Key} off the input queue or null if there is no more input events available. Note, this
+     * method call is <b>not</b> blocking, it returns null immediately if there is nothing on the input stream.
      * @return Key object which represents a keystroke coming in through the input stream
      * @throws java.io.IOException Propagated error if the underlying stream gave errors
      */

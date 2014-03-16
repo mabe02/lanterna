@@ -49,7 +49,7 @@ import javax.swing.Timer;
 import com.googlecode.lanterna.CJKUtils;
 import com.googlecode.lanterna.input.InputProvider;
 import com.googlecode.lanterna.input.Key;
-import com.googlecode.lanterna.input.KeyMappingProfile;
+import com.googlecode.lanterna.input.KeyDecodingProfile;
 import com.googlecode.lanterna.terminal.AbstractTerminal;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
@@ -149,7 +149,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
     }
 
     @Override
-    public void addInputProfile(KeyMappingProfile profile)
+    public void addInputProfile(KeyDecodingProfile profile)
     {
     }
 
