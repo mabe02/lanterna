@@ -53,7 +53,8 @@ import com.googlecode.lanterna.input.KeyMappingProfile;
 import com.googlecode.lanterna.terminal.AbstractTerminal;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
-import com.googlecode.lanterna.terminal.XTerm8bitIndexedColorUtils;
+import com.googlecode.lanterna.terminal.TextColor;
+import java.awt.Color;
 
 /**
  * A Swing-based text terminal emulator
@@ -790,15 +791,16 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
 
     private class CharacterIndexedColor extends TerminalCharacterColor {
 
-        private final int index;
+        private final java.awt.Color c;
 
         CharacterIndexedColor(int index) {
-            this.index = index;
+            TextColor.Indexed indexed = new TextColor.Indexed(index);
+            c = new Color(indexed.getRed(), indexed.getGreen(), indexed.getBlue());
         }
 
         @Override
         public java.awt.Color getColor(boolean brightHint, boolean foregroundHint) {
-            return XTerm8bitIndexedColorUtils.getAWTColor(index, appearance.getColorPalette());
+            return c;
         }
     }
 
