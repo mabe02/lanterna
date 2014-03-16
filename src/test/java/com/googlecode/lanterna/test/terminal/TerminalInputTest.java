@@ -30,7 +30,7 @@ import java.io.IOException;
  */
 public class TerminalInputTest
 {
-    public static void main(String[] args) throws InterruptedException, IOException, IOException
+    public static void main(String[] args) throws InterruptedException, IOException
     {
         final Terminal rawTerminal = new TestTerminalFactory(args).createTerminal();
         rawTerminal.enterPrivateMode();
