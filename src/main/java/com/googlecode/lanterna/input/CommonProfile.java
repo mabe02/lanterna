@@ -58,15 +58,20 @@ public class CommonProfile extends KeyMappingProfile {
                                 new BasicCharacterPattern(new Key(Key.Kind.PageUp, false, true), ESC_CODE, ESC_CODE, '[', '5', '~'),
                                 new BasicCharacterPattern(new Key(Key.Kind.PageDown), ESC_CODE, '[', '6', '~'),
                                 new BasicCharacterPattern(new Key(Key.Kind.PageDown, false, true), ESC_CODE, ESC_CODE, '[', '6', '~'),
-                                new BasicCharacterPattern(new Key(Key.Kind.F1), ESC_CODE, 'O', 'P'), //Cygwin
                                 new BasicCharacterPattern(new Key(Key.Kind.F1), ESC_CODE, '[', '1', '1', '~'),
-                                new BasicCharacterPattern(new Key(Key.Kind.F2), ESC_CODE, 'O', 'Q'), //Cygwin
+                                new BasicCharacterPattern(new Key(Key.Kind.F1), ESC_CODE, 'O', 'P'), //Cygwin
+                                new BasicCharacterPattern(new Key(Key.Kind.F1), ESC_CODE, '[', '[', 'A'), //Linux
                                 new BasicCharacterPattern(new Key(Key.Kind.F2), ESC_CODE, '[', '1', '2', '~'),
-                                new BasicCharacterPattern(new Key(Key.Kind.F3), ESC_CODE, 'O', 'R'), //Cygwin
+                                new BasicCharacterPattern(new Key(Key.Kind.F2), ESC_CODE, 'O', 'Q'), //Cygwin
+                                new BasicCharacterPattern(new Key(Key.Kind.F2), ESC_CODE, '[', '[', 'B'), //Linux
                                 new BasicCharacterPattern(new Key(Key.Kind.F3), ESC_CODE, '[', '1', '3', '~'),
-                                new BasicCharacterPattern(new Key(Key.Kind.F4), ESC_CODE, 'O', 'S'), //Cygwin
+                                new BasicCharacterPattern(new Key(Key.Kind.F3), ESC_CODE, 'O', 'R'), //Cygwin
+                                new BasicCharacterPattern(new Key(Key.Kind.F3), ESC_CODE, '[', '[', 'C'), //Linux
                                 new BasicCharacterPattern(new Key(Key.Kind.F4), ESC_CODE, '[', '1', '4', '~'),
+                                new BasicCharacterPattern(new Key(Key.Kind.F4), ESC_CODE, 'O', 'S'), //Cygwin
+                                new BasicCharacterPattern(new Key(Key.Kind.F4), ESC_CODE, '[', '[', 'D'), //Linux
                                 new BasicCharacterPattern(new Key(Key.Kind.F5), ESC_CODE, '[', '1', '5', '~'),
+                                new BasicCharacterPattern(new Key(Key.Kind.F5), ESC_CODE, '[', '[', 'E'), //Linux
                                 new BasicCharacterPattern(new Key(Key.Kind.F6), ESC_CODE, '[', '1', '7', '~'),
                                 new BasicCharacterPattern(new Key(Key.Kind.F7), ESC_CODE, '[', '1', '8', '~'),
                                 new BasicCharacterPattern(new Key(Key.Kind.F8), ESC_CODE, '[', '1', '9', '~'),
@@ -76,14 +81,14 @@ public class CommonProfile extends KeyMappingProfile {
                                 new BasicCharacterPattern(new Key(Key.Kind.F12), ESC_CODE, '[', '2', '4', '~'),
 
                                 //Function keys with alt
-                                new BasicCharacterPattern(new Key(Key.Kind.F1, false, true), ESC_CODE, ESC_CODE, 'O', 'P'), //Cygwin
                                 new BasicCharacterPattern(new Key(Key.Kind.F1, false, true), ESC_CODE, ESC_CODE, '[', '1', '1', '~'),
-                                new BasicCharacterPattern(new Key(Key.Kind.F2, false, true), ESC_CODE, ESC_CODE, 'O', 'Q'), //Cygwin
+                                new BasicCharacterPattern(new Key(Key.Kind.F1, false, true), ESC_CODE, ESC_CODE, 'O', 'P'), //Cygwin
                                 new BasicCharacterPattern(new Key(Key.Kind.F2, false, true), ESC_CODE, ESC_CODE, '[', '1', '2', '~'),
-                                new BasicCharacterPattern(new Key(Key.Kind.F3, false, true), ESC_CODE, ESC_CODE, 'O', 'R'), //Cygwin
+                                new BasicCharacterPattern(new Key(Key.Kind.F2, false, true), ESC_CODE, ESC_CODE, 'O', 'Q'), //Cygwin
                                 new BasicCharacterPattern(new Key(Key.Kind.F3, false, true), ESC_CODE, ESC_CODE, '[', '1', '3', '~'),
-                                new BasicCharacterPattern(new Key(Key.Kind.F4, false, true), ESC_CODE, ESC_CODE, 'O', 'S'), //Cygwin
+                                new BasicCharacterPattern(new Key(Key.Kind.F3, false, true), ESC_CODE, ESC_CODE, 'O', 'R'), //Cygwin
                                 new BasicCharacterPattern(new Key(Key.Kind.F4, false, true), ESC_CODE, ESC_CODE, '[', '1', '4', '~'),
+                                new BasicCharacterPattern(new Key(Key.Kind.F4, false, true), ESC_CODE, ESC_CODE, 'O', 'S'), //Cygwin
                                 new BasicCharacterPattern(new Key(Key.Kind.F5, false, true), ESC_CODE, ESC_CODE, '[', '1', '5', '~'),
                                 new BasicCharacterPattern(new Key(Key.Kind.F6, false, true), ESC_CODE, ESC_CODE, '[', '1', '7', '~'),
                                 new BasicCharacterPattern(new Key(Key.Kind.F7, false, true), ESC_CODE, ESC_CODE, '[', '1', '8', '~'),
