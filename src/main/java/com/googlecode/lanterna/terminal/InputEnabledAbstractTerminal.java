@@ -52,9 +52,15 @@ public abstract class InputEnabledAbstractTerminal extends AbstractTerminal impl
     protected TerminalSize waitForTerminalSizeReport(int timeoutMs) throws IOException {
         long startTime = System.currentTimeMillis();
         synchronized(readMutex) {
-            while(System.currentTimeMillis() - startTime < timeoutMs) {
+            while(true) {
                 Key key = inputDecoder.getNextCharacter();
                 if(key == null) {
+                    if(System.currentTimeMillis() - startTime > timeoutMs) {
+                        throw new IOException(
+                                "Timeout while waiting for terminal size report! "
+                                + "Maybe your terminal doesn't support cursor position report, please "
+                                + "consider using a custom size querier");
+                    }
                     try {
                         Thread.sleep(1);
                     }
@@ -76,10 +82,6 @@ public abstract class InputEnabledAbstractTerminal extends AbstractTerminal impl
                 }
             }
         }
-        throw new IOException(
-                    "Timeout while waiting for terminal size report! "
-                    + "Maybe your terminal doesn't support cursor position report, please "
-                    + "consider using a custom size querier");
     }
 
     @Override
