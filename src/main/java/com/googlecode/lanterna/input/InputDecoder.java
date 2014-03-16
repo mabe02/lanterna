@@ -18,7 +18,6 @@
  */
 package com.googlecode.lanterna.input;
 
-import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import java.io.IOException;
 import java.io.Reader;
@@ -31,14 +30,12 @@ import java.util.*;
  */
 public class InputDecoder {
     private final Reader source;
-    private final Queue<Character> inputBuffer;
     private final Set<CharacterPattern> bytePatterns;
     private final List<Character> currentMatching;
     private TerminalPosition lastReportedTerminalPosition;
 
     public InputDecoder(final Reader source) {
         this.source = source;
-        this.inputBuffer = new LinkedList<Character>();
         this.bytePatterns = new HashSet<CharacterPattern>();
         this.currentMatching = new ArrayList<Character>();
         this.lastReportedTerminalPosition = null;
@@ -61,63 +58,83 @@ public class InputDecoder {
      * @throws IOException
      */
     public Key getNextCharacter() throws IOException {
-        try {
-            while (source.ready()) {
-                int readChar = source.read();
-                if (readChar == -1) {
-                    return null;
-                }
-
-                inputBuffer.add((char) readChar);
+        while (source.ready()) {
+            int readChar = source.read();
+            if (readChar == -1) {
+                return null;
             }
-        } catch (IOException e) {
-            throw new LanternaException(e);
+            currentMatching.add((char) readChar);
         }
 
-        if (inputBuffer.size() == 0) {
+        //Return null if we don't have anything from the input buffer (nothing was pressed?)
+        if (currentMatching.isEmpty()) {
             return null;
         }
 
-        int largestMatchCharacters = -1;
-        Key largestMatch = null;
-        LinkedList<CharacterPattern> candidates = new LinkedList<CharacterPattern>(bytePatterns);
+        Key bestMatch = null;
+        int nrOfCharactersMatched = 0;
 
-        while (!candidates.isEmpty()) {
-            //Check all patterns
-            Character nextChar = inputBuffer.poll();
-            if (nextChar == null) {
+        //Slowly iterate by adding characters, until either the buffer is empty or no pattern matches
+        for(int i = 0; i < currentMatching.size(); i++) {
+            List<Character> subList = currentMatching.subList(0, i + 1);
+            Matching matching = getBestMatch(subList);
+            if(bestMatch != null && matching.fullMatch == null) {
                 break;
             }
-            currentMatching.add(nextChar);
-
-            Iterator<CharacterPattern> iterator = candidates.iterator();
-            while (iterator.hasNext()) {
-                CharacterPattern pattern = iterator.next();
-                if (!pattern.matches(currentMatching)) {
-                    iterator.remove();
-                    continue;
-                }
-                if (pattern.isCompleteMatch(currentMatching)) {
-                    Key result = pattern.getResult(currentMatching);
-                    largestMatchCharacters = currentMatching.size();
-                    largestMatch = result;
-                    if (result.getKind() == Key.Kind.CursorLocation) {
-                        lastReportedTerminalPosition = ScreenInfoCharacterPattern.getCursorPosition(currentMatching);
-                    }
-                }
+            else if(bestMatch == null && matching.fullMatch != null) {
+                bestMatch = matching.fullMatch;
+                nrOfCharactersMatched = i + 1;
+            }
+            else if(bestMatch == null && !matching.partialMatch) {
+                break;
             }
         }
 
-        if (largestMatch == null) {
+        //Did we find anything? Otherwise return null
+        if(bestMatch == null) {
             return null;
         }
-        for (int i = 0; i < largestMatchCharacters; i++) {
-            currentMatching.remove(0);
+
+        if (bestMatch.getKind() == Key.Kind.CursorLocation) {
+            lastReportedTerminalPosition = ScreenInfoCharacterPattern.getCursorPosition(currentMatching.subList(0, nrOfCharactersMatched));
         }
-        return largestMatch;
+
+        currentMatching.subList(0, nrOfCharactersMatched).clear();
+        return bestMatch;
     }
 
     public TerminalPosition getLastReportedTerminalPosition() {
         return lastReportedTerminalPosition;
+    }
+
+    private Matching getBestMatch(List<Character> characterSequence) {
+        boolean partialMatch = false;
+        Key bestMatch = null;
+        LinkedList<CharacterPattern> candidates = new LinkedList<CharacterPattern>(bytePatterns);
+        for(int i = 0; i < characterSequence.size(); i++) {
+            Iterator<CharacterPattern> iterator = candidates.iterator();
+            while (iterator.hasNext()) {
+                CharacterPattern pattern = iterator.next();
+                if (!pattern.matches(characterSequence)) {
+                    iterator.remove();
+                    continue;
+                }
+                partialMatch = true;
+                if (pattern.isCompleteMatch(characterSequence)) {
+                    bestMatch = pattern.getResult(characterSequence);
+                }
+            }
+        }
+        return new Matching(partialMatch, bestMatch);
+    }
+
+    private static class Matching {
+        boolean partialMatch;
+        Key fullMatch;
+
+        public Matching(boolean partialMatch, Key fullMatch) {
+            this.partialMatch = partialMatch;
+            this.fullMatch = fullMatch;
+        }
     }
 }
