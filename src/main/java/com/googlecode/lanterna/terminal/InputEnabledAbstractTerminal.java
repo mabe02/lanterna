@@ -45,7 +45,7 @@ public abstract class InputEnabledAbstractTerminal extends AbstractTerminal impl
     }
 
     @Override
-    public void addInputProfile(KeyDecodingProfile profile) {
+    public void addKeyDecodingProfile(KeyDecodingProfile profile) {
         inputDecoder.addProfile(profile);
     }
 

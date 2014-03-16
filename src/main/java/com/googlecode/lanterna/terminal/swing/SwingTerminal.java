@@ -149,7 +149,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
     }
 
     @Override
-    public void addInputProfile(KeyDecodingProfile profile)
+    public void addKeyDecodingProfile(KeyDecodingProfile profile)
     {
     }
 

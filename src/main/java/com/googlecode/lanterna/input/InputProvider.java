@@ -34,7 +34,7 @@ public interface InputProvider {
      * @see KeyDecodingProfile
      * @param profile
      */
-    void addInputProfile(KeyDecodingProfile profile);
+    void addKeyDecodingProfile(KeyDecodingProfile profile);
 
     /**
      * Returns the next {@code Key} off the input queue or null if there is no more input events available. Note, this

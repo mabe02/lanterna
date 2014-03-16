@@ -39,7 +39,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal
     {
         super(terminalInput, terminalOutput, terminalCharset);
         this.inPrivateMode = false;
-        addInputProfile(new DefaultKeyDecodingProfile());
+        addKeyDecodingProfile(new DefaultKeyDecodingProfile());
     }
 
     private void CSI()

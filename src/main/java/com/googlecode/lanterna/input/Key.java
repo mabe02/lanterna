@@ -81,7 +81,6 @@ public class Key {
     }
 
     public enum Kind {
-
         NormalKey,
         Escape,
         Backspace,
