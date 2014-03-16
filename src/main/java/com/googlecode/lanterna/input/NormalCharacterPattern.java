@@ -1,6 +1,6 @@
 /*
  * This file is part of lanterna (http://code.google.com/p/lanterna/).
- * 
+ *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Copyright (C) 2010-2014 Martin
  */
 package com.googlecode.lanterna.input;
@@ -21,7 +21,7 @@ package com.googlecode.lanterna.input;
 import java.util.List;
 
 public class NormalCharacterPattern implements CharacterPattern {
-    
+
     @Override
     public Key getResult(List<Character> matching) {
         return new Key(matching.get(0), false, false);
@@ -29,19 +29,23 @@ public class NormalCharacterPattern implements CharacterPattern {
 
     @Override
     public boolean isCompleteMatch(List<Character> currentMatching) {
-        if(currentMatching.size() != 1)
+        if (currentMatching.size() != 1) {
             return false;
-        if(!Character.isISOControl(currentMatching.get(0)))
+        }
+        if (!Character.isISOControl(currentMatching.get(0))) {
             return false;
+        }
         return true;
     }
 
     @Override
     public boolean matches(List<Character> currentMatching) {
-        if(currentMatching.size() != 1)
+        if (currentMatching.size() != 1) {
             return false;
-        if(!Character.isLetterOrDigit(currentMatching.get(0)))
+        }
+        if (!Character.isLetterOrDigit(currentMatching.get(0))) {
             return false;
+        }
         return true;
-    }    
+    }
 }

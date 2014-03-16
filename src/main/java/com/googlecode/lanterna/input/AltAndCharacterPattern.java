@@ -1,6 +1,6 @@
 /*
  * This file is part of lanterna (http://code.google.com/p/lanterna/).
- * 
+ *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Copyright (C) 2010-2014 Martin
  */
 package com.googlecode.lanterna.input;
@@ -21,7 +21,7 @@ package com.googlecode.lanterna.input;
 import java.util.List;
 
 public class AltAndCharacterPattern implements CharacterPattern {
-    
+
     @Override
     public Key getResult(List<Character> matching) {
         return new Key(matching.get(1), false, true);
@@ -29,25 +29,32 @@ public class AltAndCharacterPattern implements CharacterPattern {
 
     @Override
     public boolean isCompleteMatch(List<Character> currentMatching) {
-        if(currentMatching.size() != 2)
+        if (currentMatching.size() != 2) {
             return false;
-        if(currentMatching.get(0) != KeyMappingProfile.ESC_CODE)
+        }
+        if (currentMatching.get(0) != KeyMappingProfile.ESC_CODE) {
             return false;
-        if(!Character.isLetterOrDigit(currentMatching.get(1)))
+        }
+        if (!Character.isLetterOrDigit(currentMatching.get(1))) {
             return false;
+        }
         return true;
     }
 
     @Override
     public boolean matches(List<Character> currentMatching) {
-        if(currentMatching.get(0) != KeyMappingProfile.ESC_CODE)
+        if (currentMatching.get(0) != KeyMappingProfile.ESC_CODE) {
             return false;
-        if(currentMatching.size() == 1)
+        }
+        if (currentMatching.size() == 1) {
             return true;
-        if(!Character.isLetterOrDigit(currentMatching.get(1)))
+        }
+        if (!Character.isLetterOrDigit(currentMatching.get(1))) {
             return false;
-        if(currentMatching.size() == 2)
+        }
+        if (currentMatching.size() == 2) {
             return true;
+        }
         return false;
-    }    
+    }
 }
