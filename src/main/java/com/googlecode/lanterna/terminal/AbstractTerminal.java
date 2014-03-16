@@ -1,6 +1,6 @@
 /*
  * This file is part of lanterna (http://code.google.com/p/lanterna/).
- * 
+ *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Copyright (C) 2010-2014 Martin
  */
 package com.googlecode.lanterna.terminal;
@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Containing a some very fundamental implementations that should be common for all terminals
+ * Containing a some very fundamental functionality that should be common for all terminal implementations. 
  *
  * @author Martin
  */
@@ -79,7 +79,7 @@ public abstract class AbstractTerminal implements Terminal {
 
     /**
      * Used internally to get the last size known to the terminal
-     * @return 
+     * @return
      */
     protected TerminalSize getLastKnownSize() {
         return lastKnownSize;
