@@ -76,7 +76,7 @@ public abstract class TextColor {
     /**
      * This class represents a color expressed in the indexed XTerm 256 color extension, where each color is defined in a
      * lookup-table. All in all, there are 256 codes, but in order to know which one to know you either need to have the
-     * table at hand, or you can use the XTerm8bitIndexedColorUtils class which can help you convert from three 8-bit
+     * table at hand, or you can use the two static helper methods which can help you convert from three 8-bit
      * RGB values to the closest approximate indexed color number. If you are interested, the 256 index values are
      * actually divided like this:</br>
      * 0 .. 15 - System colors, same as ANSI, but the actual rendered color depends on the terminal emulators color scheme<br>
@@ -119,6 +119,42 @@ public abstract class TextColor {
         public void applyAsBackground(Terminal terminal) {
             terminal.applyBackgroundColor(colorIndex);
         }
+
+        /**
+         * Picks out a color approximated from the supplied RGB components
+         * @param red Red intensity, from 0 to 255
+         * @param green Red intensity, from 0 to 255
+         * @param blue Red intensity, from 0 to 255
+         * @return Nearest color from the 6x6x6 RGB color cube
+         */
+        public static Indexed fromRGB(int red, int green, int blue) {
+            if(red < 0 || red > 255) {
+                throw new IllegalArgumentException("fromRGB: red is outside of valid range (0-255)");
+            }
+            if(green < 0 || green > 255) {
+                throw new IllegalArgumentException("fromRGB: green is outside of valid range (0-255)");
+            }
+            if(blue < 0 || blue > 255) {
+                throw new IllegalArgumentException("fromRGB: blue is outside of valid range (0-255)");
+            }
+
+            int rescaledRed = (int)(((double)red / 255.0) * 6.0);
+            int rescaledGreen = (int)(((double)green / 255.0) * 6.0);
+            int rescaledBlue = (int)(((double)blue / 255.0) * 6.0);
+
+            int index = rescaledBlue + (6 * rescaledGreen) + (36 * rescaledRed) + 16;
+            return new Indexed(index);
+        }
+
+        /**
+         * Picks out a color from the grey-scale ramp area of the color index.
+         * @param intensity Intensity, 0 - 255
+         * @return Indexed color from the grey-scale ramp which is the best match for the supplied intensity
+         */
+        public static Indexed fromGreyRamp(int intensity) {
+            int rescaled = (int)(((double)intensity / 255.0) * 24.0) + 232;
+            return new Indexed(rescaled);
+        }
     }
 
     /**
@@ -146,13 +182,13 @@ public abstract class TextColor {
          */
         public RGB(int r, int g, int b) {
             if(r < 0 || r > 255) {
-                throw new IllegalArgumentException("applyForegroundColor: r is outside of valid range (0-255)");
+                throw new IllegalArgumentException("RGB: r is outside of valid range (0-255)");
             }
             if(g < 0 || g > 255) {
-                throw new IllegalArgumentException("applyForegroundColor: g is outside of valid range (0-255)");
+                throw new IllegalArgumentException("RGB: g is outside of valid range (0-255)");
             }
             if(b < 0 || b > 255) {
-                throw new IllegalArgumentException("applyForegroundColor: b is outside of valid range (0-255)");
+                throw new IllegalArgumentException("RGB: b is outside of valid range (0-255)");
             }
             this.r = r;
             this.g = g;
