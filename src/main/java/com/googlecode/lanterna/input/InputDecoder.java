@@ -78,7 +78,7 @@ public class InputDecoder {
         for(int i = 0; i < currentMatching.size(); i++) {
             List<Character> subList = currentMatching.subList(0, i + 1);
             Matching matching = getBestMatch(subList);
-            if(bestMatch != null && matching.fullMatch == null) {
+            if(bestMatch != null && matching.fullMatch == null && !matching.partialMatch) {
                 break;
             }
             else if(bestMatch == null && matching.fullMatch != null) {
@@ -135,6 +135,11 @@ public class InputDecoder {
         public Matching(boolean partialMatch, Key fullMatch) {
             this.partialMatch = partialMatch;
             this.fullMatch = fullMatch;
+        }
+
+        @Override
+        public String toString() {
+            return "Matching{" + "partialMatch=" + partialMatch + ", fullMatch=" + fullMatch + '}';
         }
     }
 }

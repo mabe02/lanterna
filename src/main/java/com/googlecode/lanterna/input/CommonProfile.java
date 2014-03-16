@@ -33,6 +33,7 @@ public class CommonProfile extends KeyMappingProfile {
     private static final List<CharacterPattern> COMMON_PATTERNS
             = new ArrayList<CharacterPattern>(Arrays.asList(
                             new CharacterPattern[]{
+                                new BasicCharacterPattern(new Key(Key.Kind.Escape), ESC_CODE),
                                 new BasicCharacterPattern(new Key(Key.Kind.ArrowUp), ESC_CODE, '[', 'A'),
                                 new BasicCharacterPattern(new Key(Key.Kind.ArrowUp, false, true), ESC_CODE, ESC_CODE, '[', 'A'),
                                 new BasicCharacterPattern(new Key(Key.Kind.ArrowDown), ESC_CODE, '[', 'B'),
@@ -73,7 +74,7 @@ public class CommonProfile extends KeyMappingProfile {
                                 new BasicCharacterPattern(new Key(Key.Kind.F10), ESC_CODE, '[', '2', '1', '~'),
                                 new BasicCharacterPattern(new Key(Key.Kind.F11), ESC_CODE, '[', '2', '3', '~'),
                                 new BasicCharacterPattern(new Key(Key.Kind.F12), ESC_CODE, '[', '2', '4', '~'),
-                                
+
                                 //Function keys with alt
                                 new BasicCharacterPattern(new Key(Key.Kind.F1, false, true), ESC_CODE, ESC_CODE, 'O', 'P'), //Cygwin
                                 new BasicCharacterPattern(new Key(Key.Kind.F1, false, true), ESC_CODE, ESC_CODE, '[', '1', '1', '~'),

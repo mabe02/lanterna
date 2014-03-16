@@ -29,10 +29,7 @@ public class NormalCharacterPattern implements CharacterPattern {
 
     @Override
     public boolean isCompleteMatch(List<Character> currentMatching) {
-        if (currentMatching.size() != 1) {
-            return false;
-        }
-        return !Character.isISOControl(currentMatching.get(0));
+        return currentMatching.size() == 1;
     }
 
     @Override
@@ -40,6 +37,18 @@ public class NormalCharacterPattern implements CharacterPattern {
         if (currentMatching.size() != 1) {
             return false;
         }
-        return Character.isLetterOrDigit(currentMatching.get(0));
+        return isPrintableChar(currentMatching.get(0));
+    }
+
+    /**
+     * From http://stackoverflow.com/questions/220547/printable-char-in-java
+     * @param c character to test
+     * @return True if this is a 'normal', printable character, false otherwise
+     */
+    private static boolean isPrintableChar(char c) {
+        Character.UnicodeBlock block = Character.UnicodeBlock.of(c);
+        return (!Character.isISOControl(c)) &&
+                block != null &&
+                block != Character.UnicodeBlock.SPECIALS;
     }
 }
