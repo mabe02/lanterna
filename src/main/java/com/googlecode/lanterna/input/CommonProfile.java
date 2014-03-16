@@ -92,6 +92,21 @@ public class CommonProfile extends KeyMappingProfile {
                                 new BasicCharacterPattern(new Key(Key.Kind.F10, false, true), ESC_CODE, ESC_CODE, '[', '2', '1', '~'),
                                 new BasicCharacterPattern(new Key(Key.Kind.F11, false, true), ESC_CODE, ESC_CODE, '[', '2', '3', '~'),
                                 new BasicCharacterPattern(new Key(Key.Kind.F12, false, true), ESC_CODE, ESC_CODE, '[', '2', '4', '~'),
+
+                                //Function keys with ctrl
+                                new BasicCharacterPattern(new Key(Key.Kind.F1, true, false), ESC_CODE, '[', '1', ';', '5', 'P'),
+                                new BasicCharacterPattern(new Key(Key.Kind.F2, true, false), ESC_CODE, '[', '1', ';', '5', 'Q'),
+                                new BasicCharacterPattern(new Key(Key.Kind.F3, true, false), ESC_CODE, '[', '1', ';', '5', 'R'),
+                                new BasicCharacterPattern(new Key(Key.Kind.F4, true, false), ESC_CODE, '[', '1', ';', '5', 'S'),
+                                new BasicCharacterPattern(new Key(Key.Kind.F5, true, false), ESC_CODE, '[', '1', '5', ';', '5', '~'),
+                                new BasicCharacterPattern(new Key(Key.Kind.F6, true, false), ESC_CODE, '[', '1', '7', ';', '5', '~'),
+                                new BasicCharacterPattern(new Key(Key.Kind.F7, true, false), ESC_CODE, '[', '1', '8', ';', '5', '~'),
+                                new BasicCharacterPattern(new Key(Key.Kind.F8, true, false), ESC_CODE, '[', '1', '9', ';', '5', '~'),
+                                new BasicCharacterPattern(new Key(Key.Kind.F9, true, false), ESC_CODE, '[', '2', '0', ';', '5', '~'),
+                                new BasicCharacterPattern(new Key(Key.Kind.F10, true, false), ESC_CODE, '[', '2', '1', ';', '5', '~'),
+                                new BasicCharacterPattern(new Key(Key.Kind.F11, true, false), ESC_CODE, '[', '2', '3', ';', '5', '~'),
+                                new BasicCharacterPattern(new Key(Key.Kind.F12, true, false), ESC_CODE, '[', '2', '4', ';', '5', '~'),
+
                                 new NormalCharacterPattern(),
                                 new AltAndCharacterPattern(),
                                 new CtrlAndCharacterPattern(),
