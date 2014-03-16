@@ -19,14 +19,25 @@
 package com.googlecode.lanterna.terminal;
 
 /**
- *
+ * This is an abstract base class for terminal color definitions. Since there are different ways of specifying terminal
+ * colors, all with a different range of adoptions, this makes it possible to program an API against an implementation-
+ * agnostic color definition.
  * @author Martin
  */
 public abstract class TextColor {
 
     protected TextColor() {}
-    
+
+    /**
+     * Apply this color representation as the foreground color on the specified terminal
+     * @param terminal Terminal to set the foreground color on
+     */
     public abstract void applyAsForeground(Terminal terminal);
+
+    /**
+     * Apply this color representation as the background color on the specified terminal
+     * @param terminal Terminal to set the background color on
+     */
     public abstract void applyAsBackground(Terminal terminal);
 
     /**
@@ -44,9 +55,9 @@ public abstract class TextColor {
         public static final ANSI CYAN = new ANSI(Terminal.ANSIColor.CYAN);
         public static final ANSI WHITE = new ANSI(Terminal.ANSIColor.WHITE);
         public static final ANSI DEFAULT = new ANSI(Terminal.ANSIColor.DEFAULT);
-        
+
         private final Terminal.ANSIColor ansiColor;
-        
+
         private ANSI(Terminal.ANSIColor ansiColor) {
             this.ansiColor = ansiColor;
         }
@@ -90,6 +101,11 @@ public abstract class TextColor {
             this.colorIndex = colorIndex;
         }
 
+        /**
+         * Retrieves the exact index of this color. See the class documentation for more information of what this index
+         * represents.
+         * @return Color index
+         */
         public int getColorIndex() {
             return colorIndex;
         }
@@ -143,14 +159,23 @@ public abstract class TextColor {
             this.b = b;
         }
 
+        /**
+         * @return Red intensity of this color, from 0 to 255
+         */
         public int getRed() {
             return r;
         }
 
+        /**
+         * @return Green intensity of this color, from 0 to 255
+         */
         public int getGreen() {
             return g;
         }
 
+        /**
+         * @return Blue intensity of this color, from 0 to 255
+         */
         public int getBlue() {
             return b;
         }
