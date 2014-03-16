@@ -81,7 +81,7 @@ public class InputDecoder {
             if(bestMatch != null && matching.fullMatch == null && !matching.partialMatch) {
                 break;
             }
-            else if(bestMatch == null && matching.fullMatch != null) {
+            else if(matching.fullMatch != null) {
                 bestMatch = matching.fullMatch;
                 nrOfCharactersMatched = i + 1;
             }
