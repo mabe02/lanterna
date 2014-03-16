@@ -1,6 +1,6 @@
 /*
  * This file is part of lanterna (http://code.google.com/p/lanterna/).
- * 
+ *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Copyright (C) 2010-2014 Martin
  */
 package com.googlecode.lanterna.terminal;
@@ -27,15 +27,15 @@ import com.googlecode.lanterna.terminal.swing.TerminalPalette;
 
 /**
  * This class can help you convert to and from the 8-bit indexed color standard that is supported
- * by some terminal emulators. For details on how this works, please see 
+ * by some terminal emulators. For details on how this works, please see
  * <a href="https://github.com/robertknight/konsole/blob/master/user-doc/README.moreColors">this</a>
  * commit log message.
  * @author Martin
  */
 public class XTerm8bitIndexedColorUtils {
-    
+
     private XTerm8bitIndexedColorUtils() {}
-    
+
     /**
      * I didn't make this myself, it is from http://www.vim.org/scripts/script.php?script_id=1349
      */
@@ -57,8 +57,8 @@ public class XTerm8bitIndexedColorUtils {
             new Entry(12, 85, 85, 255),
             new Entry(13, 255, 85, 255),
             new Entry(14, 85, 255, 255),
-            new Entry(15, 255, 255, 255),  
-            
+            new Entry(15, 255, 255, 255),
+
             //Starting indexed colors from 16
             new Entry(16, 0x00, 0x00, 0x00),
             new Entry(17, 0x00, 0x00, 0x5f),
@@ -276,6 +276,8 @@ public class XTerm8bitIndexedColorUtils {
             new Entry(229, 0xff, 0xff, 0xaf),
             new Entry(230, 0xff, 0xff, 0xd7),
             new Entry(231, 0xff, 0xff, 0xff),
+
+            //Grey-scale ramp
             new Entry(232, 0x08, 0x08, 0x08),
             new Entry(233, 0x12, 0x12, 0x12),
             new Entry(234, 0x1c, 0x1c, 0x1c),
@@ -300,7 +302,7 @@ public class XTerm8bitIndexedColorUtils {
             new Entry(253, 0xda, 0xda, 0xda),
             new Entry(254, 0xe4, 0xe4, 0xe4),
             new Entry(255, 0xee, 0xee, 0xee)));
-    
+
     /**
      * @see #getClosestColor(int, int, int, int)
      */
@@ -317,7 +319,7 @@ public class XTerm8bitIndexedColorUtils {
 
     /**
      * Given a RGB value, finds the closest color from the 8-bit palette. The calculation is done
-     * using distance in three dimensional space so it's not actually 100% accurate (color 
+     * using distance in three dimensional space so it's not actually 100% accurate (color
      * similarity is a whole research area of its own) but it's a good approximation.
      * @param red Red component value (0-255)
      * @param green Green component value (0-255)
@@ -334,7 +336,7 @@ public class XTerm8bitIndexedColorUtils {
             throw new IllegalArgumentException("getClosestColor: blue is outside of valid range (0-255)");
         if (maxIndex < 0 || maxIndex > 255)
             throw new IllegalArgumentException("getClosestColor: maxIndex is outside the valid range (0-255)");
-        	
+
         double closestMatch = Double.MAX_VALUE;
         int closestIndex = 0;
         for (int i = 0; i <= maxIndex ; i++) {
@@ -347,7 +349,7 @@ public class XTerm8bitIndexedColorUtils {
         }
         return closestIndex;
     }
-    
+
     /**
      * Returns the supplied color index as a AWT Color object
      * @param index Index of the color (0-255)
@@ -356,7 +358,7 @@ public class XTerm8bitIndexedColorUtils {
     public static Color getAWTColor(int index) {
         return getAWTColor(index, null);
     }
-    
+
     /**
      * Returns the supplied color index as a AWT Color object
      * @param index Index of the color (0-255)
@@ -366,7 +368,7 @@ public class XTerm8bitIndexedColorUtils {
     public static Color getAWTColor(int index, TerminalPalette terminalPalette) {
         if(index < 0 || index > 255)
             throw new IllegalArgumentException("getClosestColor: red is outside of valid range (0-255)");
-        
+
         if(terminalPalette != null && index < 16) {
             switch(index) {
                 case 0: return terminalPalette.getNormalBlack();
@@ -387,7 +389,7 @@ public class XTerm8bitIndexedColorUtils {
                 case 15: return terminalPalette.getBrightWhite();
             }
         }
-        
+
         for(Entry entry: colorEntries) {
             if(entry.index == index) {
                 return new Color(entry.red, entry.green, entry.blue);
@@ -408,10 +410,10 @@ public class XTerm8bitIndexedColorUtils {
             this.green = green;
             this.blue = blue;
         }
-        
+
         double distanceTo(int red, int green, int blue) {
             return Math.pow(this.red - red, 2) +
-                    Math.pow(this.green - green, 2) + 
+                    Math.pow(this.green - green, 2) +
                     Math.pow(this.blue - blue, 2);
         }
     }
