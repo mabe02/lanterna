@@ -19,7 +19,8 @@
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.gui2.WindowManager.Hint;
-import com.googlecode.lanterna.input.Key;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
 import java.util.Collection;
 
@@ -48,8 +49,8 @@ public class DefaultWindowTextGUI extends AbstractTextGUI implements WindowBased
     }
 
     @Override
-    protected boolean handleInput(Key key) {
-        return windowManager.handleInput(key);
+    protected boolean handleInput(KeyStroke keyStroke) {
+        return windowManager.handleInput(keyStroke);
     }
 
     @Override

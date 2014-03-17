@@ -24,7 +24,8 @@ import com.googlecode.lanterna.gui.Interactable;
 import com.googlecode.lanterna.gui.TextGraphics;
 import com.googlecode.lanterna.gui.Theme;
 import com.googlecode.lanterna.gui.component.TextGrid.DataGridCel;
-import com.googlecode.lanterna.input.Key;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.terminal.TextColor;
@@ -245,7 +246,7 @@ public class EditArea extends AbstractInteractableComponent {
     /**
      * Action for "Enter" key
      * */
-    private void enter(Key key) {
+    private void enter(KeyStroke key) {
         if (limitReached()) {
             return;
         }
@@ -311,9 +312,9 @@ public class EditArea extends AbstractInteractableComponent {
     }
 
     @Override
-    public Interactable.Result keyboardInteraction(Key key) {
+    public Interactable.Result keyboardInteraction(KeyStroke key) {
         try {
-            switch (key.getKind()) {
+            switch (key.getKey()) {
             case Tab:
                 return Interactable.Result.NEXT_INTERACTABLE_RIGHT;
             case Backspace:
@@ -349,7 +350,7 @@ public class EditArea extends AbstractInteractableComponent {
             case PageUp:
                 pageUp();
                 break;
-            case NormalKey:
+            case Character:
                 normal(key);
                 break;
             default:
@@ -389,7 +390,7 @@ public class EditArea extends AbstractInteractableComponent {
     /**
      * Action for "normal" key (a-z, 0-9, and symbols).
      * */
-    private void normal(Key key) {
+    private void normal(KeyStroke key) {
         if (limitReached()) {
             return;
         }

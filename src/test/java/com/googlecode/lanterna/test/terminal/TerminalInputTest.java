@@ -19,7 +19,8 @@
 
 package com.googlecode.lanterna.test.terminal;
 
-import com.googlecode.lanterna.input.Key;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.test.TestTerminalFactory;
 import java.io.IOException;
@@ -38,13 +39,13 @@ public class TerminalInputTest
         int currentRow = 0;
         rawTerminal.moveCursor(0, 0);
         while(true) {
-            Key key = rawTerminal.readInput();
+            KeyStroke key = rawTerminal.readInput();
             if(key == null) {
                 Thread.sleep(1);
                 continue;
             }
 
-            if(key.getKind() == Key.Kind.Escape)
+            if(key.getKey()== KeyType.Escape)
                 break;
 
             if(currentRow == 0)

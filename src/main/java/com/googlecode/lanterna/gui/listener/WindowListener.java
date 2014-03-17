@@ -20,7 +20,8 @@ package com.googlecode.lanterna.gui.listener;
 
 import com.googlecode.lanterna.gui.Interactable;
 import com.googlecode.lanterna.gui.Window;
-import com.googlecode.lanterna.input.Key;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 
 /**
  * This listener class is for listening to events happening to a {@code Window}. If you want to 
@@ -55,7 +56,7 @@ public interface WindowListener {
      * @param window Window that recieved the input event
      * @param key Key that couldn't be handled
      */
-    void onUnhandledKeyboardInteraction(Window window, Key key);
+    void onUnhandledKeyboardInteraction(Window window, KeyStroke key);
     
     /**
      * Called by the window whenever the input focus has changed from one component to another

@@ -33,7 +33,7 @@ public interface CharacterPattern {
      * @param matching List of characters
      * @return The {@code Key} that this pattern represents
      */
-    Key getResult(List<Character> matching);
+    KeyStroke getResult(List<Character> matching);
 
     /**
      * Returns true if this pattern is a perfect match (all characters matching and the pattern has no more characters

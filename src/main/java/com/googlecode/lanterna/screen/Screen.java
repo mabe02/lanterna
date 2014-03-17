@@ -19,7 +19,8 @@
 package com.googlecode.lanterna.screen;
 
 import com.googlecode.lanterna.CJKUtils;
-import com.googlecode.lanterna.input.Key;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.TextColor;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalPosition;
@@ -171,7 +172,7 @@ public class Screen
      * Reads the next {@code Key} from the input queue, or returns null if there
      * is nothing on the queue.
      */
-    public Key readInput() throws IOException
+    public KeyStroke readInput() throws IOException
     {
         return terminal.readInput();
     }

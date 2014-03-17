@@ -23,8 +23,8 @@ import java.util.List;
 public class NormalCharacterPattern implements CharacterPattern {
 
     @Override
-    public Key getResult(List<Character> matching) {
-        return new Key(matching.get(0), false, false);
+    public KeyStroke getResult(List<Character> matching) {
+        return new KeyStroke(KeyType.Character, matching.get(0), false, false);
     }
 
     @Override

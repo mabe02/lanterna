@@ -30,7 +30,7 @@ import com.googlecode.lanterna.gui.component.Label;
 import com.googlecode.lanterna.gui.component.Panel;
 import com.googlecode.lanterna.gui.dialog.MessageBox;
 import com.googlecode.lanterna.gui.layout.LinearLayout;
-import com.googlecode.lanterna.input.Key;
+import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.text.UnixTerminal;
@@ -69,7 +69,7 @@ public class ShortcutTest {
         });
         button1.setAlignment(Component.Alignment.CENTER);
         buttonPanel.addComponent(button1, LinearLayout.GROWS_HORIZONTALLY);
-        buttonPanel.addShortcut(Key.Kind.Home, new Action() {
+        buttonPanel.addShortcut(KeyType.Home, new Action() {
             @Override
             public void doAction() {
                 MessageBox.showMessageBox(guiScreen, "Shortcut triggered", "You triggered a shortcut by pressing home!");

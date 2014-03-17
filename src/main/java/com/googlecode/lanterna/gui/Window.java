@@ -29,7 +29,8 @@ import com.googlecode.lanterna.gui.layout.LayoutParameter;
 import com.googlecode.lanterna.gui.listener.ComponentAdapter;
 import com.googlecode.lanterna.gui.listener.ContainerListener;
 import com.googlecode.lanterna.gui.listener.WindowListener;
-import com.googlecode.lanterna.input.Key;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 
@@ -249,7 +250,7 @@ public class Window
             return currentlyInFocus.getHotspot();
     }
 
-    public void onKeyPressed(Key key)
+    public void onKeyPressed(KeyStroke key)
     {
         if(currentlyInFocus != null) {
             Interactable.Result result =  currentlyInFocus.keyboardInteraction(key);
@@ -289,7 +290,7 @@ public class Window
         }
     }
     
-    protected void onUnhandledKeyPress(Key key) {
+    protected void onUnhandledKeyPress(KeyStroke key) {
         for(WindowListener listener: windowListeners)
             listener.onUnhandledKeyboardInteraction(this, key);
     }

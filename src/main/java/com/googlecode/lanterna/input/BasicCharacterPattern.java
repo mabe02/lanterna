@@ -22,10 +22,10 @@ import java.util.Arrays;
 import java.util.List;
 
 class BasicCharacterPattern implements CharacterPattern {
-    private final Key result;
+    private final KeyStroke result;
     private final char[] pattern;
 
-    BasicCharacterPattern(Key result, char... pattern) {
+    BasicCharacterPattern(KeyStroke result, char... pattern) {
         this.result = result;
         this.pattern = pattern;
     }
@@ -42,7 +42,7 @@ class BasicCharacterPattern implements CharacterPattern {
     }
 
     @Override
-    public Key getResult(List<Character> matching) {
+    public KeyStroke getResult(List<Character> matching) {
         return result;
     }
 

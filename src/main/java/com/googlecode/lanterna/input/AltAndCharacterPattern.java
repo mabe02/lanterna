@@ -23,8 +23,8 @@ import java.util.List;
 public class AltAndCharacterPattern implements CharacterPattern {
 
     @Override
-    public Key getResult(List<Character> matching) {
-        return new Key(matching.get(1), false, true);
+    public KeyStroke getResult(List<Character> matching) {
+        return new KeyStroke(KeyType.Character, matching.get(1), false, true);
     }
 
     @Override

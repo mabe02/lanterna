@@ -18,7 +18,7 @@
  */
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.input.Key;
+import com.googlecode.lanterna.input.KeyStroke;
 import java.util.Collection;
 
 /**
@@ -32,7 +32,7 @@ public interface WindowManager {
     
     Collection<Window> getWindows();
     Window getActiveWindow();
-    boolean handleInput(Key key);
+    boolean handleInput(KeyStroke key);
     boolean isInvalid();
     
     public static class Hint {

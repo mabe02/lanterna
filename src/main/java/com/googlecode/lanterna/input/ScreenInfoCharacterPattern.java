@@ -39,8 +39,8 @@ public class ScreenInfoCharacterPattern implements CharacterPattern {
     }
 
     @Override
-    public Key getResult(List<Character> matching) {
-        return new Key(Key.Kind.CursorLocation);
+    public KeyStroke getResult(List<Character> matching) {
+        return new KeyStroke(KeyType.CursorLocation, null, false, false);
     }
 
     @Override

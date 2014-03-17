@@ -19,7 +19,8 @@
 
 package com.googlecode.lanterna.gui;
 
-import com.googlecode.lanterna.input.Key;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 
 /**
@@ -37,7 +38,7 @@ public interface Interactable
      * parent container to move input focus to a different component or telling that the event was
      * processed by the component and no extra action is required
      */
-    public Result keyboardInteraction(Key key);
+    public Result keyboardInteraction(KeyStroke key);
     
     /**
      * Method called when this component gained keyboard focus.

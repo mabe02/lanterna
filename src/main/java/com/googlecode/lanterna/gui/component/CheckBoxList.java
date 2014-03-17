@@ -21,7 +21,8 @@ package com.googlecode.lanterna.gui.component;
 
 import com.googlecode.lanterna.gui.Theme;
 import com.googlecode.lanterna.gui.Theme.Definition;
-import com.googlecode.lanterna.input.Key;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import java.util.ArrayList;
 import java.util.List;
@@ -77,11 +78,11 @@ public class CheckBoxList extends AbstractListBox
     }
 
     @Override
-    protected Result unhandledKeyboardEvent(Key key) {
+    protected Result unhandledKeyboardEvent(KeyStroke key) {
         if(getSelectedIndex() == -1)
             return Result.EVENT_NOT_HANDLED;
         
-        if(key.getKind() == Key.Kind.Enter || key.getCharacter() == ' ') {
+        if(key.getKey() == KeyType.Enter || key.getCharacter() == ' ') {
             if(itemStatus.get(getSelectedIndex()) == true)
                 itemStatus.set(getSelectedIndex(), Boolean.FALSE);
             else

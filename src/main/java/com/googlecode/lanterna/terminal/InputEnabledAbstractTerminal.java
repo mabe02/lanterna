@@ -19,11 +19,11 @@
 
 package com.googlecode.lanterna.terminal;
 
-import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.input.InputDecoder;
 import com.googlecode.lanterna.input.InputProvider;
-import com.googlecode.lanterna.input.Key;
+import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.input.KeyDecodingProfile;
+import com.googlecode.lanterna.input.KeyStroke;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -35,12 +35,12 @@ import java.util.Queue;
  */
 public abstract class InputEnabledAbstractTerminal extends AbstractTerminal implements InputProvider {
     private final InputDecoder inputDecoder;
-    private final Queue<Key> keyQueue;
+    private final Queue<KeyStroke> keyQueue;
     private final Object readMutex;
 
     public InputEnabledAbstractTerminal(InputDecoder inputDecoder) {
         this.inputDecoder = inputDecoder;
-        this.keyQueue = new LinkedList<Key>();
+        this.keyQueue = new LinkedList<KeyStroke>();
         this.readMutex = new Object();
     }
 
@@ -53,7 +53,7 @@ public abstract class InputEnabledAbstractTerminal extends AbstractTerminal impl
         long startTime = System.currentTimeMillis();
         synchronized(readMutex) {
             while(true) {
-                Key key = inputDecoder.getNextCharacter();
+                KeyStroke key = inputDecoder.getNextCharacter();
                 if(key == null) {
                     if(System.currentTimeMillis() - startTime > timeoutMs) {
                         throw new IOException(
@@ -69,13 +69,13 @@ public abstract class InputEnabledAbstractTerminal extends AbstractTerminal impl
                 }
 
                 //If we got CTRL+F3, it's probably a size report instead!!!
-                if(key.getKind() != Key.Kind.CursorLocation &&
-                        !(key.getKind() == Key.Kind.F3 && key.isCtrlPressed() && !key.isAltPressed())) {
+                if(key.getKey()!= KeyType.CursorLocation &&
+                        !(key.getKey() == KeyType.F3 && key.isCtrlDown() && !key.isAltDown())) {
                     keyQueue.add(key);
                 }
                 else {
                     TerminalPosition reportedTerminalPosition = inputDecoder.getLastReportedTerminalPosition();
-                    if(key.getKind() == Key.Kind.F3 && key.isCtrlPressed() && !key.isAltPressed()) {
+                    if(key.getKey() == KeyType.F3 && key.isCtrlDown() && !key.isAltDown()) {
                         reportedTerminalPosition = new TerminalPosition(5, 1);
                     }
                     if(reportedTerminalPosition != null)
@@ -90,13 +90,13 @@ public abstract class InputEnabledAbstractTerminal extends AbstractTerminal impl
     }
 
     @Override
-    public Key readInput() throws IOException {
+    public KeyStroke readInput() throws IOException {
         synchronized(readMutex) {
             if(!keyQueue.isEmpty())
                 return keyQueue.poll();
 
-            Key key = inputDecoder.getNextCharacter();
-            if (key != null && key.getKind() == Key.Kind.CursorLocation) {
+            KeyStroke key = inputDecoder.getNextCharacter();
+            if (key != null && key.getKey() == KeyType.CursorLocation) {
                 TerminalPosition reportedTerminalPosition = inputDecoder.getLastReportedTerminalPosition();
                 if (reportedTerminalPosition != null)
                     onResized(reportedTerminalPosition.getColumn(), reportedTerminalPosition.getRow());

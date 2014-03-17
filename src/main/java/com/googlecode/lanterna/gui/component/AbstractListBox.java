@@ -23,7 +23,8 @@ import com.googlecode.lanterna.gui.Interactable;
 import com.googlecode.lanterna.gui.TextGraphics;
 import com.googlecode.lanterna.gui.Theme;
 import com.googlecode.lanterna.gui.Theme.Category;
-import com.googlecode.lanterna.input.Key;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.ACS;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
@@ -199,9 +200,9 @@ public abstract class AbstractListBox extends AbstractInteractableComponent {
     }
 
     @Override
-    public Result keyboardInteraction(Key key) {
+    public Result keyboardInteraction(KeyStroke key) {
         try {
-            switch(key.getKind()) {
+            switch(key.getKey()) {
                 case Tab:
                 case ArrowRight:
                     return Result.NEXT_INTERACTABLE_RIGHT;
@@ -275,7 +276,7 @@ public abstract class AbstractListBox extends AbstractInteractableComponent {
         graphics.drawString(x, y, asText);
     }
     
-    protected Interactable.Result unhandledKeyboardEvent(Key key) {
+    protected Interactable.Result unhandledKeyboardEvent(KeyStroke key) {
         return Result.EVENT_NOT_HANDLED;
     }
 

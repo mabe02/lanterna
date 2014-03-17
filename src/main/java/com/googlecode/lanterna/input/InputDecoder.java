@@ -57,7 +57,7 @@ public class InputDecoder {
      * @return
      * @throws IOException
      */
-    public Key getNextCharacter() throws IOException {
+    public KeyStroke getNextCharacter() throws IOException {
         while (source.ready()) {
             int readChar = source.read();
             if (readChar == -1) {
@@ -71,7 +71,7 @@ public class InputDecoder {
             return null;
         }
 
-        Key bestMatch = null;
+        KeyStroke bestMatch = null;
         int nrOfCharactersMatched = 0;
 
         //Slowly iterate by adding characters, until either the buffer is empty or no pattern matches
@@ -95,11 +95,11 @@ public class InputDecoder {
             return null;
         }
 
-        if (bestMatch.getKind() == Key.Kind.CursorLocation) {
+        if (bestMatch.getKey() == KeyType.CursorLocation) {
             TerminalPosition cursorPosition = ScreenInfoCharacterPattern.getCursorPosition(currentMatching.subList(0, nrOfCharactersMatched));
             if(cursorPosition.getColumn() == 5 && cursorPosition.getRow() == 1) {
                 //Special case for CTRL + F3
-                bestMatch = new Key(Key.Kind.F3, true, false);
+                bestMatch = new KeyStroke(KeyType.F3, null, true, false);
             }
             else {
                 lastReportedTerminalPosition = cursorPosition;
@@ -116,7 +116,7 @@ public class InputDecoder {
 
     private Matching getBestMatch(List<Character> characterSequence) {
         boolean partialMatch = false;
-        Key bestMatch = null;
+        KeyStroke bestMatch = null;
         LinkedList<CharacterPattern> candidates = new LinkedList<CharacterPattern>(bytePatterns);
         for(int i = 0; i < characterSequence.size(); i++) {
             Iterator<CharacterPattern> iterator = candidates.iterator();
@@ -137,9 +137,9 @@ public class InputDecoder {
 
     private static class Matching {
         boolean partialMatch;
-        Key fullMatch;
+        KeyStroke fullMatch;
 
-        public Matching(boolean partialMatch, Key fullMatch) {
+        public Matching(boolean partialMatch, KeyStroke fullMatch) {
             this.partialMatch = partialMatch;
             this.fullMatch = fullMatch;
         }

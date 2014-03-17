@@ -20,7 +20,8 @@
 package com.googlecode.lanterna.terminal.text;
 
 import com.googlecode.lanterna.LanternaException;
-import com.googlecode.lanterna.input.Key;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.TerminalSize;
 
 import java.io.*;
@@ -144,14 +145,14 @@ public class UnixTerminal extends ANSITerminal
     }
 
     @Override
-    public Key readInput() throws IOException {
+    public KeyStroke readInput() throws IOException {
         //Check if we have ctrl+c coming
-        Key key = super.readInput();
+        KeyStroke key = super.readInput();
         if(key != null &&
                 terminalBehaviour == Behaviour.CTRL_C_KILLS_APPLICATION &&
                 key.getCharacter() == 'c' &&
-                !key.isAltPressed() &&
-                key.isCtrlPressed()) {
+                !key.isAltDown() &&
+                key.isCtrlDown()) {
 
             exitPrivateMode();
             System.exit(1);

@@ -20,7 +20,7 @@ package com.googlecode.lanterna.gui.listener;
 
 import com.googlecode.lanterna.gui.Interactable;
 import com.googlecode.lanterna.gui.Window;
-import com.googlecode.lanterna.input.Key;
+import com.googlecode.lanterna.input.KeyStroke;
 
 /**
  * This adapter class is implementing {@code WindowListener} and provides an implementation for all
@@ -47,7 +47,7 @@ public class WindowAdapter implements WindowListener {
     }
 
     @Override
-    public void onUnhandledKeyboardInteraction(Window window, Key key) {
+    public void onUnhandledKeyboardInteraction(Window window, KeyStroke key) {
         
     }
 

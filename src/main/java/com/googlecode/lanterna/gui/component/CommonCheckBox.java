@@ -22,7 +22,8 @@ package com.googlecode.lanterna.gui.component;
 import com.googlecode.lanterna.gui.Interactable;
 import com.googlecode.lanterna.gui.TextGraphics;
 import com.googlecode.lanterna.gui.Theme.Category;
-import com.googlecode.lanterna.input.Key;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 
@@ -71,10 +72,10 @@ public abstract class CommonCheckBox extends AbstractInteractableComponent
     }
 
     @Override
-    public Interactable.Result keyboardInteraction(Key key)
+    public Interactable.Result keyboardInteraction(KeyStroke key)
     {
         try {
-            switch(key.getKind())
+            switch(key.getKey())
             {
                 case ArrowDown:
                     return Result.NEXT_INTERACTABLE_DOWN;

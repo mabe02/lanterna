@@ -18,7 +18,8 @@
  */
 package com.googlecode.lanterna.gui;
 
-import com.googlecode.lanterna.input.Key;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 
 /**
  * Containers containing interactable components must implement this interface
@@ -63,7 +64,7 @@ public interface InteractableContainer
      * @param key Kind of key to trigger the shortcut
      * @param action Action to run, on the event thread, when the shortcut is triggered
      */
-    void addShortcut(Key.Kind key, Action action);
+    void addShortcut(KeyType key, Action action);
     
     /**
      * Adds a keyboard shortcut to be invoked when the {@code Interactable} component in focus 
@@ -85,5 +86,5 @@ public interface InteractableContainer
      * @param key {@code Key} to check for matching shortcuts
      * @return {@code true} if a shortcut was triggered and executed, {@code false} otherwise.
      */
-    boolean triggerShortcut(Key key);
+    boolean triggerShortcut(KeyStroke key);
 }

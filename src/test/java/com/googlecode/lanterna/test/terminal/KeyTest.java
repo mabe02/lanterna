@@ -1,6 +1,7 @@
 package com.googlecode.lanterna.test.terminal;
 
-import com.googlecode.lanterna.input.Key;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
@@ -11,38 +12,38 @@ public class KeyTest {
 	@Test
 	public void testFromVim() {
 		{
-			Key k = Key.fromString("a");
-			assertEquals(Key.Kind.NormalKey, k.getKind());
+			KeyStroke k = KeyStroke.fromString("a");
+			assertEquals(KeyType.Character, k.getKey());
 			assertEquals(new Character('a'), k.getCharacter());
-			assertEquals(false, k.isCtrlPressed());
-			assertEquals(false, k.isAltPressed());
+			assertEquals(false, k.isCtrlDown());
+			assertEquals(false, k.isAltDown());
 		}
 		{
-			Key k = Key.fromString("<c-a>");
-			assertEquals(Key.Kind.NormalKey, k.getKind());
+			KeyStroke k = KeyStroke.fromString("<c-a>");
+			assertEquals(KeyType.Character, k.getKey());
 			assertEquals(new Character('a'), k.getCharacter());
-			assertEquals(true, k.isCtrlPressed());
-			assertEquals(false, k.isAltPressed());
+			assertEquals(true, k.isCtrlDown());
+			assertEquals(false, k.isAltDown());
 		}
 		{
-			Key k = Key.fromString("<a-a>");
-			assertEquals(Key.Kind.NormalKey, k.getKind());
+			KeyStroke k = KeyStroke.fromString("<a-a>");
+			assertEquals(KeyType.Character, k.getKey());
 			assertEquals(new Character('a'), k.getCharacter());
-			assertEquals(false, k.isCtrlPressed());
-			assertEquals(true, k.isAltPressed());
+			assertEquals(false, k.isCtrlDown());
+			assertEquals(true, k.isAltDown());
 		}
 		{
-			Key k = Key.fromString("<c-a-a>");
-			assertEquals(k.getKind(), Key.Kind.NormalKey);
+			KeyStroke k = KeyStroke.fromString("<c-a-a>");
+			assertEquals(k.getKey(), KeyType.Character);
 			assertEquals(new Character('a'), k.getCharacter());
-			assertEquals(true, k.isCtrlPressed());
-			assertEquals(true, k.isAltPressed());
+			assertEquals(true, k.isCtrlDown());
+			assertEquals(true, k.isAltDown());
 		}
-		assertEquals(Key.Kind.ReverseTab, Key.fromString("<s-tab>").getKind());
-		assertEquals(Key.Kind.ReverseTab, Key.fromString("<S-tab>").getKind());
-		assertEquals(Key.Kind.ReverseTab, Key.fromString("<S-Tab>").getKind());
-		assertEquals(Key.Kind.Enter, Key.fromString("<cr>").getKind());
-		assertEquals(Key.Kind.PageUp, Key.fromString("<PageUp>").getKind());
+		assertEquals(KeyType.ReverseTab, KeyStroke.fromString("<s-tab>").getKey());
+		assertEquals(KeyType.ReverseTab, KeyStroke.fromString("<S-tab>").getKey());
+		assertEquals(KeyType.ReverseTab, KeyStroke.fromString("<S-Tab>").getKey());
+		assertEquals(KeyType.Enter, KeyStroke.fromString("<cr>").getKey());
+		assertEquals(KeyType.PageUp, KeyStroke.fromString("<PageUp>").getKey());
 	}
 
 }

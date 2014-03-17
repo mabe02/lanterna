@@ -18,7 +18,8 @@
  */
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.input.Key;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
 import java.io.IOException;
 import java.util.Queue;
@@ -82,9 +83,9 @@ public abstract class AbstractTextGUI implements TextGUI {
             //Draw initial screen, after this only draw when the GUI is marked as invalid
             drawGUI();
             while(status == Status.STARTED) {
-                Key key;
+                KeyStroke keyStroke;
                 try {
-                    key = screen.readInput();
+                    keyStroke = screen.readInput();
                 }
                 catch(IOException e) {
                     //TODO: Fix this
@@ -96,13 +97,13 @@ public abstract class AbstractTextGUI implements TextGUI {
                     screen.updateScreenSize();
                     needsRefresh = true;
                 }
-                if(key != null) {
+                if(keyStroke != null) {
                     //Handle input
                     //TODO: Remove this after more testing
-                    if(key.getKind() == Key.Kind.Escape) {
+                    if(keyStroke.getKey() == KeyType.Escape) {
                         stop();
                     }
-                    if(handleInput(key)) {
+                    if(handleInput(keyStroke)) {
                         needsRefresh = true;
                     }
                 }
@@ -154,5 +155,5 @@ public abstract class AbstractTextGUI implements TextGUI {
 
     protected abstract boolean isInvalid();
     protected abstract void drawGUI(TextGUIGraphics graphics);
-    protected abstract boolean handleInput(Key key);
+    protected abstract boolean handleInput(KeyStroke key);
 }

@@ -18,7 +18,8 @@
  */
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.input.Key;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -92,12 +93,12 @@ public class StackedModalWindowManager implements WindowManager {
     }
 
     @Override
-    public synchronized boolean handleInput(Key key) {
+    public synchronized boolean handleInput(KeyStroke keyStroke) {
         if(windowStack.isEmpty()) {
             return false;
         }
         
-        return windowStack.getLast().handleInput(key);
+        return windowStack.getLast().handleInput(keyStroke);
     }
 
     @Override

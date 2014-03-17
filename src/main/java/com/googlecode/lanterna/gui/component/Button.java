@@ -23,7 +23,8 @@ import com.googlecode.lanterna.gui.Action;
 import com.googlecode.lanterna.gui.Interactable;
 import com.googlecode.lanterna.gui.TextGraphics;
 import com.googlecode.lanterna.gui.Theme;
-import com.googlecode.lanterna.input.Key;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 
@@ -111,9 +112,9 @@ public class Button extends AbstractInteractableComponent
     }
 
     @Override
-    public Interactable.Result keyboardInteraction(Key key)
+    public Interactable.Result keyboardInteraction(KeyStroke key)
     {
-        switch(key.getKind()) {
+        switch(key.getKey()) {
             case Enter:
                 onPressEvent.doAction();
                 return Result.EVENT_HANDLED;

@@ -4,7 +4,8 @@ import com.googlecode.lanterna.gui.GUIScreen;
 import com.googlecode.lanterna.gui.TextGraphics;
 import com.googlecode.lanterna.gui.Window;
 import com.googlecode.lanterna.gui.component.AbstractInteractableComponent;
-import com.googlecode.lanterna.input.Key;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.test.TestTerminalFactory;
 import java.io.IOException;
@@ -20,9 +21,9 @@ public class Issue60 extends Window {
             }
 
             @Override
-            public Result keyboardInteraction(Key key) {
+            public Result keyboardInteraction(KeyStroke key) {
                 System.out.println("Char value:" + (key.getCharacter() + 0));
-                System.out.println("Key kind:" + key.getKind());
+                System.out.println("Key kind:" + key.getKey());
 
                 if(key.getCharacter() == 'q') {
                     close();

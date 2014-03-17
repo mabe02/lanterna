@@ -21,7 +21,8 @@ package com.googlecode.lanterna.gui.component;
 
 import com.googlecode.lanterna.gui.TextGraphics;
 import com.googlecode.lanterna.gui.Theme;
-import com.googlecode.lanterna.input.Key;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.ACS;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
@@ -170,10 +171,10 @@ public class TextArea  extends AbstractInteractableComponent
     }
 
     @Override
-    public Result keyboardInteraction(Key key)
+    public Result keyboardInteraction(KeyStroke key)
     {
         try {
-            switch(key.getKind()) {
+            switch(key.getKey()) {
                 case Tab:
                 case Enter:
                     return Result.NEXT_INTERACTABLE_RIGHT;

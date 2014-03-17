@@ -1,7 +1,8 @@
 package com.googlecode.lanterna.gui.component;
 
 import com.googlecode.lanterna.gui.TextGraphics;
-import com.googlecode.lanterna.input.Key;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.ACS;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
@@ -40,23 +41,23 @@ public class PopupCheckBoxList extends RadioCheckBoxList {
 	}
 	
 	@Override
-	public Result keyboardInteraction(Key key) {
+	public Result keyboardInteraction(KeyStroke key) {
 		if (poppedUp) {
 			Result parentRet = super.keyboardInteraction(key);
-			if (key.equalsString("<cr>") || key.equalsString("<space>")) {
+			if (key.getKey() == KeyType.Enter || key.getCharacter() == ' ') {
 				poppedUp = false;
 				invalidate();
 				valueChanged();
 				return parentRet;
 			}
 		} 
-		if (key.equalsString("<cr>")) {
+		if (key.getKey() == KeyType.Enter) {
 			poppedUp = true;
 			invalidate();
 			valueChanged();
-		} else if (key.equalsString("<Tab>")) {
+		} else if (key.getKey() == KeyType.Tab) {
 			return Result.NEXT_INTERACTABLE_DOWN;
-		} else if (key.equalsString("<S-Tab>")) {
+		} else if (key.getKey() == KeyType.ReverseTab) {
 			return Result.PREVIOUS_INTERACTABLE_UP;
 		}
 		return Result.EVENT_HANDLED;

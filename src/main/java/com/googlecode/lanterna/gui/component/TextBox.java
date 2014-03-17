@@ -21,7 +21,8 @@ package com.googlecode.lanterna.gui.component;
 
 import com.googlecode.lanterna.gui.TextGraphics;
 import com.googlecode.lanterna.gui.Theme.Category;
-import com.googlecode.lanterna.input.Key;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 
@@ -146,10 +147,10 @@ public class TextBox extends AbstractInteractableComponent
     }
 
     @Override
-    public Result keyboardInteraction(Key key)
+    public Result keyboardInteraction(KeyStroke key)
     {
         try {
-            switch(key.getKind()) {
+            switch(key.getKey()) {
                 case Tab:
                 case Enter:
                     return Result.NEXT_INTERACTABLE_RIGHT;
@@ -205,7 +206,7 @@ public class TextBox extends AbstractInteractableComponent
                     backend = backend.substring(0, editPosition) + backend.substring(editPosition + 1);
                     break;
 
-                case NormalKey:
+                case Character:
                     //Add character
                     if(Character.isISOControl(key.getCharacter()) || key.getCharacter() > 127)
                         break;

@@ -19,7 +19,8 @@
 package com.googlecode.lanterna.gui.util;
 
 import com.googlecode.lanterna.gui.Action;
-import com.googlecode.lanterna.input.Key;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,16 +30,16 @@ import java.util.Map;
  * @author Martin
  */
 public class ShortcutHelper {    
-    private final Map<Key.Kind, Action> specialKeysShortcut;
+    private final Map<KeyType, Action> specialKeysShortcut;
     private final Map<NormalKeyShortcut, Action> normalKeysShortcut;
 
     public ShortcutHelper() {
-        specialKeysShortcut = new EnumMap<Key.Kind, Action>(Key.Kind.class);
+        specialKeysShortcut = new EnumMap<KeyType, Action>(KeyType.class);
         normalKeysShortcut = new HashMap<NormalKeyShortcut, Action>();
     }
     
-    public void addShortcut(Key.Kind kindOfKey, Action action) {
-        if(kindOfKey == Key.Kind.NormalKey)
+    public void addShortcut(KeyType kindOfKey, Action action) {
+        if(kindOfKey == KeyType.Character)
             throw new IllegalArgumentException("Can't bind a normal key shortcut using this method, "
                     + "please use addShortcut(char, boolean, boolean, Action) instead");
         if(kindOfKey == null || action == null) 
@@ -57,9 +58,9 @@ public class ShortcutHelper {
         }
     }
 
-    public boolean triggerShortcut(Key key) {
-        if(key.getKind() == Key.Kind.NormalKey) {
-            NormalKeyShortcut asShortcutKey = new NormalKeyShortcut(key.getCharacter(), key.isCtrlPressed(), key.isAltPressed());
+    public boolean triggerShortcut(KeyStroke key) {
+        if(key.getKey() == KeyType.Character) {
+            NormalKeyShortcut asShortcutKey = new NormalKeyShortcut(key.getCharacter(), key.isCtrlDown(), key.isAltDown());
             synchronized(normalKeysShortcut) {
                 if(normalKeysShortcut.containsKey(asShortcutKey)) {
                     normalKeysShortcut.get(asShortcutKey).doAction();
@@ -70,8 +71,8 @@ public class ShortcutHelper {
         }
         else {
             synchronized(specialKeysShortcut) {
-                if(specialKeysShortcut.containsKey(key.getKind())) {
-                    specialKeysShortcut.get(key.getKind()).doAction();
+                if(specialKeysShortcut.containsKey(key.getKey())) {
+                    specialKeysShortcut.get(key.getKey()).doAction();
                     return true;
                 }
                 return false;

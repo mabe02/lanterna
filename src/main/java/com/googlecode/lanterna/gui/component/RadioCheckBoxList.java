@@ -21,7 +21,8 @@ package com.googlecode.lanterna.gui.component;
 
 import com.googlecode.lanterna.gui.Interactable;
 import com.googlecode.lanterna.gui.Theme;
-import com.googlecode.lanterna.input.Key;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.TerminalSize;
 
 /**
@@ -122,11 +123,11 @@ public class RadioCheckBoxList extends AbstractListBox {
     }
 
     @Override
-    protected Interactable.Result unhandledKeyboardEvent(Key key) {
+    protected Interactable.Result unhandledKeyboardEvent(KeyStroke key) {
         if(getSelectedIndex() == -1)
             return Interactable.Result.EVENT_NOT_HANDLED;
         
-        if(key.getKind() == Key.Kind.Enter || key.getCharacter() == ' ') {
+        if(key.getKey() == KeyType.Enter || key.getCharacter() == ' ') {
             checkedIndex = getSelectedIndex();
             valueChanged();
             return Result.EVENT_HANDLED;

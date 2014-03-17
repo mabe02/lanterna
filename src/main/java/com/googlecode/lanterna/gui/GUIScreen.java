@@ -20,7 +20,8 @@
 package com.googlecode.lanterna.gui;
 
 import com.googlecode.lanterna.gui.listener.WindowAdapter;
-import com.googlecode.lanterna.input.Key;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
@@ -247,7 +248,7 @@ public class GUIScreen
                         
                 boolean repainted = update();
 
-                Key nextKey = screen.readInput();
+                KeyStroke nextKey = screen.readInput();
                 if(nextKey != null) {
                     windowStack.getLast().window.onKeyPressed(nextKey);
                     invalidate();

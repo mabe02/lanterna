@@ -27,8 +27,8 @@ import com.googlecode.lanterna.gui.InteractableContainer;
 import com.googlecode.lanterna.gui.layout.LayoutParameter;
 import com.googlecode.lanterna.gui.listener.ContainerListener;
 import com.googlecode.lanterna.gui.util.ShortcutHelper;
-import com.googlecode.lanterna.input.Key;
-import com.googlecode.lanterna.input.Key.Kind;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -234,7 +234,7 @@ public abstract class AbstractContainer extends AbstractComponent implements Int
     }
 
     @Override
-    public void addShortcut(Kind key, Action action) {
+    public void addShortcut(KeyType key, Action action) {
         shortcutHelper.addShortcut(key, action);
     }
 
@@ -244,7 +244,7 @@ public abstract class AbstractContainer extends AbstractComponent implements Int
     }
 
     @Override
-    public boolean triggerShortcut(Key key) {
+    public boolean triggerShortcut(KeyStroke key) {
         return shortcutHelper.triggerShortcut(key);
     }
 }

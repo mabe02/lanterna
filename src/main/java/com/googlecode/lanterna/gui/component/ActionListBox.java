@@ -21,7 +21,8 @@ package com.googlecode.lanterna.gui.component;
 
 import com.googlecode.lanterna.gui.Action;
 import com.googlecode.lanterna.gui.Theme;
-import com.googlecode.lanterna.input.Key;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 
@@ -67,8 +68,8 @@ public class ActionListBox extends AbstractListBox {
     }
 
     @Override
-    protected Result unhandledKeyboardEvent(Key key) {
-        if(key.getKind() == Key.Kind.Enter) {
+    protected Result unhandledKeyboardEvent(KeyStroke key) {
+        if(key.getKey() == KeyType.Enter) {
             ((Item)getSelectedItem()).doAction();
             return Result.EVENT_HANDLED;
         }

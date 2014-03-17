@@ -19,7 +19,8 @@
 
 package com.googlecode.lanterna.test.terminal;
 
-import com.googlecode.lanterna.input.Key;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.test.TestTerminalFactory;
@@ -49,7 +50,7 @@ public class TerminalResizeTest implements Terminal.ResizeListener
         terminal.addResizeListener(new TerminalResizeTest());
 
         while(true) {
-            Key key = terminal.readInput();
+            KeyStroke key = terminal.readInput();
             if(key == null || key.getCharacter() != 'q')
                 Thread.sleep(1);
             else

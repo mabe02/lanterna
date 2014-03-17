@@ -48,8 +48,9 @@ import javax.swing.Timer;
 
 import com.googlecode.lanterna.CJKUtils;
 import com.googlecode.lanterna.input.InputProvider;
-import com.googlecode.lanterna.input.Key;
+import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.input.KeyDecodingProfile;
+import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.terminal.AbstractTerminal;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
@@ -77,7 +78,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
     private boolean currentlyBordered;
     private boolean blinkVisible;
     private boolean cursorVisible;
-    private Queue<Key> keyQueue;
+    private Queue<KeyStroke> keyQueue;
 
     private final Object resizeMutex;
 
@@ -116,7 +117,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
         this.currentlyBordered = false;
         this.blinkVisible = false;
         this.cursorVisible = true;
-        this.keyQueue = new ConcurrentLinkedQueue<Key>();
+        this.keyQueue = new ConcurrentLinkedQueue<KeyStroke>();
         this.resizeMutex = new Object();
 
         onResized(widthInColumns, heightInRows);
@@ -383,7 +384,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
     }
 
     @Override
-    public Key readInput()
+    public KeyStroke readInput()
     {
         return keyQueue.poll();
     }
@@ -440,7 +441,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
                     //We need to re-adjust the character if ctrl is pressed, just like for the AnsiTerminal
                     character = (char)('a' - 1 + character);
                 }
-                keyQueue.add(new Key(character, ctrlDown, altDown));
+                keyQueue.add(new KeyStroke(character, ctrlDown, altDown));
             }
         }
 
@@ -448,60 +449,60 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
         public void keyPressed(KeyEvent e)
         {
             if(e.getKeyCode() == KeyEvent.VK_ENTER)
-                keyQueue.add(new Key(Key.Kind.Enter));
+                keyQueue.add(new KeyStroke(KeyType.Enter));
             else if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
-                keyQueue.add(new Key(Key.Kind.Escape));
+                keyQueue.add(new KeyStroke(KeyType.Escape));
             else if(e.getKeyCode() == KeyEvent.VK_BACK_SPACE)
-                keyQueue.add(new Key(Key.Kind.Backspace));
+                keyQueue.add(new KeyStroke(KeyType.Backspace));
             else if(e.getKeyCode() == KeyEvent.VK_LEFT)
-                keyQueue.add(new Key(Key.Kind.ArrowLeft));
+                keyQueue.add(new KeyStroke(KeyType.ArrowLeft));
             else if(e.getKeyCode() == KeyEvent.VK_RIGHT)
-                keyQueue.add(new Key(Key.Kind.ArrowRight));
+                keyQueue.add(new KeyStroke(KeyType.ArrowRight));
             else if(e.getKeyCode() == KeyEvent.VK_UP)
-                keyQueue.add(new Key(Key.Kind.ArrowUp));
+                keyQueue.add(new KeyStroke(KeyType.ArrowUp));
             else if(e.getKeyCode() == KeyEvent.VK_DOWN)
-                keyQueue.add(new Key(Key.Kind.ArrowDown));
+                keyQueue.add(new KeyStroke(KeyType.ArrowDown));
             else if(e.getKeyCode() == KeyEvent.VK_INSERT)
-                keyQueue.add(new Key(Key.Kind.Insert));
+                keyQueue.add(new KeyStroke(KeyType.Insert));
             else if(e.getKeyCode() == KeyEvent.VK_DELETE)
-                keyQueue.add(new Key(Key.Kind.Delete));
+                keyQueue.add(new KeyStroke(KeyType.Delete));
             else if(e.getKeyCode() == KeyEvent.VK_HOME)
-                keyQueue.add(new Key(Key.Kind.Home));
+                keyQueue.add(new KeyStroke(KeyType.Home));
             else if(e.getKeyCode() == KeyEvent.VK_END)
-                keyQueue.add(new Key(Key.Kind.End));
+                keyQueue.add(new KeyStroke(KeyType.End));
             else if(e.getKeyCode() == KeyEvent.VK_PAGE_UP)
-                keyQueue.add(new Key(Key.Kind.PageUp));
+                keyQueue.add(new KeyStroke(KeyType.PageUp));
             else if(e.getKeyCode() == KeyEvent.VK_PAGE_DOWN)
-                keyQueue.add(new Key(Key.Kind.PageDown));
+                keyQueue.add(new KeyStroke(KeyType.PageDown));
             else if(e.getKeyCode() == KeyEvent.VK_F1)
-                keyQueue.add(new Key(Key.Kind.F1));
+                keyQueue.add(new KeyStroke(KeyType.F1));
             else if(e.getKeyCode() == KeyEvent.VK_F2)
-                keyQueue.add(new Key(Key.Kind.F2));
+                keyQueue.add(new KeyStroke(KeyType.F2));
             else if(e.getKeyCode() == KeyEvent.VK_F3)
-                keyQueue.add(new Key(Key.Kind.F3));
+                keyQueue.add(new KeyStroke(KeyType.F3));
             else if(e.getKeyCode() == KeyEvent.VK_F4)
-                keyQueue.add(new Key(Key.Kind.F4));
+                keyQueue.add(new KeyStroke(KeyType.F4));
             else if(e.getKeyCode() == KeyEvent.VK_F5)
-                keyQueue.add(new Key(Key.Kind.F5));
+                keyQueue.add(new KeyStroke(KeyType.F5));
             else if(e.getKeyCode() == KeyEvent.VK_F6)
-                keyQueue.add(new Key(Key.Kind.F6));
+                keyQueue.add(new KeyStroke(KeyType.F6));
             else if(e.getKeyCode() == KeyEvent.VK_F7)
-                keyQueue.add(new Key(Key.Kind.F7));
+                keyQueue.add(new KeyStroke(KeyType.F7));
             else if(e.getKeyCode() == KeyEvent.VK_F8)
-                keyQueue.add(new Key(Key.Kind.F8));
+                keyQueue.add(new KeyStroke(KeyType.F8));
             else if(e.getKeyCode() == KeyEvent.VK_F9)
-                keyQueue.add(new Key(Key.Kind.F9));
+                keyQueue.add(new KeyStroke(KeyType.F9));
             else if(e.getKeyCode() == KeyEvent.VK_F10)
-                keyQueue.add(new Key(Key.Kind.F10));
+                keyQueue.add(new KeyStroke(KeyType.F10));
             else if(e.getKeyCode() == KeyEvent.VK_F11)
-                keyQueue.add(new Key(Key.Kind.F11));
+                keyQueue.add(new KeyStroke(KeyType.F11));
             else if(e.getKeyCode() == KeyEvent.VK_F12)
-                keyQueue.add(new Key(Key.Kind.F12));
+                keyQueue.add(new KeyStroke(KeyType.F12));
             else if(e.getKeyCode() == KeyEvent.VK_TAB) {
                 if(e.isShiftDown())
-                    keyQueue.add(new Key(Key.Kind.ReverseTab));
+                    keyQueue.add(new KeyStroke(KeyType.ReverseTab));
                 else
-                    keyQueue.add(new Key(Key.Kind.Tab));
+                    keyQueue.add(new KeyStroke(KeyType.Tab));
             }
             else {
                 //keyTyped doesn't catch this scenario (for whatever reason...) so we have to do it here
@@ -509,7 +510,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
                 boolean ctrlDown = (e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0;
                 if(altDown && ctrlDown && e.getKeyCode() >= 'A' && e.getKeyCode() <= 'Z') {
                     char asLowerCase = Character.toLowerCase((char)e.getKeyCode());
-                    keyQueue.add(new Key(asLowerCase, true, true));
+                    keyQueue.add(new KeyStroke(asLowerCase, true, true));
                 }
             }
         }
