@@ -45,7 +45,7 @@ public class TerminalInputTest
                 continue;
             }
 
-            if(key.getKey()== KeyType.Escape)
+            if(key.getKeyType()== KeyType.Escape)
                 break;
 
             if(currentRow == 0)

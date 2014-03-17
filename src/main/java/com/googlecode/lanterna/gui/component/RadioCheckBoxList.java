@@ -127,7 +127,7 @@ public class RadioCheckBoxList extends AbstractListBox {
         if(getSelectedIndex() == -1)
             return Interactable.Result.EVENT_NOT_HANDLED;
         
-        if(key.getKey() == KeyType.Enter || key.getCharacter() == ' ') {
+        if(key.getKeyType() == KeyType.Enter || key.getCharacter() == ' ') {
             checkedIndex = getSelectedIndex();
             valueChanged();
             return Result.EVENT_HANDLED;

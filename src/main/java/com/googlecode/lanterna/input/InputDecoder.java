@@ -95,7 +95,7 @@ public class InputDecoder {
             return null;
         }
 
-        if (bestMatch.getKey() == KeyType.CursorLocation) {
+        if (bestMatch.getKeyType() == KeyType.CursorLocation) {
             TerminalPosition cursorPosition = ScreenInfoCharacterPattern.getCursorPosition(currentMatching.subList(0, nrOfCharactersMatched));
             if(cursorPosition.getColumn() == 5 && cursorPosition.getRow() == 1) {
                 //Special case for CTRL + F3

@@ -44,20 +44,20 @@ public class PopupCheckBoxList extends RadioCheckBoxList {
 	public Result keyboardInteraction(KeyStroke key) {
 		if (poppedUp) {
 			Result parentRet = super.keyboardInteraction(key);
-			if (key.getKey() == KeyType.Enter || key.getCharacter() == ' ') {
+			if (key.getKeyType() == KeyType.Enter || key.getCharacter() == ' ') {
 				poppedUp = false;
 				invalidate();
 				valueChanged();
 				return parentRet;
 			}
 		} 
-		if (key.getKey() == KeyType.Enter) {
+		if (key.getKeyType() == KeyType.Enter) {
 			poppedUp = true;
 			invalidate();
 			valueChanged();
-		} else if (key.getKey() == KeyType.Tab) {
+		} else if (key.getKeyType() == KeyType.Tab) {
 			return Result.NEXT_INTERACTABLE_DOWN;
-		} else if (key.getKey() == KeyType.ReverseTab) {
+		} else if (key.getKeyType() == KeyType.ReverseTab) {
 			return Result.PREVIOUS_INTERACTABLE_UP;
 		}
 		return Result.EVENT_HANDLED;

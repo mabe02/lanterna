@@ -35,6 +35,7 @@ public class KeyStroke {
     private final Character character;
     private final boolean ctrlDown;
     private final boolean altDown;
+    private final long eventTime;
 
     public KeyStroke(KeyType keyType) {
         this(keyType, false, false);
@@ -56,9 +57,10 @@ public class KeyStroke {
         this.character = character;
         this.ctrlDown = ctrlDown;
         this.altDown = altDown;
+        this.eventTime = System.currentTimeMillis();
     }
 
-    public KeyType getKey() {
+    public KeyType getKeyType() {
         return keyType;
     }
 
@@ -72,6 +74,10 @@ public class KeyStroke {
 
     public boolean isAltDown() {
         return altDown;
+    }
+
+    public long getEventTime() {
+        return eventTime;
     }
 
     @Override

@@ -23,7 +23,7 @@ public class Issue60 extends Window {
             @Override
             public Result keyboardInteraction(KeyStroke key) {
                 System.out.println("Char value:" + (key.getCharacter() + 0));
-                System.out.println("Key kind:" + key.getKey());
+                System.out.println("Key kind:" + key.getKeyType());
 
                 if(key.getCharacter() == 'q') {
                     close();

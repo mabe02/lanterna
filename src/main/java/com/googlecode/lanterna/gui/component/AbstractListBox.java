@@ -202,7 +202,7 @@ public abstract class AbstractListBox extends AbstractInteractableComponent {
     @Override
     public Result keyboardInteraction(KeyStroke key) {
         try {
-            switch(key.getKey()) {
+            switch(key.getKeyType()) {
                 case Tab:
                 case ArrowRight:
                     return Result.NEXT_INTERACTABLE_RIGHT;

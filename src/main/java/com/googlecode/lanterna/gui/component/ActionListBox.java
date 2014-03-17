@@ -69,7 +69,7 @@ public class ActionListBox extends AbstractListBox {
 
     @Override
     protected Result unhandledKeyboardEvent(KeyStroke key) {
-        if(key.getKey() == KeyType.Enter) {
+        if(key.getKeyType() == KeyType.Enter) {
             ((Item)getSelectedItem()).doAction();
             return Result.EVENT_HANDLED;
         }

@@ -75,7 +75,7 @@ public abstract class CommonCheckBox extends AbstractInteractableComponent
     public Interactable.Result keyboardInteraction(KeyStroke key)
     {
         try {
-            switch(key.getKey())
+            switch(key.getKeyType())
             {
                 case ArrowDown:
                     return Result.NEXT_INTERACTABLE_DOWN;

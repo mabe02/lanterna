@@ -59,7 +59,7 @@ public class ShortcutHelper {
     }
 
     public boolean triggerShortcut(KeyStroke key) {
-        if(key.getKey() == KeyType.Character) {
+        if(key.getKeyType() == KeyType.Character) {
             NormalKeyShortcut asShortcutKey = new NormalKeyShortcut(key.getCharacter(), key.isCtrlDown(), key.isAltDown());
             synchronized(normalKeysShortcut) {
                 if(normalKeysShortcut.containsKey(asShortcutKey)) {
@@ -71,8 +71,8 @@ public class ShortcutHelper {
         }
         else {
             synchronized(specialKeysShortcut) {
-                if(specialKeysShortcut.containsKey(key.getKey())) {
-                    specialKeysShortcut.get(key.getKey()).doAction();
+                if(specialKeysShortcut.containsKey(key.getKeyType())) {
+                    specialKeysShortcut.get(key.getKeyType()).doAction();
                     return true;
                 }
                 return false;

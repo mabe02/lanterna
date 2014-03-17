@@ -69,13 +69,13 @@ public abstract class InputEnabledAbstractTerminal extends AbstractTerminal impl
                 }
 
                 //If we got CTRL+F3, it's probably a size report instead!!!
-                if(key.getKey()!= KeyType.CursorLocation &&
-                        !(key.getKey() == KeyType.F3 && key.isCtrlDown() && !key.isAltDown())) {
+                if(key.getKeyType()!= KeyType.CursorLocation &&
+                        !(key.getKeyType() == KeyType.F3 && key.isCtrlDown() && !key.isAltDown())) {
                     keyQueue.add(key);
                 }
                 else {
                     TerminalPosition reportedTerminalPosition = inputDecoder.getLastReportedTerminalPosition();
-                    if(key.getKey() == KeyType.F3 && key.isCtrlDown() && !key.isAltDown()) {
+                    if(key.getKeyType() == KeyType.F3 && key.isCtrlDown() && !key.isAltDown()) {
                         reportedTerminalPosition = new TerminalPosition(5, 1);
                     }
                     if(reportedTerminalPosition != null)
@@ -96,7 +96,7 @@ public abstract class InputEnabledAbstractTerminal extends AbstractTerminal impl
                 return keyQueue.poll();
 
             KeyStroke key = inputDecoder.getNextCharacter();
-            if (key != null && key.getKey() == KeyType.CursorLocation) {
+            if (key != null && key.getKeyType() == KeyType.CursorLocation) {
                 TerminalPosition reportedTerminalPosition = inputDecoder.getLastReportedTerminalPosition();
                 if (reportedTerminalPosition != null)
                     onResized(reportedTerminalPosition.getColumn(), reportedTerminalPosition.getRow());

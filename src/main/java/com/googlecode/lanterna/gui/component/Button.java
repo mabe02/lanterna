@@ -114,7 +114,7 @@ public class Button extends AbstractInteractableComponent
     @Override
     public Interactable.Result keyboardInteraction(KeyStroke key)
     {
-        switch(key.getKey()) {
+        switch(key.getKeyType()) {
             case Enter:
                 onPressEvent.doAction();
                 return Result.EVENT_HANDLED;

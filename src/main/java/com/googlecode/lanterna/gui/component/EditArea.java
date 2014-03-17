@@ -314,7 +314,7 @@ public class EditArea extends AbstractInteractableComponent {
     @Override
     public Interactable.Result keyboardInteraction(KeyStroke key) {
         try {
-            switch (key.getKey()) {
+            switch (key.getKeyType()) {
             case Tab:
                 return Interactable.Result.NEXT_INTERACTABLE_RIGHT;
             case Backspace:

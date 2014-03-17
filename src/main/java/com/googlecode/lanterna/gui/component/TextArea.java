@@ -174,7 +174,7 @@ public class TextArea  extends AbstractInteractableComponent
     public Result keyboardInteraction(KeyStroke key)
     {
         try {
-            switch(key.getKey()) {
+            switch(key.getKeyType()) {
                 case Tab:
                 case Enter:
                     return Result.NEXT_INTERACTABLE_RIGHT;

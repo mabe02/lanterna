@@ -82,7 +82,7 @@ public class CheckBoxList extends AbstractListBox
         if(getSelectedIndex() == -1)
             return Result.EVENT_NOT_HANDLED;
         
-        if(key.getKey() == KeyType.Enter || key.getCharacter() == ' ') {
+        if(key.getKeyType() == KeyType.Enter || key.getCharacter() == ' ') {
             if(itemStatus.get(getSelectedIndex()) == true)
                 itemStatus.set(getSelectedIndex(), Boolean.FALSE);
             else

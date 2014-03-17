@@ -100,7 +100,7 @@ public abstract class AbstractTextGUI implements TextGUI {
                 if(keyStroke != null) {
                     //Handle input
                     //TODO: Remove this after more testing
-                    if(keyStroke.getKey() == KeyType.Escape) {
+                    if(keyStroke.getKeyType() == KeyType.Escape) {
                         stop();
                     }
                     if(handleInput(keyStroke)) {
