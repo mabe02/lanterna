@@ -16,18 +16,18 @@
  * 
  * Copyright (C) 2010-2014 Martin
  */
-
 package com.googlecode.lanterna.screen;
 
 /**
- * Style of a character put on the screen. Please note that some terminals may
- * not implements some or any of these styles.
+ * Style of a character put on the screen. Please note that some terminals may not implements some or any of these
+ * styles.
+ *
  * @author Martin
  */
 public enum ScreenCharacterStyle {
-    Bold, 
-    Underline, 
-    Reverse, 
+    Bold,
+    Underline,
+    Reverse,
     Blinking,
     Bordered
 }

@@ -16,7 +16,6 @@
  * 
  * Copyright (C) 2010-2014 Martin
  */
-
 package com.googlecode.lanterna.screen;
 
 import java.util.EnumSet;
@@ -28,10 +27,10 @@ import com.googlecode.lanterna.terminal.TextColor;
  *
  * @author martin
  */
-public class ScreenCharacter
-{
+public class ScreenCharacter {
+
     public static final ScreenCharacter CJK_PADDING_CHARACTER = new ScreenCharacter('\0');
-    
+
     private final char character;
     private final TextColor foregroundColor;
     private final TextColor backgroundColor;
@@ -40,35 +39,34 @@ public class ScreenCharacter
     private final boolean reverse;
     private final boolean blinking;
     private final boolean bordered;
-    
+
     public ScreenCharacter(char character) {
         this(character, TextColor.ANSI.DEFAULT, TextColor.ANSI.DEFAULT);
     }
-    
+
     public ScreenCharacter(
-            char character, 
-            TextColor foregroundColor, 
+            char character,
+            TextColor foregroundColor,
             TextColor backgroundColor) {
         this(character, foregroundColor, backgroundColor, EnumSet.noneOf(ScreenCharacterStyle.class));
     }
-    
+
     /**
-     * Warning, this class has another independent constructor too! If you change 
-     * this constructor, please check the other one to make sure you're not missing 
-     * anything!
+     * Warning, this class has another independent constructor too! If you change this constructor, please check the
+     * other one to make sure you're not missing anything!
      */
     public ScreenCharacter(
-            char character, 
-            TextColor foregroundColor, 
+            char character,
+            TextColor foregroundColor,
             TextColor backgroundColor,
             Set<ScreenCharacterStyle> style) {
-    	if(foregroundColor == null) {
-                    foregroundColor = TextColor.ANSI.DEFAULT;
-                }
+        if(foregroundColor == null) {
+            foregroundColor = TextColor.ANSI.DEFAULT;
+        }
         if(backgroundColor == null) {
-                    backgroundColor = TextColor.ANSI.DEFAULT;
-                }
-        
+            backgroundColor = TextColor.ANSI.DEFAULT;
+        }
+
         this.character = character;
         this.foregroundColor = foregroundColor;
         this.backgroundColor = backgroundColor;
@@ -80,9 +78,8 @@ public class ScreenCharacter
     }
 
     /**
-     * Warning, this class has another independent constructor too! If you change 
-     * this constructor, please check the other one to make sure you're not missing 
-     * anything!
+     * Warning, this class has another independent constructor too! If you change this constructor, please check the
+     * other one to make sure you're not missing anything!
      */
     public ScreenCharacter(final ScreenCharacter character) {
         this.character = character.character;
@@ -118,13 +115,13 @@ public class ScreenCharacter
     public boolean isUnderline() {
         return underline;
     }
-    
+
     public boolean isBlinking() {
-    	return blinking;
+        return blinking;
     }
-    
+
     public boolean isBordered() {
-    	return bordered;
+        return bordered;
     }
 
     @Override
@@ -136,15 +133,15 @@ public class ScreenCharacter
             return false;
         }
 
-        ScreenCharacter other = ((ScreenCharacter)(obj));
-        return character == other.getCharacter() &&
-                getForegroundColor() == other.getForegroundColor() &&
-                getBackgroundColor() == other.getBackgroundColor() &&
-                isBold() == other.isBold() &&
-                isNegative() == other.isNegative() &&
-                isUnderline() == other.isUnderline() &&
-                isBlinking() == other.isBlinking() &&
-                isBordered() == other.isBordered();
+        ScreenCharacter other = ((ScreenCharacter) (obj));
+        return character == other.getCharacter()
+                && getForegroundColor() == other.getForegroundColor()
+                && getBackgroundColor() == other.getBackgroundColor()
+                && isBold() == other.isBold()
+                && isNegative() == other.isNegative()
+                && isUnderline() == other.isUnderline()
+                && isBlinking() == other.isBlinking()
+                && isBordered() == other.isBordered();
     }
 
     @Override
@@ -155,8 +152,7 @@ public class ScreenCharacter
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return Character.toString(character);
     }
 }

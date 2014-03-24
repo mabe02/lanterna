@@ -29,20 +29,20 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * A layer to put on top of a Terminal object, giving you a kind of screen buffer
- * to use, which is a lot easier to work with. Drawing text or graphics to the
- * terminal is kind of like writing to a bitmap.
+ * A layer to put on top of a Terminal object, giving you a kind of screen buffer to use, which is a lot easier to work
+ * with. Drawing text or graphics to the terminal is kind of like writing to a bitmap.
+ *
  * @author Martin
  */
-public class Screen
-{
+public class Screen {
+
     private final Object mutex;
     private final Terminal terminal;
     private final LinkedList<TerminalSize> resizeQueue;
     private TerminalPosition cursorPosition;
     private TerminalSize terminalSize;
-    private ScreenCharacter [][] visibleScreen;
-    private ScreenCharacter [][] backbuffer;
+    private ScreenCharacter[][] visibleScreen;
+    private ScreenCharacter[][] backbuffer;
     private ScreenCharacter paddingCharacter;
     private boolean wholeScreenInvalid;
     private boolean hasBeenActivated;
@@ -51,36 +51,36 @@ public class Screen
     private TabBehaviour tabBehaviour;
 
     /**
-     * Creates a new Screen on top of a supplied terminal, will query the terminal
-     * for its size. The screen is initially blank.
+     * Creates a new Screen on top of a supplied terminal, will query the terminal for its size. The screen is initially
+     * blank.
+     *
      * @param terminal
      * @throws LanternaException
      */
-    public Screen(Terminal terminal) throws IOException
-    {
+    public Screen(Terminal terminal) throws IOException {
         this(terminal, terminal.getTerminalSize());
     }
 
     /**
-     * Creates a new Screen on top of a supplied terminal and will set the size
-     * of the screen to a supplied value. The screen is initially blank.
+     * Creates a new Screen on top of a supplied terminal and will set the size of the screen to a supplied value. The
+     * screen is initially blank.
+     *
      * @param terminal
      * @param terminalSize
      */
-    public Screen(Terminal terminal, TerminalSize terminalSize)
-    {
+    public Screen(Terminal terminal, TerminalSize terminalSize) {
         this(terminal, terminalSize.getColumns(), terminalSize.getRows());
     }
 
     /**
-     * Creates a new Screen on top of a supplied terminal and will set the size
-     * of the screen to a supplied value. The screen is initially blank.
+     * Creates a new Screen on top of a supplied terminal and will set the size of the screen to a supplied value. The
+     * screen is initially blank.
+     *
      * @param terminal
      * @param terminalWidth Width (number of columns) of the terminal
      * @param terminalHeight Height (number of rows) of the terminal
      */
-    public Screen(Terminal terminal, int terminalWidth, int terminalHeight)
-    {
+    public Screen(Terminal terminal, int terminalWidth, int terminalHeight) {
         this.mutex = new Object();
         this.terminal = terminal;
         this.terminalSize = new TerminalSize(terminalWidth, terminalHeight);
@@ -107,36 +107,33 @@ public class Screen
     }
 
     /**
-     * @return Position where the cursor will be located after the screen has
-     * been refreshed or {@code null} if the cursor is not visible
+     * @return Position where the cursor will be located after the screen has been refreshed or {@code null} if the
+     * cursor is not visible
      */
-    public TerminalPosition getCursorPosition()
-    {
+    public TerminalPosition getCursorPosition() {
         return cursorPosition;
     }
 
     /**
-     * Moves the current cursor position or hides it. If the cursor is hidden and given a new
-     * position, it will be visible after this method call.
-     * @param position 0-indexed column and row numbers of the new position, or if {@code null},
-     * hides the cursor
+     * Moves the current cursor position or hides it. If the cursor is hidden and given a new position, it will be
+     * visible after this method call.
+     *
+     * @param position 0-indexed column and row numbers of the new position, or if {@code null}, hides the cursor
      */
-    public void setCursorPosition(TerminalPosition position)
-    {
+    public void setCursorPosition(TerminalPosition position) {
         this.cursorPosition = position;
     }
 
     /**
-     * Moves the current cursor position, and if the cursor was hidden it will be visible after this
-     * call
+     * Moves the current cursor position, and if the cursor was hidden it will be visible after this call
+     *
      * @param column 0-indexed column number of the new position
      * @param row 0-indexed row number of the new position
      */
-    public void setCursorPosition(int column, int row)
-    {
+    public void setCursorPosition(int column, int row) {
         synchronized(mutex) {
-            if(column >= 0 && column < terminalSize.getColumns() &&
-                    row >= 0 && row < terminalSize.getRows()) {
+            if(column >= 0 && column < terminalSize.getColumns()
+                    && row >= 0 && row < terminalSize.getRows()) {
                 setCursorPosition(new TerminalPosition(column, row));
             }
         }
@@ -144,11 +141,13 @@ public class Screen
 
     /**
      * Sets the behaviour for what to do about tab characters.
+     *
      * @see TabBehaviour
      */
     public void setTabBehaviour(TabBehaviour tabBehaviour) {
-        if(tabBehaviour != null)
+        if(tabBehaviour != null) {
             this.tabBehaviour = tabBehaviour;
+        }
     }
 
     public void setPaddingCharacter(
@@ -162,6 +161,7 @@ public class Screen
 
     /**
      * Gets the behaviour for what to do about tab characters.
+     *
      * @see TabBehaviour
      */
     public TabBehaviour getTabBehaviour() {
@@ -169,33 +169,31 @@ public class Screen
     }
 
     /**
-     * Reads the next {@code Key} from the input queue, or returns null if there
-     * is nothing on the queue.
+     * Reads the next {@code Key} from the input queue, or returns null if there is nothing on the queue.
      */
-    public KeyStroke readInput() throws IOException
-    {
+    public KeyStroke readInput() throws IOException {
         return terminal.readInput();
     }
 
     /**
      * @return Size of the screen
      */
-    public TerminalSize getTerminalSize()
-    {
+    public TerminalSize getTerminalSize() {
         synchronized(mutex) {
             return terminalSize;
         }
     }
 
     /**
-     * Calling this method will put the underlying terminal in private mode,
-     * clear the screen, move the cursor and refresh.
+     * Calling this method will put the underlying terminal in private mode, clear the screen, move the cursor and
+     * refresh.
+     *
      * @throws LanternaException
      */
-    public void startScreen() throws IOException
-    {
-        if(hasBeenActivated)
+    public void startScreen() throws IOException {
+        if(hasBeenActivated) {
             return;
+        }
 
         hasBeenActivated = true;
         terminal.enterPrivateMode();
@@ -208,22 +206,22 @@ public class Screen
         if(cursorPosition != null) {
             terminal.setCursorVisible(true);
             terminal.moveCursor(cursorPosition.getColumn(), cursorPosition.getRow());
-        }
-        else
+        } else {
             terminal.setCursorVisible(false);
+        }
         refresh();
     }
 
     /**
-     * Calling this method will make the underlying terminal leave private mode,
-     * effectively going back to whatever state the terminal was in before
-     * calling {@code startScreen()}
+     * Calling this method will make the underlying terminal leave private mode, effectively going back to whatever
+     * state the terminal was in before calling {@code startScreen()}
+     *
      * @throws LanternaException
      */
-    public void stopScreen() throws IOException
-    {
-        if(!hasBeenActivated)
+    public void stopScreen() throws IOException {
+        if(!hasBeenActivated) {
             return;
+        }
 
         while(readInput() != null) {
             //Drain the input queue before exiting private mode and closing the Screen.
@@ -233,9 +231,8 @@ public class Screen
     }
 
     /**
-     * Erases all the characters on the screen, effectively giving you a blank
-     * area. The default background color will be used, if you want to fill the
-     * screen with a different color you will need to do this manually.
+     * Erases all the characters on the screen, effectively giving you a blank area. The default background color will
+     * be used, if you want to fill the screen with a different color you will need to do this manually.
      */
     public void clear() {
         //ScreenCharacter is immutable, so we can use it for every element
@@ -252,6 +249,7 @@ public class Screen
 
     /**
      * Draws a string on the screen at a particular position
+     *
      * @param x 0-indexed column number of where to put the first character in the string
      * @param y 0-indexed row number of where to put the first character in the string
      * @param string Text to put on the screen
@@ -260,8 +258,7 @@ public class Screen
      * @param styles Additional styles to apply to the text
      */
     public void putString(int x, int y, String string, TextColor foregroundColor,
-            TextColor backgroundColor, ScreenCharacterStyle... styles)
-    {
+            TextColor backgroundColor, ScreenCharacterStyle... styles) {
         Set<ScreenCharacterStyle> drawStyle = EnumSet.noneOf(ScreenCharacterStyle.class);
         drawStyle.addAll(Arrays.asList(styles));
         putString(x, y, string, foregroundColor, backgroundColor, drawStyle);
@@ -269,6 +266,7 @@ public class Screen
 
     /**
      * Draws a string on the screen at a particular position
+     *
      * @param x 0-indexed column number of where to put the first character in the string
      * @param y 0-indexed row number of where to put the first character in the string
      * @param string Text to put on the screen
@@ -277,10 +275,9 @@ public class Screen
      * @param styles Additional styles to apply to the text
      */
     public void putString(int x, int y, String string, TextColor foregroundColor,
-            TextColor backgroundColor, Set<ScreenCharacterStyle> styles)
-    {
-    	string = tabBehaviour.replaceTabs(string, x);
-    	for(int i = 0; i < string.length(); i++) {
+            TextColor backgroundColor, Set<ScreenCharacterStyle> styles) {
+        string = tabBehaviour.replaceTabs(string, x);
+        for(int i = 0; i < string.length(); i++) {
             char character = string.charAt(i);
             putCharacter(x + i, y, new ScreenCharacter(character, foregroundColor, backgroundColor, styles));
             if(CJKUtils.isCharCJK(character)) {
@@ -289,11 +286,11 @@ public class Screen
         }
     }
 
-    void putCharacter(int x, int y, ScreenCharacter character)
-    {
+    void putCharacter(int x, int y, ScreenCharacter character) {
         synchronized(mutex) {
-            if(y < 0 || y >= backbuffer.length || x < 0 || x >= backbuffer[0].length)
+            if(y < 0 || y >= backbuffer.length || x < 0 || x >= backbuffer[0].length) {
                 return;
+            }
 
             //Only create a new character if the
             if(!backbuffer[y][x].equals(character)) {
@@ -303,12 +300,12 @@ public class Screen
     }
 
     /**
-     * This method will check if there are any resize commands pending. If true,
-     * you need to call refresh() to perform the screen resize
+     * This method will check if there are any resize commands pending. If true, you need to call refresh() to perform
+     * the screen resize
+     *
      * @return true if the size is the same as before, false if the screen should be resized
      */
-    public boolean resizePending()
-    {
+    public boolean resizePending() {
         synchronized(resizeQueue) {
             return !resizeQueue.isEmpty();
         }
@@ -317,8 +314,9 @@ public class Screen
     /**
      * Calling this method will check if the terminal has changed since and in that case update the dimensions of this
      * Screen to match.
-     * @return Will return true if dimensions were changed, otherwise false. You probably want to clear and
-     * redraw the entire screen if this method returns true.
+     *
+     * @return Will return true if dimensions were changed, otherwise false. You probably want to clear and redraw the
+     * entire screen if this method returns true.
      */
     public boolean updateScreenSize() {
         if(!resizePending()) {
@@ -331,10 +329,9 @@ public class Screen
     }
 
     /**
-     * Clears the terminal and repaints with the whole content of the Screen. This is useful of
-     * something has written to the terminal outside of the Screen (System.out or through direct
-     * calls to the underlying Terminal) and you want to make sure that the content of Screen
-     * is completely pushed to the terminal.
+     * Clears the terminal and repaints with the whole content of the Screen. This is useful of something has written to
+     * the terminal outside of the Screen (System.out or through direct calls to the underlying Terminal) and you want
+     * to make sure that the content of Screen is completely pushed to the terminal.
      */
     public void completeRefresh() {
         wholeScreenInvalid = true;
@@ -343,17 +340,15 @@ public class Screen
 
     /**
      * Call this method to make changes done through {@code putCharacter(...)},
-     * {@code putString(...)} visible on the terminal. The screen will calculate
-     * the changes that are required and send the necessary characters and
-     * control sequences to make it so. If the terminal has been resized since the
-     * last refresh, and no call to {@code doResize()} has been made, this method
-     * will resize the internal buffer and fill the extra space with a padding
-     * character.
+     * {@code putString(...)} visible on the terminal. The screen will calculate the changes that are required and send
+     * the necessary characters and control sequences to make it so. If the terminal has been resized since the last
+     * refresh, and no call to {@code doResize()} has been made, this method will resize the internal buffer and fill
+     * the extra space with a padding character.
      */
-    public void refresh()
-    {
-        if(!hasBeenActivated)
+    public void refresh() {
+        if(!hasBeenActivated) {
             return;
+        }
 
         synchronized(mutex) {
             //If any resize operations are in the queue, execute them
@@ -361,10 +356,8 @@ public class Screen
 
             Map<TerminalPosition, ScreenCharacter> updateMap = new TreeMap<TerminalPosition, ScreenCharacter>(new ScreenPointComparator());
 
-            for(int y = 0; y < terminalSize.getRows(); y++)
-            {
-                for(int x = 0; x < terminalSize.getColumns(); x++)
-                {
+            for(int y = 0; y < terminalSize.getRows(); y++) {
+                for(int x = 0; x < terminalSize.getColumns(); x++) {
                     ScreenCharacter c = backbuffer[y][x];
                     if(!c.equals(visibleScreen[y][x]) || wholeScreenInvalid) {
                         visibleScreen[y][x] = c;    //Remember, ScreenCharacter is immutable, we don't need to worry about it being modified
@@ -376,9 +369,9 @@ public class Screen
             Writer terminalWriter = new Writer();
             terminalWriter.reset();
             TerminalPosition previousPoint = null;
-            for(TerminalPosition nextUpdate: updateMap.keySet()) {
-                if(previousPoint == null || previousPoint.getRow() != nextUpdate.getRow() ||
-                        previousPoint.getColumn() + 1 != nextUpdate.getColumn()) {
+            for(TerminalPosition nextUpdate : updateMap.keySet()) {
+                if(previousPoint == null || previousPoint.getRow() != nextUpdate.getRow()
+                        || previousPoint.getColumn() + 1 != nextUpdate.getColumn()) {
                     terminalWriter.setCursorPosition(nextUpdate.getColumn(), nextUpdate.getRow());
                 }
                 if(updateMap.get(nextUpdate) != ScreenCharacter.CJK_PADDING_CHARACTER) {
@@ -389,8 +382,7 @@ public class Screen
             if(cursorPosition != null) {
                 terminalWriter.setCursorVisible(true);
                 terminalWriter.setCursorPosition(cursorPosition.getColumn(), cursorPosition.getRow());
-            }
-            else {
+            } else {
                 terminalWriter.setCursorVisible(false);
             }
             wholeScreenInvalid = false;
@@ -402,8 +394,9 @@ public class Screen
     private void resizeScreenIfNeeded() {
         TerminalSize newSize;
         synchronized(resizeQueue) {
-            if(resizeQueue.isEmpty())
+            if(resizeQueue.isEmpty()) {
                 return;
+            }
 
             newSize = resizeQueue.getLast();
             resizeQueue.clear();
@@ -411,21 +404,21 @@ public class Screen
 
         int height = newSize.getRows();
         int width = newSize.getColumns();
-        ScreenCharacter [][]newBackBuffer = new ScreenCharacter[height][width];
-        ScreenCharacter [][]newVisibleScreen = new ScreenCharacter[height][width];
-        for(int y = 0; y < height; y++)
-        {
-            for(int x = 0; x < width; x++)
-            {
-                if(backbuffer.length > 0 && x < backbuffer[0].length && y < backbuffer.length)
+        ScreenCharacter[][] newBackBuffer = new ScreenCharacter[height][width];
+        ScreenCharacter[][] newVisibleScreen = new ScreenCharacter[height][width];
+        for(int y = 0; y < height; y++) {
+            for(int x = 0; x < width; x++) {
+                if(backbuffer.length > 0 && x < backbuffer[0].length && y < backbuffer.length) {
                     newBackBuffer[y][x] = backbuffer[y][x];
-                else
+                } else {
                     newBackBuffer[y][x] = new ScreenCharacter(paddingCharacter);
+                }
 
-                if(visibleScreen.length > 0 && x < visibleScreen[0].length && y < visibleScreen.length)
+                if(visibleScreen.length > 0 && x < visibleScreen[0].length && y < visibleScreen.length) {
                     newVisibleScreen[y][x] = visibleScreen[y][x];
-                else
+                } else {
                     newVisibleScreen[y][x] = new ScreenCharacter(paddingCharacter);
+                }
             }
         }
 
@@ -435,25 +428,25 @@ public class Screen
         terminalSize = newSize;
     }
 
-    private static class ScreenPointComparator implements Comparator<TerminalPosition>
-    {
-        public int compare(TerminalPosition o1, TerminalPosition o2)
-        {
-            if(o1.getRow() == o2.getRow())
-                if(o1.getColumn() == o2.getColumn())
+    private static class ScreenPointComparator implements Comparator<TerminalPosition> {
+
+        public int compare(TerminalPosition o1, TerminalPosition o2) {
+            if(o1.getRow() == o2.getRow()) {
+                if(o1.getColumn() == o2.getColumn()) {
                     return 0;
-                else
+                } else {
                     return new Integer(o1.getColumn()).compareTo(o2.getColumn());
-            else
+                }
+            } else {
                 return new Integer(o1.getRow()).compareTo(o2.getRow());
+            }
         }
     }
 
-    private class TerminalResizeListener implements Terminal.ResizeListener
-    {
+    private class TerminalResizeListener implements Terminal.ResizeListener {
+
         @Override
-        public void onResized(Terminal terminal, TerminalSize newSize)
-        {
+        public void onResized(Terminal terminal, TerminalSize newSize) {
             synchronized(resizeQueue) {
                 if(!terminalSize.equals(newSize)) {
                     resizeQueue.add(newSize);
@@ -462,8 +455,8 @@ public class Screen
         }
     }
 
-    private class Writer
-    {
+    private class Writer {
+
         private TextColor currentForegroundColor;
         private TextColor currentBackgroundColor;
         private boolean currentlyIsBold;
@@ -472,8 +465,7 @@ public class Screen
         private boolean currentlyIsBlinking;
         private boolean currentlyIsBordered;
 
-        public Writer()
-        {
+        public Writer() {
             currentForegroundColor = TextColor.ANSI.DEFAULT;
             currentBackgroundColor = TextColor.ANSI.DEFAULT;
             currentlyIsBold = false;
@@ -483,8 +475,7 @@ public class Screen
             currentlyIsBordered = false;
         }
 
-        void setCursorPosition(int x, int y)
-        {
+        void setCursorPosition(int x, int y) {
             terminal.moveCursor(x, y);
         }
 
@@ -492,14 +483,12 @@ public class Screen
             terminal.setCursorVisible(visible);
         }
 
-        void writeCharacter(ScreenCharacter character)
-        {
-            if (currentlyIsBlinking != character.isBlinking()) {
-                if (character.isBlinking()) {
+        void writeCharacter(ScreenCharacter character) {
+            if(currentlyIsBlinking != character.isBlinking()) {
+                if(character.isBlinking()) {
                     terminal.applySGR(Terminal.SGR.ENTER_BLINK);
                     currentlyIsBlinking = true;
-                }
-                else {
+                } else {
                     terminal.applySGR(Terminal.SGR.RESET_ALL);
                     character.getBackgroundColor().applyAsBackground(terminal);
                     character.getForegroundColor().applyAsForeground(terminal);
@@ -512,13 +501,13 @@ public class Screen
                     currentlyIsBordered = false;
                 }
             }
-            if(currentForegroundColor != character.getForegroundColor() &&
-                    !currentForegroundColor.equals(character.getForegroundColor())) {
+            if(currentForegroundColor != character.getForegroundColor()
+                    && !currentForegroundColor.equals(character.getForegroundColor())) {
                 character.getForegroundColor().applyAsForeground(terminal);
                 currentForegroundColor = character.getForegroundColor();
             }
-            if(currentBackgroundColor != character.getBackgroundColor() &&
-                    !currentBackgroundColor.equals(character.getBackgroundColor())) {
+            if(currentBackgroundColor != character.getBackgroundColor()
+                    && !currentBackgroundColor.equals(character.getBackgroundColor())) {
                 character.getBackgroundColor().applyAsBackground(terminal);
                 currentBackgroundColor = character.getBackgroundColor();
             }
@@ -526,8 +515,7 @@ public class Screen
                 if(character.isBold()) {
                     terminal.applySGR(Terminal.SGR.ENTER_BOLD);
                     currentlyIsBold = true;
-                }
-                else {
+                } else {
                     terminal.applySGR(Terminal.SGR.EXIT_BOLD);
                     currentlyIsBold = false;
                 }
@@ -536,8 +524,7 @@ public class Screen
                 if(character.isUnderline()) {
                     terminal.applySGR(Terminal.SGR.ENTER_UNDERLINE);
                     currentlyIsUnderline = true;
-                }
-                else {
+                } else {
                     terminal.applySGR(Terminal.SGR.EXIT_UNDERLINE);
                     currentlyIsUnderline = false;
                 }
@@ -546,8 +533,7 @@ public class Screen
                 if(character.isNegative()) {
                     terminal.applySGR(Terminal.SGR.ENTER_REVERSE);
                     currentlyIsNegative = true;
-                }
-                else {
+                } else {
                     terminal.applySGR(Terminal.SGR.EXIT_REVERSE);
                     currentlyIsNegative = false;
                 }
@@ -556,8 +542,7 @@ public class Screen
                 if(character.isBordered()) {
                     terminal.applySGR(Terminal.SGR.ENTER_BORDERED);
                     currentlyIsBordered = true;
-                }
-                else {
+                } else {
                     terminal.applySGR(Terminal.SGR.EXIT_BORDERED);
                     currentlyIsBordered = false;
                 }
@@ -565,8 +550,7 @@ public class Screen
             terminal.putCharacter(character.getCharacter());
         }
 
-        void reset()
-        {
+        void reset() {
             terminal.applySGR(Terminal.SGR.RESET_ALL);
             terminal.moveCursor(0, 0);
 

@@ -16,20 +16,20 @@
  * 
  * Copyright (C) 2010-2014 Martin
  */
-
 package com.googlecode.lanterna.screen;
 
 /**
  * What to do about the tab character when putting on a {@code Screen}
+ *
  * @author martin
  */
 public enum TabBehaviour {
+
     CONVERT_TO_ONE_SPACE,
     CONVERT_TO_FOUR_SPACES,
     CONVERT_TO_EIGHT_SPACES,
     ALIGN_TO_COLUMN_4,
-    ALIGN_TO_COLUMN_8,
-    ;
+    ALIGN_TO_COLUMN_8,;
 
     public String replaceTabs(String string, int x) {
         int tabPosition = string.indexOf('\t');
@@ -41,7 +41,7 @@ public enum TabBehaviour {
         }
         return string;
     }
-    
+
     private String getTabReplacement(int x) {
         int align = 0;
         switch(this) {
@@ -59,8 +59,9 @@ public enum TabBehaviour {
                 break;
         }
         StringBuilder replace = new StringBuilder();
-        for(int i = 0; i < align; i++)
+        for(int i = 0; i < align; i++) {
             replace.append(" ");
+        }
         return replace.toString();
     }
 }

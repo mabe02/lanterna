@@ -16,7 +16,6 @@
  * 
  * Copyright (C) 2010-2014 Martin
  */
-
 package com.googlecode.lanterna.screen;
 
 import java.util.Arrays;
@@ -28,52 +27,48 @@ import com.googlecode.lanterna.terminal.TextColor;
 
 /**
  * Helper class to write to a Screen, a bit like a pen in graphical environments.
+ *
  * @author Martin
  */
-public class ScreenWriter
-{
+public class ScreenWriter {
+
     private final Screen targetScreen;
     private TerminalPosition currentPosition;
     private TextColor foregroundColor;
     private TextColor backgroundColor;
 
-    public ScreenWriter(final Screen targetScreen)
-    {
+    public ScreenWriter(final Screen targetScreen) {
         this.foregroundColor = TextColor.ANSI.DEFAULT;
         this.backgroundColor = TextColor.ANSI.DEFAULT;
         this.targetScreen = targetScreen;
         this.currentPosition = new TerminalPosition(0, 0);
     }
 
-    public TextColor getBackgroundColor()
-    {
+    public TextColor getBackgroundColor() {
         return backgroundColor;
     }
 
-    public void setBackgroundColor(final TextColor backgroundColor)
-    {
+    public void setBackgroundColor(final TextColor backgroundColor) {
         this.backgroundColor = backgroundColor;
     }
 
-    public TextColor getForegroundColor()
-    {
+    public TextColor getForegroundColor() {
         return foregroundColor;
     }
 
     public Screen getTargetScreen() {
-		return targetScreen;
-	}
+        return targetScreen;
+    }
 
-    public void setForegroundColor(final TextColor foregroundColor)
-    {
+    public void setForegroundColor(final TextColor foregroundColor) {
         this.foregroundColor = foregroundColor;
     }
 
-    public void fillScreen(char c)
-    {
+    public void fillScreen(char c) {
         StringBuilder sb = new StringBuilder();
-        for(int i = 0; i < targetScreen.getTerminalSize().getColumns(); i++)
+        for(int i = 0; i < targetScreen.getTerminalSize().getColumns(); i++) {
             sb.append(c);
+        }
 
         String line = sb.toString();
         for(int i = 0; i < targetScreen.getTerminalSize().getRows(); i++) {
@@ -83,50 +78,48 @@ public class ScreenWriter
 
     /**
      * Draws a string on the screen at a particular position
+     *
      * @param x 0-indexed column number of where to put the first character in the string
      * @param y 0-indexed row number of where to put the first character in the string
      * @param string Text to put on the screen
      * @param styles Additional styles to apply to the text
      */
-    public void drawString(final int x, final int y, final String string, final ScreenCharacterStyle... styles)
-    {
-    	if (! string.contains("\n") && ! string.contains("\r")) { 
-    		currentPosition = currentPosition.withColumn(x).withRow(y);
-    		targetScreen.putString(x, y, string, foregroundColor, backgroundColor, styles);
-    		currentPosition = currentPosition.withColumn(currentPosition.getColumn() + string.length());
-    	} else {
-    		currentPosition = currentPosition.withColumn(x).withRow(y);
-    		int lines=1;
-    		for (String line : string.split("[\n\r]")) {
-    			lines++;
-    			targetScreen.putString(x, y+lines, line, foregroundColor, backgroundColor, styles);
-    		}
-    		currentPosition = currentPosition
-    				.withRow(currentPosition.getRow() + lines)
-    				.withColumn(currentPosition.getColumn() + string.length());
-    	}
+    public void drawString(final int x, final int y, final String string, final ScreenCharacterStyle... styles) {
+        if(!string.contains("\n") && !string.contains("\r")) {
+            currentPosition = currentPosition.withColumn(x).withRow(y);
+            targetScreen.putString(x, y, string, foregroundColor, backgroundColor, styles);
+            currentPosition = currentPosition.withColumn(currentPosition.getColumn() + string.length());
+        } else {
+            currentPosition = currentPosition.withColumn(x).withRow(y);
+            int lines = 1;
+            for(String line : string.split("[\n\r]")) {
+                lines++;
+                targetScreen.putString(x, y + lines, line, foregroundColor, backgroundColor, styles);
+            }
+            currentPosition = currentPosition
+                    .withRow(currentPosition.getRow() + lines)
+                    .withColumn(currentPosition.getColumn() + string.length());
+        }
     }
 
     public void drawCharacter(final int x, final int y, final char character, final ScreenCharacterStyle... styles) {
-    	Set<ScreenCharacterStyle> styleSet = new HashSet<ScreenCharacterStyle>();
-    	styleSet.addAll(Arrays.asList(styles));
-    	ScreenCharacter screenCharacter = new ScreenCharacter(character, getForegroundColor(), getBackgroundColor(), styleSet);
-    	targetScreen.putCharacter(x, y, screenCharacter);
+        Set<ScreenCharacterStyle> styleSet = new HashSet<ScreenCharacterStyle>();
+        styleSet.addAll(Arrays.asList(styles));
+        ScreenCharacter screenCharacter = new ScreenCharacter(character, getForegroundColor(), getBackgroundColor(), styleSet);
+        targetScreen.putCharacter(x, y, screenCharacter);
     }
 
-
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return targetScreen.hashCode();
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
-        if(obj instanceof ScreenWriter == false)
+    public boolean equals(Object obj) {
+        if(obj instanceof ScreenWriter == false) {
             return false;
+        }
 
-        return targetScreen.equals(((ScreenWriter)(obj)).targetScreen);
+        return targetScreen.equals(((ScreenWriter) (obj)).targetScreen);
     }
 }
