@@ -99,7 +99,7 @@ public class InputDecoder {
             TerminalPosition cursorPosition = ScreenInfoCharacterPattern.getCursorPosition(currentMatching.subList(0, nrOfCharactersMatched));
             if(cursorPosition.getColumn() == 5 && cursorPosition.getRow() == 1) {
                 //Special case for CTRL + F3
-                bestMatch = new KeyStroke(KeyType.F3, null, true, false);
+                bestMatch = new KeyStroke(KeyType.F3, true, false);
             }
             else {
                 lastReportedTerminalPosition = cursorPosition;

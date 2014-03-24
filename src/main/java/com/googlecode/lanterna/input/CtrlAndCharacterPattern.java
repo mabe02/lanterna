@@ -29,7 +29,7 @@ public class CtrlAndCharacterPattern implements CharacterPattern {
     @Override
     public KeyStroke getResult(List<Character> matching) {
         int firstCode = 'a' - 1;
-        return new KeyStroke(KeyType.Character, (char) (firstCode + (int) matching.get(0).charValue()), true, false);
+        return new KeyStroke((char) (firstCode + (int) matching.get(0).charValue()), true, false);
     }
 
     @Override

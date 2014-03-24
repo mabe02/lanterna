@@ -24,7 +24,7 @@ public class NormalCharacterPattern implements CharacterPattern {
 
     @Override
     public KeyStroke getResult(List<Character> matching) {
-        return new KeyStroke(KeyType.Character, matching.get(0), false, false);
+        return new KeyStroke(matching.get(0), false, false);
     }
 
     @Override

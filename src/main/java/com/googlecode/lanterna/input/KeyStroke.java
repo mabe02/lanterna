@@ -28,6 +28,11 @@ import java.util.Arrays;
  * coming from the system's standard input. Because of this, the class can only represent what can be read and 
  * interpreted from the input stream; for example, certain key-combinations like ctrl+i is indistiguishable from a tab
  * key press.
+ * <p/>
+ * Use the <tt>keyType</tt> field to determine what kind of key was pressed. For ordinary letters, numbers and symbols, the 
+ * <tt>keyType</tt> will be <tt>KeyType.Character</tt> and the actual character value of the key is in the 
+ * <tt>character</tt> field. Please note that return (\n) and tab (\t) are not sorted under type <tt>KeyType.Character</tt>
+ * but <tt>KeyType.Enter</tt> and <tt>KeyType.Tab</tt> instead.
  * @author martin
  */
 public class KeyStroke {
@@ -37,19 +42,39 @@ public class KeyStroke {
     private final boolean altDown;
     private final long eventTime;
 
+    /**
+     * Constructs a KeyStroke based on a supplied keyType; character will be null and both ctrl and alt will be 
+     * considered not pressed. If you try to construct a KeyStroke with type KeyType.Character with this constructor, it
+     * will always throw an exception; use another overload that allows you to specify the character value instead.
+     * @param keyType Type of the key pressed by this keystroke
+     */
     public KeyStroke(KeyType keyType) {
         this(keyType, false, false);
     }
 
+    /**
+     * Constructs a KeyStroke based on a supplied keyType; character will be null.
+     * If you try to construct a KeyStroke with type KeyType.Character with this constructor, it
+     * will always throw an exception; use another overload that allows you to specify the character value instead.
+     * @param keyType Type of the key pressed by this keystroke
+     * @param ctrlDown Was ctrl held down when the main key was pressed?
+     * @param altDown Was alt held down when the main key was pressed?
+     */
     public KeyStroke(KeyType keyType, boolean ctrlDown, boolean altDown) {
         this(keyType, null, ctrlDown, altDown);
     }
     
+    /**
+     * Constructs a KeyStroke based on a supplied character, keyType is implicitly KeyType.Character.
+     * @param character Character that was typed on the keyboard
+     * @param ctrlDown Was ctrl held down when the main key was pressed?
+     * @param altDown Was alt held down when the main key was pressed?
+     */
     public KeyStroke(Character character, boolean ctrlDown, boolean altDown) {
         this(KeyType.Character, character, ctrlDown, altDown);
     }
     
-    public KeyStroke(KeyType keyType, Character character, boolean ctrlDown, boolean altDown) {
+    private KeyStroke(KeyType keyType, Character character, boolean ctrlDown, boolean altDown) {
         if(keyType == KeyType.Character && character == null) {
             throw new IllegalArgumentException("Cannot construct a KeyStroke with type KeyType.Character but no character information");
         }
@@ -60,22 +85,44 @@ public class KeyStroke {
         this.eventTime = System.currentTimeMillis();
     }
 
+    /**
+     * Type of key that was pressed on the keyboard, as represented by the KeyType enum. If the value if 
+     * KeyType.Character, you need to call getCharacter() to find out which letter, number or symbol that was actually
+     * pressed.
+     * @return Type of key on the keyboard that was pressed
+     */
     public KeyType getKeyType() {
         return keyType;
     }
 
+    /**
+     * For keystrokes of ordinary keys (letters, digits, symbols), this method returns the actual character value of the
+     * key. For all other key types, it returns null.
+     * @return Character value of the key pressed, or null if it was a special key
+     */
     public Character getCharacter() {
         return character;
     }
 
+    /**
+     * @return Returns true if ctrl was help down while the key was typed (depending on terminal implementation)
+     */
     public boolean isCtrlDown() {
         return ctrlDown;
     }
 
+    /**
+     * @return Returns true if alt was help down while the key was typed (depending on terminal implementation)
+     */
     public boolean isAltDown() {
         return altDown;
     }
 
+    /**
+     * Gets the time when the keystroke was recorded. This isn't necessarily the time the keystroke happened, but when
+     * Lanterna received the event, so it may not be accurate down to the millisecond.
+     * @return The unixtime of when the keystroke happened, in milliseconds
+     */
     public long getEventTime() {
         return eventTime;
     }
