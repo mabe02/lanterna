@@ -20,7 +20,12 @@ package com.googlecode.lanterna.input;
 
 
 /**
- * 
+ * This enum is a categorization of the various keys available on a normal computer keyboard that are usable 
+ * (detectable) by a terminal environment. For ordinary numbers, letters and symbols, the enum value is <i>Character</i>
+ * but please keep in mind that newline and tab, usually represented by \n and \t, are considered their own separate
+ * values by this enum (<i>Enter</i> and <i>Tab</i>).
+ * <p/>
+ * Previously (before Lanterna 3.0), this enum was embedded inside the Key class.
  *
  * @author Martin
  */
