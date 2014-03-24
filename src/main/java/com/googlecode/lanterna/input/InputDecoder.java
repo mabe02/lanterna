@@ -81,6 +81,8 @@ public class InputDecoder {
                 nrOfCharactersMatched = i + 1;
             }
             else if(bestMatch == null && !matching.partialMatch) {
+                //No match, not even a partial match, then clear the input buffer, otherwise we'll never ever match anything
+                subList.clear();
                 break;
             }
         }
