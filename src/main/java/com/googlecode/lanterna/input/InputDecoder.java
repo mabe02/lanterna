@@ -41,11 +41,6 @@ public class InputDecoder {
         this.lastReportedTerminalPosition = null;
     }
 
-    public InputDecoder(final Reader source, final KeyDecodingProfile profile) {
-        this(source);
-        addProfile(profile);
-    }
-
     public void addProfile(KeyDecodingProfile profile) {
         for (CharacterPattern pattern : profile.getPatterns()) {
             bytePatterns.add(pattern);
