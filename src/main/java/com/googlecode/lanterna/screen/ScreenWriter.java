@@ -32,12 +32,12 @@ import com.googlecode.lanterna.terminal.TextColor;
  */
 public class ScreenWriter {
 
-    private final Screen targetScreen;
+    private final DefaultScreenImpl targetScreen;
     private TerminalPosition currentPosition;
     private TextColor foregroundColor;
     private TextColor backgroundColor;
 
-    public ScreenWriter(final Screen targetScreen) {
+    public ScreenWriter(final DefaultScreenImpl targetScreen) {
         this.foregroundColor = TextColor.ANSI.DEFAULT;
         this.backgroundColor = TextColor.ANSI.DEFAULT;
         this.targetScreen = targetScreen;
@@ -56,7 +56,7 @@ public class ScreenWriter {
         return foregroundColor;
     }
 
-    public Screen getTargetScreen() {
+    public DefaultScreenImpl getTargetScreen() {
         return targetScreen;
     }
 

@@ -19,7 +19,7 @@
 
 package com.googlecode.lanterna.test.screen;
 
-import com.googlecode.lanterna.screen.Screen;
+import com.googlecode.lanterna.screen.DefaultScreenImpl;
 import com.googlecode.lanterna.screen.ScreenCharacterStyle;
 import com.googlecode.lanterna.screen.ScreenWriter;
 import com.googlecode.lanterna.terminal.TextColor;
@@ -34,7 +34,7 @@ public class TerminalColorTest
 {
     public static void main(String[] args) throws IOException 
     {
-        Screen screen = new TestTerminalFactory(args).createScreen();
+        DefaultScreenImpl screen = new TestTerminalFactory(args).createScreen();
         screen.startScreen();
 
         ScreenWriter writer = new ScreenWriter(screen);

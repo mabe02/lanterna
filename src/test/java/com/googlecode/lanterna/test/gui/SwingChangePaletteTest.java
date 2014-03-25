@@ -28,7 +28,7 @@ import com.googlecode.lanterna.gui.component.Button;
 import com.googlecode.lanterna.gui.component.EmptySpace;
 import com.googlecode.lanterna.gui.component.Panel;
 import com.googlecode.lanterna.gui.dialog.MessageBox;
-import com.googlecode.lanterna.screen.Screen;
+import com.googlecode.lanterna.screen.DefaultScreenImpl;
 import com.googlecode.lanterna.terminal.swing.SwingTerminal;
 import com.googlecode.lanterna.terminal.swing.TerminalPalette;
 import java.lang.reflect.Field;
@@ -42,7 +42,7 @@ public class SwingChangePaletteTest {
     public static void main(String[] args) throws Exception
     {
         final SwingTerminal swingTerminal = new SwingTerminal();
-        final GUIScreen guiScreen = new GUIScreen(new Screen(swingTerminal));
+        final GUIScreen guiScreen = new GUIScreen(new DefaultScreenImpl(swingTerminal));
         guiScreen.getScreen().startScreen();
         final Window window1 = new Window("Palette Switcher");
 

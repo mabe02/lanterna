@@ -19,7 +19,7 @@
 
 package com.googlecode.lanterna.test.screen;
 
-import com.googlecode.lanterna.screen.Screen;
+import com.googlecode.lanterna.screen.DefaultScreenImpl;
 import com.googlecode.lanterna.screen.ScreenWriter;
 import com.googlecode.lanterna.test.TestTerminalFactory;
 import java.io.IOException;
@@ -31,7 +31,7 @@ import java.io.IOException;
 public class TerminalTest
 {
     public static void main(String[] args) throws IOException {
-        Screen screen = new TestTerminalFactory(args).createScreen();
+        DefaultScreenImpl screen = new TestTerminalFactory(args).createScreen();
         ScreenWriter writer = new ScreenWriter(screen);
         screen.startScreen();
         try {

@@ -5,7 +5,7 @@
 package com.googlecode.lanterna.test.issue;
 
 import com.googlecode.lanterna.TerminalFacade;
-import com.googlecode.lanterna.screen.Screen;
+import com.googlecode.lanterna.screen.DefaultScreenImpl;
 import com.googlecode.lanterna.terminal.Terminal;
 import java.io.IOException;
 
@@ -17,7 +17,7 @@ public class Issue78 {
     public static void main(String[] args) throws IOException {
         Terminal t = TerminalFacade.createTextTerminal();
         t.enterPrivateMode();
-        Screen s = new Screen(t);
+        DefaultScreenImpl s = new DefaultScreenImpl(t);
         s.startScreen();
         try {
             Thread.sleep(1000);

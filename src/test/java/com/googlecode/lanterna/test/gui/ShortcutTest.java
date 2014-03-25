@@ -31,7 +31,7 @@ import com.googlecode.lanterna.gui.component.Panel;
 import com.googlecode.lanterna.gui.dialog.MessageBox;
 import com.googlecode.lanterna.gui.layout.LinearLayout;
 import com.googlecode.lanterna.input.KeyType;
-import com.googlecode.lanterna.screen.Screen;
+import com.googlecode.lanterna.screen.DefaultScreenImpl;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.text.UnixTerminal;
 import com.googlecode.lanterna.test.TestTerminalFactory;
@@ -49,7 +49,7 @@ public class ShortcutTest {
             terminal = new UnixTerminal(System.in, System.out, Charset.forName("UTF-8"),
                                             null, UnixTerminal.Behaviour.DEFAULT);
         }
-        final GUIScreen guiScreen = new GUIScreen(new Screen(terminal));
+        final GUIScreen guiScreen = new GUIScreen(new DefaultScreenImpl(terminal));
         guiScreen.getScreen().startScreen();
         guiScreen.setBackgroundRenderer(new DefaultBackgroundRenderer("GUI Test"));
 

@@ -19,7 +19,7 @@
 
 package com.googlecode.lanterna.test.screen;
 
-import com.googlecode.lanterna.screen.Screen;
+import com.googlecode.lanterna.screen.DefaultScreenImpl;
 import com.googlecode.lanterna.screen.ScreenCharacterStyle;
 import com.googlecode.lanterna.screen.ScreenWriter;
 import com.googlecode.lanterna.terminal.TerminalPosition;
@@ -38,7 +38,7 @@ public class ScreenResizeTest
         new ScreenResizeTest(args);
     }
 
-    private Screen screen;
+    private DefaultScreenImpl screen;
     @SuppressWarnings("unused")
 	private boolean willResize;
 
