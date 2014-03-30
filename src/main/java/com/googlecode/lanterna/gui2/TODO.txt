@@ -5,6 +5,6 @@
  * Menus
  * TextBox fill character (Issue 66)
  * Telnet support
- * Proper Table class
+ * Proper Table class (+scroll)
  * Manual setFocus() for components
  * Resize terminal (http://invisible-island.net/xterm/ctlseqs/ctlseqs.html)
