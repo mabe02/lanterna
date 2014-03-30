@@ -137,58 +137,93 @@ public class InputDecoder
     }
 
     private Key getNextCharacter2() throws IOException {
-        try {
-            while(source.ready()) {
-                int readChar = source.read();
-                if(readChar == -1)
-                    return null;
-
-                inputBuffer.add((char)readChar);
+        while (source.ready()) {
+            int readChar = source.read();
+            if (readChar == -1) {
+                return null;
             }
-        }
-        catch(IOException e) {
-            throw new LanternaException(e);
+            currentMatching.add((char) readChar);
         }
 
-        if(inputBuffer.size() == 0) {
+        //Return null if we don't have anything from the input buffer (nothing was pressed?)
+        if (currentMatching.isEmpty()) {
             return null;
         }
 
-        int largestMatchCharacters = -1;
-        Key largestMatch = null;
-        LinkedList<CharacterPattern> candidates = new LinkedList<CharacterPattern>(bytePatterns);
-        
-        while(!candidates.isEmpty()) {
-            //Check all patterns
-            Character nextChar = inputBuffer.poll();
-            if(nextChar == null) {
+        Key bestMatch = null;
+        int nrOfCharactersMatched = 0;
+
+        //Slowly iterate by adding characters, until either the buffer is empty or no pattern matches
+        for(int i = 0; i < currentMatching.size(); i++) {
+            List<Character> subList = currentMatching.subList(0, i + 1);
+            Matching matching = getBestMatch(subList);
+            if(bestMatch != null && matching.fullMatch == null && !matching.partialMatch) {
                 break;
             }
-            currentMatching.add(nextChar);
-            
+            else if(matching.fullMatch != null) {
+                bestMatch = matching.fullMatch;
+                nrOfCharactersMatched = i + 1;
+            }
+            else if(bestMatch == null && !matching.partialMatch) {
+                //No match, not even a partial match, then clear the input buffer, otherwise we'll never ever match anything
+                subList.clear();
+                break;
+            }
+        }
+
+        //Did we find anything? Otherwise return null
+        if(bestMatch == null) {
+            return null;
+        }
+
+        if (bestMatch.getKind() == Key.Kind.CursorLocation) {
+            TerminalPosition cursorPosition = ScreenInfoCharacterPattern.getCursorPosition(currentMatching.subList(0, nrOfCharactersMatched));
+            if(cursorPosition.getColumn() == 5 && cursorPosition.getRow() == 1) {
+                //Special case for CTRL + F3
+                bestMatch = new Key(Key.Kind.F3, true, false);
+            }
+            else {
+                lastReportedTerminalPosition = cursorPosition;
+            }
+        }
+
+        currentMatching.subList(0, nrOfCharactersMatched).clear();
+        return bestMatch;
+    }
+    
+    private Matching getBestMatch(List<Character> characterSequence) {
+        boolean partialMatch = false;
+        Key bestMatch = null;
+        LinkedList<CharacterPattern> candidates = new LinkedList<CharacterPattern>(bytePatterns);
+        for(int i = 0; i < characterSequence.size(); i++) {
             Iterator<CharacterPattern> iterator = candidates.iterator();
-            while(iterator.hasNext()) {
+            while (iterator.hasNext()) {
                 CharacterPattern pattern = iterator.next();
-                if(!pattern.matches(currentMatching)) {
+                if (!pattern.matches(characterSequence)) {
                     iterator.remove();
                     continue;
                 }
-                if(pattern.isCompleteMatch(currentMatching)) {
-                    Key result = pattern.getResult(currentMatching);
-                    largestMatchCharacters = currentMatching.size();
-                    largestMatch = result;
-                    if(result.getKind() == Key.Kind.CursorLocation)
-                        lastReportedTerminalPosition = ScreenInfoCharacterPattern.getCursorPosition(currentMatching);
+                partialMatch = true;
+                if (pattern.isCompleteMatch(characterSequence)) {
+                    bestMatch = pattern.getResult(characterSequence);
                 }
             }
         }
-        
-        if(largestMatch == null) {
-            return null;
+        return new Matching(partialMatch, bestMatch);
+    }
+    
+    private static class Matching {
+        boolean partialMatch;
+        Key fullMatch;
+
+        public Matching(boolean partialMatch, Key fullMatch) {
+            this.partialMatch = partialMatch;
+            this.fullMatch = fullMatch;
         }
-        for(int i = 0; i < largestMatchCharacters; i++) {
-            currentMatching.remove(0);
+
+        @Override
+        public String toString() {
+            return "Matching{" + "partialMatch=" + partialMatch + ", fullMatch=" + fullMatch + '}';
         }
-        return largestMatch;
     }
 }
