@@ -26,6 +26,11 @@ package com.googlecode.lanterna.terminal;
  * @author Martin
  */
 public class TerminalPosition {
+    
+    /**
+     * Constant for the top-left corner (0x0)
+     */
+    public static final TerminalPosition TOP_LEFT_CORNER = new TerminalPosition(0, 0);
 
     private final int row;
     private final int column;
@@ -72,6 +77,9 @@ public class TerminalPosition {
      * @return A TerminalPosition object with the same column as this but with a specified row index
      */
     public TerminalPosition withRow(int row) {
+        if(row == 0 && this.column == 0) {
+            return TOP_LEFT_CORNER;
+        }
         return new TerminalPosition(this.column, row);
     }
     
@@ -82,6 +90,9 @@ public class TerminalPosition {
      * @return A TerminalPosition object with the same row as this but with a specified column index
      */
     public TerminalPosition withColumn(int column) {
+        if(column == 0 && this.row == 0) {
+            return TOP_LEFT_CORNER;
+        }
         return new TerminalPosition(column, this.row);
     }
 
