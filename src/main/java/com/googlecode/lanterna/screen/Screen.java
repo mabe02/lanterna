@@ -19,7 +19,7 @@
 package com.googlecode.lanterna.screen;
 
 import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.terminal.Terminal;
+import com.googlecode.lanterna.terminal.ResizeListener;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.terminal.TextColor;
@@ -159,13 +159,13 @@ public interface Screen {
      * trigger something that your main thread can wake up on and take appropriate actions.
      * @param listener Listener to be invoked when the user resizes the terminal
      */
-    void addTerminalResizeListener(Terminal.ResizeListener listener);
+    void addResizeListener(ResizeListener listener);
     
     /**
      * Helper method to allow you to unsubscribe to resize events, when the user resizes the terminal.
      * @param listener Listener that should no longer be invoked when the user resizes the terminal
      */
-    void removeTerminalResizeListener(Terminal.ResizeListener listener);
+    void removeResizeListener(ResizeListener listener);
     
     /**
      * This enum represents the different ways a Screen can refresh the screen, moving the back-buffer data into the

@@ -21,6 +21,7 @@ package com.googlecode.lanterna.screen;
 import com.googlecode.lanterna.CJKUtils;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
+import com.googlecode.lanterna.terminal.ResizeListener;
 import com.googlecode.lanterna.terminal.TextColor;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalPosition;
@@ -459,7 +460,7 @@ public class DefaultScreenImpl implements Screen {
         }
     }
 
-    private class TerminalResizeListener implements Terminal.ResizeListener {
+    private class TerminalResizeListener implements ResizeListener {
 
         @Override
         public void onResized(Terminal terminal, TerminalSize newSize) {

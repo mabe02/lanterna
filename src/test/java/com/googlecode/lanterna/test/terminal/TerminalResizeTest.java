@@ -21,6 +21,7 @@ package com.googlecode.lanterna.test.terminal;
 
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
+import com.googlecode.lanterna.terminal.ResizeListener;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.test.TestTerminalFactory;
@@ -30,7 +31,7 @@ import java.io.IOException;
  *
  * @author Martin
  */
-public class TerminalResizeTest implements Terminal.ResizeListener
+public class TerminalResizeTest implements ResizeListener
 {
     private static Terminal terminal;
 

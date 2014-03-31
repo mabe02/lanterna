@@ -25,10 +25,10 @@ package com.googlecode.lanterna.terminal;
  * 
  * @author martin
  */
-public class SimpleTerminalResizeListener implements Terminal.ResizeListener {
+public class SimpleTerminalResizeListener implements ResizeListener {
 
-    private boolean wasResized;
-    private TerminalSize lastKnownSize;
+    boolean wasResized;
+    TerminalSize lastKnownSize;
 
     /**
      * Creates a new SimpleTerminalResizeListener
