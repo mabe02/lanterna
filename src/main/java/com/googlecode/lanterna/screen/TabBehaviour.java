@@ -19,18 +19,69 @@
 package com.googlecode.lanterna.screen;
 
 /**
- * What to do about the tab character when putting on a {@code Screen}
+ * What to do about the tab character when putting on a {@code Screen}. Since tabs are a bit special, their meaning
+ * depends on which column the cursor is in when it's printed, we'll need to have some way to tell the Screen what to
+ * do when encountering a tab character.
  *
  * @author martin
  */
 public enum TabBehaviour {
+    /**
+     * Tab characters are not replaced, this will probably have undefined and weird behaviour!
+     */
+    IGNORE(null, null),
+    /**
+     * Tab characters are replaced with a single blank space, no matter where the tab was placed.
+     */
+    CONVERT_TO_ONE_SPACE(1, null),
+    /**
+     * Tab characters are replaced with two blank spaces, no matter where the tab was placed.
+     */
+    CONVERT_TO_TWO_SPACES(2, null),
+    /**
+     * Tab characters are replaced with three blank spaces, no matter where the tab was placed.
+     */
+    CONVERT_TO_THREE_SPACES(3, null),
+    /**
+     * Tab characters are replaced with four blank spaces, no matter where the tab was placed.
+     */
+    CONVERT_TO_FOUR_SPACES(4, null),
+    /**
+     * Tab characters are replaced with eight blank spaces, no matter where the tab was placed.
+     */
+    CONVERT_TO_EIGHT_SPACES(8, null),
+    /**
+     * Tab characters are replaced with enough space characters to reach the next column index that is evenly divisible
+     * by 2, simulating a normal tab character when placed inside a text document.
+     */
+    ALIGN_TO_COLUMN_2(null, 2),
+    /**
+     * Tab characters are replaced with enough space characters to reach the next column index that is evenly divisible
+     * by 4, simulating a normal tab character when placed inside a text document.
+     */
+    ALIGN_TO_COLUMN_4(null, 4),
+    /**
+     * Tab characters are replaced with enough space characters to reach the next column index that is evenly divisible
+     * by 8, simulating a normal tab character when placed inside a text document.
+     */
+    ALIGN_TO_COLUMN_8(null, 8),
+    ;
 
-    CONVERT_TO_ONE_SPACE,
-    CONVERT_TO_FOUR_SPACES,
-    CONVERT_TO_EIGHT_SPACES,
-    ALIGN_TO_COLUMN_4,
-    ALIGN_TO_COLUMN_8,;
+    private final Integer replaceFactor;
+    private final Integer alignFactor;
 
+    private TabBehaviour(Integer replaceFactor, Integer alignFactor) {
+        this.replaceFactor = replaceFactor;
+        this.alignFactor = alignFactor;
+    }
+    
+    /**
+     * Given a string, being placed on the screen at column X, returns the same string with all tab characters (\t) 
+     * replaced according to this TabBehaviour.
+     * @param string String that is going to be put to the screen, potentially containing tab characters
+     * @param x Column on the screen where the first character of the string is going to end up
+     * @return The input string with all tab characters replaced with spaces, according to this TabBehaviour
+     */
     public String replaceTabs(String string, int x) {
         int tabPosition = string.indexOf('\t');
         while(tabPosition != -1) {
@@ -43,23 +94,18 @@ public enum TabBehaviour {
     }
 
     private String getTabReplacement(int x) {
-        int align = 0;
-        switch(this) {
-            case CONVERT_TO_ONE_SPACE:
-                return " ";
-            case CONVERT_TO_FOUR_SPACES:
-                return "    ";
-            case CONVERT_TO_EIGHT_SPACES:
-                return "        ";
-            case ALIGN_TO_COLUMN_4:
-                align = 4 - (x % 4);
-                break;
-            case ALIGN_TO_COLUMN_8:
-                align = 8 - (x % 8);
-                break;
-        }
+        int replaceCount;
         StringBuilder replace = new StringBuilder();
-        for(int i = 0; i < align; i++) {
+        if(replaceFactor != null) {
+            replaceCount = replaceFactor;
+        }
+        else if (alignFactor != null) {
+            replaceCount = alignFactor - (x % alignFactor);
+        }
+        else {
+            return "\t";
+        }
+        for(int i = 0; i < replaceCount; i++) {
             replace.append(" ");
         }
         return replace.toString();
