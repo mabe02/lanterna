@@ -35,13 +35,13 @@ public class ResetAllTest {
         terminal.moveCursor(10, 5);
         terminal.putCharacter('H');
         terminal.putCharacter('e');
-        terminal.applySGR(Terminal.SGR.ENTER_BOLD);
+        terminal.enableSGR(Terminal.SGR.BOLD);
         terminal.putCharacter('l');
         terminal.applyForegroundColor(Terminal.ANSIColor.CYAN);
         terminal.putCharacter('l');
-        terminal.applySGR(Terminal.SGR.ENTER_REVERSE);
+        terminal.enableSGR(Terminal.SGR.REVERSE);
         terminal.putCharacter('o');
-        terminal.applySGR(Terminal.SGR.RESET_ALL);
+        terminal.resetAllSGR();
         terminal.putCharacter('!');
         terminal.moveCursor(0, 0);
 

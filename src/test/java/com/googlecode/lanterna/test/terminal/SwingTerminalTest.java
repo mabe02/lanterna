@@ -52,7 +52,7 @@ public class SwingTerminalTest {
         terminal.putCharacter(ACS.SINGLE_LINE_VERTICAL);
         terminal.putCharacter(ACS.SINGLE_LINE_HORIZONTAL);
         terminal.moveCursor(10, 7);
-        terminal.applySGR(Terminal.SGR.ENTER_BOLD);
+        terminal.enableSGR(Terminal.SGR.BOLD);
         terminal.putCharacter('H');
         terminal.putCharacter('e');
         terminal.putCharacter('l');
@@ -70,15 +70,15 @@ public class SwingTerminalTest {
         terminal.putCharacter(ACS.SINGLE_LINE_VERTICAL);
         terminal.putCharacter(ACS.SINGLE_LINE_HORIZONTAL);
         terminal.moveCursor(10, 9);
-        terminal.applySGR(Terminal.SGR.ENTER_UNDERLINE);
+        terminal.enableSGR(Terminal.SGR.UNDERLINE);
         terminal.putCharacter('H');
         terminal.putCharacter('e');
-        terminal.applySGR(Terminal.SGR.EXIT_BOLD);
+        terminal.enableSGR(Terminal.SGR.BOLD);
         terminal.putCharacter('l');
-        terminal.applySGR(Terminal.SGR.EXIT_UNDERLINE);
+        terminal.enableSGR(Terminal.SGR.UNDERLINE);
         terminal.putCharacter('l');
         terminal.putCharacter('o');
-        terminal.applySGR(Terminal.SGR.ENTER_UNDERLINE);
+        terminal.enableSGR(Terminal.SGR.UNDERLINE);
         terminal.putCharacter('!');
         terminal.putCharacter(' ');
         terminal.putCharacter(ACS.HEART);
@@ -91,7 +91,7 @@ public class SwingTerminalTest {
         terminal.putCharacter(ACS.SINGLE_LINE_VERTICAL);
         terminal.putCharacter(ACS.SINGLE_LINE_HORIZONTAL);
         terminal.moveCursor(10, 11);
-        terminal.applySGR(Terminal.SGR.ENTER_BORDERED);
+        terminal.enableSGR(Terminal.SGR.BORDERED);
         terminal.putCharacter('!');
         terminal.putCharacter(' ');
         terminal.putCharacter(ACS.HEART);
@@ -103,7 +103,7 @@ public class SwingTerminalTest {
         terminal.putCharacter(ACS.DOUBLE_LINE_T_DOWN);
         terminal.putCharacter(ACS.SINGLE_LINE_VERTICAL);
         terminal.putCharacter(ACS.SINGLE_LINE_HORIZONTAL);
-        terminal.applySGR(Terminal.SGR.RESET_ALL);
+        terminal.resetAllSGR();
         terminal.moveCursor(0, 0);
 
         Thread.sleep(5000);

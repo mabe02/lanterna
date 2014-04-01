@@ -32,7 +32,7 @@ public class BlinkTest {
         rawTerminal.enterPrivateMode();
         rawTerminal.clearScreen();
         rawTerminal.applyForegroundColor(Terminal.ANSIColor.RED);
-        rawTerminal.applySGR(Terminal.SGR.ENTER_BLINK);
+        rawTerminal.enableSGR(Terminal.SGR.BLINK);
         rawTerminal.moveCursor(10, 10);
         rawTerminal.putCharacter('H');
         rawTerminal.putCharacter('e');

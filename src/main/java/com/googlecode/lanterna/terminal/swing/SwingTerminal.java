@@ -185,32 +185,37 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
     }
 
     @Override
-    public void applySGR(SGR sgr)
-    {
-        if(sgr == SGR.RESET_ALL) {
-            currentlyBold = false;
-            currentlyBlinking = false;
-            currentlyUnderlined = false;
-            currentlyBordered = false;
-            currentForegroundColor = new CharacterANSIColor(ANSIColor.DEFAULT);
-            currentBackgroundColor = new CharacterANSIColor(ANSIColor.BLACK);
-        }
-        else if(sgr == SGR.ENTER_BOLD)
+    public void enableSGR(SGR sgr) {
+        if(sgr == SGR.BOLD)
             currentlyBold = true;
-        else if(sgr == SGR.EXIT_BOLD)
-            currentlyBold = false;
-        else if(sgr == SGR.ENTER_BLINK)
+        else if(sgr == SGR.BLINK)
             currentlyBlinking = true;
-        else if(sgr == SGR.EXIT_BLINK)
-            currentlyBlinking = false;
-        else if(sgr == SGR.ENTER_UNDERLINE)
+        else if(sgr == SGR.UNDERLINE)
             currentlyUnderlined = true;
-        else if(sgr == SGR.EXIT_UNDERLINE)
-            currentlyUnderlined = false;
-        else if(sgr == SGR.ENTER_BORDERED)
+        else if(sgr == SGR.BORDERED)
             currentlyBordered = true;
-        else if(sgr == SGR.EXIT_BORDERED)
+    }
+
+    @Override
+    public void disableSGR(SGR sgr) {
+        if(sgr == SGR.BOLD)
+            currentlyBold = false;
+        else if(sgr == SGR.BLINK)
+            currentlyBlinking = false;
+        else if(sgr == SGR.UNDERLINE)
+            currentlyUnderlined = false;
+        else if(sgr == SGR.BORDERED)
             currentlyBordered = false;
+    }
+
+    @Override
+    public void resetAllSGR() {
+        currentlyBold = false;
+        currentlyBlinking = false;
+        currentlyUnderlined = false;
+        currentlyBordered = false;
+        currentForegroundColor = new CharacterANSIColor(ANSIColor.DEFAULT);
+        currentBackgroundColor = new CharacterANSIColor(ANSIColor.BLACK);
     }
 
     @Override

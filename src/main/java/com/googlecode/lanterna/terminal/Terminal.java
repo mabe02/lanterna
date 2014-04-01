@@ -106,7 +106,11 @@ public interface Terminal extends InputProvider {
      * @see Terminal.SGR
      * @see http://www.vt100.net/docs/vt510-rm/SGR
      */
-    public void applySGR(SGR sgr);
+    public void enableSGR(SGR sgr);
+    
+    public void disableSGR(SGR sgr);
+    
+    public void resetAllSGR();
 
     /**
      * Changes the foreground color for all the following characters put to the terminal. The foreground color is what
@@ -267,59 +271,47 @@ public interface Terminal extends InputProvider {
      * RESET_ALL will clear any code currently enabled.
      */
     public enum SGR {
-
-        /**
-         * Removes any code SGR code currently enabled
-         */
-        RESET_ALL,
         /**
          * Please note that on some terminal implementations, instead of making the text bold, it will draw the text in
          * a slightly different color
          */
-        ENTER_BOLD,
-        EXIT_BOLD,
-
+        BOLD,
+        
         /**
          * Reverse mode will flip the foreground and background colors
          */
-        ENTER_REVERSE,
-        EXIT_REVERSE,
-
+        REVERSE,
+        
         /**
          * Not widely supported
          */
-        ENTER_UNDERLINE,
-        EXIT_UNDERLINE,
-
+        UNDERLINE,
+        
         /**
          * Not widely supported
          */
-        ENTER_BLINK,
-        EXIT_BLINK,
-
+        BLINK,
+        
         /**
          * Rarely supported
          */
-        ENTER_BORDERED,
-        EXIT_BORDERED,
-
+        BORDERED,
+        
         /**
          * Exotic extension, please send me a reference screenshot!
          */
-        ENTER_FRAKTUR,
-        EXIT_FRAKTUR,
-
+        FRAKTUR,
+        
         /**
          * Rarely supported
          */
-        ENTER_CROSSEDOUT,
-        EXIT_CROSSEDOUT,
-
+        CROSSEDOUT,
+        
         /**
          * Rarely supported
          */
-        ENTER_CIRCLED,
-        EXIT_CIRCLED,
+        CIRCLED,
+        ;
     }
 
     /**

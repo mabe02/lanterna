@@ -137,71 +137,80 @@ public abstract class ANSITerminal extends StreamBasedTerminal
     }
 
     @Override
-    public void applySGR(SGR sgr)
+    public void enableSGR(SGR sgr)
     {
         synchronized(writerMutex) {
             CSI();
             switch(sgr) {
-                case ENTER_BLINK:
+                case BLINK:
                     writeToTerminal((byte)'5');
                     break;
-                case EXIT_BLINK:
-                    writeToTerminal((byte)'2', (byte)'5');
-                    break;
-
-                case ENTER_BOLD:
+                case BOLD:
                     writeToTerminal((byte)'1');
                     break;
-                case EXIT_BOLD:
-                    writeToTerminal((byte)'2', (byte)'2');
-                    break;
-
-                case ENTER_BORDERED:
+                case BORDERED:
                     writeToTerminal((byte)'5', (byte)'1');
                     break;
-                case EXIT_BORDERED:
-                    writeToTerminal((byte)'5', (byte)'4');
-                    break;
-
-                case ENTER_CIRCLED:
+                case CIRCLED:
                     writeToTerminal((byte)'5', (byte)'2');
                     break;
-                case EXIT_CIRCLED:
-                    writeToTerminal((byte)'5', (byte)'4');
-                    break;
-
-                case ENTER_CROSSEDOUT:
+                case CROSSEDOUT:
                     writeToTerminal((byte)'9');
                     break;
-                case EXIT_CROSSEDOUT:
-                    writeToTerminal((byte)'2', (byte)'9');
-                    break;
-
-                case ENTER_FRAKTUR:
+                case FRAKTUR:
                     writeToTerminal((byte)'2', (byte)'0');
                     break;
-                case EXIT_FRAKTUR:
-                    writeToTerminal((byte)'2', (byte)'3');
-                    break;
-
-                case ENTER_REVERSE:
+                case REVERSE:
                     writeToTerminal((byte)'7');
                     break;
-                case EXIT_REVERSE:
-                    writeToTerminal((byte)'2', (byte)'7');
-                    break;
-
-                case ENTER_UNDERLINE:
+                case UNDERLINE:
                     writeToTerminal((byte)'4');
                     break;
-                case EXIT_UNDERLINE:
+            }
+            writeToTerminal((byte)'m');
+        }
+    }
+    
+    @Override
+    public void disableSGR(SGR sgr)
+    {
+        synchronized(writerMutex) {
+            CSI();
+            switch(sgr) {
+                case BLINK:
+                    writeToTerminal((byte)'2', (byte)'5');
+                    break;
+                case BOLD:
+                    writeToTerminal((byte)'2', (byte)'2');
+                    break;
+                case BORDERED:
+                    writeToTerminal((byte)'5', (byte)'4');
+                    break;
+                case CIRCLED:
+                    writeToTerminal((byte)'5', (byte)'4');
+                    break;
+                case CROSSEDOUT:
+                    writeToTerminal((byte)'2', (byte)'9');
+                    break;
+                case FRAKTUR:
+                    writeToTerminal((byte)'2', (byte)'3');
+                    break;
+                case REVERSE:
+                    writeToTerminal((byte)'2', (byte)'7');
+                    break;
+                case UNDERLINE:
                     writeToTerminal((byte)'2', (byte)'4');
                     break;
-
-                case RESET_ALL:
-                    writeToTerminal((byte)'0');
-                    break;
             }
+            writeToTerminal((byte)'m');
+        }
+    }
+
+    @Override
+    public void resetAllSGR() {
+        synchronized(writerMutex) {
+            CSI();
+            writeToTerminal((byte)'0');
             writeToTerminal((byte)'m');
         }
     }
@@ -235,7 +244,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal
             throw new IllegalStateException("Cannot call exitPrivateMode() when not in private mode");
         }
         synchronized(writerMutex) {
-            applySGR(SGR.RESET_ALL);
+            resetAllSGR();
             setCursorVisible(true);
             CSI();
             writeToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'4', (byte)'9', (byte)'l');
