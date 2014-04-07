@@ -27,7 +27,7 @@ import java.util.EnumSet;
  * Character in either a front-buffer or a back-buffer.
  * @author martin
  */
-class ScreenCharacter {    
+public class ScreenCharacter {    
     private static EnumSet<Terminal.SGR> toEnumSet(Terminal.SGR... modifiers) {
         EnumSet<Terminal.SGR> set = EnumSet.noneOf(Terminal.SGR.class);
         //Now assign the modifiers; we can't pass them in using EnumSet.copyOf(..) since that throws is the list is empty
