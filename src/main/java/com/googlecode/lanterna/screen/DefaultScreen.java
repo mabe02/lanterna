@@ -30,12 +30,12 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * A layer to put on top of a Terminal object, giving you a kind of screen buffer to use, which is a lot easier to work
- * with. Drawing text or graphics to the terminal is kind of like writing to a bitmap.
+ * This is the default and only implementation of Screen in Lanterna, giving you the ability to modify the terminal
+ * content in a buffered way and then calling {@code refresh()} to have your changes take effect.
  *
  * @author Martin
  */
-public class DefaultScreenImpl implements Screen {
+public class DefaultScreen extends TerminalScreen {
 
     private final Object mutex;
     private final Terminal terminal;
@@ -58,7 +58,7 @@ public class DefaultScreenImpl implements Screen {
      * @param terminal
      * @throws LanternaException
      */
-    public DefaultScreenImpl(Terminal terminal) throws IOException {
+    public DefaultScreen(Terminal terminal) throws IOException {
         this(terminal, terminal.getTerminalSize());
     }
 
@@ -69,7 +69,7 @@ public class DefaultScreenImpl implements Screen {
      * @param terminal
      * @param terminalSize
      */
-    public DefaultScreenImpl(Terminal terminal, TerminalSize terminalSize) {
+    public DefaultScreen(Terminal terminal, TerminalSize terminalSize) {
         this(terminal, terminalSize.getColumns(), terminalSize.getRows());
     }
 
@@ -81,7 +81,7 @@ public class DefaultScreenImpl implements Screen {
      * @param terminalWidth Width (number of columns) of the terminal
      * @param terminalHeight Height (number of rows) of the terminal
      */
-    public DefaultScreenImpl(Terminal terminal, int terminalWidth, int terminalHeight) {
+    public DefaultScreen(Terminal terminal, int terminalWidth, int terminalHeight) {
         this.mutex = new Object();
         this.terminal = terminal;
         this.terminalSize = new TerminalSize(terminalWidth, terminalHeight);
@@ -537,8 +537,8 @@ public class DefaultScreenImpl implements Screen {
                     currentlyIsBold = false;
                 }
             }
-            if(currentlyIsUnderline != character.isUnderline()) {
-                if(character.isUnderline()) {
+            if(currentlyIsUnderline != character.isUnderlined()) {
+                if(character.isUnderlined()) {
                     terminal.applySGR(Terminal.SGR.ENTER_UNDERLINE);
                     currentlyIsUnderline = true;
                 } else {
@@ -546,8 +546,8 @@ public class DefaultScreenImpl implements Screen {
                     currentlyIsUnderline = false;
                 }
             }
-            if(currentlyIsNegative != character.isNegative()) {
-                if(character.isNegative()) {
+            if(currentlyIsNegative != character.isReversed()) {
+                if(character.isReversed()) {
                     terminal.applySGR(Terminal.SGR.ENTER_REVERSE);
                     currentlyIsNegative = true;
                 } else {

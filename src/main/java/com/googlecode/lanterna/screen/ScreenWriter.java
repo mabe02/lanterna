@@ -18,11 +18,13 @@
  */
 package com.googlecode.lanterna.screen;
 
+import com.googlecode.lanterna.terminal.Terminal;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
 import com.googlecode.lanterna.terminal.TerminalPosition;
+import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.terminal.TextColor;
 
 /**
@@ -32,12 +34,12 @@ import com.googlecode.lanterna.terminal.TextColor;
  */
 public class ScreenWriter {
 
-    private final DefaultScreenImpl targetScreen;
+    private final Screen targetScreen;
     private TerminalPosition currentPosition;
     private TextColor foregroundColor;
     private TextColor backgroundColor;
 
-    public ScreenWriter(final DefaultScreenImpl targetScreen) {
+    public ScreenWriter(final DefaultScreen targetScreen) {
         this.foregroundColor = TextColor.ANSI.DEFAULT;
         this.backgroundColor = TextColor.ANSI.DEFAULT;
         this.targetScreen = targetScreen;
@@ -56,7 +58,7 @@ public class ScreenWriter {
         return foregroundColor;
     }
 
-    public DefaultScreenImpl getTargetScreen() {
+    public DefaultScreen getTargetScreen() {
         return targetScreen;
     }
 
@@ -75,6 +77,28 @@ public class ScreenWriter {
             drawString(0, i, line);
         }
     }
+    
+    /**
+     * Takes a rectangle on the screen and fills it with a particular character and color. Please note that calling this 
+     * method will only affect the back buffer, you need to call refresh() to make the change visible.
+     * @param topLeft The top-left (inclusive) coordinate of the top left corner of the rectangle
+     * @param size Size (in columns and rows) of the area to draw
+     * @param character What character to use when filling the rectangle
+     * @param color Color to draw the rectangle with
+     */
+    void fillRectangle(TerminalPosition topLeft, TerminalSize size, Character character, TextColor color);
+    
+    /**
+     * Draws a string on the screen at a particular position
+     *
+     * @param position Position of the first character in the string on the screen, the remaining characters will follow
+     * immediately to the right
+     * @param string Text to put on the screen
+     * @param foregroundColor What color to use for the text
+     * @param backgroundColor What color to use for the background
+     * @param styles Additional styles to apply to the text
+     */
+    void putString(TerminalPosition position, String string, TextColor foregroundColor, TextColor backgroundColor, Terminal.SGR... styles);
 
     /**
      * Draws a string on the screen at a particular position

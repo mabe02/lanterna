@@ -27,8 +27,14 @@ import com.googlecode.lanterna.terminal.TextColor;
 import java.io.IOException;
 
 /**
- * A layer to put on top of a Terminal object, giving you a kind of screen buffer to use, which is a lot easier to work
- * with. Drawing text or graphics to the terminal is kind of like writing to a bitmap.
+ * Screen is a fundamental layer in Lanterna, presenting the terminal as a bitmap-like surface where you can perform
+ * smaller in-memory operations to a back-buffer, effectively painting out the terminal as you'd like it, and then call
+ * {@code refresh} to have the screen automatically apply the changes in the back-buffer to the real terminal. The 
+ * screen tracks what's visible through a front-buffer, but this is completely managed internally and cannot be expected
+ * to know what the terminal looks like if it's being modified externally.
+ * </p>
+ * If you want to do more complicated drawing operations, please see the class {@code ScreenWriter} which has many
+ * utility methods that works on Screens.
  *
  * @author Martin
  */
@@ -62,16 +68,6 @@ public interface Screen {
      * change visible.
      */
     void clear();
-    
-    /**
-     * Takes a rectangle on the screen and fills it with a particular character and color. Please note that calling this 
-     * method will only affect the back buffer, you need to call refresh() to make the change visible.
-     * @param topLeft The top-left (inclusive) coordinate of the top left corner of the rectangle
-     * @param size Size (in columns and rows) of the area to draw
-     * @param character What character to use when filling the rectangle
-     * @param color Color to draw the rectangle with
-     */
-    void fillRectangle(TerminalPosition topLeft, TerminalSize size, Character character, TextColor color);
 
     /**
      * A screen implementation typically keeps a location on the screen where the cursor will be placed after drawing
@@ -115,16 +111,34 @@ public interface Screen {
     TerminalSize getTerminalSize();
 
     /**
-     * Draws a string on the screen at a particular position
-     *
-     * @param position Position of the first character in the string on the screen, the remaining characters will follow
-     * immediately to the right
-     * @param string Text to put on the screen
-     * @param foregroundColor What color to use for the text
-     * @param backgroundColor What color to use for the background
-     * @param styles Additional styles to apply to the text
+     * Sets a character in the back-buffer to a specified value with specified colors and modifiers.
+     * @param position Which character to modify
+     * @param character What physical character to set at this position
+     * @param foregroundColor The foreground color to use for this character
+     * @param backgroundColor The background color to use for this character
+     * @param modifiers Which modifiers, if any, to activate for this character
      */
-    void putString(TerminalPosition position, String string, TextColor foregroundColor, TextColor backgroundColor, Terminal.SGR... styles);
+    void setCharacter(TerminalPosition position, 
+            char character, 
+            TextColor foregroundColor, 
+            TextColor backgroundColor,
+            Terminal.SGR... modifiers);
+    
+    /**
+     * Reads a character and its associated meta-data from the front-buffer and returns it encapsulated as a 
+     * ScreenCharacter.
+     * @param position What position to read the character from
+     * @return A {@code ScreenCharacter} representation of the character in the front-buffer at the specified location
+     */
+    ScreenCharacter getFrontCharacter(TerminalPosition position);
+    
+    /**
+     * Reads a character and its associated meta-data from the back-buffer and returns it encapsulated as a 
+     * ScreenCharacter.
+     * @param position What position to read the character from
+     * @return A {@code ScreenCharacter} representation of the character in the back-buffer at the specified location
+     */
+    ScreenCharacter getBackCharacter(TerminalPosition position);
 
     /**
      * Reads the next {@code KeyStroke} from the input queue, or returns null if there is nothing on the queue. This
