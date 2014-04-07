@@ -46,7 +46,7 @@ public interface Screen {
     /**
      * Calling this method will make the underlying terminal leave private mode, effectively going back to whatever
      * state the terminal was in before calling {@code startScreen()}. Once a screen has been stopped, you can start it
-     * again with {@code startScreen()} which will retore the screens content to the terminal.
+     * again with {@code startScreen()} which will restore the screens content to the terminal.
      *
      * @throws IOException if there was an underlying IO error when exiting from private mode
      */
