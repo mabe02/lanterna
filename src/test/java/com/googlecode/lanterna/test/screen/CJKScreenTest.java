@@ -4,7 +4,7 @@
  */
 package com.googlecode.lanterna.test.screen;
 
-import com.googlecode.lanterna.screen.DefaultScreenImpl;
+import com.googlecode.lanterna.screen.DefaultScreen;
 import com.googlecode.lanterna.screen.ScreenWriter;
 import com.googlecode.lanterna.terminal.TextColor;
 import com.googlecode.lanterna.test.TestTerminalFactory;
@@ -16,7 +16,7 @@ import java.io.IOException;
  */
 public class CJKScreenTest {
     public static void main(String[] args) throws IOException {
-        DefaultScreenImpl screen = new TestTerminalFactory(args).createScreen();
+        DefaultScreen screen = new TestTerminalFactory(args).createScreen();
         screen.startScreen();
 
         ScreenWriter writer = new ScreenWriter(screen);

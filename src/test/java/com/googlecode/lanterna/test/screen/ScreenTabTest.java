@@ -19,7 +19,7 @@
 
 package com.googlecode.lanterna.test.screen;
 
-import com.googlecode.lanterna.screen.DefaultScreenImpl;
+import com.googlecode.lanterna.screen.DefaultScreen;
 import com.googlecode.lanterna.screen.ScreenCharacterStyle;
 import com.googlecode.lanterna.screen.ScreenWriter;
 import com.googlecode.lanterna.screen.TabBehaviour;
@@ -38,7 +38,7 @@ public class ScreenTabTest {
         new ScreenTabTest(args);
     }
 
-    private DefaultScreenImpl screen;
+    private DefaultScreen screen;
 
     public ScreenTabTest(String[] args) throws InterruptedException, IOException
     {

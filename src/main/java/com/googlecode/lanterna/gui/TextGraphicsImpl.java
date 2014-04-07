@@ -22,7 +22,7 @@ package com.googlecode.lanterna.gui;
 import java.util.Arrays;
 import java.util.EnumSet;
 
-import com.googlecode.lanterna.screen.DefaultScreenImpl;
+import com.googlecode.lanterna.screen.DefaultScreen;
 import com.googlecode.lanterna.screen.ScreenCharacterStyle;
 import com.googlecode.lanterna.screen.TabBehaviour;
 import com.googlecode.lanterna.terminal.Terminal;
@@ -41,13 +41,13 @@ class TextGraphicsImpl implements TextGraphics
 {
     private final TerminalPosition topLeft;
     private final TerminalSize areaSize;
-    private final DefaultScreenImpl screen;
+    private final DefaultScreen screen;
     private Theme theme;
     private TextColor foregroundColor;
     private TextColor backgroundColor;
     private boolean currentlyBold;
 
-    TextGraphicsImpl(final TerminalPosition topLeft, final TerminalSize areaSize, final DefaultScreenImpl screen, final Theme theme)
+    TextGraphicsImpl(final TerminalPosition topLeft, final TerminalSize areaSize, final DefaultScreen screen, final Theme theme)
     {
         this.topLeft = topLeft;
         this.areaSize = areaSize;

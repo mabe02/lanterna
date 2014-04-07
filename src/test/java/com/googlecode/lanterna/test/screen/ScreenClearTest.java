@@ -18,7 +18,7 @@
  */
 package com.googlecode.lanterna.test.screen;
 
-import com.googlecode.lanterna.screen.DefaultScreenImpl;
+import com.googlecode.lanterna.screen.DefaultScreen;
 import com.googlecode.lanterna.screen.ScreenCharacterStyle;
 import com.googlecode.lanterna.screen.ScreenWriter;
 import com.googlecode.lanterna.terminal.TextColor;
@@ -31,7 +31,7 @@ import java.io.IOException;
  */
 public class ScreenClearTest {
     public static void main(String[] args) throws IOException {
-        DefaultScreenImpl screen = new TestTerminalFactory(args).createScreen();
+        DefaultScreen screen = new TestTerminalFactory(args).createScreen();
         screen.startScreen();
         drawText(screen);
         screen.refresh();
@@ -53,7 +53,7 @@ public class ScreenClearTest {
         screen.stopScreen();
     }
 
-    private static void drawText(DefaultScreenImpl screen) {
+    private static void drawText(DefaultScreen screen) {
         ScreenWriter writer = new ScreenWriter(screen);
         writer.setForegroundColor(TextColor.ANSI.DEFAULT);
         writer.setBackgroundColor(TextColor.ANSI.DEFAULT);

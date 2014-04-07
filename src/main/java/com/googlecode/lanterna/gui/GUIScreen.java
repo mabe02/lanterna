@@ -22,7 +22,7 @@ package com.googlecode.lanterna.gui;
 import com.googlecode.lanterna.gui.listener.WindowAdapter;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
-import com.googlecode.lanterna.screen.DefaultScreenImpl;
+import com.googlecode.lanterna.screen.DefaultScreen;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 
@@ -41,7 +41,7 @@ import java.util.Queue;
  */
 public class GUIScreen
 {
-    private final DefaultScreenImpl screen;
+    private final DefaultScreen screen;
     private final LinkedList<WindowPlacement> windowStack;
     protected final Queue<Action> actionToRunInEventThread;
     private GUIScreenBackgroundRenderer backgroundRenderer;
@@ -49,17 +49,17 @@ public class GUIScreen
     private boolean needsRefresh;
     private Thread eventThread;
 
-    public GUIScreen(DefaultScreenImpl screen)
+    public GUIScreen(DefaultScreen screen)
     {
         this(screen, "");
     }
     
-    public GUIScreen(DefaultScreenImpl screen, String title)
+    public GUIScreen(DefaultScreen screen, String title)
     {
         this(screen, new DefaultBackgroundRenderer(title));
     }
     
-    public GUIScreen(DefaultScreenImpl screen, GUIScreenBackgroundRenderer backgroundRenderer)
+    public GUIScreen(DefaultScreen screen, GUIScreenBackgroundRenderer backgroundRenderer)
     {
         if(backgroundRenderer == null)
             throw new IllegalArgumentException("backgroundRenderer cannot be null");
@@ -117,7 +117,7 @@ public class GUIScreen
      * querying for size and much more
      * @return The Screen which is backing this GUI
      */
-    public DefaultScreenImpl getScreen() {
+    public DefaultScreen getScreen() {
         return screen;
     }
     

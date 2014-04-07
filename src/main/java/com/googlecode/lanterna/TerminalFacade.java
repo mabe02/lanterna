@@ -24,7 +24,7 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 
 import com.googlecode.lanterna.gui.GUIScreen;
-import com.googlecode.lanterna.screen.DefaultScreenImpl;
+import com.googlecode.lanterna.screen.DefaultScreen;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.swing.SwingTerminal;
 import com.googlecode.lanterna.terminal.swing.TerminalAppearance;
@@ -237,15 +237,15 @@ public class TerminalFacade {
     /**
      * Creates a {@code Screen} backed by a default terminal
      */
-    public static DefaultScreenImpl createScreen() throws IOException {
+    public static DefaultScreen createScreen() throws IOException {
         return createScreen(createTerminal());
     }
 
     /**
      * Creates a {@code Screen} backed by the supplied {@code Terminal}
      */
-    public static DefaultScreenImpl createScreen(Terminal terminal) throws IOException {
-        return new DefaultScreenImpl(terminal);
+    public static DefaultScreen createScreen(Terminal terminal) throws IOException {
+        return new DefaultScreen(terminal);
     }
 
     /**
@@ -265,7 +265,7 @@ public class TerminalFacade {
     /**
      * Creates a {@code GUIScreen} backed by the supplied {@code Screen}
      */
-    public static GUIScreen createGUIScreen(DefaultScreenImpl screen) {
+    public static GUIScreen createGUIScreen(DefaultScreen screen) {
         return new GUIScreen(screen);
     }
 

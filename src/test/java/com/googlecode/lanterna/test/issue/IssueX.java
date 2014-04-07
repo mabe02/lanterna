@@ -1,6 +1,6 @@
 package com.googlecode.lanterna.test.issue;
 
-import com.googlecode.lanterna.screen.DefaultScreenImpl;
+import com.googlecode.lanterna.screen.DefaultScreen;
 import com.googlecode.lanterna.screen.ScreenCharacterStyle;
 import com.googlecode.lanterna.screen.ScreenWriter;
 import com.googlecode.lanterna.test.TestTerminalFactory;
@@ -19,7 +19,7 @@ class IssueX {
 
     public static class LanternaTerminalWriter {
 
-        private DefaultScreenImpl screen;
+        private DefaultScreen screen;
         private ScreenWriter screenWriter;
 
         private int current_y = 1;

@@ -18,7 +18,7 @@
  */
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.screen.DefaultScreenImpl;
+import com.googlecode.lanterna.screen.DefaultScreen;
 import com.googlecode.lanterna.screen.ScreenCharacterStyle;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
@@ -31,18 +31,18 @@ import java.util.EnumSet;
  */
 public class ScreenBackendTextGUIGraphics implements TextGUIGraphics {
     
-    private final DefaultScreenImpl screen;
+    private final DefaultScreen screen;
     private final TerminalPosition topLeftPosition;
     private final TerminalSize drawableAreaSize;
     private final EnumSet<ScreenCharacterStyle> enabledCharacterStyles;
     private TextColor foregroundColor;
     private TextColor backgroundColor;
 
-    public ScreenBackendTextGUIGraphics(DefaultScreenImpl screen) {
+    public ScreenBackendTextGUIGraphics(DefaultScreen screen) {
         this(screen, new TerminalPosition(0, 0), screen.getTerminalSize());
     }
 
-    public ScreenBackendTextGUIGraphics(DefaultScreenImpl screen, TerminalPosition topLeftPosition, TerminalSize drawableAreaSize) {
+    public ScreenBackendTextGUIGraphics(DefaultScreen screen, TerminalPosition topLeftPosition, TerminalSize drawableAreaSize) {
         this.screen = screen;
         this.topLeftPosition = topLeftPosition;
         this.drawableAreaSize = drawableAreaSize;
