@@ -20,6 +20,7 @@ package com.googlecode.lanterna.screen;
 
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.terminal.ResizeListener;
+import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.terminal.TextColor;
@@ -123,7 +124,7 @@ public interface Screen {
      * @param backgroundColor What color to use for the background
      * @param styles Additional styles to apply to the text
      */
-    void putString(TerminalPosition position, String string, TextColor foregroundColor, TextColor backgroundColor, ScreenCharacterStyle... styles);
+    void putString(TerminalPosition position, String string, TextColor foregroundColor, TextColor backgroundColor, Terminal.SGR... styles);
 
     /**
      * Reads the next {@code KeyStroke} from the input queue, or returns null if there is nothing on the queue. This
@@ -137,6 +138,17 @@ public interface Screen {
      * This method will take the content from the back-buffer and move it into the front-buffer, making the changes
      * visible to the terminal in the process. The common workflow with Screen would involve drawing text and text-like
      * graphics on the back buffer and then finally calling refresh(..) to make it visible to the user.
+     * @see RefreshType
+     */
+    void refresh();
+
+    /**
+     * This method will take the content from the back-buffer and move it into the front-buffer, making the changes
+     * visible to the terminal in the process. The common workflow with Screen would involve drawing text and text-like
+     * graphics on the back buffer and then finally calling refresh(..) to make it visible to the user.
+     * <p/>
+     * Using this method call instead of {@code refresh()} gives you a little bit more control over how the screen will
+     * be refreshed.
      * @param refreshType What type of refresh to do
      * @see RefreshType
      */
@@ -172,6 +184,8 @@ public interface Screen {
      * front-buffer that is being displayed.
      */
     public static enum RefreshType {
+        
+        AUTOMATIC,
         /**
          * In {@code RefreshType.DELTA} mode, the Screen will calculate a diff between the back-buffer and the 
          * front-buffer, then figure out the set of terminal commands that is required to make the front-buffer exactly
