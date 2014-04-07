@@ -18,37 +18,39 @@
  */
 package com.googlecode.lanterna.screen;
 
-import java.util.EnumSet;
-import java.util.Set;
-
+import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TextColor;
+import java.util.Arrays;
+import java.util.EnumSet;
 
 /**
- *
+ * Character in either a front-buffer or a back-buffer.
  * @author martin
  */
-public class ScreenCharacter {
+class ScreenCharacter {    
+    private static EnumSet<Terminal.SGR> toEnumSet(Terminal.SGR... modifiers) {
+        EnumSet<Terminal.SGR> set = EnumSet.noneOf(Terminal.SGR.class);
+        //Now assign the modifiers; we can't pass them in using EnumSet.copyOf(..) since that throws is the list is empty
+        set.addAll(Arrays.asList(modifiers));
+        return set;
+    }
 
     public static final ScreenCharacter CJK_PADDING_CHARACTER = new ScreenCharacter('\0');
 
     private final char character;
     private final TextColor foregroundColor;
     private final TextColor backgroundColor;
-    private final boolean bold;
-    private final boolean underline;
-    private final boolean reverse;
-    private final boolean blinking;
-    private final boolean bordered;
+    private final EnumSet<Terminal.SGR> modifiers;  //This isn't immutable, but we should treat it as such!
 
     public ScreenCharacter(char character) {
         this(character, TextColor.ANSI.DEFAULT, TextColor.ANSI.DEFAULT);
     }
-
-    public ScreenCharacter(
-            char character,
-            TextColor foregroundColor,
-            TextColor backgroundColor) {
-        this(character, foregroundColor, backgroundColor, EnumSet.noneOf(ScreenCharacterStyle.class));
+    
+    public ScreenCharacter(ScreenCharacter character) {
+        this(character.getCharacter(), 
+                character.getForegroundColor(), 
+                character.getBackgroundColor(), 
+                character.getModifiers().toArray(new Terminal.SGR[0]));
     }
 
     /**
@@ -59,7 +61,20 @@ public class ScreenCharacter {
             char character,
             TextColor foregroundColor,
             TextColor backgroundColor,
-            Set<ScreenCharacterStyle> style) {
+            Terminal.SGR... styles) {
+        
+        this(character, 
+                foregroundColor, 
+                backgroundColor, 
+                toEnumSet(styles));
+    }
+        
+    private ScreenCharacter(
+            char character,
+            TextColor foregroundColor,
+            TextColor backgroundColor,
+            EnumSet<Terminal.SGR> modifiers) {
+        
         if(foregroundColor == null) {
             foregroundColor = TextColor.ANSI.DEFAULT;
         }
@@ -70,89 +85,81 @@ public class ScreenCharacter {
         this.character = character;
         this.foregroundColor = foregroundColor;
         this.backgroundColor = backgroundColor;
-        this.bold = style.contains(ScreenCharacterStyle.Bold);
-        this.underline = style.contains(ScreenCharacterStyle.Underline);
-        this.reverse = style.contains(ScreenCharacterStyle.Reverse);
-        this.blinking = style.contains(ScreenCharacterStyle.Blinking);
-        this.bordered = style.contains(ScreenCharacterStyle.Bordered);
-    }
-
-    /**
-     * Warning, this class has another independent constructor too! If you change this constructor, please check the
-     * other one to make sure you're not missing anything!
-     */
-    public ScreenCharacter(final ScreenCharacter character) {
-        this.character = character.character;
-        this.foregroundColor = character.foregroundColor;
-        this.backgroundColor = character.backgroundColor;
-        this.bold = character.bold;
-        this.underline = character.underline;
-        this.reverse = character.reverse;
-        this.blinking = character.blinking;
-        this.bordered = character.bordered;
+        this.modifiers = modifiers;
     }
 
     public char getCharacter() {
         return character;
     }
 
-    public TextColor getBackgroundColor() {
-        return backgroundColor;
-    }
-
-    public boolean isBold() {
-        return bold;
-    }
-
     public TextColor getForegroundColor() {
         return foregroundColor;
     }
 
-    public boolean isNegative() {
-        return reverse;
+    public TextColor getBackgroundColor() {
+        return backgroundColor;
     }
 
-    public boolean isUnderline() {
-        return underline;
+    public EnumSet<Terminal.SGR> getModifiers() {
+        return EnumSet.copyOf(modifiers);
+    }
+
+    public boolean isBold() {
+        return modifiers.contains(Terminal.SGR.BOLD);
+    }
+
+    public boolean isReversed() {
+        return modifiers.contains(Terminal.SGR.REVERSE);
+    }
+
+    public boolean isUnderlined() {
+        return modifiers.contains(Terminal.SGR.UNDERLINE);
     }
 
     public boolean isBlinking() {
-        return blinking;
+        return modifiers.contains(Terminal.SGR.BLINK);
     }
 
     public boolean isBordered() {
-        return bordered;
+        return modifiers.contains(Terminal.SGR.BORDERED);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if(obj == this) {
-            return true;
-        }
-        if(obj instanceof ScreenCharacter == false) {
+        if(obj == null) {
             return false;
         }
-
-        ScreenCharacter other = ((ScreenCharacter) (obj));
-        return character == other.getCharacter()
-                && getForegroundColor() == other.getForegroundColor()
-                && getBackgroundColor() == other.getBackgroundColor()
-                && isBold() == other.isBold()
-                && isNegative() == other.isNegative()
-                && isUnderline() == other.isUnderline()
-                && isBlinking() == other.isBlinking()
-                && isBordered() == other.isBordered();
+        if(getClass() != obj.getClass()) {
+            return false;
+        }
+        final ScreenCharacter other = (ScreenCharacter) obj;
+        if(this.character != other.character) {
+            return false;
+        }
+        if(this.foregroundColor != other.foregroundColor && (this.foregroundColor == null || !this.foregroundColor.equals(other.foregroundColor))) {
+            return false;
+        }
+        if(this.backgroundColor != other.backgroundColor && (this.backgroundColor == null || !this.backgroundColor.equals(other.backgroundColor))) {
+            return false;
+        }
+        if(this.modifiers != other.modifiers && (this.modifiers == null || !this.modifiers.equals(other.modifiers))) {
+            return false;
+        }
+        return true;
     }
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 71 * hash + this.character;
+        int hash = 7;
+        hash = 37 * hash + this.character;
+        hash = 37 * hash + (this.foregroundColor != null ? this.foregroundColor.hashCode() : 0);
+        hash = 37 * hash + (this.backgroundColor != null ? this.backgroundColor.hashCode() : 0);
+        hash = 37 * hash + (this.modifiers != null ? this.modifiers.hashCode() : 0);
         return hash;
     }
 
     @Override
     public String toString() {
-        return Character.toString(character);
+        return "ScreenCharacter{" + "character=" + character + ", foregroundColor=" + foregroundColor + ", backgroundColor=" + backgroundColor + ", modifiers=" + modifiers + '}';
     }
 }
