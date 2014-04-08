@@ -88,6 +88,13 @@ public class DefaultKeyDecodingProfile implements KeyDecodingProfile {
                                 new BasicCharacterPattern(new KeyStroke(KeyType.F10), ESC_CODE, '[', '2', '1', '~'),
                                 new BasicCharacterPattern(new KeyStroke(KeyType.F11), ESC_CODE, '[', '2', '3', '~'),
                                 new BasicCharacterPattern(new KeyStroke(KeyType.F12), ESC_CODE, '[', '2', '4', '~'),
+                                new BasicCharacterPattern(new KeyStroke(KeyType.F13), ESC_CODE, '[', '2', '5', '~'),
+                                new BasicCharacterPattern(new KeyStroke(KeyType.F14), ESC_CODE, '[', '2', '6', '~'),
+                                new BasicCharacterPattern(new KeyStroke(KeyType.F15), ESC_CODE, '[', '2', '8', '~'),
+                                new BasicCharacterPattern(new KeyStroke(KeyType.F16), ESC_CODE, '[', '2', '9', '~'),
+                                new BasicCharacterPattern(new KeyStroke(KeyType.F17), ESC_CODE, '[', '3', '1', '~'),
+                                new BasicCharacterPattern(new KeyStroke(KeyType.F18), ESC_CODE, '[', '3', '2', '~'),
+                                new BasicCharacterPattern(new KeyStroke(KeyType.F19), ESC_CODE, '[', '3', '3', '~'),
 
                                 //Function keys with alt
                                 new BasicCharacterPattern(new KeyStroke(KeyType.F1, false, true), ESC_CODE, ESC_CODE, '[', '1', '1', '~'),
