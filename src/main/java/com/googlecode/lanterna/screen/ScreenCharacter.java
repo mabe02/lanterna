@@ -24,7 +24,8 @@ import java.util.Arrays;
 import java.util.EnumSet;
 
 /**
- * Character in either a front-buffer or a back-buffer.
+ * Represents a character inside a {@code Screen}, along with various modifier and color information. This class is 
+ * typically used when manipulating the screen's contentor when reading out from one of the buffers in the screen.
  * @author martin
  */
 public class ScreenCharacter {    
@@ -42,10 +43,18 @@ public class ScreenCharacter {
     private final TextColor backgroundColor;
     private final EnumSet<Terminal.SGR> modifiers;  //This isn't immutable, but we should treat it as such!
 
+    /**
+     * Creates a {@code ScreenCharacter} based on a supplied character, with default colors and no extra modifiers.
+     * @param character Physical character to use
+     */
     public ScreenCharacter(char character) {
         this(character, TextColor.ANSI.DEFAULT, TextColor.ANSI.DEFAULT);
     }
     
+    /**
+     * Copies another {@code ScreenCharacter}
+     * @param character screenCharacter to copy from
+     */
     public ScreenCharacter(ScreenCharacter character) {
         this(character.getCharacter(), 
                 character.getForegroundColor(), 
@@ -54,8 +63,11 @@ public class ScreenCharacter {
     }
 
     /**
-     * Warning, this class has another independent constructor too! If you change this constructor, please check the
-     * other one to make sure you're not missing anything!
+     * Creates a new {@code ScreenCharacter} based on a physical character, color information and optional modifiers.
+     * @param character Physical character to refer to
+     * @param foregroundColor Foreground color the character has
+     * @param backgroundColor Background color the character has
+     * @param styles Optional list of modifiers to apply when drawing the character
      */
     public ScreenCharacter(
             char character,
