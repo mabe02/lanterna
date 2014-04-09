@@ -20,10 +20,8 @@ package com.googlecode.lanterna.screen;
 
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.terminal.ResizeListener;
-import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
-import com.googlecode.lanterna.terminal.TextColor;
 import java.io.IOException;
 
 /**
@@ -112,17 +110,10 @@ public interface Screen {
 
     /**
      * Sets a character in the back-buffer to a specified value with specified colors and modifiers.
-     * @param position Which character to modify
-     * @param character What physical character to set at this position
-     * @param foregroundColor The foreground color to use for this character
-     * @param backgroundColor The background color to use for this character
-     * @param modifiers Which modifiers, if any, to activate for this character
+     * @param position Which position in the terminal to modify
+     * @param screenCharacter New data to put at the specified position
      */
-    void setCharacter(TerminalPosition position, 
-            char character, 
-            TextColor foregroundColor, 
-            TextColor backgroundColor,
-            Terminal.SGR... modifiers);
+    void setCharacter(TerminalPosition position, ScreenCharacter screenCharacter);
     
     /**
      * Reads a character and its associated meta-data from the front-buffer and returns it encapsulated as a 
