@@ -95,6 +95,34 @@ public class TerminalPosition {
         }
         return new TerminalPosition(column, this.row);
     }
+    
+    /**
+     * Creates a new TerminalPosition object representing a position on the same row, but with a column offset by a 
+     * supplied value. Calling this method with delta 0 will return this, calling it with a positive delta will return
+     * a terminal position <i>delta</i> number of columns to the right and for negative numbers the same to the left.
+     * @param delta Column offset
+     * @return New terminal position based off this one but with an applied offset
+     */
+    public TerminalPosition withRelativeColumn(int delta) {
+        if(delta == 0) {
+            return this;
+        }
+        return withColumn(column + delta);
+    }
+    
+    /**
+     * Creates a new TerminalPosition object representing a position on the same column, but with a row offset by a 
+     * supplied value. Calling this method with delta 0 will return this, calling it with a positive delta will return
+     * a terminal position <i>delta</i> number of rows to the down and for negative numbers the same up.
+     * @param delta Column offset
+     * @return New terminal position based off this one but with an applied offset
+     */
+    public TerminalPosition withRelativeRow(int delta) {
+        if(delta == 0) {
+            return this;
+        }
+        return withRow(row + delta);
+    }
 
     @Override
     public String toString() {
