@@ -20,130 +20,168 @@ package com.googlecode.lanterna.screen;
 
 import com.googlecode.lanterna.terminal.Terminal;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.terminal.TextColor;
+import java.util.EnumSet;
 
 /**
- * Helper class to write to a Screen, a bit like a pen in graphical environments.
- *
+ * This is a helper class to assist you in composing your output on a {@code Screen}. It provides methods for drawing
+ * full strings as well as keeping a color and modifier state so that you don't have to specify them for every operation.
+ * It also has a position state which moves as you as putting characters, so you can think of this as a pen.
  * @author Martin
  */
 public class ScreenWriter {
 
-    private final Screen targetScreen;
+    private final Screen screen;
     private TerminalPosition currentPosition;
     private TextColor foregroundColor;
     private TextColor backgroundColor;
+    private final EnumSet<Terminal.SGR> activeModifiers;
 
-    public ScreenWriter(final DefaultScreen targetScreen) {
+    public ScreenWriter(final DefaultScreen screen) {
         this.foregroundColor = TextColor.ANSI.DEFAULT;
         this.backgroundColor = TextColor.ANSI.DEFAULT;
-        this.targetScreen = targetScreen;
+        this.screen = screen;
         this.currentPosition = new TerminalPosition(0, 0);
+        this.activeModifiers = EnumSet.noneOf(Terminal.SGR.class);
+    }
+
+    public ScreenWriter setPosition(TerminalPosition newPosition) {
+        this.currentPosition = newPosition;
+        return this;
+    }
+
+    public TerminalPosition getPosition() {
+        return currentPosition;
     }
 
     public TextColor getBackgroundColor() {
         return backgroundColor;
     }
 
-    public void setBackgroundColor(final TextColor backgroundColor) {
+    public ScreenWriter setBackgroundColor(final TextColor backgroundColor) {
         this.backgroundColor = backgroundColor;
+        return this;
     }
 
     public TextColor getForegroundColor() {
         return foregroundColor;
     }
 
-    public DefaultScreen getTargetScreen() {
-        return targetScreen;
-    }
-
-    public void setForegroundColor(final TextColor foregroundColor) {
+    public ScreenWriter setForegroundColor(final TextColor foregroundColor) {
         this.foregroundColor = foregroundColor;
+        return this;
+    }
+    
+    public ScreenWriter enableModifiers(Terminal.SGR... modifiers) {
+        this.activeModifiers.addAll(Arrays.asList(modifiers));
+        return this;
+    }
+    
+    public ScreenWriter disableModifiers(Terminal.SGR... modifiers) {
+        this.activeModifiers.removeAll(Arrays.asList(modifiers));
+        return this;
+    }
+    
+    public ScreenWriter clearModifiers() {
+        this.activeModifiers.clear();
+        return this;
     }
 
+    /**
+     * Fills the entire screen with a single character
+     * @param c 
+     */
     public void fillScreen(char c) {
-        StringBuilder sb = new StringBuilder();
-        for(int i = 0; i < targetScreen.getTerminalSize().getColumns(); i++) {
-            sb.append(c);
-        }
-
-        String line = sb.toString();
-        for(int i = 0; i < targetScreen.getTerminalSize().getRows(); i++) {
-            drawString(0, i, line);
-        }
+        TerminalPosition savedPosition = getPosition();
+        setPosition(TerminalPosition.TOP_LEFT_CORNER);
+        fillRectangle(screen.getTerminalSize(), c);
+        setPosition(savedPosition);
+    }
+    
+    void drawLine(TerminalPosition toPoint, char character) {
+        
     }
     
     /**
-     * Takes a rectangle on the screen and fills it with a particular character and color. Please note that calling this 
-     * method will only affect the back buffer, you need to call refresh() to make the change visible.
-     * @param topLeft The top-left (inclusive) coordinate of the top left corner of the rectangle
+     * Takes a rectangle on the screen and fills it with a particular character (and the currently active colors and 
+     * modifiers). The top-left corner will be at the current position of this {@code ScreenWriter} (inclusive) and it
+     * will extend to position + size (inclusive).
      * @param size Size (in columns and rows) of the area to draw
      * @param character What character to use when filling the rectangle
-     * @param color Color to draw the rectangle with
      */
-    void fillRectangle(TerminalPosition topLeft, TerminalSize size, Character character, TextColor color);
+    void drawTriangle(TerminalSize size, char character) {
+        
+    }
     
     /**
-     * Draws a string on the screen at a particular position
-     *
-     * @param position Position of the first character in the string on the screen, the remaining characters will follow
-     * immediately to the right
-     * @param string Text to put on the screen
-     * @param foregroundColor What color to use for the text
-     * @param backgroundColor What color to use for the background
-     * @param styles Additional styles to apply to the text
+     * Takes a rectangle on the screen and fills it with a particular character (and the currently active colors and 
+     * modifiers). The top-left corner will be at the current position of this {@code ScreenWriter} (inclusive) and it
+     * will extend to position + size (inclusive).
+     * @param size Size (in columns and rows) of the area to draw
+     * @param character What character to use when filling the rectangle
      */
-    void putString(TerminalPosition position, String string, TextColor foregroundColor, TextColor backgroundColor, Terminal.SGR... styles);
+    void fillTriangle(TerminalSize size, char character) {
+        
+    }
+    
+    /**
+     * Draws the outline of a rectangle in the {@code Screen} with a particular character (and the currently active colors and 
+     * modifiers). The top-left corner will be at the current position of this {@code ScreenWriter} (inclusive) and it
+     * will extend to position + size (inclusive).
+     * @param size Size (in columns and rows) of the area to draw
+     * @param character What character to use when filling the rectangle
+     */
+    void drawRectangle(TerminalSize size, char character) {
+        
+    }
+    
+    /**
+     * Takes a rectangle on the screen and fills it with a particular character (and the currently active colors and 
+     * modifiers). The top-left corner will be at the current position of this {@code ScreenWriter} (inclusive) and it
+     * will extend to position + size (inclusive).
+     * @param size Size (in columns and rows) of the area to draw
+     * @param character What character to use when filling the rectangle
+     */
+    void fillRectangle(TerminalSize size, char character) {
+        for(int y = 0; y < size.getRows(); y++) {
+            for(int x = 0; x < size.getColumns(); x++) {
+                screen.setCharacter(
+                    currentPosition.withRelativeColumn(x).withRelativeRow(y), 
+                    new ScreenCharacter(
+                            character, 
+                            foregroundColor, 
+                            backgroundColor, 
+                            activeModifiers.clone()));
+            }
+        }
+    }
 
     /**
-     * Draws a string on the screen at a particular position
+     * Puts a string on the screen at the current position with the current colors and modifiers. If the string 
+     * contains newlines (\r and/or \n), the method will stop at the character before that; you have to manage 
+     * multi-line strings yourself!
      *
-     * @param x 0-indexed column number of where to put the first character in the string
-     * @param y 0-indexed row number of where to put the first character in the string
      * @param string Text to put on the screen
-     * @param styles Additional styles to apply to the text
      */
-    public void drawString(final int x, final int y, final String string, final ScreenCharacterStyle... styles) {
-        if(!string.contains("\n") && !string.contains("\r")) {
-            currentPosition = currentPosition.withColumn(x).withRow(y);
-            targetScreen.putString(x, y, string, foregroundColor, backgroundColor, styles);
-            currentPosition = currentPosition.withColumn(currentPosition.getColumn() + string.length());
-        } else {
-            currentPosition = currentPosition.withColumn(x).withRow(y);
-            int lines = 1;
-            for(String line : string.split("[\n\r]")) {
-                lines++;
-                targetScreen.putString(x, y + lines, line, foregroundColor, backgroundColor, styles);
-            }
-            currentPosition = currentPosition
-                    .withRow(currentPosition.getRow() + lines)
-                    .withColumn(currentPosition.getColumn() + string.length());
+    public void putString(String string) {
+        if(string.contains("\n")) {
+            string = string.substring(0, string.indexOf("\n"));
         }
-    }
-
-    public void drawCharacter(final int x, final int y, final char character, final ScreenCharacterStyle... styles) {
-        Set<ScreenCharacterStyle> styleSet = new HashSet<ScreenCharacterStyle>();
-        styleSet.addAll(Arrays.asList(styles));
-        ScreenCharacter screenCharacter = new ScreenCharacter(character, getForegroundColor(), getBackgroundColor(), styleSet);
-        targetScreen.putCharacter(x, y, screenCharacter);
-    }
-
-    @Override
-    public int hashCode() {
-        return targetScreen.hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if(obj instanceof ScreenWriter == false) {
-            return false;
+        if(string.contains("\r")) {
+            string = string.substring(0, string.indexOf("\r"));
         }
-
-        return targetScreen.equals(((ScreenWriter) (obj)).targetScreen);
+        for(int i = 0; i < string.length(); i++) {
+            screen.setCharacter(
+                    currentPosition.withRelativeColumn(i), 
+                    new ScreenCharacter(
+                            string.charAt(i), 
+                            foregroundColor, 
+                            backgroundColor, 
+                            activeModifiers.clone()));
+        }
+        currentPosition = currentPosition.withRelativeColumn(string.length());
     }
 }

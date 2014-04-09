@@ -81,7 +81,7 @@ public class ScreenCharacter {
                 toEnumSet(styles));
     }
         
-    private ScreenCharacter(
+    ScreenCharacter(
             char character,
             TextColor foregroundColor,
             TextColor backgroundColor,
