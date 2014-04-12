@@ -20,7 +20,6 @@ package com.googlecode.lanterna.screen;
 
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
-import java.util.concurrent.Semaphore;
 
 /**
  *
