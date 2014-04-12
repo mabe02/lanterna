@@ -135,6 +135,13 @@ public class ScreenCharacter {
     public boolean isBordered() {
         return modifiers.contains(Terminal.SGR.BORDERED);
     }
+    
+    public ScreenCharacter withCharacter(char character) {
+        if(this.character == character) {
+            return this;
+        }
+        return new ScreenCharacter(character, foregroundColor, backgroundColor, modifiers);
+    }
 
     @Override
     public boolean equals(Object obj) {
