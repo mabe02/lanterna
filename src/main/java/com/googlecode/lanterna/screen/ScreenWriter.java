@@ -39,13 +39,15 @@ public class ScreenWriter {
     private TerminalPosition currentPosition;
     private TextColor foregroundColor;
     private TextColor backgroundColor;
+    private TabBehaviour tabBehaviour;
     private final EnumSet<Terminal.SGR> activeModifiers;
 
     public ScreenWriter(final DefaultScreen screen) {
+        this.screen = screen;
         this.foregroundColor = TextColor.ANSI.DEFAULT;
         this.backgroundColor = TextColor.ANSI.DEFAULT;
-        this.screen = screen;
         this.currentPosition = new TerminalPosition(0, 0);
+        this.tabBehaviour = TabBehaviour.ALIGN_TO_COLUMN_4;
         this.activeModifiers = EnumSet.noneOf(Terminal.SGR.class);
     }
     
@@ -93,6 +95,16 @@ public class ScreenWriter {
     public ScreenWriter clearModifiers() {
         this.activeModifiers.clear();
         return this;
+    }
+
+    public TabBehaviour getTabBehaviour() {
+        return tabBehaviour;
+    }
+
+    public void setTabBehaviour(TabBehaviour tabBehaviour) {
+        if(tabBehaviour != null) {
+            this.tabBehaviour = tabBehaviour;
+        }
     }
 
     /**
@@ -268,6 +280,7 @@ public class ScreenWriter {
         if(string.contains("\r")) {
             string = string.substring(0, string.indexOf("\r"));
         }
+        string = tabBehaviour.replaceTabs(string, currentPosition.getColumn());
         for(int i = 0; i < string.length(); i++) {
             screen.setCharacter(
                     currentPosition.withRelativeColumn(i),

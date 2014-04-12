@@ -18,10 +18,6 @@
  */
 package com.googlecode.lanterna.screen;
 
-import com.googlecode.lanterna.CJKUtils;
-import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.input.KeyType;
-import com.googlecode.lanterna.terminal.ResizeListener;
 import com.googlecode.lanterna.terminal.TextColor;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalPosition;
@@ -179,7 +175,20 @@ public class DefaultScreen extends TerminalScreen {
 
     @Override
     public synchronized void setCharacter(TerminalPosition position, ScreenCharacter screenCharacter) {
-        backBuffer.setCharacterAt(position, screenCharacter);
+        //It would be nice if we didn't have to care about tabs at this level, but we have no such luxury
+        if(screenCharacter.getCharacter() == '\t') {
+            //Swap out the tab for a space
+            screenCharacter = screenCharacter.withCharacter(' ');
+            
+            //Now see how many times we have to put spaces...
+            for(int i = 0; i < tabBehaviour.replaceTabs("\t", position.getColumn()).length(); i++) {
+                backBuffer.setCharacterAt(position.withRelativeColumn(i), screenCharacter);
+            }
+        }
+        else {
+            //This is the normal case, no special character
+            backBuffer.setCharacterAt(position, screenCharacter);
+        }
     }
 
     @Override
