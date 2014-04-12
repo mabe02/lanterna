@@ -173,6 +173,7 @@ public class DefaultScreen extends TerminalScreen {
         
         backBuffer = backBuffer.resize(pendingResize, DEFAULT_CHARACTER);
         frontBuffer = frontBuffer.resize(pendingResize, DEFAULT_CHARACTER);
+        fullRedrawHint = true;
         return pendingResize;
     }
 
