@@ -20,8 +20,8 @@
 package com.googlecode.lanterna.test.screen;
 
 import com.googlecode.lanterna.screen.DefaultScreen;
-import com.googlecode.lanterna.screen.ScreenCharacterStyle;
 import com.googlecode.lanterna.screen.ScreenWriter;
+import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TextColor;
 import com.googlecode.lanterna.test.TestTerminalFactory;
@@ -48,21 +48,21 @@ public class ScreenResizeTest
         screen = new TestTerminalFactory(args).createScreen();
         screen.startScreen();
         screen.setCursorPosition(new TerminalPosition(0, 0));
-        drawStrings("Initial setup, please resize the window");
+        putStrings("Initial setup, please resize the window");
 
         long now = System.currentTimeMillis();
         while(System.currentTimeMillis() - now < 20 * 1000)
         {
             screen.readInput();
-            if(!screen.resizePending())
-                drawStrings("Size: " + screen.getTerminalSize().getColumns() + "x" + screen.getTerminalSize().getRows());
+            if(screen.doResizeIfNecessary() != null)
+                putStrings("Size: " + screen.getTerminalSize().getColumns() + "x" + screen.getTerminalSize().getRows());
 
             Thread.sleep(1);
         }
         screen.stopScreen();
     }
 
-    private void drawStrings(String topTitle)
+    private void putStrings(String topTitle)
     {
         ScreenWriter writer = new ScreenWriter(screen);
         writer.setForegroundColor(TextColor.ANSI.DEFAULT);
@@ -71,77 +71,77 @@ public class ScreenResizeTest
 
         writer.setForegroundColor(TextColor.ANSI.DEFAULT);
         writer.setBackgroundColor(TextColor.ANSI.DEFAULT);
-        writer.drawString(0, 0, topTitle);
-        writer.drawString(10, 1, "Hello World");
+        writer.putString(0, 0, topTitle);
+        writer.putString(10, 1, "Hello World");
 
         writer.setForegroundColor(TextColor.ANSI.BLACK);
         writer.setBackgroundColor(TextColor.ANSI.WHITE);
-        writer.drawString(11, 2, "Hello World");
+        writer.putString(11, 2, "Hello World");
         writer.setForegroundColor(TextColor.ANSI.WHITE);
         writer.setBackgroundColor(TextColor.ANSI.BLACK);
-        writer.drawString(12, 3, "Hello World");
+        writer.putString(12, 3, "Hello World");
         writer.setForegroundColor(TextColor.ANSI.BLACK);
         writer.setBackgroundColor(TextColor.ANSI.WHITE);
-        writer.drawString(13, 4, "Hello World", ScreenCharacterStyle.Bold);
+        writer.putString(13, 4, "Hello World", Terminal.SGR.BOLD);
         writer.setForegroundColor(TextColor.ANSI.WHITE);
         writer.setBackgroundColor(TextColor.ANSI.BLACK);
-        writer.drawString(14, 5, "Hello World", ScreenCharacterStyle.Bold);
+        writer.putString(14, 5, "Hello World", Terminal.SGR.BOLD);
         writer.setForegroundColor(TextColor.ANSI.DEFAULT);
         writer.setBackgroundColor(TextColor.ANSI.DEFAULT);
-        writer.drawString(15, 6, "Hello World", ScreenCharacterStyle.Bold);
+        writer.putString(15, 6, "Hello World", Terminal.SGR.BOLD);
         writer.setForegroundColor(TextColor.ANSI.DEFAULT);
         writer.setBackgroundColor(TextColor.ANSI.DEFAULT);
-        writer.drawString(16, 7, "Hello World");
+        writer.putString(16, 7, "Hello World");
 
         writer.setForegroundColor(TextColor.ANSI.BLUE);
         writer.setBackgroundColor(TextColor.ANSI.DEFAULT);
-        writer.drawString(10, 10, "Hello World");
+        writer.putString(10, 10, "Hello World");
         writer.setForegroundColor(TextColor.ANSI.BLUE);
         writer.setBackgroundColor(TextColor.ANSI.WHITE);
-        writer.drawString(11, 11, "Hello World");
+        writer.putString(11, 11, "Hello World");
         writer.setForegroundColor(TextColor.ANSI.BLUE);
         writer.setBackgroundColor(TextColor.ANSI.BLACK);
-        writer.drawString(12, 12, "Hello World");
+        writer.putString(12, 12, "Hello World");
         writer.setForegroundColor(TextColor.ANSI.BLUE);
         writer.setBackgroundColor(TextColor.ANSI.MAGENTA);
-        writer.drawString(13, 13, "Hello World");
+        writer.putString(13, 13, "Hello World");
         writer.setForegroundColor(TextColor.ANSI.GREEN);
         writer.setBackgroundColor(TextColor.ANSI.DEFAULT);
-        writer.drawString(14, 14, "Hello World");
+        writer.putString(14, 14, "Hello World");
         writer.setForegroundColor(TextColor.ANSI.GREEN);
         writer.setBackgroundColor(TextColor.ANSI.WHITE);
-        writer.drawString(15, 15, "Hello World");
+        writer.putString(15, 15, "Hello World");
         writer.setForegroundColor(TextColor.ANSI.GREEN);
         writer.setBackgroundColor(TextColor.ANSI.BLACK);
-        writer.drawString(16, 16, "Hello World");
+        writer.putString(16, 16, "Hello World");
         writer.setForegroundColor(TextColor.ANSI.GREEN);
         writer.setBackgroundColor(TextColor.ANSI.MAGENTA);
-        writer.drawString(17, 17, "Hello World");
+        writer.putString(17, 17, "Hello World");
 
         writer.setForegroundColor(TextColor.ANSI.BLUE);
         writer.setBackgroundColor(TextColor.ANSI.DEFAULT);
-        writer.drawString(10, 20, "Hello World", ScreenCharacterStyle.Bold);
+        writer.putString(10, 20, "Hello World", Terminal.SGR.BOLD);
         writer.setForegroundColor(TextColor.ANSI.BLUE);
         writer.setBackgroundColor(TextColor.ANSI.WHITE);
-        writer.drawString(11, 21, "Hello World", ScreenCharacterStyle.Bold);
+        writer.putString(11, 21, "Hello World", Terminal.SGR.BOLD);
         writer.setForegroundColor(TextColor.ANSI.BLUE);
         writer.setBackgroundColor(TextColor.ANSI.BLACK);
-        writer.drawString(12, 22, "Hello World", ScreenCharacterStyle.Bold);
+        writer.putString(12, 22, "Hello World", Terminal.SGR.BOLD);
         writer.setForegroundColor(TextColor.ANSI.BLUE);
         writer.setBackgroundColor(TextColor.ANSI.MAGENTA);
-        writer.drawString(13, 23, "Hello World", ScreenCharacterStyle.Bold);
+        writer.putString(13, 23, "Hello World", Terminal.SGR.BOLD);
         writer.setForegroundColor(TextColor.ANSI.GREEN);
         writer.setBackgroundColor(TextColor.ANSI.DEFAULT);
-        writer.drawString(14, 24, "Hello World", ScreenCharacterStyle.Bold);
+        writer.putString(14, 24, "Hello World", Terminal.SGR.BOLD);
         writer.setForegroundColor(TextColor.ANSI.GREEN);
         writer.setBackgroundColor(TextColor.ANSI.WHITE);
-        writer.drawString(15, 25, "Hello World", ScreenCharacterStyle.Bold);
+        writer.putString(15, 25, "Hello World", Terminal.SGR.BOLD);
         writer.setForegroundColor(TextColor.ANSI.GREEN);
         writer.setBackgroundColor(TextColor.ANSI.BLACK);
-        writer.drawString(16, 26, "Hello World", ScreenCharacterStyle.Bold);
+        writer.putString(16, 26, "Hello World", Terminal.SGR.BOLD);
         writer.setForegroundColor(TextColor.ANSI.CYAN);
         writer.setBackgroundColor(TextColor.ANSI.BLUE);
-        writer.drawString(17, 27, "Hello World", ScreenCharacterStyle.Bold);
+        writer.putString(17, 27, "Hello World", Terminal.SGR.BOLD);
         screen.refresh();
     }
 }

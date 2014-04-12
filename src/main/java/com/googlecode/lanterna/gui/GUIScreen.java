@@ -123,9 +123,7 @@ public class GUIScreen
     
     private synchronized void repaint()
     {
-        if(screen.resizePending())
-            screen.refresh();   //Do an initial refresh if there are any resizes in the queue
-        
+        screen.doResizeIfNecessary();
         final TextGraphics textGraphics = new TextGraphicsImpl(new TerminalPosition(0, 0),
                 screen.getTerminalSize(), screen, guiTheme);
 
@@ -197,7 +195,7 @@ public class GUIScreen
     }
 
     protected boolean update() {
-        if(needsRefresh || screen.resizePending()) {
+        if(needsRefresh || screen.doResizeIfNecessary() != null) {
             repaint();
             needsRefresh = false;
             return true;

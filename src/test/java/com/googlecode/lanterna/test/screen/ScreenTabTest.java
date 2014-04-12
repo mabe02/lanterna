@@ -20,9 +20,9 @@
 package com.googlecode.lanterna.test.screen;
 
 import com.googlecode.lanterna.screen.DefaultScreen;
-import com.googlecode.lanterna.screen.ScreenCharacterStyle;
 import com.googlecode.lanterna.screen.ScreenWriter;
 import com.googlecode.lanterna.screen.TabBehaviour;
+import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TextColor;
 import com.googlecode.lanterna.test.TestTerminalFactory;
@@ -45,7 +45,7 @@ public class ScreenTabTest {
         screen = new TestTerminalFactory(args).createScreen();
         screen.startScreen();
         screen.setCursorPosition(new TerminalPosition(0, 0));
-        drawStrings("Trying out some tabs!");
+        putStrings("Trying out some tabs!");
 
         long now = System.currentTimeMillis();
         while(System.currentTimeMillis() - now < 20 * 1000) {
@@ -54,7 +54,7 @@ public class ScreenTabTest {
         screen.stopScreen();
     }
 
-    private void drawStrings(String topTitle)
+    private void putStrings(String topTitle)
     {
         ScreenWriter writer = new ScreenWriter(screen);
         writer.setForegroundColor(TextColor.ANSI.DEFAULT);
@@ -63,17 +63,17 @@ public class ScreenTabTest {
 
         writer.setForegroundColor(TextColor.ANSI.DEFAULT);
         writer.setBackgroundColor(TextColor.ANSI.DEFAULT);
-        writer.drawString(0, 0, topTitle, ScreenCharacterStyle.Blinking);
+        writer.putString(0, 0, topTitle, Terminal.SGR.BLINK);
         screen.setTabBehaviour(TabBehaviour.CONVERT_TO_ONE_SPACE);
-        writer.drawString(10, 1, "TabBehaviour.CONVERT_TO_ONE_SPACE:    |\t|\t|\t|\t|");
+        writer.putString(10, 1, "TabBehaviour.CONVERT_TO_ONE_SPACE:    |\t|\t|\t|\t|");
         screen.setTabBehaviour(TabBehaviour.CONVERT_TO_FOUR_SPACES);
-        writer.drawString(10, 2, "TabBehaviour.CONVERT_TO_FOUR_SPACES:  |\t|\t|\t|\t|");
+        writer.putString(10, 2, "TabBehaviour.CONVERT_TO_FOUR_SPACES:  |\t|\t|\t|\t|");
         screen.setTabBehaviour(TabBehaviour.CONVERT_TO_EIGHT_SPACES);
-        writer.drawString(10, 3, "TabBehaviour.CONVERT_TO_EIGHT_SPACES: |\t|\t|\t|\t|");
+        writer.putString(10, 3, "TabBehaviour.CONVERT_TO_EIGHT_SPACES: |\t|\t|\t|\t|");
         screen.setTabBehaviour(TabBehaviour.ALIGN_TO_COLUMN_4);
-        writer.drawString(10, 4, "TabBehaviour.ALIGN_TO_COLUMN_4:       |\t|\t|\t|\t|");
+        writer.putString(10, 4, "TabBehaviour.ALIGN_TO_COLUMN_4:       |\t|\t|\t|\t|");
         screen.setTabBehaviour(TabBehaviour.ALIGN_TO_COLUMN_8);
-        writer.drawString(10, 5, "TabBehaviour.ALIGN_TO_COLUMN_8:       |\t|\t|\t|\t|");
+        writer.putString(10, 5, "TabBehaviour.ALIGN_TO_COLUMN_8:       |\t|\t|\t|\t|");
 
         screen.refresh();
     }

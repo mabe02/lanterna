@@ -37,26 +37,6 @@ public class NullTextGUIGraphics implements TextGUIGraphics {
     }
 
     @Override
-    public boolean isStyleBlink() {
-        return false;
-    }
-
-    @Override
-    public boolean isStyleBold() {
-        return false;
-    }
-
-    @Override
-    public boolean isStyleReverse() {
-        return false;
-    }
-
-    @Override
-    public boolean isStyleUnderline() {
-        return false;
-    }
-
-    @Override
     public void resetCharacterStyles() {
     }
 

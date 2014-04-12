@@ -93,8 +93,7 @@ public abstract class AbstractTextGUI implements TextGUI {
                     continue;
                 }
                 boolean needsRefresh = false;
-                if(screen.resizePending()) {
-                    screen.updateScreenSize();
+                if(screen.doResizeIfNecessary() != null) {
                     needsRefresh = true;
                 }
                 if(keyStroke != null) {

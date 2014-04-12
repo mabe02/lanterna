@@ -23,7 +23,7 @@ import java.util.Arrays;
 import java.util.EnumSet;
 
 import com.googlecode.lanterna.screen.DefaultScreen;
-import com.googlecode.lanterna.screen.ScreenCharacterStyle;
+import com.googlecode.lanterna.screen.ScreenWriter;
 import com.googlecode.lanterna.screen.TabBehaviour;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalPosition;
@@ -124,7 +124,7 @@ class TextGraphicsImpl implements TextGraphics
      * @param styles Which styles to apply to the string
      */
     @Override
-    public void drawString(int column, int row, String string, ScreenCharacterStyle... styles)
+    public void drawString(int column, int row, String string, Terminal.SGR... styles)
     {
         if(column >= areaSize.getColumns() || row >= areaSize.getRows() || string == null)
             return;
@@ -134,20 +134,12 @@ class TextGraphicsImpl implements TextGraphics
         if(string.length() + column > areaSize.getColumns())
             string = string.substring(0, areaSize.getColumns() - column);
 
-        EnumSet<ScreenCharacterStyle> stylesSet = EnumSet.noneOf(ScreenCharacterStyle.class);
-        if(styles != null && styles.length != 0)
-            stylesSet = EnumSet.copyOf(Arrays.asList(styles));
-        
-        if(currentlyBold)
-            stylesSet.add(ScreenCharacterStyle.Bold);
-
-        screen.putString(
-                column + topLeft.getColumn(), 
-                row + topLeft.getRow(), 
-                string,
-                foregroundColor, 
-                backgroundColor, 
-                stylesSet);
+        ScreenWriter screenWriter = new ScreenWriter(screen);
+        screenWriter.setPosition(new TerminalPosition(column + topLeft.getColumn(), row + topLeft.getRow()));
+        screenWriter.setForegroundColor(foregroundColor);
+        screenWriter.setBackgroundColor(backgroundColor);
+        screenWriter.enableModifiers(styles);
+        screenWriter.putString(string);
     }
 
     @Override
@@ -296,7 +288,7 @@ class TextGraphicsImpl implements TextGraphics
         public void applyTheme(Theme.Definition themeItem) { }
 
         @Override
-        public void drawString(int column, int row, String string, ScreenCharacterStyle... styles) { }
+        public void drawString(int column, int row, String string, Terminal.SGR... styles) { }
 
         @Override
         public void fillArea(char character) { }

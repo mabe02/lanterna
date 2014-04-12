@@ -31,7 +31,7 @@ public class Issue95 {
         frame.setResizable(false);
 
         while(screen.readInput() == null) {
-            if(screen.updateScreenSize()) {
+            if(screen.doResizeIfNecessary() != null) {
                 screen.refresh();
             }
             Thread.sleep(100);

@@ -24,9 +24,10 @@ import java.util.Arrays;
 import com.googlecode.lanterna.gui.TextGraphics;
 import com.googlecode.lanterna.gui.Theme;
 import com.googlecode.lanterna.gui.Theme.Category;
-import com.googlecode.lanterna.screen.ScreenCharacterStyle;
+import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.terminal.TextColor;
+import java.util.EnumSet;
 
 /**
  *
@@ -42,7 +43,7 @@ public class Label extends AbstractComponent
     private TextColor textColor;
     private TextColor backgroundColor;
     private Theme.Category style;
-    private ScreenCharacterStyle charStyle;
+    private final EnumSet<Terminal.SGR> charStyles;
 
     public Label()
     {
@@ -91,6 +92,7 @@ public class Label extends AbstractComponent
         this.width = 0;
         this.forceWidth = fixedWidth;
         this.style = Theme.Category.DIALOG_AREA;
+        this.charStyles = EnumSet.noneOf(Terminal.SGR.class);
         updateMetrics();
     }
 
@@ -130,10 +132,7 @@ public class Label extends AbstractComponent
                 	stringToDraw = text[i].substring(0, forceWidth - 3) + "...";
 				}
             }
-            if (charStyle != null)
-            	graphics.drawString(leftPosition, i, stringToDraw, charStyle);
-            else 
-            	graphics.drawString(leftPosition, i, stringToDraw);
+            graphics.drawString(leftPosition, i, stringToDraw, charStyles.toArray(new Terminal.SGR[0]));
         }
     }
 
@@ -200,11 +199,13 @@ public class Label extends AbstractComponent
         }
     }
 
-	public ScreenCharacterStyle getCharStyle() {
-		return charStyle;
-	}
+    public EnumSet<Terminal.SGR> getCharStyles() {
+        return charStyles;
+    }
+    
 
-	public void setCharStyle(ScreenCharacterStyle charStyle) {
-		this.charStyle = charStyle;
-	}
+    public void setCharStyles(EnumSet<Terminal.SGR> styles) {
+        charStyles.clear();
+        charStyles.addAll(styles);
+    }
 }

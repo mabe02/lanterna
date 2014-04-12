@@ -19,11 +19,11 @@
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.screen.DefaultScreen;
-import com.googlecode.lanterna.screen.ScreenCharacterStyle;
+import com.googlecode.lanterna.screen.ScreenWriter;
+import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.terminal.TextColor;
-import java.util.EnumSet;
 
 /**
  *
@@ -31,24 +31,18 @@ import java.util.EnumSet;
  */
 public class ScreenBackendTextGUIGraphics implements TextGUIGraphics {
     
-    private final DefaultScreen screen;
+    private final ScreenWriter screenWriter;
     private final TerminalPosition topLeftPosition;
     private final TerminalSize drawableAreaSize;
-    private final EnumSet<ScreenCharacterStyle> enabledCharacterStyles;
-    private TextColor foregroundColor;
-    private TextColor backgroundColor;
 
     public ScreenBackendTextGUIGraphics(DefaultScreen screen) {
-        this(screen, new TerminalPosition(0, 0), screen.getTerminalSize());
+        this(new  ScreenWriter(screen), new TerminalPosition(0, 0), screen.getTerminalSize());
     }
 
-    public ScreenBackendTextGUIGraphics(DefaultScreen screen, TerminalPosition topLeftPosition, TerminalSize drawableAreaSize) {
-        this.screen = screen;
+    public ScreenBackendTextGUIGraphics(ScreenWriter screenWriter, TerminalPosition topLeftPosition, TerminalSize drawableAreaSize) {
+        this.screenWriter = screenWriter;
         this.topLeftPosition = topLeftPosition;
         this.drawableAreaSize = drawableAreaSize;
-        this.foregroundColor = TextColor.ANSI.DEFAULT;
-        this.backgroundColor = TextColor.ANSI.DEFAULT;
-        this.enabledCharacterStyles = EnumSet.noneOf(ScreenCharacterStyle.class);
     }
 
     @Override
@@ -56,7 +50,7 @@ public class ScreenBackendTextGUIGraphics implements TextGUIGraphics {
         if(color == null) {
             throw new IllegalArgumentException("Cannot set foreground color to null");
         }
-        this.foregroundColor = color;
+        screenWriter.setForegroundColor(color);
     }
 
     @Override
@@ -64,72 +58,52 @@ public class ScreenBackendTextGUIGraphics implements TextGUIGraphics {
         if(color == null) {
             throw new IllegalArgumentException("Cannot set background color to null");
         }
-        this.backgroundColor = color;        
+        screenWriter.setBackgroundColor(color);
     }
     
     @Override
     public void resetCharacterStyles() {
-        enabledCharacterStyles.clear();
+        screenWriter.clearModifiers();
     }
     
     @Override
     public void setStyleBold(boolean isBold) {
         if(isBold) {
-            enabledCharacterStyles.add(ScreenCharacterStyle.Bold);
+            screenWriter.enableModifiers(Terminal.SGR.BOLD);
         }
         else {
-            enabledCharacterStyles.remove(ScreenCharacterStyle.Bold);
+            screenWriter.disableModifiers(Terminal.SGR.BOLD);
         }
     }
     
     @Override
     public void setStyleBlink(boolean isBlinking) {
         if(isBlinking) {
-            enabledCharacterStyles.add(ScreenCharacterStyle.Blinking);
+            screenWriter.enableModifiers(Terminal.SGR.BLINK);
         }
         else {
-            enabledCharacterStyles.remove(ScreenCharacterStyle.Blinking);
+            screenWriter.disableModifiers(Terminal.SGR.BLINK);
         }
     }
     
     @Override
     public void setStyleReverse(boolean isReverse) {
         if(isReverse) {
-            enabledCharacterStyles.add(ScreenCharacterStyle.Reverse);
+            screenWriter.enableModifiers(Terminal.SGR.REVERSE);
         }
         else {
-            enabledCharacterStyles.remove(ScreenCharacterStyle.Reverse);
+            screenWriter.disableModifiers(Terminal.SGR.REVERSE);
         }
     }
     
     @Override
     public void setStyleUnderline(boolean isUnderlined) {
         if(isUnderlined) {
-            enabledCharacterStyles.add(ScreenCharacterStyle.Underline);
+            screenWriter.enableModifiers(Terminal.SGR.UNDERLINE);
         }
         else {
-            enabledCharacterStyles.remove(ScreenCharacterStyle.Underline);
+            screenWriter.disableModifiers(Terminal.SGR.UNDERLINE);
         }
-    }
-    
-    @Override
-    public boolean isStyleBold() {
-        return enabledCharacterStyles.contains(ScreenCharacterStyle.Bold);
-    }
-    
-    @Override
-    public boolean isStyleBlink() {
-        return enabledCharacterStyles.contains(ScreenCharacterStyle.Blinking);
-    }
-    
-    @Override
-    public boolean isStyleReverse() {
-        return enabledCharacterStyles.contains(ScreenCharacterStyle.Reverse);
-    }
-    
-    @Override
-    public boolean isStyleUnderline() {
-        return enabledCharacterStyles.contains(ScreenCharacterStyle.Underline);
     }
 
     @Override
@@ -161,13 +135,7 @@ public class ScreenBackendTextGUIGraphics implements TextGUIGraphics {
             text = text.substring(0, drawableAreaSize.getColumns() - xOffset);
         }
         
-        screen.putString(
-                xOffset + topLeftPosition.getColumn(), 
-                yOffset + topLeftPosition.getRow(), 
-                text, 
-                foregroundColor, 
-                backgroundColor, 
-                enabledCharacterStyles);
+        screenWriter.setPosition(new TerminalPosition(xOffset + topLeftPosition.getColumn(), yOffset + topLeftPosition.getRow()));
     }
 
     @Override
@@ -201,6 +169,6 @@ public class ScreenBackendTextGUIGraphics implements TextGUIGraphics {
             return new NullTextGUIGraphics();
         }
         
-        return new ScreenBackendTextGUIGraphics(screen, newTopLeft, newSize);
+        return new ScreenBackendTextGUIGraphics(screenWriter, newTopLeft, newSize);
     }
 }

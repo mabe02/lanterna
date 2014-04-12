@@ -32,14 +32,6 @@ public interface TextGUIGraphics {
 
     void setBackgroundColor(TextColor color);
 
-    boolean isStyleBlink();
-
-    boolean isStyleBold();
-
-    boolean isStyleReverse();
-
-    boolean isStyleUnderline();
-
     void resetCharacterStyles();
 
     void setStyleBlink(boolean isBlinking);

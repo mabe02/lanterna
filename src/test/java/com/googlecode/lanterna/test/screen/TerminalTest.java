@@ -38,73 +38,73 @@ public class TerminalTest
             Thread.sleep(500);
         }
         catch(InterruptedException e) {}
-        writer.drawString(10, 10, "Hello world!");
+        writer.setPosition(10, 10).putString("Hello world!");
         screen.refresh();
         try {
             Thread.sleep(500);
         }
         catch(InterruptedException e) {}
-        writer.drawString(10, 10, " ello world!");
+        writer.setPosition(10, 10).putString(" ello world!");
         screen.refresh();
         try {
             Thread.sleep(500);
         }
         catch(InterruptedException e) {}
-        writer.drawString(10, 10, "  llo world!");
+        writer.setPosition(10, 10).putString("  llo world!");
         screen.refresh();
         try {
             Thread.sleep(500);
         }
         catch(InterruptedException e) {}
-        writer.drawString(10, 10, "   lo world!");
+        writer.setPosition(10, 10).putString("   lo world!");
         screen.refresh();
         try {
             Thread.sleep(500);
         }
         catch(InterruptedException e) {}
-        writer.drawString(10, 10, "    o world!");
+        writer.setPosition(10, 10).putString("    o world!");
         screen.refresh();
         try {
             Thread.sleep(500);
         }
         catch(InterruptedException e) {}
-        writer.drawString(10, 10, "      world!");
+        writer.setPosition(10, 10).putString("      world!");
         screen.refresh();
         try {
             Thread.sleep(500);
         }
         catch(InterruptedException e) {}
-        writer.drawString(10, 10, "       orld!");
+        writer.setPosition(10, 10).putString("       orld!");
         screen.refresh();
         try {
             Thread.sleep(500);
         }
         catch(InterruptedException e) {}
-        writer.drawString(10, 10, "        rld!");
+        writer.setPosition(10, 10).putString("        rld!");
         screen.refresh();
         try {
             Thread.sleep(500);
         }
         catch(InterruptedException e) {}
-        writer.drawString(10, 10, "         ld!");
+        writer.setPosition(10, 10).putString("         ld!");
         screen.refresh();
         try {
             Thread.sleep(500);
         }
         catch(InterruptedException e) {}
-        writer.drawString(10, 10, "          d!");
+        writer.setPosition(10, 10).putString("          d!");
         screen.refresh();
         try {
             Thread.sleep(500);
         }
         catch(InterruptedException e) {}
-        writer.drawString(10, 10, "           !");
+        writer.setPosition(10, 10).putString("           !");
         screen.refresh();
         try {
             Thread.sleep(500);
         }
         catch(InterruptedException e) {}
-        writer.drawString(10, 10, "            ");
+        writer.setPosition(10, 10).putString("            ");
         screen.refresh();
         try {
             Thread.sleep(500);
