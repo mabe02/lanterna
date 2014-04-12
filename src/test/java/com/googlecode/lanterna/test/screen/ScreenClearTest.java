@@ -33,23 +33,14 @@ public class ScreenClearTest {
     public static void main(String[] args) throws IOException {
         DefaultScreen screen = new TestTerminalFactory(args).createScreen();
         screen.startScreen();
-        drawText(screen);
-        screen.refresh();
-        sleep(1000);
-        screen.clear();
-        screen.refresh();
-        sleep(300);
-        drawText(screen);
-        screen.refresh();
-        sleep(1000);
-        screen.clear();
-        screen.refresh();
-        sleep(300);
-        drawText(screen);
-        screen.refresh();
-        sleep(1000);
-        screen.clear();
-        screen.refresh();
+        for(int i = 0; i < 10; i++) {
+            drawText(screen);
+            screen.refresh();
+            sleep(1000);
+            screen.clear();
+            screen.refresh();
+            sleep(300);
+        }
         screen.stopScreen();
     }
 
