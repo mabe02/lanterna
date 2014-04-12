@@ -32,7 +32,7 @@ import java.util.Random;
  *
  * @author martin
  */
-public class ScreenFillTest {
+public class ScreenRectangleTest {
     public static void main(String[] args) throws IOException {
         boolean useAnsiColors = false;
         for(String arg: args) {
