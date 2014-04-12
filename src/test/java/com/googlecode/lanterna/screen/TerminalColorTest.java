@@ -108,6 +108,12 @@ public class TerminalColorTest {
         writer.setForegroundColor(TextColor.ANSI.CYAN);
         writer.setBackgroundColor(TextColor.ANSI.BLUE);
         writer.setPosition(17, 27).putString("Hello World", Terminal.SGR.BOLD);
+        
+        writer.setForegroundColor(TextColor.ANSI.DEFAULT);
+        writer.setBackgroundColor(TextColor.ANSI.RED);
+        writer.setPosition(0, 0);
+        writer.drawRectangle(screen.getTerminalSize(), ' ');
+        
         screen.refresh();
 
         try {
