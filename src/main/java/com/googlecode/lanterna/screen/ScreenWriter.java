@@ -158,7 +158,8 @@ public class ScreenWriter {
      * @param character What character to use when drawing the lines of the triangle
      */
     void fillTriangle(TerminalPosition p1, TerminalPosition p2, char character) {
-        //Sort the points
+        //I've used the algorithm described here:
+        //http://www-users.mat.uni.torun.pl/~wrona/3d_tutor/tri_fillers.html
         TerminalPosition[] points = new TerminalPosition[]{currentPosition, p1, p2};
         Arrays.sort(points, new Comparator<TerminalPosition>() {
             @Override
