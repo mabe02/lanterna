@@ -48,6 +48,10 @@ public class ScreenWriter {
         this.currentPosition = new TerminalPosition(0, 0);
         this.activeModifiers = EnumSet.noneOf(Terminal.SGR.class);
     }
+    
+    public ScreenWriter setPosition(int column, int row) {
+        return setPosition(new TerminalPosition(column, row));
+    }
 
     public ScreenWriter setPosition(TerminalPosition newPosition) {
         this.currentPosition = newPosition;
