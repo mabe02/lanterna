@@ -292,10 +292,15 @@ public class DefaultScreen extends TerminalScreen {
         EnumSet<Terminal.SGR> currentSGR = EnumSet.noneOf(Terminal.SGR.class);
         TextColor currentForegroundColor = TextColor.ANSI.DEFAULT;
         TextColor currentBackgroundColor = TextColor.ANSI.DEFAULT;
+        int currentColumn = 0;
         for(int y = 0; y < getTerminalSize().getRows(); y++) {
             getTerminal().moveCursor(0, y);
             for(int x = 0; x < getTerminalSize().getColumns(); x++) {
                 ScreenCharacter newCharacter = backBuffer.getCharacterAt(x, y);
+                if(newCharacter.equals(DEFAULT_CHARACTER)) {
+                    continue;
+                }
+                    
                 if(!currentForegroundColor.equals(newCharacter.getForegroundColor())) {
                     getTerminal().applyForegroundColor(newCharacter.getForegroundColor());
                     currentForegroundColor = newCharacter.getForegroundColor();
@@ -314,7 +319,12 @@ public class DefaultScreen extends TerminalScreen {
                         currentSGR.add(sgr);
                     }
                 }
+                if(currentColumn != x) {
+                    getTerminal().moveCursor(x, y);
+                    currentColumn = x;
+                }
                 getTerminal().putCharacter(newCharacter.getCharacter());
+                currentColumn++;
             }
         }
     }
