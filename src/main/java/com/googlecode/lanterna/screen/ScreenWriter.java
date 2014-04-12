@@ -142,7 +142,7 @@ public class ScreenWriter {
      * @param p2 Second point on the screen to draw the triangle with, going from p1 and going back to the original start
      * @param character What character to use when drawing the lines of the triangle
      */
-    void drawTriangle(TerminalPosition p1, TerminalPosition p2, char character) {
+    public void drawTriangle(TerminalPosition p1, TerminalPosition p2, char character) {
         TerminalPosition originalStart = currentPosition;
         drawLine(p1, character);
         drawLine(p2, character);
@@ -157,7 +157,7 @@ public class ScreenWriter {
      * @param p2 Second point on the screen to draw the triangle with, going from p1 and going back to the original start
      * @param character What character to use when drawing the lines of the triangle
      */
-    void fillTriangle(TerminalPosition p1, TerminalPosition p2, char character) {
+    public void fillTriangle(TerminalPosition p1, TerminalPosition p2, char character) {
         //I've used the algorithm described here:
         //http://www-users.mat.uni.torun.pl/~wrona/3d_tutor/tri_fillers.html
         TerminalPosition[] points = new TerminalPosition[]{currentPosition, p1, p2};
@@ -220,7 +220,7 @@ public class ScreenWriter {
      * @param size Size (in columns and rows) of the area to draw
      * @param character What character to use when drawing the outline of the rectangle
      */
-    void drawRectangle(TerminalSize size, char character) {
+    public void drawRectangle(TerminalSize size, char character) {
         TerminalPosition originalStart = currentPosition;
         drawLine(currentPosition.withRelativeColumn(size.getColumns()), character);
         drawLine(currentPosition.withRelativeRow(size.getRows()), character);
@@ -235,7 +235,7 @@ public class ScreenWriter {
      * @param size Size (in columns and rows) of the area to draw
      * @param character What character to use when filling the rectangle
      */
-    void fillRectangle(TerminalSize size, char character) {
+    public void fillRectangle(TerminalSize size, char character) {
         for(int y = 0; y < size.getRows(); y++) {
             for(int x = 0; x < size.getColumns(); x++) {
                 screen.setCharacter(
