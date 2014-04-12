@@ -125,7 +125,27 @@ public class ScreenWriter {
      * @param character Character to use for the line
      */
     public void drawLine(TerminalPosition toPoint, char character) {
-        drawLine(currentPosition, toPoint, character);
+        //Special case for straight vertical line
+        if(currentPosition.getColumn() == toPoint.getColumn()) {
+            for(int y = Math.min(currentPosition.getRow(), toPoint.getRow()); 
+                    y <= Math.max(currentPosition.getRow(), toPoint.getRow());
+                    y++) {
+                screen.setCharacter(new TerminalPosition(currentPosition.getColumn(), y), newScreenCharacter(character));
+            }
+        }
+        else {
+            //Sort the points, left-to-right
+            TerminalPosition left, right;
+            if(currentPosition.getColumn() < toPoint.getColumn()) {
+                left = currentPosition;
+                right = toPoint;
+            }
+            else {
+                left = toPoint;
+                right = currentPosition;
+            }
+            drawLine(left, right, character);
+        }
         currentPosition = toPoint;
     }
 
