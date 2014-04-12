@@ -17,7 +17,7 @@
  * Copyright (C) 2010-2014 Martin
  */
 
-package com.googlecode.lanterna.test.gui;
+package com.googlecode.lanterna.gui;
 
 import com.googlecode.lanterna.gui.Action;
 import com.googlecode.lanterna.gui.Border;

@@ -16,7 +16,7 @@
  * 
  * Copyright (C) 2010-2014 Martin
  */
-package com.googlecode.lanterna.test.gui2;
+package com.googlecode.lanterna.gui2;
 
 /**
  *

@@ -1,4 +1,4 @@
-package com.googlecode.lanterna.test.issue;
+package com.googlecode.lanterna.issue;
 
 import com.googlecode.lanterna.gui.GUIScreen;
 import com.googlecode.lanterna.gui.TextGraphics;
@@ -7,7 +7,7 @@ import com.googlecode.lanterna.gui.component.AbstractInteractableComponent;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.TerminalSize;
-import com.googlecode.lanterna.test.TestTerminalFactory;
+import com.googlecode.lanterna.TestTerminalFactory;
 import java.io.IOException;
 
 public class Issue60 extends Window {

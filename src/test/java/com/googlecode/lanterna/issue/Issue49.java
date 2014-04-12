@@ -1,4 +1,4 @@
-package com.googlecode.lanterna.test.issue;
+package com.googlecode.lanterna.issue;
 
 import com.googlecode.lanterna.gui.Action;
 import com.googlecode.lanterna.gui.Component;
@@ -12,7 +12,7 @@ import com.googlecode.lanterna.gui.component.Panel.Orientation;
 import com.googlecode.lanterna.gui.component.Table;
 import com.googlecode.lanterna.gui.layout.LinearLayout;
 import com.googlecode.lanterna.gui.layout.VerticalLayout;
-import com.googlecode.lanterna.test.TestTerminalFactory;
+import com.googlecode.lanterna.TestTerminalFactory;
 import java.io.IOException;
 
 public class Issue49 {

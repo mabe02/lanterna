@@ -16,14 +16,14 @@
  *
  * Copyright (C) 2010-2013 Martin
  */
-package com.googlecode.lanterna.test.gui;
+package com.googlecode.lanterna.gui;
 
 import com.googlecode.lanterna.gui.Action;
 import com.googlecode.lanterna.gui.GUIScreen;
 import com.googlecode.lanterna.gui.Window;
 import com.googlecode.lanterna.gui.component.Button;
 import com.googlecode.lanterna.gui.dialog.MessageBox;
-import com.googlecode.lanterna.test.TestTerminalFactory;
+import com.googlecode.lanterna.TestTerminalFactory;
 import java.io.IOException;
 
 public class MultiWindowTest {

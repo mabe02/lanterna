@@ -1,4 +1,4 @@
-package com.googlecode.lanterna.test.issue;
+package com.googlecode.lanterna.issue;
 import com.googlecode.lanterna.TerminalFacade;
 import com.googlecode.lanterna.gui.Action;
 import com.googlecode.lanterna.gui.Component.Alignment;

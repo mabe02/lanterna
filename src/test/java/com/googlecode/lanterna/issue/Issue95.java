@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package com.googlecode.lanterna.test.issue;
+package com.googlecode.lanterna.issue;
 
 import com.googlecode.lanterna.TerminalFacade;
 import com.googlecode.lanterna.screen.DefaultScreen;

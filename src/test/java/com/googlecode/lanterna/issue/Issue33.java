@@ -16,7 +16,7 @@
  *
  * Copyright (C) 2010-2014 Martin
  */
-package com.googlecode.lanterna.test.issue;
+package com.googlecode.lanterna.issue;
 
 import com.googlecode.lanterna.gui.Action;
 import com.googlecode.lanterna.gui.GUIScreen;
@@ -27,7 +27,7 @@ import com.googlecode.lanterna.gui.component.Label;
 import com.googlecode.lanterna.gui.component.Panel;
 import com.googlecode.lanterna.gui.component.Table;
 import com.googlecode.lanterna.gui.layout.LinearLayout;
-import com.googlecode.lanterna.test.TestTerminalFactory;
+import com.googlecode.lanterna.TestTerminalFactory;
 import java.io.IOException;
 import java.util.Random;
 

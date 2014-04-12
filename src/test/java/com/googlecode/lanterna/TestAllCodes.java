@@ -17,7 +17,7 @@
  * Copyright (C) 2010-2014 Martin
  */
 
-package com.googlecode.lanterna.test;
+package com.googlecode.lanterna;
 
 /**
  * Prints the whole symbol table, this is debug stuff for UTF-8 to non-UTF-8

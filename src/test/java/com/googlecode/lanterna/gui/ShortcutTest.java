@@ -16,7 +16,7 @@
  *
  * Copyright (C) 2010-2014 Martin
  */
-package com.googlecode.lanterna.test.gui;
+package com.googlecode.lanterna.gui;
 
 import java.nio.charset.Charset;
 
@@ -34,7 +34,7 @@ import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.DefaultScreen;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.text.UnixTerminal;
-import com.googlecode.lanterna.test.TestTerminalFactory;
+import com.googlecode.lanterna.TestTerminalFactory;
 import java.io.IOException;
 
 /**

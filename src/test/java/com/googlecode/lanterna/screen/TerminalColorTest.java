@@ -17,13 +17,13 @@
  * Copyright (C) 2010-2014 Martin
  */
 
-package com.googlecode.lanterna.test.screen;
+package com.googlecode.lanterna.screen;
 
 import com.googlecode.lanterna.screen.DefaultScreen;
 import com.googlecode.lanterna.screen.ScreenWriter;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TextColor;
-import com.googlecode.lanterna.test.TestTerminalFactory;
+import com.googlecode.lanterna.TestTerminalFactory;
 import java.io.IOException;
 
 /**

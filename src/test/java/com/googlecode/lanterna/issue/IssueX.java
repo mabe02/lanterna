@@ -1,10 +1,10 @@
-package com.googlecode.lanterna.test.issue;
+package com.googlecode.lanterna.issue;
 
 import com.googlecode.lanterna.screen.DefaultScreen;
 import com.googlecode.lanterna.screen.ScreenWriter;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalPosition;
-import com.googlecode.lanterna.test.TestTerminalFactory;
+import com.googlecode.lanterna.TestTerminalFactory;
 import java.io.IOException;
 
 class IssueX {

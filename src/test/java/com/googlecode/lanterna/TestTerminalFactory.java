@@ -17,7 +17,7 @@
  * Copyright (C) 2010-2014 Martin
  */
 
-package com.googlecode.lanterna.test;
+package com.googlecode.lanterna;
 
 import com.googlecode.lanterna.TerminalFacade;
 import com.googlecode.lanterna.gui.GUIScreen;

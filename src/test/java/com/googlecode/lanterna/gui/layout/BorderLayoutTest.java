@@ -16,7 +16,7 @@
  *
  * Copyright (C) 2010-2014 Martin
  */
-package com.googlecode.lanterna.test.gui.layout;
+package com.googlecode.lanterna.gui.layout;
 
 import com.googlecode.lanterna.gui.Action;
 import com.googlecode.lanterna.gui.Component;
@@ -31,8 +31,8 @@ import com.googlecode.lanterna.gui.layout.BorderLayout;
 import com.googlecode.lanterna.gui.layout.LayoutParameter;
 import com.googlecode.lanterna.gui.layout.LinearLayout;
 import com.googlecode.lanterna.terminal.TerminalSize;
-import com.googlecode.lanterna.test.TestTerminalFactory;
-import com.googlecode.lanterna.test.gui.MockComponent;
+import com.googlecode.lanterna.TestTerminalFactory;
+import com.googlecode.lanterna.gui.MockComponent;
 import java.io.IOException;
 
 /**

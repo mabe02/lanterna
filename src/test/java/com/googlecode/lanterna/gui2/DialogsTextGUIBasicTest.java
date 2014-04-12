@@ -16,7 +16,7 @@
  *
  * Copyright (C) 2010-2014 Martin
  */
-package com.googlecode.lanterna.test.gui2;
+package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.gui2.DefaultWindowTextGUI;
 import com.googlecode.lanterna.gui2.GUIElement;
@@ -24,7 +24,7 @@ import com.googlecode.lanterna.gui2.TextGUI;
 import com.googlecode.lanterna.gui2.TextGUIGraphics;
 import com.googlecode.lanterna.screen.DefaultScreen;
 import com.googlecode.lanterna.terminal.TextColor;
-import com.googlecode.lanterna.test.TestTerminalFactory;
+import com.googlecode.lanterna.TestTerminalFactory;
 import java.io.IOException;
 
 /**

@@ -1,8 +1,8 @@
-package com.googlecode.lanterna.test.issue;
+package com.googlecode.lanterna.issue;
 
 import com.googlecode.lanterna.gui.GUIScreen;
 import com.googlecode.lanterna.gui.dialog.TextInputDialog;
-import com.googlecode.lanterna.test.TestTerminalFactory;
+import com.googlecode.lanterna.TestTerminalFactory;
 import java.io.IOException;
 
 public class Issue53 {

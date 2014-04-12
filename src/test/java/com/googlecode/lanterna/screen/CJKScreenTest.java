@@ -2,12 +2,12 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.googlecode.lanterna.test.screen;
+package com.googlecode.lanterna.screen;
 
 import com.googlecode.lanterna.screen.DefaultScreen;
 import com.googlecode.lanterna.screen.ScreenWriter;
 import com.googlecode.lanterna.terminal.TextColor;
-import com.googlecode.lanterna.test.TestTerminalFactory;
+import com.googlecode.lanterna.TestTerminalFactory;
 import java.io.IOException;
 
 /**

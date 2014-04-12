@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.googlecode.lanterna.test.gui;
+package com.googlecode.lanterna.gui;
 
 import com.googlecode.lanterna.gui.Action;
 import com.googlecode.lanterna.gui.GUIScreen;
@@ -16,7 +16,7 @@ import com.googlecode.lanterna.gui.component.ProgressBar;
 import com.googlecode.lanterna.gui.component.Table;
 import com.googlecode.lanterna.gui.component.TextBox;
 import com.googlecode.lanterna.gui.layout.LinearLayout;
-import com.googlecode.lanterna.test.TestTerminalFactory;
+import com.googlecode.lanterna.TestTerminalFactory;
 import java.io.IOException;
 import java.util.Random;
 
