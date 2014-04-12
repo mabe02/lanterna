@@ -91,6 +91,11 @@ public abstract class TextColor {
         public void applyAsBackground(Terminal terminal) {
             terminal.applyBackgroundColor(ansiColor);
         }
+
+        @Override
+        public String toString() {
+            return ansiColor.toString();
+        }
     }
 
     /**
@@ -425,6 +430,11 @@ public abstract class TextColor {
             return COLOR_TABLE[colorIndex][2];
         }
 
+        @Override
+        public String toString() {
+            return "{IndexedColor:" + colorIndex + "}";
+        }
+
         /**
          * Picks out a color approximated from the supplied RGB components
          * @param red Red intensity, from 0 to 255
@@ -529,6 +539,11 @@ public abstract class TextColor {
         @Override
         public void applyAsBackground(Terminal terminal) {
             terminal.applyBackgroundColor(r, g, b);
+        }
+
+        @Override
+        public String toString() {
+            return "{RGB:" + r + "," + g + "," + b + "}";
         }
     }
 }
