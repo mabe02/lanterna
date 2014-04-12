@@ -32,12 +32,20 @@ import java.util.Random;
  *
  * @author martin
  */
-public class ScreenRectangleTest {
-    public static void main(String[] args) throws IOException {
+public class ScreenRectangleFillTest {
+    public static void main(String[] args) throws IOException, InterruptedException {
         boolean useAnsiColors = false;
+        boolean useFilled = false;
+        boolean slow = false;
         for(String arg: args) {
             if(arg.equals("--ansi-colors")) {
                 useAnsiColors = true;
+            }
+            if(arg.equals("--filled")) {
+                useFilled = true;
+            }
+            if(arg.equals("--slow")) {
+                slow = true;
             }
         }
         DefaultScreen screen = new TestTerminalFactory(args).createScreen();
@@ -64,12 +72,20 @@ public class ScreenRectangleTest {
             }
             
             TerminalPosition topLeft = new TerminalPosition(random.nextInt(size.getColumns()), random.nextInt(size.getRows()));
-            TerminalSize rectangleSize = new TerminalSize(random.nextInt(size.getColumns() - topLeft.getColumn() + 1), random.nextInt(size.getRows() - topLeft.getRow() + 1));
+            TerminalSize rectangleSize = new TerminalSize(random.nextInt(size.getColumns() - topLeft.getColumn()), random.nextInt(size.getRows() - topLeft.getRow()));
             
             writer.setBackgroundColor(color);
             writer.setPosition(topLeft);
-            writer.fillRectangle(rectangleSize, ' ');
+            if(useFilled) {
+                writer.fillRectangle(rectangleSize, ' ');
+            }
+            else {
+                writer.drawRectangle(rectangleSize, ' ');
+            }
             screen.refresh(Screen.RefreshType.DELTA);
+            if(slow) {
+                Thread.sleep(500);
+            }
         }
         screen.stopScreen();
     }
