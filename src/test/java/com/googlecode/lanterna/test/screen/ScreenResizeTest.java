@@ -19,6 +19,8 @@
 
 package com.googlecode.lanterna.test.screen;
 
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.DefaultScreen;
 import com.googlecode.lanterna.screen.ScreenWriter;
 import com.googlecode.lanterna.terminal.Terminal;
@@ -54,8 +56,9 @@ public class ScreenResizeTest
         while(System.currentTimeMillis() - now < 20 * 1000)
         {
             screen.readInput();
-            if(screen.doResizeIfNecessary() != null)
+            if(screen.doResizeIfNecessary() != null) {
                 putStrings("Size: " + screen.getTerminalSize().getColumns() + "x" + screen.getTerminalSize().getRows());
+            }
 
             Thread.sleep(1);
         }
