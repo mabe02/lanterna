@@ -284,9 +284,9 @@ public class DefaultScreen extends TerminalScreen {
     }
 
     private void refreshFull() {
-        getTerminal().clearScreen();
         getTerminal().applyForegroundColor(Terminal.ANSIColor.DEFAULT);
         getTerminal().applyBackgroundColor(Terminal.ANSIColor.DEFAULT);
+        getTerminal().clearScreen();
         getTerminal().resetAllSGR();
         
         EnumSet<Terminal.SGR> currentSGR = EnumSet.noneOf(Terminal.SGR.class);
