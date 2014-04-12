@@ -316,7 +316,7 @@ public class DefaultScreen extends TerminalScreen {
                     currentForegroundColor = newCharacter.getForegroundColor();
                 }
                 if(!currentBackgroundColor.equals(newCharacter.getBackgroundColor())) {
-                    getTerminal().applyBackgroundColor(newCharacter.getForegroundColor());
+                    getTerminal().applyBackgroundColor(newCharacter.getBackgroundColor());
                     currentBackgroundColor = newCharacter.getBackgroundColor();
                 }
                 for(Terminal.SGR sgr: Terminal.SGR.values()) {
