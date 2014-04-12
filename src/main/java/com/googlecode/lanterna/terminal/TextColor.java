@@ -56,11 +56,31 @@ public abstract class TextColor {
         public static final ANSI WHITE = new ANSI(Terminal.ANSIColor.WHITE);
         public static final ANSI DEFAULT = new ANSI(Terminal.ANSIColor.DEFAULT);
 
+        
+        public static ANSI fromTerminalANSIColor(Terminal.ANSIColor color) {
+            if(color == null) {
+                return null;
+            }
+            switch(color) {
+                case BLACK: return BLACK;
+                case RED: return RED;
+                case GREEN: return GREEN;
+                case YELLOW: return YELLOW;
+                case BLUE: return BLUE;
+                case MAGENTA: return MAGENTA;
+                case CYAN: return CYAN;
+                case WHITE: return WHITE;
+                case DEFAULT: return DEFAULT;
+                default: throw new IllegalArgumentException("Unknown ANSI color " + color);
+            }
+        }    
+        
         private final Terminal.ANSIColor ansiColor;
 
         private ANSI(Terminal.ANSIColor ansiColor) {
             this.ansiColor = ansiColor;
         }
+        
 
         @Override
         public void applyAsForeground(Terminal terminal) {
