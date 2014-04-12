@@ -18,17 +18,36 @@
  */
 package com.googlecode.lanterna.screen;
 
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.terminal.ResizeListener;
 import com.googlecode.lanterna.terminal.Terminal;
+import com.googlecode.lanterna.terminal.TerminalSize;
+import java.io.IOException;
+import java.util.LinkedList;
 
 /**
  * This class keeps some simple code dealing with handling the Terminal interface that the Screen sits on top of.
  * @author martin
  */
 public abstract class TerminalScreen implements Screen {
+    
     private final Terminal terminal;
+    
+    private TerminalSize terminalSize;
+    private TerminalSize latestResizeRequest;
 
-    public TerminalScreen(Terminal terminal) {
+    protected TerminalScreen(Terminal terminal, TerminalSize terminalSize) throws IOException {
         this.terminal = terminal;
+        
+        if(terminalSize != null) {
+            this.terminalSize = terminalSize; 
+        }
+        else {
+            this.terminalSize = terminal.getTerminalSize();
+        }
+        this.latestResizeRequest = null;
+        
+        this.terminal.addResizeListener(new TerminalResizeListener());
     }
     
     /**
@@ -43,5 +62,38 @@ public abstract class TerminalScreen implements Screen {
      */
     public Terminal getTerminal() {
         return terminal;
+    }
+
+    @Override
+    public KeyStroke readInput() throws IOException {
+        return terminal.readInput();
+    }
+
+    @Override
+    public TerminalSize getTerminalSize() {
+        return terminalSize;
+    }
+    
+    @Override
+    public void addResizeListener(ResizeListener listener) {
+        terminal.addResizeListener(listener);
+    }
+
+    @Override
+    public void removeResizeListener(ResizeListener listener) {
+        terminal.removeResizeListener(listener);
+    }
+    
+    protected synchronized TerminalSize getAndClearPendingResize() {
+        TerminalSize size = latestResizeRequest;
+        latestResizeRequest = null;
+        return size;
+    }
+    
+    private class TerminalResizeListener implements ResizeListener {
+        @Override
+        public void onResized(Terminal terminal, TerminalSize newSize) {
+            latestResizeRequest = newSize;
+        }
     }
 }
