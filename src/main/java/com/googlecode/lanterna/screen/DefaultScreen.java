@@ -70,8 +70,8 @@ public class DefaultScreen extends TerminalScreen {
      */
     public DefaultScreen(Terminal terminal, TerminalSize terminalSize) throws IOException {
         super(terminal, terminalSize);
-        this.frontBuffer = new ScreenBuffer(terminalSize, DEFAULT_CHARACTER);
-        this.backBuffer = new ScreenBuffer(terminalSize, DEFAULT_CHARACTER);
+        this.frontBuffer = new ScreenBuffer(getTerminalSize(), DEFAULT_CHARACTER);
+        this.backBuffer = new ScreenBuffer(getTerminalSize(), DEFAULT_CHARACTER);
         this.cursorPosition = new TerminalPosition(0, 0);
         this.tabBehaviour = TabBehaviour.ALIGN_TO_COLUMN_4;
         this.isStarted = false;
