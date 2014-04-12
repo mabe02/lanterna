@@ -47,7 +47,7 @@ public class ScreenWriter {
         this.foregroundColor = TextColor.ANSI.DEFAULT;
         this.backgroundColor = TextColor.ANSI.DEFAULT;
         this.currentPosition = new TerminalPosition(0, 0);
-        this.tabBehaviour = TabBehaviour.ALIGN_TO_COLUMN_4;
+        this.tabBehaviour = screen.getTabBehaviour();
         this.activeModifiers = EnumSet.noneOf(Terminal.SGR.class);
     }
     
