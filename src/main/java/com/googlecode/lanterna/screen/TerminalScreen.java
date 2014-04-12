@@ -85,9 +85,11 @@ public abstract class TerminalScreen implements Screen {
     }
     
     protected synchronized TerminalSize getAndClearPendingResize() {
-        TerminalSize size = latestResizeRequest;
-        latestResizeRequest = null;
-        return size;
+        if(latestResizeRequest != null) {
+            terminalSize = latestResizeRequest;
+            return terminalSize;
+        }
+        return null;
     }
     
     private class TerminalResizeListener implements ResizeListener {
