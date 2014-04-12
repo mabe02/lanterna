@@ -147,7 +147,7 @@ public class TerminalFacade {
      * {@code System.out} and {@code System.in} for input and output of the
      * terminal.
      */
-    public static UnixTerminal createUnixTerminal() {
+    public static UnixTerminal createUnixTerminal() throws IOException {
         return createUnixTerminal(DEFAULT_CHARSET);
     }
 
@@ -155,7 +155,7 @@ public class TerminalFacade {
      * Creates a {@code UnixTerminal} object that is using a supplied character
      * set when converting characters to bytes.
      */
-    public static UnixTerminal createUnixTerminal(Charset terminalCharset) {
+    public static UnixTerminal createUnixTerminal(Charset terminalCharset) throws IOException {
         return createUnixTerminal(System.in, System.out, terminalCharset);
     }
 
@@ -165,7 +165,7 @@ public class TerminalFacade {
      */
     public static UnixTerminal createUnixTerminal(
             InputStream terminalInput,
-            OutputStream terminalOutput) {
+            OutputStream terminalOutput) throws IOException {
         return createUnixTerminal(terminalInput, terminalOutput, DEFAULT_CHARSET);
     }
 
@@ -177,7 +177,7 @@ public class TerminalFacade {
     public static UnixTerminal createUnixTerminal(
             InputStream terminalInput,
             OutputStream terminalOutput,
-            Charset terminalCharset) {
+            Charset terminalCharset) throws IOException {
         return new UnixTerminal(terminalInput, terminalOutput, terminalCharset);
     }
 
@@ -230,7 +230,12 @@ public class TerminalFacade {
         if (isOperatingSystemWindows()) {
             return createCygwinTerminal(terminalInput, terminalOutput, terminalCharset);
         } else {
-            return createUnixTerminal(terminalInput, terminalOutput, terminalCharset);
+            try {
+                return createUnixTerminal(terminalInput, terminalOutput, terminalCharset);
+            }
+            catch(IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
