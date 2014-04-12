@@ -62,11 +62,12 @@ public class UnixTerminal extends ANSITerminal {
      * @param terminalInput Input stream to read terminal input from
      * @param terminalOutput Output stream to write terminal output to
      * @param terminalCharset Character set to use when converting characters to bytes
+     * @throws java.io.IOException If there was an I/O error initializing the terminal
      */
     public UnixTerminal(
             InputStream terminalInput,
             OutputStream terminalOutput,
-            Charset terminalCharset) {
+            Charset terminalCharset) throws IOException {
         this(terminalInput, terminalOutput, terminalCharset, null);
     }
 
@@ -78,12 +79,13 @@ public class UnixTerminal extends ANSITerminal {
      * @param terminalCharset Character set to use when converting characters to bytes
      * @param customSizeQuerier Object to use for looking up the size of the terminal, or null to use the built-in
      * method
+     * @throws java.io.IOException If there was an I/O error initializing the terminal
      */
     public UnixTerminal(
             InputStream terminalInput,
             OutputStream terminalOutput,
             Charset terminalCharset,
-            UnixTerminalSizeQuerier customSizeQuerier) {
+            UnixTerminalSizeQuerier customSizeQuerier) throws IOException {
         this(terminalInput, terminalOutput, terminalCharset, customSizeQuerier, Behaviour.DEFAULT);
     }
 
@@ -97,6 +99,7 @@ public class UnixTerminal extends ANSITerminal {
      * method
      * @param terminalBehaviour Special settings on how the terminal will behave, see {@code UnixTerminalMode} for more
      * details
+     * @throws java.io.IOException If there was an I/O error initializing the terminal
      */
     @SuppressWarnings("unchecked")
     public UnixTerminal(
@@ -104,7 +107,7 @@ public class UnixTerminal extends ANSITerminal {
             OutputStream terminalOutput,
             Charset terminalCharset,
             UnixTerminalSizeQuerier customSizeQuerier,
-            Behaviour terminalBehaviour) {
+            Behaviour terminalBehaviour) throws IOException {
         super(terminalInput, terminalOutput, terminalCharset);
         this.terminalSizeQuerier = customSizeQuerier;
         this.terminalBehaviour = terminalBehaviour;
@@ -132,6 +135,17 @@ public class UnixTerminal extends ANSITerminal {
         } catch(Throwable e) {
             System.err.println(e.getMessage());
         }
+        
+        saveSTTY();
+        sttyMinimumCharacterForRead(1);
+        setCBreak(true);
+        setEcho(false);
+        Runtime.getRuntime().addShutdownHook(new Thread("Lanterna SSTY restore") {
+            @Override
+            public void run() {
+                restoreSTTY();
+            }
+        });
     }
 
     @Override
@@ -139,7 +153,7 @@ public class UnixTerminal extends ANSITerminal {
         if(terminalSizeQuerier != null) {
             return terminalSizeQuerier.queryTerminalSize();
         }
-
+        
         return super.getTerminalSize();
     }
 
@@ -164,12 +178,7 @@ public class UnixTerminal extends ANSITerminal {
         if(isInPrivateMode()) {
             super.enterPrivateMode();   //This will throw IllegalStateException
         }
-        saveSTTY();
         super.enterPrivateMode();
-        setCBreak(true);
-        setEcho(false);
-        sttyMinimumCharacterForRead(1);
-        disableSpecialCharacters();
     }
 
     @Override
@@ -178,7 +187,6 @@ public class UnixTerminal extends ANSITerminal {
             super.exitPrivateMode();   //This will throw IllegalStateException
         }
         super.exitPrivateMode();
-        restoreSTTY();
     }
 
     @Override
@@ -227,10 +235,12 @@ public class UnixTerminal extends ANSITerminal {
     }
 
     private void saveSTTY() {
-        sttyStatusToRestore = exec("/bin/sh", "-c", "stty -g < /dev/tty").trim();
+        if(sttyStatusToRestore == null) {
+            sttyStatusToRestore = exec("/bin/sh", "-c", "stty -g < /dev/tty").trim();
+        }
     }
 
-    private void restoreSTTY() {
+    private synchronized void restoreSTTY() {
         if(sttyStatusToRestore == null) {
             //Nothing to restore
             return;
