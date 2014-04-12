@@ -251,23 +251,26 @@ public class ScreenWriter {
     /**
      * Draws the outline of a rectangle in the {@code Screen} with a particular character (and the currently active colors and
      * modifiers). The top-left corner will be at the current position of this {@code ScreenWriter} (inclusive) and it
-     * will extend to position + size (inclusive). The current position of this {@code ScreenWriter} after this
+     * will extend to position + size (exclusive). The current position of this {@code ScreenWriter} after this
      * operation will be the same as where it started.
+     * <p/>
+     * For example, calling drawRectangle with size being the size of the terminal when the writer's position is in the 
+     * top-left (0x0) corner will draw a border around the terminal.
      * @param size Size (in columns and rows) of the area to draw
      * @param character What character to use when drawing the outline of the rectangle
      */
     public void drawRectangle(TerminalSize size, char character) {
         TerminalPosition originalStart = currentPosition;
-        drawLine(currentPosition.withRelativeColumn(size.getColumns()), character);
-        drawLine(currentPosition.withRelativeRow(size.getRows()), character);
-        drawLine(originalStart.withRelativeRow(size.getRows()), character);
+        drawLine(currentPosition.withRelativeColumn(size.getColumns() - 1), character);
+        drawLine(currentPosition.withRelativeRow(size.getRows() - 1), character);
+        drawLine(originalStart.withRelativeRow(size.getRows() - 1), character);
         drawLine(originalStart, character);
     }
 
     /**
      * Takes a rectangle on the screen and fills it with a particular character (and the currently active colors and
      * modifiers). The top-left corner will be at the current position of this {@code ScreenWriter} (inclusive) and it
-     * will extend to position + size (inclusive).
+     * will extend to position + size (exclusive).
      * @param size Size (in columns and rows) of the area to draw
      * @param character What character to use when filling the rectangle
      */
