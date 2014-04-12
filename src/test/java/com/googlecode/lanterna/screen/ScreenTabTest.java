@@ -61,22 +61,22 @@ public class ScreenTabTest {
         writer.setForegroundColor(TextColor.ANSI.DEFAULT);
         writer.setBackgroundColor(TextColor.ANSI.DEFAULT);
         writer.putString(0, 0, topTitle, Terminal.SGR.BLINK);
-        screen.setTabBehaviour(TabBehaviour.CONVERT_TO_ONE_SPACE);
+        writer.setTabBehaviour(TabBehaviour.CONVERT_TO_ONE_SPACE);
         writer.putString(10, 1, "TabBehaviour.CONVERT_TO_ONE_SPACE:    |\t|\t|\t|\t|");
-        screen.setTabBehaviour(TabBehaviour.CONVERT_TO_TWO_SPACES);
-        writer.putString(10, 1, "TabBehaviour.CONVERT_TO_TWO_SPACES:    |\t|\t|\t|\t|");
-        screen.setTabBehaviour(TabBehaviour.CONVERT_TO_THREE_SPACES);
-        writer.putString(10, 1, "TabBehaviour.CONVERT_TO_THREE_SPACES:    |\t|\t|\t|\t|");
-        screen.setTabBehaviour(TabBehaviour.CONVERT_TO_FOUR_SPACES);
-        writer.putString(10, 2, "TabBehaviour.CONVERT_TO_FOUR_SPACES:  |\t|\t|\t|\t|");
-        screen.setTabBehaviour(TabBehaviour.CONVERT_TO_EIGHT_SPACES);
-        writer.putString(10, 3, "TabBehaviour.CONVERT_TO_EIGHT_SPACES: |\t|\t|\t|\t|");
-        screen.setTabBehaviour(TabBehaviour.ALIGN_TO_COLUMN_2);
-        writer.putString(10, 4, "TabBehaviour.ALIGN_TO_COLUMN_2:       |\t|\t|\t|\t|");
-        screen.setTabBehaviour(TabBehaviour.ALIGN_TO_COLUMN_4);
-        writer.putString(10, 4, "TabBehaviour.ALIGN_TO_COLUMN_4:       |\t|\t|\t|\t|");
-        screen.setTabBehaviour(TabBehaviour.ALIGN_TO_COLUMN_8);
-        writer.putString(10, 5, "TabBehaviour.ALIGN_TO_COLUMN_8:       |\t|\t|\t|\t|");
+        writer.setTabBehaviour(TabBehaviour.CONVERT_TO_TWO_SPACES);
+        writer.putString(10, 2, "TabBehaviour.CONVERT_TO_TWO_SPACES:   |\t|\t|\t|\t|");
+        writer.setTabBehaviour(TabBehaviour.CONVERT_TO_THREE_SPACES);
+        writer.putString(10, 3, "TabBehaviour.CONVERT_TO_THREE_SPACES: |\t|\t|\t|\t|");
+        writer.setTabBehaviour(TabBehaviour.CONVERT_TO_FOUR_SPACES);
+        writer.putString(10, 4, "TabBehaviour.CONVERT_TO_FOUR_SPACES:  |\t|\t|\t|\t|");
+        writer.setTabBehaviour(TabBehaviour.CONVERT_TO_EIGHT_SPACES);
+        writer.putString(10, 5, "TabBehaviour.CONVERT_TO_EIGHT_SPACES: |\t|\t|\t|\t|");
+        writer.setTabBehaviour(TabBehaviour.ALIGN_TO_COLUMN_2);
+        writer.putString(10, 6, "TabBehaviour.ALIGN_TO_COLUMN_2:       |\t|\t|\t|\t|");
+        writer.setTabBehaviour(TabBehaviour.ALIGN_TO_COLUMN_4);
+        writer.putString(10, 7, "TabBehaviour.ALIGN_TO_COLUMN_4:       |\t|\t|\t|\t|");
+        writer.setTabBehaviour(TabBehaviour.ALIGN_TO_COLUMN_8);
+        writer.putString(10, 8, "TabBehaviour.ALIGN_TO_COLUMN_8:       |\t|\t|\t|\t|");
 
         screen.refresh();
     }
