@@ -259,8 +259,9 @@ public class ScreenWriter {
      * multi-line strings yourself!
      *
      * @param string Text to put on the screen
+     * @return Itself
      */
-    public void putString(String string) {
+    public ScreenWriter putString(String string) {
         if(string.contains("\n")) {
             string = string.substring(0, string.indexOf("\n"));
         }
@@ -277,6 +278,94 @@ public class ScreenWriter {
                             activeModifiers.clone()));
         }
         currentPosition = currentPosition.withRelativeColumn(string.length());
+        return this;
+    }
+    
+    /**
+     * Shortcut to calling:
+     * <pre>
+     *  putString(new TerminalPosition(column, row), string);
+     * </pre>
+     * @param column What column to put the string at
+     * @param row What row to put the string at
+     * @param string String to put on the screen
+     * @return Itself
+     */
+    public ScreenWriter putString(int column, int row, String string) {
+        putString(new TerminalPosition(column, row), string);
+        return this;
+    }
+    
+    /**
+     * Shortcut to calling:
+     * <pre>
+     *  setPosition(position);
+     *  putString(string);
+     * </pre>
+     * @param position Position to put the string at
+     * @param string String to put on the screen
+     * @return Itself
+     */
+    public ScreenWriter putString(TerminalPosition position, String string) {
+        setPosition(position);
+        putString(string);
+        return this;
+    }
+    
+    /**
+     * Shortcut to calling:
+     * <pre>
+     *  putString(new TerminalPosition(column, row), string, modifiers, optionalExtraModifiers);
+     * </pre>
+     * @param column What column to put the string at
+     * @param row What row to put the string at
+     * @param string String to put on the screen
+     * @param modifier Modifier to apply to the string
+     * @param optionalExtraModifiers Optional extra modifiers to apply to the string
+     * @return Itself
+     */
+    public ScreenWriter putString(int column, int row, String string, Terminal.SGR modifier, Terminal.SGR... optionalExtraModifiers) {
+        putString(new TerminalPosition(column, row), string, modifier, optionalExtraModifiers);
+        return this;
+    }
+    
+    /**
+     * Shortcut to calling:
+     * <pre>
+     *  setPosition(position);
+     *  putString(string, modifiers, optionalExtraModifiers);
+     * </pre>
+     * @param position Position to put the string at
+     * @param string String to put on the screen
+     * @param modifier Modifier to apply to the string
+     * @param optionalExtraModifiers Optional extra modifiers to apply to the string
+     * @return Itself
+     */
+    public ScreenWriter putString(TerminalPosition position, String string, Terminal.SGR modifier, Terminal.SGR... optionalExtraModifiers) {
+        setPosition(position);
+        putString(string, modifier, optionalExtraModifiers);
+        return this;
+    }
+    
+    /**
+     * Shortcut to calling:
+     * <pre>
+     *  clearModifiers();
+     *  enableModifiers(modifiers);
+     *  enableModifiers(optionalExtraModifiers);
+     *  putString(string);
+     * </pre>
+     * @param string String to put on the screen
+     * @param modifier Modifier to apply to the string
+     * @param optionalExtraModifiers Optional extra modifiers to apply to the string
+     * @return Itself
+     */
+    public ScreenWriter putString(String string, Terminal.SGR modifier, Terminal.SGR... optionalExtraModifiers) {
+        clearModifiers();
+        enableModifiers(modifier);
+        enableModifiers(optionalExtraModifiers);
+        putString(string);
+        return this;
     }
 
     private ScreenCharacter newScreenCharacter(char character) {
