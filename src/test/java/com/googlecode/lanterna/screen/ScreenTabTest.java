@@ -71,12 +71,10 @@ public class ScreenTabTest {
         writer.putString(10, 4, "TabBehaviour.CONVERT_TO_FOUR_SPACES:  |\t|\t|\t|\t|");
         writer.setTabBehaviour(TabBehaviour.CONVERT_TO_EIGHT_SPACES);
         writer.putString(10, 5, "TabBehaviour.CONVERT_TO_EIGHT_SPACES: |\t|\t|\t|\t|");
-        writer.setTabBehaviour(TabBehaviour.ALIGN_TO_COLUMN_2);
-        writer.putString(10, 6, "TabBehaviour.ALIGN_TO_COLUMN_2:       |\t|\t|\t|\t|");
         writer.setTabBehaviour(TabBehaviour.ALIGN_TO_COLUMN_4);
-        writer.putString(10, 7, "TabBehaviour.ALIGN_TO_COLUMN_4:       |\t|\t|\t|\t|");
+        writer.putString(10, 6, "TabBehaviour.ALIGN_TO_COLUMN_4:       |\t|\t|\t|\t|");
         writer.setTabBehaviour(TabBehaviour.ALIGN_TO_COLUMN_8);
-        writer.putString(10, 8, "TabBehaviour.ALIGN_TO_COLUMN_8:       |\t|\t|\t|\t|");
+        writer.putString(10, 7, "TabBehaviour.ALIGN_TO_COLUMN_8:       |\t|\t|\t|\t|");
 
         screen.refresh();
     }

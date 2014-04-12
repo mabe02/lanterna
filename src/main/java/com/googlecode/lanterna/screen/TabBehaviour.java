@@ -52,11 +52,6 @@ public enum TabBehaviour {
     CONVERT_TO_EIGHT_SPACES(8, null),
     /**
      * Tab characters are replaced with enough space characters to reach the next column index that is evenly divisible
-     * by 2, simulating a normal tab character when placed inside a text document.
-     */
-    ALIGN_TO_COLUMN_2(null, 2),
-    /**
-     * Tab characters are replaced with enough space characters to reach the next column index that is evenly divisible
      * by 4, simulating a normal tab character when placed inside a text document.
      */
     ALIGN_TO_COLUMN_4(null, 4),
@@ -85,7 +80,7 @@ public enum TabBehaviour {
     public String replaceTabs(String string, int x) {
         int tabPosition = string.indexOf('\t');
         while(tabPosition != -1) {
-            String tabReplacementHere = getTabReplacement(x);
+            String tabReplacementHere = getTabReplacement(x + tabPosition);
             string = string.substring(0, tabPosition) + tabReplacementHere + string.substring(tabPosition + 1);
             tabPosition += tabReplacementHere.length();
             tabPosition = string.indexOf('\t', tabPosition);
