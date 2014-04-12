@@ -16,11 +16,8 @@
  *
  * Copyright (C) 2010-2014 Martin
  */
-
 package com.googlecode.lanterna.screen;
 
-import com.googlecode.lanterna.screen.DefaultScreen;
-import com.googlecode.lanterna.screen.ScreenWriter;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TextColor;
 import com.googlecode.lanterna.TestTerminalFactory;
@@ -30,10 +27,9 @@ import java.io.IOException;
  *
  * @author martin
  */
-public class TerminalColorTest
-{
-    public static void main(String[] args) throws IOException 
-    {
+public class TerminalColorTest {
+
+    public static void main(String[] args) throws IOException {
         DefaultScreen screen = new TestTerminalFactory(args).createScreen();
         screen.startScreen();
 
@@ -114,11 +110,9 @@ public class TerminalColorTest
         writer.setPosition(17, 27).putString("Hello World", Terminal.SGR.BOLD);
         screen.refresh();
 
-        try
-        {
+        try {
             Thread.sleep(5000);
-        } catch (InterruptedException e)
-        {
+        } catch(InterruptedException e) {
         }
         screen.stopScreen();
     }
