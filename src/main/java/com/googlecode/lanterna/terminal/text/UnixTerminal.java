@@ -16,12 +16,10 @@
  *
  * Copyright (C) 2010-2014 Martin
  */
-
 package com.googlecode.lanterna.terminal.text;
 
 import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.TerminalSize;
 
 import java.io.*;
@@ -31,23 +29,24 @@ import java.lang.reflect.Proxy;
 import java.nio.charset.Charset;
 
 /**
- * A common ANSI terminal extention with support for Unix resize signals and
- * the stty program to control cbreak and key echo
+ * A common ANSI terminal extention with support for Unix resize signals and the stty program to control cbreak and key
+ * echo
+ *
  * @author Martin
  */
-public class UnixTerminal extends ANSITerminal
-{
+public class UnixTerminal extends ANSITerminal {
+
     private final UnixTerminalSizeQuerier terminalSizeQuerier;
 
     /**
      * This enum lets you control some more low-level behaviors of this terminal object.
      */
     public static enum Behaviour {
+
         /**
          * Pressing ctrl+c doesn't kill the application, it will be added to the input queue as usual
          */
         DEFAULT,
-
         /**
          * Pressing ctrl+c will restore the terminal and kill the application
          */
@@ -59,6 +58,7 @@ public class UnixTerminal extends ANSITerminal
 
     /**
      * Creates a UnixTerminal using a specified input stream, output stream and character set.
+     *
      * @param terminalInput Input stream to read terminal input from
      * @param terminalOutput Output stream to write terminal output to
      * @param terminalCharset Character set to use when converting characters to bytes
@@ -66,46 +66,45 @@ public class UnixTerminal extends ANSITerminal
     public UnixTerminal(
             InputStream terminalInput,
             OutputStream terminalOutput,
-            Charset terminalCharset)
-    {
+            Charset terminalCharset) {
         this(terminalInput, terminalOutput, terminalCharset, null);
     }
 
     /**
      * Creates a UnixTerminal using a specified input stream, output stream and character set.
+     *
      * @param terminalInput Input stream to read terminal input from
      * @param terminalOutput Output stream to write terminal output to
      * @param terminalCharset Character set to use when converting characters to bytes
-     * @param customSizeQuerier Object to use for looking up the size of the terminal, or null to
-     * use the built-in method
+     * @param customSizeQuerier Object to use for looking up the size of the terminal, or null to use the built-in
+     * method
      */
     public UnixTerminal(
             InputStream terminalInput,
             OutputStream terminalOutput,
             Charset terminalCharset,
-            UnixTerminalSizeQuerier customSizeQuerier)
-    {
+            UnixTerminalSizeQuerier customSizeQuerier) {
         this(terminalInput, terminalOutput, terminalCharset, customSizeQuerier, Behaviour.DEFAULT);
     }
 
     /**
      * Creates a UnixTerminal using a specified input stream, output stream and character set.
+     *
      * @param terminalInput Input stream to read terminal input from
      * @param terminalOutput Output stream to write terminal output to
      * @param terminalCharset Character set to use when converting characters to bytes
-     * @param customSizeQuerier Object to use for looking up the size of the terminal, or null to
-     * use the built-in method
-     * @param terminalBehaviour Special settings on how the terminal will behave, see
-     * {@code UnixTerminalMode} for more details
+     * @param customSizeQuerier Object to use for looking up the size of the terminal, or null to use the built-in
+     * method
+     * @param terminalBehaviour Special settings on how the terminal will behave, see {@code UnixTerminalMode} for more
+     * details
      */
     @SuppressWarnings("unchecked")
-	public UnixTerminal(
+    public UnixTerminal(
             InputStream terminalInput,
             OutputStream terminalOutput,
             Charset terminalCharset,
             UnixTerminalSizeQuerier customSizeQuerier,
-            Behaviour terminalBehaviour)
-    {
+            Behaviour terminalBehaviour) {
         super(terminalInput, terminalOutput, terminalCharset);
         this.terminalSizeQuerier = customSizeQuerier;
         this.terminalBehaviour = terminalBehaviour;
@@ -115,10 +114,10 @@ public class UnixTerminal extends ANSITerminal
         onResized(80, 20);
         try {
             @SuppressWarnings("rawtypes")
-			Class signalClass = Class.forName("sun.misc.Signal");
-            for(Method m: signalClass.getDeclaredMethods()) {
+            Class signalClass = Class.forName("sun.misc.Signal");
+            for(Method m : signalClass.getDeclaredMethods()) {
                 if("handle".equals(m.getName())) {
-                    Object windowResizeHandler = Proxy.newProxyInstance(getClass().getClassLoader(), new Class[] {Class.forName("sun.misc.SignalHandler")}, new InvocationHandler() {
+                    Object windowResizeHandler = Proxy.newProxyInstance(getClass().getClassLoader(), new Class[]{Class.forName("sun.misc.SignalHandler")}, new InvocationHandler() {
                         @Override
                         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
                             if("handle".equals(method.getName())) {
@@ -130,16 +129,16 @@ public class UnixTerminal extends ANSITerminal
                     m.invoke(null, signalClass.getConstructor(String.class).newInstance("WINCH"), windowResizeHandler);
                 }
             }
-        }
-        catch(Throwable e) {
+        } catch(Throwable e) {
             System.err.println(e.getMessage());
         }
     }
 
     @Override
     public TerminalSize getTerminalSize() throws IOException {
-        if(terminalSizeQuerier != null)
+        if(terminalSizeQuerier != null) {
             return terminalSizeQuerier.queryTerminalSize();
+        }
 
         return super.getTerminalSize();
     }
@@ -148,11 +147,11 @@ public class UnixTerminal extends ANSITerminal
     public KeyStroke readInput() throws IOException {
         //Check if we have ctrl+c coming
         KeyStroke key = super.readInput();
-        if(key != null &&
-                terminalBehaviour == Behaviour.CTRL_C_KILLS_APPLICATION &&
-                key.getCharacter() == 'c' &&
-                !key.isAltDown() &&
-                key.isCtrlDown()) {
+        if(key != null
+                && terminalBehaviour == Behaviour.CTRL_C_KILLS_APPLICATION
+                && key.getCharacter() == 'c'
+                && !key.isAltDown()
+                && key.isCtrlDown()) {
 
             exitPrivateMode();
             System.exit(1);
@@ -161,8 +160,7 @@ public class UnixTerminal extends ANSITerminal
     }
 
     @Override
-    public void enterPrivateMode()
-    {
+    public void enterPrivateMode() {
         if(isInPrivateMode()) {
             super.enterPrivateMode();   //This will throw IllegalStateException
         }
@@ -175,8 +173,7 @@ public class UnixTerminal extends ANSITerminal
     }
 
     @Override
-    public void exitPrivateMode()
-    {
+    public void exitPrivateMode() {
         if(!isInPrivateMode()) {
             super.exitPrivateMode();   //This will throw IllegalStateException
         }
@@ -194,32 +191,27 @@ public class UnixTerminal extends ANSITerminal
         sttyKeyEcho(echoOn);
     }
 
-    private static void sttyKeyEcho(final boolean enable)
-    {
+    private static void sttyKeyEcho(final boolean enable) {
         exec("/bin/sh", "-c",
-                            "/bin/stty " + (enable ? "echo" : "-echo") + " < /dev/tty");
+                "/bin/stty " + (enable ? "echo" : "-echo") + " < /dev/tty");
     }
 
-    private static void sttyMinimumCharacterForRead(final int nrCharacters)
-    {
+    private static void sttyMinimumCharacterForRead(final int nrCharacters) {
         exec("/bin/sh", "-c",
-                            "/bin/stty min " + nrCharacters + " < /dev/tty");
+                "/bin/stty min " + nrCharacters + " < /dev/tty");
     }
 
-    private static void sttyICanon(final boolean enable)
-    {
+    private static void sttyICanon(final boolean enable) {
         exec("/bin/sh", "-c",
-                            "/bin/stty " + (enable ? "-icanon" : "icanon") + " < /dev/tty");
+                "/bin/stty " + (enable ? "-icanon" : "icanon") + " < /dev/tty");
     }
 
     @SuppressWarnings("unused")
-	private static void restoreEOFCtrlD()
-    {
+    private static void restoreEOFCtrlD() {
         exec("/bin/sh", "-c", "/bin/stty eof ^d < /dev/tty");
     }
 
-    private static void disableSpecialCharacters()
-    {
+    private static void disableSpecialCharacters() {
         exec("/bin/sh", "-c", "/bin/stty intr undef < /dev/tty");
         exec("/bin/sh", "-c", "/bin/stty start undef < /dev/tty");
         exec("/bin/sh", "-c", "/bin/stty stop undef < /dev/tty");
@@ -227,8 +219,7 @@ public class UnixTerminal extends ANSITerminal
     }
 
     @SuppressWarnings("unused")
-	private static void restoreSpecialCharacters()
-    {
+    private static void restoreSpecialCharacters() {
         exec("/bin/sh", "-c", "/bin/stty intr ^C < /dev/tty");
         exec("/bin/sh", "-c", "/bin/stty start ^Q < /dev/tty");
         exec("/bin/sh", "-c", "/bin/stty stop ^S < /dev/tty");
@@ -249,8 +240,7 @@ public class UnixTerminal extends ANSITerminal
         sttyStatusToRestore = null;
     }
 
-    private static String exec(String ...cmd)
-    {
+    private static String exec(String... cmd) {
         try {
             ProcessBuilder pb = new ProcessBuilder(cmd);
             Process process = pb.start();
@@ -269,8 +259,7 @@ public class UnixTerminal extends ANSITerminal
             }
             reader.close();
             return builder.toString();
-        }
-        catch(IOException e) {
+        } catch(IOException e) {
             throw new LanternaException(e);
         }
     }
