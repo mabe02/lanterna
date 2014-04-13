@@ -41,7 +41,7 @@ public class ScreenWriter {
     private TextColor backgroundColor;
     private TabBehaviour tabBehaviour;
     private final EnumSet<Terminal.SGR> activeModifiers;
-
+    
     public ScreenWriter(Screen screen) {
         this.screen = screen;
         this.foregroundColor = TextColor.ANSI.DEFAULT;
@@ -260,21 +260,21 @@ public class ScreenWriter {
         startY = endY = points[0].getRow();
         if (dx1 > dx2) {
             for (; startY <= points[1].getRow(); startY++, endY++, startX += dx2, endX += dx1) {
-                drawLine(new TerminalPosition((int)startX, (int)startY), new TerminalPosition((int)endX, (int)endY), character);
+                drawLine(new TerminalPosition((int)startX, (int)startY), new TerminalPosition((int)endX, (int)startY), character);
             }
             endX = points[1].getColumn();
             endY = points[1].getRow();
             for (; startY <= points[2].getRow(); startY++, endY++, startX += dx2, endX += dx3) {
-                drawLine(new TerminalPosition((int)startX, (int)startY), new TerminalPosition((int)endX, (int)endY), character);
+                drawLine(new TerminalPosition((int)startX, (int)startY), new TerminalPosition((int)endX, (int)startY), character);
             }
         } else {
             for (; startY <= points[1].getRow(); startY++, endY++, startX += dx1, endX += dx2) {
-                drawLine(new TerminalPosition((int)startX, (int)startY), new TerminalPosition((int)endX, (int)endY), character);
+                drawLine(new TerminalPosition((int)startX, (int)startY), new TerminalPosition((int)endX, (int)startY), character);
             }
             startX = points[1].getColumn();
             startY = points[1].getRow();
             for (; startY <= points[2].getRow(); startY++, endY++, startX += dx3, endX += dx2) {
-                drawLine(new TerminalPosition((int)startX, (int)startY), new TerminalPosition((int)endX, (int)endY), character);
+                drawLine(new TerminalPosition((int)startX, (int)startY), new TerminalPosition((int)endX, (int)startY), character);
             }
         }
     }
