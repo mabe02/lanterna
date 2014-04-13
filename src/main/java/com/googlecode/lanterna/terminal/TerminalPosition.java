@@ -36,20 +36,14 @@ public class TerminalPosition {
     private final int column;
 
     /**
-     * Creates a new TerminalPosition object, which represents a location on the screen. You cannot represent negative 
-     * locations but there is no check to verify that the position you specified is within the size of the current
-     * terminal.
+     * Creates a new TerminalPosition object, which represents a location on the screen. There is no check to verify 
+     * that the position you specified is within the size of the current terminal and you can specify negative positions
+     * as well.
      * 
      * @param column Column of the location, or the "x" coordinate, zero indexed (the first column is 0)
      * @param row Row of the location, or the "y" coordinate, zero indexed (the first row is 0)
      */
     public TerminalPosition(int column, int row) {
-        if (column < 0) {
-            throw new IllegalArgumentException("TerminalPosition.columns cannot be less than 0!");
-        }
-        if (row < 0) {
-            throw new IllegalArgumentException("TerminalPosition.rows cannot be less than 0!");
-        }
         this.row = row;
         this.column = column;
     }
