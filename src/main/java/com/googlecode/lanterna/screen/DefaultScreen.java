@@ -211,7 +211,7 @@ public class DefaultScreen extends TerminalScreen {
         if(!isStarted) {
             return;
         }
-        if(fullRedrawHint || refreshType == RefreshType.COMPLETE) {
+        if((refreshType == RefreshType.AUTOMATIC && fullRedrawHint) || refreshType == RefreshType.COMPLETE) {
             refreshFull();
             fullRedrawHint = false;
         }
