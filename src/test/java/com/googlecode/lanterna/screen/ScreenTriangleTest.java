@@ -41,6 +41,7 @@ public class ScreenTriangleTest {
         boolean useFilled = false;
         boolean slow = false;
         boolean rotating = false;
+        boolean square = false;
         for(String arg: args) {
             if(arg.equals("--ansi-colors")) {
                 useAnsiColors = true;
@@ -54,8 +55,14 @@ public class ScreenTriangleTest {
             if(arg.equals("--rotating")) {
                 rotating = true;
             }
+            if(arg.equals("--square")) {
+                square = true;
+            }
         }
-        DefaultScreen screen = new TestTerminalFactory(args).createScreen();
+        Screen screen = new TestTerminalFactory(args).createScreen();
+        if(square) {
+            screen = new SquaredScreen(screen);
+        }
         screen.startScreen();
 
         ScreenWriter writer = new ScreenWriter(screen);
@@ -63,7 +70,6 @@ public class ScreenTriangleTest {
         
         TextColor color = null;
         double rad = 0.0;
-        long startTime = System.currentTimeMillis();
         while(true) {
             KeyStroke keyStroke = screen.readInput();
             if(keyStroke != null && keyStroke.getKeyType() == KeyType.Escape) {
@@ -82,7 +88,6 @@ public class ScreenTriangleTest {
                     color = new TextColor.Indexed(random.nextInt(256));
                 }
             }
-            
             
             TerminalPosition p1;
             TerminalPosition p2;
