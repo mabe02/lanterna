@@ -36,6 +36,7 @@ public class TextBox extends AbstractInteractableComponent
     private int editPosition;
     private int visibleLeftPosition;
     private int lastKnownWidth;
+    private char fillCharacter;
     
     /**
      * Creates a text box component, where the user can enter text by typing on
@@ -82,6 +83,7 @@ public class TextBox extends AbstractInteractableComponent
         this.editPosition = initialContent.length();
         this.visibleLeftPosition = 0;
         this.lastKnownWidth = 0;
+        this.fillCharacter = ' ';
     }
 
     public String getText()
@@ -116,6 +118,14 @@ public class TextBox extends AbstractInteractableComponent
         return textboxString;
     }
 
+    public char getFillCharacter() {
+        return fillCharacter;
+    }
+
+    public void setFillCharacter(char fillCharacter) {
+        this.fillCharacter = fillCharacter;
+    }
+
     @Override
     public void repaint(TextGraphics graphics)
     {
@@ -131,7 +141,7 @@ public class TextBox extends AbstractInteractableComponent
             }
         }
         
-        graphics.fillArea(' ');
+        graphics.fillArea(fillCharacter);
         String displayString = prerenderTransformation(backend).substring(visibleLeftPosition);
         if(displayString.length() > graphics.getWidth())
             displayString = displayString.substring(0, graphics.getWidth()-1);
