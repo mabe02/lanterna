@@ -174,20 +174,20 @@ public class DefaultScreen extends TerminalScreen {
     }
 
     @Override
-    public synchronized void setCharacter(TerminalPosition position, ScreenCharacter screenCharacter) {
+    public synchronized void setCharacter(int column, int row, ScreenCharacter screenCharacter) {
         //It would be nice if we didn't have to care about tabs at this level, but we have no such luxury
         if(screenCharacter.getCharacter() == '\t') {
             //Swap out the tab for a space
             screenCharacter = screenCharacter.withCharacter(' ');
             
             //Now see how many times we have to put spaces...
-            for(int i = 0; i < tabBehaviour.replaceTabs("\t", position.getColumn()).length(); i++) {
-                backBuffer.setCharacterAt(position.withRelativeColumn(i), screenCharacter);
+            for(int i = 0; i < tabBehaviour.replaceTabs("\t", column).length(); i++) {
+                backBuffer.setCharacterAt(column + i, row, screenCharacter);
             }
         }
         else {
             //This is the normal case, no special character
-            backBuffer.setCharacterAt(position, screenCharacter);
+            backBuffer.setCharacterAt(column, row, screenCharacter);
         }
     }
 

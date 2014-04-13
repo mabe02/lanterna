@@ -110,6 +110,14 @@ public interface Screen {
 
     /**
      * Sets a character in the back-buffer to a specified value with specified colors and modifiers.
+     * @param column Column of the character to modify (x coordinate)
+     * @param row Row of the character to modify (y coordinate)
+     * @param screenCharacter New data to put at the specified position
+     */
+    void setCharacter(int column, int row, ScreenCharacter screenCharacter);
+    
+    /**
+     * Sets a character in the back-buffer to a specified value with specified colors and modifiers.
      * @param position Which position in the terminal to modify
      * @param screenCharacter New data to put at the specified position
      */

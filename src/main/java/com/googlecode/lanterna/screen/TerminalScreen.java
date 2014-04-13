@@ -29,7 +29,7 @@ import java.util.LinkedList;
  * This class keeps some simple code dealing with handling the Terminal interface that the Screen sits on top of.
  * @author martin
  */
-public abstract class TerminalScreen implements Screen {
+public abstract class TerminalScreen extends AbstractScreen {
     
     private final Terminal terminal;
     

@@ -125,51 +125,82 @@ public class ScreenWriter {
      * @param character Character to use for the line
      */
     public void drawLine(TerminalPosition toPoint, char character) {
-        //Special case for straight vertical line
-        if(currentPosition.getColumn() == toPoint.getColumn()) {
-            for(int y = Math.min(currentPosition.getRow(), toPoint.getRow()); 
-                    y <= Math.max(currentPosition.getRow(), toPoint.getRow());
-                    y++) {
-                screen.setCharacter(new TerminalPosition(currentPosition.getColumn(), y), newScreenCharacter(character));
-            }
-        }
-        else {
-            //Sort the points, left-to-right
-            TerminalPosition left, right;
-            if(currentPosition.getColumn() < toPoint.getColumn()) {
-                left = currentPosition;
-                right = toPoint;
-            }
-            else {
-                left = toPoint;
-                right = currentPosition;
-            }
-            drawLine(left, right, character);
-        }
+        drawLine(currentPosition, toPoint, character);
         currentPosition = toPoint;
     }
 
     private void drawLine(TerminalPosition fromPoint, TerminalPosition toPoint, char character) {
         //http://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
-        ScreenCharacter screenCharacter = newScreenCharacter(character);
-        int dx = toPoint.getColumn() - fromPoint.getColumn();
-        int dy = toPoint.getRow() - fromPoint.getRow();
-        int d = 2 * dy - dx;
-        screen.setCharacter(fromPoint, screenCharacter);
-        int y = fromPoint.getRow();
-        for(int x = fromPoint.getColumn() + 1; x <= toPoint.getColumn(); x++) {
-            if(d > 0) {
-                y = y + 1;
-                screen.setCharacter(new TerminalPosition(x, y), screenCharacter);
-                d = d + (2 * dy - 2 * dx);
+        //Implementation from Graphics Programming Black Book by Michael Abrash
+        //Available at http://www.gamedev.net/page/resources/_/technical/graphics-programming-and-theory/graphics-programming-black-book-r1698
+        if(fromPoint.getRow() > toPoint.getRow()) {
+            TerminalPosition temp = fromPoint;
+            fromPoint = toPoint;
+            toPoint = temp;
+        }
+        int deltaX = toPoint.getColumn() - fromPoint.getColumn();
+        int deltaY = toPoint.getRow() - fromPoint.getRow();
+        if(deltaX > 0) {
+            if(deltaX > deltaY) {
+                drawLine0(fromPoint, deltaX, deltaY, true, character);
             }
             else {
-                screen.setCharacter(new TerminalPosition(x, y), screenCharacter);
-                d = d + (2 * dy);
+                drawLine1(fromPoint, deltaX, deltaY, true, character);
+            }
+        }
+        else {
+            deltaX = Math.abs(deltaX);
+            if(deltaX > deltaY) {
+                drawLine0(fromPoint, deltaX, deltaY, false, character);
+            }
+            else {
+                drawLine1(fromPoint, deltaX, deltaY, false, character);
             }
         }
     }
-
+    
+    private void drawLine0(TerminalPosition start, int deltaX, int deltaY, boolean leftToRight, char character) {
+        ScreenCharacter screenCharacter = newScreenCharacter(character);
+        int x = start.getColumn();
+        int y = start.getRow();
+        int deltaYx2 = deltaY * 2;
+        int deltaYx2MinusDeltaXx2 = deltaYx2 - (deltaX * 2);
+        int errorTerm = deltaYx2 - deltaX;
+        screen.setCharacter(start, screenCharacter);
+        while(deltaX-- > 0) {
+            if(errorTerm >= 0) {
+                y++;
+                errorTerm += deltaYx2MinusDeltaXx2;
+            }
+            else {
+                errorTerm += deltaYx2;
+            }
+            x += leftToRight ? 1 : -1;
+            screen.setCharacter(x, y, screenCharacter);
+        }
+    }
+    
+    private void drawLine1(TerminalPosition start, int deltaX, int deltaY, boolean leftToRight, char character) {
+        ScreenCharacter screenCharacter = newScreenCharacter(character);
+        int x = start.getColumn();
+        int y = start.getRow();
+        int deltaXx2 = deltaX * 2;
+        int deltaXx2MinusDeltaYx2 = deltaXx2 - (deltaY * 2);
+        int errorTerm = deltaXx2 - deltaY;
+        screen.setCharacter(start, screenCharacter);
+        while(deltaY-- > 0) {
+            if(errorTerm >= 0) {
+                x += leftToRight ? 1 : -1;
+                errorTerm += deltaXx2MinusDeltaYx2;
+            }
+            else {
+                errorTerm += deltaXx2;
+            }
+            y++;
+            screen.setCharacter(x, y, screenCharacter);
+        }
+    }
+    
     /**
      * Draws the outline of a triangle on the screen, using a supplied character. The triangle will begin at this
      * writer's current position, go through both supplied points and then back again to the original position. The

@@ -65,13 +65,17 @@ class ScreenBuffer {
         return new ScreenBuffer(pendingResize, buffer, filler);
     }
 
-    void setCharacterAt(TerminalPosition position, ScreenCharacter screenCharacter) {
-        if(position.getColumn() < 0 || position.getRow() < 0 || 
-                position.getRow() >= buffer.length || position.getColumn() >= buffer[0].length) {
+    
+    void setCharacterAt(int column, int row, ScreenCharacter screenCharacter) {
+        if(column < 0 || row < 0 || row >= buffer.length || column >= buffer[0].length) {
             return;
         }
         
-        buffer[position.getRow()][position.getColumn()] = screenCharacter;
+        buffer[row][column] = screenCharacter;
+    }
+    
+    void setCharacterAt(TerminalPosition position, ScreenCharacter screenCharacter) {
+        setCharacterAt(position.getColumn(), position.getRow(), screenCharacter);
     }
 
     ScreenCharacter getCharacterAt(TerminalPosition position) {
