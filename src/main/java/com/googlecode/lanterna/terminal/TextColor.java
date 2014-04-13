@@ -96,6 +96,28 @@ public abstract class TextColor {
         public String toString() {
             return ansiColor.toString();
         }
+
+        @Override
+        public int hashCode() {
+            int hash = 7;
+            hash = 53 * hash + (this.ansiColor != null ? this.ansiColor.hashCode() : 0);
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if(obj == null) {
+                return false;
+            }
+            if(getClass() != obj.getClass()) {
+                return false;
+            }
+            final ANSI other = (ANSI) obj;
+            if(this.ansiColor != other.ansiColor) {
+                return false;
+            }
+            return true;
+        }
     }
 
     /**
@@ -435,6 +457,28 @@ public abstract class TextColor {
             return "{IndexedColor:" + colorIndex + "}";
         }
 
+        @Override
+        public int hashCode() {
+            int hash = 3;
+            hash = 43 * hash + this.colorIndex;
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if(obj == null) {
+                return false;
+            }
+            if(getClass() != obj.getClass()) {
+                return false;
+            }
+            final Indexed other = (Indexed) obj;
+            if(this.colorIndex != other.colorIndex) {
+                return false;
+            }
+            return true;
+        }
+
         /**
          * Picks out a color approximated from the supplied RGB components
          * @param red Red intensity, from 0 to 255
@@ -544,6 +588,36 @@ public abstract class TextColor {
         @Override
         public String toString() {
             return "{RGB:" + r + "," + g + "," + b + "}";
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 7;
+            hash = 29 * hash + this.r;
+            hash = 29 * hash + this.g;
+            hash = 29 * hash + this.b;
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if(obj == null) {
+                return false;
+            }
+            if(getClass() != obj.getClass()) {
+                return false;
+            }
+            final RGB other = (RGB) obj;
+            if(this.r != other.r) {
+                return false;
+            }
+            if(this.g != other.g) {
+                return false;
+            }
+            if(this.b != other.b) {
+                return false;
+            }
+            return true;
         }
     }
 }
