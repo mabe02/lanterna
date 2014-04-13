@@ -302,9 +302,9 @@ public class DefaultScreen extends TerminalScreen {
         EnumSet<Terminal.SGR> currentSGR = EnumSet.noneOf(Terminal.SGR.class);
         TextColor currentForegroundColor = TextColor.ANSI.DEFAULT;
         TextColor currentBackgroundColor = TextColor.ANSI.DEFAULT;
-        int currentColumn = 0;
         for(int y = 0; y < getTerminalSize().getRows(); y++) {
             getTerminal().moveCursor(0, y);
+            int currentColumn = 0;
             for(int x = 0; x < getTerminalSize().getColumns(); x++) {
                 ScreenCharacter newCharacter = backBuffer.getCharacterAt(x, y);
                 if(newCharacter.equals(DEFAULT_CHARACTER)) {
