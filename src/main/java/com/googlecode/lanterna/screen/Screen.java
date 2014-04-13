@@ -180,21 +180,6 @@ public interface Screen {
     TerminalSize doResizeIfNecessary();
     
     /**
-     * Helper method to allow you to subscribe to resize events, when the user resizes the terminal. You should 
-     * <b>always</b> assume that the thread calling the listener is something exotic which you cannot keep for too long
-     * and you should absolutely not run any operations on the screen from inside it. Rather, try to have the listener
-     * trigger something that your main thread can wake up on and take appropriate actions.
-     * @param listener Listener to be invoked when the user resizes the terminal
-     */
-    void addResizeListener(ResizeListener listener);
-    
-    /**
-     * Helper method to allow you to unsubscribe to resize events, when the user resizes the terminal.
-     * @param listener Listener that should no longer be invoked when the user resizes the terminal
-     */
-    void removeResizeListener(ResizeListener listener);
-    
-    /**
      * This enum represents the different ways a Screen can refresh the screen, moving the back-buffer data into the
      * front-buffer that is being displayed.
      */

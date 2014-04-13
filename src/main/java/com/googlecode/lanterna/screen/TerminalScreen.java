@@ -23,7 +23,6 @@ import com.googlecode.lanterna.terminal.ResizeListener;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import java.io.IOException;
-import java.util.LinkedList;
 
 /**
  * This class keeps some simple code dealing with handling the Terminal interface that the Screen sits on top of.
@@ -72,16 +71,6 @@ public abstract class TerminalScreen extends AbstractScreen {
     @Override
     public TerminalSize getTerminalSize() {
         return terminalSize;
-    }
-    
-    @Override
-    public void addResizeListener(ResizeListener listener) {
-        terminal.addResizeListener(listener);
-    }
-
-    @Override
-    public void removeResizeListener(ResizeListener listener) {
-        terminal.removeResizeListener(listener);
     }
     
     protected synchronized TerminalSize getAndClearPendingResize() {
