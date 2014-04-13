@@ -78,8 +78,8 @@ public class DefaultKeyDecodingProfile implements KeyDecodingProfile {
                                 new BasicCharacterPattern(new KeyStroke(KeyType.F4), ESC_CODE, 'O', 'S'), //Cygwin
                                 new BasicCharacterPattern(new KeyStroke(KeyType.F4), ESC_CODE, '[', '[', 'D'), //Linux
                                 new BasicCharacterPattern(new KeyStroke(KeyType.F5), ESC_CODE, '[', '1', '5', '~'),
-                                new BasicCharacterPattern(new KeyStroke(KeyType.F5), ESC_CODE, '[', '1', '6', '~'),
-                                new BasicCharacterPattern(new KeyStroke(KeyType.F5), ESC_CODE, '[', '3', '2', '~'),
+                                new BasicCharacterPattern(new KeyStroke(KeyType.F5), ESC_CODE, '[', '1', '6', '~'), 
+                                new BasicCharacterPattern(new KeyStroke(KeyType.F5), ESC_CODE, '[', '3', '2', '~'), //Psion TekLogix
                                 new BasicCharacterPattern(new KeyStroke(KeyType.F5), ESC_CODE, '[', '[', 'E'), //Linux
                                 new BasicCharacterPattern(new KeyStroke(KeyType.F6), ESC_CODE, '[', '1', '7', '~'),
                                 new BasicCharacterPattern(new KeyStroke(KeyType.F7), ESC_CODE, '[', '1', '8', '~'),
