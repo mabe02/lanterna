@@ -235,46 +235,46 @@ public class ScreenWriter {
             }
         });
 
-        int dx1, dx2, dx3;
+        float dx1, dx2, dx3;
         if (points[1].getRow() - points[0].getRow() > 0) {
-            dx1 = (points[1].getColumn() - points[0].getColumn()) / (points[1].getRow() - points[0].getRow());
+            dx1 = (float)(points[1].getColumn() - points[0].getColumn()) / (float)(points[1].getRow() - points[0].getRow());
         }
         else {
             dx1 = 0;
         }
         if (points[2].getRow() - points[0].getRow() > 0) {
-            dx2 = (points[2].getColumn() - points[0].getColumn()) / (points[2].getRow() - points[0].getRow());
+            dx2 = (float)(points[2].getColumn() - points[0].getColumn()) / (float)(points[2].getRow() - points[0].getRow());
         }
         else {
             dx2 = 0;
         }
         if (points[2].getRow() - points[1].getRow() > 0) {
-            dx3 = (points[2].getColumn() - points[1].getColumn()) / (points[2].getRow() - points[1].getRow());
+            dx3 = (float)(points[2].getColumn() - points[1].getColumn()) / (float)(points[2].getRow() - points[1].getRow());
         }
         else {
             dx3 = 0;
         }
 
-        int startX, startY, endX, endY;
+        float startX, startY, endX, endY;
         startX = endX = points[0].getColumn();
         startY = endY = points[0].getRow();
         if (dx1 > dx2) {
             for (; startY <= points[1].getRow(); startY++, endY++, startX += dx2, endX += dx1) {
-                drawLine(new TerminalPosition(startX, startY), new TerminalPosition(endX, endY), character);
+                drawLine(new TerminalPosition((int)startX, (int)startY), new TerminalPosition((int)endX, (int)endY), character);
             }
             endX = points[1].getColumn();
             endY = points[1].getRow();
             for (; startY <= points[2].getRow(); startY++, endY++, startX += dx2, endX += dx3) {
-                drawLine(new TerminalPosition(startX, startY), new TerminalPosition(endX, endY), character);
+                drawLine(new TerminalPosition((int)startX, (int)startY), new TerminalPosition((int)endX, (int)endY), character);
             }
         } else {
             for (; startY <= points[1].getRow(); startY++, endY++, startX += dx1, endX += dx2) {
-                drawLine(new TerminalPosition(startX, startY), new TerminalPosition(endX, endY), character);
+                drawLine(new TerminalPosition((int)startX, (int)startY), new TerminalPosition((int)endX, (int)endY), character);
             }
             startX = points[1].getColumn();
             startY = points[1].getRow();
             for (; startY <= points[2].getRow(); startY++, endY++, startX += dx3, endX += dx2) {
-                drawLine(new TerminalPosition(startX, startY), new TerminalPosition(endX, endY), character);
+                drawLine(new TerminalPosition((int)startX, (int)startY), new TerminalPosition((int)endX, (int)endY), character);
             }
         }
     }
