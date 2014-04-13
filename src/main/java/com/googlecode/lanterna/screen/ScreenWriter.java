@@ -42,7 +42,7 @@ public class ScreenWriter {
     private TabBehaviour tabBehaviour;
     private final EnumSet<Terminal.SGR> activeModifiers;
 
-    public ScreenWriter(final DefaultScreen screen) {
+    public ScreenWriter(Screen screen) {
         this.screen = screen;
         this.foregroundColor = TextColor.ANSI.DEFAULT;
         this.backgroundColor = TextColor.ANSI.DEFAULT;
