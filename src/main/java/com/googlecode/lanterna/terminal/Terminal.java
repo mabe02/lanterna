@@ -267,6 +267,7 @@ public interface Terminal extends InputProvider {
      * on all platforms).
      *
      * @return Size of the terminal
+     * @throws java.io.IOException if there was an I/O error trying to retrieve the size of the terminal
      */
     public TerminalSize getTerminalSize() throws IOException;
 
