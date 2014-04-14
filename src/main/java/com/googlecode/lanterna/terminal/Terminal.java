@@ -98,9 +98,7 @@ public interface Terminal extends InputProvider {
 
     /**
      * Activates an {@code SGR} (Selected Graphic Rendition) code. This code modifies a state inside the terminal
-     * that will apply to all characters written afterwards, such as bold, italic, blinking code and so on. SGR codes
-     * for the most part also has an 'anti' code which will turn it off (SGR.ENTER_BOLD vs SGR.EXIT_BOLD) but there is
-     * also a SGR.RESET_ALL which will return the terminal's state to normal for further characters printed.
+     * that will apply to all characters written afterwards, such as bold, italic, blinking code and so on. 
      *
      * @param sgr SGR code to apply
      * @see Terminal.SGR
@@ -108,8 +106,22 @@ public interface Terminal extends InputProvider {
      */
     public void enableSGR(SGR sgr);
     
+    /**
+     * Deactivates an {@code SGR} (Selected Graphic Rendition) code which has previously been activated through {@code 
+     * enableSGR(..)}. 
+     *
+     * @param sgr SGR code to apply
+     * @see Terminal.SGR
+     * @see http://www.vt100.net/docs/vt510-rm/SGR
+     */
     public void disableSGR(SGR sgr);
     
+    /**
+     * Removes all currently active SGR codes.
+     *
+     * @see Terminal.SGR
+     * @see http://www.vt100.net/docs/vt510-rm/SGR
+     */
     public void resetAllSGR();
 
     /**
