@@ -16,7 +16,6 @@
  *
  * Copyright (C) 2010-2014 Martin
  */
-
 package com.googlecode.lanterna.terminal.text;
 
 import com.googlecode.lanterna.input.DefaultKeyDecodingProfile;
@@ -28,23 +27,22 @@ import java.nio.charset.Charset;
 
 /**
  * A common ANSI text terminal implementation
+ *
  * @see <a href="http://en.wikipedia.org/wiki/ANSI_escape_code">Wikipedia</a>
  * @author Martin
  */
-public abstract class ANSITerminal extends StreamBasedTerminal
-{
+public abstract class ANSITerminal extends StreamBasedTerminal {
+
     private boolean inPrivateMode;
 
-    public ANSITerminal(InputStream terminalInput, OutputStream terminalOutput, Charset terminalCharset)
-    {
+    public ANSITerminal(InputStream terminalInput, OutputStream terminalOutput, Charset terminalCharset) {
         super(terminalInput, terminalOutput, terminalCharset);
         this.inPrivateMode = false;
         addKeyDecodingProfile(new DefaultKeyDecodingProfile());
     }
 
-    private void CSI()
-    {
-        writeToTerminal((byte)0x1b, (byte)'[');
+    private void CSI() {
+        writeToTerminal((byte) 0x1b, (byte) '[');
     }
 
     @Override
@@ -59,150 +57,158 @@ public abstract class ANSITerminal extends StreamBasedTerminal
     }
 
     @Override
-    public void applyBackgroundColor(ANSIColor color)
-    {
+    public void applyBackgroundColor(ANSIColor color) {
         synchronized(writerMutex) {
             CSI();
-            writeToTerminal((byte)'4', (byte)((color.getIndex() + "").charAt(0)), (byte)'m');
+            writeToTerminal((byte) '4', (byte) ((color.getIndex() + "").charAt(0)), (byte) 'm');
         }
     }
 
     @Override
     public void applyBackgroundColor(int r, int g, int b) {
-        if(r < 0 || r > 255)
+        if(r < 0 || r > 255) {
             throw new IllegalArgumentException("applyForegroundColor: r is outside of valid range (0-255)");
-        if(g < 0 || g > 255)
+        }
+        if(g < 0 || g > 255) {
             throw new IllegalArgumentException("applyForegroundColor: g is outside of valid range (0-255)");
-        if(b < 0 || b > 255)
+        }
+        if(b < 0 || b > 255) {
             throw new IllegalArgumentException("applyForegroundColor: b is outside of valid range (0-255)");
+        }
 
         synchronized(writerMutex) {
             CSI();
             String asString = "48;2;" + r + ";" + g + ";" + b + "m";
-            for(int i = 0; i < asString.length(); i++)
-                writeToTerminal((byte)asString.charAt(i));
+            for(int i = 0; i < asString.length(); i++) {
+                writeToTerminal((byte) asString.charAt(i));
+            }
         }
     }
 
     @Override
     public void applyBackgroundColor(int index) {
-        if(index < 0 || index > 255)
+        if(index < 0 || index > 255) {
             throw new IllegalArgumentException("applyBackgroundColor: index is outside of valid range (0-255)");
+        }
 
         synchronized(writerMutex) {
             CSI();
             String asString = "48;5;" + index + "m";
-            for(int i = 0; i < asString.length(); i++)
-                writeToTerminal((byte)asString.charAt(i));
+            for(int i = 0; i < asString.length(); i++) {
+                writeToTerminal((byte) asString.charAt(i));
+            }
         }
     }
 
     @Override
-    public void applyForegroundColor(ANSIColor color)
-    {
+    public void applyForegroundColor(ANSIColor color) {
         synchronized(writerMutex) {
             CSI();
-            writeToTerminal((byte)'3', (byte)((color.getIndex() + "").charAt(0)), (byte)'m');
+            writeToTerminal((byte) '3', (byte) ((color.getIndex() + "").charAt(0)), (byte) 'm');
         }
     }
 
     @Override
     public void applyForegroundColor(int r, int g, int b) {
-        if(r < 0 || r > 255)
+        if(r < 0 || r > 255) {
             throw new IllegalArgumentException("applyForegroundColor: r is outside of valid range (0-255)");
-        if(g < 0 || g > 255)
+        }
+        if(g < 0 || g > 255) {
             throw new IllegalArgumentException("applyForegroundColor: g is outside of valid range (0-255)");
-        if(b < 0 || b > 255)
+        }
+        if(b < 0 || b > 255) {
             throw new IllegalArgumentException("applyForegroundColor: b is outside of valid range (0-255)");
+        }
 
         synchronized(writerMutex) {
             CSI();
             String asString = "38;2;" + r + ";" + g + ";" + b + "m";
-            for(int i = 0; i < asString.length(); i++)
-                writeToTerminal((byte)asString.charAt(i));
+            for(int i = 0; i < asString.length(); i++) {
+                writeToTerminal((byte) asString.charAt(i));
+            }
         }
     }
 
     @Override
     public void applyForegroundColor(int index) {
-        if(index < 0 || index > 255)
+        if(index < 0 || index > 255) {
             throw new IllegalArgumentException("applyForegroundColor: index is outside of valid range (0-255)");
+        }
 
         synchronized(writerMutex) {
             CSI();
             String asString = "38;5;" + index + "m";
-            for(int i = 0; i < asString.length(); i++)
-                writeToTerminal((byte)asString.charAt(i));
+            for(int i = 0; i < asString.length(); i++) {
+                writeToTerminal((byte) asString.charAt(i));
+            }
         }
     }
 
     @Override
-    public void enableSGR(SGR sgr)
-    {
+    public void enableSGR(SGR sgr) {
         synchronized(writerMutex) {
             CSI();
             switch(sgr) {
                 case BLINK:
-                    writeToTerminal((byte)'5');
+                    writeToTerminal((byte) '5');
                     break;
                 case BOLD:
-                    writeToTerminal((byte)'1');
+                    writeToTerminal((byte) '1');
                     break;
                 case BORDERED:
-                    writeToTerminal((byte)'5', (byte)'1');
+                    writeToTerminal((byte) '5', (byte) '1');
                     break;
                 case CIRCLED:
-                    writeToTerminal((byte)'5', (byte)'2');
+                    writeToTerminal((byte) '5', (byte) '2');
                     break;
                 case CROSSEDOUT:
-                    writeToTerminal((byte)'9');
+                    writeToTerminal((byte) '9');
                     break;
                 case FRAKTUR:
-                    writeToTerminal((byte)'2', (byte)'0');
+                    writeToTerminal((byte) '2', (byte) '0');
                     break;
                 case REVERSE:
-                    writeToTerminal((byte)'7');
+                    writeToTerminal((byte) '7');
                     break;
                 case UNDERLINE:
-                    writeToTerminal((byte)'4');
+                    writeToTerminal((byte) '4');
                     break;
             }
-            writeToTerminal((byte)'m');
+            writeToTerminal((byte) 'm');
         }
     }
-    
+
     @Override
-    public void disableSGR(SGR sgr)
-    {
+    public void disableSGR(SGR sgr) {
         synchronized(writerMutex) {
             CSI();
             switch(sgr) {
                 case BLINK:
-                    writeToTerminal((byte)'2', (byte)'5');
+                    writeToTerminal((byte) '2', (byte) '5');
                     break;
                 case BOLD:
-                    writeToTerminal((byte)'2', (byte)'2');
+                    writeToTerminal((byte) '2', (byte) '2');
                     break;
                 case BORDERED:
-                    writeToTerminal((byte)'5', (byte)'4');
+                    writeToTerminal((byte) '5', (byte) '4');
                     break;
                 case CIRCLED:
-                    writeToTerminal((byte)'5', (byte)'4');
+                    writeToTerminal((byte) '5', (byte) '4');
                     break;
                 case CROSSEDOUT:
-                    writeToTerminal((byte)'2', (byte)'9');
+                    writeToTerminal((byte) '2', (byte) '9');
                     break;
                 case FRAKTUR:
-                    writeToTerminal((byte)'2', (byte)'3');
+                    writeToTerminal((byte) '2', (byte) '3');
                     break;
                 case REVERSE:
-                    writeToTerminal((byte)'2', (byte)'7');
+                    writeToTerminal((byte) '2', (byte) '7');
                     break;
                 case UNDERLINE:
-                    writeToTerminal((byte)'2', (byte)'4');
+                    writeToTerminal((byte) '2', (byte) '4');
                     break;
             }
-            writeToTerminal((byte)'m');
+            writeToTerminal((byte) 'm');
         }
     }
 
@@ -210,36 +216,33 @@ public abstract class ANSITerminal extends StreamBasedTerminal
     public void resetAllSGR() {
         synchronized(writerMutex) {
             CSI();
-            writeToTerminal((byte)'0');
-            writeToTerminal((byte)'m');
+            writeToTerminal((byte) '0');
+            writeToTerminal((byte) 'm');
         }
     }
 
     @Override
-    public void clearScreen()
-    {
+    public void clearScreen() {
         synchronized(writerMutex) {
             CSI();
-            writeToTerminal((byte)'2', (byte)'J');
+            writeToTerminal((byte) '2', (byte) 'J');
         }
     }
 
     @Override
-    public void enterPrivateMode()
-    {
+    public void enterPrivateMode() {
         if(inPrivateMode) {
             throw new IllegalStateException("Cannot call enterPrivateMode() when already in private mode");
         }
         synchronized(writerMutex) {
             CSI();
-            writeToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'4', (byte)'9', (byte)'h');
+            writeToTerminal((byte) '?', (byte) '1', (byte) '0', (byte) '4', (byte) '9', (byte) 'h');
             inPrivateMode = true;
         }
     }
 
     @Override
-    public void exitPrivateMode()
-    {
+    public void exitPrivateMode() {
         if(!inPrivateMode) {
             throw new IllegalStateException("Cannot call exitPrivateMode() when not in private mode");
         }
@@ -247,26 +250,26 @@ public abstract class ANSITerminal extends StreamBasedTerminal
             resetAllSGR();
             setCursorVisible(true);
             CSI();
-            writeToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'4', (byte)'9', (byte)'l');
+            writeToTerminal((byte) '?', (byte) '1', (byte) '0', (byte) '4', (byte) '9', (byte) 'l');
             inPrivateMode = false;
         }
     }
 
     /**
-     * Enables or disables keyboard echo, meaning the immediate output of the
-     * characters you type on your keyboard. If your users are going to interact
-     * with this application through the keyboard, you probably want to disable
-     * echo mode.
+     * Enables or disables keyboard echo, meaning the immediate output of the characters you type on your keyboard. If
+     * your users are going to interact with this application through the keyboard, you probably want to disable echo
+     * mode.
+     *
      * @param echoOn true if keyboard input will immediately echo, false if it's hidden
      * @throws LanternaException
      */
     public abstract void setEcho(boolean echoOn);
 
     /**
-     * Enabling cbreak mode will allow you to read user input immediately as the
-     * user enters the characters, as opposed to reading the data in lines as
-     * the user presses enter. If you want your program to respond to user input
-     * by the keyboard, you probably want to enable cbreak mode.
+     * Enabling cbreak mode will allow you to read user input immediately as the user enters the characters, as opposed
+     * to reading the data in lines as the user presses enter. If you want your program to respond to user input by the
+     * keyboard, you probably want to enable cbreak mode.
+     *
      * @see <a href="http://en.wikipedia.org/wiki/POSIX_terminal_interface">POSIX terminal interface</a>
      * @param cbreakOn
      * @throws LanternaException
@@ -274,14 +277,13 @@ public abstract class ANSITerminal extends StreamBasedTerminal
     public abstract void setCBreak(boolean cbreakOn);
 
     @Override
-    public void moveCursor(int x, int y)
-    {
+    public void moveCursor(int x, int y) {
         synchronized(writerMutex) {
             CSI();
-            writeToTerminal(((y+1) + "").getBytes());
-            writeToTerminal((byte)';');
-            writeToTerminal(((x+1) + "").getBytes());
-            writeToTerminal((byte)'H');
+            writeToTerminal(((y + 1) + "").getBytes());
+            writeToTerminal((byte) ';');
+            writeToTerminal(((x + 1) + "").getBytes());
+            writeToTerminal((byte) 'H');
         }
     }
 
@@ -289,18 +291,21 @@ public abstract class ANSITerminal extends StreamBasedTerminal
     public void setCursorVisible(boolean visible) {
         synchronized(writerMutex) {
             CSI();
-            writeToTerminal((byte)'?');
-            writeToTerminal((byte)'2');
-            writeToTerminal((byte)'5');
-            if(visible)
-                writeToTerminal((byte)'h');
-            else
-                writeToTerminal((byte)'l');
+            writeToTerminal((byte) '?');
+            writeToTerminal((byte) '2');
+            writeToTerminal((byte) '5');
+            if(visible) {
+                writeToTerminal((byte) 'h');
+            }
+            else {
+                writeToTerminal((byte) 'l');
+            }
         }
     }
 
     /**
      * Method to test if the terminal (as far as the library knows) is in private mode.
+     *
      * @return True if there has been a call to enterPrivateMode() but not yet exitPrivateMode()
      */
     public boolean isInPrivateMode() {
@@ -310,8 +315,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal
     /**
      * Synchronize with writerMutex externally!!!
      */
-    protected void reportPosition()
-    {
+    protected void reportPosition() {
         CSI();
         writeToTerminal("6n".getBytes());
     }
@@ -319,8 +323,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal
     /**
      * Synchronize with writerMutex externally!!!
      */
-    protected void restoreCursorPosition()
-    {
+    protected void restoreCursorPosition() {
         CSI();
         writeToTerminal("u".getBytes());
     }
@@ -328,8 +331,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal
     /**
      * Synchronize with writerMutex externally!!!
      */
-    protected void saveCursorPosition()
-    {
+    protected void saveCursorPosition() {
         CSI();
         writeToTerminal("s".getBytes());
     }
