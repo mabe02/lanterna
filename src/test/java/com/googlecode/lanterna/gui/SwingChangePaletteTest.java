@@ -30,7 +30,7 @@ import com.googlecode.lanterna.gui.component.Panel;
 import com.googlecode.lanterna.gui.dialog.MessageBox;
 import com.googlecode.lanterna.screen.DefaultScreen;
 import com.googlecode.lanterna.terminal.swing.OldSwingTerminal;
-import com.googlecode.lanterna.terminal.swing.OldTerminalPalette;
+import com.googlecode.lanterna.terminal.swing.SwingTerminalPalette;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
@@ -49,9 +49,9 @@ public class SwingChangePaletteTest {
         Panel mainPanel = new Panel(new Border.Invisible(), Panel.Orientation.VERTICAL);
         ActionListBox actionListBox = new ActionListBox();
         
-        Field[] fields = OldTerminalPalette.class.getFields();
+        Field[] fields = SwingTerminalPalette.class.getFields();
         for(Field field: fields) {
-            if(field.getType() != OldTerminalPalette.class)
+            if(field.getType() != SwingTerminalPalette.class)
                 continue;
             
             if((field.getModifiers() & Modifier.STATIC) != 0)
@@ -76,13 +76,13 @@ public class SwingChangePaletteTest {
     
     private static class ActionListBoxItem implements Action {
         private final GUIScreen owner;
-        private final OldTerminalPalette palette;
+        private final SwingTerminalPalette palette;
         private final String label;
 
         private ActionListBoxItem(GUIScreen owner, Field field) throws Exception {
             this.owner = owner;
             this.label = field.getName();
-            this.palette = (OldTerminalPalette)field.get(null);
+            this.palette = (SwingTerminalPalette)field.get(null);
         }
         
         @Override

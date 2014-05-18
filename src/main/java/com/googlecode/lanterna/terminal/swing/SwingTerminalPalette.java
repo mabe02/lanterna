@@ -28,12 +28,12 @@ import java.util.List;
  * normally available 8 + 1.
  * @author Martin
  */
-public class OldTerminalPalette {
+public class SwingTerminalPalette {
     /**
      * Values taken from gnome-terminal on Ubuntu
      */
-    public static final OldTerminalPalette GNOME_TERMINAL = 
-            new OldTerminalPalette(
+    public static final SwingTerminalPalette GNOME_TERMINAL = 
+            new SwingTerminalPalette(
                     new java.awt.Color(211, 215, 207),
                     new java.awt.Color(238, 238, 236),
                     new java.awt.Color(46, 52, 54),
@@ -57,8 +57,8 @@ public class OldTerminalPalette {
      * Values taken from <a href="http://en.wikipedia.org/wiki/ANSI_escape_code">
      * wikipedia</a>, these are supposed to be the standard VGA palette.
      */
-    public static final OldTerminalPalette STANDARD_VGA = 
-            new OldTerminalPalette(
+    public static final SwingTerminalPalette STANDARD_VGA = 
+            new SwingTerminalPalette(
                     new java.awt.Color(170, 170, 170),
                     new java.awt.Color(255, 255, 255),
                     new java.awt.Color(0, 0, 0),
@@ -82,8 +82,8 @@ public class OldTerminalPalette {
      * Values taken from <a href="http://en.wikipedia.org/wiki/ANSI_escape_code">
      * wikipedia</a>, these are supposed to be what Windows XP cmd is using.
      */
-    public static final OldTerminalPalette WINDOWS_XP_COMMAND_PROMPT = 
-            new OldTerminalPalette(
+    public static final SwingTerminalPalette WINDOWS_XP_COMMAND_PROMPT = 
+            new SwingTerminalPalette(
                     new java.awt.Color(192, 192, 192),
                     new java.awt.Color(255, 255, 255),
                     new java.awt.Color(0, 0, 0),
@@ -107,8 +107,8 @@ public class OldTerminalPalette {
      * Values taken from <a href="http://en.wikipedia.org/wiki/ANSI_escape_code">
      * wikipedia</a>, these are supposed to be what terminal.app on MacOSX is using.
      */
-    public static final OldTerminalPalette MAC_OS_X_TERMINAL_APP = 
-            new OldTerminalPalette(
+    public static final SwingTerminalPalette MAC_OS_X_TERMINAL_APP = 
+            new SwingTerminalPalette(
                     new java.awt.Color(203, 204, 205),
                     new java.awt.Color(233, 235, 235),
                     new java.awt.Color(0, 0, 0),
@@ -132,8 +132,8 @@ public class OldTerminalPalette {
      * Values taken from <a href="http://en.wikipedia.org/wiki/ANSI_escape_code">
      * wikipedia</a>, these are supposed to be what putty is using.
      */
-    public static final OldTerminalPalette PUTTY = 
-            new OldTerminalPalette(
+    public static final SwingTerminalPalette PUTTY = 
+            new SwingTerminalPalette(
                     new java.awt.Color(187, 187, 187),
                     new java.awt.Color(255, 255, 255),
                     new java.awt.Color(0, 0, 0),
@@ -157,8 +157,8 @@ public class OldTerminalPalette {
      * Values taken from <a href="http://en.wikipedia.org/wiki/ANSI_escape_code">
      * wikipedia</a>, these are supposed to be what xterm is using.
      */
-    public static final OldTerminalPalette XTERM = 
-            new OldTerminalPalette(
+    public static final SwingTerminalPalette XTERM = 
+            new SwingTerminalPalette(
                     new java.awt.Color(229, 229, 229),
                     new java.awt.Color(255, 255, 255),
                     new java.awt.Color(0, 0, 0),
@@ -181,7 +181,7 @@ public class OldTerminalPalette {
     /**
      * Default colors the SwingTerminal is using if you don't specify anything
      */
-    public static final OldTerminalPalette DEFAULT = GNOME_TERMINAL;
+    public static final SwingTerminalPalette DEFAULT = GNOME_TERMINAL;
     
     private final Color defaultColor;
     private final Color defaultBrightColor;
@@ -202,7 +202,7 @@ public class OldTerminalPalette {
     private final Color normalWhite;
     private final Color brightWhite;
 
-    public OldTerminalPalette(
+    public SwingTerminalPalette(
             Color defaultColor, 
             Color defaultBrightColor, 
             Color normalBlack, 
@@ -350,7 +350,7 @@ public class OldTerminalPalette {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final OldTerminalPalette other = (OldTerminalPalette) obj;
+        final SwingTerminalPalette other = (SwingTerminalPalette) obj;
         if (this.defaultColor != other.defaultColor && (this.defaultColor == null || !this.defaultColor.equals(other.defaultColor))) {
             return false;
         }

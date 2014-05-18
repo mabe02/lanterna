@@ -38,7 +38,7 @@ public class OldTerminalAppearance {
             = new OldTerminalAppearance(
                     DEFAULT_NORMAL_FONT,
                     DEFAULT_BOLD_FONT,
-                    OldTerminalPalette.DEFAULT,
+                    SwingTerminalPalette.DEFAULT,
                     true,
                     true,
                     DEFAULT_NORMAL_FONT
@@ -62,7 +62,7 @@ public class OldTerminalAppearance {
     private final Font boldTextFont;
     private final Font cjkFont;
     private final Font[] fallbackFonts;
-    private final OldTerminalPalette colorPalette;
+    private final SwingTerminalPalette colorPalette;
     private final boolean useBrightColorsOnBold;
     private final boolean useAntiAliasing;
 	private final Font wideFont;
@@ -70,7 +70,7 @@ public class OldTerminalAppearance {
     public OldTerminalAppearance(
             Font normalTextFont, 
             Font boldTextFont, 
-            OldTerminalPalette colorPalette,
+            SwingTerminalPalette colorPalette,
             boolean useBrightColorsOnBold,
             boolean useAntiAliasing,
             Font wideFont,
@@ -120,7 +120,7 @@ public class OldTerminalAppearance {
 		return fallbackFonts;
 	}
 
-    public OldTerminalPalette getColorPalette() {
+    public SwingTerminalPalette getColorPalette() {
         return colorPalette;
     }
 
@@ -144,7 +144,7 @@ public class OldTerminalAppearance {
         return new OldTerminalAppearance(normalTextFont, boldTextFont, colorPalette, useBrightColorsOnBold, useAntiAliasing, wideFont, fallbackFonts);
 	}
     
-    public OldTerminalAppearance withPalette(OldTerminalPalette palette) {
+    public OldTerminalAppearance withPalette(SwingTerminalPalette palette) {
         return new OldTerminalAppearance(normalTextFont, boldTextFont, palette, useBrightColorsOnBold, useAntiAliasing, wideFont, fallbackFonts);
     }
     

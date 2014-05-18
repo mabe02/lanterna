@@ -410,7 +410,7 @@ public class OldSwingTerminal extends AbstractTerminal implements InputProvider
      * Changes the current color palett to a new one supplied
      * @param palette Palett to use
      */
-    public void setTerminalPalette(OldTerminalPalette palette) {
+    public void setTerminalPalette(SwingTerminalPalette palette) {
         appearance = appearance.withPalette(palette);
         refreshScreen();
     }
