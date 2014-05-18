@@ -33,6 +33,7 @@ public class FixedTerminalSizeProvider implements UnixTerminalSizeQuerier {
         this.size = size;
     }
 
+    @Override
     public TerminalSize queryTerminalSize() {
         return size;
     }
