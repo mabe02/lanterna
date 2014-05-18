@@ -16,7 +16,6 @@
  * 
  * Copyright (C) 2010-2014 Martin
  */
-
 package com.googlecode.lanterna.terminal.text;
 
 import com.googlecode.lanterna.LanternaException;
@@ -30,22 +29,21 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * This class is trying to provide some special workarounds in order to function
- * in Cygwin terminal environments. 
+ * This class is trying to provide some special workarounds in order to function in Cygwin terminal environments.
  * <b>This is work in progress and is not functional at the moment</b>
+ *
  * @author Martin
  */
 public class CygwinTerminal extends ANSITerminal {
-    
+
     private static final Pattern STTY_SIZE_PATTERN = Pattern.compile(".*rows ([0-9]+);.*columns ([0-9]+);.*");
-    
+
     private Timer resizeCheckTimer;
-    
+
     public CygwinTerminal(
-            InputStream terminalInput, 
-            OutputStream terminalOutput, 
-            Charset terminalCharset)
-    {
+            InputStream terminalInput,
+            OutputStream terminalOutput,
+            Charset terminalCharset) {
         super(terminalInput, terminalOutput, terminalCharset);
 
         //Make sure to set an initial size
@@ -58,19 +56,20 @@ public class CygwinTerminal extends ANSITerminal {
         try {
             String stty = exec(findSTTY(), "-F", "/dev/pty0", "-a"); //exec(findShell(), "-c", "echo $PPID");
             Matcher matcher = STTY_SIZE_PATTERN.matcher(stty);
-            if(matcher.matches())
+            if(matcher.matches()) {
                 return new TerminalSize(Integer.parseInt(matcher.group(2)), Integer.parseInt(matcher.group(1)));
-            else
+            }
+            else {
                 return new TerminalSize(80, 20);
+            }
         }
         catch(LanternaException e) {
             return new TerminalSize(80, 20);
         }
     }
-    
+
     @Override
-    public void enterPrivateMode()
-    {
+    public void enterPrivateMode() {
         super.enterPrivateMode();
         setCBreak(true);
         setEcho(false);
@@ -80,13 +79,12 @@ public class CygwinTerminal extends ANSITerminal {
             @Override
             public void run() {
                 //queryTerminalSize();
-            }            
+            }
         }, 1000, 1000);
     }
 
     @Override
-    public void exitPrivateMode()
-    {
+    public void exitPrivateMode() {
         resizeCheckTimer.cancel();
         setEcho(true);
         super.exitPrivateMode();
@@ -102,55 +100,52 @@ public class CygwinTerminal extends ANSITerminal {
     public void setEcho(boolean echoOn) {
         sttyKeyEcho(echoOn);
     }
-    
-    private static void sttyKeyEcho(final boolean enable)
-    {
+
+    private static void sttyKeyEcho(final boolean enable) {
         exec(findSTTY(), "-F", "/dev/pty0", (enable ? "echo" : "-echo"));
         /*
-        exec(findShell(), "-c",
-                            "/bin/stty.exe " + (enable ? "echo" : "-echo") + " < /dev/tty");
-                            */ 
+         exec(findShell(), "-c",
+         "/bin/stty.exe " + (enable ? "echo" : "-echo") + " < /dev/tty");
+         */
     }
 
-    private static void sttyMinimumCharacterForRead(final int nrCharacters)
-    {
+    private static void sttyMinimumCharacterForRead(final int nrCharacters) {
         exec(findSTTY(), "-F", "/dev/pty0", "min", nrCharacters + "");
         /*
-        exec(findShell(), "-c",
-                            "/bin/stty.exe min " + nrCharacters + " < /dev/tty");
-                            */
+         exec(findShell(), "-c",
+         "/bin/stty.exe min " + nrCharacters + " < /dev/tty");
+         */
     }
 
-    private static void sttyCBreak(final boolean enable)
-    {
+    private static void sttyCBreak(final boolean enable) {
         exec(findSTTY(), "-F", "/dev/pty0", (enable ? "cbreak" : "icanon"));
         /*
-        exec(findShell(), "-c",
-                            "/bin/stty.exe " + (enable ? "-icanon" : "icanon") + " < /dev/tty");
-                            */ 
+         exec(findShell(), "-c",
+         "/bin/stty.exe " + (enable ? "-icanon" : "icanon") + " < /dev/tty");
+         */
     }
-    
+
     @SuppressWarnings("unused")
-	private static String findShell() {
+    private static String findShell() {
         return findProgram("sh.exe");
     }
-    
+
     private static String findSTTY() {
         return findProgram("stty.exe");
     }
-    
+
     private static String findProgram(String programName) {
         String[] paths = System.getProperty("java.library.path").split(";");
-        for(String path: paths) {
+        for(String path : paths) {
             File shBin = new File(path, programName);
-            if(shBin.exists())
+            if(shBin.exists()) {
                 return shBin.getAbsolutePath();
+            }
         }
         return programName;
     }
-    
-    private static String exec(String ...cmd)
-    {
+
+    private static String exec(String... cmd) {
         try {
             ProcessBuilder pb = new ProcessBuilder(cmd);
             Process process = pb.start();
