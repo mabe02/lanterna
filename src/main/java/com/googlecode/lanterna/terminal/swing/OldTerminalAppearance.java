@@ -21,7 +21,7 @@ package com.googlecode.lanterna.terminal.swing;
 
 import java.awt.Font;
 import java.awt.image.BufferedImage;
-import com.googlecode.lanterna.terminal.swing.TerminalAppearance;
+import com.googlecode.lanterna.terminal.swing.OldTerminalAppearance;
 
 /**
  * This class will describe how a {@code SwingTerminal} is to be visually presented. 
@@ -30,15 +30,15 @@ import com.googlecode.lanterna.terminal.swing.TerminalAppearance;
  * @see SwingTerminal
  * @author Martin
  */
-public class TerminalAppearance {
+public class OldTerminalAppearance {
     
     public static final Font DEFAULT_NORMAL_FONT = createDefaultNormalFont();
     public static final Font DEFAULT_BOLD_FONT = createDefaultBoldFont();
-    public static final TerminalAppearance DEFAULT_APPEARANCE 
-            = new TerminalAppearance(
+    public static final OldTerminalAppearance DEFAULT_APPEARANCE 
+            = new OldTerminalAppearance(
                     DEFAULT_NORMAL_FONT,
                     DEFAULT_BOLD_FONT,
-                    TerminalPalette.DEFAULT,
+                    OldTerminalPalette.DEFAULT,
                     true,
                     true,
                     DEFAULT_NORMAL_FONT
@@ -62,15 +62,15 @@ public class TerminalAppearance {
     private final Font boldTextFont;
     private final Font cjkFont;
     private final Font[] fallbackFonts;
-    private final TerminalPalette colorPalette;
+    private final OldTerminalPalette colorPalette;
     private final boolean useBrightColorsOnBold;
     private final boolean useAntiAliasing;
 	private final Font wideFont;
 
-    public TerminalAppearance(
+    public OldTerminalAppearance(
             Font normalTextFont, 
             Font boldTextFont, 
-            TerminalPalette colorPalette,
+            OldTerminalPalette colorPalette,
             boolean useBrightColorsOnBold,
             boolean useAntiAliasing,
             Font wideFont,
@@ -120,7 +120,7 @@ public class TerminalAppearance {
 		return fallbackFonts;
 	}
 
-    public TerminalPalette getColorPalette() {
+    public OldTerminalPalette getColorPalette() {
         return colorPalette;
     }
 
@@ -132,31 +132,31 @@ public class TerminalAppearance {
     	return useAntiAliasing;
     }
     
-    public TerminalAppearance withFont(Font textFont) {
+    public OldTerminalAppearance withFont(Font textFont) {
         return withFont(textFont, textFont);
     }
     
-    public TerminalAppearance withFont(Font normalTextFont, Font boldTextFont) {
-        return new TerminalAppearance(normalTextFont, boldTextFont, colorPalette, useBrightColorsOnBold, useAntiAliasing, wideFont, fallbackFonts);
+    public OldTerminalAppearance withFont(Font normalTextFont, Font boldTextFont) {
+        return new OldTerminalAppearance(normalTextFont, boldTextFont, colorPalette, useBrightColorsOnBold, useAntiAliasing, wideFont, fallbackFonts);
     }
 
-	public TerminalAppearance withFallbackFonts(Font... fallbackFonts) {
-        return new TerminalAppearance(normalTextFont, boldTextFont, colorPalette, useBrightColorsOnBold, useAntiAliasing, wideFont, fallbackFonts);
+	public OldTerminalAppearance withFallbackFonts(Font... fallbackFonts) {
+        return new OldTerminalAppearance(normalTextFont, boldTextFont, colorPalette, useBrightColorsOnBold, useAntiAliasing, wideFont, fallbackFonts);
 	}
     
-    public TerminalAppearance withPalette(TerminalPalette palette) {
-        return new TerminalAppearance(normalTextFont, boldTextFont, palette, useBrightColorsOnBold, useAntiAliasing, wideFont, fallbackFonts);
+    public OldTerminalAppearance withPalette(OldTerminalPalette palette) {
+        return new OldTerminalAppearance(normalTextFont, boldTextFont, palette, useBrightColorsOnBold, useAntiAliasing, wideFont, fallbackFonts);
     }
     
-    public TerminalAppearance withUseBrightColors(boolean useBrightColorsOnBold) {
-        return new TerminalAppearance(normalTextFont, boldTextFont, colorPalette, useBrightColorsOnBold, useAntiAliasing, wideFont, fallbackFonts);
+    public OldTerminalAppearance withUseBrightColors(boolean useBrightColorsOnBold) {
+        return new OldTerminalAppearance(normalTextFont, boldTextFont, colorPalette, useBrightColorsOnBold, useAntiAliasing, wideFont, fallbackFonts);
     }
 
-    public TerminalAppearance withUseAntiAliasing(boolean useAntiAliasing) {
-        return new TerminalAppearance(normalTextFont, boldTextFont, colorPalette, useBrightColorsOnBold, useAntiAliasing, wideFont, fallbackFonts);
+    public OldTerminalAppearance withUseAntiAliasing(boolean useAntiAliasing) {
+        return new OldTerminalAppearance(normalTextFont, boldTextFont, colorPalette, useBrightColorsOnBold, useAntiAliasing, wideFont, fallbackFonts);
     }
-    public TerminalAppearance withWideFont(Font wideFont) {
-        return new TerminalAppearance(normalTextFont, boldTextFont, colorPalette, useBrightColorsOnBold, useAntiAliasing, wideFont, fallbackFonts);
+    public OldTerminalAppearance withWideFont(Font wideFont) {
+        return new OldTerminalAppearance(normalTextFont, boldTextFont, colorPalette, useBrightColorsOnBold, useAntiAliasing, wideFont, fallbackFonts);
     }
 
     @Override
@@ -167,7 +167,7 @@ public class TerminalAppearance {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final TerminalAppearance other = (TerminalAppearance) obj;
+        final OldTerminalAppearance other = (OldTerminalAppearance) obj;
         if (this.normalTextFont != other.normalTextFont && (this.normalTextFont == null || !this.normalTextFont.equals(other.normalTextFont))) {
             return false;
         }

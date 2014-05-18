@@ -63,13 +63,13 @@ import java.util.concurrent.TimeUnit;
  * A Swing-based text terminal emulator
  * @author Martin
  */
-public class SwingTerminal extends AbstractTerminal implements InputProvider
+public class OldSwingTerminal extends AbstractTerminal implements InputProvider
 {
     private final TerminalRenderer terminalRenderer;
     private final Timer blinkTimer;
 
     private JFrame terminalFrame;
-    private TerminalAppearance appearance;
+    private OldTerminalAppearance appearance;
     private TerminalCharacter [][]characterMap;
     private TerminalPosition textPosition;
     private TerminalCharacterColor currentForegroundColor;
@@ -84,27 +84,27 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
 
     private final Object resizeMutex;
 
-    public SwingTerminal()
+    public OldSwingTerminal()
     {
         this(160, 40); //By default, create a 160x40 terminal (normal size * 2)
     }
 
-    public SwingTerminal(TerminalSize terminalSize)
+    public OldSwingTerminal(TerminalSize terminalSize)
     {
         this(terminalSize.getColumns(), terminalSize.getRows());
     }
 
-    public SwingTerminal(int widthInColumns, int heightInRows)
+    public OldSwingTerminal(int widthInColumns, int heightInRows)
     {
-        this(TerminalAppearance.DEFAULT_APPEARANCE, widthInColumns, heightInRows);
+        this(OldTerminalAppearance.DEFAULT_APPEARANCE, widthInColumns, heightInRows);
     }
 
-    public SwingTerminal(TerminalAppearance appearance)
+    public OldSwingTerminal(OldTerminalAppearance appearance)
     {
         this(appearance, 160, 40);
     }
 
-    public SwingTerminal(TerminalAppearance appearance, int widthInColumns, int heightInRows)
+    public OldSwingTerminal(OldTerminalAppearance appearance, int widthInColumns, int heightInRows)
     {
         this.appearance = appearance;
         this.terminalRenderer = new TerminalRenderer(appearance.useAntiAliasing());
@@ -410,7 +410,7 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
      * Changes the current color palett to a new one supplied
      * @param palette Palett to use
      */
-    public void setTerminalPalette(TerminalPalette palette) {
+    public void setTerminalPalette(OldTerminalPalette palette) {
         appearance = appearance.withPalette(palette);
         refreshScreen();
     }
@@ -575,8 +575,8 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
         public Dimension getPreferredSize()
         {
             FontMetrics fontMetrics = getGraphics().getFontMetrics(appearance.getNormalTextFont());
-            final int screenWidth = SwingTerminal.this.size().getColumns() * fontMetrics.charWidth(' ');
-            final int screenHeight = SwingTerminal.this.size().getRows() * fontMetrics.getHeight();
+            final int screenWidth = OldSwingTerminal.this.size().getColumns() * fontMetrics.charWidth(' ');
+            final int screenHeight = OldSwingTerminal.this.size().getRows() * fontMetrics.getHeight();
             return new Dimension(screenWidth, screenHeight);
         }
 
@@ -595,8 +595,8 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
             final int charWidth = fontMetrics.charWidth(' ');
             final int charHeight = fontMetrics.getHeight();
 
-            for(int row = 0; row < SwingTerminal.this.size().getRows(); row++) {
-                for(int col = 0; col < SwingTerminal.this.size().getColumns(); col++) {
+            for(int row = 0; row < OldSwingTerminal.this.size().getRows(); row++) {
+                for(int col = 0; col < OldSwingTerminal.this.size().getColumns(); col++) {
                     boolean needToResetFont = false;
                     TerminalCharacter character = characterMap[row][col];
                     boolean isCJKCharacter = CJKUtils.isCharCJK(character.character);

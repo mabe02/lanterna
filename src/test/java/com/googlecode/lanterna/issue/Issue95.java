@@ -8,7 +8,7 @@ package com.googlecode.lanterna.issue;
 
 import com.googlecode.lanterna.TerminalFacade;
 import com.googlecode.lanterna.screen.DefaultScreen;
-import com.googlecode.lanterna.terminal.swing.SwingTerminal;
+import com.googlecode.lanterna.terminal.swing.OldSwingTerminal;
 import java.io.IOException;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
@@ -19,7 +19,7 @@ import javax.swing.WindowConstants;
  */
 public class Issue95 {
     public static void main(String[] args) throws InterruptedException, IOException {
-        SwingTerminal terminal = new SwingTerminal(80, 20);
+        OldSwingTerminal terminal = new OldSwingTerminal(80, 20);
         terminal.setCursorVisible(false);
 
         DefaultScreen screen = TerminalFacade.createScreen(terminal);

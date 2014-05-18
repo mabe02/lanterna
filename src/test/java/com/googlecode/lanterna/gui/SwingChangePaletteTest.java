@@ -29,8 +29,8 @@ import com.googlecode.lanterna.gui.component.EmptySpace;
 import com.googlecode.lanterna.gui.component.Panel;
 import com.googlecode.lanterna.gui.dialog.MessageBox;
 import com.googlecode.lanterna.screen.DefaultScreen;
-import com.googlecode.lanterna.terminal.swing.SwingTerminal;
-import com.googlecode.lanterna.terminal.swing.TerminalPalette;
+import com.googlecode.lanterna.terminal.swing.OldSwingTerminal;
+import com.googlecode.lanterna.terminal.swing.OldTerminalPalette;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
@@ -41,7 +41,7 @@ import java.lang.reflect.Modifier;
 public class SwingChangePaletteTest {
     public static void main(String[] args) throws Exception
     {
-        final SwingTerminal swingTerminal = new SwingTerminal();
+        final OldSwingTerminal swingTerminal = new OldSwingTerminal();
         final GUIScreen guiScreen = new GUIScreen(new DefaultScreen(swingTerminal));
         guiScreen.getScreen().startScreen();
         final Window window1 = new Window("Palette Switcher");
@@ -49,9 +49,9 @@ public class SwingChangePaletteTest {
         Panel mainPanel = new Panel(new Border.Invisible(), Panel.Orientation.VERTICAL);
         ActionListBox actionListBox = new ActionListBox();
         
-        Field[] fields = TerminalPalette.class.getFields();
+        Field[] fields = OldTerminalPalette.class.getFields();
         for(Field field: fields) {
-            if(field.getType() != TerminalPalette.class)
+            if(field.getType() != OldTerminalPalette.class)
                 continue;
             
             if((field.getModifiers() & Modifier.STATIC) != 0)
@@ -76,13 +76,13 @@ public class SwingChangePaletteTest {
     
     private static class ActionListBoxItem implements Action {
         private final GUIScreen owner;
-        private final TerminalPalette palette;
+        private final OldTerminalPalette palette;
         private final String label;
 
         private ActionListBoxItem(GUIScreen owner, Field field) throws Exception {
             this.owner = owner;
             this.label = field.getName();
-            this.palette = (TerminalPalette)field.get(null);
+            this.palette = (OldTerminalPalette)field.get(null);
         }
         
         @Override
@@ -93,7 +93,7 @@ public class SwingChangePaletteTest {
         @Override
         public void doAction() {
             MessageBox.showMessageBox(owner, "Palette", "Will change palette to " + label + "...");
-            ((SwingTerminal)owner.getScreen().getTerminal()).setTerminalPalette(palette);
+            ((OldSwingTerminal)owner.getScreen().getTerminal()).setTerminalPalette(palette);
             MessageBox.showMessageBox(owner, "Palette", "Palette changed to " + label + "!");
         }
     }

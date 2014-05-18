@@ -26,8 +26,8 @@ import java.nio.charset.Charset;
 import com.googlecode.lanterna.gui.GUIScreen;
 import com.googlecode.lanterna.screen.DefaultScreen;
 import com.googlecode.lanterna.terminal.Terminal;
-import com.googlecode.lanterna.terminal.swing.SwingTerminal;
-import com.googlecode.lanterna.terminal.swing.TerminalAppearance;
+import com.googlecode.lanterna.terminal.swing.OldSwingTerminal;
+import com.googlecode.lanterna.terminal.swing.OldTerminalAppearance;
 import com.googlecode.lanterna.terminal.text.CygwinTerminal;
 import com.googlecode.lanterna.terminal.text.UnixTerminal;
 import java.io.IOException;
@@ -102,7 +102,7 @@ public class TerminalFacade {
      * emulator, DEFAULT_TERMINAL_COLUMN_WIDTH columns wide and
      * DEFAULT_TERMINAL_COLUMN_HEIGHT rows high.
      */
-    public static SwingTerminal createSwingTerminal() {
+    public static OldSwingTerminal createSwingTerminal() {
         return createSwingTerminal(DEFAULT_TERMINAL_COLUMN_WIDTH, DEFAULT_TERMINAL_COLUMN_HEIGHT);
     }
 
@@ -114,8 +114,8 @@ public class TerminalFacade {
      * pixels
      * @param rows Height of the terminal window, in text rows <b>not</b> pixels
      */
-    public static SwingTerminal createSwingTerminal(int columns, int rows) {
-        return new SwingTerminal(columns, rows);
+    public static OldSwingTerminal createSwingTerminal(int columns, int rows) {
+        return new OldSwingTerminal(columns, rows);
     }
 
     /**
@@ -125,7 +125,7 @@ public class TerminalFacade {
      *
      * @param appearance The kind of appearance to use for the terminal
      */
-    public static SwingTerminal createSwingTerminal(TerminalAppearance appearance) {
+    public static OldSwingTerminal createSwingTerminal(OldTerminalAppearance appearance) {
         return createSwingTerminal(appearance, DEFAULT_TERMINAL_COLUMN_WIDTH, DEFAULT_TERMINAL_COLUMN_HEIGHT);
     }
 
@@ -138,8 +138,8 @@ public class TerminalFacade {
      * pixels
      * @param rows Height of the terminal window, in text rows <b>not</b> pixels
      */
-    public static SwingTerminal createSwingTerminal(TerminalAppearance appearance, int columns, int rows) {
-        return new SwingTerminal(appearance, columns, rows);
+    public static OldSwingTerminal createSwingTerminal(OldTerminalAppearance appearance, int columns, int rows) {
+        return new OldSwingTerminal(appearance, columns, rows);
     }
 
     /**
