@@ -56,6 +56,8 @@ import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.terminal.TextColor;
 import java.awt.Color;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A Swing-based text terminal emulator
@@ -147,6 +149,11 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
             blinkVisible = !blinkVisible;
             terminalRenderer.repaint();
         }
+    }
+
+    @Override
+    public byte[] enquireTerminal(int timeout, TimeUnit timeoutUnit) throws IOException {
+        return new byte[0]; //Not supported
     }
 
     @Override
