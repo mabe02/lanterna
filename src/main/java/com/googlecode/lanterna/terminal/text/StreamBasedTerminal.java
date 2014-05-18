@@ -30,7 +30,6 @@ import com.googlecode.lanterna.input.InputDecoder;
 import com.googlecode.lanterna.terminal.ACS;
 import com.googlecode.lanterna.terminal.InputEnabledAbstractTerminal;
 import java.io.ByteArrayOutputStream;
-import java.nio.ByteBuffer;
 import java.util.concurrent.TimeUnit;
 
 /**
