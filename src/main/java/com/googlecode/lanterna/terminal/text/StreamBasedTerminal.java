@@ -16,7 +16,6 @@
  *
  * Copyright (C) 2010-2014 Martin
  */
-
 package com.googlecode.lanterna.terminal.text;
 
 import java.io.IOException;
@@ -30,15 +29,19 @@ import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.input.InputDecoder;
 import com.googlecode.lanterna.terminal.ACS;
 import com.googlecode.lanterna.terminal.InputEnabledAbstractTerminal;
+import java.io.ByteArrayOutputStream;
+import java.nio.ByteBuffer;
+import java.util.concurrent.TimeUnit;
 
 /**
- * An abstract terminal implementing functionality for terminals using
- * OutputStream/InputStream
+ * An abstract terminal implementing functionality for terminals using OutputStream/InputStream
+ *
  * @author Martin
  */
 public abstract class StreamBasedTerminal extends InputEnabledAbstractTerminal {
 
     private static Charset UTF8_REFERENCE;
+
     static {
         try {
             UTF8_REFERENCE = Charset.forName("UTF-8");
@@ -48,25 +51,28 @@ public abstract class StreamBasedTerminal extends InputEnabledAbstractTerminal {
         }
     }
 
+    private final InputStream terminalInput;
     private final OutputStream terminalOutput;
     private final Charset terminalCharset;
     protected final Object writerMutex;
 
     public StreamBasedTerminal(final InputStream terminalInput, final OutputStream terminalOutput,
-            final Charset terminalCharset)
-    {
+            final Charset terminalCharset) {
         super(new InputDecoder(new InputStreamReader(terminalInput, terminalCharset)));
         this.writerMutex = new Object();
+        this.terminalInput = terminalInput;
         this.terminalOutput = terminalOutput;
-        if(terminalCharset == null)
+        if(terminalCharset == null) {
             this.terminalCharset = Charset.defaultCharset();
-        else
+        }
+        else {
             this.terminalCharset = terminalCharset;
+        }
     }
 
     /**
-     * Outputs a single character to the terminal output stream, translating any
-     * UTF-8 graphical symbol if necessary
+     * Outputs a single character to the terminal output stream, translating any UTF-8 graphical symbol if necessary
+     *
      * @param c Character to write to the output stream
      * @throws LanternaException
      */
@@ -80,32 +86,63 @@ public abstract class StreamBasedTerminal extends InputEnabledAbstractTerminal {
     /**
      * Allow subclasses (that are supposed to know what they're doing) to write directly to the terminal<br>
      * Warning! Be sure to call this method INSIDE of a synchronize(writeMutex) block!!!<br>
-     * The reason is that many control sequences are a group of bytes and we want to
-     * synchronize the whole thing rather than each character one by one.
+     * The reason is that many control sequences are a group of bytes and we want to synchronize the whole thing rather
+     * than each character one by one.
      */
     protected void writeToTerminal(final byte... bytes) {
         try {
             terminalOutput.write(bytes);
-        } catch (IOException e) {
+        }
+        catch(IOException e) {
             throw new LanternaException(e);
         }
+    }
+
+    @Override
+    public byte[] enquireTerminal(int timeout, TimeUnit timeoutTimeUnit) throws IOException {
+        synchronized(writerMutex) {
+            terminalOutput.write(5);    //ENQ
+        }
+        flush();
+        
+        //Wait for input
+        long startTime = System.currentTimeMillis();
+        while(terminalInput.available() == 0) {
+            if(System.currentTimeMillis() - startTime > timeoutTimeUnit.toMillis(timeout)) {
+                return new byte[0];
+            }
+            try { 
+                Thread.sleep(1); 
+            } 
+            catch(InterruptedException e) {
+                return new byte[0];
+            }
+        }
+        
+        //We have at least one character, read as far as we can and return
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        while(terminalInput.available() > 0) {
+            baos.write(terminalInput.read());
+        }
+        return baos.toByteArray();
     }
 
     @Override
     public void flush() {
         try {
             terminalOutput.flush();
-        } catch (IOException e) {
+        }
+        catch(IOException e) {
             throw new LanternaException(e);
         }
     }
 
     protected byte[] translateCharacter(char input) {
-        if (UTF8_REFERENCE != null && UTF8_REFERENCE == terminalCharset) {
+        if(UTF8_REFERENCE != null && UTF8_REFERENCE == terminalCharset) {
             return convertToCharset(input);
         }
         //Convert ACS to ordinary terminal codes
-        switch (input) {
+        switch(input) {
             case ACS.ARROW_DOWN:
                 return convertToVT100('v');
             case ACS.ARROW_LEFT:

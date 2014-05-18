@@ -20,6 +20,7 @@ package com.googlecode.lanterna.terminal;
 
 import com.googlecode.lanterna.input.InputProvider;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This is the main terminal interface, at the lowest level supported by Lanterna. You can implement your own
@@ -270,6 +271,18 @@ public interface Terminal extends InputProvider {
      * @throws java.io.IOException if there was an I/O error trying to retrieve the size of the terminal
      */
     public TerminalSize getTerminalSize() throws IOException;
+    
+    /**
+     * Retrieves optional information from the terminal by printing the ENQ ({@literal \}u005) character. Terminals and terminal
+     * emulators may or may not respond to this command, sometimes it's configurable.
+     * @param timeout How long to wait for the talkback message, if there's nothing immediately available on the input 
+     * stream, you should probably set this to a somewhat small value to prevent unnecessary blockage on the input stream
+     * but large enough to accommodate a round-trip to the user's terminal (~300 ms if you are connection across the globe).
+     * @param timeoutUnit What unit to use when interpreting the {@code timeout} parameter
+     * @return Answerback message from the terminal or empty if there was nothing
+     * @throws java.io.IOException If there was an I/O error while trying to read the enquiry reply
+     */
+    public byte[] enquireTerminal(int timeout, TimeUnit timeoutUnit) throws IOException;
 
     /**
      * Calls {@code flush()} on the underlying {@code OutputStream} object, or whatever other implementation this
