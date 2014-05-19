@@ -18,7 +18,15 @@
  */
 package com.googlecode.lanterna.terminal;
 
+import com.googlecode.lanterna.screen.DefaultScreen;
+import com.googlecode.lanterna.screen.Screen;
+import com.googlecode.lanterna.screen.ScreenWriter;
 import com.googlecode.lanterna.terminal.swing.SwingTerminal;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.util.Random;
+import javax.swing.Timer;
 
 /**
  *
@@ -26,17 +34,44 @@ import com.googlecode.lanterna.terminal.swing.SwingTerminal;
  */
 public class NewSwingTerminalTest extends javax.swing.JFrame {
 
+    private static final Random RANDOM = new Random();
+
     /**
      * Creates new form NewSwingTerminalTest
      */
     public NewSwingTerminalTest() {
         initComponents();
 
-        SwingTerminal leftTerminal = new SwingTerminal();
-        SwingTerminal rightTerminal = new SwingTerminal();
+        final SwingTerminal leftTerminal = new SwingTerminal();
+        final SwingTerminal rightTerminal = new SwingTerminal();
         splitPane.setLeftComponent(leftTerminal);
         splitPane.setRightComponent(rightTerminal);
         pack();
+
+        Timer timer = new Timer(500, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                drawRandomHello(leftTerminal.getTerminal());
+                drawRandomHello(rightTerminal.getTerminal());
+            }
+
+            private void drawRandomHello(IOSafeTerminal terminal) {
+                TerminalSize size = terminal.getTerminalSize();
+                if(size.getColumns() > 6 && size.getRows() > 1) {
+                    int positionX = RANDOM.nextInt(size.getColumns() - 6);
+                    int positionY = RANDOM.nextInt(size.getRows());
+
+                    terminal.moveCursor(positionX, positionY);
+                    terminal.applyBackgroundColor(RANDOM.nextInt(256));
+                    terminal.applyForegroundColor(RANDOM.nextInt(256));
+                    String hello = "Hello!";
+                    for(int i = 0; i < hello.length(); i++) {
+                        terminal.putCharacter(hello.charAt(i));
+                    }
+                }
+            }
+        });
+        timer.start();
     }
 
     /**

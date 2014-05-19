@@ -20,18 +20,17 @@ package com.googlecode.lanterna.terminal.swing;
 
 import com.googlecode.lanterna.input.KeyDecodingProfile;
 import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.terminal.AbstractTerminal;
+import com.googlecode.lanterna.terminal.IOSafeTerminal;
 import com.googlecode.lanterna.terminal.ResizeListener;
 import com.googlecode.lanterna.terminal.Terminal;
+import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.terminal.TextColor;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import javax.swing.JComponent;
@@ -42,16 +41,15 @@ import javax.swing.JComponent;
  * similar to how the SwingTerminal used to work in earlier versions of lanterna.
  * @author martin
  */
-public class SwingTerminal extends JComponent implements Terminal {
-
-    private static final TerminalCharacter DEFAULT_CHARACTER = new TerminalCharacter();
+public class SwingTerminal extends JComponent {
 
     private final SwingTerminalFontConfiguration fontConfiguration;
     private final SwingTerminalColorConfiguration colorConfiguration;
-    private final int lineBufferScrollbackSize;
-    private final LinkedList<List<TerminalCharacter>> lineBuffer;
+    private final TextBuffer mainBuffer;
+    private final TextBuffer privateModeBuffer;
+    private final TerminalImplementation terminalImplementation;
 
-    private TerminalSize terminalSize;
+    private TextBuffer currentBuffer;
 
     public SwingTerminal() {
         this(SwingTerminalFontConfiguration.DEFAULT,
@@ -70,18 +68,15 @@ public class SwingTerminal extends JComponent implements Terminal {
             SwingTerminalColorConfiguration colorConfiguration,
             int lineBufferScrollbackSize) {
 
+                //This is kind of meaningless since we don't know how large the
+                //component is at this point, but we should set it to something
+        this.terminalImplementation = new TerminalImplementation(new TerminalSize(80, 20));
         this.fontConfiguration = fontConfiguration;
         this.colorConfiguration = colorConfiguration;
-        this.lineBufferScrollbackSize = lineBufferScrollbackSize;
-        this.lineBuffer = new LinkedList<List<TerminalCharacter>>();
 
-        this.terminalSize = new TerminalSize(80, 20);   //This is kind of meaningless since we don't know how large the
-                                                        //component is at this point, but we should set it to something
-
-        //Initialize the content to empty
-        for(int y = 0; y < terminalSize.getRows(); y++) {
-            lineBuffer.add(newEmptyLine());
-        }
+        this.mainBuffer = new TextBuffer(lineBufferScrollbackSize, terminalImplementation.getTerminalSize());
+        this.privateModeBuffer = new TextBuffer(0, terminalImplementation.getTerminalSize());
+        this.currentBuffer = mainBuffer;    //Always start with the active buffer
 
         //Prevent us from shrinking beyond one character
         setMinimumSize(new Dimension(fontConfiguration.getFontWidth(), fontConfiguration.getFontHeight()));
@@ -92,184 +87,180 @@ public class SwingTerminal extends JComponent implements Terminal {
     ///////////
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(fontConfiguration.getFontWidth() * terminalSize.getColumns(),
-                fontConfiguration.getFontHeight() * terminalSize.getRows());
+        return new Dimension(fontConfiguration.getFontWidth() * terminalImplementation.getTerminalSize().getColumns(),
+                fontConfiguration.getFontHeight() * terminalImplementation.getTerminalSize().getRows());
     }
 
     @Override
     protected void paintComponent(Graphics g) {
-        //First, resize the buffer width if necessary
-        int widthInNumberOfCharacters = getWidth() / fontConfiguration.getFontWidth();
-        if(widthInNumberOfCharacters > terminalSize.getColumns()) {
-            for(List<TerminalCharacter> line: lineBuffer) {
-                for(int i = 0; i < widthInNumberOfCharacters - terminalSize.getColumns(); i++) {
-                    line.add(DEFAULT_CHARACTER);
-                }
-            }
-            terminalSize = terminalSize.withColumns(widthInNumberOfCharacters);
-        }
-        else if(widthInNumberOfCharacters < terminalSize.getColumns()) {
-            for(List<TerminalCharacter> line: lineBuffer) {
-                for(int i = 0; i < terminalSize.getColumns() - widthInNumberOfCharacters; i++) {
-                    line.remove(line.size() - 1);
-                }
-            }
-            terminalSize = terminalSize.withColumns(widthInNumberOfCharacters);
-        }
+        //First, resize the buffer width/height if necessary
+        int fontWidth = fontConfiguration.getFontWidth();
+        int fontHeight = fontConfiguration.getFontHeight();
+        int widthInNumberOfCharacters = getWidth() / fontWidth;
+        int visibleRows = getHeight() / fontHeight;
+
+        currentBuffer.readjust(widthInNumberOfCharacters, visibleRows);
+        terminalImplementation.setTerminalSize(terminalImplementation.getTerminalSize().withColumns(widthInNumberOfCharacters).withRows(visibleRows));
 
         System.out.println("Painting with width = " + getWidth() + " and height = " + getHeight());
 
-        //Fill the buffer height if necessary
-        int visibleRows = getHeight() / fontConfiguration.getFontHeight();
-        if(visibleRows > lineBuffer.size()) {
-            while(visibleRows > lineBuffer.size()) {
-                lineBuffer.addFirst(newEmptyLine());
-            }
-            terminalSize = terminalSize.withRows(visibleRows);
-        }
-
         //Draw line by line, character by character
-        for(int rowIndex = lineBuffer.size() - terminalSize.getRows(); rowIndex < lineBuffer.size(); rowIndex++) {
-            for(int columnIndex = 0; columnIndex < terminalSize.getColumns(); columnIndex++) {
-                
+        int rowIndex = 0;
+        for(List<TerminalCharacter> row: currentBuffer.getVisibleLines(visibleRows, 0)) {
+            for(int columnIndex = 0; columnIndex < row.size(); columnIndex++) {
+                TerminalCharacter character = row.get(columnIndex);
+                g.setColor(character.getBackgroundColor());
+                g.fillRect(columnIndex * fontWidth, rowIndex * fontHeight, fontWidth, fontHeight);
+                g.setColor(character.getForegroundColor());
+                g.setFont(fontConfiguration.getFontForCharacter(character.getCharacter()));
+                g.drawString(Character.toString(character.getCharacter()), columnIndex * fontWidth, (rowIndex + 1) * fontHeight);
             }
+            rowIndex++;
         }
 
         g.dispose();
     }
 
-    ///////////
-    // Now implement all Terminal-related methods
-    ///////////
-    @Override
-    public KeyStroke readInput() throws IOException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public IOSafeTerminal getTerminal() {
+        return terminalImplementation;
     }
 
-    @Override
-    public void addKeyDecodingProfile(KeyDecodingProfile profile) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    private class TerminalImplementation extends AbstractTerminal implements IOSafeTerminal {
+        private TerminalSize terminalSize;
+        private TerminalPosition currentPosition;
+        private Color foregroundColor;
+        private Color backgroundColor;
 
-    @Override
-    public void enterPrivateMode() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+        public TerminalImplementation(TerminalSize terminalSize) {
+            this.terminalSize = terminalSize;
+            this.currentPosition = TerminalPosition.TOP_LEFT_CORNER;
+            this.foregroundColor = Color.WHITE;
+            this.backgroundColor = Color.BLACK;
 
-    @Override
-    public void exitPrivateMode() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void clearScreen() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void moveCursor(int x, int y) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setCursorVisible(boolean visible) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void putCharacter(char c) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void enableSGR(SGR sgr) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void disableSGR(SGR sgr) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void resetAllSGR() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void applyForegroundColor(TextColor color) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void applyForegroundColor(ANSIColor color) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void applyForegroundColor(int index) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void applyForegroundColor(int r, int g, int b) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void applyBackgroundColor(TextColor color) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void applyBackgroundColor(ANSIColor color) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void applyBackgroundColor(int index) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void applyBackgroundColor(int r, int g, int b) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void addResizeListener(ResizeListener listener) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void removeResizeListener(ResizeListener listener) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public TerminalSize getTerminalSize() throws IOException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public byte[] enquireTerminal(int timeout, TimeUnit timeoutUnit) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void flush() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    private List<TerminalCharacter> newEmptyLine() {
-        List<TerminalCharacter> row = new ArrayList<TerminalCharacter>();
-        for(int x = 0; x < terminalSize.getColumns(); x++) {
-            row.add(DEFAULT_CHARACTER);
+            //Initialize lastKnownSize in AbstractTerminal
+            onResized(terminalSize.getColumns(), terminalSize.getRows());
         }
-        return row;
-    }
 
-    private static class TerminalCharacter {
+        ///////////
+        // Now implement all Terminal-related methods
+        ///////////
+        @Override
+        public KeyStroke readInput() throws IOException {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
 
+        @Override
+        public void addKeyDecodingProfile(KeyDecodingProfile profile) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public void enterPrivateMode() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public void exitPrivateMode() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public void clearScreen() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public void moveCursor(int x, int y) {
+            TerminalSize size = getTerminalSize();
+            if(x < 0) {
+                x = 0;
+            }
+            else if(x >= size.getColumns()) {
+                x = size.getColumns() - 1;
+            }
+            if(y < 0) {
+                y = 0;
+            }
+            else if(y >= size.getRows()) {
+                y = size.getRows() - 1;
+            }
+            currentPosition = currentPosition.withColumn(x).withRow(y);
+        }
+
+        @Override
+        public void setCursorVisible(boolean visible) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public void putCharacter(char c) {
+            currentBuffer.setCharacter(getTerminalSize(), currentPosition, new TerminalCharacter(c, foregroundColor, backgroundColor));
+            repaint();
+        }
+
+        @Override
+        public void enableSGR(SGR sgr) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public void disableSGR(SGR sgr) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public void resetAllSGR() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public void applyForegroundColor(ANSIColor color) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public void applyForegroundColor(int index) {
+            backgroundColor = Color.WHITE;
+        }
+
+        @Override
+        public void applyForegroundColor(int r, int g, int b) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public void applyBackgroundColor(ANSIColor color) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public void applyBackgroundColor(int index) {
+            backgroundColor = Color.BLACK;
+        }
+
+        @Override
+        public void applyBackgroundColor(int r, int g, int b) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        private void setTerminalSize(TerminalSize terminalSize) {
+            onResized(terminalSize.getColumns(), terminalSize.getRows());
+            this.terminalSize = terminalSize;
+        }
+
+        @Override
+        public TerminalSize getTerminalSize() {
+            return terminalSize;
+        }
+
+        @Override
+        public byte[] enquireTerminal(int timeout, TimeUnit timeoutUnit) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public void flush() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
     }
 }
