@@ -32,6 +32,7 @@ import com.googlecode.lanterna.terminal.swing.SwingTerminalFrame;
 import com.googlecode.lanterna.terminal.text.CygwinTerminal;
 import com.googlecode.lanterna.terminal.text.UnixTerminal;
 import java.io.IOException;
+import javax.swing.JFrame;
 
 /**
  * This class gives an easy facade over the whole Lanterna terminal construction
