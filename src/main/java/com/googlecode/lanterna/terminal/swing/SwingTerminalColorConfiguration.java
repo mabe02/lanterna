@@ -56,10 +56,8 @@ public class SwingTerminalColorConfiguration {
         if(COLOR_STORAGE.containsKey(color)) {
             return COLOR_STORAGE.get(color);
         }
-        if(color instanceof TextColor.ANSI) {
-            Color awtColor = colorPalette.get((TextColor.ANSI)color, isForeground, inBoldContext && useBrightColorsOnBold);
-            COLOR_STORAGE.put(color, awtColor);
-            return awtColor;
+        else if(color instanceof TextColor.ANSI) {
+            return colorPalette.get((TextColor.ANSI)color, isForeground, inBoldContext && useBrightColorsOnBold);
         }
         else if(color instanceof TextColor.Indexed) {
             TextColor.Indexed indexedColor = (TextColor.Indexed)color;

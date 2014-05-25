@@ -125,13 +125,13 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
                 TerminalCharacter character = row.get(columnIndex);
                 boolean atCursorLocation = cursorPosition.equals(columnIndex, rowIndex);
 
-                TextColor backgroundColor = deriveTrueForegroundColor(character, atCursorLocation);
-                TextColor foregroundColor = deriveTrueBackgroundColor(character, atCursorLocation);
+                Color foregroundColor = deriveTrueForegroundColor(character, atCursorLocation);
+                Color backgroundColor = deriveTrueBackgroundColor(character, atCursorLocation);
 
-                g.setColor(colorConfiguration.toAWTColor(backgroundColor, false, character.isBold()));
+                g.setColor(backgroundColor);
                 g.fillRect(columnIndex * fontWidth, rowIndex * fontHeight, fontWidth, fontHeight);
 
-                g.setColor(colorConfiguration.toAWTColor(foregroundColor, true, character.isBold()));
+                g.setColor(foregroundColor);
                 g.setFont(fontConfiguration.getFontForCharacter(character.getCharacter()));
                 g.drawString(Character.toString(character.getCharacter()), columnIndex * fontWidth, (rowIndex + 1) * fontHeight);
 
@@ -146,13 +146,13 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
         g.dispose();
     }
 
-    private TextColor deriveTrueForegroundColor(TerminalCharacter character, boolean atCursorLocation) {
+    private Color deriveTrueForegroundColor(TerminalCharacter character, boolean atCursorLocation) {
         TextColor foregroundColor = character.getForegroundColor();
         TextColor backgroundColor = character.getBackgroundColor();
         boolean reverse = character.isReverse();
         boolean blink = character.isBlink();
 
-        if(cursorIsVisible) {
+        if(cursorIsVisible && atCursorLocation) {
             if(deviceConfiguration.getCursorStyle() == SwingTerminalDeviceConfiguration.CursorStyle.REVERSED) {
                 reverse = true;
             }
@@ -162,22 +162,22 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
         }
 
         if(reverse && (!blink || (blink && !blinkOn))) {
-            return backgroundColor;
+            return colorConfiguration.toAWTColor(backgroundColor, true, character.isBold());
         }
         else if(!reverse && blink && blinkOn) {
-            return backgroundColor;
+            return colorConfiguration.toAWTColor(backgroundColor, true, character.isBold());
         }
         else {
-            return foregroundColor;
+            return colorConfiguration.toAWTColor(foregroundColor, true, character.isBold());
         }
     }
 
-    private TextColor deriveTrueBackgroundColor(TerminalCharacter character, boolean atCursorLocation) {
+    private Color deriveTrueBackgroundColor(TerminalCharacter character, boolean atCursorLocation) {
         TextColor foregroundColor = character.getForegroundColor();
         TextColor backgroundColor = character.getBackgroundColor();
         boolean reverse = character.isReverse();
 
-        if(cursorIsVisible) {
+        if(cursorIsVisible && atCursorLocation) {
             if(deviceConfiguration.getCursorStyle() == SwingTerminalDeviceConfiguration.CursorStyle.REVERSED) {
                 reverse = true;
             }
@@ -187,10 +187,10 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
         }
 
         if(reverse) {
-            return foregroundColor;
+            return colorConfiguration.toAWTColor(foregroundColor, false, character.isBold());
         }
         else {
-            return backgroundColor;
+            return colorConfiguration.toAWTColor(backgroundColor, false, character.isBold());
         }
     }
 
