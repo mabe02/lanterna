@@ -28,6 +28,7 @@ import com.googlecode.lanterna.screen.DefaultScreen;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.swing.OldSwingTerminal;
 import com.googlecode.lanterna.terminal.swing.OldTerminalAppearance;
+import com.googlecode.lanterna.terminal.swing.SwingTerminalFrame;
 import com.googlecode.lanterna.terminal.text.CygwinTerminal;
 import com.googlecode.lanterna.terminal.text.UnixTerminal;
 import java.io.IOException;
@@ -102,7 +103,7 @@ public class TerminalFacade {
      * emulator, DEFAULT_TERMINAL_COLUMN_WIDTH columns wide and
      * DEFAULT_TERMINAL_COLUMN_HEIGHT rows high.
      */
-    public static OldSwingTerminal createSwingTerminal() {
+    public static SwingTerminalFrame createSwingTerminal() {
         return createSwingTerminal(DEFAULT_TERMINAL_COLUMN_WIDTH, DEFAULT_TERMINAL_COLUMN_HEIGHT);
     }
 
@@ -114,8 +115,10 @@ public class TerminalFacade {
      * pixels
      * @param rows Height of the terminal window, in text rows <b>not</b> pixels
      */
-    public static OldSwingTerminal createSwingTerminal(int columns, int rows) {
-        return new OldSwingTerminal(columns, rows);
+    public static SwingTerminalFrame createSwingTerminal(int columns, int rows) {
+        SwingTerminalFrame frame = new SwingTerminalFrame();
+        frame.setVisible(true);
+        return frame;
     }
 
     /**

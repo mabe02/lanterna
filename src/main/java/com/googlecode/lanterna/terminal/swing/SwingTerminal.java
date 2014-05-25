@@ -91,6 +91,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
 
         //Prevent us from shrinking beyond one character
         setMinimumSize(new Dimension(fontConfiguration.getFontWidth(), fontConfiguration.getFontHeight()));
+        this.blinkTimer.start();
     }
 
     ///////////
@@ -153,16 +154,14 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
         boolean blink = character.isBlink();
 
         if(cursorIsVisible && atCursorLocation) {
-            if(deviceConfiguration.getCursorStyle() == SwingTerminalDeviceConfiguration.CursorStyle.REVERSED) {
+            if(deviceConfiguration.getCursorStyle() == SwingTerminalDeviceConfiguration.CursorStyle.REVERSED &&
+                    (!deviceConfiguration.isCursorBlinking() || (deviceConfiguration.isCursorBlinking() && blinkOn))) {
                 reverse = true;
-            }
-            if(deviceConfiguration.isCursorBlinking()) {
-                blink = true;
             }
         }
 
         if(reverse && (!blink || (blink && !blinkOn))) {
-            return colorConfiguration.toAWTColor(backgroundColor, true, character.isBold());
+            return colorConfiguration.toAWTColor(backgroundColor, backgroundColor != TextColor.ANSI.DEFAULT, character.isBold());
         }
         else if(!reverse && blink && blinkOn) {
             return colorConfiguration.toAWTColor(backgroundColor, true, character.isBold());
@@ -178,7 +177,8 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
         boolean reverse = character.isReverse();
 
         if(cursorIsVisible && atCursorLocation) {
-            if(deviceConfiguration.getCursorStyle() == SwingTerminalDeviceConfiguration.CursorStyle.REVERSED) {
+            if(deviceConfiguration.getCursorStyle() == SwingTerminalDeviceConfiguration.CursorStyle.REVERSED &&
+                    (!deviceConfiguration.isCursorBlinking() || (deviceConfiguration.isCursorBlinking() && blinkOn))) {
                 reverse = true;
             }
             else if(deviceConfiguration.getCursorStyle() == SwingTerminalDeviceConfiguration.CursorStyle.FIXED_BACKGROUND) {
@@ -187,7 +187,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
         }
 
         if(reverse) {
-            return colorConfiguration.toAWTColor(foregroundColor, false, character.isBold());
+            return colorConfiguration.toAWTColor(foregroundColor, backgroundColor == TextColor.ANSI.DEFAULT, character.isBold());
         }
         else {
             return colorConfiguration.toAWTColor(backgroundColor, false, character.isBold());
@@ -294,6 +294,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
         @Override
         public void actionPerformed(ActionEvent e) {
             blinkOn = !blinkOn;
+            repaint();
         }
     }
 

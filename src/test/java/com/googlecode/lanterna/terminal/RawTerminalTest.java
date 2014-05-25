@@ -32,7 +32,7 @@ public class RawTerminalTest
     public static void main(String[] args) throws InterruptedException, IOException
     {
         Terminal terminal = new TestTerminalFactory(args).createTerminal();
-        terminal.enterPrivateMode();
+        //terminal.enterPrivateMode();
         terminal.clearScreen();
         terminal.moveCursor(10, 5);
         terminal.putCharacter('H');
@@ -42,8 +42,9 @@ public class RawTerminalTest
         terminal.putCharacter('o');
         terminal.putCharacter('!');
         terminal.moveCursor(0, 0);
+        terminal.flush();
 
         Thread.sleep(5000);
-        terminal.exitPrivateMode();
+        //terminal.exitPrivateMode();
     }
 }
