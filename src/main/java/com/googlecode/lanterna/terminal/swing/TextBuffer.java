@@ -44,14 +44,14 @@ class TextBuffer {
 
         //Initialize the content to empty
         for(int y = 0; y < initialSize.getRows(); y++) {
-            lineBuffer.add(newLine(initialSize.getColumns()));
+            lineBuffer.add(newLine(initialSize.getColumns(), fillCharacter));
         }
     }
 
-    private List<TerminalCharacter> newLine(int width) {
+    private List<TerminalCharacter> newLine(int width, TerminalCharacter character) {
         List<TerminalCharacter> row = new ArrayList<TerminalCharacter>();
         for(int x = 0; x < width; x++) {
-            row.add(fillCharacter);
+            row.add(character);
         }
         return row;
     }
@@ -76,7 +76,7 @@ class TextBuffer {
 
         //Fill the buffer height if necessary
         while(height > lineBuffer.size()) {
-            lineBuffer.addFirst(newLine(width));
+            lineBuffer.addFirst(newLine(width, fillCharacter));
         }
         //Cut down history, if necessary
         while(lineBuffer.size() - height > backlog) {
@@ -92,7 +92,11 @@ class TextBuffer {
         lineBuffer.get(lineBuffer.size() - terminalSize.getRows() + currentPosition.getRow()).set(currentPosition.getColumn(), terminalCharacter);
     }
 
-    void fillScreen(TerminalSize terminalSize, TerminalCharacter DEFAULT_CHARACTER) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    void fillScreen(TerminalSize terminalSize, TerminalCharacter character) {
+        readjust(terminalSize.getColumns(), terminalSize.getRows());
+        for(List<TerminalCharacter> row: getVisibleLines(terminalSize.getRows(), 0)) {
+            row.clear();
+            row.addAll(newLine(terminalSize.getColumns(), character));
+        }
     }
 }
