@@ -76,7 +76,7 @@ class VirtualTerminalImplementation extends AbstractTerminal implements IOSafeTe
     // Now implement all Terminal-related methods
     ///////////
     @Override
-    public KeyStroke readInput() throws IOException {
+    public KeyStroke readInput() {
         return deviceEmulator.readInput();
     }
 

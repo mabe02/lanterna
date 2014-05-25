@@ -51,8 +51,8 @@ public class NewSwingTerminalTest extends javax.swing.JFrame {
         Timer timer = new Timer(500, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                drawRandomHello(leftTerminal.getTerminal());
-                drawRandomHello(rightTerminal.getTerminal());
+                drawRandomHello(leftTerminal);
+                drawRandomHello(rightTerminal);
             }
 
             private void drawRandomHello(IOSafeTerminal terminal) {

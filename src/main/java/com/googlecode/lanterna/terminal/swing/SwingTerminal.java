@@ -18,8 +18,10 @@
  */
 package com.googlecode.lanterna.terminal.swing;
 
+import com.googlecode.lanterna.input.KeyDecodingProfile;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.terminal.IOSafeTerminal;
+import com.googlecode.lanterna.terminal.ResizeListener;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.terminal.TextColor;
@@ -30,6 +32,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import javax.swing.JComponent;
 import javax.swing.Timer;
 
@@ -39,7 +42,7 @@ import javax.swing.Timer;
  * similar to how the SwingTerminal used to work in earlier versions of lanterna.
  * @author martin
  */
-public class SwingTerminal extends JComponent {
+public class SwingTerminal extends JComponent implements IOSafeTerminal {
 
     private final SwingTerminalDeviceConfiguration deviceConfiguration;
     private final SwingTerminalFontConfiguration fontConfiguration;
@@ -143,10 +146,6 @@ public class SwingTerminal extends JComponent {
         g.dispose();
     }
 
-    public IOSafeTerminal getTerminal() {
-        return terminalImplementation;
-    }
-
     private TextColor deriveTrueForegroundColor(TerminalCharacter character, boolean atCursorLocation) {
         TextColor foregroundColor = character.getForegroundColor();
         TextColor backgroundColor = character.getBackgroundColor();
@@ -195,6 +194,102 @@ public class SwingTerminal extends JComponent {
         }
     }
 
+    ///////////
+    // Then delegate all Terminal interface methods to the virtual terminal implementation
+    ///////////
+    @Override
+    public KeyStroke readInput() {
+        return terminalImplementation.readInput();
+    }
+
+    @Override
+    public void addKeyDecodingProfile(KeyDecodingProfile profile) {
+        terminalImplementation.addKeyDecodingProfile(profile);
+    }
+
+    @Override
+    public void enterPrivateMode() {
+        terminalImplementation.enterPrivateMode();
+    }
+
+    @Override
+    public void exitPrivateMode() {
+        terminalImplementation.exitPrivateMode();
+    }
+
+    @Override
+    public void clearScreen() {
+        terminalImplementation.clearScreen();
+    }
+
+    @Override
+    public void moveCursor(int x, int y) {
+        terminalImplementation.moveCursor(x, y);
+    }
+
+    @Override
+    public void setCursorVisible(boolean visible) {
+        terminalImplementation.setCursorVisible(visible);
+    }
+
+    @Override
+    public void putCharacter(char c) {
+        terminalImplementation.putCharacter(c);
+    }
+
+    @Override
+    public void enableSGR(SGR sgr) {
+        terminalImplementation.enableSGR(sgr);
+    }
+
+    @Override
+    public void disableSGR(SGR sgr) {
+        terminalImplementation.disableSGR(sgr);
+    }
+
+    @Override
+    public void resetAllSGR() {
+        terminalImplementation.resetAllSGR();
+    }
+
+    @Override
+    public void applyForegroundColor(TextColor color) {
+        terminalImplementation.applyForegroundColor(color);
+    }
+
+    @Override
+    public void applyBackgroundColor(TextColor color) {
+        terminalImplementation.applyBackgroundColor(color);
+    }
+
+    @Override
+    public TerminalSize getTerminalSize() {
+        return terminalImplementation.getTerminalSize();
+    }
+
+    @Override
+    public byte[] enquireTerminal(int timeout, TimeUnit timeoutUnit) {
+        return terminalImplementation.enquireTerminal(timeout, timeoutUnit);
+    }
+
+    @Override
+    public void flush() {
+        terminalImplementation.flush();
+    }
+
+    @Override
+    public void addResizeListener(ResizeListener listener) {
+        terminalImplementation.addResizeListener(listener);
+    }
+
+    @Override
+    public void removeResizeListener(ResizeListener listener) {
+        terminalImplementation.removeResizeListener(listener);
+    }
+
+    ///////////
+    // Remaining are private internal classes used by SwingTerminal
+    ///////////
     private class BlinkTimerCallback implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
