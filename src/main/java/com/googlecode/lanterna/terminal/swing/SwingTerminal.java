@@ -35,6 +35,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import javax.swing.JComponent;
 import javax.swing.Timer;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 
 /**
  * This class provides a Swing implementation of the Terminal interface that is an embeddable component you can put into
@@ -91,7 +93,20 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
 
         //Prevent us from shrinking beyond one character
         setMinimumSize(new Dimension(fontConfiguration.getFontWidth(), fontConfiguration.getFontHeight()));
-        this.blinkTimer.start();
+        addAncestorListener(new AncestorListener() {
+            @Override
+            public void ancestorAdded(AncestorEvent event) {
+                blinkTimer.start();
+            }
+
+            @Override
+            public void ancestorRemoved(AncestorEvent event) {
+                blinkTimer.stop();
+            }
+
+            @Override
+            public void ancestorMoved(AncestorEvent event) { }
+        });
     }
 
     ///////////
