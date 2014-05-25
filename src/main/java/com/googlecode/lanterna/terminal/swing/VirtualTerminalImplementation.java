@@ -100,42 +100,35 @@ class VirtualTerminalImplementation extends AbstractTerminal implements IOSafeTe
     }
 
     private void advanceCursor() {
-        int x = currentPosition.getColumn();
-        int y = currentPosition.getRow();
-        TerminalSize size = getTerminalSize();
-        if(x < 0) {
-            x = 0;
+        currentPosition = currentPosition.withRelativeColumn(1);
+        if(currentPosition.getColumn() >= getTerminalSize().getColumns()) {
+            currentPosition = currentPosition.withColumn(0).withRelativeRow(1);
         }
-        x++;
-        if(x >= size.getColumns()) {
-            x = 0;
-            y++;
-        }
-        if(y < 0) {
-            y = 0;
-        }
-        else if(y >= size.getRows()) {
-            y = size.getRows() - 1;
-        }
-        currentPosition = currentPosition.withColumn(x).withRow(y);
+        correctCursorPosition();
     }
 
     @Override
     public void moveCursor(int x, int y) {
+        currentPosition = currentPosition.withColumn(x).withRow(y);
+        correctCursorPosition();
+    }
+
+    private void correctCursorPosition() {
+        int x = currentPosition.getColumn();
+        int y = currentPosition.getRow();
         TerminalSize size = getTerminalSize();
         if(x < 0) {
-            x = 0;
+            currentPosition = currentPosition.withColumn(0);
         }
-        else if(x >= size.getColumns()) {
-            x = size.getColumns() - 1;
+        if(x >= size.getColumns()) {
+            currentPosition = currentPosition.withColumn(size.getColumns() - 1);
         }
         if(y < 0) {
-            y = 0;
+            currentPosition = currentPosition.withRow(0);
         }
         else if(y >= size.getRows()) {
-            y = size.getRows() - 1;
+            currentPosition = currentPosition.withRow(size.getRows() - 1);
         }
-        currentPosition = currentPosition.withColumn(x).withRow(y);
     }
 
     @Override
@@ -198,6 +191,7 @@ class VirtualTerminalImplementation extends AbstractTerminal implements IOSafeTe
     void setTerminalSize(TerminalSize terminalSize) {
         onResized(terminalSize.getColumns(), terminalSize.getRows());
         this.terminalSize = terminalSize;
+        correctCursorPosition();
     }
 
     @Override
