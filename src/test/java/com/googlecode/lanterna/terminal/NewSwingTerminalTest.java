@@ -30,7 +30,7 @@ import javax.swing.Timer;
 
 /**
  *
- * @author mberglun
+ * @author martin
  */
 public class NewSwingTerminalTest extends javax.swing.JFrame {
 

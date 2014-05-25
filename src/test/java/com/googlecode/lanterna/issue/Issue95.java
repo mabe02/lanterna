@@ -15,7 +15,7 @@ import javax.swing.WindowConstants;
 
 /**
  *
- * @author mberglun
+ * @author martin
  */
 public class Issue95 {
     public static void main(String[] args) throws InterruptedException, IOException {

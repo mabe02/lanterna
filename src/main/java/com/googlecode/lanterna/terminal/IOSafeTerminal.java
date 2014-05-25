@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Interface extending Terminal that removes the IOException throw clause
- * @author mberglun
+ * @author martin
  */
 public interface IOSafeTerminal extends Terminal {
 

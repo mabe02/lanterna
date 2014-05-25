@@ -24,7 +24,7 @@ import java.util.List;
  * Used to compare a list of character if they match a particular pattern, and in that case, return the kind of 
  * keystroke this pattern represents
  *
- * @author mberglun
+ * @author martin
  */
 public interface CharacterPattern {
 

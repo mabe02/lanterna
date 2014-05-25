@@ -20,12 +20,11 @@ package com.googlecode.lanterna.terminal.swing;
 
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TextColor;
-import java.awt.Color;
 import java.util.EnumSet;
 
 /**
  *
- * @author mberglun
+ * @author martin
  */
 class TerminalCharacter {
     static final TerminalCharacter DEFAULT_CHARACTER = new TerminalCharacter(' ', TextColor.ANSI.DEFAULT, TextColor.ANSI.DEFAULT, EnumSet.noneOf(Terminal.SGR.class));

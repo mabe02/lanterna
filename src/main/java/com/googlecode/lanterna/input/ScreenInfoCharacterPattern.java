@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
  * <a href="http://en.wikipedia.org/wiki/ANSI_escape_code">Wikipedia</a>'s article on ANSI escape codes for more
  * information about how cursor position reporting works ("DSR – Device Status Report").
  *
- * @author mberglun
+ * @author martin
  */
 public class ScreenInfoCharacterPattern implements CharacterPattern {
 

@@ -143,6 +143,10 @@ class VirtualTerminalImplementation extends AbstractTerminal implements IOSafeTe
         deviceEmulator.setCursorVisible(visible);
     }
 
+    public TerminalPosition getCurrentPosition() {
+        return currentPosition;
+    }
+
     @Override
     public void putCharacter(char c) {
         deviceEmulator.getBuffer().setCharacter(getTerminalSize(), currentPosition, new TerminalCharacter(c, foregroundColor, backgroundColor, activeSGRs));

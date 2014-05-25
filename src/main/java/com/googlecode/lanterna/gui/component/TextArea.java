@@ -34,7 +34,7 @@ import java.util.List;
  * This component is designed for displaying large chunks of text. If the text
  * is larger than the component, it will display scrollbars and letting the
  * user scroll through the text using the arrow keys.
- * @author mberglun
+ * @author martin
  */
 public class TextArea  extends AbstractInteractableComponent
 { 

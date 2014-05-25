@@ -26,6 +26,7 @@ import java.awt.Graphics;
 import java.nio.charset.Charset;
 import java.util.List;
 import javax.swing.JComponent;
+import javax.swing.Timer;
 
 /**
  * This class provides a Swing implementation of the Terminal interface that is an embeddable component you can put into
@@ -40,6 +41,7 @@ public class SwingTerminal extends JComponent {
     private final TextBuffer mainBuffer;
     private final TextBuffer privateModeBuffer;
     private final VirtualTerminalImplementation terminalImplementation;
+    private final Timer blinkTimer;
 
     private TextBuffer currentBuffer;
     private boolean cursorIsVisible;
