@@ -111,8 +111,8 @@ public class OldSwingTerminal extends AbstractTerminal implements InputProvider
         this.blinkTimer = new Timer(500, new BlinkAction());
         this.textPosition = new TerminalPosition(0, 0);
         this.characterMap = new TerminalCharacter[heightInRows][widthInColumns];
-        this.currentForegroundColor = new CharacterANSIColor(ANSIColor.WHITE);
-        this.currentBackgroundColor = new CharacterANSIColor(ANSIColor.BLACK);
+        this.currentForegroundColor = new CharacterANSIColor(TextColor.ANSI.WHITE);
+        this.currentBackgroundColor = new CharacterANSIColor(TextColor.ANSI.BLACK);
         this.currentlyBold = false;
         this.currentlyBlinking = false;
         this.currentlyUnderlined = false;
@@ -162,7 +162,7 @@ public class OldSwingTerminal extends AbstractTerminal implements InputProvider
     }
 
     @Override
-    public void applyBackgroundColor(ANSIColor color) {
+    public void applyBackgroundColor(TextColor.ANSI color) {
         currentBackgroundColor = new CharacterANSIColor(color);
     }
 
@@ -177,7 +177,7 @@ public class OldSwingTerminal extends AbstractTerminal implements InputProvider
     }
 
     @Override
-    public void applyForegroundColor(ANSIColor color) {
+    public void applyForegroundColor(TextColor.ANSI color) {
         currentForegroundColor = new CharacterANSIColor(color);
     }
 
@@ -221,8 +221,8 @@ public class OldSwingTerminal extends AbstractTerminal implements InputProvider
         currentlyBlinking = false;
         currentlyUnderlined = false;
         currentlyBordered = false;
-        currentForegroundColor = new CharacterANSIColor(ANSIColor.DEFAULT);
-        currentBackgroundColor = new CharacterANSIColor(ANSIColor.BLACK);
+        currentForegroundColor = new CharacterANSIColor(TextColor.ANSI.DEFAULT);
+        currentBackgroundColor = new CharacterANSIColor(TextColor.ANSI.BLACK);
     }
 
     @Override
@@ -233,8 +233,8 @@ public class OldSwingTerminal extends AbstractTerminal implements InputProvider
                 for(int x = 0; x < size().getColumns(); x++)
                     this.characterMap[y][x] = new TerminalCharacter(
                             ' ',
-                            new CharacterANSIColor(ANSIColor.DEFAULT),
-                            new CharacterANSIColor(ANSIColor.BLACK),
+                            new CharacterANSIColor(TextColor.ANSI.DEFAULT),
+                            new CharacterANSIColor(TextColor.ANSI.BLACK),
                             false,
                             false,
                             false,
@@ -366,8 +366,8 @@ public class OldSwingTerminal extends AbstractTerminal implements InputProvider
             for(int x = 0; x < newSizeColumns; x++)
                 newCharacterMap[y][x] = new TerminalCharacter(
                         ' ',
-                        new CharacterANSIColor(ANSIColor.WHITE),
-                        new CharacterANSIColor(ANSIColor.BLACK),
+                        new CharacterANSIColor(TextColor.ANSI.WHITE),
+                        new CharacterANSIColor(TextColor.ANSI.BLACK),
                         false,
                         false,
                         false,
@@ -730,9 +730,9 @@ public class OldSwingTerminal extends AbstractTerminal implements InputProvider
 
     private class CharacterANSIColor extends TerminalCharacterColor {
 
-        private final ANSIColor color;
+        private final TextColor.ANSI color;
 
-        CharacterANSIColor(ANSIColor color) {
+        CharacterANSIColor(TextColor.ANSI color) {
             this.color = color;
         }
 

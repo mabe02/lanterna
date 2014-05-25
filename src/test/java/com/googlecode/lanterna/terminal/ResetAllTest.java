@@ -37,7 +37,7 @@ public class ResetAllTest {
         terminal.putCharacter('e');
         terminal.enableSGR(Terminal.SGR.BOLD);
         terminal.putCharacter('l');
-        terminal.applyForegroundColor(Terminal.ANSIColor.CYAN);
+        terminal.applyForegroundColor(TextColor.ANSI.CYAN);
         terminal.putCharacter('l');
         terminal.enableSGR(Terminal.SGR.REVERSE);
         terminal.putCharacter('o');

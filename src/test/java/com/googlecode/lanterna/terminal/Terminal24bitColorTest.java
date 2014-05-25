@@ -45,8 +45,8 @@ public class Terminal24bitColorTest {
                 return;
             }
 
-            terminal.applyForegroundColor(random.nextInt(255), random.nextInt(255), random.nextInt(255));
-            terminal.applyBackgroundColor(random.nextInt(255), random.nextInt(255), random.nextInt(255));
+            terminal.applyForegroundColor(new TextColor.RGB(random.nextInt(255), random.nextInt(255), random.nextInt(255)));
+            terminal.applyBackgroundColor(new TextColor.RGB(random.nextInt(255), random.nextInt(255), random.nextInt(255)));
             terminal.moveCursor(random.nextInt(size.getColumns() - string.length()), random.nextInt(size.getRows()));
             printString(terminal, string);
 

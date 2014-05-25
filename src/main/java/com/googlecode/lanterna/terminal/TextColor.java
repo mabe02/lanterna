@@ -18,108 +18,64 @@
  */
 package com.googlecode.lanterna.terminal;
 
+import com.googlecode.lanterna.terminal.text.ANSITerminal;
+
 /**
  * This is an abstract base class for terminal color definitions. Since there are different ways of specifying terminal
  * colors, all with a different range of adoptions, this makes it possible to program an API against an implementation-
  * agnostic color definition.
  * @author Martin
  */
-public abstract class TextColor {
-
-    protected TextColor() {}
+public interface TextColor {
 
     /**
      * Apply this color representation as the foreground color on the specified terminal
      * @param terminal Terminal to set the foreground color on
      */
-    public abstract void applyAsForeground(Terminal terminal);
+    void applyAsForeground(AbstractTerminal terminal);
 
     /**
      * Apply this color representation as the background color on the specified terminal
      * @param terminal Terminal to set the background color on
      */
-    public abstract void applyAsBackground(Terminal terminal);
+    void applyAsBackground(AbstractTerminal terminal);
 
     /**
      * This class represent classic ANSI colors that are likely to be very compatible with most terminal
      * implementations. It is limited to 8 colors (plus the 'default' color) but as a norm, using bold mode (SGR code)
      * will slightly alter the color, giving it a bit brighter tone, so in total this will give you 16 (+1) colors.
+     *
+     * @see http://en.wikipedia.org/wiki/File:Ansi.png
      */
-    public static class ANSI extends TextColor {
-        public static final ANSI BLACK = new ANSI(Terminal.ANSIColor.BLACK);
-        public static final ANSI RED = new ANSI(Terminal.ANSIColor.RED);
-        public static final ANSI GREEN = new ANSI(Terminal.ANSIColor.GREEN);
-        public static final ANSI YELLOW = new ANSI(Terminal.ANSIColor.YELLOW);
-        public static final ANSI BLUE = new ANSI(Terminal.ANSIColor.BLUE);
-        public static final ANSI MAGENTA = new ANSI(Terminal.ANSIColor.MAGENTA);
-        public static final ANSI CYAN = new ANSI(Terminal.ANSIColor.CYAN);
-        public static final ANSI WHITE = new ANSI(Terminal.ANSIColor.WHITE);
-        public static final ANSI DEFAULT = new ANSI(Terminal.ANSIColor.DEFAULT);
+    public static enum ANSI implements TextColor {
+        BLACK(0),
+        RED(1),
+        GREEN(2),
+        YELLOW(3),
+        BLUE(4),
+        MAGENTA(5),
+        CYAN(6),
+        WHITE(7),
+        DEFAULT(9);
 
-        
-        public static ANSI fromTerminalANSIColor(Terminal.ANSIColor color) {
-            if(color == null) {
-                return null;
-            }
-            switch(color) {
-                case BLACK: return BLACK;
-                case RED: return RED;
-                case GREEN: return GREEN;
-                case YELLOW: return YELLOW;
-                case BLUE: return BLUE;
-                case MAGENTA: return MAGENTA;
-                case CYAN: return CYAN;
-                case WHITE: return WHITE;
-                case DEFAULT: return DEFAULT;
-                default: throw new IllegalArgumentException("Unknown ANSI color " + color);
-            }
-        }    
-        
-        private final Terminal.ANSIColor ansiColor;
+        private final int index;
 
-        private ANSI(Terminal.ANSIColor ansiColor) {
-            this.ansiColor = ansiColor;
+        private ANSI(int index) {
+            this.index = index;
         }
 
-        public Terminal.ANSIColor getAnsiColor() {
-            return ansiColor;
+        public int getIndex() {
+            return index;
         }
 
         @Override
-        public void applyAsForeground(Terminal terminal) {
-            terminal.applyForegroundColor(ansiColor);
+        public void applyAsForeground(AbstractTerminal terminal) {
+            terminal.applyForegroundColor(this);
         }
 
         @Override
-        public void applyAsBackground(Terminal terminal) {
-            terminal.applyBackgroundColor(ansiColor);
-        }
-
-        @Override
-        public String toString() {
-            return ansiColor.toString();
-        }
-
-        @Override
-        public int hashCode() {
-            int hash = 7;
-            hash = 53 * hash + (this.ansiColor != null ? this.ansiColor.hashCode() : 0);
-            return hash;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if(obj == null) {
-                return false;
-            }
-            if(getClass() != obj.getClass()) {
-                return false;
-            }
-            final ANSI other = (ANSI) obj;
-            if(this.ansiColor != other.ansiColor) {
-                return false;
-            }
-            return true;
+        public void applyAsBackground(AbstractTerminal terminal) {
+            terminal.applyBackgroundColor(this);
         }
     }
 
@@ -140,7 +96,7 @@ public abstract class TextColor {
      * href="https://github.com/robertknight/konsole/blob/master/user-doc/README.moreColors">
      * this</a> commit message to Konsole.
      */
-    public static class Indexed extends TextColor {
+    public static class Indexed implements TextColor {
         private static final byte[][] COLOR_TABLE = new byte[][] {
             //These are the standard 16-color VGA palette entries
             {(byte)0,(byte)0,(byte)0 },
@@ -425,12 +381,12 @@ public abstract class TextColor {
         }
 
         @Override
-        public void applyAsForeground(Terminal terminal) {
+        public void applyAsForeground(AbstractTerminal terminal) {
             terminal.applyForegroundColor(colorIndex);
         }
 
         @Override
-        public void applyAsBackground(Terminal terminal) {
+        public void applyAsBackground(AbstractTerminal terminal) {
             terminal.applyBackgroundColor(colorIndex);
         }
 
@@ -526,7 +482,7 @@ public abstract class TextColor {
      * <a href="https://github.com/robertknight/konsole/blob/master/user-doc/README.moreColors">
      * this</a> commit log. Behavior on terminals that don't support these codes is undefined.
      */
-    public static class RGB extends TextColor {
+    public static class RGB implements TextColor {
         private final int r;
         private final int g;
         private final int b;
@@ -579,12 +535,12 @@ public abstract class TextColor {
         }
 
         @Override
-        public void applyAsForeground(Terminal terminal) {
+        public void applyAsForeground(AbstractTerminal terminal) {
             terminal.applyForegroundColor(r, g, b);
         }
 
         @Override
-        public void applyAsBackground(Terminal terminal) {
+        public void applyAsBackground(AbstractTerminal terminal) {
             terminal.applyBackgroundColor(r, g, b);
         }
 

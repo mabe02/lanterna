@@ -35,7 +35,7 @@ import java.util.Random;
 public class ScreenTriangleTest {
     private static final double oneThirdOf2PI = (Math.PI * 2.0) / 3.0;
     private static final double twoThirdsOf2PI = oneThirdOf2PI * 2.0;
-    
+
     public static void main(String[] args) throws IOException, InterruptedException {
         boolean useAnsiColors = false;
         boolean useFilled = false;
@@ -67,7 +67,7 @@ public class ScreenTriangleTest {
 
         ScreenWriter writer = new ScreenWriter(screen);
         Random random = new Random();
-        
+
         TextColor color = null;
         double rad = 0.0;
         while(true) {
@@ -79,7 +79,7 @@ public class ScreenTriangleTest {
             TerminalSize size = screen.getTerminalSize();
             if(useAnsiColors) {
                 if(color == null || !rotating) {
-                    color = TextColor.ANSI.fromTerminalANSIColor(Terminal.ANSIColor.values()[random.nextInt(Terminal.ANSIColor.values().length)]);
+                    color = TextColor.ANSI.values()[random.nextInt(TextColor.ANSI.values().length)];
                 }
             }
             else {
@@ -88,7 +88,7 @@ public class ScreenTriangleTest {
                     color = new TextColor.Indexed(random.nextInt(256));
                 }
             }
-            
+
             TerminalPosition p1;
             TerminalPosition p2;
             TerminalPosition p3;
@@ -111,7 +111,7 @@ public class ScreenTriangleTest {
                 p2 = new TerminalPosition(random.nextInt(size.getColumns()), random.nextInt(size.getRows()));
                 p3 = new TerminalPosition(random.nextInt(size.getColumns()), random.nextInt(size.getRows()));
             }
-            
+
             writer.setBackgroundColor(color);
             writer.setPosition(p1);
             if(useFilled) {

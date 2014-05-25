@@ -20,6 +20,7 @@ package com.googlecode.lanterna.terminal.text;
 
 import com.googlecode.lanterna.input.DefaultKeyDecodingProfile;
 import com.googlecode.lanterna.terminal.TerminalSize;
+import com.googlecode.lanterna.terminal.TextColor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -57,7 +58,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal {
     }
 
     @Override
-    public void applyBackgroundColor(ANSIColor color) {
+    public void applyBackgroundColor(TextColor.ANSI color) {
         synchronized(writerMutex) {
             CSI();
             writeToTerminal((byte) '4', (byte) ((color.getIndex() + "").charAt(0)), (byte) 'm');
@@ -101,7 +102,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal {
     }
 
     @Override
-    public void applyForegroundColor(ANSIColor color) {
+    public void applyForegroundColor(TextColor.ANSI color) {
         synchronized(writerMutex) {
             CSI();
             writeToTerminal((byte) '3', (byte) ((color.getIndex() + "").charAt(0)), (byte) 'm');

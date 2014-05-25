@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
  * @author martin
  */
 class VirtualTerminalImplementation extends AbstractTerminal implements IOSafeTerminal {
-    
+
     interface DeviceEmulator {
 
         public KeyStroke readInput();
@@ -46,13 +46,13 @@ class VirtualTerminalImplementation extends AbstractTerminal implements IOSafeTe
         public TextBuffer getBuffer();
 
         public void setCursorVisible(boolean visible);
-        
+
         public void flush();
 
         public byte[] equireTerminal();
-        
+
     }
-    
+
     private final DeviceEmulator deviceEmulator;
     private TerminalSize terminalSize;
     private TerminalPosition currentPosition;
@@ -67,7 +67,7 @@ class VirtualTerminalImplementation extends AbstractTerminal implements IOSafeTe
         this.foregroundColor = TextColor.ANSI.DEFAULT;
         this.backgroundColor = TextColor.ANSI.DEFAULT;
         this.activeSGRs = EnumSet.noneOf(SGR.class);
-        
+
         //Initialize lastKnownSize in AbstractTerminal
         onResized(terminalSize.getColumns(), terminalSize.getRows());
     }
@@ -98,7 +98,7 @@ class VirtualTerminalImplementation extends AbstractTerminal implements IOSafeTe
     public void clearScreen() {
         deviceEmulator.getBuffer().fillScreen(getTerminalSize(), TerminalCharacter.DEFAULT_CHARACTER);
     }
-    
+
     private void advanceCursor() {
         int x = currentPosition.getColumn();
         int y = currentPosition.getRow();
@@ -165,33 +165,30 @@ class VirtualTerminalImplementation extends AbstractTerminal implements IOSafeTe
     }
 
     @Override
-    public void applyForegroundColor(ANSIColor color) {
-        foregroundColor = TextColor.ANSI.fromTerminalANSIColor(color);
+    public void applyForegroundColor(TextColor color) {
+        this.foregroundColor = color;
     }
 
+    //We don't need to implement these, they will never be called since we override applyForegroundColor(TextColor)
     @Override
-    public void applyForegroundColor(int index) {
-        foregroundColor = new TextColor.Indexed(index);
-    }
+    protected void applyForegroundColor(TextColor.ANSI color) { }
+    @Override
+    protected void applyForegroundColor(int index) { }
+    @Override
+    protected void applyForegroundColor(int r, int g, int b) { }
+
+    //We don't need to implement these, they will never be called since we override applyBackgroundColor(TextColor)
+    @Override
+    protected void applyBackgroundColor(TextColor.ANSI color) { }
+    @Override
+    protected void applyBackgroundColor(int index) { }
+    @Override
+    protected void applyBackgroundColor(int r, int g, int b) { }
+
 
     @Override
-    public void applyForegroundColor(int r, int g, int b) {
-        foregroundColor = new TextColor.RGB(r, g, b);
-    }
-
-    @Override
-    public void applyBackgroundColor(ANSIColor color) {
-        backgroundColor = TextColor.ANSI.fromTerminalANSIColor(color);
-    }
-
-    @Override
-    public void applyBackgroundColor(int index) {
-        backgroundColor = new TextColor.Indexed(index);
-    }
-
-    @Override
-    public void applyBackgroundColor(int r, int g, int b) {
-        backgroundColor = new TextColor.RGB(r, g, b);
+    public void applyBackgroundColor(TextColor color) {
+        this.backgroundColor = color;
     }
 
     void setTerminalSize(TerminalSize terminalSize) {

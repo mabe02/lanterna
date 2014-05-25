@@ -1,6 +1,6 @@
 /*
  * This file is part of lanterna (http://code.google.com/p/lanterna/).
- * 
+ *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Copyright (C) 2010-2014 Martin
  */
 
@@ -23,7 +23,7 @@ import com.googlecode.lanterna.terminal.TextColor;
 import java.awt.Color;
 
 /**
- * This class specifies the palette of colors the terminal will use for the 
+ * This class specifies the palette of colors the terminal will use for the
  * normally available 8 + 1.
  * @author Martin
  */
@@ -31,7 +31,7 @@ public class SwingTerminalPalette {
     /**
      * Values taken from gnome-terminal on Ubuntu
      */
-    public static final SwingTerminalPalette GNOME_TERMINAL = 
+    public static final SwingTerminalPalette GNOME_TERMINAL =
             new SwingTerminalPalette(
                     new java.awt.Color(211, 215, 207),
                     new java.awt.Color(238, 238, 236),
@@ -52,12 +52,12 @@ public class SwingTerminalPalette {
                     new java.awt.Color(52, 226, 226),
                     new java.awt.Color(211, 215, 207),
                     new java.awt.Color(238, 238, 236));
-    
+
     /**
      * Values taken from <a href="http://en.wikipedia.org/wiki/ANSI_escape_code">
      * wikipedia</a>, these are supposed to be the standard VGA palette.
      */
-    public static final SwingTerminalPalette STANDARD_VGA = 
+    public static final SwingTerminalPalette STANDARD_VGA =
             new SwingTerminalPalette(
                     new java.awt.Color(170, 170, 170),
                     new java.awt.Color(255, 255, 255),
@@ -78,12 +78,12 @@ public class SwingTerminalPalette {
                     new java.awt.Color(85, 255, 255),
                     new java.awt.Color(170, 170, 170),
                     new java.awt.Color(255, 255, 255));
-    
+
     /**
      * Values taken from <a href="http://en.wikipedia.org/wiki/ANSI_escape_code">
      * wikipedia</a>, these are supposed to be what Windows XP cmd is using.
      */
-    public static final SwingTerminalPalette WINDOWS_XP_COMMAND_PROMPT = 
+    public static final SwingTerminalPalette WINDOWS_XP_COMMAND_PROMPT =
             new SwingTerminalPalette(
                     new java.awt.Color(192, 192, 192),
                     new java.awt.Color(255, 255, 255),
@@ -104,12 +104,12 @@ public class SwingTerminalPalette {
                     new java.awt.Color(0, 255, 255),
                     new java.awt.Color(192, 192, 192),
                     new java.awt.Color(255, 255, 255));
-    
+
     /**
      * Values taken from <a href="http://en.wikipedia.org/wiki/ANSI_escape_code">
      * wikipedia</a>, these are supposed to be what terminal.app on MacOSX is using.
      */
-    public static final SwingTerminalPalette MAC_OS_X_TERMINAL_APP = 
+    public static final SwingTerminalPalette MAC_OS_X_TERMINAL_APP =
             new SwingTerminalPalette(
                     new java.awt.Color(203, 204, 205),
                     new java.awt.Color(233, 235, 235),
@@ -130,12 +130,12 @@ public class SwingTerminalPalette {
                     new java.awt.Color(20, 240, 240),
                     new java.awt.Color(203, 204, 205),
                     new java.awt.Color(233, 235, 235));
-    
+
     /**
      * Values taken from <a href="http://en.wikipedia.org/wiki/ANSI_escape_code">
      * wikipedia</a>, these are supposed to be what putty is using.
      */
-    public static final SwingTerminalPalette PUTTY = 
+    public static final SwingTerminalPalette PUTTY =
             new SwingTerminalPalette(
                     new java.awt.Color(187, 187, 187),
                     new java.awt.Color(255, 255, 255),
@@ -156,12 +156,12 @@ public class SwingTerminalPalette {
                     new java.awt.Color(85, 255, 255),
                     new java.awt.Color(187, 187, 187),
                     new java.awt.Color(255, 255, 255));
-    
+
     /**
      * Values taken from <a href="http://en.wikipedia.org/wiki/ANSI_escape_code">
      * wikipedia</a>, these are supposed to be what xterm is using.
      */
-    public static final SwingTerminalPalette XTERM = 
+    public static final SwingTerminalPalette XTERM =
             new SwingTerminalPalette(
                     new java.awt.Color(229, 229, 229),
                     new java.awt.Color(255, 255, 255),
@@ -182,12 +182,12 @@ public class SwingTerminalPalette {
                     new java.awt.Color(0, 255, 255),
                     new java.awt.Color(229, 229, 229),
                     new java.awt.Color(255, 255, 255));
-    
+
     /**
      * Default colors the SwingTerminal is using if you don't specify anything
      */
     public static final SwingTerminalPalette DEFAULT = GNOME_TERMINAL;
-    
+
     private final Color defaultColor;
     private final Color defaultBrightColor;
     private final Color defaultBackgroundColor;
@@ -209,24 +209,24 @@ public class SwingTerminalPalette {
     private final Color brightWhite;
 
     public SwingTerminalPalette(
-            Color defaultColor, 
-            Color defaultBrightColor, 
-            Color defaultBackgroundColor, 
-            Color normalBlack, 
-            Color brightBlack, 
-            Color normalRed, 
-            Color brightRed, 
-            Color normalGreen, 
-            Color brightGreen, 
-            Color normalYellow, 
-            Color brightYellow, 
-            Color normalBlue, 
+            Color defaultColor,
+            Color defaultBrightColor,
+            Color defaultBackgroundColor,
+            Color normalBlack,
+            Color brightBlack,
+            Color normalRed,
+            Color brightRed,
+            Color normalGreen,
+            Color brightGreen,
+            Color normalYellow,
+            Color brightYellow,
+            Color normalBlue,
             Color brightBlue,
             Color normalMagenta,
-            Color brightMagenta, 
-            Color normalCyan, 
-            Color brightCyan, 
-            Color normalWhite, 
+            Color brightMagenta,
+            Color normalCyan,
+            Color brightCyan,
+            Color normalWhite,
             Color brightWhite) {
         this.defaultColor = defaultColor;
         this.defaultBrightColor = defaultBrightColor;
@@ -324,10 +324,10 @@ public class SwingTerminalPalette {
     public Color getNormalYellow() {
         return normalYellow;
     }
-    
+
     public Color get(TextColor.ANSI color, boolean isForeground, boolean useBrighTones) {
         if(useBrighTones) {
-            switch(color.getAnsiColor()) {
+            switch(color) {
                 case BLACK:
                     return brightBlack;
                 case BLUE:
@@ -349,7 +349,7 @@ public class SwingTerminalPalette {
             }
         }
         else {
-            switch(color.getAnsiColor()) {
+            switch(color) {
                 case BLACK:
                     return normalBlack;
                 case BLUE:
@@ -469,25 +469,25 @@ public class SwingTerminalPalette {
 
     @Override
     public String toString() {
-        return "SwingTerminalPalette{" + 
-                "defaultColor=" + defaultColor + 
-                ", defaultBrightColor=" + defaultBrightColor + 
-                ", defaultBackgroundColor=" + defaultBackgroundColor + 
-                ", normalBlack=" + normalBlack + 
-                ", brightBlack=" + brightBlack + 
-                ", normalRed=" + normalRed + 
-                ", brightRed=" + brightRed + 
-                ", normalGreen=" + normalGreen + 
-                ", brightGreen=" + brightGreen + 
-                ", normalYellow=" + normalYellow + 
-                ", brightYellow=" + brightYellow + 
-                ", normalBlue=" + normalBlue + 
-                ", brightBlue=" + brightBlue + 
-                ", normalMagenta=" + normalMagenta + 
-                ", brightMagenta=" + brightMagenta + 
-                ", normalCyan=" + normalCyan + 
-                ", brightCyan=" + brightCyan + 
-                ", normalWhite=" + normalWhite + 
+        return "SwingTerminalPalette{" +
+                "defaultColor=" + defaultColor +
+                ", defaultBrightColor=" + defaultBrightColor +
+                ", defaultBackgroundColor=" + defaultBackgroundColor +
+                ", normalBlack=" + normalBlack +
+                ", brightBlack=" + brightBlack +
+                ", normalRed=" + normalRed +
+                ", brightRed=" + brightRed +
+                ", normalGreen=" + normalGreen +
+                ", brightGreen=" + brightGreen +
+                ", normalYellow=" + normalYellow +
+                ", brightYellow=" + brightYellow +
+                ", normalBlue=" + normalBlue +
+                ", brightBlue=" + brightBlue +
+                ", normalMagenta=" + normalMagenta +
+                ", brightMagenta=" + brightMagenta +
+                ", normalCyan=" + normalCyan +
+                ", brightCyan=" + brightCyan +
+                ", normalWhite=" + normalWhite +
                 ", brightWhite=" + brightWhite + '}';
     }
 }

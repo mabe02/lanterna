@@ -1,6 +1,6 @@
 /*
  * This file is part of lanterna (http://code.google.com/p/lanterna/).
- * 
+ *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Copyright (C) 2010-2014 Martin
  */
 
@@ -31,7 +31,7 @@ public class BlinkTest {
         Terminal rawTerminal = new TestTerminalFactory(args).createTerminal();
         rawTerminal.enterPrivateMode();
         rawTerminal.clearScreen();
-        rawTerminal.applyForegroundColor(Terminal.ANSIColor.RED);
+        rawTerminal.applyForegroundColor(TextColor.ANSI.RED);
         rawTerminal.enableSGR(Terminal.SGR.BLINK);
         rawTerminal.moveCursor(10, 10);
         rawTerminal.putCharacter('H');

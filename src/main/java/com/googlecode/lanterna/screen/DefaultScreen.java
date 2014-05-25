@@ -32,13 +32,13 @@ import java.util.*;
  * @author Martin
  */
 public class DefaultScreen extends TerminalScreen {
-    
+
     private static final ScreenCharacter DEFAULT_CHARACTER = new ScreenCharacter(' ');
-    
+
     private TerminalPosition cursorPosition;
     private ScreenBuffer backBuffer;
     private ScreenBuffer frontBuffer;
-    
+
     private boolean isStarted;
     private boolean fullRedrawHint;
 
@@ -114,7 +114,7 @@ public class DefaultScreen extends TerminalScreen {
     /**
      * Gets the behaviour for what to do about tab characters.
      *
-     * @return 
+     * @return
      * @see TabBehaviour
      */
     @Override
@@ -166,7 +166,7 @@ public class DefaultScreen extends TerminalScreen {
         if(pendingResize == null) {
             return null;
         }
-        
+
         backBuffer = backBuffer.resize(pendingResize, DEFAULT_CHARACTER);
         frontBuffer = frontBuffer.resize(pendingResize, DEFAULT_CHARACTER);
         fullRedrawHint = true;
@@ -179,7 +179,7 @@ public class DefaultScreen extends TerminalScreen {
         if(screenCharacter.getCharacter() == '\t') {
             //Swap out the tab for a space
             screenCharacter = screenCharacter.withCharacter(' ');
-            
+
             //Now see how many times we have to put spaces...
             for(int i = 0; i < tabBehaviour.replaceTabs("\t", column).length(); i++) {
                 backBuffer.setCharacterAt(column + i, row, screenCharacter);
@@ -236,7 +236,7 @@ public class DefaultScreen extends TerminalScreen {
         getTerminal().flush();
         backBuffer.copyTo(frontBuffer);
     }
-    
+
     private void refreshByDelta() {
         Map<TerminalPosition, ScreenCharacter> updateMap = new TreeMap<TerminalPosition, ScreenCharacter>(new ScreenPointComparator());
         TerminalSize terminalSize = getTerminalSize();
@@ -248,13 +248,13 @@ public class DefaultScreen extends TerminalScreen {
                 }
             }
         }
-        
+
         if(updateMap.isEmpty()) {
             return;
         }
         TerminalPosition currentPosition = updateMap.keySet().iterator().next();
         getTerminal().moveCursor(currentPosition.getColumn(), currentPosition.getRow());
-        
+
         ScreenCharacter firstScreenCharacterToUpdate = updateMap.values().iterator().next();
         EnumSet<Terminal.SGR> currentSGR = firstScreenCharacterToUpdate.getModifiers();
         getTerminal().resetAllSGR();
@@ -294,11 +294,11 @@ public class DefaultScreen extends TerminalScreen {
     }
 
     private void refreshFull() {
-        getTerminal().applyForegroundColor(Terminal.ANSIColor.DEFAULT);
-        getTerminal().applyBackgroundColor(Terminal.ANSIColor.DEFAULT);
+        getTerminal().applyForegroundColor(TextColor.ANSI.DEFAULT);
+        getTerminal().applyBackgroundColor(TextColor.ANSI.DEFAULT);
         getTerminal().clearScreen();
         getTerminal().resetAllSGR();
-        
+
         EnumSet<Terminal.SGR> currentSGR = EnumSet.noneOf(Terminal.SGR.class);
         TextColor currentForegroundColor = TextColor.ANSI.DEFAULT;
         TextColor currentBackgroundColor = TextColor.ANSI.DEFAULT;
@@ -310,7 +310,7 @@ public class DefaultScreen extends TerminalScreen {
                 if(newCharacter.equals(DEFAULT_CHARACTER)) {
                     continue;
                 }
-                    
+
                 if(!currentForegroundColor.equals(newCharacter.getForegroundColor())) {
                     getTerminal().applyForegroundColor(newCharacter.getForegroundColor());
                     currentForegroundColor = newCharacter.getForegroundColor();

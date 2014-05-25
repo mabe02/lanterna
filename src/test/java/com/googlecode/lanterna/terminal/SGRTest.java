@@ -32,7 +32,7 @@ public class SGRTest {
         Terminal rawTerminal = new TestTerminalFactory(args).createTerminal();
         rawTerminal.enterPrivateMode();
         rawTerminal.clearScreen();
-        rawTerminal.applyForegroundColor(Terminal.ANSIColor.RED);
+        rawTerminal.applyForegroundColor(TextColor.ANSI.RED);
         rawTerminal.enableSGR(Terminal.SGR.BLINK);
         rawTerminal.moveCursor(10, 4);
         rawTerminal.putCharacter('H');

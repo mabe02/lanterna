@@ -63,13 +63,13 @@ public class ScreenLineTest {
             TerminalSize size = screen.getTerminalSize();
             TextColor color;
             if(useAnsiColors) {
-                color = TextColor.ANSI.fromTerminalANSIColor(Terminal.ANSIColor.values()[random.nextInt(Terminal.ANSIColor.values().length)]);
+                color = TextColor.ANSI.values()[random.nextInt(TextColor.ANSI.values().length)];
             }
             else {
                 //Draw a rectangle in random indexed color
                 color = new TextColor.Indexed(random.nextInt(256));
             }
-            
+
             TerminalPosition p1;
             TerminalPosition p2;
             if(circle) {

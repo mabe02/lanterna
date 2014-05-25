@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Containing a some very fundamental functionality that should be common for all terminal implementations. 
+ * Containing a some very fundamental functionality that should be common for all terminal implementations.
  *
  * @author Martin
  */
@@ -72,10 +72,91 @@ public abstract class AbstractTerminal implements Terminal {
         color.applyAsForeground(this);
     }
 
+    /**
+     * Changes the foreground color for all the following characters put to the terminal. The foreground color is what
+     * color to draw the text in, as opposed to the background color which is the color surrounding the characters. This
+     * way of setting the foreground color, compared with the other applyForegroundColor(..) overloads, is the most safe
+     * and compatible.
+     *
+     * @param color Color to use for foreground
+     */
+    protected abstract void applyForegroundColor(TextColor.ANSI color);
+
+    /**
+     * Changes the foreground color for all the following characters put to the terminal. The foreground color is what
+     * color to draw the text in, as opposed to the background color which is the color surrounding the characters.<br>
+     * <b>Warning:</b> This method will use the XTerm 256 color extension, it may not be supported on all terminal
+     * emulators! The index values are resolved as this:<br>
+     * 0 .. 15 - System color, these are taken from the schema. 16 .. 231 - Forms a 6x6x6 RGB color cube.<br>
+     * 232 .. 255 - A gray scale ramp without black and white.<br>
+     *
+     * <p>
+     * For more details on this, please see <a
+     * href="https://github.com/robertknight/konsole/blob/master/user-doc/README.moreColors">
+     * this</a> commit message to Konsole.
+     *
+     * @param index Color index from the XTerm 256 color space
+     */
+    protected abstract void applyForegroundColor(int index);
+
+    /**
+     * Changes the foreground color for all the following characters put to the terminal. The foreground color is what
+     * color to draw the text in, as opposed to the background color which is the color surrounding the characters.<br>
+     * <b>Warning:</b> Only a few terminal support 24-bit color control codes, please avoid using this unless you know
+     * all users will have compatible terminals. For details, please see
+     * <a href="https://github.com/robertknight/konsole/blob/master/user-doc/README.moreColors">
+     * this</a> commit log.
+     *
+     * @param r Red intensity, from 0 to 255
+     * @param g Green intensity, from 0 to 255
+     * @param b Blue intensity, from 0 to 255
+     */
+    protected abstract void applyForegroundColor(int r, int g, int b);
+
     @Override
     public void applyBackgroundColor(TextColor color) {
         color.applyAsBackground(this);
     }
+
+    /**
+     * Changes the background color for all the following characters put to the terminal. The background color is the
+     * color surrounding the text being printed. This way of setting the background color, compared with the other
+     * applyBackgroundColor(..) overloads, is the most safe and compatible.
+     *
+     * @param color Color to use for the background
+     */
+    protected abstract void applyBackgroundColor(TextColor.ANSI color);
+
+    /**
+     * Changes the background color for all the following characters put to the terminal. The background color is the
+     * color surrounding the text being printed.<br>
+     * <b>Warning:</b> This method will use the XTerm 256 color extension, it may not be supported on all terminal
+     * emulators! The index values are resolved as this:<br>
+     * 0 .. 15 - System color, these are taken from the schema. 16 .. 231 - Forms a 6x6x6 RGB color cube.<br>
+     * 232 .. 255 - A gray scale ramp without black and white.<br>
+     *
+     * <p>
+     * For more details on this, please see <a
+     * href="https://github.com/robertknight/konsole/blob/master/user-doc/README.moreColors">
+     * this</a> commit message to Konsole.
+     *
+     * @param index Index of the color to use, from the XTerm 256 color extension
+     */
+    protected abstract void applyBackgroundColor(int index);
+
+    /**
+     * Changes the background color for all the following characters put to the terminal. The background color is the
+     * color surrounding the text being printed.<br>
+     * <b>Warning:</b> Only a few terminal support 24-bit color control codes, please avoid using this unless you know
+     * all users will have compatible terminals. For details, please see
+     * <a href="https://github.com/robertknight/konsole/blob/master/user-doc/README.moreColors">
+     * this</a> commit log.
+     *
+     * @param r Red intensity, from 0 to 255
+     * @param g Green intensity, from 0 to 255
+     * @param b Blue intensity, from 0 to 255
+     */
+    protected abstract void applyBackgroundColor(int r, int g, int b);
 
     /**
      * Used internally to get the last size known to the terminal

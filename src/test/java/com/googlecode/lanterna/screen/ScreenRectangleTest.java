@@ -53,7 +53,7 @@ public class ScreenRectangleTest {
 
         ScreenWriter writer = new ScreenWriter(screen);
         Random random = new Random();
-        
+
         long startTime = System.currentTimeMillis();
         while(System.currentTimeMillis() - startTime < 1000 * 20) {
             KeyStroke keyStroke = screen.readInput();
@@ -64,16 +64,16 @@ public class ScreenRectangleTest {
             TerminalSize size = screen.getTerminalSize();
             TextColor color;
             if(useAnsiColors) {
-                color = TextColor.ANSI.fromTerminalANSIColor(Terminal.ANSIColor.values()[random.nextInt(Terminal.ANSIColor.values().length)]);
+                color = TextColor.ANSI.values()[random.nextInt(TextColor.ANSI.values().length)];
             }
             else {
                 //Draw a rectangle in random indexed color
                 color = new TextColor.Indexed(random.nextInt(256));
             }
-            
+
             TerminalPosition topLeft = new TerminalPosition(random.nextInt(size.getColumns()), random.nextInt(size.getRows()));
             TerminalSize rectangleSize = new TerminalSize(random.nextInt(size.getColumns() - topLeft.getColumn()), random.nextInt(size.getRows() - topLeft.getRow()));
-            
+
             writer.setBackgroundColor(color);
             writer.setPosition(topLeft);
             if(useFilled) {
