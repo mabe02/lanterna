@@ -57,4 +57,12 @@ class TerminalCharacter {
         return styles.contains(Terminal.SGR.BOLD);
     }
 
+    boolean isReverse() {
+        return styles.contains(Terminal.SGR.REVERSE);
+    }
+
+    boolean isBlink() {
+        return styles.contains(Terminal.SGR.BLINK);
+    }
+
 }

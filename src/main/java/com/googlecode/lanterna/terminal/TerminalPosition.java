@@ -1,6 +1,6 @@
 /*
  * This file is part of lanterna (http://code.google.com/p/lanterna/).
- * 
+ *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Copyright (C) 2010-2014 Martin
  */
 package com.googlecode.lanterna.terminal;
@@ -26,7 +26,7 @@ package com.googlecode.lanterna.terminal;
  * @author Martin
  */
 public class TerminalPosition {
-    
+
     /**
      * Constant for the top-left corner (0x0)
      */
@@ -36,10 +36,10 @@ public class TerminalPosition {
     private final int column;
 
     /**
-     * Creates a new TerminalPosition object, which represents a location on the screen. There is no check to verify 
+     * Creates a new TerminalPosition object, which represents a location on the screen. There is no check to verify
      * that the position you specified is within the size of the current terminal and you can specify negative positions
      * as well.
-     * 
+     *
      * @param column Column of the location, or the "x" coordinate, zero indexed (the first column is 0)
      * @param row Row of the location, or the "y" coordinate, zero indexed (the first row is 0)
      */
@@ -63,9 +63,9 @@ public class TerminalPosition {
     public int getRow() {
         return row;
     }
-    
+
     /**
-     * Creates a new TerminalPosition object representing a position with the same column index as this but with a 
+     * Creates a new TerminalPosition object representing a position with the same column index as this but with a
      * supplied row index.
      * @param row Index of the row for the new position
      * @return A TerminalPosition object with the same column as this but with a specified row index
@@ -76,9 +76,9 @@ public class TerminalPosition {
         }
         return new TerminalPosition(this.column, row);
     }
-    
+
     /**
-     * Creates a new TerminalPosition object representing a position with the same row index as this but with a 
+     * Creates a new TerminalPosition object representing a position with the same row index as this but with a
      * supplied column index.
      * @param column Index of the column for the new position
      * @return A TerminalPosition object with the same row as this but with a specified column index
@@ -89,9 +89,9 @@ public class TerminalPosition {
         }
         return new TerminalPosition(column, this.row);
     }
-    
+
     /**
-     * Creates a new TerminalPosition object representing a position on the same row, but with a column offset by a 
+     * Creates a new TerminalPosition object representing a position on the same row, but with a column offset by a
      * supplied value. Calling this method with delta 0 will return this, calling it with a positive delta will return
      * a terminal position <i>delta</i> number of columns to the right and for negative numbers the same to the left.
      * @param delta Column offset
@@ -103,9 +103,9 @@ public class TerminalPosition {
         }
         return withColumn(column + delta);
     }
-    
+
     /**
-     * Creates a new TerminalPosition object representing a position on the same column, but with a row offset by a 
+     * Creates a new TerminalPosition object representing a position on the same column, but with a row offset by a
      * supplied value. Calling this method with delta 0 will return this, calling it with a positive delta will return
      * a terminal position <i>delta</i> number of rows to the down and for negative numbers the same up.
      * @param delta Column offset
@@ -129,6 +129,11 @@ public class TerminalPosition {
         hash = 23 * hash + this.row;
         hash = 23 * hash + this.column;
         return hash;
+    }
+
+    public boolean equals(int columnIndex, int rowIndex) {
+        return this.column == columnIndex &&
+                this.row == rowIndex;
     }
 
     @Override

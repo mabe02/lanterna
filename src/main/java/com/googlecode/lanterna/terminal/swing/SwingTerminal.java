@@ -20,9 +20,14 @@ package com.googlecode.lanterna.terminal.swing;
 
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.terminal.IOSafeTerminal;
+import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
+import com.googlecode.lanterna.terminal.TextColor;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.nio.charset.Charset;
 import java.util.List;
 import javax.swing.JComponent;
@@ -36,6 +41,7 @@ import javax.swing.Timer;
  */
 public class SwingTerminal extends JComponent {
 
+    private final SwingTerminalDeviceConfiguration deviceConfiguration;
     private final SwingTerminalFontConfiguration fontConfiguration;
     private final SwingTerminalColorConfiguration colorConfiguration;
     private final TextBuffer mainBuffer;
@@ -44,37 +50,41 @@ public class SwingTerminal extends JComponent {
     private final Timer blinkTimer;
 
     private TextBuffer currentBuffer;
-    private boolean cursorIsVisible;
     private String enquiryString;
 
+    private volatile boolean cursorIsVisible;
+    private volatile boolean blinkOn;
+
     public SwingTerminal() {
-        this(SwingTerminalFontConfiguration.DEFAULT,
-                SwingTerminalColorConfiguration.DEFAULT,
-                0);
+        this(SwingTerminalDeviceConfiguration.DEFAULT,
+                SwingTerminalFontConfiguration.DEFAULT,
+                SwingTerminalColorConfiguration.DEFAULT);
     }
 
     /**
      * Creates a new SwingTerminal component.
+     * @param deviceConfiguration
      * @param fontConfiguration
      * @param colorConfiguration
-     * @param lineBufferScrollbackSize How many lines of scrollback to save
      */
     public SwingTerminal(
+            SwingTerminalDeviceConfiguration deviceConfiguration,
             SwingTerminalFontConfiguration fontConfiguration,
-            SwingTerminalColorConfiguration colorConfiguration,
-            int lineBufferScrollbackSize) {
+            SwingTerminalColorConfiguration colorConfiguration) {
 
-                //This is kind of meaningless since we don't know how large the
-                //component is at this point, but we should set it to something
+        //This is kind of meaningless since we don't know how large the
+        //component is at this point, but we should set it to something
         this.terminalImplementation = new VirtualTerminalImplementation(new TerminalDeviceEmulator(), new TerminalSize(80, 20));
-        this.fontConfiguration = fontConfiguration;
-        this.colorConfiguration = colorConfiguration;
+        this.deviceConfiguration = deviceConfiguration == null ? SwingTerminalDeviceConfiguration.DEFAULT : deviceConfiguration;
+        this.fontConfiguration = fontConfiguration == null ? SwingTerminalFontConfiguration.DEFAULT : fontConfiguration;
+        this.colorConfiguration = colorConfiguration == null ? SwingTerminalColorConfiguration.DEFAULT : colorConfiguration;
 
-        this.mainBuffer = new TextBuffer(lineBufferScrollbackSize, terminalImplementation.getTerminalSize());
+        this.mainBuffer = new TextBuffer(deviceConfiguration.getLineBufferScrollbackSize(), terminalImplementation.getTerminalSize());
         this.privateModeBuffer = new TextBuffer(0, terminalImplementation.getTerminalSize());
         this.currentBuffer = mainBuffer;    //Always start with the active buffer
         this.cursorIsVisible = true;        //Always start with an activate and visible cursor
         this.enquiryString = "SwingTerminal";
+        this.blinkTimer = new Timer(deviceConfiguration.getBlinkLengthInMilliSeconds(), new BlinkTimerCallback());
 
         //Prevent us from shrinking beyond one character
         setMinimumSize(new Dimension(fontConfiguration.getFontWidth(), fontConfiguration.getFontHeight()));
@@ -99,17 +109,33 @@ public class SwingTerminal extends JComponent {
 
         currentBuffer.readjust(widthInNumberOfCharacters, visibleRows);
         terminalImplementation.setTerminalSize(terminalImplementation.getTerminalSize().withColumns(widthInNumberOfCharacters).withRows(visibleRows));
+        TerminalPosition cursorPosition = terminalImplementation.getCurrentPosition();
+
+        //Fill with black to remove any previous content
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, getWidth(), getHeight());
 
         //Draw line by line, character by character
         int rowIndex = 0;
         for(List<TerminalCharacter> row: currentBuffer.getVisibleLines(visibleRows, 0)) {
             for(int columnIndex = 0; columnIndex < row.size(); columnIndex++) {
                 TerminalCharacter character = row.get(columnIndex);
-                g.setColor(colorConfiguration.toAWTColor(character.getBackgroundColor(), false, character.isBold()));
+                boolean atCursorLocation = cursorPosition.equals(columnIndex, rowIndex);
+
+                TextColor backgroundColor = deriveTrueForegroundColor(character, atCursorLocation);
+                TextColor foregroundColor = deriveTrueBackgroundColor(character, atCursorLocation);
+
+                g.setColor(colorConfiguration.toAWTColor(backgroundColor, false, character.isBold()));
                 g.fillRect(columnIndex * fontWidth, rowIndex * fontHeight, fontWidth, fontHeight);
-                g.setColor(colorConfiguration.toAWTColor(character.getForegroundColor(), true, character.isBold()));
+
+                g.setColor(colorConfiguration.toAWTColor(foregroundColor, true, character.isBold()));
                 g.setFont(fontConfiguration.getFontForCharacter(character.getCharacter()));
                 g.drawString(Character.toString(character.getCharacter()), columnIndex * fontWidth, (rowIndex + 1) * fontHeight);
+
+                if(atCursorLocation && deviceConfiguration.getCursorStyle() == SwingTerminalDeviceConfiguration.CursorStyle.DOUBLE_UNDERBAR) {
+                    g.setColor(colorConfiguration.toAWTColor(deviceConfiguration.getCursorColor(), false, false));
+                    g.fillRect(columnIndex * fontWidth, (rowIndex * fontHeight) + fontHeight - 2, fontWidth, 2);
+                }
             }
             rowIndex++;
         }
@@ -119,6 +145,61 @@ public class SwingTerminal extends JComponent {
 
     public IOSafeTerminal getTerminal() {
         return terminalImplementation;
+    }
+
+    private TextColor deriveTrueForegroundColor(TerminalCharacter character, boolean atCursorLocation) {
+        TextColor foregroundColor = character.getForegroundColor();
+        TextColor backgroundColor = character.getBackgroundColor();
+        boolean reverse = character.isReverse();
+        boolean blink = character.isBlink();
+
+        if(cursorIsVisible) {
+            if(deviceConfiguration.getCursorStyle() == SwingTerminalDeviceConfiguration.CursorStyle.REVERSED) {
+                reverse = true;
+            }
+            if(deviceConfiguration.isCursorBlinking()) {
+                blink = true;
+            }
+        }
+
+        if(reverse && (!blink || (blink && !blinkOn))) {
+            return backgroundColor;
+        }
+        else if(!reverse && blink && blinkOn) {
+            return backgroundColor;
+        }
+        else {
+            return foregroundColor;
+        }
+    }
+
+    private TextColor deriveTrueBackgroundColor(TerminalCharacter character, boolean atCursorLocation) {
+        TextColor foregroundColor = character.getForegroundColor();
+        TextColor backgroundColor = character.getBackgroundColor();
+        boolean reverse = character.isReverse();
+
+        if(cursorIsVisible) {
+            if(deviceConfiguration.getCursorStyle() == SwingTerminalDeviceConfiguration.CursorStyle.REVERSED) {
+                reverse = true;
+            }
+            else if(deviceConfiguration.getCursorStyle() == SwingTerminalDeviceConfiguration.CursorStyle.FIXED_BACKGROUND) {
+                backgroundColor = deviceConfiguration.getCursorColor();
+            }
+        }
+
+        if(reverse) {
+            return foregroundColor;
+        }
+        else {
+            return backgroundColor;
+        }
+    }
+
+    private class BlinkTimerCallback implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            blinkOn = !blinkOn;
+        }
     }
 
     private class TerminalDeviceEmulator implements VirtualTerminalImplementation.DeviceEmulator {
