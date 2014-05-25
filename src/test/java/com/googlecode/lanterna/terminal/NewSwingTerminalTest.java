@@ -68,6 +68,7 @@ public class NewSwingTerminalTest extends javax.swing.JFrame {
                     for(int i = 0; i < hello.length(); i++) {
                         terminal.putCharacter(hello.charAt(i));
                     }
+                    terminal.flush();
                 }
             }
         });

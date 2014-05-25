@@ -91,4 +91,8 @@ class TextBuffer {
     void setCharacter(TerminalSize terminalSize, TerminalPosition currentPosition, TerminalCharacter terminalCharacter) {
         lineBuffer.get(lineBuffer.size() - terminalSize.getRows() + currentPosition.getRow()).set(currentPosition.getColumn(), terminalCharacter);
     }
+
+    void fillScreen(TerminalSize terminalSize, TerminalCharacter DEFAULT_CHARACTER) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

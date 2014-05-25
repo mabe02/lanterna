@@ -80,7 +80,10 @@ public abstract class TextColor {
         private ANSI(Terminal.ANSIColor ansiColor) {
             this.ansiColor = ansiColor;
         }
-        
+
+        public Terminal.ANSIColor getAnsiColor() {
+            return ansiColor;
+        }
 
         @Override
         public void applyAsForeground(Terminal terminal) {
@@ -435,21 +438,21 @@ public abstract class TextColor {
          * @return Red intensity of this color, from 0 to 255
          */
         public int getRed() {
-            return COLOR_TABLE[colorIndex][0];
+            return COLOR_TABLE[colorIndex][0] & 0x000000ff;
         }
 
         /**
          * @return Green intensity of this color, from 0 to 255
          */
         public int getGreen() {
-            return COLOR_TABLE[colorIndex][1];
+            return COLOR_TABLE[colorIndex][1] & 0x000000ff;
         }
 
         /**
          * @return Blue intensity of this color, from 0 to 255
          */
         public int getBlue() {
-            return COLOR_TABLE[colorIndex][2];
+            return COLOR_TABLE[colorIndex][2] & 0x000000ff;
         }
 
         @Override

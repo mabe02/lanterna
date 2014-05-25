@@ -18,21 +18,13 @@
  */
 package com.googlecode.lanterna.terminal.swing;
 
-import com.googlecode.lanterna.input.KeyDecodingProfile;
 import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.terminal.AbstractTerminal;
 import com.googlecode.lanterna.terminal.IOSafeTerminal;
-import com.googlecode.lanterna.terminal.ResizeListener;
-import com.googlecode.lanterna.terminal.Terminal;
-import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
-import com.googlecode.lanterna.terminal.TextColor;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import javax.swing.JComponent;
 
 /**
@@ -47,9 +39,11 @@ public class SwingTerminal extends JComponent {
     private final SwingTerminalColorConfiguration colorConfiguration;
     private final TextBuffer mainBuffer;
     private final TextBuffer privateModeBuffer;
-    private final TerminalImplementation terminalImplementation;
+    private final VirtualTerminalImplementation terminalImplementation;
 
     private TextBuffer currentBuffer;
+    private boolean cursorIsVisible;
+    private String enquiryString;
 
     public SwingTerminal() {
         this(SwingTerminalFontConfiguration.DEFAULT,
@@ -70,13 +64,15 @@ public class SwingTerminal extends JComponent {
 
                 //This is kind of meaningless since we don't know how large the
                 //component is at this point, but we should set it to something
-        this.terminalImplementation = new TerminalImplementation(new TerminalSize(80, 20));
+        this.terminalImplementation = new VirtualTerminalImplementation(new TerminalDeviceEmulator(), new TerminalSize(80, 20));
         this.fontConfiguration = fontConfiguration;
         this.colorConfiguration = colorConfiguration;
 
         this.mainBuffer = new TextBuffer(lineBufferScrollbackSize, terminalImplementation.getTerminalSize());
         this.privateModeBuffer = new TextBuffer(0, terminalImplementation.getTerminalSize());
         this.currentBuffer = mainBuffer;    //Always start with the active buffer
+        this.cursorIsVisible = true;        //Always start with an activate and visible cursor
+        this.enquiryString = "SwingTerminal";
 
         //Prevent us from shrinking beyond one character
         setMinimumSize(new Dimension(fontConfiguration.getFontWidth(), fontConfiguration.getFontHeight()));
@@ -102,16 +98,14 @@ public class SwingTerminal extends JComponent {
         currentBuffer.readjust(widthInNumberOfCharacters, visibleRows);
         terminalImplementation.setTerminalSize(terminalImplementation.getTerminalSize().withColumns(widthInNumberOfCharacters).withRows(visibleRows));
 
-        System.out.println("Painting with width = " + getWidth() + " and height = " + getHeight());
-
         //Draw line by line, character by character
         int rowIndex = 0;
         for(List<TerminalCharacter> row: currentBuffer.getVisibleLines(visibleRows, 0)) {
             for(int columnIndex = 0; columnIndex < row.size(); columnIndex++) {
                 TerminalCharacter character = row.get(columnIndex);
-                g.setColor(character.getBackgroundColor());
+                g.setColor(colorConfiguration.toAWTColor(character.getBackgroundColor(), false, character.isBold()));
                 g.fillRect(columnIndex * fontWidth, rowIndex * fontHeight, fontWidth, fontHeight);
-                g.setColor(character.getForegroundColor());
+                g.setColor(colorConfiguration.toAWTColor(character.getForegroundColor(), true, character.isBold()));
                 g.setFont(fontConfiguration.getFontForCharacter(character.getCharacter()));
                 g.drawString(Character.toString(character.getCharacter()), columnIndex * fontWidth, (rowIndex + 1) * fontHeight);
             }
@@ -125,142 +119,40 @@ public class SwingTerminal extends JComponent {
         return terminalImplementation;
     }
 
-    private class TerminalImplementation extends AbstractTerminal implements IOSafeTerminal {
-        private TerminalSize terminalSize;
-        private TerminalPosition currentPosition;
-        private Color foregroundColor;
-        private Color backgroundColor;
-
-        public TerminalImplementation(TerminalSize terminalSize) {
-            this.terminalSize = terminalSize;
-            this.currentPosition = TerminalPosition.TOP_LEFT_CORNER;
-            this.foregroundColor = Color.WHITE;
-            this.backgroundColor = Color.BLACK;
-
-            //Initialize lastKnownSize in AbstractTerminal
-            onResized(terminalSize.getColumns(), terminalSize.getRows());
-        }
-
-        ///////////
-        // Now implement all Terminal-related methods
-        ///////////
+    private class TerminalDeviceEmulator implements VirtualTerminalImplementation.DeviceEmulator {
         @Override
-        public KeyStroke readInput() throws IOException {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public void addKeyDecodingProfile(KeyDecodingProfile profile) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        public KeyStroke readInput() {
+            return null;
         }
 
         @Override
         public void enterPrivateMode() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            SwingTerminal.this.currentBuffer = SwingTerminal.this.privateModeBuffer;
         }
 
         @Override
         public void exitPrivateMode() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            SwingTerminal.this.currentBuffer = SwingTerminal.this.mainBuffer;
         }
 
         @Override
-        public void clearScreen() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public void moveCursor(int x, int y) {
-            TerminalSize size = getTerminalSize();
-            if(x < 0) {
-                x = 0;
-            }
-            else if(x >= size.getColumns()) {
-                x = size.getColumns() - 1;
-            }
-            if(y < 0) {
-                y = 0;
-            }
-            else if(y >= size.getRows()) {
-                y = size.getRows() - 1;
-            }
-            currentPosition = currentPosition.withColumn(x).withRow(y);
+        public TextBuffer getBuffer() {
+            return currentBuffer;
         }
 
         @Override
         public void setCursorVisible(boolean visible) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public void putCharacter(char c) {
-            currentBuffer.setCharacter(getTerminalSize(), currentPosition, new TerminalCharacter(c, foregroundColor, backgroundColor));
-            repaint();
-        }
-
-        @Override
-        public void enableSGR(SGR sgr) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public void disableSGR(SGR sgr) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public void resetAllSGR() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public void applyForegroundColor(ANSIColor color) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public void applyForegroundColor(int index) {
-            backgroundColor = Color.WHITE;
-        }
-
-        @Override
-        public void applyForegroundColor(int r, int g, int b) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public void applyBackgroundColor(ANSIColor color) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public void applyBackgroundColor(int index) {
-            backgroundColor = Color.BLACK;
-        }
-
-        @Override
-        public void applyBackgroundColor(int r, int g, int b) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        private void setTerminalSize(TerminalSize terminalSize) {
-            onResized(terminalSize.getColumns(), terminalSize.getRows());
-            this.terminalSize = terminalSize;
-        }
-
-        @Override
-        public TerminalSize getTerminalSize() {
-            return terminalSize;
-        }
-
-        @Override
-        public byte[] enquireTerminal(int timeout, TimeUnit timeoutUnit) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            SwingTerminal.this.cursorIsVisible = visible;
         }
 
         @Override
         public void flush() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            SwingTerminal.this.repaint();
+        }
+
+        @Override
+        public byte[] equireTerminal() {
+            return SwingTerminal.this.enquiryString.getBytes(Charset.defaultCharset());
         }
     }
 }

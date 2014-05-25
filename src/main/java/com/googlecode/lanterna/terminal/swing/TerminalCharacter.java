@@ -18,35 +18,44 @@
  */
 package com.googlecode.lanterna.terminal.swing;
 
+import com.googlecode.lanterna.terminal.Terminal;
+import com.googlecode.lanterna.terminal.TextColor;
 import java.awt.Color;
+import java.util.EnumSet;
 
 /**
  *
  * @author mberglun
  */
 class TerminalCharacter {
-    static final TerminalCharacter DEFAULT_CHARACTER = new TerminalCharacter(' ', Color.WHITE, Color.BLACK);
+    static final TerminalCharacter DEFAULT_CHARACTER = new TerminalCharacter(' ', TextColor.ANSI.DEFAULT, TextColor.ANSI.DEFAULT, EnumSet.noneOf(Terminal.SGR.class));
 
     private final char character;
-    private final Color foregroundColor;
-    private final Color backgroundColor;
+    private final TextColor foregroundColor;
+    private final TextColor backgroundColor;
+    private final EnumSet<Terminal.SGR> styles;
 
-    public TerminalCharacter(char character, Color foregroundColor, Color backgroundColor) {
+    public TerminalCharacter(char character, TextColor foregroundColor, TextColor backgroundColor, EnumSet<Terminal.SGR> styles) {
         this.character = character;
         this.foregroundColor = foregroundColor;
         this.backgroundColor = backgroundColor;
+        this.styles = EnumSet.copyOf(styles);
     }
 
     public char getCharacter() {
         return character;
     }
 
-    public Color getForegroundColor() {
+    public TextColor getForegroundColor() {
         return foregroundColor;
     }
 
-    public Color getBackgroundColor() {
+    public TextColor getBackgroundColor() {
         return backgroundColor;
+    }
+
+    boolean isBold() {
+        return styles.contains(Terminal.SGR.BOLD);
     }
 
 }

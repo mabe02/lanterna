@@ -19,9 +19,8 @@
 
 package com.googlecode.lanterna.terminal.swing;
 
+import com.googlecode.lanterna.terminal.TextColor;
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This class specifies the palette of colors the terminal will use for the 
@@ -36,6 +35,7 @@ public class SwingTerminalPalette {
             new SwingTerminalPalette(
                     new java.awt.Color(211, 215, 207),
                     new java.awt.Color(238, 238, 236),
+                    new java.awt.Color(46, 52, 54),
                     new java.awt.Color(46, 52, 54),
                     new java.awt.Color(85, 87, 83),
                     new java.awt.Color(204, 0, 0),
@@ -62,6 +62,7 @@ public class SwingTerminalPalette {
                     new java.awt.Color(170, 170, 170),
                     new java.awt.Color(255, 255, 255),
                     new java.awt.Color(0, 0, 0),
+                    new java.awt.Color(0, 0, 0),
                     new java.awt.Color(85, 85, 85),
                     new java.awt.Color(170, 0, 0),
                     new java.awt.Color(255, 85, 85),
@@ -86,6 +87,7 @@ public class SwingTerminalPalette {
             new SwingTerminalPalette(
                     new java.awt.Color(192, 192, 192),
                     new java.awt.Color(255, 255, 255),
+                    new java.awt.Color(0, 0, 0),
                     new java.awt.Color(0, 0, 0),
                     new java.awt.Color(128, 128, 128),
                     new java.awt.Color(128, 0, 0),
@@ -112,6 +114,7 @@ public class SwingTerminalPalette {
                     new java.awt.Color(203, 204, 205),
                     new java.awt.Color(233, 235, 235),
                     new java.awt.Color(0, 0, 0),
+                    new java.awt.Color(0, 0, 0),
                     new java.awt.Color(129, 131, 131),
                     new java.awt.Color(194, 54, 33),
                     new java.awt.Color(252,57,31),
@@ -136,6 +139,7 @@ public class SwingTerminalPalette {
             new SwingTerminalPalette(
                     new java.awt.Color(187, 187, 187),
                     new java.awt.Color(255, 255, 255),
+                    new java.awt.Color(0, 0, 0),
                     new java.awt.Color(0, 0, 0),
                     new java.awt.Color(85, 85, 85),
                     new java.awt.Color(187, 0, 0),
@@ -162,6 +166,7 @@ public class SwingTerminalPalette {
                     new java.awt.Color(229, 229, 229),
                     new java.awt.Color(255, 255, 255),
                     new java.awt.Color(0, 0, 0),
+                    new java.awt.Color(0, 0, 0),
                     new java.awt.Color(127, 127, 127),
                     new java.awt.Color(205, 0, 0),
                     new java.awt.Color(255, 0, 0),
@@ -185,6 +190,7 @@ public class SwingTerminalPalette {
     
     private final Color defaultColor;
     private final Color defaultBrightColor;
+    private final Color defaultBackgroundColor;
     private final Color normalBlack;
     private final Color brightBlack;
     private final Color normalRed;
@@ -205,6 +211,7 @@ public class SwingTerminalPalette {
     public SwingTerminalPalette(
             Color defaultColor, 
             Color defaultBrightColor, 
+            Color defaultBackgroundColor, 
             Color normalBlack, 
             Color brightBlack, 
             Color normalRed, 
@@ -223,6 +230,7 @@ public class SwingTerminalPalette {
             Color brightWhite) {
         this.defaultColor = defaultColor;
         this.defaultBrightColor = defaultBrightColor;
+        this.defaultBackgroundColor = defaultBackgroundColor;
         this.normalBlack = normalBlack;
         this.brightBlack = brightBlack;
         this.normalRed = normalRed;
@@ -281,6 +289,10 @@ public class SwingTerminalPalette {
         return defaultColor;
     }
 
+    public Color getDefaultBackgroundColor() {
+        return defaultBackgroundColor;
+    }
+
     public Color getNormalBlack() {
         return normalBlack;
     }
@@ -312,97 +324,119 @@ public class SwingTerminalPalette {
     public Color getNormalYellow() {
         return normalYellow;
     }
-
-    public Color get(int index) {
-    	switch (index) {
-    	case 0: return normalBlack;
-    	case 1: return normalRed;
-    	case 2: return normalGreen;
-    	case 3: return normalYellow;
-    	case 4: return normalBlue;
-    	case 5: return normalMagenta;
-    	case 6: return normalCyan;
-    	case 7: return normalWhite;
-    	case 8: return brightBlack;
-    	case 9: return brightRed;
-    	case 10: return brightGreen;
-    	case 11: return brightYellow;
-    	case 12: return brightBlue;
-    	case 13: return brightMagenta;
-    	case 14: return brightCyan;
-    	case 15: return brightWhite;
-    	default:throw new IllegalArgumentException("Color index must be in the range [0 .. 15]");
-    	}
-    }
     
-    public List<Color> asList() {
-    	List<Color> list = new ArrayList<Color>();
-    	for (int i = 0; i < 16 ; i++)
-    		list.add(get(i));
-    	return list;
+    public Color get(TextColor.ANSI color, boolean isForeground, boolean useBrighTones) {
+        if(useBrighTones) {
+            switch(color.getAnsiColor()) {
+                case BLACK:
+                    return brightBlack;
+                case BLUE:
+                    return brightBlue;
+                case CYAN:
+                    return brightCyan;
+                case DEFAULT:
+                    return isForeground ? defaultBrightColor : defaultBackgroundColor;
+                case GREEN:
+                    return brightGreen;
+                case MAGENTA:
+                    return brightMagenta;
+                case RED:
+                    return brightRed;
+                case WHITE:
+                    return brightWhite;
+                case YELLOW:
+                    return brightYellow;
+            }
+        }
+        else {
+            switch(color.getAnsiColor()) {
+                case BLACK:
+                    return normalBlack;
+                case BLUE:
+                    return normalBlue;
+                case CYAN:
+                    return normalCyan;
+                case DEFAULT:
+                    return isForeground ? defaultColor : defaultBackgroundColor;
+                case GREEN:
+                    return normalGreen;
+                case MAGENTA:
+                    return normalMagenta;
+                case RED:
+                    return normalRed;
+                case WHITE:
+                    return normalWhite;
+                case YELLOW:
+                    return normalYellow;
+            }
+        }
+        throw new IllegalArgumentException("Unknown text color " + color);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
+        if(obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if(getClass() != obj.getClass()) {
             return false;
         }
         final SwingTerminalPalette other = (SwingTerminalPalette) obj;
-        if (this.defaultColor != other.defaultColor && (this.defaultColor == null || !this.defaultColor.equals(other.defaultColor))) {
+        if(this.defaultColor != other.defaultColor && (this.defaultColor == null || !this.defaultColor.equals(other.defaultColor))) {
             return false;
         }
-        if (this.defaultBrightColor != other.defaultBrightColor && (this.defaultBrightColor == null || !this.defaultBrightColor.equals(other.defaultBrightColor))) {
+        if(this.defaultBrightColor != other.defaultBrightColor && (this.defaultBrightColor == null || !this.defaultBrightColor.equals(other.defaultBrightColor))) {
             return false;
         }
-        if (this.normalBlack != other.normalBlack && (this.normalBlack == null || !this.normalBlack.equals(other.normalBlack))) {
+        if(this.defaultBackgroundColor != other.defaultBackgroundColor && (this.defaultBackgroundColor == null || !this.defaultBackgroundColor.equals(other.defaultBackgroundColor))) {
             return false;
         }
-        if (this.brightBlack != other.brightBlack && (this.brightBlack == null || !this.brightBlack.equals(other.brightBlack))) {
+        if(this.normalBlack != other.normalBlack && (this.normalBlack == null || !this.normalBlack.equals(other.normalBlack))) {
             return false;
         }
-        if (this.normalRed != other.normalRed && (this.normalRed == null || !this.normalRed.equals(other.normalRed))) {
+        if(this.brightBlack != other.brightBlack && (this.brightBlack == null || !this.brightBlack.equals(other.brightBlack))) {
             return false;
         }
-        if (this.brightRed != other.brightRed && (this.brightRed == null || !this.brightRed.equals(other.brightRed))) {
+        if(this.normalRed != other.normalRed && (this.normalRed == null || !this.normalRed.equals(other.normalRed))) {
             return false;
         }
-        if (this.normalGreen != other.normalGreen && (this.normalGreen == null || !this.normalGreen.equals(other.normalGreen))) {
+        if(this.brightRed != other.brightRed && (this.brightRed == null || !this.brightRed.equals(other.brightRed))) {
             return false;
         }
-        if (this.brightGreen != other.brightGreen && (this.brightGreen == null || !this.brightGreen.equals(other.brightGreen))) {
+        if(this.normalGreen != other.normalGreen && (this.normalGreen == null || !this.normalGreen.equals(other.normalGreen))) {
             return false;
         }
-        if (this.normalYellow != other.normalYellow && (this.normalYellow == null || !this.normalYellow.equals(other.normalYellow))) {
+        if(this.brightGreen != other.brightGreen && (this.brightGreen == null || !this.brightGreen.equals(other.brightGreen))) {
             return false;
         }
-        if (this.brightYellow != other.brightYellow && (this.brightYellow == null || !this.brightYellow.equals(other.brightYellow))) {
+        if(this.normalYellow != other.normalYellow && (this.normalYellow == null || !this.normalYellow.equals(other.normalYellow))) {
             return false;
         }
-        if (this.normalBlue != other.normalBlue && (this.normalBlue == null || !this.normalBlue.equals(other.normalBlue))) {
+        if(this.brightYellow != other.brightYellow && (this.brightYellow == null || !this.brightYellow.equals(other.brightYellow))) {
             return false;
         }
-        if (this.brightBlue != other.brightBlue && (this.brightBlue == null || !this.brightBlue.equals(other.brightBlue))) {
+        if(this.normalBlue != other.normalBlue && (this.normalBlue == null || !this.normalBlue.equals(other.normalBlue))) {
             return false;
         }
-        if (this.normalMagenta != other.normalMagenta && (this.normalMagenta == null || !this.normalMagenta.equals(other.normalMagenta))) {
+        if(this.brightBlue != other.brightBlue && (this.brightBlue == null || !this.brightBlue.equals(other.brightBlue))) {
             return false;
         }
-        if (this.brightMagenta != other.brightMagenta && (this.brightMagenta == null || !this.brightMagenta.equals(other.brightMagenta))) {
+        if(this.normalMagenta != other.normalMagenta && (this.normalMagenta == null || !this.normalMagenta.equals(other.normalMagenta))) {
             return false;
         }
-        if (this.normalCyan != other.normalCyan && (this.normalCyan == null || !this.normalCyan.equals(other.normalCyan))) {
+        if(this.brightMagenta != other.brightMagenta && (this.brightMagenta == null || !this.brightMagenta.equals(other.brightMagenta))) {
             return false;
         }
-        if (this.brightCyan != other.brightCyan && (this.brightCyan == null || !this.brightCyan.equals(other.brightCyan))) {
+        if(this.normalCyan != other.normalCyan && (this.normalCyan == null || !this.normalCyan.equals(other.normalCyan))) {
             return false;
         }
-        if (this.normalWhite != other.normalWhite && (this.normalWhite == null || !this.normalWhite.equals(other.normalWhite))) {
+        if(this.brightCyan != other.brightCyan && (this.brightCyan == null || !this.brightCyan.equals(other.brightCyan))) {
             return false;
         }
-        if (this.brightWhite != other.brightWhite && (this.brightWhite == null || !this.brightWhite.equals(other.brightWhite))) {
+        if(this.normalWhite != other.normalWhite && (this.normalWhite == null || !this.normalWhite.equals(other.normalWhite))) {
+            return false;
+        }
+        if(this.brightWhite != other.brightWhite && (this.brightWhite == null || !this.brightWhite.equals(other.brightWhite))) {
             return false;
         }
         return true;
@@ -410,33 +444,35 @@ public class SwingTerminalPalette {
 
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 43 * hash + (this.defaultColor != null ? this.defaultColor.hashCode() : 0);
-        hash = 43 * hash + (this.defaultBrightColor != null ? this.defaultBrightColor.hashCode() : 0);
-        hash = 43 * hash + (this.normalBlack != null ? this.normalBlack.hashCode() : 0);
-        hash = 43 * hash + (this.brightBlack != null ? this.brightBlack.hashCode() : 0);
-        hash = 43 * hash + (this.normalRed != null ? this.normalRed.hashCode() : 0);
-        hash = 43 * hash + (this.brightRed != null ? this.brightRed.hashCode() : 0);
-        hash = 43 * hash + (this.normalGreen != null ? this.normalGreen.hashCode() : 0);
-        hash = 43 * hash + (this.brightGreen != null ? this.brightGreen.hashCode() : 0);
-        hash = 43 * hash + (this.normalYellow != null ? this.normalYellow.hashCode() : 0);
-        hash = 43 * hash + (this.brightYellow != null ? this.brightYellow.hashCode() : 0);
-        hash = 43 * hash + (this.normalBlue != null ? this.normalBlue.hashCode() : 0);
-        hash = 43 * hash + (this.brightBlue != null ? this.brightBlue.hashCode() : 0);
-        hash = 43 * hash + (this.normalMagenta != null ? this.normalMagenta.hashCode() : 0);
-        hash = 43 * hash + (this.brightMagenta != null ? this.brightMagenta.hashCode() : 0);
-        hash = 43 * hash + (this.normalCyan != null ? this.normalCyan.hashCode() : 0);
-        hash = 43 * hash + (this.brightCyan != null ? this.brightCyan.hashCode() : 0);
-        hash = 43 * hash + (this.normalWhite != null ? this.normalWhite.hashCode() : 0);
-        hash = 43 * hash + (this.brightWhite != null ? this.brightWhite.hashCode() : 0);
+        int hash = 5;
+        hash = 47 * hash + (this.defaultColor != null ? this.defaultColor.hashCode() : 0);
+        hash = 47 * hash + (this.defaultBrightColor != null ? this.defaultBrightColor.hashCode() : 0);
+        hash = 47 * hash + (this.defaultBackgroundColor != null ? this.defaultBackgroundColor.hashCode() : 0);
+        hash = 47 * hash + (this.normalBlack != null ? this.normalBlack.hashCode() : 0);
+        hash = 47 * hash + (this.brightBlack != null ? this.brightBlack.hashCode() : 0);
+        hash = 47 * hash + (this.normalRed != null ? this.normalRed.hashCode() : 0);
+        hash = 47 * hash + (this.brightRed != null ? this.brightRed.hashCode() : 0);
+        hash = 47 * hash + (this.normalGreen != null ? this.normalGreen.hashCode() : 0);
+        hash = 47 * hash + (this.brightGreen != null ? this.brightGreen.hashCode() : 0);
+        hash = 47 * hash + (this.normalYellow != null ? this.normalYellow.hashCode() : 0);
+        hash = 47 * hash + (this.brightYellow != null ? this.brightYellow.hashCode() : 0);
+        hash = 47 * hash + (this.normalBlue != null ? this.normalBlue.hashCode() : 0);
+        hash = 47 * hash + (this.brightBlue != null ? this.brightBlue.hashCode() : 0);
+        hash = 47 * hash + (this.normalMagenta != null ? this.normalMagenta.hashCode() : 0);
+        hash = 47 * hash + (this.brightMagenta != null ? this.brightMagenta.hashCode() : 0);
+        hash = 47 * hash + (this.normalCyan != null ? this.normalCyan.hashCode() : 0);
+        hash = 47 * hash + (this.brightCyan != null ? this.brightCyan.hashCode() : 0);
+        hash = 47 * hash + (this.normalWhite != null ? this.normalWhite.hashCode() : 0);
+        hash = 47 * hash + (this.brightWhite != null ? this.brightWhite.hashCode() : 0);
         return hash;
     }
 
     @Override
     public String toString() {
-        return "TerminalPalette{" + 
-                  "defaultColor=" + defaultColor + 
+        return "SwingTerminalPalette{" + 
+                "defaultColor=" + defaultColor + 
                 ", defaultBrightColor=" + defaultBrightColor + 
+                ", defaultBackgroundColor=" + defaultBackgroundColor + 
                 ", normalBlack=" + normalBlack + 
                 ", brightBlack=" + brightBlack + 
                 ", normalRed=" + normalRed + 

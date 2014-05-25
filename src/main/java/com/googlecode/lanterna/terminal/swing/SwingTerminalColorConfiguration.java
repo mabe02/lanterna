@@ -18,6 +18,11 @@
  */
 package com.googlecode.lanterna.terminal.swing;
 
+import com.googlecode.lanterna.terminal.TextColor;
+import java.awt.Color;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  *
  * @author martin
@@ -25,6 +30,7 @@ package com.googlecode.lanterna.terminal.swing;
 public class SwingTerminalColorConfiguration {
 
     public static final SwingTerminalColorConfiguration DEFAULT = newInstance(SwingTerminalPalette.STANDARD_VGA);
+    public static final Map<TextColor, Color> COLOR_STORAGE = new ConcurrentHashMap<TextColor, Color>();
 
     public static SwingTerminalColorConfiguration newInstance(SwingTerminalPalette colorPalette) {
         return new SwingTerminalColorConfiguration(colorPalette, true);
@@ -44,5 +50,28 @@ public class SwingTerminalColorConfiguration {
 
     public SwingTerminalColorConfiguration withoutBrightColorsOnBold() {
         return new SwingTerminalColorConfiguration(colorPalette, false);
+    }
+
+    public Color toAWTColor(TextColor color, boolean isForeground, boolean inBoldContext) {
+        if(COLOR_STORAGE.containsKey(color)) {
+            return COLOR_STORAGE.get(color);
+        }
+        if(color instanceof TextColor.ANSI) {
+            Color awtColor = colorPalette.get((TextColor.ANSI)color, isForeground, inBoldContext && useBrightColorsOnBold);
+            COLOR_STORAGE.put(color, awtColor);
+            return awtColor;
+        }
+        else if(color instanceof TextColor.Indexed) {
+            TextColor.Indexed indexedColor = (TextColor.Indexed)color;
+            Color awtColor = new Color(indexedColor.getRed(), indexedColor.getGreen(), indexedColor.getBlue());
+            COLOR_STORAGE.put(color, awtColor);
+            return awtColor;
+        }
+        else if(color instanceof TextColor.RGB) {
+            TextColor.RGB rgbColor = (TextColor.RGB)color;
+            Color awtColor = new Color(rgbColor.getRed(), rgbColor.getGreen(), rgbColor.getBlue());
+            return awtColor;
+        }
+        throw new IllegalArgumentException("Unknown color " + color);
     }
 }
