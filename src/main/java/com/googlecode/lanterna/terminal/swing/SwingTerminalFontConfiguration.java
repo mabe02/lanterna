@@ -76,7 +76,15 @@ public class SwingTerminalFontConfiguration {
         }
     }
 
-    Font getFontForCharacter(char c) {
+    Font getFontForCharacter(TerminalCharacter character) {
+        Font normalFont = getFontForCharacter(character.getCharacter());
+        if(character.isBold()) {
+            normalFont = normalFont.deriveFont(Font.BOLD);
+        }
+        return normalFont;
+    }
+
+    private Font getFontForCharacter(char c) {
         for(Font font: fontPriority) {
             if(font.canDisplay(c)) {
                 return font;
@@ -84,10 +92,6 @@ public class SwingTerminalFontConfiguration {
         }
         //No available font here, what to do...?
         return fontPriority.get(0);
-    }
-
-    Font getBoldFontForCharacter(char c) {
-        return getFontForCharacter(c).deriveFont(Font.BOLD);
     }
 
     boolean isUsingAntiAliasing() {

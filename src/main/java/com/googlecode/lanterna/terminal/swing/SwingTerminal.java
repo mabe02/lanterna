@@ -148,7 +148,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
                 g.fillRect(columnIndex * fontWidth, rowIndex * fontHeight, fontWidth, fontHeight);
 
                 g.setColor(foregroundColor);
-                g.setFont(fontConfiguration.getFontForCharacter(character.getCharacter()));
+                g.setFont(fontConfiguration.getFontForCharacter(character));
                 g.drawString(Character.toString(character.getCharacter()), columnIndex * fontWidth, (rowIndex + 1) * fontHeight);
 
                 if(atCursorLocation && deviceConfiguration.getCursorStyle() == SwingTerminalDeviceConfiguration.CursorStyle.DOUBLE_UNDERBAR) {
@@ -179,7 +179,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
             return colorConfiguration.toAWTColor(backgroundColor, backgroundColor != TextColor.ANSI.DEFAULT, character.isBold());
         }
         else if(!reverse && blink && blinkOn) {
-            return colorConfiguration.toAWTColor(backgroundColor, true, character.isBold());
+            return colorConfiguration.toAWTColor(backgroundColor, false, character.isBold());
         }
         else {
             return colorConfiguration.toAWTColor(foregroundColor, true, character.isBold());
