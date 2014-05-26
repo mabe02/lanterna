@@ -20,6 +20,7 @@ package com.googlecode.lanterna.terminal.swing;
 
 import com.googlecode.lanterna.input.KeyDecodingProfile;
 import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.IOSafeTerminal;
 import com.googlecode.lanterna.terminal.ResizeListener;
 import com.googlecode.lanterna.terminal.TerminalSize;
@@ -34,27 +35,65 @@ import javax.swing.JFrame;
  * @author martin
  */
 public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
+    
+    /**
+     * This enum stored various ways the SwingTerminalFrame can automatically close (hide and dispose) itself when a
+     * certain condition happens. By default, auto-close is not active.
+     */
+    public enum AutoCloseTrigger {
+        /**
+         * Auto-close disabled
+         */
+        DontAutoClose,
+        /**
+         * Close the frame when exiting from private mode
+         */
+        CloseOnExitPrivateMode,
+        /**
+         * Close if the user presses ESC key on the keyboard
+         */
+        CloseOnEscape,
+        ;
+    }
 
     private final SwingTerminal swingTerminal;
+    private final AutoCloseTrigger autoCloseTrigger;
 
     public SwingTerminalFrame() throws HeadlessException {
-        this("SwingTerminalFrame");
+        this(AutoCloseTrigger.DontAutoClose);
+    }
+    
+    public SwingTerminalFrame(AutoCloseTrigger autoCloseTrigger) {
+        this("SwingTerminalFrame", autoCloseTrigger);
     }
 
     public SwingTerminalFrame(String title) throws HeadlessException {
-        this(title, new SwingTerminal());
+        this(title, AutoCloseTrigger.DontAutoClose);
+    }
+    
+    public SwingTerminalFrame(String title, AutoCloseTrigger autoCloseTrigger) throws HeadlessException {
+        this(title, new SwingTerminal(), autoCloseTrigger);
     }
 
     public SwingTerminalFrame(String title,
             SwingTerminalDeviceConfiguration deviceConfiguration,
             SwingTerminalFontConfiguration fontConfiguration,
             SwingTerminalColorConfiguration colorConfiguration) {
-        this(title, new SwingTerminal(deviceConfiguration, fontConfiguration, colorConfiguration));
+        this(title, deviceConfiguration, fontConfiguration, colorConfiguration, AutoCloseTrigger.DontAutoClose);
     }
-
-    private SwingTerminalFrame(String title, SwingTerminal swingTerminal) {
+    
+    public SwingTerminalFrame(String title,
+            SwingTerminalDeviceConfiguration deviceConfiguration,
+            SwingTerminalFontConfiguration fontConfiguration,
+            SwingTerminalColorConfiguration colorConfiguration,
+            AutoCloseTrigger autoCloseTrigger) {
+        this(title, new SwingTerminal(deviceConfiguration, fontConfiguration, colorConfiguration), autoCloseTrigger);
+    }
+    
+    private SwingTerminalFrame(String title, SwingTerminal swingTerminal, AutoCloseTrigger autoCloseTrigger) {
         super(title);
         this.swingTerminal = swingTerminal;
+        this.autoCloseTrigger = autoCloseTrigger;
 
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(swingTerminal, BorderLayout.CENTER);
@@ -66,7 +105,13 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
     ///////////
     @Override
     public KeyStroke readInput() {
-        return swingTerminal.readInput();
+        KeyStroke keyStroke = swingTerminal.readInput();
+        if(autoCloseTrigger == AutoCloseTrigger.CloseOnEscape && 
+                keyStroke != null && 
+                keyStroke.getKeyType() == KeyType.Escape) {
+            dispose();
+        }
+        return keyStroke;
     }
 
     @Override
@@ -82,6 +127,9 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
     @Override
     public void exitPrivateMode() {
         swingTerminal.exitPrivateMode();
+        if(autoCloseTrigger == AutoCloseTrigger.CloseOnExitPrivateMode) {
+            dispose();
+        }
     }
 
     @Override

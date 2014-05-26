@@ -20,7 +20,6 @@
 package com.googlecode.lanterna.terminal;
 
 import com.googlecode.lanterna.TestTerminalFactory;
-import com.googlecode.lanterna.terminal.swing.SwingTerminalFrame;
 import java.io.IOException;
 
 /**
@@ -46,10 +45,5 @@ public class RawTerminalTest
 
         Thread.sleep(5000);
         terminal.exitPrivateMode();
-        terminal.flush();
-
-        if(terminal instanceof SwingTerminalFrame) {
-            ((SwingTerminalFrame)terminal).dispose();
-        }
     }
 }

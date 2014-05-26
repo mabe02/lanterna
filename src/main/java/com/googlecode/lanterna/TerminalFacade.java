@@ -117,7 +117,7 @@ public class TerminalFacade {
      * @param rows Height of the terminal window, in text rows <b>not</b> pixels
      */
     public static SwingTerminalFrame createSwingTerminal(int columns, int rows) {
-        SwingTerminalFrame frame = new SwingTerminalFrame();
+        SwingTerminalFrame frame = new SwingTerminalFrame(SwingTerminalFrame.AutoCloseTrigger.CloseOnExitPrivateMode);
         frame.setVisible(true);
         return frame;
     }
