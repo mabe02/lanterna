@@ -119,6 +119,7 @@ public class TerminalFacade {
     public static SwingTerminalFrame createSwingTerminal(int columns, int rows) {
         SwingTerminalFrame frame = new SwingTerminalFrame(SwingTerminalFrame.AutoCloseTrigger.CloseOnExitPrivateMode);
         frame.setVisible(true);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         return frame;
     }
 
