@@ -76,6 +76,16 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
             SwingTerminalDeviceConfiguration deviceConfiguration,
             SwingTerminalFontConfiguration fontConfiguration,
             SwingTerminalColorConfiguration colorConfiguration) {
+        //Enforce valid values on the input parameters
+        if(deviceConfiguration == null) {
+            deviceConfiguration = SwingTerminalDeviceConfiguration.DEFAULT;
+        }
+        if(fontConfiguration == null) {
+            fontConfiguration = SwingTerminalFontConfiguration.DEFAULT;
+        }
+        if(colorConfiguration == null) {
+            colorConfiguration = SwingTerminalColorConfiguration.DEFAULT;
+        }
 
         //This is kind of meaningless since we don't know how large the
         //component is at this point, but we should set it to something
