@@ -20,6 +20,7 @@ package com.googlecode.lanterna.terminal.swing;
 
 import com.googlecode.lanterna.input.KeyDecodingProfile;
 import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.IOSafeTerminal;
 import com.googlecode.lanterna.terminal.ResizeListener;
 import com.googlecode.lanterna.terminal.TerminalPosition;
@@ -30,8 +31,16 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.nio.charset.Charset;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Queue;
+import java.util.Set;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 import javax.swing.JComponent;
 import javax.swing.Timer;
@@ -51,6 +60,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
     private final SwingTerminalColorConfiguration colorConfiguration;
     private final TextBuffer mainBuffer;
     private final TextBuffer privateModeBuffer;
+    private final TerminalDeviceEmulator deviceEmulator;
     private final VirtualTerminalImplementation terminalImplementation;
     private final Timer blinkTimer;
 
@@ -89,7 +99,9 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
 
         //This is kind of meaningless since we don't know how large the
         //component is at this point, but we should set it to something
-        this.terminalImplementation = new VirtualTerminalImplementation(new TerminalDeviceEmulator(), new TerminalSize(80, 20));
+        TerminalSize terminalSize = new TerminalSize(80, 20);
+        deviceEmulator = new TerminalDeviceEmulator();
+        this.terminalImplementation = new VirtualTerminalImplementation(deviceEmulator, terminalSize);
         this.deviceConfiguration = deviceConfiguration == null ? SwingTerminalDeviceConfiguration.DEFAULT : deviceConfiguration;
         this.fontConfiguration = fontConfiguration == null ? SwingTerminalFontConfiguration.DEFAULT : fontConfiguration;
         this.colorConfiguration = colorConfiguration == null ? SwingTerminalColorConfiguration.DEFAULT : colorConfiguration;
@@ -103,6 +115,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
 
         //Prevent us from shrinking beyond one character
         setMinimumSize(new Dimension(fontConfiguration.getFontWidth(), fontConfiguration.getFontHeight()));
+        addKeyListener(new TerminalInputListener());
         addAncestorListener(new AncestorListener() {
             @Override
             public void ancestorAdded(AncestorEvent event) {
@@ -322,11 +335,135 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
             repaint();
         }
     }
+    
+    private static final Set<Character> TYPED_KEYS_TO_IGNORE = new HashSet<Character>(Arrays.asList('\n', '\t', '\r', '\b', '\33'));
+    private class TerminalInputListener extends KeyAdapter {
+        @Override
+        public void keyTyped(KeyEvent e) {
+            char character = e.getKeyChar();
+            boolean altDown = (e.getModifiersEx() & InputEvent.ALT_DOWN_MASK) != 0;
+            boolean ctrlDown = (e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0;
+
+            if(!TYPED_KEYS_TO_IGNORE.contains(character)) {
+                if(ctrlDown) {
+                    //We need to re-adjust the character if ctrl is pressed, just like for the AnsiTerminal
+                    character = (char) ('a' - 1 + character);
+                }
+                deviceEmulator.registerKeyStroke(new KeyStroke(character, ctrlDown, altDown));
+            }
+        }
+
+        @Override
+        public void keyPressed(KeyEvent e) {
+            if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.Enter));
+            }
+            else if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.Escape));
+            }
+            else if(e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.Backspace));
+            }
+            else if(e.getKeyCode() == KeyEvent.VK_LEFT) {
+                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.ArrowLeft));
+            }
+            else if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
+                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.ArrowRight));
+            }
+            else if(e.getKeyCode() == KeyEvent.VK_UP) {
+                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.ArrowUp));
+            }
+            else if(e.getKeyCode() == KeyEvent.VK_DOWN) {
+                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.ArrowDown));
+            }
+            else if(e.getKeyCode() == KeyEvent.VK_INSERT) {
+                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.Insert));
+            }
+            else if(e.getKeyCode() == KeyEvent.VK_DELETE) {
+                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.Delete));
+            }
+            else if(e.getKeyCode() == KeyEvent.VK_HOME) {
+                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.Home));
+            }
+            else if(e.getKeyCode() == KeyEvent.VK_END) {
+                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.End));
+            }
+            else if(e.getKeyCode() == KeyEvent.VK_PAGE_UP) {
+                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.PageUp));
+            }
+            else if(e.getKeyCode() == KeyEvent.VK_PAGE_DOWN) {
+                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.PageDown));
+            }
+            else if(e.getKeyCode() == KeyEvent.VK_F1) {
+                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.F1));
+            }
+            else if(e.getKeyCode() == KeyEvent.VK_F2) {
+                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.F2));
+            }
+            else if(e.getKeyCode() == KeyEvent.VK_F3) {
+                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.F3));
+            }
+            else if(e.getKeyCode() == KeyEvent.VK_F4) {
+                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.F4));
+            }
+            else if(e.getKeyCode() == KeyEvent.VK_F5) {
+                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.F5));
+            }
+            else if(e.getKeyCode() == KeyEvent.VK_F6) {
+                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.F6));
+            }
+            else if(e.getKeyCode() == KeyEvent.VK_F7) {
+                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.F7));
+            }
+            else if(e.getKeyCode() == KeyEvent.VK_F8) {
+                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.F8));
+            }
+            else if(e.getKeyCode() == KeyEvent.VK_F9) {
+                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.F9));
+            }
+            else if(e.getKeyCode() == KeyEvent.VK_F10) {
+                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.F10));
+            }
+            else if(e.getKeyCode() == KeyEvent.VK_F11) {
+                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.F11));
+            }
+            else if(e.getKeyCode() == KeyEvent.VK_F12) {
+                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.F12));
+            }
+            else if(e.getKeyCode() == KeyEvent.VK_TAB) {
+                if(e.isShiftDown()) {
+                    deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.ReverseTab));
+                }
+                else {
+                    deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.Tab));
+                }
+            }
+            else {
+                //keyTyped doesn't catch this scenario (for whatever reason...) so we have to do it here
+                boolean altDown = (e.getModifiersEx() & InputEvent.ALT_DOWN_MASK) != 0;
+                boolean ctrlDown = (e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0;
+                if(altDown && ctrlDown && e.getKeyCode() >= 'A' && e.getKeyCode() <= 'Z') {
+                    char asLowerCase = Character.toLowerCase((char) e.getKeyCode());
+                    deviceEmulator.registerKeyStroke(new KeyStroke(asLowerCase, true, true));
+                }
+            }
+        }
+    }
 
     private class TerminalDeviceEmulator implements VirtualTerminalImplementation.DeviceEmulator {
+        private final Queue<KeyStroke> keyQueue;
+
+        public TerminalDeviceEmulator() {
+            this.keyQueue = new ConcurrentLinkedQueue<KeyStroke>();
+        }
+        
+        public void registerKeyStroke(KeyStroke keyStroke) {
+            keyQueue.add(keyStroke);
+        }
+        
         @Override
         public KeyStroke readInput() {
-            return null;
+            return keyQueue.poll();
         }
 
         @Override
