@@ -98,6 +98,9 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(swingTerminal, BorderLayout.CENTER);
         pack();
+        
+        //Put input focus on the terminal component by default
+        swingTerminal.requestFocusInWindow();
     }
 
     ///////////
