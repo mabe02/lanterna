@@ -64,5 +64,6 @@ public class TerminalInputTest
     private static void putString(Terminal rawTerminal, String string) {
         for(int i = 0; i < string.length(); i++)
             rawTerminal.putCharacter(string.charAt(i));
+        rawTerminal.flush();
     }
 }
