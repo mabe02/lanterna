@@ -86,6 +86,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
             SwingTerminalDeviceConfiguration deviceConfiguration,
             SwingTerminalFontConfiguration fontConfiguration,
             SwingTerminalColorConfiguration colorConfiguration) {
+        
         //Enforce valid values on the input parameters
         if(deviceConfiguration == null) {
             deviceConfiguration = SwingTerminalDeviceConfiguration.DEFAULT;
@@ -100,11 +101,11 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
         //This is kind of meaningless since we don't know how large the
         //component is at this point, but we should set it to something
         TerminalSize terminalSize = new TerminalSize(80, 20);
-        deviceEmulator = new TerminalDeviceEmulator();
+        this.deviceEmulator = new TerminalDeviceEmulator();
         this.terminalImplementation = new VirtualTerminalImplementation(deviceEmulator, terminalSize);
-        this.deviceConfiguration = deviceConfiguration == null ? SwingTerminalDeviceConfiguration.DEFAULT : deviceConfiguration;
-        this.fontConfiguration = fontConfiguration == null ? SwingTerminalFontConfiguration.DEFAULT : fontConfiguration;
-        this.colorConfiguration = colorConfiguration == null ? SwingTerminalColorConfiguration.DEFAULT : colorConfiguration;
+        this.deviceConfiguration = deviceConfiguration;
+        this.fontConfiguration = fontConfiguration;
+        this.colorConfiguration = colorConfiguration;
 
         this.mainBuffer = new TextBuffer(deviceConfiguration.getLineBufferScrollbackSize(), terminalImplementation.getTerminalSize());
         this.privateModeBuffer = new TextBuffer(0, terminalImplementation.getTerminalSize());
