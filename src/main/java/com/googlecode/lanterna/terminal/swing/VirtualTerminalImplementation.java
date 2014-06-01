@@ -142,8 +142,23 @@ class VirtualTerminalImplementation extends AbstractTerminal implements IOSafeTe
 
     @Override
     public void putCharacter(char c) {
-        deviceEmulator.getBuffer().setCharacter(getTerminalSize(), currentPosition, new TerminalCharacter(c, foregroundColor, backgroundColor, activeSGRs));
-        advanceCursor();
+        if(c == '\n') {
+            if(currentPosition.getRow() == terminalSize.getRows() - 1) {
+                deviceEmulator.getBuffer().newLine(getTerminalSize());
+            }
+            moveCursor(0, currentPosition.getRow() + 1);
+        }
+        else if (c == '\t') {
+            for(int i = 0; i < 4 - currentPosition.getColumn() % 4; i++) {
+                if(currentPosition.getColumn() < getTerminalSize().getColumns() - 1) {
+                    putCharacter(' ');
+                }
+            }
+        }
+        else {
+            deviceEmulator.getBuffer().setCharacter(getTerminalSize(), currentPosition, new TerminalCharacter(c, foregroundColor, backgroundColor, activeSGRs));
+            advanceCursor();
+        }
     }
 
     @Override
