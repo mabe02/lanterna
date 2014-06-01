@@ -28,6 +28,8 @@ import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.terminal.TextColor;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -181,8 +183,10 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
                 g.fillRect(columnIndex * fontWidth, rowIndex * fontHeight, fontWidth, fontHeight);
 
                 g.setColor(foregroundColor);
-                g.setFont(fontConfiguration.getFontForCharacter(character));
-                g.drawString(Character.toString(character.getCharacter()), columnIndex * fontWidth, (rowIndex + 1) * fontHeight);
+                Font font = fontConfiguration.getFontForCharacter(character);
+                g.setFont(font);
+                FontMetrics fontMetrics = g.getFontMetrics();
+                g.drawString(Character.toString(character.getCharacter()), columnIndex * fontWidth, ((rowIndex + 1) * fontHeight) - fontMetrics.getDescent());
 
                 if(atCursorLocation && deviceConfiguration.getCursorStyle() == SwingTerminalDeviceConfiguration.CursorStyle.DOUBLE_UNDERBAR) {
                     g.setColor(colorConfiguration.toAWTColor(deviceConfiguration.getCursorColor(), false, false));
