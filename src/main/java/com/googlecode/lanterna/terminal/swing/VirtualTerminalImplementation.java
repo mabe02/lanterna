@@ -190,6 +190,14 @@ class VirtualTerminalImplementation extends AbstractTerminal implements IOSafeTe
 
     void setTerminalSize(TerminalSize terminalSize) {
         onResized(terminalSize.getColumns(), terminalSize.getRows());
+        if(!this.terminalSize.equals(terminalSize)) {
+            if(this.terminalSize.getRows() < terminalSize.getRows()) {
+                currentPosition = currentPosition.withRelativeRow(terminalSize.getRows() - this.terminalSize.getRows());
+            }
+            else if(this.terminalSize.getRows() > terminalSize.getRows()) {
+                currentPosition = currentPosition.withRelativeRow(terminalSize.getRows() - this.terminalSize.getRows());
+            }
+        }
         this.terminalSize = terminalSize;
         correctCursorPosition();
     }
