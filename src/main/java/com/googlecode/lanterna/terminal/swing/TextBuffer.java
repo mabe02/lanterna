@@ -88,6 +88,11 @@ class TextBuffer {
         return lineBuffer.subList(lineBuffer.size() - rows, lineBuffer.size());
     }
 
+    void newLine(TerminalSize terminalSize) {
+        lineBuffer.addLast(newLine(terminalSize.getColumns(), fillCharacter));
+        readjust(terminalSize.getColumns(), terminalSize.getRows());
+    }
+    
     void setCharacter(TerminalSize terminalSize, TerminalPosition currentPosition, TerminalCharacter terminalCharacter) {
         lineBuffer.get(lineBuffer.size() - terminalSize.getRows() + currentPosition.getRow()).set(currentPosition.getColumn(), terminalCharacter);
     }
