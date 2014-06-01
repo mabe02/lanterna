@@ -35,7 +35,7 @@ public class SwingTerminalDeviceConfiguration {
     private final boolean cursorBlinking;
 
     public SwingTerminalDeviceConfiguration() {
-        this(0, 500, CursorStyle.REVERSED, TextColor.ANSI.WHITE, true);
+        this(2000, 500, CursorStyle.REVERSED, TextColor.ANSI.WHITE, true);
     }
 
     public SwingTerminalDeviceConfiguration(int lineBufferScrollbackSize, int blinkLengthInMilliSeconds, CursorStyle cursorStyle, TextColor cursorColor, boolean cursorBlinking) {
