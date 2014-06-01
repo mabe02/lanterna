@@ -45,6 +45,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 import javax.swing.JComponent;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
@@ -243,6 +244,9 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
 
     ///////////
     // Then delegate all Terminal interface methods to the virtual terminal implementation
+    //
+    // Some of these methods we need to pass to the AWT-thread, which makes the call asynchronous. Hopefully this isn't
+    // causing too much problem...
     ///////////
     @Override
     public KeyStroke readInput() {
@@ -256,57 +260,112 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
 
     @Override
     public void enterPrivateMode() {
-        terminalImplementation.enterPrivateMode();
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                terminalImplementation.enterPrivateMode();
+            }
+        });
     }
 
     @Override
     public void exitPrivateMode() {
-        terminalImplementation.exitPrivateMode();
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                terminalImplementation.exitPrivateMode();
+            }
+        });
     }
 
     @Override
-    public void clearScreen() {
-        terminalImplementation.clearScreen();
+    public void clearScreen() {        
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                terminalImplementation.clearScreen();
+            }
+        });
     }
 
     @Override
-    public void moveCursor(int x, int y) {
-        terminalImplementation.moveCursor(x, y);
+    public void moveCursor(final int x, final int y) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                terminalImplementation.moveCursor(x, y);
+            }
+        });
     }
 
     @Override
-    public void setCursorVisible(boolean visible) {
-        terminalImplementation.setCursorVisible(visible);
+    public void setCursorVisible(final boolean visible) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                terminalImplementation.setCursorVisible(visible);
+            }
+        });
     }
 
     @Override
-    public void putCharacter(char c) {
-        terminalImplementation.putCharacter(c);
+    public void putCharacter(final char c) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                terminalImplementation.putCharacter(c);
+            }
+        });
     }
 
     @Override
-    public void enableSGR(SGR sgr) {
-        terminalImplementation.enableSGR(sgr);
+    public void enableSGR(final SGR sgr) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                terminalImplementation.enableSGR(sgr);
+            }
+        });
     }
 
     @Override
-    public void disableSGR(SGR sgr) {
-        terminalImplementation.disableSGR(sgr);
+    public void disableSGR(final SGR sgr) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                terminalImplementation.disableSGR(sgr);
+            }
+        });
     }
 
     @Override
     public void resetAllSGR() {
-        terminalImplementation.resetAllSGR();
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                terminalImplementation.resetAllSGR();
+            }
+        });
     }
 
     @Override
-    public void applyForegroundColor(TextColor color) {
-        terminalImplementation.applyForegroundColor(color);
+    public void applyForegroundColor(final TextColor color) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                terminalImplementation.applyForegroundColor(color);
+            }
+        });
     }
 
     @Override
-    public void applyBackgroundColor(TextColor color) {
-        terminalImplementation.applyBackgroundColor(color);
+    public void applyBackgroundColor(final TextColor color) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                terminalImplementation.applyBackgroundColor(color);
+            }
+        });
     }
 
     @Override
@@ -321,7 +380,12 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
 
     @Override
     public void flush() {
-        terminalImplementation.flush();
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                terminalImplementation.flush();
+            }
+        });
     }
 
     @Override
