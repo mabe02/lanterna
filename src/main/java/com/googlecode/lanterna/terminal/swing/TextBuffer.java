@@ -96,12 +96,4 @@ class TextBuffer {
     void setCharacter(TerminalSize terminalSize, TerminalPosition currentPosition, TerminalCharacter terminalCharacter) {
         lineBuffer.get(lineBuffer.size() - terminalSize.getRows() + currentPosition.getRow()).set(currentPosition.getColumn(), terminalCharacter);
     }
-
-    void fillScreen(TerminalSize terminalSize, TerminalCharacter character) {
-        readjust(terminalSize.getColumns(), terminalSize.getRows());
-        for(List<TerminalCharacter> row: getVisibleLines(terminalSize.getRows(), 0)) {
-            row.clear();
-            row.addAll(newLine(terminalSize.getColumns(), character));
-        }
-    }
 }

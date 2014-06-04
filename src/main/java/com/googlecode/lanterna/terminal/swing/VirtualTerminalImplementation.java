@@ -96,7 +96,10 @@ class VirtualTerminalImplementation extends AbstractTerminal implements IOSafeTe
 
     @Override
     public void clearScreen() {
-        deviceEmulator.getBuffer().fillScreen(getTerminalSize(), TerminalCharacter.DEFAULT_CHARACTER);
+        int linesToAdd = terminalSize.getRows();
+        for(int i = 0; i < linesToAdd; i++) {
+            deviceEmulator.getBuffer().newLine(terminalSize);
+        }
     }
 
     private void advanceCursor() {
