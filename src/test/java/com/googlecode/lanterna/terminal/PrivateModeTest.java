@@ -21,6 +21,7 @@ package com.googlecode.lanterna.terminal;
 import com.googlecode.lanterna.TestTerminalFactory;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
+import com.googlecode.lanterna.terminal.swing.SwingTerminalFrame;
 import java.io.IOException;
 
 /**
@@ -54,6 +55,9 @@ public class PrivateModeTest {
             terminal.exitPrivateMode();
         }
         terminal.putCharacter('\n');
+        if(terminal instanceof SwingTerminalFrame) {
+            ((SwingTerminalFrame)terminal).dispose();
+        }
     }
 
     private static void printNormalTerminalText(Terminal terminal) {
