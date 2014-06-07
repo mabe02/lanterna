@@ -177,6 +177,8 @@ class VirtualTerminalImplementation extends AbstractTerminal implements IOSafeTe
     @Override
     public void resetAllSGR() {
         activeSGRs.clear();
+        foregroundColor = TextColor.ANSI.DEFAULT;
+        backgroundColor = TextColor.ANSI.DEFAULT;
     }
 
     @Override
