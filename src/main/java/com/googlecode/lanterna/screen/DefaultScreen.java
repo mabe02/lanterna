@@ -91,6 +91,11 @@ public class DefaultScreen extends TerminalScreen {
      */
     @Override
     public void setCursorPosition(TerminalPosition position) {
+        if(position == null) {
+            //Skip any validation checks if we just want to hide the cursor
+            this.cursorPosition = null;
+            return;
+        }
         TerminalSize terminalSize = getTerminalSize();
         if(position.getColumn() >= 0 && position.getColumn() < terminalSize.getColumns()
                 && position.getRow() >= 0 && position.getRow() < terminalSize.getRows()) {
