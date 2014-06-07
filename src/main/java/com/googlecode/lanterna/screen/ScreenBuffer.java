@@ -59,7 +59,7 @@ class ScreenBuffer {
 
     ScreenBuffer resize(TerminalSize pendingResize, ScreenCharacter filler) {
         if(pendingResize.getRows() == buffer.length &&
-                pendingResize.getColumns() == buffer[0].length) {
+                (buffer.length == 0 || pendingResize.getColumns() == buffer[0].length)) {
             return this;
         }
         return new ScreenBuffer(pendingResize, buffer, filler);
