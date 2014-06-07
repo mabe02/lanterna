@@ -65,4 +65,12 @@ class TerminalCharacter {
         return styles.contains(Terminal.SGR.BLINK);
     }
 
+    boolean isCrossedOut() {
+        return styles.contains(Terminal.SGR.CROSSEDOUT);
+    }
+
+    boolean isUnderlined() {
+        return styles.contains(Terminal.SGR.UNDERLINE);
+    }
+
 }
