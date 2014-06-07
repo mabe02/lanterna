@@ -163,6 +163,7 @@ public class UnixTerminal extends ANSITerminal {
         KeyStroke key = super.readInput();
         if(key != null
                 && terminalBehaviour == Behaviour.CTRL_C_KILLS_APPLICATION
+                && key.getCharacter() != null
                 && key.getCharacter() == 'c'
                 && !key.isAltDown()
                 && key.isCtrlDown()) {
