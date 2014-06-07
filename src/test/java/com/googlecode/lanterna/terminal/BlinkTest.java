@@ -19,7 +19,6 @@
 
 package com.googlecode.lanterna.terminal;
 
-import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.TestTerminalFactory;
 
 /**

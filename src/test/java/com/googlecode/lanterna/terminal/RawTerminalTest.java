@@ -16,7 +16,6 @@
  *
  * Copyright (C) 2010-2014 Martin
  */
-
 package com.googlecode.lanterna.terminal;
 
 import com.googlecode.lanterna.TestTerminalFactory;
@@ -26,10 +25,9 @@ import java.io.IOException;
  *
  * @author Martin
  */
-public class RawTerminalTest
-{
-    public static void main(String[] args) throws InterruptedException, IOException
-    {
+public class RawTerminalTest {
+
+    public static void main(String[] args) throws InterruptedException, IOException {
         Terminal terminal = new TestTerminalFactory(args).createTerminal();
         terminal.enterPrivateMode();
         terminal.clearScreen();

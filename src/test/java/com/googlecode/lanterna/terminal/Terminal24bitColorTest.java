@@ -16,22 +16,20 @@
  *
  * Copyright (C) 2010-2014 Martin
  */
-
 package com.googlecode.lanterna.terminal;
 
-import com.googlecode.lanterna.terminal.Terminal;
-import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.TestTerminalFactory;
 import java.io.IOException;
 import java.util.Random;
 
 /**
  * This class will try using the 24-bit color extension supported by a few terminal emulators
+ *
  * @author Martin
  */
 public class Terminal24bitColorTest {
-    public static void main(String[] args) throws IOException
-    {
+
+    public static void main(String[] args) throws IOException {
         final String string = "Hello!";
         Random random = new Random();
         Terminal terminal = new TestTerminalFactory(args).createTerminal();
@@ -59,8 +57,9 @@ public class Terminal24bitColorTest {
     }
 
     private static void printString(Terminal terminal, String string) {
-        for(int i = 0; i < string.length(); i++)
+        for(int i = 0; i < string.length(); i++) {
             terminal.putCharacter(string.charAt(i));
+        }
         terminal.flush();
     }
 }

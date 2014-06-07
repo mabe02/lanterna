@@ -21,7 +21,6 @@ package com.googlecode.lanterna.screen;
 import com.googlecode.lanterna.TestTerminalFactory;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
-import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.terminal.TextColor;
@@ -33,6 +32,7 @@ import java.util.Random;
  * @author martin
  */
 public class ScreenTriangleTest {
+
     private static final double oneThirdOf2PI = (Math.PI * 2.0) / 3.0;
     private static final double twoThirdsOf2PI = oneThirdOf2PI * 2.0;
 
@@ -42,7 +42,7 @@ public class ScreenTriangleTest {
         boolean slow = false;
         boolean rotating = false;
         boolean square = false;
-        for(String arg: args) {
+        for(String arg : args) {
             if(arg.equals("--ansi-colors")) {
                 useAnsiColors = true;
             }
@@ -95,12 +95,12 @@ public class ScreenTriangleTest {
             if(rotating) {
                 screen.clear();
                 double triangleSize = 15.0;
-                int x0 = (size.getColumns() / 2) + (int)(Math.cos(rad) * triangleSize);
-                int y0 = (size.getRows() / 2) + (int)(Math.sin(rad) * triangleSize);
-                int x1 = (size.getColumns() / 2) + (int)(Math.cos(rad + oneThirdOf2PI) * triangleSize);
-                int y1 = (size.getRows() / 2) + (int)(Math.sin(rad + oneThirdOf2PI) * triangleSize);
-                int x2 = (size.getColumns() / 2) + (int)(Math.cos(rad + twoThirdsOf2PI) * triangleSize);
-                int y2 = (size.getRows() / 2) + (int)(Math.sin(rad + twoThirdsOf2PI) * triangleSize);
+                int x0 = (size.getColumns() / 2) + (int) (Math.cos(rad) * triangleSize);
+                int y0 = (size.getRows() / 2) + (int) (Math.sin(rad) * triangleSize);
+                int x1 = (size.getColumns() / 2) + (int) (Math.cos(rad + oneThirdOf2PI) * triangleSize);
+                int y1 = (size.getRows() / 2) + (int) (Math.sin(rad + oneThirdOf2PI) * triangleSize);
+                int x2 = (size.getColumns() / 2) + (int) (Math.cos(rad + twoThirdsOf2PI) * triangleSize);
+                int y2 = (size.getRows() / 2) + (int) (Math.sin(rad + twoThirdsOf2PI) * triangleSize);
                 p1 = new TerminalPosition(x0, y0);
                 p2 = new TerminalPosition(x1, y1);
                 p3 = new TerminalPosition(x2, y2);

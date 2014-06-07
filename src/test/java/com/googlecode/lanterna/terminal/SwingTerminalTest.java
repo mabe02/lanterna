@@ -16,12 +16,9 @@
  *
  * Copyright (C) 2010-2014 Martin
  */
-
 package com.googlecode.lanterna.terminal;
 
 import com.googlecode.lanterna.TerminalFacade;
-import com.googlecode.lanterna.terminal.ACS;
-import com.googlecode.lanterna.terminal.Terminal;
 import java.io.IOException;
 
 /**
@@ -29,8 +26,8 @@ import java.io.IOException;
  * @author Martin
  */
 public class SwingTerminalTest {
-    public static void main(String[] args) throws InterruptedException, IOException
-    {
+
+    public static void main(String[] args) throws InterruptedException, IOException {
         Terminal terminal = TerminalFacade.createSwingTerminal();
         terminal.enterPrivateMode();
         terminal.clearScreen();

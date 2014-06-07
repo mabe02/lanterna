@@ -16,13 +16,8 @@
  *
  * Copyright (C) 2010-2014 Martin
  */
-
 package com.googlecode.lanterna.screen;
 
-import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.input.KeyType;
-import com.googlecode.lanterna.screen.DefaultScreen;
-import com.googlecode.lanterna.screen.ScreenWriter;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TextColor;
@@ -33,28 +28,22 @@ import java.io.IOException;
  *
  * @author Martin
  */
-public class ScreenResizeTest
-{
-    public static void main(String[] args) throws InterruptedException, IOException, IOException
-    {
+public class ScreenResizeTest {
+
+    public static void main(String[] args) throws InterruptedException, IOException, IOException {
         new ScreenResizeTest(args);
     }
 
-    private DefaultScreen screen;
-    @SuppressWarnings("unused")
-	private boolean willResize;
+    private final DefaultScreen screen;
 
-    public ScreenResizeTest(String[] args) throws InterruptedException, IOException
-    {
-        this.willResize = false;
+    public ScreenResizeTest(String[] args) throws InterruptedException, IOException {
         screen = new TestTerminalFactory(args).createScreen();
         screen.startScreen();
         screen.setCursorPosition(new TerminalPosition(0, 0));
         putStrings("Initial setup, please resize the window");
 
         long now = System.currentTimeMillis();
-        while(System.currentTimeMillis() - now < 20 * 1000)
-        {
+        while(System.currentTimeMillis() - now < 20 * 1000) {
             screen.readInput();
             if(screen.doResizeIfNecessary() != null) {
                 putStrings("Size: " + screen.getTerminalSize().getColumns() + "x" + screen.getTerminalSize().getRows());
@@ -65,8 +54,7 @@ public class ScreenResizeTest
         screen.stopScreen();
     }
 
-    private void putStrings(String topTitle)
-    {
+    private void putStrings(String topTitle) {
         ScreenWriter writer = new ScreenWriter(screen);
         writer.setForegroundColor(TextColor.ANSI.DEFAULT);
         writer.setBackgroundColor(TextColor.ANSI.DEFAULT);

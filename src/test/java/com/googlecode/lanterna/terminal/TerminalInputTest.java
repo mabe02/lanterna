@@ -16,12 +16,10 @@
  *
  * Copyright (C) 2010-2014 Martin
  */
-
 package com.googlecode.lanterna.terminal;
 
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
-import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.TestTerminalFactory;
 import java.io.IOException;
 
@@ -29,10 +27,9 @@ import java.io.IOException;
  *
  * @author martin
  */
-public class TerminalInputTest
-{
-    public static void main(String[] args) throws InterruptedException, IOException
-    {
+public class TerminalInputTest {
+
+    public static void main(String[] args) throws InterruptedException, IOException {
         final Terminal rawTerminal = new TestTerminalFactory(args).createTerminal();
         rawTerminal.enterPrivateMode();
 
@@ -45,25 +42,29 @@ public class TerminalInputTest
                 continue;
             }
 
-            if(key.getKeyType()== KeyType.Escape)
+            if(key.getKeyType() == KeyType.Escape) {
                 break;
+            }
 
-            if(currentRow == 0)
+            if(currentRow == 0) {
                 rawTerminal.clearScreen();
+            }
 
             rawTerminal.moveCursor(0, currentRow++);
             putString(rawTerminal, key.toString());
 
-            if(currentRow >= rawTerminal.getTerminalSize().getRows())
+            if(currentRow >= rawTerminal.getTerminalSize().getRows()) {
                 currentRow = 0;
+            }
         }
 
         rawTerminal.exitPrivateMode();
     }
 
     private static void putString(Terminal rawTerminal, String string) {
-        for(int i = 0; i < string.length(); i++)
+        for(int i = 0; i < string.length(); i++) {
             rawTerminal.putCharacter(string.charAt(i));
+        }
         rawTerminal.flush();
     }
 }

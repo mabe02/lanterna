@@ -16,14 +16,9 @@
  *
  * Copyright (C) 2010-2014 Martin
  */
-
 package com.googlecode.lanterna.terminal;
 
 import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.input.KeyType;
-import com.googlecode.lanterna.terminal.ResizeListener;
-import com.googlecode.lanterna.terminal.Terminal;
-import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.TestTerminalFactory;
 import java.io.IOException;
 
@@ -31,12 +26,11 @@ import java.io.IOException;
  *
  * @author Martin
  */
-public class TerminalResizeTest implements ResizeListener
-{
+public class TerminalResizeTest implements ResizeListener {
+
     private static Terminal terminal;
 
-    public static void main(String[] args) throws InterruptedException, IOException, IOException
-    {
+    public static void main(String[] args) throws InterruptedException, IOException, IOException {
         terminal = new TestTerminalFactory(args).createTerminal();
         terminal.enterPrivateMode();
         terminal.clearScreen();
@@ -52,21 +46,23 @@ public class TerminalResizeTest implements ResizeListener
 
         while(true) {
             KeyStroke key = terminal.readInput();
-            if(key == null || key.getCharacter() != 'q')
+            if(key == null || key.getCharacter() != 'q') {
                 Thread.sleep(1);
-            else
+            }
+            else {
                 break;
+            }
         }
         terminal.exitPrivateMode();
     }
 
     @Override
-    public void onResized(Terminal terminal, TerminalSize newSize)
-    {
+    public void onResized(Terminal terminal, TerminalSize newSize) {
         terminal.moveCursor(0, 0);
         String string = newSize.getColumns() + "x" + newSize.getRows() + "                     ";
-        char []chars = string.toCharArray();
-        for(char c: chars)
+        char[] chars = string.toCharArray();
+        for(char c : chars) {
             terminal.putCharacter(c);
+        }
     }
 }

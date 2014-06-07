@@ -40,7 +40,7 @@ public class PseudoTerminal {
 
     public static void main(String[] args) throws InterruptedException, IOException {
         final Terminal rawTerminal = new TestTerminalFactory(args).createTerminal();
-        
+
         //assume bash is available
         Process bashProcess = Runtime.getRuntime().exec("bash", makeEnvironmentVariables());
         ProcessOutputReader stdout = new ProcessOutputReader(bashProcess.getInputStream(), rawTerminal);
@@ -60,13 +60,14 @@ public class PseudoTerminal {
         List<String> environment = new ArrayList<String>();
         Map<String, String> env = new TreeMap<String, String>(System.getenv());
         env.put("TERM", "xterm");   //Will this make bash detect us as a proper terminal??
-        for(String key: env.keySet()) {
+        for(String key : env.keySet()) {
             environment.add(key + "=" + env.get(key));
         }
         return environment.toArray(new String[environment.size()]);
     }
-    
+
     private static class ProcessOutputReader {
+
         private final InputStreamReader inputStreamReader;
         private final Terminal terminalEmulator;
         private boolean stop;
@@ -92,7 +93,11 @@ public class PseudoTerminal {
                                 terminalEmulator.flush();
                             }
                             else {
-                                try { Thread.sleep(1); } catch(InterruptedException e) {}
+                                try {
+                                    Thread.sleep(1);
+                                }
+                                catch(InterruptedException e) {
+                                }
                             }
                             readCharacters = inputStreamReader.read(buffer);
                         }
@@ -107,16 +112,17 @@ public class PseudoTerminal {
                         catch(IOException e) {
                         }
                     }
-                }                
+                }
             }.start();
         }
-        
+
         private void stop() {
             stop = true;
         }
     }
 
     private static class ProcessInputWriter {
+
         private final OutputStream outputStream;
         private final Terminal terminalEmulator;
         private boolean stop;
@@ -167,7 +173,7 @@ public class PseudoTerminal {
                         catch(IOException e) {
                         }
                     }
-                }                
+                }
             }.start();
         }
 
@@ -180,7 +186,7 @@ public class PseudoTerminal {
             outputStream.flush();
             terminalEmulator.flush();
         }
-        
+
         private void stop() {
             stop = true;
         }

@@ -29,10 +29,11 @@ import java.io.IOException;
  * @author martin
  */
 public class PrivateModeTest {
+
     public static void main(String[] args) throws IOException, InterruptedException {
         Terminal terminal = new TestTerminalFactory(args).createTerminal();
         if(terminal instanceof SwingTerminalFrame) {
-            ((SwingTerminalFrame)terminal).setAutoCloseTrigger(SwingTerminalFrame.AutoCloseTrigger.DontAutoClose);
+            ((SwingTerminalFrame) terminal).setAutoCloseTrigger(SwingTerminalFrame.AutoCloseTrigger.DontAutoClose);
         }
         boolean normalTerminal = true;
         printNormalTerminalText(terminal);
@@ -59,7 +60,7 @@ public class PrivateModeTest {
         }
         terminal.putCharacter('\n');
         if(terminal instanceof SwingTerminalFrame) {
-            ((SwingTerminalFrame)terminal).dispose();
+            ((SwingTerminalFrame) terminal).dispose();
         }
     }
 

@@ -4,8 +4,6 @@
  */
 package com.googlecode.lanterna.screen;
 
-import com.googlecode.lanterna.screen.DefaultScreen;
-import com.googlecode.lanterna.screen.ScreenWriter;
 import com.googlecode.lanterna.terminal.TextColor;
 import com.googlecode.lanterna.TestTerminalFactory;
 import java.io.IOException;
