@@ -31,6 +31,9 @@ import java.io.IOException;
 public class PrivateModeTest {
     public static void main(String[] args) throws IOException, InterruptedException {
         Terminal terminal = new TestTerminalFactory(args).createTerminal();
+        if(terminal instanceof SwingTerminalFrame) {
+            ((SwingTerminalFrame)terminal).setAutoCloseTrigger(SwingTerminalFrame.AutoCloseTrigger.DontAutoClose);
+        }
         boolean normalTerminal = true;
         printNormalTerminalText(terminal);
         KeyStroke keyStroke = null;
