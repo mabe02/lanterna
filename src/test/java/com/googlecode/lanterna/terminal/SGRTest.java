@@ -34,7 +34,7 @@ public class SGRTest {
         rawTerminal.clearScreen();
         rawTerminal.applyForegroundColor(TextColor.ANSI.RED);
         rawTerminal.enableSGR(Terminal.SGR.BLINK);
-        rawTerminal.moveCursor(10, 4);
+        rawTerminal.moveCursor(10, 2);
         rawTerminal.putCharacter('H');
         rawTerminal.putCharacter('e');
         rawTerminal.putCharacter('l');
@@ -43,7 +43,7 @@ public class SGRTest {
         rawTerminal.putCharacter('!');
         rawTerminal.disableSGR(Terminal.SGR.BLINK);
         rawTerminal.enableSGR(Terminal.SGR.BOLD);
-        rawTerminal.moveCursor(10, 5);
+        rawTerminal.moveCursor(10, 4);
         rawTerminal.putCharacter('H');
         rawTerminal.putCharacter('e');
         rawTerminal.putCharacter('l');
@@ -61,7 +61,7 @@ public class SGRTest {
         rawTerminal.putCharacter('!');
         rawTerminal.disableSGR(Terminal.SGR.BORDERED);
         rawTerminal.enableSGR(Terminal.SGR.CIRCLED);
-        rawTerminal.moveCursor(10, 7);
+        rawTerminal.moveCursor(10, 8);
         rawTerminal.putCharacter('H');
         rawTerminal.putCharacter('e');
         rawTerminal.putCharacter('l');
@@ -70,7 +70,7 @@ public class SGRTest {
         rawTerminal.putCharacter('!');
         rawTerminal.disableSGR(Terminal.SGR.CIRCLED);
         rawTerminal.enableSGR(Terminal.SGR.CROSSEDOUT);
-        rawTerminal.moveCursor(10, 8);
+        rawTerminal.moveCursor(10, 10);
         rawTerminal.putCharacter('H');
         rawTerminal.putCharacter('e');
         rawTerminal.putCharacter('l');
@@ -79,7 +79,7 @@ public class SGRTest {
         rawTerminal.putCharacter('!');
         rawTerminal.disableSGR(Terminal.SGR.CROSSEDOUT);
         rawTerminal.enableSGR(Terminal.SGR.UNDERLINE);
-        rawTerminal.moveCursor(10, 9);
+        rawTerminal.moveCursor(10, 12);
         rawTerminal.putCharacter('H');
         rawTerminal.putCharacter('e');
         rawTerminal.putCharacter('l');
@@ -88,7 +88,7 @@ public class SGRTest {
         rawTerminal.putCharacter('!');
         rawTerminal.disableSGR(Terminal.SGR.UNDERLINE);
         rawTerminal.enableSGR(Terminal.SGR.FRAKTUR);
-        rawTerminal.moveCursor(10, 10);
+        rawTerminal.moveCursor(10, 14);
         rawTerminal.putCharacter('H');
         rawTerminal.putCharacter('e');
         rawTerminal.putCharacter('l');
@@ -97,7 +97,7 @@ public class SGRTest {
         rawTerminal.putCharacter('!');
         rawTerminal.disableSGR(Terminal.SGR.FRAKTUR);
         rawTerminal.enableSGR(Terminal.SGR.REVERSE);
-        rawTerminal.moveCursor(10, 11);
+        rawTerminal.moveCursor(10, 16);
         rawTerminal.putCharacter('H');
         rawTerminal.putCharacter('e');
         rawTerminal.putCharacter('l');
