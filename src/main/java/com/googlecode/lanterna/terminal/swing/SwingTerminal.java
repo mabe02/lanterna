@@ -187,6 +187,13 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
                 g.setFont(font);
                 FontMetrics fontMetrics = g.getFontMetrics();
                 g.drawString(Character.toString(character.getCharacter()), columnIndex * fontWidth, ((rowIndex + 1) * fontHeight) - fontMetrics.getDescent());
+                
+                if(character.isCrossedOut()) {
+                    g.drawLine(columnIndex * fontWidth, rowIndex * fontHeight + (fontHeight / 2), (columnIndex + 1) * fontWidth, rowIndex * fontHeight + (fontHeight / 2));
+                }
+                if(character.isUnderlined()) {
+                    g.drawLine(columnIndex * fontWidth, ((rowIndex + 1) * fontHeight) - fontMetrics.getDescent() + 1, (columnIndex + 1) * fontWidth, ((rowIndex + 1) * fontHeight) - fontMetrics.getDescent() + 1);
+                }
 
                 if(atCursorLocation && deviceConfiguration.getCursorStyle() == SwingTerminalDeviceConfiguration.CursorStyle.DOUBLE_UNDERBAR) {
                     g.setColor(colorConfiguration.toAWTColor(deviceConfiguration.getCursorColor(), false, false));
