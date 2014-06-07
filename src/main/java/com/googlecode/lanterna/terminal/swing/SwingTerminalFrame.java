@@ -57,7 +57,7 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
     }
 
     private final SwingTerminal swingTerminal;
-    private final AutoCloseTrigger autoCloseTrigger;
+    private AutoCloseTrigger autoCloseTrigger;
 
     public SwingTerminalFrame() throws HeadlessException {
         this(AutoCloseTrigger.DontAutoClose);
@@ -101,6 +101,14 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
         
         //Put input focus on the terminal component by default
         swingTerminal.requestFocusInWindow();
+    }
+
+    public AutoCloseTrigger getAutoCloseTrigger() {
+        return autoCloseTrigger;
+    }
+
+    public void setAutoCloseTrigger(AutoCloseTrigger autoCloseTrigger) {
+        this.autoCloseTrigger = autoCloseTrigger;
     }
 
     ///////////
