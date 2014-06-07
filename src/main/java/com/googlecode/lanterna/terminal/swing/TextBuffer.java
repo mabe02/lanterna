@@ -56,30 +56,36 @@ class TextBuffer {
         return row;
     }
 
-    void readjust(int width, int height) {
+    void readjust(int columns, int rows) {
+        while(lineBuffer.size() < rows) {
+            newLine(columns);
+        }
+        if(lineBuffer.isEmpty()) {
+            return;
+        }
         int bufferWidth = lineBuffer.getLast().size();
 
-        if(width > bufferWidth) {
+        if(columns > bufferWidth) {
             for(List<TerminalCharacter> line: lineBuffer) {
-                for(int i = 0; i < width - bufferWidth; i++) {
+                for(int i = 0; i < columns - bufferWidth; i++) {
                     line.add(fillCharacter);
                 }
             }
         }
-        else if(width < bufferWidth) {
+        else if(columns < bufferWidth) {
             for(List<TerminalCharacter> line: lineBuffer) {
-                for(int i = 0; i < bufferWidth - width; i++) {
+                for(int i = 0; i < bufferWidth - columns; i++) {
                     line.remove(line.size() - 1);
                 }
             }
         }
 
         //Fill the buffer height if necessary
-        while(height > lineBuffer.size()) {
-            lineBuffer.addFirst(newLine(width, fillCharacter));
+        while(rows > lineBuffer.size()) {
+            lineBuffer.addFirst(newLine(columns, fillCharacter));
         }
         //Cut down history, if necessary
-        while(lineBuffer.size() - height > backlog) {
+        while(lineBuffer.size() - rows > backlog) {
             lineBuffer.removeFirst();
         }
     }
@@ -89,8 +95,12 @@ class TextBuffer {
     }
 
     void newLine(TerminalSize terminalSize) {
-        lineBuffer.addLast(newLine(terminalSize.getColumns(), fillCharacter));
+        newLine(terminalSize.getColumns());
         readjust(terminalSize.getColumns(), terminalSize.getRows());
+    }
+    
+    private void newLine(int columns) {
+        lineBuffer.addLast(newLine(columns, fillCharacter));
     }
     
     void setCharacter(TerminalSize terminalSize, TerminalPosition currentPosition, TerminalCharacter terminalCharacter) {
