@@ -18,13 +18,9 @@
  */
 package com.googlecode.lanterna.terminal;
 
-import com.googlecode.lanterna.screen.DefaultScreen;
-import com.googlecode.lanterna.screen.Screen;
-import com.googlecode.lanterna.screen.ScreenWriter;
 import com.googlecode.lanterna.terminal.swing.SwingTerminal;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.util.Random;
 import javax.swing.Timer;
 
