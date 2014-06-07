@@ -24,6 +24,7 @@ import java.util.Arrays;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.terminal.TextColor;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.EnumSet;
 
@@ -83,13 +84,21 @@ public class ScreenWriter {
     }
 
     public ScreenWriter enableModifiers(Terminal.SGR... modifiers) {
-        this.activeModifiers.addAll(Arrays.asList(modifiers));
+        enableModifiers(Arrays.asList(modifiers));
         return this;
+    }
+    
+    private void enableModifiers(Collection<Terminal.SGR> modifiers) { 
+        this.activeModifiers.addAll(modifiers);
     }
 
     public ScreenWriter disableModifiers(Terminal.SGR... modifiers) {
-        this.activeModifiers.removeAll(Arrays.asList(modifiers));
+        disableModifiers(Arrays.asList(modifiers));
         return this;
+    }
+    
+    private void disableModifiers(Collection<Terminal.SGR> modifiers) { 
+        this.activeModifiers.removeAll(modifiers);
     }
 
     public ScreenWriter clearModifiers() {
@@ -387,12 +396,12 @@ public class ScreenWriter {
      * @param column What column to put the string at
      * @param row What row to put the string at
      * @param string String to put on the screen
-     * @param modifier Modifier to apply to the string
+     * @param extraModifier Modifier to apply to the string
      * @param optionalExtraModifiers Optional extra modifiers to apply to the string
      * @return Itself
      */
-    public ScreenWriter putString(int column, int row, String string, Terminal.SGR modifier, Terminal.SGR... optionalExtraModifiers) {
-        putString(new TerminalPosition(column, row), string, modifier, optionalExtraModifiers);
+    public ScreenWriter putString(int column, int row, String string, Terminal.SGR extraModifier, Terminal.SGR... optionalExtraModifiers) {
+        putString(new TerminalPosition(column, row), string, extraModifier, optionalExtraModifiers);
         return this;
     }
     
@@ -404,34 +413,32 @@ public class ScreenWriter {
      * </pre>
      * @param position Position to put the string at
      * @param string String to put on the screen
-     * @param modifier Modifier to apply to the string
+     * @param extraModifier Modifier to apply to the string
      * @param optionalExtraModifiers Optional extra modifiers to apply to the string
      * @return Itself
      */
-    public ScreenWriter putString(TerminalPosition position, String string, Terminal.SGR modifier, Terminal.SGR... optionalExtraModifiers) {
+    public ScreenWriter putString(TerminalPosition position, String string, Terminal.SGR extraModifier, Terminal.SGR... optionalExtraModifiers) {
         setPosition(position);
-        putString(string, modifier, optionalExtraModifiers);
+        putString(string, extraModifier, optionalExtraModifiers);
         return this;
     }
     
     /**
-     * Shortcut to calling:
-     * <pre>
-     *  clearModifiers();
-     *  enableModifiers(modifiers);
-     *  enableModifiers(optionalExtraModifiers);
-     *  putString(string);
-     * </pre>
+     * Prints a string from the current writer position and optionally enables a few extra SGR modifiers. The extra SGR
+     * modifiers, those that wasn't already active on the writer when this method is called, will only be applied to 
+     * this operation and will be disabled again when the call is done.
      * @param string String to put on the screen
-     * @param modifier Modifier to apply to the string
+     * @param extraModifier Extra modifier to apply to the string
      * @param optionalExtraModifiers Optional extra modifiers to apply to the string
      * @return Itself
      */
-    public ScreenWriter putString(String string, Terminal.SGR modifier, Terminal.SGR... optionalExtraModifiers) {
+    public ScreenWriter putString(String string, Terminal.SGR extraModifier, Terminal.SGR... optionalExtraModifiers) {
         clearModifiers();
-        enableModifiers(modifier);
-        enableModifiers(optionalExtraModifiers);
+        EnumSet<Terminal.SGR> extraModifiers = EnumSet.of(extraModifier, optionalExtraModifiers);
+        extraModifiers.removeAll(activeModifiers);
+        enableModifiers(extraModifiers);
         putString(string);
+        disableModifiers(extraModifiers);
         return this;
     }
 
