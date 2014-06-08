@@ -226,42 +226,42 @@ public class GUIScreen
                 break;
             }
 
-            try {
-                List<Action> actions = null;
-                synchronized(actionToRunInEventThread) {
-                    if(!actionToRunInEventThread.isEmpty()) {
-                        actions = new ArrayList<Action>(actionToRunInEventThread);
-                        actionToRunInEventThread.clear();
-                    }
-                }
-                
-                if(actions != null) {
-                    for(Action nextAction: actions) {
-                        nextAction.doAction();
-                    }
-                }                
-
-                //Make sure we have a component in focus if there is one available
-                windowStack.getLast().window.checkFocus();
-                        
-                boolean repainted = update();
-
-                Key nextKey = screen.readInput();
-                if(nextKey != null) {
-                    windowStack.getLast().window.onKeyPressed(nextKey);
-                    invalidate();
-                }
-                else {
-                    if(!repainted) {
-                        try {
-                            Thread.sleep(1);
-                        }
-                        catch(InterruptedException e) {}
-                    }
+            List<Action> actions = null;
+            synchronized(actionToRunInEventThread) {
+                if(!actionToRunInEventThread.isEmpty()) {
+                    actions = new ArrayList<Action>(actionToRunInEventThread);
+                    actionToRunInEventThread.clear();
                 }
             }
-            catch(Throwable e) {
-                e.printStackTrace();
+
+            if(actions != null) {
+                for(Action nextAction: actions) {
+                    try {
+                        nextAction.doAction();
+                    }
+                    catch(Throwable e) {
+                        e.printStackTrace();
+                    }
+                }
+            }                
+
+            //Make sure we have a component in focus if there is one available
+            windowStack.getLast().window.checkFocus();
+
+            boolean repainted = update();
+
+            Key nextKey = screen.readInput();
+            if(nextKey != null) {
+                windowStack.getLast().window.onKeyPressed(nextKey);
+                invalidate();
+            }
+            else {
+                if(!repainted) {
+                    try {
+                        Thread.sleep(1);
+                    }
+                    catch(InterruptedException e) {}
+                }
             }
         }
     }
