@@ -178,10 +178,12 @@ public class GUIScreen
             TextGraphics subGraphics = textGraphics.subAreaGraphics(topLeft,
                     new TerminalSize(preferredSize.getColumns(), preferredSize.getRows()));
 
-            //First draw the shadow
-            textGraphics.applyTheme(guiTheme.getDefinition(Theme.Category.SHADOW));
-            textGraphics.fillRectangle(' ', new TerminalPosition(topLeft.getColumn() + 2, topLeft.getRow() + 1),
-                    new TerminalSize(subGraphics.getWidth(), subGraphics.getHeight()));
+            if(windowPlacement.getWindow().isDrawShadow()) {
+                //First draw the shadow
+                textGraphics.applyTheme(guiTheme.getDefinition(Theme.Category.SHADOW));
+                textGraphics.fillRectangle(' ', new TerminalPosition(topLeft.getColumn() + 2, topLeft.getRow() + 1),
+                        new TerminalSize(subGraphics.getWidth(), subGraphics.getHeight()));
+            }
 
             //Then draw the window
             windowPlacement.getWindow().repaint(subGraphics);

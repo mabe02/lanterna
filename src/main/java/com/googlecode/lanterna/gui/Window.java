@@ -48,6 +48,7 @@ public class Window
     private Interactable currentlyInFocus;
     private TerminalSize windowSizeOverride;
     private boolean soloWindow;
+    private boolean drawShadow;
 
     /**
      * Creates a new window
@@ -62,6 +63,7 @@ public class Window
         this.currentlyInFocus = null;
         this.soloWindow = false;
         this.windowSizeOverride = null;
+        this.drawShadow = true;
     }
 
     public void addWindowListener(WindowListener listener)
@@ -306,6 +308,14 @@ public class Window
     {
         this.soloWindow = soloWindow;
     }
+
+    public boolean isDrawShadow() {
+        return drawShadow;
+    }
+
+    public void setDrawShadow(boolean drawShadow) {
+        this.drawShadow = drawShadow;
+    }            
 
     boolean maximisesVertically()
     {
