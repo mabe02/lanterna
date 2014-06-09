@@ -9,6 +9,7 @@
  * Manual setFocus() for components
  * Resize terminal (http://invisible-island.net/xterm/ctlseqs/ctlseqs.html)
  * Tabbed panel
+ * Render window title other place than left-aligned
 
 From Brad C. by email to lanterna-discuss on 2014-06-09:
  * Border Colors - Would be nice if you could optionally override the Theme to include a Background and Foreground color on the various borders. 
