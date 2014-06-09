@@ -338,6 +338,10 @@ public class Window
         invalidate();
     }
 
+    protected Interactable getInputFocusedComponent() {
+        return currentlyInFocus;
+    }
+
     public void close()
     {
         if(owner != null)
