@@ -31,7 +31,13 @@ public class CJKUtils {
     //Contributed there by user Rakesh N
     public static boolean isCharCJK(final char c) {
         Character.UnicodeBlock unicodeBlock = Character.UnicodeBlock.of(c);
-        return (unicodeBlock == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS)
+        return (unicodeBlock == Character.UnicodeBlock.HIRAGANA)
+                || (unicodeBlock == Character.UnicodeBlock.KATAKANA)
+                || (unicodeBlock == Character.UnicodeBlock.KATAKANA_PHONETIC_EXTENSIONS)
+                || (unicodeBlock == Character.UnicodeBlock.HANGUL_COMPATIBILITY_JAMO)
+                || (unicodeBlock == Character.UnicodeBlock.HANGUL_JAMO)
+                || (unicodeBlock == Character.UnicodeBlock.HANGUL_SYLLABLES)
+                || (unicodeBlock == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS)
                 || (unicodeBlock == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A)
                 || (unicodeBlock == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B)
                 || (unicodeBlock == Character.UnicodeBlock.CJK_COMPATIBILITY_FORMS)
