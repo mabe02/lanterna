@@ -64,7 +64,7 @@ public class PrivateModeTest {
         }
     }
 
-    private static void printNormalTerminalText(Terminal terminal) {
+    private static void printNormalTerminalText(Terminal terminal) throws IOException {
         terminal.clearScreen();
         terminal.moveCursor(5, 3);
         String text = "Normal terminal, press space to switch";
@@ -74,7 +74,7 @@ public class PrivateModeTest {
         terminal.flush();
     }
 
-    private static void printPrivateModeTerminalText(Terminal terminal) {
+    private static void printPrivateModeTerminalText(Terminal terminal) throws IOException {
         terminal.clearScreen();
         terminal.moveCursor(5, 3);
         String text = "Private mode terminal, press space to switch";

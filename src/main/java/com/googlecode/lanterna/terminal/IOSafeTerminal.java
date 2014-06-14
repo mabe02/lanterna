@@ -18,17 +18,45 @@
  */
 package com.googlecode.lanterna.terminal;
 
+import com.googlecode.lanterna.input.KeyStroke;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Interface extending Terminal that removes the IOException throw clause
- * @author martin
+ * Interface extending Terminal that removes the IOException throw clause. You can for example use this instead of 
+ * Terminal if you use an implementation that doesn't throw any IOExceptions or if you wrap your terminal in an 
+ * IOSafeTerminalAdapter.
+ * @author Martin
  */
 public interface IOSafeTerminal extends Terminal {
-
     @Override
-    public byte[] enquireTerminal(int timeout, TimeUnit timeoutUnit);
-
+    public void enterPrivateMode();
+    @Override
+    public void exitPrivateMode();
+    @Override
+    public void clearScreen();
+    @Override
+    public void moveCursor(int x, int y);
+    @Override
+    public void setCursorVisible(boolean visible);
+    @Override
+    public void putCharacter(char c);
+    @Override
+    public void enableSGR(SGR sgr);
+    @Override
+    public void disableSGR(SGR sgr);
+    @Override
+    public void resetAllSGR();
+    @Override
+    public void applyForegroundColor(TextColor color);
+    @Override
+    public void applyBackgroundColor(TextColor color);
     @Override
     public TerminalSize getTerminalSize();
+    @Override
+    public byte[] enquireTerminal(int timeout, TimeUnit timeoutUnit);
+    @Override
+    public void flush();
+    @Override
+    KeyStroke readInput();
 }

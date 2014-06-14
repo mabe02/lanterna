@@ -53,10 +53,9 @@ public abstract class StreamBasedTerminal extends InputEnabledAbstractTerminal {
     private final InputStream terminalInput;
     private final OutputStream terminalOutput;
     private final Charset terminalCharset;
-    protected final Object writerMutex;
+    private final Object writerMutex;
 
-    public StreamBasedTerminal(final InputStream terminalInput, final OutputStream terminalOutput,
-            final Charset terminalCharset) {
+    public StreamBasedTerminal(InputStream terminalInput, OutputStream terminalOutput, Charset terminalCharset) {
         super(new InputDecoder(new InputStreamReader(terminalInput, terminalCharset)));
         this.writerMutex = new Object();
         this.terminalInput = terminalInput;
@@ -76,24 +75,16 @@ public abstract class StreamBasedTerminal extends InputEnabledAbstractTerminal {
      * @throws LanternaException
      */
     @Override
-    public void putCharacter(char c) {
-        synchronized(writerMutex) {
-            writeToTerminal(translateCharacter(c));
-        }
+    public void putCharacter(char c) throws IOException {
+        writeToTerminal(translateCharacter(c));
     }
 
     /**
-     * Allow subclasses (that are supposed to know what they're doing) to write directly to the terminal<br>
-     * Warning! Be sure to call this method INSIDE of a synchronize(writeMutex) block!!!<br>
-     * The reason is that many control sequences are a group of bytes and we want to synchronize the whole thing rather
-     * than each character one by one.
+     * This method will write a list of bytes directly to the output stream of the terminal.
      */
-    protected void writeToTerminal(final byte... bytes) {
-        try {
+    protected void writeToTerminal(byte... bytes) throws IOException {
+        synchronized(writerMutex) {
             terminalOutput.write(bytes);
-        }
-        catch(IOException e) {
-            throw new LanternaException(e);
         }
     }
 
@@ -101,8 +92,8 @@ public abstract class StreamBasedTerminal extends InputEnabledAbstractTerminal {
     public byte[] enquireTerminal(int timeout, TimeUnit timeoutTimeUnit) throws IOException {
         synchronized(writerMutex) {
             terminalOutput.write(5);    //ENQ
+            flush();
         }
-        flush();
         
         //Wait for input
         long startTime = System.currentTimeMillis();
@@ -127,13 +118,8 @@ public abstract class StreamBasedTerminal extends InputEnabledAbstractTerminal {
     }
 
     @Override
-    public void flush() {
-        try {
-            terminalOutput.flush();
-        }
-        catch(IOException e) {
-            throw new LanternaException(e);
-        }
+    public void flush() throws IOException {
+        terminalOutput.flush();
     }
 
     protected byte[] translateCharacter(char input) {

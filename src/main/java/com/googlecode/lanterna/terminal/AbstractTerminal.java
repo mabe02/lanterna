@@ -18,6 +18,7 @@
  */
 package com.googlecode.lanterna.terminal;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,7 +81,7 @@ public abstract class AbstractTerminal implements Terminal {
      *
      * @param color Color to use for foreground
      */
-    protected abstract void applyForegroundColor(TextColor.ANSI color);
+    protected abstract void applyForegroundColor(TextColor.ANSI color) throws IOException;
 
     /**
      * Changes the foreground color for all the following characters put to the terminal. The foreground color is what
@@ -97,7 +98,7 @@ public abstract class AbstractTerminal implements Terminal {
      *
      * @param index Color index from the XTerm 256 color space
      */
-    protected abstract void applyForegroundColor(int index);
+    protected abstract void applyForegroundColor(int index) throws IOException;
 
     /**
      * Changes the foreground color for all the following characters put to the terminal. The foreground color is what
@@ -111,10 +112,10 @@ public abstract class AbstractTerminal implements Terminal {
      * @param g Green intensity, from 0 to 255
      * @param b Blue intensity, from 0 to 255
      */
-    protected abstract void applyForegroundColor(int r, int g, int b);
+    protected abstract void applyForegroundColor(int r, int g, int b) throws IOException;
 
     @Override
-    public void applyBackgroundColor(TextColor color) {
+    public void applyBackgroundColor(TextColor color) throws IOException {
         color.applyAsBackground(this);
     }
 
@@ -125,7 +126,7 @@ public abstract class AbstractTerminal implements Terminal {
      *
      * @param color Color to use for the background
      */
-    protected abstract void applyBackgroundColor(TextColor.ANSI color);
+    protected abstract void applyBackgroundColor(TextColor.ANSI color) throws IOException;
 
     /**
      * Changes the background color for all the following characters put to the terminal. The background color is the
@@ -142,7 +143,7 @@ public abstract class AbstractTerminal implements Terminal {
      *
      * @param index Index of the color to use, from the XTerm 256 color extension
      */
-    protected abstract void applyBackgroundColor(int index);
+    protected abstract void applyBackgroundColor(int index) throws IOException;
 
     /**
      * Changes the background color for all the following characters put to the terminal. The background color is the
@@ -156,7 +157,7 @@ public abstract class AbstractTerminal implements Terminal {
      * @param g Green intensity, from 0 to 255
      * @param b Blue intensity, from 0 to 255
      */
-    protected abstract void applyBackgroundColor(int r, int g, int b);
+    protected abstract void applyBackgroundColor(int r, int g, int b) throws IOException;
 
     /**
      * Used internally to get the last size known to the terminal

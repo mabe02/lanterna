@@ -41,7 +41,7 @@ public interface Terminal extends InputProvider {
      *
      * @throws IllegalStateException If you are already in private mode
      */
-    public void enterPrivateMode();
+    public void enterPrivateMode() throws IOException;
 
     /**
      * If you have previously entered private mode, this method will exit this and, depending on implementation, maybe
@@ -51,14 +51,14 @@ public interface Terminal extends InputProvider {
      *
      * @throws IllegalStateException If you are not in private mode
      */
-    public void exitPrivateMode();
+    public void exitPrivateMode() throws IOException;
 
     /**
      * Removes all the characters, colors and graphics from the screen and leaves you with a big empty space. Text
      * cursor position is undefined after this call (depends on platform and terminal) so you should always call
      * {@code moveCursor} next.
      */
-    public void clearScreen();
+    public void clearScreen() throws IOException;
 
     /**
      * Moves the text cursor to a new location on the terminal. The top-left corner has coordinates 0 x 0 and the bottom-
@@ -68,7 +68,7 @@ public interface Terminal extends InputProvider {
      * @param x The 0-indexed column to place the cursor at
      * @param y The 0-indexed row to place the cursor at
      */
-    public void moveCursor(int x, int y);
+    public void moveCursor(int x, int y) throws IOException;
 
     /**
      * Hides or shows the text cursor, but not all terminal (-emulators) supports this. The text cursor is normally a
@@ -77,7 +77,7 @@ public interface Terminal extends InputProvider {
      *
      * @param visible Hides the text cursor if {@code false} and shows it if {@code true}
      */
-    public void setCursorVisible(boolean visible);
+    public void setCursorVisible(boolean visible) throws IOException;
 
     /**
      * Prints one character to the terminal at the current cursor location. Please note that the cursor will then move
@@ -95,7 +95,7 @@ public interface Terminal extends InputProvider {
      *
      * @param c Character to place on the terminal
      */
-    public void putCharacter(char c);
+    public void putCharacter(char c) throws IOException;
 
     /**
      * Activates an {@code SGR} (Selected Graphic Rendition) code. This code modifies a state inside the terminal
@@ -105,7 +105,7 @@ public interface Terminal extends InputProvider {
      * @see Terminal.SGR
      * @see http://www.vt100.net/docs/vt510-rm/SGR
      */
-    public void enableSGR(SGR sgr);
+    public void enableSGR(SGR sgr) throws IOException;
 
     /**
      * Deactivates an {@code SGR} (Selected Graphic Rendition) code which has previously been activated through {@code
@@ -115,7 +115,7 @@ public interface Terminal extends InputProvider {
      * @see Terminal.SGR
      * @see http://www.vt100.net/docs/vt510-rm/SGR
      */
-    public void disableSGR(SGR sgr);
+    public void disableSGR(SGR sgr) throws IOException;
 
     /**
      * Removes all currently active SGR codes.
@@ -123,7 +123,7 @@ public interface Terminal extends InputProvider {
      * @see Terminal.SGR
      * @see http://www.vt100.net/docs/vt510-rm/SGR
      */
-    public void resetAllSGR();
+    public void resetAllSGR() throws IOException;
 
     /**
      * Changes the foreground color for all the following characters put to the terminal. The foreground color is what
@@ -137,7 +137,7 @@ public interface Terminal extends InputProvider {
      *
      * @param color Color to use for foreground
      */
-    public void applyForegroundColor(TextColor color);
+    public void applyForegroundColor(TextColor color) throws IOException;
 
     /**
      * Changes the background color for all the following characters put to the terminal. The background color is the
@@ -151,7 +151,7 @@ public interface Terminal extends InputProvider {
      *
      * @param color Color to use for the background
      */
-    public void applyBackgroundColor(TextColor color);
+    public void applyBackgroundColor(TextColor color) throws IOException;
 
     /**
      * Adds a {@code ResizeListener} to be called when the terminal has changed size. There is no guarantee that this
@@ -207,7 +207,7 @@ public interface Terminal extends InputProvider {
      * terminal is built around. Some implementing classes of this interface (like SwingTerminal) doesn't do anything
      * as it doesn't really apply to them.
      */
-    public void flush();
+    public void flush() throws IOException;
 
     /**
      * SGR - Select Graphic Rendition, changes the state of the terminal as to what kind of text to print after this
