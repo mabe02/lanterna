@@ -18,6 +18,7 @@
  */
 package com.googlecode.lanterna.terminal.swing;
 
+import com.googlecode.lanterna.CJKUtils;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import java.util.ArrayList;
@@ -94,6 +95,15 @@ class TextBuffer {
         List<TerminalCharacter> line = lineBuffer.get(lineBuffer.size() - terminalSize.getRows() + currentPosition.getRow());
         readjust(line, terminalSize.getColumns());
         line.set(currentPosition.getColumn(), terminalCharacter);
+        
+        //Pad CJK character with a trailing space
+        if(CJKUtils.isCharCJK(terminalCharacter.getCharacter()) && currentPosition.getColumn() + 1 < line.size()) {
+            line.set(currentPosition.getColumn() + 1, terminalCharacter.withCharacter(' '));
+        }
+        //If there's a CJK character immediately to our left, reset it
+        if(currentPosition.getColumn() > 0 && CJKUtils.isCharCJK(line.get(currentPosition.getColumn() - 1).getCharacter())) {
+            line.set(currentPosition.getColumn() - 1, line.get(currentPosition.getColumn() - 1).withCharacter(' '));
+        }
     }
 
     private void readjust(List<TerminalCharacter> line, int columns) {

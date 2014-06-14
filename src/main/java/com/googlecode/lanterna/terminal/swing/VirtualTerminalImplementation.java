@@ -18,6 +18,7 @@
  */
 package com.googlecode.lanterna.terminal.swing;
 
+import com.googlecode.lanterna.CJKUtils;
 import com.googlecode.lanterna.input.KeyDecodingProfile;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.terminal.AbstractTerminal;
@@ -25,9 +26,7 @@ import com.googlecode.lanterna.terminal.IOSafeTerminal;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.terminal.TextColor;
-import java.io.IOException;
 import java.util.EnumSet;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -103,8 +102,8 @@ class VirtualTerminalImplementation extends AbstractTerminal implements IOSafeTe
         }
     }
 
-    private void advanceCursor() {
-        currentPosition = currentPosition.withRelativeColumn(1);
+    private void advanceCursor(char c) {
+        currentPosition = currentPosition.withRelativeColumn(CJKUtils.isCharCJK(c) ? 2 : 1);
         if(currentPosition.getColumn() >= getTerminalSize().getColumns()) {
             currentPosition = currentPosition.withColumn(0).withRelativeRow(1);
         }
@@ -161,7 +160,7 @@ class VirtualTerminalImplementation extends AbstractTerminal implements IOSafeTe
         }
         else {
             deviceEmulator.getBuffer().setCharacter(getTerminalSize(), currentPosition, new TerminalCharacter(c, foregroundColor, backgroundColor, activeSGRs));
-            advanceCursor();
+            advanceCursor(c);
         }
     }
 

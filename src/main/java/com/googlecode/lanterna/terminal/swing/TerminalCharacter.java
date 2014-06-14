@@ -34,22 +34,22 @@ class TerminalCharacter {
     private final TextColor backgroundColor;
     private final EnumSet<Terminal.SGR> styles;
 
-    public TerminalCharacter(char character, TextColor foregroundColor, TextColor backgroundColor, EnumSet<Terminal.SGR> styles) {
+    TerminalCharacter(char character, TextColor foregroundColor, TextColor backgroundColor, EnumSet<Terminal.SGR> styles) {
         this.character = character;
         this.foregroundColor = foregroundColor;
         this.backgroundColor = backgroundColor;
         this.styles = EnumSet.copyOf(styles);
     }
 
-    public char getCharacter() {
+    char getCharacter() {
         return character;
     }
 
-    public TextColor getForegroundColor() {
+    TextColor getForegroundColor() {
         return foregroundColor;
     }
 
-    public TextColor getBackgroundColor() {
+    TextColor getBackgroundColor() {
         return backgroundColor;
     }
 
@@ -73,4 +73,10 @@ class TerminalCharacter {
         return styles.contains(Terminal.SGR.UNDERLINE);
     }
 
+    TerminalCharacter withCharacter(char c) {
+        if(c == character) {
+            return this;
+        }
+        return new TerminalCharacter(c, foregroundColor, backgroundColor, styles);
+    }
 }

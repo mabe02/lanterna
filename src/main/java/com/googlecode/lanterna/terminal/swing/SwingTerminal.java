@@ -18,6 +18,7 @@
  */
 package com.googlecode.lanterna.terminal.swing;
 
+import com.googlecode.lanterna.CJKUtils;
 import com.googlecode.lanterna.input.KeyDecodingProfile;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
@@ -40,7 +41,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -48,7 +48,6 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
@@ -181,12 +180,21 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
             for(int columnIndex = 0; columnIndex < row.size(); columnIndex++) {
                 TerminalCharacter character = row.get(columnIndex);
                 boolean atCursorLocation = cursorPosition.equals(columnIndex, rowIndex);
+                //If next position is the cursor location and this is a CJK character (i.e. cursor is on the padding),
+                //consider this location the cursor position since otherwise the cursor will be skipped
+                if(!atCursorLocation && 
+                        cursorPosition.getColumn() == columnIndex + 1 && 
+                        cursorPosition.getRow() == rowIndex &&
+                        CJKUtils.isCharCJK(character.getCharacter())) {
+                    atCursorLocation = true;
+                }
+                int characterWidth = fontWidth * (CJKUtils.isCharCJK(character.getCharacter()) ? 2 : 1);
 
                 Color foregroundColor = deriveTrueForegroundColor(character, atCursorLocation);
                 Color backgroundColor = deriveTrueBackgroundColor(character, atCursorLocation);
 
                 g.setColor(backgroundColor);
-                g.fillRect(columnIndex * fontWidth, rowIndex * fontHeight, fontWidth, fontHeight);
+                g.fillRect(columnIndex * fontWidth, rowIndex * fontHeight, characterWidth, fontHeight);
 
                 g.setColor(foregroundColor);
                 Font font = fontConfiguration.getFontForCharacter(character);
@@ -195,15 +203,26 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
                 g.drawString(Character.toString(character.getCharacter()), columnIndex * fontWidth, ((rowIndex + 1) * fontHeight) - fontMetrics.getDescent());
                 
                 if(character.isCrossedOut()) {
-                    g.drawLine(columnIndex * fontWidth, rowIndex * fontHeight + (fontHeight / 2), (columnIndex + 1) * fontWidth, rowIndex * fontHeight + (fontHeight / 2));
+                    int lineStartX = columnIndex * fontWidth;
+                    int lineStartY = rowIndex * fontHeight + (fontHeight / 2);
+                    int lineEndX = lineStartX + characterWidth;
+                    int lineEndY = lineStartY;
+                    g.drawLine(lineStartX, lineStartY, lineEndX, lineEndY);
                 }
                 if(character.isUnderlined()) {
-                    g.drawLine(columnIndex * fontWidth, ((rowIndex + 1) * fontHeight) - fontMetrics.getDescent() + 1, (columnIndex + 1) * fontWidth, ((rowIndex + 1) * fontHeight) - fontMetrics.getDescent() + 1);
+                    int lineStartX = columnIndex * fontWidth;
+                    int lineStartY = ((rowIndex + 1) * fontHeight) - fontMetrics.getDescent() + 1;
+                    int lineEndX = lineStartX + characterWidth;
+                    int lineEndY = lineStartY;
+                    g.drawLine(lineStartX, lineStartY, lineEndX, lineEndY);
                 }
 
                 if(atCursorLocation && deviceConfiguration.getCursorStyle() == SwingTerminalDeviceConfiguration.CursorStyle.DOUBLE_UNDERBAR) {
                     g.setColor(colorConfiguration.toAWTColor(deviceConfiguration.getCursorColor(), false, false));
-                    g.fillRect(columnIndex * fontWidth, (rowIndex * fontHeight) + fontHeight - 2, fontWidth, 2);
+                    g.fillRect(columnIndex * fontWidth, (rowIndex * fontHeight) + fontHeight - 2, characterWidth, 2);
+                }
+                if(CJKUtils.isCharCJK(character.getCharacter())) {
+                    columnIndex++; //Skip the trailing space after a CJK character
                 }
             }
             rowIndex++;
