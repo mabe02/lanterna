@@ -49,7 +49,7 @@ public class ScreenTabTest {
         screen.stopScreen();
     }
 
-    private void putStrings(String topTitle) {
+    private void putStrings(String topTitle) throws IOException {
         ScreenWriter writer = new ScreenWriter(screen);
         writer.setForegroundColor(TextColor.ANSI.DEFAULT);
         writer.setBackgroundColor(TextColor.ANSI.DEFAULT);

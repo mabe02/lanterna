@@ -61,7 +61,7 @@ public class TerminalInputTest {
         rawTerminal.exitPrivateMode();
     }
 
-    private static void putString(Terminal rawTerminal, String string) {
+    private static void putString(Terminal rawTerminal, String string) throws IOException {
         for(int i = 0; i < string.length(); i++) {
             rawTerminal.putCharacter(string.charAt(i));
         }

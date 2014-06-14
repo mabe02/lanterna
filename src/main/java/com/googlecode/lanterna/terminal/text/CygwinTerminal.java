@@ -69,7 +69,7 @@ public class CygwinTerminal extends ANSITerminal {
     }
 
     @Override
-    public void enterPrivateMode() {
+    public void enterPrivateMode() throws IOException {
         super.enterPrivateMode();
         setCBreak(true);
         setEcho(false);
@@ -84,7 +84,7 @@ public class CygwinTerminal extends ANSITerminal {
     }
 
     @Override
-    public void exitPrivateMode() {
+    public void exitPrivateMode() throws IOException {
         resizeCheckTimer.cancel();
         setEcho(true);
         super.exitPrivateMode();

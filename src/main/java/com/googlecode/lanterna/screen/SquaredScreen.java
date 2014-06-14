@@ -102,12 +102,12 @@ public class SquaredScreen extends AbstractScreen {
     }
 
     @Override
-    public void refresh() {
+    public void refresh() throws IOException {
         backend.refresh();
     }
 
     @Override
-    public void refresh(RefreshType refreshType) {
+    public void refresh(RefreshType refreshType) throws IOException {
         backend.refresh(refreshType);
     }
 

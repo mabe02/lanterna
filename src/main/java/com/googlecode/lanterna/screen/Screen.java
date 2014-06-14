@@ -153,7 +153,7 @@ public interface Screen {
      * graphics on the back buffer and then finally calling refresh(..) to make it visible to the user.
      * @see RefreshType
      */
-    void refresh();
+    void refresh() throws IOException;
 
     /**
      * This method will take the content from the back-buffer and move it into the front-buffer, making the changes
@@ -165,7 +165,7 @@ public interface Screen {
      * @param refreshType What type of refresh to do
      * @see RefreshType
      */
-    void refresh(RefreshType refreshType);
+    void refresh(RefreshType refreshType) throws IOException;
 
     /**
      * One problem working with Screens is that whenever the terminal is resized, the front and back buffers needs to be

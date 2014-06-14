@@ -18,6 +18,8 @@
  */
 package com.googlecode.lanterna.terminal;
 
+import java.io.IOException;
+
 /**
  * This is an abstract base class for terminal color definitions. Since there are different ways of specifying terminal
  * colors, all with a different range of adoptions, this makes it possible to program an API against an implementation-
@@ -30,13 +32,13 @@ public interface TextColor {
      * Apply this color representation as the foreground color on the specified terminal
      * @param terminal Terminal to set the foreground color on
      */
-    void applyAsForeground(AbstractTerminal terminal);
+    void applyAsForeground(AbstractTerminal terminal) throws IOException;
 
     /**
      * Apply this color representation as the background color on the specified terminal
      * @param terminal Terminal to set the background color on
      */
-    void applyAsBackground(AbstractTerminal terminal);
+    void applyAsBackground(AbstractTerminal terminal) throws IOException;
 
     /**
      * This class represent classic ANSI colors that are likely to be very compatible with most terminal
@@ -67,12 +69,12 @@ public interface TextColor {
         }
 
         @Override
-        public void applyAsForeground(AbstractTerminal terminal) {
+        public void applyAsForeground(AbstractTerminal terminal) throws IOException {
             terminal.applyForegroundColor(this);
         }
 
         @Override
-        public void applyAsBackground(AbstractTerminal terminal) {
+        public void applyAsBackground(AbstractTerminal terminal) throws IOException {
             terminal.applyBackgroundColor(this);
         }
     }
@@ -379,12 +381,12 @@ public interface TextColor {
         }
 
         @Override
-        public void applyAsForeground(AbstractTerminal terminal) {
+        public void applyAsForeground(AbstractTerminal terminal) throws IOException {
             terminal.applyForegroundColor(colorIndex);
         }
 
         @Override
-        public void applyAsBackground(AbstractTerminal terminal) {
+        public void applyAsBackground(AbstractTerminal terminal) throws IOException {
             terminal.applyBackgroundColor(colorIndex);
         }
 
@@ -533,12 +535,12 @@ public interface TextColor {
         }
 
         @Override
-        public void applyAsForeground(AbstractTerminal terminal) {
+        public void applyAsForeground(AbstractTerminal terminal) throws IOException {
             terminal.applyForegroundColor(r, g, b);
         }
 
         @Override
-        public void applyAsBackground(AbstractTerminal terminal) {
+        public void applyAsBackground(AbstractTerminal terminal) throws IOException {
             terminal.applyBackgroundColor(r, g, b);
         }
 

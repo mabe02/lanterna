@@ -58,7 +58,7 @@ public class Terminal8bitIndexedColorTest {
         }
     }
 
-    private static void printString(Terminal terminal, String string) {
+    private static void printString(Terminal terminal, String string) throws IOException {
         for(int i = 0; i < string.length(); i++)
             terminal.putCharacter(string.charAt(i));
         terminal.flush();

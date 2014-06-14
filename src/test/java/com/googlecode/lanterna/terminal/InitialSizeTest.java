@@ -51,7 +51,7 @@ public class InitialSizeTest {
         rawTerminal.exitPrivateMode();
     }
 
-    private static void printString(Terminal rawTerminal, String string) {
+    private static void printString(Terminal rawTerminal, String string) throws IOException {
         for(int i = 0; i < string.length(); i++) {
             rawTerminal.putCharacter(string.charAt(i));
         }

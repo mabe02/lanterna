@@ -25,6 +25,7 @@ import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.DefaultScreen;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
+import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -121,7 +122,7 @@ public class GUIScreen
         return screen;
     }
     
-    private synchronized void repaint()
+    private synchronized void repaint() throws IOException
     {
         screen.doResizeIfNecessary();
         final TextGraphics textGraphics = new TextGraphicsImpl(new TerminalPosition(0, 0),
@@ -194,7 +195,7 @@ public class GUIScreen
         screen.refresh();
     }
 
-    protected boolean update() {
+    protected boolean update() throws IOException {
         if(needsRefresh || screen.doResizeIfNecessary() != null) {
             repaint();
             needsRefresh = false;

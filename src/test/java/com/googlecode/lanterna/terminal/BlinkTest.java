@@ -20,13 +20,14 @@
 package com.googlecode.lanterna.terminal;
 
 import com.googlecode.lanterna.TestTerminalFactory;
+import java.io.IOException;
 
 /**
  *
  * @author Martin
  */
 public class BlinkTest {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         Terminal rawTerminal = new TestTerminalFactory(args).createTerminal();
         rawTerminal.enterPrivateMode();
         rawTerminal.clearScreen();

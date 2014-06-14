@@ -175,7 +175,7 @@ public class UnixTerminal extends ANSITerminal {
     }
 
     @Override
-    public void enterPrivateMode() {
+    public void enterPrivateMode() throws IOException {
         if(isInPrivateMode()) {
             super.enterPrivateMode();   //This will throw IllegalStateException
         }
@@ -183,7 +183,7 @@ public class UnixTerminal extends ANSITerminal {
     }
 
     @Override
-    public void exitPrivateMode() {
+    public void exitPrivateMode() throws IOException {
         if(!isInPrivateMode()) {
             super.exitPrivateMode();   //This will throw IllegalStateException
         }

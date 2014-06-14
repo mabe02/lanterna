@@ -207,12 +207,12 @@ public class DefaultScreen extends TerminalScreen {
     }
 
     @Override
-    public void refresh() {
+    public void refresh() throws IOException {
         refresh(RefreshType.AUTOMATIC);
     }
 
     @Override
-    public synchronized void refresh(RefreshType refreshType) {
+    public synchronized void refresh(RefreshType refreshType) throws IOException {
         if(!isStarted) {
             return;
         }
@@ -242,7 +242,7 @@ public class DefaultScreen extends TerminalScreen {
         backBuffer.copyTo(frontBuffer);
     }
 
-    private void refreshByDelta() {
+    private void refreshByDelta() throws IOException {
         Map<TerminalPosition, ScreenCharacter> updateMap = new TreeMap<TerminalPosition, ScreenCharacter>(new ScreenPointComparator());
         TerminalSize terminalSize = getTerminalSize();
         for(int y = 0; y < terminalSize.getRows(); y++) {
@@ -298,7 +298,7 @@ public class DefaultScreen extends TerminalScreen {
         }
     }
 
-    private void refreshFull() {
+    private void refreshFull() throws IOException {
         getTerminal().applyForegroundColor(TextColor.ANSI.DEFAULT);
         getTerminal().applyBackgroundColor(TextColor.ANSI.DEFAULT);
         getTerminal().clearScreen();
