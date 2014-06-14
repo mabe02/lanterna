@@ -68,10 +68,10 @@ public class SwingTerminalFontConfiguration {
                 continue;
             }
             if(getFontWidth(font) > fontWidth) {
-                throw new IllegalArgumentException("Font " + font + " is larger than the highest priority font, must be smaller or equal in width");
+                throw new IllegalArgumentException("Font " + font + " is wider (" + getFontWidth(font) + " px) than the highest priority font (" + fontWidth + " px), must be smaller or equal in width");
             }
             if(getFontHeight(font) > fontHeight) {
-                throw new IllegalArgumentException("Font " + font + " is larger than the highest priority font, must be smaller or equal in height");
+                throw new IllegalArgumentException("Font " + font + " is taller (" + getFontHeight(font) + " px) than the highest priority font (" + fontHeight + " px), must be smaller or equal in height");
             }
         }
     }
