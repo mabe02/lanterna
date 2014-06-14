@@ -53,11 +53,9 @@ public abstract class StreamBasedTerminal extends InputEnabledAbstractTerminal {
     private final InputStream terminalInput;
     private final OutputStream terminalOutput;
     private final Charset terminalCharset;
-    private final Object writerMutex;
 
     public StreamBasedTerminal(InputStream terminalInput, OutputStream terminalOutput, Charset terminalCharset) {
         super(new InputDecoder(new InputStreamReader(terminalInput, terminalCharset)));
-        this.writerMutex = new Object();
         this.terminalInput = terminalInput;
         this.terminalOutput = terminalOutput;
         if(terminalCharset == null) {
@@ -83,14 +81,14 @@ public abstract class StreamBasedTerminal extends InputEnabledAbstractTerminal {
      * This method will write a list of bytes directly to the output stream of the terminal.
      */
     protected void writeToTerminal(byte... bytes) throws IOException {
-        synchronized(writerMutex) {
+        synchronized(terminalOutput) {
             terminalOutput.write(bytes);
         }
     }
 
     @Override
     public byte[] enquireTerminal(int timeout, TimeUnit timeoutTimeUnit) throws IOException {
-        synchronized(writerMutex) {
+        synchronized(terminalOutput) {
             terminalOutput.write(5);    //ENQ
             flush();
         }
@@ -119,7 +117,9 @@ public abstract class StreamBasedTerminal extends InputEnabledAbstractTerminal {
 
     @Override
     public void flush() throws IOException {
-        terminalOutput.flush();
+        synchronized(terminalOutput) {
+            terminalOutput.flush();
+        }
     }
 
     protected byte[] translateCharacter(char input) {
