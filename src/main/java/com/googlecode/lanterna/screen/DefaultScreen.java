@@ -18,6 +18,7 @@
  */
 package com.googlecode.lanterna.screen;
 
+import com.googlecode.lanterna.CJKUtils;
 import com.googlecode.lanterna.terminal.TextColor;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalPosition;
@@ -193,6 +194,11 @@ public class DefaultScreen extends TerminalScreen {
         else {
             //This is the normal case, no special character
             backBuffer.setCharacterAt(column, row, screenCharacter);
+        }
+        
+        if(CJKUtils.isCharCJK(screenCharacter.getCharacter())) {
+            //Pad CJK character with a trailing space
+            backBuffer.setCharacterAt(column + 1, row, screenCharacter.withCharacter(' '));
         }
     }
 

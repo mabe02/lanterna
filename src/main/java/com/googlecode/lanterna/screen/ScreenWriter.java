@@ -18,6 +18,7 @@
  */
 package com.googlecode.lanterna.screen;
 
+import com.googlecode.lanterna.CJKUtils;
 import com.googlecode.lanterna.terminal.Terminal;
 import java.util.Arrays;
 
@@ -345,13 +346,19 @@ public class ScreenWriter {
         }
         string = tabBehaviour.replaceTabs(string, currentPosition.getColumn());
         for(int i = 0; i < string.length(); i++) {
+            char character = string.charAt(i);
             screen.setCharacter(
                     currentPosition.withRelativeColumn(i),
                     new ScreenCharacter(
-                            string.charAt(i),
+                            character,
                             foregroundColor,
                             backgroundColor,
                             activeModifiers.clone()));
+            
+            //CJK characters are twice the normal characters in width
+            if(CJKUtils.isCharCJK(character)) {
+                i++;
+            }
         }
         currentPosition = currentPosition.withRelativeColumn(string.length());
         return this;
