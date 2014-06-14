@@ -241,7 +241,7 @@ public class ScreenWriter {
         Arrays.sort(points, new Comparator<TerminalPosition>() {
             @Override
             public int compare(TerminalPosition o1, TerminalPosition o2) {
-                return Integer.compare(o1.getRow(), o2.getRow());
+                return (o1.getRow() < o2.getRow()) ? -1 : ((o1.getRow() == o2.getRow()) ? 0 : 1);
             }
         });
 
