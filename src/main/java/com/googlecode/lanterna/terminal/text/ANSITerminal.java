@@ -27,7 +27,7 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 
 /**
- * A common ANSI text terminal implementation
+ * Class containing common code for ANSI compliant text terminals and terminal emulators.
  *
  * @see <a href="http://en.wikipedia.org/wiki/ANSI_escape_code">Wikipedia</a>
  * @author Martin
