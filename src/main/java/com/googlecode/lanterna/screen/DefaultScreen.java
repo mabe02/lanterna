@@ -99,7 +99,7 @@ public class DefaultScreen extends TerminalScreen {
         }
         TerminalSize terminalSize = getTerminalSize();
         if(position.getColumn() >= 0 && position.getColumn() < terminalSize.getColumns()
-                && position.getRow() >= 0 && position.getRow() < terminalSize.getRows()) {
+                && position.getRow() >= 0 && position.getRow() < terminalSize.getRows()) {           
             this.cursorPosition = position;
         }
     }
@@ -196,20 +196,32 @@ public class DefaultScreen extends TerminalScreen {
             backBuffer.setCharacterAt(column, row, screenCharacter);
         }
         
+        //Pad CJK character with a trailing space
         if(CJKUtils.isCharCJK(screenCharacter.getCharacter())) {
-            //Pad CJK character with a trailing space
             backBuffer.setCharacterAt(column + 1, row, screenCharacter.withCharacter(' '));
+        }
+        //If there's a CJK character immediately to our left, reset it
+        if(column > 0 && CJKUtils.isCharCJK(backBuffer.getCharacterAt(column - 1, row).getCharacter())) {
+            backBuffer.setCharacterAt(column - 1, row, backBuffer.getCharacterAt(column - 1, row).withCharacter(' '));
         }
     }
 
     @Override
     public synchronized ScreenCharacter getFrontCharacter(TerminalPosition position) {
-        return frontBuffer.getCharacterAt(position);
+        return getCharacterFromBuffer(frontBuffer, position);
     }
 
     @Override
     public synchronized ScreenCharacter getBackCharacter(TerminalPosition position) {
-        return backBuffer.getCharacterAt(position);
+        return getCharacterFromBuffer(backBuffer, position);
+    }
+    
+    private ScreenCharacter getCharacterFromBuffer(ScreenBuffer buffer, TerminalPosition position) {
+        //If we are picking the padding of a CJK character, pick the actual CJK character instead of the padding
+        if(position.getColumn() > 0 && CJKUtils.isCharCJK(buffer.getCharacterAt(position.withRelativeColumn(-1)).getCharacter())) {
+            return buffer.getCharacterAt(position.withRelativeColumn(-1));
+        }
+        return buffer.getCharacterAt(position);
     }
 
     @Override
@@ -240,7 +252,13 @@ public class DefaultScreen extends TerminalScreen {
         }
         if(cursorPosition != null) {
             getTerminal().setCursorVisible(true);
-            getTerminal().moveCursor(cursorPosition.getColumn(), cursorPosition.getRow());
+            //If we are trying to move the cursor to the padding of a CJK character, put it on the actual character instead
+            if(cursorPosition.getColumn() > 0 && CJKUtils.isCharCJK(frontBuffer.getCharacterAt(cursorPosition.withColumn(-1)).getCharacter())) {
+                getTerminal().moveCursor(cursorPosition.getColumn() - 1, cursorPosition.getRow());
+            }
+            else {
+                getTerminal().moveCursor(cursorPosition.getColumn(), cursorPosition.getRow());
+            }            
         } else {
             getTerminal().setCursorVisible(false);
         }
@@ -256,6 +274,9 @@ public class DefaultScreen extends TerminalScreen {
                 ScreenCharacter backBufferCharacter = backBuffer.getCharacterAt(x, y);
                 if(!backBufferCharacter.equals(frontBuffer.getCharacterAt(x, y))) {
                     updateMap.put(new TerminalPosition(x, y), backBufferCharacter);
+                }
+                if(CJKUtils.isCharCJK(backBufferCharacter.getCharacter())) {
+                    x++;    //Skip the trailing padding
                 }
             }
         }
@@ -300,7 +321,14 @@ public class DefaultScreen extends TerminalScreen {
                 }
             }
             getTerminal().putCharacter(newCharacter.getCharacter());
-            currentPosition = currentPosition.withRelativeColumn(1);
+            if(CJKUtils.isCharCJK(newCharacter.getCharacter())) {
+                //CJK characters advances two columns
+                currentPosition = currentPosition.withRelativeColumn(2);
+            }
+            else {
+                //Normal characters advances one column
+                currentPosition = currentPosition.withRelativeColumn(1);
+            }
         }
     }
 
@@ -345,7 +373,14 @@ public class DefaultScreen extends TerminalScreen {
                     currentColumn = x;
                 }
                 getTerminal().putCharacter(newCharacter.getCharacter());
-                currentColumn++;
+                if(CJKUtils.isCharCJK(newCharacter.getCharacter())) {
+                    //CJK characters take up two columns
+                    currentColumn += 2;
+                }
+                else {
+                    //Normal characters take up one column
+                    currentColumn += 1;
+                }
             }
         }
     }
