@@ -18,8 +18,6 @@
  */
 package com.googlecode.lanterna.terminal;
 
-import com.googlecode.lanterna.terminal.text.ANSITerminal;
-
 /**
  * This is an abstract base class for terminal color definitions. Since there are different ways of specifying terminal
  * colors, all with a different range of adoptions, this makes it possible to program an API against an implementation-
