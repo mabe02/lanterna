@@ -40,6 +40,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -47,6 +48,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
@@ -208,6 +210,9 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
         }
 
         g.dispose();
+        synchronized(this) {
+            notifyAll();
+        }
     }
 
     private Color deriveTrueForegroundColor(TerminalCharacter character, boolean atCursorLocation) {
@@ -401,6 +406,13 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
                 terminalImplementation.flush();
             }
         });
+        try {
+            synchronized(this) {
+                wait(500);
+            }
+        }
+        catch(InterruptedException e) {
+        }
     }
 
     @Override

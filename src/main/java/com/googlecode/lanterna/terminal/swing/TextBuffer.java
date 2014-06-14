@@ -63,21 +63,8 @@ class TextBuffer {
         if(lineBuffer.isEmpty()) {
             return;
         }
-        int bufferWidth = lineBuffer.getLast().size();
-
-        if(columns > bufferWidth) {
-            for(List<TerminalCharacter> line: lineBuffer) {
-                for(int i = 0; i < columns - bufferWidth; i++) {
-                    line.add(fillCharacter);
-                }
-            }
-        }
-        else if(columns < bufferWidth) {
-            for(List<TerminalCharacter> line: lineBuffer) {
-                for(int i = 0; i < bufferWidth - columns; i++) {
-                    line.remove(line.size() - 1);
-                }
-            }
+        for(List<TerminalCharacter> line: lineBuffer) {
+            readjust(line, columns);
         }
 
         //Fill the buffer height if necessary
@@ -104,6 +91,17 @@ class TextBuffer {
     }
     
     void setCharacter(TerminalSize terminalSize, TerminalPosition currentPosition, TerminalCharacter terminalCharacter) {
-        lineBuffer.get(lineBuffer.size() - terminalSize.getRows() + currentPosition.getRow()).set(currentPosition.getColumn(), terminalCharacter);
+        List<TerminalCharacter> line = lineBuffer.get(lineBuffer.size() - terminalSize.getRows() + currentPosition.getRow());
+        readjust(line, terminalSize.getColumns());
+        line.set(currentPosition.getColumn(), terminalCharacter);
+    }
+
+    private void readjust(List<TerminalCharacter> line, int columns) {
+        for(int i = 0; i < columns - line.size(); i++) {
+            line.add(fillCharacter);
+        }
+        for(int i = 0; i < line.size() - columns; i++) {
+            line.remove(line.size() - 1);
+        }
     }
 }
