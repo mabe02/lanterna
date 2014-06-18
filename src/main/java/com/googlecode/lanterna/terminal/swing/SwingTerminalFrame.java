@@ -179,13 +179,13 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
     }
 
     @Override
-    public void applyForegroundColor(TextColor color) {
-        swingTerminal.applyForegroundColor(color);
+    public void setForegroundColor(TextColor color) {
+        swingTerminal.setForegroundColor(color);
     }
 
     @Override
-    public void applyBackgroundColor(TextColor color) {
-        swingTerminal.applyBackgroundColor(color);
+    public void setBackgroundColor(TextColor color) {
+        swingTerminal.setBackgroundColor(color);
     }
 
     @Override

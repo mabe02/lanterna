@@ -45,8 +45,8 @@ public class Terminal8bitIndexedColorTest {
             TextColor.Indexed foregroundIndex = TextColor.Indexed.fromRGB(random.nextInt(255), random.nextInt(255), random.nextInt(255));
             TextColor.Indexed backgroundIndex = TextColor.Indexed.fromRGB(random.nextInt(255), random.nextInt(255), random.nextInt(255));
 
-            terminal.applyForegroundColor(foregroundIndex);
-            terminal.applyBackgroundColor(backgroundIndex);
+            terminal.setForegroundColor(foregroundIndex);
+            terminal.setBackgroundColor(backgroundIndex);
             terminal.moveCursor(random.nextInt(size.getColumns() - string.length()), random.nextInt(size.getRows()));
             printString(terminal, string);
 

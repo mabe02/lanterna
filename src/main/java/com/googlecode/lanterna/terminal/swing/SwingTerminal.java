@@ -388,21 +388,21 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
     }
 
     @Override
-    public void applyForegroundColor(final TextColor color) {
+    public void setForegroundColor(final TextColor color) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                terminalImplementation.applyForegroundColor(color);
+                terminalImplementation.setForegroundColor(color);
             }
         });
     }
 
     @Override
-    public void applyBackgroundColor(final TextColor color) {
+    public void setBackgroundColor(final TextColor color) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                terminalImplementation.applyBackgroundColor(color);
+                terminalImplementation.setBackgroundColor(color);
             }
         });
     }

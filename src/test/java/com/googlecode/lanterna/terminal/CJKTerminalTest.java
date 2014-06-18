@@ -50,8 +50,8 @@ public class CJKTerminalTest {
             terminal.flush();
             Thread.sleep(2000);
         }
-        terminal.applyForegroundColor(TextColor.ANSI.WHITE);
-        terminal.applyBackgroundColor(TextColor.ANSI.RED);
+        terminal.setForegroundColor(TextColor.ANSI.WHITE);
+        terminal.setBackgroundColor(TextColor.ANSI.RED);
         for(int i = 0; i < 5; i++) {
             if(terminal.readInput() != null) {
                 break;

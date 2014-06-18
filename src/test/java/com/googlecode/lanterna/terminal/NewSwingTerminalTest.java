@@ -58,8 +58,8 @@ public class NewSwingTerminalTest extends javax.swing.JFrame {
                     int positionY = RANDOM.nextInt(size.getRows());
 
                     terminal.moveCursor(positionX, positionY);
-                    terminal.applyBackgroundColor(new TextColor.Indexed(RANDOM.nextInt(256)));
-                    terminal.applyForegroundColor(new TextColor.Indexed(RANDOM.nextInt(256)));
+                    terminal.setBackgroundColor(new TextColor.Indexed(RANDOM.nextInt(256)));
+                    terminal.setForegroundColor(new TextColor.Indexed(RANDOM.nextInt(256)));
                     String hello = "Hello!";
                     for(int i = 0; i < hello.length(); i++) {
                         terminal.putCharacter(hello.charAt(i));

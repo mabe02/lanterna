@@ -165,9 +165,9 @@ public class IOSafeTerminalAdapter implements IOSafeTerminal {
     }
 
     @Override
-    public void applyForegroundColor(TextColor color) {
+    public void setForegroundColor(TextColor color) {
         try {
-            backend.applyForegroundColor(color);
+            backend.setForegroundColor(color);
         }
         catch(IOException e) {
             exceptionHandler.onException(e);
@@ -175,9 +175,9 @@ public class IOSafeTerminalAdapter implements IOSafeTerminal {
     }
 
     @Override
-    public void applyBackgroundColor(TextColor color) {
+    public void setBackgroundColor(TextColor color) {
         try {
-            backend.applyBackgroundColor(color);
+            backend.setBackgroundColor(color);
         }
         catch(IOException e) {
             exceptionHandler.onException(e);

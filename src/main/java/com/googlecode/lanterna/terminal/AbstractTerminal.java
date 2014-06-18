@@ -69,7 +69,7 @@ public abstract class AbstractTerminal implements Terminal {
     }
 
     @Override
-    public void applyForegroundColor(TextColor color) throws IOException {
+    public void setForegroundColor(TextColor color) throws IOException {
         color.applyAsForeground(this);
     }
 
@@ -115,7 +115,7 @@ public abstract class AbstractTerminal implements Terminal {
     protected abstract void applyForegroundColor(int r, int g, int b) throws IOException;
 
     @Override
-    public void applyBackgroundColor(TextColor color) throws IOException {
+    public void setBackgroundColor(TextColor color) throws IOException {
         color.applyAsBackground(this);
     }
 

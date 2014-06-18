@@ -130,28 +130,28 @@ public interface Terminal extends InputProvider {
      * color to draw the text in, as opposed to the background color which is the color surrounding the characters.
      * </p>
      * This overload is using the TextColor class to define a color, which is a layer of abstraction above the three
-     * different color formats supported (ANSI, indexed and RGB). The other applyForegroundColor(..) overloads gives
+     * different color formats supported (ANSI, indexed and RGB). The other setForegroundColor(..) overloads gives
      * you direct access to set one of those three.
      * </p>
      * Note to implementers of this interface, just make this method call <b>color.applyAsForeground(this);</b>
      *
      * @param color Color to use for foreground
      */
-    public void applyForegroundColor(TextColor color) throws IOException;
+    public void setForegroundColor(TextColor color) throws IOException;
 
     /**
      * Changes the background color for all the following characters put to the terminal. The background color is the
      * color surrounding the text being printed.
      * </p>
      * This overload is using the TextColor class to define a color, which is a layer of abstraction above the three
-     * different color formats supported (ANSI, indexed and RGB). The other applyBackgroundColor(..) overloads gives
+     * different color formats supported (ANSI, indexed and RGB). The other setBackgroundColor(..) overloads gives
      * you direct access to set one of those three.
      * </p>
      * Note to implementers of this interface, just make this method call <b>color.applyAsBackground(this);</b>
      *
      * @param color Color to use for the background
      */
-    public void applyBackgroundColor(TextColor color) throws IOException;
+    public void setBackgroundColor(TextColor color) throws IOException;
 
     /**
      * Adds a {@code ResizeListener} to be called when the terminal has changed size. There is no guarantee that this

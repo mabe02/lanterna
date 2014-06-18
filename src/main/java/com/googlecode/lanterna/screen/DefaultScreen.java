@@ -295,19 +295,19 @@ public class DefaultScreen extends TerminalScreen {
         }
         TextColor currentForegroundColor = firstScreenCharacterToUpdate.getForegroundColor();
         TextColor currentBackgroundColor = firstScreenCharacterToUpdate.getBackgroundColor();
-        getTerminal().applyForegroundColor(currentForegroundColor);
-        getTerminal().applyBackgroundColor(currentBackgroundColor);
+        getTerminal().setForegroundColor(currentForegroundColor);
+        getTerminal().setBackgroundColor(currentBackgroundColor);
         for(TerminalPosition position: updateMap.keySet()) {
             if(!position.equals(currentPosition)) {
                 getTerminal().moveCursor(position.getColumn(), position.getRow());
             }
             ScreenCharacter newCharacter = updateMap.get(position);
             if(!currentForegroundColor.equals(newCharacter.getForegroundColor())) {
-                getTerminal().applyForegroundColor(newCharacter.getForegroundColor());
+                getTerminal().setForegroundColor(newCharacter.getForegroundColor());
                 currentForegroundColor = newCharacter.getForegroundColor();
             }
             if(!currentBackgroundColor.equals(newCharacter.getBackgroundColor())) {
-                getTerminal().applyBackgroundColor(newCharacter.getBackgroundColor());
+                getTerminal().setBackgroundColor(newCharacter.getBackgroundColor());
                 currentBackgroundColor = newCharacter.getBackgroundColor();
             }
             for(Terminal.SGR sgr: Terminal.SGR.values()) {
@@ -333,8 +333,8 @@ public class DefaultScreen extends TerminalScreen {
     }
 
     private void refreshFull() throws IOException {
-        getTerminal().applyForegroundColor(TextColor.ANSI.DEFAULT);
-        getTerminal().applyBackgroundColor(TextColor.ANSI.DEFAULT);
+        getTerminal().setForegroundColor(TextColor.ANSI.DEFAULT);
+        getTerminal().setBackgroundColor(TextColor.ANSI.DEFAULT);
         getTerminal().clearScreen();
         getTerminal().resetAllSGR();
 
@@ -351,11 +351,11 @@ public class DefaultScreen extends TerminalScreen {
                 }
 
                 if(!currentForegroundColor.equals(newCharacter.getForegroundColor())) {
-                    getTerminal().applyForegroundColor(newCharacter.getForegroundColor());
+                    getTerminal().setForegroundColor(newCharacter.getForegroundColor());
                     currentForegroundColor = newCharacter.getForegroundColor();
                 }
                 if(!currentBackgroundColor.equals(newCharacter.getBackgroundColor())) {
-                    getTerminal().applyBackgroundColor(newCharacter.getBackgroundColor());
+                    getTerminal().setBackgroundColor(newCharacter.getBackgroundColor());
                     currentBackgroundColor = newCharacter.getBackgroundColor();
                 }
                 for(Terminal.SGR sgr: Terminal.SGR.values()) {

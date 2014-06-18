@@ -182,7 +182,7 @@ class VirtualTerminalImplementation extends AbstractTerminal implements IOSafeTe
     }
 
     @Override
-    public void applyForegroundColor(TextColor color) {
+    public void setForegroundColor(TextColor color) {
         this.foregroundColor = color;
     }
 
@@ -204,7 +204,7 @@ class VirtualTerminalImplementation extends AbstractTerminal implements IOSafeTe
 
 
     @Override
-    public void applyBackgroundColor(TextColor color) {
+    public void setBackgroundColor(TextColor color) {
         this.backgroundColor = color;
     }
 
