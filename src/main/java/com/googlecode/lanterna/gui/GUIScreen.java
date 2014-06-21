@@ -229,27 +229,30 @@ public class GUIScreen
                 break;
             }
 
-            List<Action> actions = null;
-            synchronized(actionToRunInEventThread) {
-                if(!actionToRunInEventThread.isEmpty()) {
-                    actions = new ArrayList<Action>(actionToRunInEventThread);
-                    actionToRunInEventThread.clear();
-                }
-            }
-
-            if(actions != null) {
-                for(Action nextAction: actions) {
-                    try {
-                        nextAction.doAction();
-                    }
-                    catch(Throwable e) {
-                        e.printStackTrace();
+            try {
+                List<Action> actions = null;
+                synchronized(actionToRunInEventThread) {
+                    if(!actionToRunInEventThread.isEmpty()) {
+                        actions = new ArrayList<Action>(actionToRunInEventThread);
+                        actionToRunInEventThread.clear();
                     }
                 }
-            }                
 
-            //Make sure we have a component in focus if there is one available
-            windowStack.getLast().window.checkFocus();
+                if(actions != null) {
+                    for(Action nextAction: actions) {
+                        try {
+                            nextAction.doAction();
+                        }
+                        catch(Throwable e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+                //Make sure we have a component in focus if there is one available
+                windowStack.getLast().window.checkFocus();
+
+                boolean repainted = update();
 
                 KeyStroke nextKey = screen.readInput();
                 if(nextKey != null) {
@@ -263,8 +266,10 @@ public class GUIScreen
                         }
                         catch(InterruptedException e) {}
                     }
-                    catch(InterruptedException e) {}
                 }
+            }
+            catch(Throwable e) {
+                e.printStackTrace();
             }
         }
     }

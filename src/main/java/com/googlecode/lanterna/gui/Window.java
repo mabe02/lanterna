@@ -319,7 +319,7 @@ public class Window
         this.drawShadow = drawShadow;
     }            
 
-    boolean maximisesVertically()
+    protected boolean maximisesVertically()
     {
         return contentPane.maximisesVertically();
     }
