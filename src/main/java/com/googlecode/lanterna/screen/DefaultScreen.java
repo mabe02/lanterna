@@ -253,7 +253,7 @@ public class DefaultScreen extends TerminalScreen {
         if(cursorPosition != null) {
             getTerminal().setCursorVisible(true);
             //If we are trying to move the cursor to the padding of a CJK character, put it on the actual character instead
-            if(cursorPosition.getColumn() > 0 && CJKUtils.isCharCJK(frontBuffer.getCharacterAt(cursorPosition.withColumn(-1)).getCharacter())) {
+            if(cursorPosition.getColumn() > 0 && CJKUtils.isCharCJK(frontBuffer.getCharacterAt(cursorPosition.withRelativeColumn(-1)).getCharacter())) {
                 getTerminal().moveCursor(cursorPosition.getColumn() - 1, cursorPosition.getRow());
             }
             else {
