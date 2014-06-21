@@ -217,7 +217,7 @@ public class TextBox extends AbstractInteractableComponent
 
                 case NormalKey:
                     //Add character
-                    if(Character.isISOControl(key.getCharacter()) || key.getCharacter() > 127)
+                    if(Character.isISOControl(key.getCharacter()))
                         break;
 
                     backend = backend.substring(0, editPosition) + (char)key.getCharacter() + backend.substring(editPosition);
