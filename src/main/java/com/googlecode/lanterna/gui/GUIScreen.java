@@ -179,10 +179,12 @@ public class GUIScreen
             TextGraphics subGraphics = textGraphics.subAreaGraphics(topLeft,
                     new TerminalSize(preferredSize.getColumns(), preferredSize.getRows()));
 
-            //First draw the shadow
-            textGraphics.applyTheme(guiTheme.getDefinition(Theme.Category.SHADOW));
-            textGraphics.fillRectangle(' ', new TerminalPosition(topLeft.getColumn() + 2, topLeft.getRow() + 1),
-                    new TerminalSize(subGraphics.getWidth(), subGraphics.getHeight()));
+            if(windowPlacement.getWindow().isDrawShadow()) {
+                //First draw the shadow
+                textGraphics.applyTheme(guiTheme.getDefinition(Theme.Category.SHADOW));
+                textGraphics.fillRectangle(' ', new TerminalPosition(topLeft.getColumn() + 2, topLeft.getRow() + 1),
+                        new TerminalSize(subGraphics.getWidth(), subGraphics.getHeight()));
+            }
 
             //Then draw the window
             windowPlacement.getWindow().repaint(subGraphics);
@@ -227,25 +229,27 @@ public class GUIScreen
                 break;
             }
 
-            try {
-                List<Action> actions = null;
-                synchronized(actionToRunInEventThread) {
-                    if(!actionToRunInEventThread.isEmpty()) {
-                        actions = new ArrayList<Action>(actionToRunInEventThread);
-                        actionToRunInEventThread.clear();
-                    }
+            List<Action> actions = null;
+            synchronized(actionToRunInEventThread) {
+                if(!actionToRunInEventThread.isEmpty()) {
+                    actions = new ArrayList<Action>(actionToRunInEventThread);
+                    actionToRunInEventThread.clear();
                 }
-                
-                if(actions != null) {
-                    for(Action nextAction: actions) {
+            }
+
+            if(actions != null) {
+                for(Action nextAction: actions) {
+                    try {
                         nextAction.doAction();
                     }
-                }                
+                    catch(Throwable e) {
+                        e.printStackTrace();
+                    }
+                }
+            }                
 
-                //Make sure we have a component in focus if there is one available
-                windowStack.getLast().window.checkFocus();
-                        
-                boolean repainted = update();
+            //Make sure we have a component in focus if there is one available
+            windowStack.getLast().window.checkFocus();
 
                 KeyStroke nextKey = screen.readInput();
                 if(nextKey != null) {
@@ -259,10 +263,8 @@ public class GUIScreen
                         }
                         catch(InterruptedException e) {}
                     }
+                    catch(InterruptedException e) {}
                 }
-            }
-            catch(Throwable e) {
-                e.printStackTrace();
             }
         }
     }
