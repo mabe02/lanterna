@@ -212,7 +212,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal {
      * @param echoOn true if keyboard input will immediately echo, false if it's hidden
      * @throws LanternaException
      */
-    public abstract void setEcho(boolean echoOn);
+    public abstract void setEcho(boolean echoOn) throws IOException;
 
     /**
      * Enabling cbreak mode will allow you to read user input immediately as the user enters the characters, as opposed
@@ -223,7 +223,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal {
      * @param cbreakOn
      * @throws LanternaException
      */
-    public abstract void setCBreak(boolean cbreakOn);
+    public abstract void setCBreak(boolean cbreakOn) throws IOException;
 
     @Override
     public void moveCursor(int x, int y) throws IOException {

@@ -18,7 +18,6 @@
  */
 package com.googlecode.lanterna.terminal.ansi;
 
-import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.terminal.TerminalSize;
 
@@ -143,7 +142,10 @@ public class UnixTerminal extends ANSITerminal {
         Runtime.getRuntime().addShutdownHook(new Thread("Lanterna SSTY restore") {
             @Override
             public void run() {
-                restoreSTTY();
+                try {
+                    restoreSTTY();
+                }
+                catch(IOException e) {}
             }
         });
     }
@@ -191,36 +193,36 @@ public class UnixTerminal extends ANSITerminal {
     }
 
     @Override
-    public void setCBreak(boolean cbreakOn) {
+    public void setCBreak(boolean cbreakOn) throws IOException {
         sttyICanon(cbreakOn);
     }
 
     @Override
-    public void setEcho(boolean echoOn) {
+    public void setEcho(boolean echoOn) throws IOException {
         sttyKeyEcho(echoOn);
     }
 
-    private static void sttyKeyEcho(final boolean enable) {
+    private static void sttyKeyEcho(final boolean enable) throws IOException {
         exec("/bin/sh", "-c",
                 "/bin/stty " + (enable ? "echo" : "-echo") + " < /dev/tty");
     }
 
-    private static void sttyMinimumCharacterForRead(final int nrCharacters) {
+    private static void sttyMinimumCharacterForRead(final int nrCharacters) throws IOException {
         exec("/bin/sh", "-c",
                 "/bin/stty min " + nrCharacters + " < /dev/tty");
     }
 
-    private static void sttyICanon(final boolean enable) {
+    private static void sttyICanon(final boolean enable) throws IOException {
         exec("/bin/sh", "-c",
                 "/bin/stty " + (enable ? "-icanon" : "icanon") + " < /dev/tty");
     }
 
     @SuppressWarnings("unused")
-    private static void restoreEOFCtrlD() {
+    private static void restoreEOFCtrlD() throws IOException {
         exec("/bin/sh", "-c", "/bin/stty eof ^d < /dev/tty");
     }
 
-    private static void disableSpecialCharacters() {
+    private static void disableSpecialCharacters() throws IOException {
         exec("/bin/sh", "-c", "/bin/stty intr undef < /dev/tty");
         exec("/bin/sh", "-c", "/bin/stty start undef < /dev/tty");
         exec("/bin/sh", "-c", "/bin/stty stop undef < /dev/tty");
@@ -228,20 +230,20 @@ public class UnixTerminal extends ANSITerminal {
     }
 
     @SuppressWarnings("unused")
-    private static void restoreSpecialCharacters() {
+    private static void restoreSpecialCharacters() throws IOException {
         exec("/bin/sh", "-c", "/bin/stty intr ^C < /dev/tty");
         exec("/bin/sh", "-c", "/bin/stty start ^Q < /dev/tty");
         exec("/bin/sh", "-c", "/bin/stty stop ^S < /dev/tty");
         exec("/bin/sh", "-c", "/bin/stty susp ^Z < /dev/tty");
     }
 
-    private void saveSTTY() {
+    private void saveSTTY() throws IOException {
         if(sttyStatusToRestore == null) {
             sttyStatusToRestore = exec("/bin/sh", "-c", "stty -g < /dev/tty").trim();
         }
     }
 
-    private synchronized void restoreSTTY() {
+    private synchronized void restoreSTTY() throws IOException {
         if(sttyStatusToRestore == null) {
             //Nothing to restore
             return;
@@ -251,27 +253,23 @@ public class UnixTerminal extends ANSITerminal {
         sttyStatusToRestore = null;
     }
 
-    private static String exec(String... cmd) {
-        try {
-            ProcessBuilder pb = new ProcessBuilder(cmd);
-            Process process = pb.start();
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            InputStream stdout = process.getInputStream();
-            int readByte = stdout.read();
-            while(readByte >= 0) {
-                baos.write(readByte);
-                readByte = stdout.read();
-            }
-            ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-            BufferedReader reader = new BufferedReader(new InputStreamReader(bais));
-            StringBuilder builder = new StringBuilder();
-            while(reader.ready()) {
-                builder.append(reader.readLine());
-            }
-            reader.close();
-            return builder.toString();
-        } catch(IOException e) {
-            throw new LanternaException(e);
+    private static String exec(String... cmd) throws IOException {
+        ProcessBuilder pb = new ProcessBuilder(cmd);
+        Process process = pb.start();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        InputStream stdout = process.getInputStream();
+        int readByte = stdout.read();
+        while(readByte >= 0) {
+            baos.write(readByte);
+            readByte = stdout.read();
         }
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        BufferedReader reader = new BufferedReader(new InputStreamReader(bais));
+        StringBuilder builder = new StringBuilder();
+        while(reader.ready()) {
+            builder.append(reader.readLine());
+        }
+        reader.close();
+        return builder.toString();
     }
 }
