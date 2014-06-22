@@ -29,8 +29,8 @@ import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.swing.OldSwingTerminal;
 import com.googlecode.lanterna.terminal.swing.OldTerminalAppearance;
 import com.googlecode.lanterna.terminal.swing.SwingTerminalFrame;
-import com.googlecode.lanterna.terminal.text.CygwinTerminal;
-import com.googlecode.lanterna.terminal.text.UnixTerminal;
+import com.googlecode.lanterna.terminal.ansi.CygwinTerminal;
+import com.googlecode.lanterna.terminal.ansi.UnixTerminal;
 import java.io.IOException;
 import javax.swing.JFrame;
 

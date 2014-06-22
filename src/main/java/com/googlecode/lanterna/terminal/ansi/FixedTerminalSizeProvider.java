@@ -16,16 +16,25 @@
  * 
  * Copyright (C) 2010-2014 Martin
  */
-package com.googlecode.lanterna.terminal.text;
+
+package com.googlecode.lanterna.terminal.ansi;
 
 import com.googlecode.lanterna.terminal.TerminalSize;
 
 /**
- * This class allows you to override by what means Lanterna detects the size of
- * the terminal. You can implement this interface and pass it to the 
- * UnixTerminal constructor in order to use it.
+ * Using this terminal size provider, your terminal will be set to a fixed size
+ * and will never resize.
  * @author martin
  */
-public interface UnixTerminalSizeQuerier {
-    TerminalSize queryTerminalSize();
+public class FixedTerminalSizeProvider implements UnixTerminalSizeQuerier {
+    private final TerminalSize size;
+
+    public FixedTerminalSizeProvider(TerminalSize size) {
+        this.size = size;
+    }
+
+    @Override
+    public TerminalSize queryTerminalSize() {
+        return size;
+    }
 }

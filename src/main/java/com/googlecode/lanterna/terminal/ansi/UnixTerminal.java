@@ -16,7 +16,7 @@
  *
  * Copyright (C) 2010-2014 Martin
  */
-package com.googlecode.lanterna.terminal.text;
+package com.googlecode.lanterna.terminal.ansi;
 
 import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.input.KeyStroke;
