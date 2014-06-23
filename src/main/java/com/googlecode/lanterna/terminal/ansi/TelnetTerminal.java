@@ -19,16 +19,13 @@
 package com.googlecode.lanterna.terminal.ansi;
 
 import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.terminal.TerminalSize;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.charset.Charset;
 
 /**
- *
+ * A good resource on telnet communication is http://www.tcpipguide.com/free/t_TelnetProtocol.htm
  * @author martin
  */
 public class TelnetTerminal extends ANSITerminal {
@@ -38,7 +35,7 @@ public class TelnetTerminal extends ANSITerminal {
     TelnetTerminal(Socket socket, Charset terminalCharset) throws IOException {
         super(new TelnetClientIACFilterer(socket.getInputStream()), socket.getOutputStream(), terminalCharset);
         this.socket = socket;
-        //setCBreak(true);
+        setCBreak(true);
         setEcho(false);
     }
 
@@ -65,7 +62,6 @@ public class TelnetTerminal extends ANSITerminal {
     @Override
     public KeyStroke readInput() throws IOException {
         KeyStroke keyStroke = super.readInput();
-        System.out.println("Got " + keyStroke);
         return keyStroke;
     }
     
@@ -75,16 +71,20 @@ public class TelnetTerminal extends ANSITerminal {
     
     private static class TelnetClientIACFilterer extends InputStream {
         private final InputStream inputStream;
+        private final byte[] buffer;
+        private final byte[] workingBuffer;
+        private int bytesInBuffer;
 
         public TelnetClientIACFilterer(InputStream inputStream) {
             this.inputStream = inputStream;
+            this.buffer = new byte[64 * 1024];
+            this.workingBuffer = new byte[1024];
+            this.bytesInBuffer = 0;
         }
 
         @Override
         public int read() throws IOException {
-            int data = inputStream.read();
-            System.out.println("Telnet client sent: " + data);
-            return data;
+            throw new UnsupportedOperationException("TelnetClientIACFilterer doesn't support .read()");
         }
 
         @Override
@@ -94,19 +94,60 @@ public class TelnetTerminal extends ANSITerminal {
 
         @Override
         public int available() throws IOException {
-            return inputStream.available();
+            int underlyingStreamAvailable = inputStream.available();
+            if(underlyingStreamAvailable == 0 && bytesInBuffer == 0) {
+                return 0;
+            }
+            else if(underlyingStreamAvailable == 0) {
+                return bytesInBuffer;
+            }
+            else if(bytesInBuffer == buffer.length) {
+                return bytesInBuffer;
+            }
+            fillBuffer();
+            return bytesInBuffer;
         }
 
         @Override
         public int read(byte[] b, int off, int len) throws IOException {
-            int readBytes = inputStream.read(b, off, len);
-            ByteArrayOutputStream filteredOutput = new ByteArrayOutputStream(len);
-            for(int i = 0; i < readBytes; i++) {
-                System.out.println("Telnet client sent: 0x" + String.format("%02X ", b[i]) + " (" + b[i] + ")");
-                filteredOutput.write(b[i]);
+            if(inputStream.available() > 0) {
+                fillBuffer();
             }
-            System.arraycopy(filteredOutput.toByteArray(), 0, b, 0, filteredOutput.size());
-            return filteredOutput.size();
+            if(bytesInBuffer == 0) {
+                return -1;
+            }
+            int bytesToCopy = Math.min(len, bytesInBuffer);
+            System.arraycopy(buffer, 0, b, off, bytesToCopy);
+            System.arraycopy(buffer, bytesToCopy, buffer, 0, buffer.length - bytesToCopy);
+            bytesInBuffer -= bytesToCopy;
+            return bytesToCopy;
+        }
+
+        private void fillBuffer() throws IOException {
+            int readBytes = inputStream.read(workingBuffer, 0, Math.min(workingBuffer.length, buffer.length - bytesInBuffer));
+            if(readBytes == -1) {
+                return;
+            }
+            for(int i = 0; i < readBytes; i++) {
+                if(workingBuffer[i] == -1) {//0xFF = IAC = Interpret As Command
+                    i++;
+                    if(workingBuffer[i] >= (byte)0xfb && workingBuffer[i] <= (byte)0xfe) {
+                        i++;
+                        continue;
+                    }
+                    else if(workingBuffer[i] == (byte)0xfa) {   //0xFA = SB = Subnegotiation
+                        i++;
+                        //Wait for SE
+                        while(workingBuffer[i] != (byte)0xF0) {
+                            i++;
+                        }
+                    }
+                    else {
+                        System.err.println("Unknown Telnet command: " + workingBuffer[i]);
+                    }
+                }
+                buffer[bytesInBuffer++] = workingBuffer[i];
+            }
         }
     }
 }
