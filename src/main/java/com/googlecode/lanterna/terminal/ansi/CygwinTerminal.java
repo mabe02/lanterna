@@ -34,7 +34,7 @@ import java.util.regex.Pattern;
  *
  * @author Martin
  */
-public class CygwinTerminal extends ANSITerminal {
+public class CygwinTerminal extends UnixTerminal {
 
     private static final Pattern STTY_SIZE_PATTERN = Pattern.compile(".*rows ([0-9]+);.*columns ([0-9]+);.*");
 
@@ -43,7 +43,7 @@ public class CygwinTerminal extends ANSITerminal {
     public CygwinTerminal(
             InputStream terminalInput,
             OutputStream terminalOutput,
-            Charset terminalCharset) {
+            Charset terminalCharset) throws IOException {
         super(terminalInput, terminalOutput, terminalCharset);
 
         //Make sure to set an initial size

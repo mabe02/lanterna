@@ -35,23 +35,16 @@ public class TelnetTerminal extends ANSITerminal {
     TelnetTerminal(Socket socket, Charset terminalCharset) throws IOException {
         super(new TelnetClientIACFilterer(socket.getInputStream()), socket.getOutputStream(), terminalCharset);
         this.socket = socket;
-        setCBreak(true);
-        setEcho(false);
+        setLineMode0();
+        setEchoOff();
     }
 
-    @Override
-    public void setEcho(boolean echoOn) throws IOException {
+    private void setEchoOff() throws IOException {
         writeToTerminal((byte)255, (byte)251, (byte)1);
         flush();
     }
-
-//    @Override
-//    public TerminalSize getTerminalSize() throws IOException {
-//        return new TerminalSize(80, 20);
-//    }
     
-    @Override
-    public void setCBreak(boolean cbreakOn) throws IOException {
+    private void setLineMode0() throws IOException {
         writeToTerminal(
             (byte)255, (byte)253, (byte)34,  /* IAC DO LINEMODE */
             (byte)255, (byte)250, (byte)34, (byte)1, (byte)0, (byte)255, (byte)240 /* IAC SB LINEMODE MODE 0 IAC SE */

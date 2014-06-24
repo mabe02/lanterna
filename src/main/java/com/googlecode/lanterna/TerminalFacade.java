@@ -189,14 +189,14 @@ public class TerminalFacade {
     /**
      * <b>Experimental</b> Cygwin support!
      */
-    public static CygwinTerminal createCygwinTerminal() {
+    public static CygwinTerminal createCygwinTerminal() throws IOException {
         return createCygwinTerminal(DEFAULT_CHARSET);
     }
 
     /**
      * <b>Experimental</b> Cygwin support!
      */
-    public static CygwinTerminal createCygwinTerminal(Charset terminalCharset) {
+    public static CygwinTerminal createCygwinTerminal(Charset terminalCharset) throws IOException {
         return createCygwinTerminal(System.in, System.out, terminalCharset);
     }
 
@@ -205,7 +205,7 @@ public class TerminalFacade {
      */
     public static CygwinTerminal createCygwinTerminal(
             InputStream terminalInput,
-            OutputStream terminalOutput) {
+            OutputStream terminalOutput) throws IOException {
         return createCygwinTerminal(terminalInput, terminalOutput, DEFAULT_CHARSET);
     }
 
@@ -215,14 +215,14 @@ public class TerminalFacade {
     public static CygwinTerminal createCygwinTerminal(
             InputStream terminalInput,
             OutputStream terminalOutput,
-            Charset terminalCharset) {
+            Charset terminalCharset) throws IOException {
         return new CygwinTerminal(terminalInput, terminalOutput, terminalCharset);
     }
 
     /*
      * Creates a suitable text terminal for the running environment.
      */
-    public static Terminal createTextTerminal() {
+    public static Terminal createTextTerminal() throws IOException {
         return createTextTerminal(System.in, System.out, DEFAULT_CHARSET);
     }
 
@@ -232,15 +232,16 @@ public class TerminalFacade {
     public static Terminal createTextTerminal(InputStream terminalInput,
             OutputStream terminalOutput,
             Charset terminalCharset) {
-        if (isOperatingSystemWindows()) {
-            return createCygwinTerminal(terminalInput, terminalOutput, terminalCharset);
-        } else {
-            try {
+        try {
+            if(isOperatingSystemWindows()) {
+                return createCygwinTerminal(terminalInput, terminalOutput, terminalCharset);
+            }
+            else {
                 return createUnixTerminal(terminalInput, terminalOutput, terminalCharset);
             }
-            catch(IOException e) {
-                throw new RuntimeException(e);
-            }
+        }
+        catch(IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
