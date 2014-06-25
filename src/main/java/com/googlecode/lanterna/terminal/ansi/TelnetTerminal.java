@@ -19,10 +19,14 @@
 package com.googlecode.lanterna.terminal.ansi;
 
 import com.googlecode.lanterna.input.KeyStroke;
+import static com.googlecode.lanterna.terminal.ansi.TelnetProtocol.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
 import java.nio.charset.Charset;
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A good resource on telnet communication is http://www.tcpipguide.com/free/t_TelnetProtocol.htm
@@ -38,7 +42,7 @@ public class TelnetTerminal extends ANSITerminal {
         setLineMode0();
         setEchoOff();
     }
-
+    
     private void setEchoOff() throws IOException {
         writeToTerminal((byte)255, (byte)251, (byte)1);
         flush();
@@ -46,9 +50,8 @@ public class TelnetTerminal extends ANSITerminal {
     
     private void setLineMode0() throws IOException {
         writeToTerminal(
-            (byte)255, (byte)253, (byte)34,  /* IAC DO LINEMODE */
-            (byte)255, (byte)250, (byte)34, (byte)1, (byte)0, (byte)255, (byte)240 /* IAC SB LINEMODE MODE 0 IAC SE */
-        );
+                COMMAND_IAC, COMMAND_DO, OPTION_LINEMODE,
+                COMMAND_IAC, COMMAND_SUBNEGOTIATION, OPTION_LINEMODE, (byte)1, (byte)0, COMMAND_IAC, COMMAND_SUBNEGOTIATION_END);
         flush();
     }
 
@@ -122,18 +125,26 @@ public class TelnetTerminal extends ANSITerminal {
                 return;
             }
             for(int i = 0; i < readBytes; i++) {
-                if(workingBuffer[i] == -1) {//0xFF = IAC = Interpret As Command
+                if(workingBuffer[i] == COMMAND_IAC) {
                     i++;
-                    if(workingBuffer[i] >= (byte)0xfb && workingBuffer[i] <= (byte)0xfe) {
-                        i++;
+                    if(Arrays.asList(COMMAND_DO, COMMAND_DONT, COMMAND_WILL, COMMAND_WONT).contains(workingBuffer[i])) {
+                        String call = CODE_TO_NAME.get(workingBuffer[i++]);
+                        String operation = CODE_TO_NAME.get(workingBuffer[i]);
+                        System.out.println("Got IAC " + call + " " + operation);
                         continue;
                     }
-                    else if(workingBuffer[i] == (byte)0xfa) {   //0xFA = SB = Subnegotiation
-                        i++;
+                    else if(workingBuffer[i] == COMMAND_SUBNEGOTIATION) {   //0xFA = SB = Subnegotiation
                         //Wait for SE
-                        while(workingBuffer[i] != (byte)0xF0) {
-                            i++;
+                        String operation = CODE_TO_NAME.get(workingBuffer[++i]);
+                        List<Byte> extraData = new ArrayList<Byte>();
+                        while(workingBuffer[++i] != COMMAND_SUBNEGOTIATION_END) {
+                            extraData.add(workingBuffer[i]);
                         }
+                        System.out.print("Got IAC SB " + operation);
+                        for(Byte data: extraData) {
+                            System.out.print(" " + data);
+                        }
+                        System.out.println(" SE");
                     }
                     else {
                         System.err.println("Unknown Telnet command: " + workingBuffer[i]);
