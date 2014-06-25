@@ -222,7 +222,7 @@ public class TerminalFacade {
     /*
      * Creates a suitable text terminal for the running environment.
      */
-    public static Terminal createTextTerminal() throws IOException {
+    public static Terminal createTextTerminal() {
         return createTextTerminal(System.in, System.out, DEFAULT_CHARSET);
     }
 
