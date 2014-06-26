@@ -18,7 +18,6 @@
  */
 package com.googlecode.lanterna.terminal.ansi;
 
-import com.googlecode.lanterna.terminal.Terminal;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
