@@ -22,6 +22,7 @@ import com.googlecode.lanterna.input.KeyStroke;
 import static com.googlecode.lanterna.terminal.ansi.TelnetProtocol.*;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.charset.Charset;
 import java.util.Arrays;
@@ -37,14 +38,26 @@ public class TelnetTerminal extends ANSITerminal {
     private final Socket socket;
 
     TelnetTerminal(Socket socket, Charset terminalCharset) throws IOException {
-        super(new TelnetClientIACFilterer(socket.getInputStream()), socket.getOutputStream(), terminalCharset);
+        this(socket, new TelnetClientIACFilterer(socket.getInputStream()), socket.getOutputStream(), terminalCharset);
+    }
+    
+    //This weird construction is just so that we can access the input filter without changing the visibility in StreamBasedTerminal
+    private TelnetTerminal(Socket socket, TelnetClientIACFilterer inputStream, OutputStream outputStream, Charset terminalCharset) throws IOException {
+        super(inputStream, outputStream, terminalCharset);
         this.socket = socket;
+        inputStream.setEventListener(new TelnetClientEventListener() {
+            @Override
+            public void onResize(int columns, int rows) {
+                TelnetTerminal.this.onResized(columns, rows);
+            }
+        });
         setLineMode0();
         setEchoOff();
+        setResizeNotificationOn();
     }
     
     private void setEchoOff() throws IOException {
-        writeToTerminal((byte)255, (byte)251, (byte)1);
+        writeToTerminal(COMMAND_IAC, COMMAND_WILL, OPTION_ECHO);
         flush();
     }
     
@@ -52,6 +65,12 @@ public class TelnetTerminal extends ANSITerminal {
         writeToTerminal(
                 COMMAND_IAC, COMMAND_DO, OPTION_LINEMODE,
                 COMMAND_IAC, COMMAND_SUBNEGOTIATION, OPTION_LINEMODE, (byte)1, (byte)0, COMMAND_IAC, COMMAND_SUBNEGOTIATION_END);
+        flush();
+    }
+
+    private void setResizeNotificationOn() throws IOException {
+        writeToTerminal(
+                COMMAND_IAC, COMMAND_DO, OPTION_NAWS);
         flush();
     }
 
@@ -65,17 +84,27 @@ public class TelnetTerminal extends ANSITerminal {
         socket.close();
     }
     
+    private static interface TelnetClientEventListener {
+        void onResize(int columns, int rows);
+    }
+    
     private static class TelnetClientIACFilterer extends InputStream {
         private final InputStream inputStream;
         private final byte[] buffer;
         private final byte[] workingBuffer;
         private int bytesInBuffer;
+        private TelnetClientEventListener eventListener;
 
         public TelnetClientIACFilterer(InputStream inputStream) {
             this.inputStream = inputStream;
             this.buffer = new byte[64 * 1024];
             this.workingBuffer = new byte[1024];
             this.bytesInBuffer = 0;
+            this.eventListener = null;
+        }
+
+        public void setEventListener(TelnetClientEventListener eventListener) {
+            this.eventListener = eventListener;
         }
 
         @Override
@@ -134,7 +163,7 @@ public class TelnetTerminal extends ANSITerminal {
                         continue;
                     }
                     else if(workingBuffer[i] == COMMAND_SUBNEGOTIATION) {   //0xFA = SB = Subnegotiation
-                        //Wait for SE
+                        //Wait for IAC
                         String operation = CODE_TO_NAME.get(workingBuffer[++i]);
                         List<Byte> extraData = new ArrayList<Byte>();
                         while(workingBuffer[++i] != COMMAND_SUBNEGOTIATION_END) {
@@ -145,6 +174,10 @@ public class TelnetTerminal extends ANSITerminal {
                             System.out.print(" " + data);
                         }
                         System.out.println(" SE");
+                        
+                        if(operation.equals("NAWS") && eventListener != null) {
+                            eventListener.onResize(convertTwoBytesToInt2(extraData.get(1), extraData.get(0)), convertTwoBytesToInt2(extraData.get(3), extraData.get(2)));
+                        }
                     }
                     else {
                         System.err.println("Unknown Telnet command: " + workingBuffer[i]);
@@ -153,5 +186,9 @@ public class TelnetTerminal extends ANSITerminal {
                 buffer[bytesInBuffer++] = workingBuffer[i];
             }
         }
+    }
+    
+    private static int convertTwoBytesToInt2(byte b1, byte b2) {
+        return (int) (( (b2 & 0xFF) << 8) | (b1 & 0xFF));
     }
 }

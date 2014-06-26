@@ -40,6 +40,9 @@ public class TelnetTerminalTest {
 
     private static void spawnColorTest(final TelnetTerminal terminal) {
         new Thread() {
+            
+            private volatile TerminalSize size;
+            
             @Override
             public void run() {
                 try {
@@ -47,7 +50,14 @@ public class TelnetTerminalTest {
                     Random random = new Random();
                     terminal.enterPrivateMode();
                     terminal.clearScreen();
-                    TerminalSize size = terminal.getTerminalSize();
+                    terminal.addResizeListener(new ResizeListener() {
+                        @Override
+                        public void onResized(Terminal terminal, TerminalSize newSize) {
+                            System.err.println("Resized to " + newSize);
+                            size = newSize;
+                        }
+                    });
+                    size = terminal.getTerminalSize();
 
                     while(true) {
                         if(terminal.readInput() != null) {
