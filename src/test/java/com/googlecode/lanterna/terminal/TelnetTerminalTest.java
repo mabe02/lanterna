@@ -18,9 +18,12 @@
  */
 package com.googlecode.lanterna.terminal;
 
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.ansi.TelnetTerminal;
 import com.googlecode.lanterna.terminal.ansi.TelnetTerminalServer;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Random;
 
 /**
@@ -29,7 +32,7 @@ import java.util.Random;
  */
 public class TelnetTerminalTest {
     public static void main(String[] args) throws IOException {
-        TelnetTerminalServer server = new TelnetTerminalServer(1024);
+        TelnetTerminalServer server = new TelnetTerminalServer(1024, Charset.forName("utf-8"));
         while(true) {
             TelnetTerminal telnetTerminal = server.acceptConnection();
             if(telnetTerminal != null) {
@@ -60,9 +63,13 @@ public class TelnetTerminalTest {
                     size = terminal.getTerminalSize();
 
                     while(true) {
-                        if(terminal.readInput() != null) {
-                            terminal.exitPrivateMode();
-                            return;
+                        KeyStroke key = terminal.readInput();
+                        if(key != null) {
+                            System.out.println(key);
+                            if(key.getKeyType() == KeyType.Escape) {
+                                terminal.exitPrivateMode();
+                                return;
+                            }
                         }
 
                         TextColor.Indexed foregroundIndex = TextColor.Indexed.fromRGB(random.nextInt(255), random.nextInt(255), random.nextInt(255));
