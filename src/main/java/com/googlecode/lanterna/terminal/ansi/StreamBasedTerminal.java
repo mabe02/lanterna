@@ -25,7 +25,6 @@ import java.io.OutputStream;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 
-import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.input.InputDecoder;
 import com.googlecode.lanterna.terminal.ACS;
 import com.googlecode.lanterna.terminal.InputEnabledAbstractTerminal;

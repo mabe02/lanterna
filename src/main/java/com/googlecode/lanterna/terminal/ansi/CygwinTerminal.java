@@ -18,7 +18,6 @@
  */
 package com.googlecode.lanterna.terminal.ansi;
 
-import com.googlecode.lanterna.LanternaException;
 import com.googlecode.lanterna.terminal.TerminalSize;
 
 import java.io.*;
@@ -63,7 +62,7 @@ public class CygwinTerminal extends UnixTerminal {
                 return new TerminalSize(80, 20);
             }
         }
-        catch(LanternaException e) {
+        catch(Throwable e) {
             return new TerminalSize(80, 20);
         }
     }
@@ -92,16 +91,16 @@ public class CygwinTerminal extends UnixTerminal {
     }
 
     @Override
-    public void setCBreak(boolean cbreakOn) {
+    public void setCBreak(boolean cbreakOn) throws IOException {
         sttyCBreak(cbreakOn);
     }
 
     @Override
-    public void setEcho(boolean echoOn) {
+    public void setEcho(boolean echoOn) throws IOException {
         sttyKeyEcho(echoOn);
     }
 
-    private static void sttyKeyEcho(final boolean enable) {
+    private static void sttyKeyEcho(final boolean enable) throws IOException {
         exec(findSTTY(), "-F", "/dev/pty0", (enable ? "echo" : "-echo"));
         /*
          exec(findShell(), "-c",
@@ -109,7 +108,7 @@ public class CygwinTerminal extends UnixTerminal {
          */
     }
 
-    private static void sttyMinimumCharacterForRead(final int nrCharacters) {
+    private static void sttyMinimumCharacterForRead(final int nrCharacters) throws IOException {
         exec(findSTTY(), "-F", "/dev/pty0", "min", nrCharacters + "");
         /*
          exec(findShell(), "-c",
@@ -117,7 +116,7 @@ public class CygwinTerminal extends UnixTerminal {
          */
     }
 
-    private static void sttyCBreak(final boolean enable) {
+    private static void sttyCBreak(final boolean enable) throws IOException {
         exec(findSTTY(), "-F", "/dev/pty0", (enable ? "cbreak" : "icanon"));
         /*
          exec(findShell(), "-c",
@@ -145,29 +144,24 @@ public class CygwinTerminal extends UnixTerminal {
         return programName;
     }
 
-    private static String exec(String... cmd) {
-        try {
-            ProcessBuilder pb = new ProcessBuilder(cmd);
-            Process process = pb.start();
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            InputStream stdout = process.getInputStream();
-            int readByte = stdout.read();
-            while(readByte >= 0) {
-                baos.write(readByte);
-                readByte = stdout.read();
-            }
-            ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-            BufferedReader reader = new BufferedReader(new InputStreamReader(bais));
-            StringBuilder builder = new StringBuilder();
-            while(reader.ready()) {
-                builder.append(reader.readLine());
-            }
-            reader.close();
-            return builder.toString();
+    private static String exec(String... cmd) throws IOException {
+        ProcessBuilder pb = new ProcessBuilder(cmd);
+        Process process = pb.start();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        InputStream stdout = process.getInputStream();
+        int readByte = stdout.read();
+        while(readByte >= 0) {
+            baos.write(readByte);
+            readByte = stdout.read();
         }
-        catch(IOException e) {
-            throw new LanternaException(e);
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        BufferedReader reader = new BufferedReader(new InputStreamReader(bais));
+        StringBuilder builder = new StringBuilder();
+        while(reader.ready()) {
+            builder.append(reader.readLine());
         }
+        reader.close();
+        return builder.toString();
     }
 
 }
