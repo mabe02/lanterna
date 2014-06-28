@@ -81,6 +81,10 @@ class TextBuffer {
     List<List<TerminalCharacter>> getVisibleLines(int rows, int scrollOffset) {
         return lineBuffer.subList(lineBuffer.size() - rows, lineBuffer.size());
     }
+    
+    int getNumberOfLines() {
+        return lineBuffer.size();
+    }
 
     void newLine(TerminalSize terminalSize) {
         newLine(terminalSize.getColumns());

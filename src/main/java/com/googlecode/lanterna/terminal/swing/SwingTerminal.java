@@ -63,6 +63,17 @@ import javax.swing.event.AncestorListener;
  */
 public class SwingTerminal extends JComponent implements IOSafeTerminal {
 
+    public static interface ScrollObserver {
+        void newScrollableLength(int rows);
+    }
+    
+    private static class NullScrollObserver implements ScrollObserver {
+        @Override
+        public void newScrollableLength(int pixels) {
+        }
+    }
+    
+    private final ScrollObserver scrollObserver;
     private final SwingTerminalDeviceConfiguration deviceConfiguration;
     private final SwingTerminalFontConfiguration fontConfiguration;
     private final SwingTerminalColorConfiguration colorConfiguration;
@@ -79,6 +90,10 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
     private volatile boolean blinkOn;
 
     public SwingTerminal() {
+        this(new NullScrollObserver());
+    }
+    
+    public SwingTerminal(ScrollObserver scrollObserver) {
         this(SwingTerminalDeviceConfiguration.DEFAULT,
                 SwingTerminalFontConfiguration.DEFAULT,
                 SwingTerminalColorConfiguration.DEFAULT);
@@ -94,6 +109,22 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
             SwingTerminalDeviceConfiguration deviceConfiguration,
             SwingTerminalFontConfiguration fontConfiguration,
             SwingTerminalColorConfiguration colorConfiguration) {
+        
+        this(deviceConfiguration, fontConfiguration, colorConfiguration, new NullScrollObserver());
+    }
+    
+    /**
+     * Creates a new SwingTerminal component.
+     * @param deviceConfiguration
+     * @param fontConfiguration
+     * @param colorConfiguration
+     * @param scrollObserver
+     */
+    public SwingTerminal(
+            SwingTerminalDeviceConfiguration deviceConfiguration,
+            SwingTerminalFontConfiguration fontConfiguration,
+            SwingTerminalColorConfiguration colorConfiguration,
+            ScrollObserver scrollObserver) {
         
         //Enforce valid values on the input parameters
         if(deviceConfiguration == null) {
@@ -114,6 +145,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
         this.deviceConfiguration = deviceConfiguration;
         this.fontConfiguration = fontConfiguration;
         this.colorConfiguration = colorConfiguration;
+        this.scrollObserver = scrollObserver;
 
         this.mainBuffer = new TextBuffer(deviceConfiguration.getLineBufferScrollbackSize(), terminalImplementation.getTerminalSize());
         this.privateModeBuffer = new TextBuffer(0, terminalImplementation.getTerminalSize());
@@ -122,6 +154,9 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
         this.enquiryString = "SwingTerminal";
         this.blinkTimer = new Timer(deviceConfiguration.getBlinkLengthInMilliSeconds(), new BlinkTimerCallback());
 
+        //Set the initial scrollable size
+        //scrollObserver.newScrollableLength(fontConfiguration.getFontHeight() * terminalSize.getRows());
+        
         //Prevent us from shrinking beyond one character
         setMinimumSize(new Dimension(fontConfiguration.getFontWidth(), fontConfiguration.getFontHeight()));
         setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, Collections.EMPTY_SET);
@@ -353,6 +388,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
             @Override
             public void run() {
                 terminalImplementation.putCharacter(c);
+                scrollObserver.newScrollableLength(currentBuffer.getNumberOfLines() - (getSize().height / fontConfiguration.getFontHeight()));
             }
         });
     }
