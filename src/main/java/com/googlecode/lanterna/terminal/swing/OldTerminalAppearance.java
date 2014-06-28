@@ -28,7 +28,9 @@ import java.awt.image.BufferedImage;
  * {@code SwingTerminal} to look.
  * @see SwingTerminal
  * @author Martin
+ * @deprecated 
  */
+@Deprecated
 public class OldTerminalAppearance {
     
     public static final Font DEFAULT_NORMAL_FONT = createDefaultNormalFont();

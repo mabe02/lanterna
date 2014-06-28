@@ -62,7 +62,9 @@ import java.util.concurrent.TimeUnit;
 /**
  * A Swing-based text terminal emulator
  * @author Martin
+ * @deprecated Use SwingTerminal or SwingTerminalFrame instead
  */
+@Deprecated
 public class OldSwingTerminal extends AbstractTerminal implements InputProvider
 {
     private final TerminalRenderer terminalRenderer;
