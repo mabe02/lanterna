@@ -19,12 +19,7 @@
 
 package com.googlecode.lanterna.gui;
 
-import com.googlecode.lanterna.gui.Action;
-import com.googlecode.lanterna.gui.DefaultBackgroundRenderer;
-import com.googlecode.lanterna.gui.GUIScreen;
-import com.googlecode.lanterna.gui.TextGraphics;
 import com.googlecode.lanterna.gui.Theme.Category;
-import com.googlecode.lanterna.gui.Window;
 import com.googlecode.lanterna.gui.component.AbstractComponent;
 import com.googlecode.lanterna.gui.component.Button;
 import com.googlecode.lanterna.gui.component.Panel;

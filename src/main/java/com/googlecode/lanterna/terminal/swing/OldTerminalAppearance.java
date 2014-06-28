@@ -21,7 +21,6 @@ package com.googlecode.lanterna.terminal.swing;
 
 import java.awt.Font;
 import java.awt.image.BufferedImage;
-import com.googlecode.lanterna.terminal.swing.OldTerminalAppearance;
 
 /**
  * This class will describe how a {@code SwingTerminal} is to be visually presented. 
