@@ -39,6 +39,7 @@ public interface Terminal extends InputProvider {
      * supports scrolling, going into private mode will disable the scrolling and leave you with a fixed screen, which
      * can be useful if you don't want to deal with what the terminal buffer will look like if the user scrolls up.
      *
+     * @throws java.io.IOException
      * @throws IllegalStateException If you are already in private mode
      */
     public void enterPrivateMode() throws IOException;
@@ -49,6 +50,7 @@ public interface Terminal extends InputProvider {
      * secondary buffer for private mode, it will probably make a new line below the private mode and place the cursor
      * there.
      *
+     * @throws java.io.IOException If there was an underlying I/O error
      * @throws IllegalStateException If you are not in private mode
      */
     public void exitPrivateMode() throws IOException;
@@ -57,6 +59,7 @@ public interface Terminal extends InputProvider {
      * Removes all the characters, colors and graphics from the screen and leaves you with a big empty space. Text
      * cursor position is undefined after this call (depends on platform and terminal) so you should always call
      * {@code moveCursor} next.
+     * @throws java.io.IOException If there was an underlying I/O error
      */
     public void clearScreen() throws IOException;
 
@@ -67,6 +70,7 @@ public interface Terminal extends InputProvider {
      *
      * @param x The 0-indexed column to place the cursor at
      * @param y The 0-indexed row to place the cursor at
+     * @throws java.io.IOException If there was an underlying I/O error
      */
     public void moveCursor(int x, int y) throws IOException;
 
@@ -76,6 +80,7 @@ public interface Terminal extends InputProvider {
      * show up.
      *
      * @param visible Hides the text cursor if {@code false} and shows it if {@code true}
+     * @throws java.io.IOException If there was an underlying I/O error
      */
     public void setCursorVisible(boolean visible) throws IOException;
 
@@ -84,7 +89,7 @@ public interface Terminal extends InputProvider {
      * one column to the right, so multiple calls to {@code putCharacter} will print out a text string without the need
      * to reposition the text cursor. If you reach the end of the line while putting characters using this method, you
      * can expect the text cursor to move to the beginning of the next line.
-     * </p>
+     * <p/>
      * You can output CJK (Chinese, Japanese, Korean) characters (as well as other regional scripts) but remember that
      * the terminal that the user is using might not have the required font to render it. Also worth noticing is that
      * CJK (and some others) characters tend to take up 2 columns per character, simply because they are a square in
@@ -94,6 +99,7 @@ public interface Terminal extends InputProvider {
      * programmer because you can't really trust 1 character = 1 column, but I suppose it's "しょうがない".
      *
      * @param c Character to place on the terminal
+     * @throws java.io.IOException If there was an underlying I/O error
      */
     public void putCharacter(char c) throws IOException;
 
@@ -102,6 +108,7 @@ public interface Terminal extends InputProvider {
      * that will apply to all characters written afterwards, such as bold, italic, blinking code and so on.
      *
      * @param sgr SGR code to apply
+     * @throws java.io.IOException If there was an underlying I/O error
      * @see Terminal.SGR
      * @see http://www.vt100.net/docs/vt510-rm/SGR
      */
@@ -112,6 +119,7 @@ public interface Terminal extends InputProvider {
      * enableSGR(..)}.
      *
      * @param sgr SGR code to apply
+     * @throws java.io.IOException If there was an underlying I/O error
      * @see Terminal.SGR
      * @see http://www.vt100.net/docs/vt510-rm/SGR
      */
@@ -120,6 +128,7 @@ public interface Terminal extends InputProvider {
     /**
      * Removes all currently active SGR codes.
      *
+     * @throws java.io.IOException If there was an underlying I/O error
      * @see Terminal.SGR
      * @see http://www.vt100.net/docs/vt510-rm/SGR
      */
@@ -128,28 +137,30 @@ public interface Terminal extends InputProvider {
     /**
      * Changes the foreground color for all the following characters put to the terminal. The foreground color is what
      * color to draw the text in, as opposed to the background color which is the color surrounding the characters.
-     * </p>
+     * <p/>
      * This overload is using the TextColor class to define a color, which is a layer of abstraction above the three
      * different color formats supported (ANSI, indexed and RGB). The other setForegroundColor(..) overloads gives
      * you direct access to set one of those three.
-     * </p>
+     * <p/>
      * Note to implementers of this interface, just make this method call <b>color.applyAsForeground(this);</b>
      *
      * @param color Color to use for foreground
+     * @throws java.io.IOException If there was an underlying I/O error
      */
     public void setForegroundColor(TextColor color) throws IOException;
 
     /**
      * Changes the background color for all the following characters put to the terminal. The background color is the
      * color surrounding the text being printed.
-     * </p>
+     * <p/>
      * This overload is using the TextColor class to define a color, which is a layer of abstraction above the three
      * different color formats supported (ANSI, indexed and RGB). The other setBackgroundColor(..) overloads gives
      * you direct access to set one of those three.
-     * </p>
+     * <p/>
      * Note to implementers of this interface, just make this method call <b>color.applyAsBackground(this);</b>
      *
      * @param color Color to use for the background
+     * @throws java.io.IOException If there was an underlying I/O error
      */
     public void setBackgroundColor(TextColor color) throws IOException;
 
@@ -158,7 +169,7 @@ public interface Terminal extends InputProvider {
      * listener will really be invoked when the terminal has changed size, at all depends on the terminal emulator
      * implementation. Normally on Unix systems the WINCH signal will be sent to the process and lanterna can intercept
      * this.
-     * </p>
+     * <p/>
      * There are no guarantees on what thread the call will be made on, so please be careful with what kind of operation
      * you perform in this callback. You should probably not take too long to return.
      *
@@ -206,6 +217,7 @@ public interface Terminal extends InputProvider {
      * Calls {@code flush()} on the underlying {@code OutputStream} object, or whatever other implementation this
      * terminal is built around. Some implementing classes of this interface (like SwingTerminal) doesn't do anything
      * as it doesn't really apply to them.
+     * @throws java.io.IOException If there was an underlying I/O error
      */
     public void flush() throws IOException;
 
