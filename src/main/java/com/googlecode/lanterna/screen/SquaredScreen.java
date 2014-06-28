@@ -25,8 +25,12 @@ import com.googlecode.lanterna.terminal.TerminalSize;
 import java.io.IOException;
 
 /**
- *
- * @author martin
+ * This class wraps another Screen and presents it as having half the number of columns. The purpose for this is to 
+ * make drawing text graphics easier, since normally a terminal's individual 'cell' is twice as tall as it is wide.
+ * When you put a character to a SquaredScreen, it will actually put the same character twice, which won't make much 
+ * sense for text but does for solid blocks. For a demonstation of this, take a look at the Triangle test in 
+ * com.googlecode.lanterna.screen and compare it when running with the --square parameter and without.
+ * @author Martin
  */
 public class SquaredScreen extends AbstractScreen {
     private final Screen backend;
