@@ -388,7 +388,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
             @Override
             public void run() {
                 terminalImplementation.putCharacter(c);
-                scrollObserver.newScrollableLength(currentBuffer.getNumberOfLines() - (getSize().height / fontConfiguration.getFontHeight()));
+                scrollObserver.newScrollableLength(currentBuffer.getNumberOfLines());
             }
         });
     }

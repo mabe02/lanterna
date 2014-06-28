@@ -51,15 +51,15 @@ public class ScrollingSwingTerminal extends JComponent implements IOSafeTerminal
         add(swingTerminal, BorderLayout.CENTER);
         add(scrollBar, BorderLayout.EAST);
         this.scrollBar.setMinimum(0);
-        this.scrollBar.setMaximum(50);
-        this.scrollBar.setValue(50);
+        this.scrollBar.setMaximum(20);
+        this.scrollBar.setValue(0);
         this.scrollBar.setBlockIncrement(20);
         this.scrollBar.setVisibleAmount(20);
         
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
-                scrollBar.setVisibleAmount(swingTerminal.getSize().height);
+                //scrollBar.setVisibleAmount(swingTerminal.getSize().height);
             }
         });
     }
@@ -68,7 +68,9 @@ public class ScrollingSwingTerminal extends JComponent implements IOSafeTerminal
         @Override
         public void newScrollableLength(int rows) {
             System.out.println("Visible amount is now " + rows);
-            //scrollBar.setMaximum(rows);
+            int previousMaximum = scrollBar.getMaximum();
+            scrollBar.setMaximum(rows);
+            scrollBar.setValue(scrollBar.getValue() + rows - previousMaximum);
         }
     }
 
