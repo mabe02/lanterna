@@ -5,6 +5,7 @@ import com.googlecode.lanterna.screen.ScreenWriter;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.TestTerminalFactory;
+import com.googlecode.lanterna.screen.Screen;
 import java.io.IOException;
 
 class IssueX {
@@ -20,7 +21,7 @@ class IssueX {
 
     public static class LanternaTerminalWriter {
 
-        private DefaultScreen screen;
+        private Screen screen;
         private ScreenWriter screenWriter;
 
         private int current_y = 1;

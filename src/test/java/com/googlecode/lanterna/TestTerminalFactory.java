@@ -22,6 +22,7 @@ package com.googlecode.lanterna;
 import com.googlecode.lanterna.TerminalFacade;
 import com.googlecode.lanterna.gui.GUIScreen;
 import com.googlecode.lanterna.screen.DefaultScreen;
+import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.Terminal;
 import java.io.IOException;
 
@@ -45,7 +46,7 @@ public class TestTerminalFactory {
             return TerminalFacade.createTerminal();
     }
 
-    public DefaultScreen createScreen() throws IOException {
+    public Screen createScreen() throws IOException {
         return TerminalFacade.createScreen(createTerminal());
     }
 

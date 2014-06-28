@@ -47,7 +47,7 @@ public class ScreenRectangleTest {
                 slow = true;
             }
         }
-        DefaultScreen screen = new TestTerminalFactory(args).createScreen();
+        Screen screen = new TestTerminalFactory(args).createScreen();
         screen.startScreen();
 
         ScreenWriter writer = new ScreenWriter(screen);

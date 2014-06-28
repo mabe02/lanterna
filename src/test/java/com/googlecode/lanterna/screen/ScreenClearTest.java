@@ -29,7 +29,7 @@ import java.io.IOException;
  */
 public class ScreenClearTest {
     public static void main(String[] args) throws IOException {
-        DefaultScreen screen = new TestTerminalFactory(args).createScreen();
+        Screen screen = new TestTerminalFactory(args).createScreen();
         screen.startScreen();
         for(int i = 0; i < 10; i++) {
             drawText(screen);
@@ -42,7 +42,7 @@ public class ScreenClearTest {
         screen.stopScreen();
     }
 
-    private static void drawText(DefaultScreen screen) {
+    private static void drawText(Screen screen) {
         ScreenWriter writer = new ScreenWriter(screen);
         writer.setForegroundColor(TextColor.ANSI.DEFAULT);
         writer.setBackgroundColor(TextColor.ANSI.DEFAULT);

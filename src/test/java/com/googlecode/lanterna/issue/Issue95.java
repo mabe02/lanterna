@@ -8,6 +8,7 @@ package com.googlecode.lanterna.issue;
 
 import com.googlecode.lanterna.TerminalFacade;
 import com.googlecode.lanterna.screen.DefaultScreen;
+import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.swing.OldSwingTerminal;
 import java.io.IOException;
 import javax.swing.JFrame;
@@ -22,7 +23,7 @@ public class Issue95 {
         OldSwingTerminal terminal = new OldSwingTerminal(80, 20);
         terminal.setCursorVisible(false);
 
-        DefaultScreen screen = TerminalFacade.createScreen(terminal);
+        Screen screen = TerminalFacade.createScreen(terminal);
         screen.startScreen();
 
         JFrame frame = terminal.getJFrame();

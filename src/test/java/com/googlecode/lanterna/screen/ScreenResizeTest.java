@@ -34,7 +34,7 @@ public class ScreenResizeTest {
         new ScreenResizeTest(args);
     }
 
-    private final DefaultScreen screen;
+    private final Screen screen;
 
     public ScreenResizeTest(String[] args) throws InterruptedException, IOException {
         screen = new TestTerminalFactory(args).createScreen();

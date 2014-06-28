@@ -19,6 +19,7 @@
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.screen.DefaultScreen;
+import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.ScreenWriter;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalPosition;
@@ -35,7 +36,7 @@ public class ScreenBackendTextGUIGraphics implements TextGUIGraphics {
     private final TerminalPosition topLeftPosition;
     private final TerminalSize drawableAreaSize;
 
-    public ScreenBackendTextGUIGraphics(DefaultScreen screen) {
+    public ScreenBackendTextGUIGraphics(Screen screen) {
         this(new  ScreenWriter(screen), new TerminalPosition(0, 0), screen.getTerminalSize());
     }
 

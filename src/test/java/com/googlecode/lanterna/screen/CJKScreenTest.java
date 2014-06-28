@@ -28,7 +28,7 @@ import java.io.IOException;
  */
 public class CJKScreenTest {
     public static void main(String[] args) throws IOException {
-        DefaultScreen screen = new TestTerminalFactory(args).createScreen();
+        Screen screen = new TestTerminalFactory(args).createScreen();
         screen.startScreen();
 
         ScreenWriter writer = new ScreenWriter(screen);

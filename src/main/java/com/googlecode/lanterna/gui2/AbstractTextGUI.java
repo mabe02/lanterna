@@ -21,6 +21,7 @@ package com.googlecode.lanterna.gui2;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.DefaultScreen;
+import com.googlecode.lanterna.screen.Screen;
 import java.io.IOException;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -31,14 +32,14 @@ import java.util.concurrent.CountDownLatch;
  * @author Martin
  */
 public abstract class AbstractTextGUI implements TextGUI {
-    private final DefaultScreen screen;
+    private final Screen screen;
     private final Queue<Runnable> customTasks;
 
     private Status status;
     private Thread textGUIThread;
     private CountDownLatch waitLatch;
 
-    public AbstractTextGUI(DefaultScreen screen) {
+    public AbstractTextGUI(Screen screen) {
         this.screen = screen;
         this.waitLatch = new CountDownLatch(0);
         this.customTasks = new ConcurrentLinkedQueue<Runnable>();

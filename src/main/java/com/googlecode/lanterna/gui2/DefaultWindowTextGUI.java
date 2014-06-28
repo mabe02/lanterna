@@ -22,6 +22,7 @@ import com.googlecode.lanterna.gui2.WindowManager.Hint;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.DefaultScreen;
+import com.googlecode.lanterna.screen.Screen;
 import java.util.Collection;
 
 /**
@@ -32,7 +33,7 @@ public class DefaultWindowTextGUI extends AbstractTextGUI implements WindowBased
     private final WindowManager windowManager;
     private final GUIElement background;
 
-    public DefaultWindowTextGUI(DefaultScreen screen, WindowManager windowManager, GUIElement background) {
+    public DefaultWindowTextGUI(Screen screen, WindowManager windowManager, GUIElement background) {
         super(screen);
         this.windowManager = windowManager;
         this.background = background;

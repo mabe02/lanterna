@@ -29,6 +29,7 @@ import com.googlecode.lanterna.gui.component.EmptySpace;
 import com.googlecode.lanterna.gui.component.Panel;
 import com.googlecode.lanterna.gui.dialog.MessageBox;
 import com.googlecode.lanterna.screen.DefaultScreen;
+import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.swing.OldSwingTerminal;
 import com.googlecode.lanterna.terminal.swing.SwingTerminalPalette;
 import java.lang.reflect.Field;
@@ -93,7 +94,7 @@ public class SwingChangePaletteTest {
         @Override
         public void doAction() {
             MessageBox.showMessageBox(owner, "Palette", "Will change palette to " + label + "...");
-            ((OldSwingTerminal)owner.getScreen().getTerminal()).setTerminalPalette(palette);
+            ((OldSwingTerminal)((TerminalScreen)owner.getScreen()).getTerminal()).setTerminalPalette(palette);
             MessageBox.showMessageBox(owner, "Palette", "Palette changed to " + label + "!");
         }
     }

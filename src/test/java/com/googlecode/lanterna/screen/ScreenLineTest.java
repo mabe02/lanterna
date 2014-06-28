@@ -48,7 +48,7 @@ public class ScreenLineTest {
                 circle = true;
             }
         }
-        DefaultScreen screen = new TestTerminalFactory(args).createScreen();
+        Screen screen = new TestTerminalFactory(args).createScreen();
         screen.startScreen();
 
         ScreenWriter writer = new ScreenWriter(screen);

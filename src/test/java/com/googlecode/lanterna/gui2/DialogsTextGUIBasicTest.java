@@ -18,13 +18,10 @@
  */
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.gui2.DefaultWindowTextGUI;
-import com.googlecode.lanterna.gui2.GUIElement;
-import com.googlecode.lanterna.gui2.TextGUI;
-import com.googlecode.lanterna.gui2.TextGUIGraphics;
 import com.googlecode.lanterna.screen.DefaultScreen;
 import com.googlecode.lanterna.terminal.TextColor;
 import com.googlecode.lanterna.TestTerminalFactory;
+import com.googlecode.lanterna.screen.Screen;
 import java.io.IOException;
 
 /**
@@ -33,7 +30,7 @@ import java.io.IOException;
  */
 public class DialogsTextGUIBasicTest {
     public static void main(String[] args) throws IOException {
-        DefaultScreen screen = new TestTerminalFactory(args).createScreen();
+        Screen screen = new TestTerminalFactory(args).createScreen();
         screen.startScreen();
 
         TextGUI textGUI = new DefaultWindowTextGUI(screen, null, new GUIElement() {
