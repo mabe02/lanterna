@@ -7,7 +7,6 @@
 package com.googlecode.lanterna.issue;
 
 import com.googlecode.lanterna.TerminalFacade;
-import com.googlecode.lanterna.screen.DefaultScreen;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.swing.OldSwingTerminal;
 import java.io.IOException;

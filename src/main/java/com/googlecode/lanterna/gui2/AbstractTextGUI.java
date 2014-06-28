@@ -20,7 +20,6 @@ package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
-import com.googlecode.lanterna.screen.DefaultScreen;
 import com.googlecode.lanterna.screen.Screen;
 import java.io.IOException;
 import java.util.Queue;

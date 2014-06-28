@@ -21,7 +21,6 @@ package com.googlecode.lanterna.gui.listener;
 import com.googlecode.lanterna.gui.Interactable;
 import com.googlecode.lanterna.gui.Window;
 import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.input.KeyType;
 
 /**
  * This listener class is for listening to events happening to a {@code Window}. If you want to 

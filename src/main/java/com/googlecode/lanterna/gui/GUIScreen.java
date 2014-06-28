@@ -21,8 +21,6 @@ package com.googlecode.lanterna.gui;
 
 import com.googlecode.lanterna.gui.listener.WindowAdapter;
 import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.input.KeyType;
-import com.googlecode.lanterna.screen.DefaultScreen;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;

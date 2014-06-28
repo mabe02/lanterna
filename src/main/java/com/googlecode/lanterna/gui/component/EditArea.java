@@ -25,7 +25,6 @@ import com.googlecode.lanterna.gui.TextGraphics;
 import com.googlecode.lanterna.gui.Theme;
 import com.googlecode.lanterna.gui.component.TextGrid.DataGridCel;
 import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.terminal.TextColor;

@@ -18,7 +18,6 @@
  */
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.screen.DefaultScreen;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.ScreenWriter;
 import com.googlecode.lanterna.terminal.Terminal;

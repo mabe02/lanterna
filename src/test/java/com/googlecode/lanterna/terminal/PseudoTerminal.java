@@ -20,7 +20,6 @@ package com.googlecode.lanterna.terminal;
 
 import com.googlecode.lanterna.TestTerminalFactory;
 import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.input.KeyType;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -30,7 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import javax.swing.SwingUtilities;
 
 /**
  *

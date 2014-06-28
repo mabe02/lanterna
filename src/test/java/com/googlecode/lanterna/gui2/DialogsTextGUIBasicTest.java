@@ -18,7 +18,6 @@
  */
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.screen.DefaultScreen;
 import com.googlecode.lanterna.terminal.TextColor;
 import com.googlecode.lanterna.TestTerminalFactory;
 import com.googlecode.lanterna.screen.Screen;

@@ -5,7 +5,6 @@ import com.googlecode.lanterna.gui.TextGraphics;
 import com.googlecode.lanterna.gui.Window;
 import com.googlecode.lanterna.gui.component.AbstractInteractableComponent;
 import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.TestTerminalFactory;
 import java.io.IOException;

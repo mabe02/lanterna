@@ -22,7 +22,6 @@ import com.googlecode.lanterna.terminal.TerminalPosition;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Used to read the input stream character by character and generate {@code Key} objects to be put in the input queue.

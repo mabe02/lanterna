@@ -30,7 +30,6 @@ import com.googlecode.lanterna.gui.listener.ComponentAdapter;
 import com.googlecode.lanterna.gui.listener.ContainerListener;
 import com.googlecode.lanterna.gui.listener.WindowListener;
 import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 

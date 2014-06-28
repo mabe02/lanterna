@@ -19,10 +19,6 @@
 
 package com.googlecode.lanterna.gui;
 
-import java.util.Arrays;
-import java.util.EnumSet;
-
-import com.googlecode.lanterna.screen.DefaultScreen;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.ScreenWriter;
 import com.googlecode.lanterna.screen.TabBehaviour;
