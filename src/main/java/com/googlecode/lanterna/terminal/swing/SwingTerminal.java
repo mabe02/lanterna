@@ -40,6 +40,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collections;
@@ -62,7 +63,7 @@ import javax.swing.event.AncestorListener;
  * @author martin
  */
 public class SwingTerminal extends JComponent implements IOSafeTerminal {
-
+    
     public static interface ScrollObserver {
         void newScrollableLength(int rows);
     }
@@ -85,6 +86,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
 
     private TextBuffer currentBuffer;
     private String enquiryString;
+    private int scrollOffset;
 
     private volatile boolean cursorIsVisible;
     private volatile boolean blinkOn;
@@ -152,6 +154,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
         this.currentBuffer = mainBuffer;    //Always start with the active buffer
         this.cursorIsVisible = true;        //Always start with an activate and visible cursor
         this.enquiryString = "SwingTerminal";
+        this.scrollOffset = 0;
         this.blinkTimer = new Timer(deviceConfiguration.getBlinkLengthInMilliSeconds(), new BlinkTimerCallback());
 
         //Set the initial scrollable size
@@ -211,7 +214,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
 
         //Draw line by line, character by character
         int rowIndex = 0;
-        for(List<TerminalCharacter> row: currentBuffer.getVisibleLines(visibleRows, 0)) {
+        for(List<TerminalCharacter> row: currentBuffer.getVisibleLines(visibleRows, scrollOffset)) {
             for(int columnIndex = 0; columnIndex < row.size(); columnIndex++) {
                 TerminalCharacter character = row.get(columnIndex);
                 boolean atCursorLocation = cursorPosition.equals(columnIndex, rowIndex);
@@ -268,6 +271,16 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
             notifyAll();
         }
     }
+    
+    public void setScrollOffset(int scrollOffset) {
+        this.scrollOffset = scrollOffset;
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                repaint();
+            }
+        });
+    }
 
     private Color deriveTrueForegroundColor(TerminalCharacter character, boolean atCursorLocation) {
         TextColor foregroundColor = character.getForegroundColor();
@@ -314,6 +327,18 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
         else {
             return colorConfiguration.toAWTColor(backgroundColor, false, character.isBold());
         }
+    }
+
+    public SwingTerminalDeviceConfiguration getDeviceConfiguration() {
+        return deviceConfiguration;
+    }
+
+    public SwingTerminalFontConfiguration getFontConfiguration() {
+        return fontConfiguration;
+    }
+
+    public SwingTerminalColorConfiguration getColorConfiguration() {
+        return colorConfiguration;
     }
 
     ///////////
@@ -385,10 +410,15 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
     @Override
     public void putCharacter(final char c) {
         SwingUtilities.invokeLater(new Runnable() {
+            private int lastSize = -1;
+            
             @Override
             public void run() {
                 terminalImplementation.putCharacter(c);
-                scrollObserver.newScrollableLength(currentBuffer.getNumberOfLines());
+                if(currentBuffer.getNumberOfLines() != lastSize) {
+                    scrollObserver.newScrollableLength(currentBuffer.getNumberOfLines());
+                    lastSize = currentBuffer.getNumberOfLines();
+                }
             }
         });
     }
@@ -455,18 +485,23 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
 
     @Override
     public void flush() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                terminalImplementation.flush();
-            }
-        });
-        try {
-            synchronized(this) {
-                wait(500);
-            }
+        if(SwingUtilities.isEventDispatchThread()) {
+            terminalImplementation.flush();
         }
-        catch(InterruptedException e) {
+        else {
+            try {
+                SwingUtilities.invokeAndWait(new Runnable() {
+                    @Override
+                    public void run() {
+                        terminalImplementation.flush();
+                    }
+                });
+            }
+            catch(InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
+            catch(InterruptedException e) {
+            }
         }
     }
 
@@ -640,7 +675,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
         public void setCursorVisible(boolean visible) {
             SwingTerminal.this.cursorIsVisible = visible;
         }
-
+        
         @Override
         public void flush() {
             SwingTerminal.this.repaint();

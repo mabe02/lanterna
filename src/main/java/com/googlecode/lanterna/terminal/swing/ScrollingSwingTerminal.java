@@ -1,24 +1,37 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * 
+ * lanterna is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * Copyright (C) 2010-2014 Martin
  */
-
 package com.googlecode.lanterna.terminal.swing;
 
 import com.googlecode.lanterna.input.KeyDecodingProfile;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.terminal.IOSafeTerminal;
 import com.googlecode.lanterna.terminal.ResizeListener;
+import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.terminal.TextColor;
 import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.util.concurrent.TimeUnit;
 import javax.swing.JComponent;
 import javax.swing.JScrollBar;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -50,16 +63,26 @@ public class ScrollingSwingTerminal extends JComponent implements IOSafeTerminal
         setLayout(new BorderLayout());
         add(swingTerminal, BorderLayout.CENTER);
         add(scrollBar, BorderLayout.EAST);
-        this.scrollBar.setMinimum(0);
-        this.scrollBar.setMaximum(20);
+        this.scrollBar.setMinimum(-20);
+        this.scrollBar.setMaximum(0);
         this.scrollBar.setValue(0);
-        this.scrollBar.setBlockIncrement(20);
         this.scrollBar.setVisibleAmount(20);
-        
-        addComponentListener(new ComponentAdapter() {
+        this.scrollBar.addAdjustmentListener(new ScrollbarListener());
+        this.swingTerminal.addResizeListener(new ResizeListener() {
             @Override
-            public void componentResized(ComponentEvent e) {
-                //scrollBar.setVisibleAmount(swingTerminal.getSize().height);
+            public void onResized(Terminal terminal, final TerminalSize newSize) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(scrollBar.getVisibleAmount() < newSize.getRows()) {
+                            scrollBar.setValue(scrollBar.getValue() - (newSize.getRows() - scrollBar.getVisibleAmount()));
+                            scrollBar.setVisibleAmount(newSize.getRows());
+                        }
+                        else {
+                            scrollBar.setVisibleAmount(newSize.getRows());
+                        }
+                    }
+                });
             }
         });
     }
@@ -67,10 +90,23 @@ public class ScrollingSwingTerminal extends JComponent implements IOSafeTerminal
     private class ScrollObserver implements SwingTerminal.ScrollObserver {
         @Override
         public void newScrollableLength(int rows) {
-            System.out.println("Visible amount is now " + rows);
-            int previousMaximum = scrollBar.getMaximum();
-            scrollBar.setMaximum(rows);
-            scrollBar.setValue(scrollBar.getValue() + rows - previousMaximum);
+            if(rows == -scrollBar.getMinimum()) {
+                return;
+            }
+            scrollBar.setMinimum(-rows);
+        }
+    }
+    
+    private class ScrollbarListener implements AdjustmentListener {
+        int lastValue = -1;
+        
+        @Override
+        public synchronized void adjustmentValueChanged(AdjustmentEvent e) {
+            if(scrollBar.getValue() == lastValue) {
+                return;
+            }
+            swingTerminal.setScrollOffset(-scrollBar.getValue() - scrollBar.getVisibleAmount());
+            lastValue = scrollBar.getValue();
         }
     }
 

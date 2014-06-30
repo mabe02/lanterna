@@ -79,7 +79,18 @@ class TextBuffer {
     }
 
     List<List<TerminalCharacter>> getVisibleLines(int rows, int scrollOffset) {
-        return lineBuffer.subList(lineBuffer.size() - rows, lineBuffer.size());
+        int lastIndex = lineBuffer.size() - scrollOffset;
+        int firstIndex = lastIndex - rows;
+        if(firstIndex < 0) {
+            System.err.println("Error, firstIndex is above the top by " + firstIndex + " rows (" + rows + " -> " + scrollOffset + " -> " + lineBuffer.size() + ")");
+            lastIndex = 0 - firstIndex;
+            firstIndex = 0 - firstIndex;
+        }
+        if(lastIndex > lineBuffer.size()) {
+            System.err.println("Error, lastIndex shot through the bottom by " + (lineBuffer.size() - lastIndex) + " rows");
+            lastIndex = lineBuffer.size();
+        }
+        return lineBuffer.subList(firstIndex, lastIndex);
     }
     
     int getNumberOfLines() {
