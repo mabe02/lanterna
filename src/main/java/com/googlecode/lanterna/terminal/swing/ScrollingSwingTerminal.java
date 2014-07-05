@@ -58,16 +58,17 @@ public class ScrollingSwingTerminal extends JComponent implements IOSafeTerminal
                 deviceConfiguration, 
                 fontConfiguration, 
                 colorConfiguration, 
-                new ScrollObserver());
+                new ScrollController());
         
         setLayout(new BorderLayout());
         add(swingTerminal, BorderLayout.CENTER);
         add(scrollBar, BorderLayout.EAST);
-        this.scrollBar.setMinimum(-20);
-        this.scrollBar.setMaximum(0);
+        this.scrollBar.setMinimum(0);
+        this.scrollBar.setMaximum(20);
         this.scrollBar.setValue(0);
         this.scrollBar.setVisibleAmount(20);
         this.scrollBar.addAdjustmentListener(new ScrollbarListener());
+        /*
         this.swingTerminal.addResizeListener(new ResizeListener() {
             @Override
             public void onResized(Terminal terminal, final TerminalSize newSize) {
@@ -85,15 +86,20 @@ public class ScrollingSwingTerminal extends JComponent implements IOSafeTerminal
                 });
             }
         });
+        */
     }
     
-    private class ScrollObserver implements SwingTerminal.ScrollObserver {
+    private class ScrollController implements SwingTerminal.ScrollingController {
         @Override
-        public void newScrollableLength(int rows) {
-            if(rows == -scrollBar.getMinimum()) {
-                return;
+        public void updateModel(int totalSize, int screenSize) {
+            if(scrollBar.getMaximum() != totalSize) {
+                System.out.println("Setting maximum to " + totalSize);
+                scrollBar.setMaximum(totalSize);
             }
-            scrollBar.setMinimum(-rows);
+            if(scrollBar.getVisibleAmount() != screenSize) {
+                System.out.println("Setting visible amount to " + screenSize);
+                scrollBar.setVisibleAmount(screenSize);
+            }
         }
     }
     
@@ -102,11 +108,13 @@ public class ScrollingSwingTerminal extends JComponent implements IOSafeTerminal
         
         @Override
         public synchronized void adjustmentValueChanged(AdjustmentEvent e) {
+            /*
             if(scrollBar.getValue() == lastValue) {
                 return;
             }
             swingTerminal.setScrollOffset(-scrollBar.getValue() - scrollBar.getVisibleAmount());
             lastValue = scrollBar.getValue();
+            */
         }
     }
 

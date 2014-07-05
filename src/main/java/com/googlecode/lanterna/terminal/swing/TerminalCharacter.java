@@ -79,4 +79,9 @@ class TerminalCharacter {
         }
         return new TerminalCharacter(c, foregroundColor, backgroundColor, styles);
     }
+
+    @Override
+    public String toString() {
+        return "TerminalCharacter{" + "character=" + character + ", foregroundColor=" + foregroundColor + ", backgroundColor=" + backgroundColor + ", styles=" + styles + '}';
+    }
 }

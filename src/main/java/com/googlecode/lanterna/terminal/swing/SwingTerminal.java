@@ -41,9 +41,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Queue;
@@ -64,27 +64,27 @@ import javax.swing.event.AncestorListener;
  */
 public class SwingTerminal extends JComponent implements IOSafeTerminal {
     
-    public static interface ScrollObserver {
-        void newScrollableLength(int rows);
+    public static interface ScrollingController {
+        void updateModel(int totalSize, int screenSize);
     }
     
-    private static class NullScrollObserver implements ScrollObserver {
+    private static class NullScrollingController implements ScrollingController {
         @Override
-        public void newScrollableLength(int pixels) {
+        public void updateModel(int totalSize, int screenSize) {
         }
     }
     
-    private final ScrollObserver scrollObserver;
+    private final ScrollingController scrollObserver;
     private final SwingTerminalDeviceConfiguration deviceConfiguration;
     private final SwingTerminalFontConfiguration fontConfiguration;
     private final SwingTerminalColorConfiguration colorConfiguration;
-    private final TextBuffer mainBuffer;
-    private final TextBuffer privateModeBuffer;
-    private final TerminalDeviceEmulator deviceEmulator;
-    private final VirtualTerminalImplementation terminalImplementation;
+    private final VirtualTerminal virtualTerminal;
+    private final Queue<KeyStroke> keyQueue;
     private final Timer blinkTimer;
 
-    private TextBuffer currentBuffer;
+    private final EnumSet<SGR> activeSGRs;
+    private TextColor foregroundColor;
+    private TextColor backgroundColor;
     private String enquiryString;
     private int scrollOffset;
 
@@ -92,10 +92,10 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
     private volatile boolean blinkOn;
 
     public SwingTerminal() {
-        this(new NullScrollObserver());
+        this(new NullScrollingController());
     }
     
-    public SwingTerminal(ScrollObserver scrollObserver) {
+    public SwingTerminal(ScrollingController scrollObserver) {
         this(SwingTerminalDeviceConfiguration.DEFAULT,
                 SwingTerminalFontConfiguration.DEFAULT,
                 SwingTerminalColorConfiguration.DEFAULT);
@@ -112,7 +112,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
             SwingTerminalFontConfiguration fontConfiguration,
             SwingTerminalColorConfiguration colorConfiguration) {
         
-        this(deviceConfiguration, fontConfiguration, colorConfiguration, new NullScrollObserver());
+        this(deviceConfiguration, fontConfiguration, colorConfiguration, new NullScrollingController());
     }
     
     /**
@@ -126,7 +126,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
             SwingTerminalDeviceConfiguration deviceConfiguration,
             SwingTerminalFontConfiguration fontConfiguration,
             SwingTerminalColorConfiguration colorConfiguration,
-            ScrollObserver scrollObserver) {
+            ScrollingController scrollObserver) {
         
         //Enforce valid values on the input parameters
         if(deviceConfiguration == null) {
@@ -142,19 +142,20 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
         //This is kind of meaningless since we don't know how large the
         //component is at this point, but we should set it to something
         TerminalSize terminalSize = new TerminalSize(80, 20);
-        this.deviceEmulator = new TerminalDeviceEmulator();
-        this.terminalImplementation = new VirtualTerminalImplementation(deviceEmulator, terminalSize);
+        this.virtualTerminal = new VirtualTerminal(deviceConfiguration.getLineBufferScrollbackSize(), terminalSize, TerminalCharacter.DEFAULT_CHARACTER);
+        this.keyQueue = new ConcurrentLinkedQueue<KeyStroke>();
         this.deviceConfiguration = deviceConfiguration;
         this.fontConfiguration = fontConfiguration;
         this.colorConfiguration = colorConfiguration;
         this.scrollObserver = scrollObserver;
 
-        this.mainBuffer = new TextBuffer(deviceConfiguration.getLineBufferScrollbackSize(), terminalImplementation.getTerminalSize());
-        this.privateModeBuffer = new TextBuffer(0, terminalImplementation.getTerminalSize());
-        this.currentBuffer = mainBuffer;    //Always start with the active buffer
+        this.activeSGRs = EnumSet.noneOf(SGR.class);
+        this.foregroundColor = TextColor.ANSI.DEFAULT;
+        this.backgroundColor = TextColor.ANSI.DEFAULT;
         this.cursorIsVisible = true;        //Always start with an activate and visible cursor
         this.enquiryString = "SwingTerminal";
         this.scrollOffset = 0;
+        this.scrollObserver.updateModel(20, 20);
         this.blinkTimer = new Timer(deviceConfiguration.getBlinkLengthInMilliSeconds(), new BlinkTimerCallback());
 
         //Set the initial scrollable size
@@ -192,8 +193,8 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
     ///////////
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(fontConfiguration.getFontWidth() * terminalImplementation.getTerminalSize().getColumns(),
-                fontConfiguration.getFontHeight() * terminalImplementation.getTerminalSize().getRows());
+        return new Dimension(fontConfiguration.getFontWidth() * virtualTerminal.getSize().getColumns(),
+                fontConfiguration.getFontHeight() * virtualTerminal.getSize().getRows());
     }
 
     @Override
@@ -204,9 +205,9 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
         int widthInNumberOfCharacters = getWidth() / fontWidth;
         int visibleRows = getHeight() / fontHeight;
 
-        currentBuffer.readjust(widthInNumberOfCharacters, visibleRows);
-        terminalImplementation.setTerminalSize(terminalImplementation.getTerminalSize().withColumns(widthInNumberOfCharacters).withRows(visibleRows));
-        TerminalPosition cursorPosition = terminalImplementation.getCurrentPosition();
+        //scrollObserver.updateModel(currentBuffer.getNumberOfLines(), visibleRows);
+        virtualTerminal.resize(virtualTerminal.getSize().withColumns(widthInNumberOfCharacters).withRows(visibleRows));
+        TerminalPosition cursorPosition = virtualTerminal.getCursorPosition();
 
         //Fill with black to remove any previous content
         g.setColor(Color.BLACK);
@@ -214,10 +215,10 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
 
         //Draw line by line, character by character
         int rowIndex = 0;
-        for(List<TerminalCharacter> row: currentBuffer.getVisibleLines(visibleRows, scrollOffset)) {
+        for(List<TerminalCharacter> row: virtualTerminal.getLines(visibleRows, scrollOffset)) {
             for(int columnIndex = 0; columnIndex < row.size(); columnIndex++) {
                 TerminalCharacter character = row.get(columnIndex);
-                boolean atCursorLocation = cursorPosition.equals(columnIndex, rowIndex);
+                boolean atCursorLocation = cursorPosition.equals(columnIndex, rowIndex + scrollOffset);
                 //If next position is the cursor location and this is a CJK character (i.e. cursor is on the padding),
                 //consider this location the cursor position since otherwise the cursor will be skipped
                 if(!atCursorLocation && 
@@ -349,151 +350,120 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
     ///////////
     @Override
     public KeyStroke readInput() {
-        return terminalImplementation.readInput();
+        return keyQueue.peek();
     }
 
     @Override
     public void addKeyDecodingProfile(KeyDecodingProfile profile) {
-        terminalImplementation.addKeyDecodingProfile(profile);
+        //terminalImplementation.addKeyDecodingProfile(profile);
     }
 
     @Override
     public void enterPrivateMode() {
+        virtualTerminal.switchToPrivateMode();
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                terminalImplementation.enterPrivateMode();
+                repaint();
             }
         });
     }
 
     @Override
     public void exitPrivateMode() {
+        virtualTerminal.switchToNormalMode();
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                terminalImplementation.exitPrivateMode();
+                repaint();
             }
         });
     }
 
     @Override
-    public void clearScreen() {        
+    public void clearScreen() {
+        virtualTerminal.clear();
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                terminalImplementation.clearScreen();
+                repaint();
             }
         });
     }
 
     @Override
     public void moveCursor(final int x, final int y) {
+        virtualTerminal.setCursorPosition(new TerminalPosition(x, y));
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                terminalImplementation.moveCursor(x, y);
+                repaint();
             }
         });
     }
 
     @Override
     public void setCursorVisible(final boolean visible) {
+        //TODO
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                terminalImplementation.setCursorVisible(visible);
+                repaint();
             }
         });
     }
 
     @Override
     public void putCharacter(final char c) {
-        SwingUtilities.invokeLater(new Runnable() {
-            private int lastSize = -1;
-            
-            @Override
-            public void run() {
-                terminalImplementation.putCharacter(c);
-                if(currentBuffer.getNumberOfLines() != lastSize) {
-                    scrollObserver.newScrollableLength(currentBuffer.getNumberOfLines());
-                    lastSize = currentBuffer.getNumberOfLines();
-                }
-            }
-        });
+        virtualTerminal.putCharacter(new TerminalCharacter(c, foregroundColor, backgroundColor, activeSGRs));
     }
 
     @Override
     public void enableSGR(final SGR sgr) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                terminalImplementation.enableSGR(sgr);
-            }
-        });
+        activeSGRs.add(sgr);
     }
 
     @Override
     public void disableSGR(final SGR sgr) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                terminalImplementation.disableSGR(sgr);
-            }
-        });
+        activeSGRs.remove(sgr);
     }
 
     @Override
     public void resetAllSGR() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                terminalImplementation.resetAllSGR();
-            }
-        });
+        activeSGRs.clear();
     }
 
     @Override
     public void setForegroundColor(final TextColor color) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                terminalImplementation.setForegroundColor(color);
-            }
-        });
+        foregroundColor = color;
     }
 
     @Override
     public void setBackgroundColor(final TextColor color) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                terminalImplementation.setBackgroundColor(color);
-            }
-        });
+        backgroundColor = color;
     }
 
     @Override
     public TerminalSize getTerminalSize() {
-        return terminalImplementation.getTerminalSize();
+        return virtualTerminal.getSize();
     }
 
     @Override
     public byte[] enquireTerminal(int timeout, TimeUnit timeoutUnit) {
-        return terminalImplementation.enquireTerminal(timeout, timeoutUnit);
+        return enquiryString.getBytes();
     }
 
     @Override
     public void flush() {
         if(SwingUtilities.isEventDispatchThread()) {
-            terminalImplementation.flush();
+            repaint();
         }
         else {
             try {
                 SwingUtilities.invokeAndWait(new Runnable() {
                     @Override
                     public void run() {
-                        terminalImplementation.flush();
+                        repaint();
                     }
                 });
             }
@@ -507,12 +477,12 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
 
     @Override
     public void addResizeListener(ResizeListener listener) {
-        terminalImplementation.addResizeListener(listener);
+        //terminalImplementation.addResizeListener(listener);
     }
 
     @Override
     public void removeResizeListener(ResizeListener listener) {
-        terminalImplementation.removeResizeListener(listener);
+        //terminalImplementation.removeResizeListener(listener);
     }
 
     ///////////
@@ -539,93 +509,93 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
                     //We need to re-adjust the character if ctrl is pressed, just like for the AnsiTerminal
                     character = (char) ('a' - 1 + character);
                 }
-                deviceEmulator.registerKeyStroke(new KeyStroke(character, ctrlDown, altDown));
+                keyQueue.add(new KeyStroke(character, ctrlDown, altDown));
             }
         }
 
         @Override
         public void keyPressed(KeyEvent e) {
             if(e.getKeyCode() == KeyEvent.VK_ENTER) {
-                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.Enter));
+                keyQueue.add(new KeyStroke(KeyType.Enter));
             }
             else if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.Escape));
+                keyQueue.add(new KeyStroke(KeyType.Escape));
             }
             else if(e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
-                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.Backspace));
+                keyQueue.add(new KeyStroke(KeyType.Backspace));
             }
             else if(e.getKeyCode() == KeyEvent.VK_LEFT) {
-                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.ArrowLeft));
+                keyQueue.add(new KeyStroke(KeyType.ArrowLeft));
             }
             else if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.ArrowRight));
+                keyQueue.add(new KeyStroke(KeyType.ArrowRight));
             }
             else if(e.getKeyCode() == KeyEvent.VK_UP) {
-                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.ArrowUp));
+                keyQueue.add(new KeyStroke(KeyType.ArrowUp));
             }
             else if(e.getKeyCode() == KeyEvent.VK_DOWN) {
-                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.ArrowDown));
+                keyQueue.add(new KeyStroke(KeyType.ArrowDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_INSERT) {
-                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.Insert));
+                keyQueue.add(new KeyStroke(KeyType.Insert));
             }
             else if(e.getKeyCode() == KeyEvent.VK_DELETE) {
-                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.Delete));
+                keyQueue.add(new KeyStroke(KeyType.Delete));
             }
             else if(e.getKeyCode() == KeyEvent.VK_HOME) {
-                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.Home));
+                keyQueue.add(new KeyStroke(KeyType.Home));
             }
             else if(e.getKeyCode() == KeyEvent.VK_END) {
-                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.End));
+                keyQueue.add(new KeyStroke(KeyType.End));
             }
             else if(e.getKeyCode() == KeyEvent.VK_PAGE_UP) {
-                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.PageUp));
+                keyQueue.add(new KeyStroke(KeyType.PageUp));
             }
             else if(e.getKeyCode() == KeyEvent.VK_PAGE_DOWN) {
-                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.PageDown));
+                keyQueue.add(new KeyStroke(KeyType.PageDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_F1) {
-                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.F1));
+                keyQueue.add(new KeyStroke(KeyType.F1));
             }
             else if(e.getKeyCode() == KeyEvent.VK_F2) {
-                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.F2));
+                keyQueue.add(new KeyStroke(KeyType.F2));
             }
             else if(e.getKeyCode() == KeyEvent.VK_F3) {
-                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.F3));
+                keyQueue.add(new KeyStroke(KeyType.F3));
             }
             else if(e.getKeyCode() == KeyEvent.VK_F4) {
-                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.F4));
+                keyQueue.add(new KeyStroke(KeyType.F4));
             }
             else if(e.getKeyCode() == KeyEvent.VK_F5) {
-                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.F5));
+                keyQueue.add(new KeyStroke(KeyType.F5));
             }
             else if(e.getKeyCode() == KeyEvent.VK_F6) {
-                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.F6));
+                keyQueue.add(new KeyStroke(KeyType.F6));
             }
             else if(e.getKeyCode() == KeyEvent.VK_F7) {
-                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.F7));
+                keyQueue.add(new KeyStroke(KeyType.F7));
             }
             else if(e.getKeyCode() == KeyEvent.VK_F8) {
-                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.F8));
+                keyQueue.add(new KeyStroke(KeyType.F8));
             }
             else if(e.getKeyCode() == KeyEvent.VK_F9) {
-                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.F9));
+                keyQueue.add(new KeyStroke(KeyType.F9));
             }
             else if(e.getKeyCode() == KeyEvent.VK_F10) {
-                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.F10));
+                keyQueue.add(new KeyStroke(KeyType.F10));
             }
             else if(e.getKeyCode() == KeyEvent.VK_F11) {
-                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.F11));
+                keyQueue.add(new KeyStroke(KeyType.F11));
             }
             else if(e.getKeyCode() == KeyEvent.VK_F12) {
-                deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.F12));
+                keyQueue.add(new KeyStroke(KeyType.F12));
             }
             else if(e.getKeyCode() == KeyEvent.VK_TAB) {
                 if(e.isShiftDown()) {
-                    deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.ReverseTab));
+                    keyQueue.add(new KeyStroke(KeyType.ReverseTab));
                 }
                 else {
-                    deviceEmulator.registerKeyStroke(new KeyStroke(KeyType.Tab));
+                    keyQueue.add(new KeyStroke(KeyType.Tab));
                 }
             }
             else {
@@ -634,56 +604,9 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
                 boolean ctrlDown = (e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0;
                 if(altDown && ctrlDown && e.getKeyCode() >= 'A' && e.getKeyCode() <= 'Z') {
                     char asLowerCase = Character.toLowerCase((char) e.getKeyCode());
-                    deviceEmulator.registerKeyStroke(new KeyStroke(asLowerCase, true, true));
+                    keyQueue.add(new KeyStroke(asLowerCase, true, true));
                 }
             }
-        }
-    }
-
-    private class TerminalDeviceEmulator implements VirtualTerminalImplementation.DeviceEmulator {
-        private final Queue<KeyStroke> keyQueue;
-
-        public TerminalDeviceEmulator() {
-            this.keyQueue = new ConcurrentLinkedQueue<KeyStroke>();
-        }
-        
-        public void registerKeyStroke(KeyStroke keyStroke) {
-            keyQueue.add(keyStroke);
-        }
-        
-        @Override
-        public KeyStroke readInput() {
-            return keyQueue.poll();
-        }
-
-        @Override
-        public void enterPrivateMode() {
-            SwingTerminal.this.currentBuffer = SwingTerminal.this.privateModeBuffer;
-        }
-
-        @Override
-        public void exitPrivateMode() {
-            SwingTerminal.this.currentBuffer = SwingTerminal.this.mainBuffer;
-        }
-
-        @Override
-        public TextBuffer getBuffer() {
-            return currentBuffer;
-        }
-
-        @Override
-        public void setCursorVisible(boolean visible) {
-            SwingTerminal.this.cursorIsVisible = visible;
-        }
-        
-        @Override
-        public void flush() {
-            SwingTerminal.this.repaint();
-        }
-
-        @Override
-        public byte[] equireTerminal() {
-            return SwingTerminal.this.enquiryString.getBytes(Charset.defaultCharset());
         }
     }
 }

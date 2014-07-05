@@ -29,7 +29,7 @@ public class SwingTerminalTest {
 
     public static void main(String[] args) throws InterruptedException, IOException {
         Terminal terminal = TerminalFacade.createSwingTerminal();
-        terminal.enterPrivateMode();
+        //terminal.enterPrivateMode();
         terminal.clearScreen();
         terminal.moveCursor(10, 5);
         terminal.putCharacter('H');
@@ -104,6 +104,6 @@ public class SwingTerminalTest {
         terminal.moveCursor(0, 0);
 
         Thread.sleep(5000);
-        terminal.exitPrivateMode();
+        //terminal.exitPrivateMode();
     }
 }

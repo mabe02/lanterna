@@ -22,8 +22,10 @@ import com.googlecode.lanterna.CJKUtils;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 
 /**
  *
@@ -34,85 +36,67 @@ class TextBuffer {
     private final LinkedList<List<TerminalCharacter>> lineBuffer;
     private final TerminalCharacter fillCharacter;
 
-    TextBuffer(int backlog, TerminalSize initialSize) {
-        this(backlog, initialSize, TerminalCharacter.DEFAULT_CHARACTER);
-    }
-
-    TextBuffer(int backlog, TerminalSize initialSize, TerminalCharacter fillCharacter) {
+    TextBuffer(int backlog, TerminalCharacter fillCharacter) {
         this.backlog = backlog;
         this.lineBuffer = new LinkedList<List<TerminalCharacter>>();
         this.fillCharacter = fillCharacter;
 
-        //Initialize the content to empty
-        for(int y = 0; y < initialSize.getRows(); y++) {
-            lineBuffer.add(newLine(initialSize.getColumns(), fillCharacter));
-        }
+        //Initialize the content to one line
+        newLine();
     }
 
-    private List<TerminalCharacter> newLine(int width, TerminalCharacter character) {
-        List<TerminalCharacter> row = new ArrayList<TerminalCharacter>();
-        for(int x = 0; x < width; x++) {
-            row.add(character);
-        }
-        return row;
+    void clear() {
+        lineBuffer.clear();
+        newLine();
     }
 
-    void readjust(int columns, int rows) {
-        while(lineBuffer.size() < rows) {
-            newLine(columns);
-        }
-        if(lineBuffer.isEmpty()) {
-            return;
-        }
-        for(List<TerminalCharacter> line: lineBuffer) {
-            readjust(line, columns);
-        }
-
-        //Fill the buffer height if necessary
-        while(rows > lineBuffer.size()) {
-            lineBuffer.addFirst(newLine(columns, fillCharacter));
-        }
-        //Cut down history, if necessary
-        while(lineBuffer.size() - rows > backlog) {
-            lineBuffer.removeFirst();
-        }
+    void newLine() {
+        ArrayList<TerminalCharacter> line = new ArrayList<TerminalCharacter>(200);
+        line.add(fillCharacter);
+        lineBuffer.addFirst(line);
     }
 
-    List<List<TerminalCharacter>> getVisibleLines(int rows, int scrollOffset) {
-        int lastIndex = lineBuffer.size() - scrollOffset;
-        int firstIndex = lastIndex - rows;
-        if(firstIndex < 0) {
-            System.err.println("Error, firstIndex is above the top by " + firstIndex + " rows (" + rows + " -> " + scrollOffset + " -> " + lineBuffer.size() + ")");
-            lastIndex = 0 - firstIndex;
-            firstIndex = 0 - firstIndex;
-        }
-        if(lastIndex > lineBuffer.size()) {
-            System.err.println("Error, lastIndex shot through the bottom by " + (lineBuffer.size() - lastIndex) + " rows");
-            lastIndex = lineBuffer.size();
-        }
-        return lineBuffer.subList(firstIndex, lastIndex);
+
+    Iterable<List<TerminalCharacter>> getVisibleLines(final int visibleRows, final int scrollOffset) {
+        final int length = Math.min(visibleRows, lineBuffer.size());
+        return new Iterable<List<TerminalCharacter>>() {
+            @Override
+            public Iterator<List<TerminalCharacter>> iterator() {
+                return new Iterator<List<TerminalCharacter>>() {
+                    private final ListIterator<List<TerminalCharacter>> listIter = lineBuffer.subList(0, length).listIterator(length);
+                    @Override
+                    public boolean hasNext() { return listIter.hasPrevious(); }
+                    @Override
+                    public List<TerminalCharacter> next() { return listIter.previous(); }
+                    @Override
+                    public void remove() { listIter.remove(); }   
+                };
+            }
+        };
     }
     
     int getNumberOfLines() {
         return lineBuffer.size();
     }
-
-    void newLine(TerminalSize terminalSize) {
-        newLine(terminalSize.getColumns());
-        readjust(terminalSize.getColumns(), terminalSize.getRows());
+    
+    public void trimBacklog(int terminalHeight) {
+        while(lineBuffer.size() - terminalHeight > backlog) {
+            lineBuffer.removeLast();
+        }
     }
     
-    private void newLine(int columns) {
-        lineBuffer.addLast(newLine(columns, fillCharacter));
+    void ensurePosition(TerminalSize terminalSize, TerminalPosition position) {
+        getLine(terminalSize, position);
     }
+    
     
     void setCharacter(TerminalSize terminalSize, TerminalPosition currentPosition, TerminalCharacter terminalCharacter) {
-        List<TerminalCharacter> line = lineBuffer.get(lineBuffer.size() - terminalSize.getRows() + currentPosition.getRow());
-        readjust(line, terminalSize.getColumns());
+        List<TerminalCharacter> line = getLine(terminalSize, currentPosition);
         line.set(currentPosition.getColumn(), terminalCharacter);
         
         //Pad CJK character with a trailing space
         if(CJKUtils.isCharCJK(terminalCharacter.getCharacter()) && currentPosition.getColumn() + 1 < line.size()) {
+            ensurePosition(terminalSize, currentPosition.withRelativeColumn(1));
             line.set(currentPosition.getColumn() + 1, terminalCharacter.withCharacter(' '));
         }
         //If there's a CJK character immediately to our left, reset it
@@ -121,12 +105,14 @@ class TextBuffer {
         }
     }
 
-    private void readjust(List<TerminalCharacter> line, int columns) {
-        for(int i = 0; i < columns - line.size(); i++) {
+    private List<TerminalCharacter> getLine(TerminalSize terminalSize, TerminalPosition position) {
+        while(position.getRow() >= lineBuffer.size()) {
+            newLine();
+        }
+        List<TerminalCharacter> line = lineBuffer.get(Math.min(terminalSize.getRows(), lineBuffer.size()) - 1 - position.getRow());
+        while(line.size() <= position.getColumn()) {
             line.add(fillCharacter);
         }
-        for(int i = 0; i < line.size() - columns; i++) {
-            line.remove(line.size() - 1);
-        }
+        return line;
     }
 }
