@@ -127,11 +127,6 @@ public class ScrollingSwingTerminal extends JComponent implements IOSafeTerminal
     }
 
     @Override
-    public void addKeyDecodingProfile(KeyDecodingProfile profile) {
-        swingTerminal.addKeyDecodingProfile(profile);
-    }
-
-    @Override
     public void enterPrivateMode() {
         swingTerminal.enterPrivateMode();
     }

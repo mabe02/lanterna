@@ -126,11 +126,6 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
     }
 
     @Override
-    public void addKeyDecodingProfile(KeyDecodingProfile profile) {
-        swingTerminal.addKeyDecodingProfile(profile);
-    }
-
-    @Override
     public void enterPrivateMode() {
         swingTerminal.enterPrivateMode();
     }

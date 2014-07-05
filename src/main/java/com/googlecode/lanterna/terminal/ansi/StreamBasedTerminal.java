@@ -26,9 +26,16 @@ import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 
 import com.googlecode.lanterna.input.InputDecoder;
+import com.googlecode.lanterna.input.KeyDecodingProfile;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.ACS;
-import com.googlecode.lanterna.terminal.InputEnabledAbstractTerminal;
+import com.googlecode.lanterna.terminal.AbstractTerminal;
+import com.googlecode.lanterna.terminal.TerminalPosition;
+import com.googlecode.lanterna.terminal.TerminalSize;
 import java.io.ByteArrayOutputStream;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -36,7 +43,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Martin
  */
-public abstract class StreamBasedTerminal extends InputEnabledAbstractTerminal {
+public abstract class StreamBasedTerminal extends AbstractTerminal {
 
     private static Charset UTF8_REFERENCE;
 
@@ -53,10 +60,16 @@ public abstract class StreamBasedTerminal extends InputEnabledAbstractTerminal {
     private final OutputStream terminalOutput;
     private final Charset terminalCharset;
 
+    private final InputDecoder inputDecoder;
+    private final Queue<KeyStroke> keyQueue;
+    private final Object readMutex;
+    
     public StreamBasedTerminal(InputStream terminalInput, OutputStream terminalOutput, Charset terminalCharset) {
-        super(new InputDecoder(new InputStreamReader(terminalInput, terminalCharset)));
         this.terminalInput = terminalInput;
         this.terminalOutput = terminalOutput;
+        this.inputDecoder = new InputDecoder(new InputStreamReader(terminalInput, terminalCharset));
+        this.keyQueue = new LinkedList<KeyStroke>();
+        this.readMutex = new Object();
         if(terminalCharset == null) {
             this.terminalCharset = Charset.defaultCharset();
         }
@@ -112,6 +125,75 @@ public abstract class StreamBasedTerminal extends InputEnabledAbstractTerminal {
             baos.write(terminalInput.read());
         }
         return baos.toByteArray();
+    }
+    
+    /**
+     * Adds a KeyDecodingProfile to be used when converting raw user input characters to {@code Key} objects.
+     *
+     * @see KeyDecodingProfile
+     * @param profile
+     */
+    public void addKeyDecodingProfile(KeyDecodingProfile profile) {
+        inputDecoder.addProfile(profile);
+    }
+
+    protected TerminalSize waitForTerminalSizeReport(int timeoutMs) throws IOException {
+        long startTime = System.currentTimeMillis();
+        synchronized(readMutex) {
+            while(true) {
+                KeyStroke key = inputDecoder.getNextCharacter();
+                if(key == null) {
+                    if(System.currentTimeMillis() - startTime > timeoutMs) {
+                        throw new IOException(
+                                "Timeout while waiting for terminal size report! "
+                                + "Maybe your terminal doesn't support cursor position report, please "
+                                + "consider using a custom size querier");
+                    }
+                    try {
+                        Thread.sleep(1);
+                    }
+                    catch(InterruptedException e) {}
+                    continue;
+                }
+
+                //If we got CTRL+F3, it's probably a size report instead!!!
+                if(key.getKeyType()!= KeyType.CursorLocation &&
+                        !(key.getKeyType() == KeyType.F3 && key.isCtrlDown() && !key.isAltDown())) {
+                    keyQueue.add(key);
+                }
+                else {
+                    TerminalPosition reportedTerminalPosition = inputDecoder.getLastReportedTerminalPosition();
+                    if(key.getKeyType() == KeyType.F3 && key.isCtrlDown() && !key.isAltDown()) {
+                        reportedTerminalPosition = new TerminalPosition(5, 1);
+                    }
+                    if(reportedTerminalPosition != null)
+                        onResized(reportedTerminalPosition.getColumn(), reportedTerminalPosition.getRow());
+                    else
+                        throw new IOException("Unexpected: inputDecoder.getLastReportedTerminalPosition() "
+                                + "returned null after position was reported");
+                    return new TerminalSize(reportedTerminalPosition.getColumn(), reportedTerminalPosition.getRow());
+                }
+            }
+        }
+    }
+
+    @Override
+    public KeyStroke readInput() throws IOException {
+        synchronized(readMutex) {
+            if(!keyQueue.isEmpty())
+                return keyQueue.poll();
+
+            KeyStroke key = inputDecoder.getNextCharacter();
+            if (key != null && key.getKeyType() == KeyType.CursorLocation) {
+                TerminalPosition reportedTerminalPosition = inputDecoder.getLastReportedTerminalPosition();
+                if (reportedTerminalPosition != null)
+                    onResized(reportedTerminalPosition.getColumn(), reportedTerminalPosition.getRow());
+
+                return readInput();
+            } else {
+                return key;
+            }
+        }
     }
 
     @Override

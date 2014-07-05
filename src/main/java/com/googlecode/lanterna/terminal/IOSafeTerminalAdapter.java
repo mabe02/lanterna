@@ -227,11 +227,6 @@ public class IOSafeTerminalAdapter implements IOSafeTerminal {
     }
 
     @Override
-    public void addKeyDecodingProfile(KeyDecodingProfile profile) {
-        backend.addKeyDecodingProfile(profile);
-    }
-
-    @Override
     public KeyStroke readInput() {
         try {
             return backend.readInput();

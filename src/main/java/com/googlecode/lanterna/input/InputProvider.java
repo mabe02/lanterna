@@ -27,15 +27,6 @@ import java.io.IOException;
  * @author Martin
  */
 public interface InputProvider {
-
-    /**
-     * Adds a KeyDecodingProfile to be used when converting raw user input characters to {@code Key} objects.
-     *
-     * @see KeyDecodingProfile
-     * @param profile
-     */
-    void addKeyDecodingProfile(KeyDecodingProfile profile);
-
     /**
      * Returns the next {@code Key} off the input queue or null if there is no more input events available. Note, this
      * method call is <b>not</b> blocking, it returns null immediately if there is nothing on the input stream.

@@ -354,11 +354,6 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
     }
 
     @Override
-    public void addKeyDecodingProfile(KeyDecodingProfile profile) {
-        //terminalImplementation.addKeyDecodingProfile(profile);
-    }
-
-    @Override
     public void enterPrivateMode() {
         virtualTerminal.switchToPrivateMode();
         SwingUtilities.invokeLater(new Runnable() {

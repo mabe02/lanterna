@@ -159,11 +159,6 @@ public class OldSwingTerminal extends AbstractTerminal implements InputProvider
     }
 
     @Override
-    public void addKeyDecodingProfile(KeyDecodingProfile profile)
-    {
-    }
-
-    @Override
     public void applyBackgroundColor(TextColor.ANSI color) {
         currentBackgroundColor = new CharacterANSIColor(color);
     }
