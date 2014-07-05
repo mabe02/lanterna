@@ -88,7 +88,7 @@ public enum TabBehaviour {
         return string;
     }
 
-    private String getTabReplacement(int columnIndex) {
+    public String getTabReplacement(int columnIndex) {
         int replaceCount;
         StringBuilder replace = new StringBuilder();
         if(replaceFactor != null) {
