@@ -49,6 +49,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
@@ -80,6 +81,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
     private final SwingTerminalColorConfiguration colorConfiguration;
     private final VirtualTerminal virtualTerminal;
     private final Queue<KeyStroke> keyQueue;
+    private final List<ResizeListener> resizeListeners;
     private final Timer blinkTimer;
 
     private final EnumSet<SGR> activeSGRs;
@@ -144,6 +146,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
         TerminalSize terminalSize = new TerminalSize(80, 20);
         this.virtualTerminal = new VirtualTerminal(deviceConfiguration.getLineBufferScrollbackSize(), terminalSize, TerminalCharacter.DEFAULT_CHARACTER);
         this.keyQueue = new ConcurrentLinkedQueue<KeyStroke>();
+        this.resizeListeners = new CopyOnWriteArrayList<ResizeListener>();
         this.deviceConfiguration = deviceConfiguration;
         this.fontConfiguration = fontConfiguration;
         this.colorConfiguration = colorConfiguration;
@@ -206,7 +209,13 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
         int visibleRows = getHeight() / fontHeight;
 
         //scrollObserver.updateModel(currentBuffer.getNumberOfLines(), visibleRows);
-        virtualTerminal.resize(virtualTerminal.getSize().withColumns(widthInNumberOfCharacters).withRows(visibleRows));
+        TerminalSize terminalSize = virtualTerminal.getSize().withColumns(widthInNumberOfCharacters).withRows(visibleRows);
+        if(!terminalSize.equals(virtualTerminal.getSize())) {
+            virtualTerminal.resize(terminalSize);
+            for(ResizeListener listener: resizeListeners) {
+                listener.onResized(this, terminalSize);
+            }
+        }
         TerminalPosition cursorPosition = virtualTerminal.getCursorPosition();
 
         //Fill with black to remove any previous content
@@ -472,12 +481,12 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
 
     @Override
     public void addResizeListener(ResizeListener listener) {
-        //terminalImplementation.addResizeListener(listener);
+        resizeListeners.add(listener);
     }
 
     @Override
     public void removeResizeListener(ResizeListener listener) {
-        //terminalImplementation.removeResizeListener(listener);
+        resizeListeners.remove(listener);
     }
 
     ///////////
