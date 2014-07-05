@@ -74,13 +74,13 @@ public enum TabBehaviour {
      * Given a string, being placed on the screen at column X, returns the same string with all tab characters (\t) 
      * replaced according to this TabBehaviour.
      * @param string String that is going to be put to the screen, potentially containing tab characters
-     * @param x Column on the screen where the first character of the string is going to end up
+     * @param columnIndex Column on the screen where the first character of the string is going to end up
      * @return The input string with all tab characters replaced with spaces, according to this TabBehaviour
      */
-    public String replaceTabs(String string, int x) {
+    public String replaceTabs(String string, int columnIndex) {
         int tabPosition = string.indexOf('\t');
         while(tabPosition != -1) {
-            String tabReplacementHere = getTabReplacement(x + tabPosition);
+            String tabReplacementHere = getTabReplacement(columnIndex + tabPosition);
             string = string.substring(0, tabPosition) + tabReplacementHere + string.substring(tabPosition + 1);
             tabPosition += tabReplacementHere.length();
             tabPosition = string.indexOf('\t', tabPosition);
@@ -88,14 +88,14 @@ public enum TabBehaviour {
         return string;
     }
 
-    private String getTabReplacement(int x) {
+    private String getTabReplacement(int columnIndex) {
         int replaceCount;
         StringBuilder replace = new StringBuilder();
         if(replaceFactor != null) {
             replaceCount = replaceFactor;
         }
         else if (alignFactor != null) {
-            replaceCount = alignFactor - (x % alignFactor);
+            replaceCount = alignFactor - (columnIndex % alignFactor);
         }
         else {
             return "\t";
