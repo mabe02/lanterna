@@ -69,31 +69,31 @@ class TextBuffer {
                     @Override
                     public List<TerminalCharacter> next() { return listIter.previous(); }
                     @Override
-                    public void remove() { listIter.remove(); }   
+                    public void remove() { listIter.remove(); }
                 };
             }
         };
     }
-    
+
     int getNumberOfLines() {
         return lineBuffer.size();
     }
-    
+
     public void trimBacklog(int terminalHeight) {
         while(lineBuffer.size() - terminalHeight > backlog) {
             lineBuffer.removeLast();
         }
     }
-    
+
     void ensurePosition(TerminalSize terminalSize, TerminalPosition position) {
         getLine(terminalSize, position);
     }
-    
-    
+
+
     void setCharacter(TerminalSize terminalSize, TerminalPosition currentPosition, TerminalCharacter terminalCharacter) {
         List<TerminalCharacter> line = getLine(terminalSize, currentPosition);
         line.set(currentPosition.getColumn(), terminalCharacter);
-        
+
         //Pad CJK character with a trailing space
         if(CJKUtils.isCharCJK(terminalCharacter.getCharacter()) && currentPosition.getColumn() + 1 < line.size()) {
             ensurePosition(terminalSize, currentPosition.withRelativeColumn(1));
@@ -109,7 +109,8 @@ class TextBuffer {
         while(position.getRow() >= lineBuffer.size()) {
             newLine();
         }
-        List<TerminalCharacter> line = lineBuffer.get(Math.min(terminalSize.getRows(), lineBuffer.size()) - 1 - position.getRow());
+        int lineIndex = Math.min(terminalSize.getRows(), lineBuffer.size()) - 1 - position.getRow();
+        List<TerminalCharacter> line = lineBuffer.get(lineIndex);
         while(line.size() <= position.getColumn()) {
             line.add(fillCharacter);
         }
