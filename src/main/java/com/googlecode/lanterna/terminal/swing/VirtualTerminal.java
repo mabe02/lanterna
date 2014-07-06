@@ -29,16 +29,24 @@ import java.util.List;
  * @author martin
  */
 class VirtualTerminal {
+
     private final TextBuffer mainTextBuffer;
     private final TextBuffer privateModeTextBuffer;
+    private final TerminalScrollController terminalScrollController;
 
     private TextBuffer currentBuffer;
     private TerminalSize size;
     private TerminalPosition cursorPosition;
 
-    public VirtualTerminal(int backlog, TerminalSize initialSize, TerminalCharacter fillCharacter) {
+    public VirtualTerminal(
+            int backlog,
+            TerminalSize initialSize,
+            TerminalCharacter fillCharacter,
+            TerminalScrollController scrollController) {
+
         this.mainTextBuffer = new TextBuffer(backlog, fillCharacter);
         this.privateModeTextBuffer = new TextBuffer(0, fillCharacter);
+        this.terminalScrollController = scrollController;
 
         this.currentBuffer = mainTextBuffer;
         this.size = initialSize;
@@ -50,7 +58,14 @@ class VirtualTerminal {
             cursorPosition = cursorPosition.withRelativeRow(newSize.getRows() - size.getRows());
         }
         this.size = newSize;
+        updateScrollingController();
         correctCursor();
+    }
+
+    private void updateScrollingController() {
+        int totalSize = Math.max(currentBuffer.getNumberOfLines(), size.getRows());
+        int visibleSize = size.getRows();
+        this.terminalScrollController.updateModel(totalSize, visibleSize);
     }
 
     public TerminalSize getSize() {
@@ -105,6 +120,8 @@ class VirtualTerminal {
             cursorPosition = cursorPosition.withRelativeRow(-1);
             if(currentBuffer == mainTextBuffer) {
                 currentBuffer.newLine();
+                currentBuffer.trimBacklog(size.getRows());
+                updateScrollingController();
             }
         }
         currentBuffer.ensurePosition(size, cursorPosition);
@@ -123,7 +140,15 @@ class VirtualTerminal {
         setCursorPosition(TerminalPosition.TOP_LEFT_CORNER);
     }
 
-    Iterable<List<TerminalCharacter>> getLines(int visibleRows, int scrollOffset) {
-        return currentBuffer.getVisibleLines(visibleRows, scrollOffset);
+    Iterable<List<TerminalCharacter>> getLines() {
+        int scrollingOffset = terminalScrollController.getScrollingOffset();
+        int visibleRows = size.getRows();
+        //Make sure scrolling isn't too far off (can be sometimes when the terminal is being resized and the scrollbar
+        //hasn't adjusted itself yet)
+        if(currentBuffer.getNumberOfLines() > visibleRows &&
+                scrollingOffset + visibleRows > currentBuffer.getNumberOfLines()) {
+            scrollingOffset = currentBuffer.getNumberOfLines() - visibleRows;
+        }
+        return currentBuffer.getVisibleLines(visibleRows, scrollingOffset);
     }
 }

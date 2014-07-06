@@ -63,7 +63,7 @@ class TextBuffer {
             @Override
             public Iterator<List<TerminalCharacter>> iterator() {
                 return new Iterator<List<TerminalCharacter>>() {
-                    private final ListIterator<List<TerminalCharacter>> listIter = lineBuffer.subList(0, length).listIterator(length);
+                    private final ListIterator<List<TerminalCharacter>> listIter = lineBuffer.subList(scrollOffset, scrollOffset + length).listIterator(length);
                     @Override
                     public boolean hasNext() { return listIter.hasPrevious(); }
                     @Override
@@ -79,7 +79,7 @@ class TextBuffer {
         return lineBuffer.size();
     }
 
-    public void trimBacklog(int terminalHeight) {
+    void trimBacklog(int terminalHeight) {
         while(lineBuffer.size() - terminalHeight > backlog) {
             lineBuffer.removeLast();
         }

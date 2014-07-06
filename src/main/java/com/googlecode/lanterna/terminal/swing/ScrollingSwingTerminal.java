@@ -1,6 +1,6 @@
 /*
  * This file is part of lanterna (http://code.google.com/p/lanterna/).
- * 
+ *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,16 +13,14 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Copyright (C) 2010-2014 Martin
  */
 package com.googlecode.lanterna.terminal.swing;
 
-import com.googlecode.lanterna.input.KeyDecodingProfile;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.terminal.IOSafeTerminal;
 import com.googlecode.lanterna.terminal.ResizeListener;
-import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.terminal.TextColor;
 import java.awt.BorderLayout;
@@ -31,35 +29,34 @@ import java.awt.event.AdjustmentListener;
 import java.util.concurrent.TimeUnit;
 import javax.swing.JComponent;
 import javax.swing.JScrollBar;
-import javax.swing.SwingUtilities;
 
 /**
  *
  * @author Martin
  */
 public class ScrollingSwingTerminal extends JComponent implements IOSafeTerminal {
-    
+
     private final SwingTerminal swingTerminal;
     private final JScrollBar scrollBar;
-            
+
     public ScrollingSwingTerminal() {
         this(SwingTerminalDeviceConfiguration.DEFAULT,
                 SwingTerminalFontConfiguration.DEFAULT,
                 SwingTerminalColorConfiguration.DEFAULT);
     }
-    
+
     public ScrollingSwingTerminal(
             SwingTerminalDeviceConfiguration deviceConfiguration,
             SwingTerminalFontConfiguration fontConfiguration,
             SwingTerminalColorConfiguration colorConfiguration) {
-        
+
         this.scrollBar = new JScrollBar(JScrollBar.VERTICAL);
         this.swingTerminal = new SwingTerminal(
-                deviceConfiguration, 
-                fontConfiguration, 
-                colorConfiguration, 
+                deviceConfiguration,
+                fontConfiguration,
+                colorConfiguration,
                 new ScrollController());
-        
+
         setLayout(new BorderLayout());
         add(swingTerminal, BorderLayout.CENTER);
         add(scrollBar, BorderLayout.EAST);
@@ -68,53 +65,40 @@ public class ScrollingSwingTerminal extends JComponent implements IOSafeTerminal
         this.scrollBar.setValue(0);
         this.scrollBar.setVisibleAmount(20);
         this.scrollBar.addAdjustmentListener(new ScrollbarListener());
-        /*
-        this.swingTerminal.addResizeListener(new ResizeListener() {
-            @Override
-            public void onResized(Terminal terminal, final TerminalSize newSize) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(scrollBar.getVisibleAmount() < newSize.getRows()) {
-                            scrollBar.setValue(scrollBar.getValue() - (newSize.getRows() - scrollBar.getVisibleAmount()));
-                            scrollBar.setVisibleAmount(newSize.getRows());
-                        }
-                        else {
-                            scrollBar.setVisibleAmount(newSize.getRows());
-                        }
-                    }
-                });
-            }
-        });
-        */
     }
-    
-    private class ScrollController implements SwingTerminal.ScrollingController {
+
+    private class ScrollController implements TerminalScrollController {
         @Override
         public void updateModel(int totalSize, int screenSize) {
             if(scrollBar.getMaximum() != totalSize) {
-                System.out.println("Setting maximum to " + totalSize);
+                int lastMaximum = scrollBar.getMaximum();
                 scrollBar.setMaximum(totalSize);
+                if(lastMaximum < totalSize &&
+                        lastMaximum - scrollBar.getVisibleAmount() - scrollBar.getValue() == 0) {
+                    int adjustedValue = scrollBar.getValue() + (totalSize - lastMaximum);
+                    scrollBar.setValue(adjustedValue);
+                }
             }
             if(scrollBar.getVisibleAmount() != screenSize) {
-                System.out.println("Setting visible amount to " + screenSize);
+                if(scrollBar.getValue() + screenSize > scrollBar.getMaximum()) {
+                    scrollBar.setValue(scrollBar.getMaximum() - screenSize);
+                }
                 scrollBar.setVisibleAmount(screenSize);
             }
         }
+
+        @Override
+        public int getScrollingOffset() {
+            return scrollBar.getMaximum() - scrollBar.getVisibleAmount() - scrollBar.getValue();
+        }
     }
-    
+
     private class ScrollbarListener implements AdjustmentListener {
         int lastValue = -1;
-        
+
         @Override
         public synchronized void adjustmentValueChanged(AdjustmentEvent e) {
-            /*
-            if(scrollBar.getValue() == lastValue) {
-                return;
-            }
-            swingTerminal.setScrollOffset(-scrollBar.getValue() - scrollBar.getVisibleAmount());
-            lastValue = scrollBar.getValue();
-            */
+            swingTerminal.repaint();
         }
     }
 

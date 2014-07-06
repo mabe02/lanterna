@@ -19,6 +19,9 @@
 package com.googlecode.lanterna.terminal;
 
 import com.googlecode.lanterna.terminal.swing.ScrollingSwingTerminal;
+import com.googlecode.lanterna.terminal.swing.SwingTerminalColorConfiguration;
+import com.googlecode.lanterna.terminal.swing.SwingTerminalDeviceConfiguration;
+import com.googlecode.lanterna.terminal.swing.SwingTerminalFontConfiguration;
 import java.awt.BorderLayout;
 import java.util.Random;
 import javax.swing.UIManager;
@@ -30,13 +33,16 @@ import javax.swing.UIManager;
 public class ScrollingSwingTerminalTest extends javax.swing.JFrame {
 
     private final ScrollingSwingTerminal scrollingSwingTerminal;
-    
+
     /**
      * Creates new form ScrollingSwingTerminalTest
      */
     public ScrollingSwingTerminalTest() {
         initComponents();
-        scrollingSwingTerminal = new ScrollingSwingTerminal();
+        scrollingSwingTerminal = new ScrollingSwingTerminal(
+                SwingTerminalDeviceConfiguration.DEFAULT.withLineBufferScrollbackSize(150),
+                SwingTerminalFontConfiguration.DEFAULT,
+                SwingTerminalColorConfiguration.DEFAULT);
         panelTerminalContainer.add(scrollingSwingTerminal, BorderLayout.CENTER);
         pack();
     }

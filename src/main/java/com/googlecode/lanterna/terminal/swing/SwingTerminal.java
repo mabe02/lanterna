@@ -64,18 +64,6 @@ import javax.swing.event.AncestorListener;
  * @author martin
  */
 public class SwingTerminal extends JComponent implements IOSafeTerminal {
-    
-    public static interface ScrollingController {
-        void updateModel(int totalSize, int screenSize);
-    }
-    
-    private static class NullScrollingController implements ScrollingController {
-        @Override
-        public void updateModel(int totalSize, int screenSize) {
-        }
-    }
-    
-    private final ScrollingController scrollObserver;
     private final SwingTerminalDeviceConfiguration deviceConfiguration;
     private final SwingTerminalFontConfiguration fontConfiguration;
     private final SwingTerminalColorConfiguration colorConfiguration;
@@ -94,13 +82,14 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
     private volatile boolean blinkOn;
 
     public SwingTerminal() {
-        this(new NullScrollingController());
+        this(new TerminalScrollController.Null());
     }
-    
-    public SwingTerminal(ScrollingController scrollObserver) {
+
+    public SwingTerminal(TerminalScrollController scrollController) {
         this(SwingTerminalDeviceConfiguration.DEFAULT,
                 SwingTerminalFontConfiguration.DEFAULT,
-                SwingTerminalColorConfiguration.DEFAULT);
+                SwingTerminalColorConfiguration.DEFAULT,
+                scrollController);
     }
 
     /**
@@ -113,23 +102,23 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
             SwingTerminalDeviceConfiguration deviceConfiguration,
             SwingTerminalFontConfiguration fontConfiguration,
             SwingTerminalColorConfiguration colorConfiguration) {
-        
-        this(deviceConfiguration, fontConfiguration, colorConfiguration, new NullScrollingController());
+
+        this(deviceConfiguration, fontConfiguration, colorConfiguration, new TerminalScrollController.Null());
     }
-    
+
     /**
      * Creates a new SwingTerminal component.
      * @param deviceConfiguration
      * @param fontConfiguration
      * @param colorConfiguration
-     * @param scrollObserver
+     * @param scrollController
      */
     public SwingTerminal(
             SwingTerminalDeviceConfiguration deviceConfiguration,
             SwingTerminalFontConfiguration fontConfiguration,
             SwingTerminalColorConfiguration colorConfiguration,
-            ScrollingController scrollObserver) {
-        
+            TerminalScrollController scrollController) {
+
         //Enforce valid values on the input parameters
         if(deviceConfiguration == null) {
             deviceConfiguration = SwingTerminalDeviceConfiguration.DEFAULT;
@@ -144,13 +133,16 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
         //This is kind of meaningless since we don't know how large the
         //component is at this point, but we should set it to something
         TerminalSize terminalSize = new TerminalSize(80, 20);
-        this.virtualTerminal = new VirtualTerminal(deviceConfiguration.getLineBufferScrollbackSize(), terminalSize, TerminalCharacter.DEFAULT_CHARACTER);
+        this.virtualTerminal = new VirtualTerminal(
+                deviceConfiguration.getLineBufferScrollbackSize(),
+                terminalSize,
+                TerminalCharacter.DEFAULT_CHARACTER,
+                scrollController);
         this.keyQueue = new ConcurrentLinkedQueue<KeyStroke>();
         this.resizeListeners = new CopyOnWriteArrayList<ResizeListener>();
         this.deviceConfiguration = deviceConfiguration;
         this.fontConfiguration = fontConfiguration;
         this.colorConfiguration = colorConfiguration;
-        this.scrollObserver = scrollObserver;
 
         this.activeSGRs = EnumSet.noneOf(SGR.class);
         this.foregroundColor = TextColor.ANSI.DEFAULT;
@@ -158,12 +150,11 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
         this.cursorIsVisible = true;        //Always start with an activate and visible cursor
         this.enquiryString = "SwingTerminal";
         this.scrollOffset = 0;
-        this.scrollObserver.updateModel(20, 20);
         this.blinkTimer = new Timer(deviceConfiguration.getBlinkLengthInMilliSeconds(), new BlinkTimerCallback());
 
         //Set the initial scrollable size
         //scrollObserver.newScrollableLength(fontConfiguration.getFontHeight() * terminalSize.getRows());
-        
+
         //Prevent us from shrinking beyond one character
         setMinimumSize(new Dimension(fontConfiguration.getFontWidth(), fontConfiguration.getFontHeight()));
         setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, Collections.EMPTY_SET);
@@ -224,14 +215,14 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
 
         //Draw line by line, character by character
         int rowIndex = 0;
-        for(List<TerminalCharacter> row: virtualTerminal.getLines(visibleRows, scrollOffset)) {
+        for(List<TerminalCharacter> row: virtualTerminal.getLines()) {
             for(int columnIndex = 0; columnIndex < row.size(); columnIndex++) {
                 TerminalCharacter character = row.get(columnIndex);
                 boolean atCursorLocation = cursorPosition.equals(columnIndex, rowIndex + scrollOffset);
                 //If next position is the cursor location and this is a CJK character (i.e. cursor is on the padding),
                 //consider this location the cursor position since otherwise the cursor will be skipped
-                if(!atCursorLocation && 
-                        cursorPosition.getColumn() == columnIndex + 1 && 
+                if(!atCursorLocation &&
+                        cursorPosition.getColumn() == columnIndex + 1 &&
                         cursorPosition.getRow() == rowIndex &&
                         CJKUtils.isCharCJK(character.getCharacter())) {
                     atCursorLocation = true;
@@ -249,7 +240,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
                 g.setFont(font);
                 FontMetrics fontMetrics = g.getFontMetrics();
                 g.drawString(Character.toString(character.getCharacter()), columnIndex * fontWidth, ((rowIndex + 1) * fontHeight) - fontMetrics.getDescent());
-                
+
                 if(character.isCrossedOut()) {
                     int lineStartX = columnIndex * fontWidth;
                     int lineStartY = rowIndex * fontHeight + (fontHeight / 2);
@@ -281,7 +272,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
             notifyAll();
         }
     }
-    
+
     public void setScrollOffset(int scrollOffset) {
         this.scrollOffset = scrollOffset;
         SwingUtilities.invokeLater(new Runnable() {
@@ -499,7 +490,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
             repaint();
         }
     }
-    
+
     private static final Set<Character> TYPED_KEYS_TO_IGNORE = new HashSet<Character>(Arrays.asList('\n', '\t', '\r', '\b', '\33'));
     private class TerminalInputListener extends KeyAdapter {
         @Override
