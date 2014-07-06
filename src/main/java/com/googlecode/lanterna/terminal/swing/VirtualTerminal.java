@@ -31,7 +31,7 @@ import java.util.List;
 class VirtualTerminal {
     private final TextBuffer mainTextBuffer;
     private final TextBuffer privateModeTextBuffer;
-    
+
     private TextBuffer currentBuffer;
     private TerminalSize size;
     private TerminalPosition cursorPosition;
@@ -39,13 +39,16 @@ class VirtualTerminal {
     public VirtualTerminal(int backlog, TerminalSize initialSize, TerminalCharacter fillCharacter) {
         this.mainTextBuffer = new TextBuffer(backlog, fillCharacter);
         this.privateModeTextBuffer = new TextBuffer(0, fillCharacter);
-        
+
         this.currentBuffer = mainTextBuffer;
         this.size = initialSize;
         this.cursorPosition = TerminalPosition.TOP_LEFT_CORNER;
     }
-    
+
     public void resize(TerminalSize newSize) {
+        if(size.getRows() < newSize.getRows()) {
+            cursorPosition = cursorPosition.withRelativeRow(newSize.getRows() - size.getRows());
+        }
         this.size = newSize;
         correctCursor();
     }
@@ -62,7 +65,7 @@ class VirtualTerminal {
     public TerminalPosition getCursorPosition() {
         return cursorPosition;
     }
-    
+
     private void correctCursor() {
         this.cursorPosition =
                 new TerminalPosition(
@@ -73,7 +76,7 @@ class VirtualTerminal {
                         Math.max(cursorPosition.getColumn(), 0),
                         Math.max(cursorPosition.getRow(), 0));
     }
-    
+
     public void putCharacter(TerminalCharacter terminalCharacter) {
         if(terminalCharacter.getCharacter() == '\n') {
             moveCursorToNextLine();
@@ -86,7 +89,7 @@ class VirtualTerminal {
         }
         else {
             currentBuffer.setCharacter(size, cursorPosition, terminalCharacter);
-            
+
             //Advance cursor
             cursorPosition = cursorPosition.withRelativeColumn(CJKUtils.isCharCJK(terminalCharacter.getCharacter()) ? 2 : 1);
             if(cursorPosition.getColumn() >= size.getColumns()) {
@@ -99,18 +102,18 @@ class VirtualTerminal {
     private void moveCursorToNextLine() {
         cursorPosition = cursorPosition.withColumn(0).withRelativeRow(1);
         if(cursorPosition.getRow() >= size.getRows()) {
-            cursorPosition.withRelativeRow(-1);
+            cursorPosition = cursorPosition.withRelativeRow(-1);
             if(currentBuffer == mainTextBuffer) {
                 currentBuffer.newLine();
             }
         }
         currentBuffer.ensurePosition(size, cursorPosition);
     }
-    
+
     public void switchToPrivateMode() {
         currentBuffer = privateModeTextBuffer;
     }
-    
+
     public void switchToNormalMode() {
         currentBuffer = mainTextBuffer;
     }
