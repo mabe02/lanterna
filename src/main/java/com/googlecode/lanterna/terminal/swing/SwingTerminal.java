@@ -76,7 +76,6 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
     private TextColor foregroundColor;
     private TextColor backgroundColor;
     private String enquiryString;
-    private int scrollOffset;
 
     private volatile boolean cursorIsVisible;
     private volatile boolean blinkOn;
@@ -149,7 +148,6 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
         this.backgroundColor = TextColor.ANSI.DEFAULT;
         this.cursorIsVisible = true;        //Always start with an activate and visible cursor
         this.enquiryString = "SwingTerminal";
-        this.scrollOffset = 0;
         this.blinkTimer = new Timer(deviceConfiguration.getBlinkLengthInMilliSeconds(), new BlinkTimerCallback());
 
         //Set the initial scrollable size
@@ -271,16 +269,6 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
         synchronized(this) {
             notifyAll();
         }
-    }
-
-    public void setScrollOffset(int scrollOffset) {
-        this.scrollOffset = scrollOffset;
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                repaint();
-            }
-        });
     }
 
     private Color deriveTrueForegroundColor(TerminalCharacter character, boolean atCursorLocation) {
