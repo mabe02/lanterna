@@ -205,7 +205,8 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
                 listener.onResized(this, terminalSize);
             }
         }
-        TerminalPosition cursorPosition = virtualTerminal.getCursorPosition();
+        //Retrieve the position of the cursor, relative to the scrolling state
+        TerminalPosition translatedCursorPosition = virtualTerminal.getTranslatedCursorPosition();
 
         //Fill with black to remove any previous content
         g.setColor(Color.BLACK);
@@ -216,12 +217,12 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
         for(List<TerminalCharacter> row: virtualTerminal.getLines()) {
             for(int columnIndex = 0; columnIndex < row.size(); columnIndex++) {
                 TerminalCharacter character = row.get(columnIndex);
-                boolean atCursorLocation = cursorPosition.equals(columnIndex, rowIndex + scrollOffset);
+                boolean atCursorLocation = translatedCursorPosition.equals(columnIndex, rowIndex);
                 //If next position is the cursor location and this is a CJK character (i.e. cursor is on the padding),
                 //consider this location the cursor position since otherwise the cursor will be skipped
                 if(!atCursorLocation &&
-                        cursorPosition.getColumn() == columnIndex + 1 &&
-                        cursorPosition.getRow() == rowIndex &&
+                        translatedCursorPosition.getColumn() == columnIndex + 1 &&
+                        translatedCursorPosition.getRow() == rowIndex &&
                         CJKUtils.isCharCJK(character.getCharacter())) {
                     atCursorLocation = true;
                 }

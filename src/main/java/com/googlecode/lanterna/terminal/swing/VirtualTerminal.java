@@ -77,8 +77,8 @@ class VirtualTerminal {
         correctCursor();
     }
 
-    public TerminalPosition getCursorPosition() {
-        return cursorPosition;
+    public TerminalPosition getTranslatedCursorPosition() {
+        return cursorPosition.withRelativeRow(terminalScrollController.getScrollingOffset());
     }
 
     private void correctCursor() {
