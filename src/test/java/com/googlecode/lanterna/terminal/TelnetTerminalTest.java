@@ -77,7 +77,7 @@ public class TelnetTerminalTest {
 
                         terminal.setForegroundColor(foregroundIndex);
                         terminal.setBackgroundColor(backgroundIndex);
-                        terminal.moveCursor(random.nextInt(size.getColumns() - string.length()), random.nextInt(size.getRows()));
+                        terminal.setCursorPosition(random.nextInt(size.getColumns() - string.length()), random.nextInt(size.getRows()));
                         printString(terminal, string);
 
                         try {

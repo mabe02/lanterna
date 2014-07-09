@@ -141,7 +141,7 @@ public class DefaultScreen extends TerminalScreen {
         clear();
         if(cursorPosition != null) {
             getTerminal().setCursorVisible(true);
-            getTerminal().moveCursor(cursorPosition.getColumn(), cursorPosition.getRow());
+            getTerminal().setCursorPosition(cursorPosition.getColumn(), cursorPosition.getRow());
         } else {
             getTerminal().setCursorVisible(false);
         }
@@ -254,10 +254,10 @@ public class DefaultScreen extends TerminalScreen {
             getTerminal().setCursorVisible(true);
             //If we are trying to move the cursor to the padding of a CJK character, put it on the actual character instead
             if(cursorPosition.getColumn() > 0 && CJKUtils.isCharCJK(frontBuffer.getCharacterAt(cursorPosition.withRelativeColumn(-1)).getCharacter())) {
-                getTerminal().moveCursor(cursorPosition.getColumn() - 1, cursorPosition.getRow());
+                getTerminal().setCursorPosition(cursorPosition.getColumn() - 1, cursorPosition.getRow());
             }
             else {
-                getTerminal().moveCursor(cursorPosition.getColumn(), cursorPosition.getRow());
+                getTerminal().setCursorPosition(cursorPosition.getColumn(), cursorPosition.getRow());
             }            
         } else {
             getTerminal().setCursorVisible(false);
@@ -285,7 +285,7 @@ public class DefaultScreen extends TerminalScreen {
             return;
         }
         TerminalPosition currentPosition = updateMap.keySet().iterator().next();
-        getTerminal().moveCursor(currentPosition.getColumn(), currentPosition.getRow());
+        getTerminal().setCursorPosition(currentPosition.getColumn(), currentPosition.getRow());
 
         ScreenCharacter firstScreenCharacterToUpdate = updateMap.values().iterator().next();
         EnumSet<Terminal.SGR> currentSGR = firstScreenCharacterToUpdate.getModifiers();
@@ -299,7 +299,7 @@ public class DefaultScreen extends TerminalScreen {
         getTerminal().setBackgroundColor(currentBackgroundColor);
         for(TerminalPosition position: updateMap.keySet()) {
             if(!position.equals(currentPosition)) {
-                getTerminal().moveCursor(position.getColumn(), position.getRow());
+                getTerminal().setCursorPosition(position.getColumn(), position.getRow());
             }
             ScreenCharacter newCharacter = updateMap.get(position);
             if(!currentForegroundColor.equals(newCharacter.getForegroundColor())) {
@@ -342,7 +342,7 @@ public class DefaultScreen extends TerminalScreen {
         TextColor currentForegroundColor = TextColor.ANSI.DEFAULT;
         TextColor currentBackgroundColor = TextColor.ANSI.DEFAULT;
         for(int y = 0; y < getTerminalSize().getRows(); y++) {
-            getTerminal().moveCursor(0, y);
+            getTerminal().setCursorPosition(0, y);
             int currentColumn = 0;
             for(int x = 0; x < getTerminalSize().getColumns(); x++) {
                 ScreenCharacter newCharacter = backBuffer.getCharacterAt(x, y);
@@ -369,7 +369,7 @@ public class DefaultScreen extends TerminalScreen {
                     }
                 }
                 if(currentColumn != x) {
-                    getTerminal().moveCursor(x, y);
+                    getTerminal().setCursorPosition(x, y);
                     currentColumn = x;
                 }
                 getTerminal().putCharacter(newCharacter.getCharacter());

@@ -31,7 +31,7 @@ public class CJKTerminalTest {
         terminal.enterPrivateMode();
         terminal.clearScreen();
         for(int i = 1; i < 5; i++) {
-            terminal.moveCursor(i, i);
+            terminal.setCursorPosition(i, i);
             printString(terminal, "あ い う え お");
         }
         int pos = 0;
@@ -40,9 +40,9 @@ public class CJKTerminalTest {
             if(terminal.readInput() != null) {
                 break;
             }
-            terminal.moveCursor(0, 0);
+            terminal.setCursorPosition(0, 0);
             printString(terminal, pos + "x" + line);            
-            terminal.moveCursor(pos++, line);
+            terminal.setCursorPosition(pos++, line);
             if(pos == 10) {
                 pos = 0;
                 line++;
@@ -56,9 +56,9 @@ public class CJKTerminalTest {
             if(terminal.readInput() != null) {
                 break;
             }
-            terminal.moveCursor(5, i + 1);
+            terminal.setCursorPosition(5, i + 1);
             printString(terminal, "X");
-            terminal.moveCursor(0, 0);
+            terminal.setCursorPosition(0, 0);
             terminal.flush();
             Thread.sleep(2000);
         }

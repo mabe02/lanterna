@@ -35,7 +35,7 @@ public interface IOSafeTerminal extends Terminal {
     @Override
     public void clearScreen();
     @Override
-    public void moveCursor(int x, int y);
+    public void setCursorPosition(int x, int y);
     @Override
     public void setCursorVisible(boolean visible);
     @Override

@@ -53,7 +53,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal {
     @Override
     public TerminalSize getTerminalSize() throws IOException {
         saveCursorPosition();
-        moveCursor(5000, 5000);
+        setCursorPosition(5000, 5000);
         reportPosition();
         restoreCursorPosition();
         return waitForTerminalSizeReport(1000); //Wait 1 second for the terminal size report to come, is this reasonable?
@@ -205,7 +205,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal {
     }
 
     @Override
-    public void moveCursor(int x, int y) throws IOException {
+    public void setCursorPosition(int x, int y) throws IOException {
         writeCSISequenctToTerminal(((y + 1) + ";" + (x + 1) + "H").getBytes());
     }
 

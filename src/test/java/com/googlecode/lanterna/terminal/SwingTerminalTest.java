@@ -31,7 +31,7 @@ public class SwingTerminalTest {
         Terminal terminal = TerminalFacade.createSwingTerminal();
         //terminal.enterPrivateMode();
         terminal.clearScreen();
-        terminal.moveCursor(10, 5);
+        terminal.setCursorPosition(10, 5);
         terminal.putCharacter('H');
         terminal.putCharacter('e');
         terminal.putCharacter('l');
@@ -48,7 +48,7 @@ public class SwingTerminalTest {
         terminal.putCharacter(ACS.DOUBLE_LINE_T_DOWN);
         terminal.putCharacter(ACS.SINGLE_LINE_VERTICAL);
         terminal.putCharacter(ACS.SINGLE_LINE_HORIZONTAL);
-        terminal.moveCursor(10, 7);
+        terminal.setCursorPosition(10, 7);
         terminal.enableSGR(Terminal.SGR.BOLD);
         terminal.putCharacter('H');
         terminal.putCharacter('e');
@@ -66,7 +66,7 @@ public class SwingTerminalTest {
         terminal.putCharacter(ACS.DOUBLE_LINE_T_DOWN);
         terminal.putCharacter(ACS.SINGLE_LINE_VERTICAL);
         terminal.putCharacter(ACS.SINGLE_LINE_HORIZONTAL);
-        terminal.moveCursor(10, 9);
+        terminal.setCursorPosition(10, 9);
         terminal.enableSGR(Terminal.SGR.UNDERLINE);
         terminal.putCharacter('H');
         terminal.putCharacter('e');
@@ -87,7 +87,7 @@ public class SwingTerminalTest {
         terminal.putCharacter(ACS.DOUBLE_LINE_T_DOWN);
         terminal.putCharacter(ACS.SINGLE_LINE_VERTICAL);
         terminal.putCharacter(ACS.SINGLE_LINE_HORIZONTAL);
-        terminal.moveCursor(10, 11);
+        terminal.setCursorPosition(10, 11);
         terminal.enableSGR(Terminal.SGR.BORDERED);
         terminal.putCharacter('!');
         terminal.putCharacter(' ');
@@ -101,7 +101,7 @@ public class SwingTerminalTest {
         terminal.putCharacter(ACS.SINGLE_LINE_VERTICAL);
         terminal.putCharacter(ACS.SINGLE_LINE_HORIZONTAL);
         terminal.resetAllSGR();
-        terminal.moveCursor(0, 0);
+        terminal.setCursorPosition(0, 0);
 
         Thread.sleep(5000);
         //terminal.exitPrivateMode();

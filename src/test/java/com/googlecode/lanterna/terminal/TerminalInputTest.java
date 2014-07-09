@@ -34,7 +34,7 @@ public class TerminalInputTest {
         rawTerminal.enterPrivateMode();
 
         int currentRow = 0;
-        rawTerminal.moveCursor(0, 0);
+        rawTerminal.setCursorPosition(0, 0);
         while(true) {
             KeyStroke key = rawTerminal.readInput();
             if(key == null) {
@@ -50,7 +50,7 @@ public class TerminalInputTest {
                 rawTerminal.clearScreen();
             }
 
-            rawTerminal.moveCursor(0, currentRow++);
+            rawTerminal.setCursorPosition(0, currentRow++);
             putString(rawTerminal, key.toString());
 
             if(currentRow >= rawTerminal.getTerminalSize().getRows()) {

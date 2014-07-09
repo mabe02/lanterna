@@ -72,7 +72,7 @@ public interface Terminal extends InputProvider {
      * @param y The 0-indexed row to place the cursor at
      * @throws java.io.IOException If there was an underlying I/O error
      */
-    public void moveCursor(int x, int y) throws IOException;
+    public void setCursorPosition(int x, int y) throws IOException;
 
     /**
      * Hides or shows the text cursor, but not all terminal (-emulators) supports this. The text cursor is normally a

@@ -237,7 +237,7 @@ public class OldSwingTerminal extends AbstractTerminal implements InputProvider
                             false,
                             false
                             );
-            moveCursor(0,0);
+            setCursorPosition(0,0);
         }
     }
 
@@ -307,7 +307,7 @@ public class OldSwingTerminal extends AbstractTerminal implements InputProvider
     }
 
     @Override
-    public void moveCursor(int x, int y)
+    public void setCursorPosition(int x, int y)
     {
         if(x < 0)
             x = 0;
@@ -337,13 +337,13 @@ public class OldSwingTerminal extends AbstractTerminal implements InputProvider
 
         if(textPosition.getColumn() >= size().getColumns() - nextCharacterDistance &&
                 textPosition.getRow() == size().getRows() - 1) {
-            moveCursor(0, textPosition.getRow());
+            setCursorPosition(0, textPosition.getRow());
         }
         else if(textPosition.getColumn() >= size().getColumns() - nextCharacterDistance) {
-            moveCursor(0, textPosition.getRow() + 1);
+            setCursorPosition(0, textPosition.getRow() + 1);
         }
         else {
-            moveCursor(textPosition.getColumn() + nextCharacterDistance, textPosition.getRow());
+            setCursorPosition(textPosition.getColumn() + nextCharacterDistance, textPosition.getRow());
         }
     }
 

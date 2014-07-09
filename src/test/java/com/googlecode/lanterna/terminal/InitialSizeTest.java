@@ -31,13 +31,13 @@ public class InitialSizeTest {
         rawTerminal.enterPrivateMode();
         rawTerminal.clearScreen();
 
-        rawTerminal.moveCursor(5, 5);
+        rawTerminal.setCursorPosition(5, 5);
         printString(rawTerminal, "Waiting for initial size...");
         rawTerminal.flush();
 
         TerminalSize initialSize = rawTerminal.getTerminalSize();
         rawTerminal.clearScreen();
-        rawTerminal.moveCursor(5, 5);
+        rawTerminal.setCursorPosition(5, 5);
         printString(rawTerminal, "Initial size: ");
         rawTerminal.enableSGR(Terminal.SGR.BOLD);
         printString(rawTerminal, initialSize.toString());

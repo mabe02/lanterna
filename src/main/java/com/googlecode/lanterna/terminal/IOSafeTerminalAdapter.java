@@ -105,9 +105,9 @@ public class IOSafeTerminalAdapter implements IOSafeTerminal {
     }
 
     @Override
-    public void moveCursor(int x, int y) {
+    public void setCursorPosition(int x, int y) {
         try {
-            backend.moveCursor(x, y);
+            backend.setCursorPosition(x, y);
         }
         catch(IOException e) {
             exceptionHandler.onException(e);

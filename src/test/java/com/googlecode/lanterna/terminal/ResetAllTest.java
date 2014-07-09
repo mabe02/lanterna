@@ -31,7 +31,7 @@ public class ResetAllTest {
         Terminal terminal = new TestTerminalFactory(args).createTerminal();
         terminal.enterPrivateMode();
         terminal.clearScreen();
-        terminal.moveCursor(10, 5);
+        terminal.setCursorPosition(10, 5);
         terminal.putCharacter('H');
         terminal.putCharacter('e');
         terminal.enableSGR(Terminal.SGR.BOLD);
@@ -42,7 +42,7 @@ public class ResetAllTest {
         terminal.putCharacter('o');
         terminal.resetAllSGR();
         terminal.putCharacter('!');
-        terminal.moveCursor(0, 0);
+        terminal.setCursorPosition(0, 0);
 
         Thread.sleep(5000);
         terminal.exitPrivateMode();

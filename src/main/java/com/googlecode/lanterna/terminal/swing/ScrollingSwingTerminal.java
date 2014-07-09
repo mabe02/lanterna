@@ -126,8 +126,8 @@ public class ScrollingSwingTerminal extends JComponent implements IOSafeTerminal
     }
 
     @Override
-    public void moveCursor(int x, int y) {
-        swingTerminal.moveCursor(x, y);
+    public void setCursorPosition(int x, int y) {
+        swingTerminal.setCursorPosition(x, y);
     }
 
     @Override

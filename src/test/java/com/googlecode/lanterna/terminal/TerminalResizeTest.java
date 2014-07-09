@@ -34,14 +34,14 @@ public class TerminalResizeTest implements ResizeListener {
         terminal = new TestTerminalFactory(args).createTerminal();
         terminal.enterPrivateMode();
         terminal.clearScreen();
-        terminal.moveCursor(10, 5);
+        terminal.setCursorPosition(10, 5);
         terminal.putCharacter('H');
         terminal.putCharacter('e');
         terminal.putCharacter('l');
         terminal.putCharacter('l');
         terminal.putCharacter('o');
         terminal.putCharacter('!');
-        terminal.moveCursor(0, 0);
+        terminal.setCursorPosition(0, 0);
         terminal.addResizeListener(new TerminalResizeTest());
 
         while(true) {
@@ -59,7 +59,7 @@ public class TerminalResizeTest implements ResizeListener {
     @Override
     public void onResized(Terminal terminal, TerminalSize newSize) {
         try {
-            terminal.moveCursor(0, 0);
+            terminal.setCursorPosition(0, 0);
             String string = newSize.getColumns() + "x" + newSize.getRows() + "                     ";
             char[] chars = string.toCharArray();
             for(char c : chars) {
