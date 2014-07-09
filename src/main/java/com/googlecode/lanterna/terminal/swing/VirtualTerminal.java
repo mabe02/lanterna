@@ -73,6 +73,7 @@ class VirtualTerminal {
     }
 
     public void setCursorPosition(TerminalPosition cursorPosition) {
+        currentBuffer.ensurePosition(size, cursorPosition);
         this.cursorPosition = cursorPosition;
         correctCursor();
     }
