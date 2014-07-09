@@ -378,23 +378,11 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
     @Override
     public void moveCursor(final int x, final int y) {
         virtualTerminal.setCursorPosition(new TerminalPosition(x, y));
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                repaint();
-            }
-        });
     }
 
     @Override
     public void setCursorVisible(final boolean visible) {
-        //TODO
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                repaint();
-            }
-        });
+        cursorIsVisible = visible;
     }
 
     @Override
