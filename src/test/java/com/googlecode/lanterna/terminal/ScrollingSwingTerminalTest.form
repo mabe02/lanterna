@@ -28,7 +28,9 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="panelTerminalContainer" alignment="0" max="32767" attributes="0"/>
                   <Group type="102" alignment="1" attributes="0">
-                      <EmptySpace min="0" pref="356" max="32767" attributes="0"/>
+                      <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
+                      <Component id="buttonMoveCursor" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="246" max="32767" attributes="0"/>
                       <Component id="buttonPrint1Line" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="buttonPrint10Lines" min="-2" max="-2" attributes="0"/>
@@ -53,6 +55,7 @@
                   <Component id="buttonPrint100Lines" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="buttonPrint10Lines" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="buttonPrint1Line" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="buttonMoveCursor" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -95,6 +98,14 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="buttonPrint1LineActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="buttonMoveCursor">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Move cursor"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="buttonMoveCursorActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>

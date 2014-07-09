@@ -60,6 +60,7 @@ public class ScrollingSwingTerminalTest extends javax.swing.JFrame {
         jSeparator1 = new javax.swing.JSeparator();
         buttonPrint10Lines = new javax.swing.JButton();
         buttonPrint1Line = new javax.swing.JButton();
+        buttonMoveCursor = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -87,6 +88,13 @@ public class ScrollingSwingTerminalTest extends javax.swing.JFrame {
             }
         });
 
+        buttonMoveCursor.setText("Move cursor");
+        buttonMoveCursor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonMoveCursorActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -96,7 +104,9 @@ public class ScrollingSwingTerminalTest extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(panelTerminalContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 356, Short.MAX_VALUE)
+                        .addGap(6, 6, 6)
+                        .addComponent(buttonMoveCursor)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 246, Short.MAX_VALUE)
                         .addComponent(buttonPrint1Line)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(buttonPrint10Lines)
@@ -116,7 +126,8 @@ public class ScrollingSwingTerminalTest extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(buttonPrint100Lines)
                     .addComponent(buttonPrint10Lines)
-                    .addComponent(buttonPrint1Line))
+                    .addComponent(buttonPrint1Line)
+                    .addComponent(buttonMoveCursor))
                 .addContainerGap())
         );
 
@@ -134,6 +145,13 @@ public class ScrollingSwingTerminalTest extends javax.swing.JFrame {
     private void buttonPrint1LineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonPrint1LineActionPerformed
         printLines(1);
     }//GEN-LAST:event_buttonPrint1LineActionPerformed
+
+    private void buttonMoveCursorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonMoveCursorActionPerformed
+        TerminalSize terminalSize = scrollingSwingTerminal.getTerminalSize();
+        Random random = new Random();
+        scrollingSwingTerminal.moveCursor(random.nextInt(terminalSize.getColumns()), random.nextInt(terminalSize.getRows()));
+        scrollingSwingTerminal.flush();
+    }//GEN-LAST:event_buttonMoveCursorActionPerformed
 
     private void printLines(int howMany) {
         Random random = new Random();
@@ -182,6 +200,7 @@ public class ScrollingSwingTerminalTest extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton buttonMoveCursor;
     private javax.swing.JButton buttonPrint100Lines;
     private javax.swing.JButton buttonPrint10Lines;
     private javax.swing.JButton buttonPrint1Line;
