@@ -8,7 +8,7 @@ package com.googlecode.lanterna.issue;
 
 import com.googlecode.lanterna.TerminalFacade;
 import com.googlecode.lanterna.screen.Screen;
-import com.googlecode.lanterna.terminal.swing.OldSwingTerminal;
+import com.googlecode.lanterna.terminal.swing.SwingTerminalFrame;
 import java.io.IOException;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
@@ -19,16 +19,16 @@ import javax.swing.WindowConstants;
  */
 public class Issue95 {
     public static void main(String[] args) throws InterruptedException, IOException {
-        OldSwingTerminal terminal = new OldSwingTerminal(80, 20);
+        SwingTerminalFrame terminal = new SwingTerminalFrame(SwingTerminalFrame.AutoCloseTrigger.CloseOnExitPrivateMode);
         terminal.setCursorVisible(false);
 
         Screen screen = TerminalFacade.createScreen(terminal);
         screen.startScreen();
-
-        JFrame frame = terminal.getJFrame();
-        frame.setTitle("Freedom: An arena-battle roguelike");
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setResizable(false);
+        
+        terminal.setTitle("Freedom: An arena-battle roguelike");
+        terminal.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        terminal.setResizable(false);
+        terminal.setVisible(true);
 
         while(screen.readInput() == null) {
             if(screen.doResizeIfNecessary() != null) {

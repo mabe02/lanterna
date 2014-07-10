@@ -27,8 +27,6 @@ import com.googlecode.lanterna.gui.GUIScreen;
 import com.googlecode.lanterna.screen.DefaultScreen;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.Terminal;
-import com.googlecode.lanterna.terminal.swing.OldSwingTerminal;
-import com.googlecode.lanterna.terminal.swing.OldTerminalAppearance;
 import com.googlecode.lanterna.terminal.swing.SwingTerminalFrame;
 import com.googlecode.lanterna.terminal.ansi.CygwinTerminal;
 import com.googlecode.lanterna.terminal.ansi.UnixTerminal;
@@ -122,30 +120,6 @@ public class TerminalFacade {
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         return frame;
-    }
-
-    /**
-     * Creates a new {@code SwingTerminal} object, a simple Swing terminal
-     * emulator, DEFAULT_TERMINAL_COLUMN_WIDTH columns wide and
-     * DEFAULT_TERMINAL_COLUMN_HEIGHT rows high.
-     *
-     * @param appearance The kind of appearance to use for the terminal
-     */
-    public static OldSwingTerminal createSwingTerminal(OldTerminalAppearance appearance) {
-        return createSwingTerminal(appearance, DEFAULT_TERMINAL_COLUMN_WIDTH, DEFAULT_TERMINAL_COLUMN_HEIGHT);
-    }
-
-    /**
-     * Creates a new {@code SwingTerminal} object, a simple Swing terminal
-     * emulator, with specified dimensions.
-     *
-     * @param appearance The kind of appearance to use for the terminal
-     * @param columns Width of the terminal window, in text columns <b>not</b>
-     * pixels
-     * @param rows Height of the terminal window, in text rows <b>not</b> pixels
-     */
-    public static OldSwingTerminal createSwingTerminal(OldTerminalAppearance appearance, int columns, int rows) {
-        return new OldSwingTerminal(appearance, columns, rows);
     }
 
     /**
