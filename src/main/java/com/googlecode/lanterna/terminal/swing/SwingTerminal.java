@@ -339,7 +339,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
     ///////////
     @Override
     public KeyStroke readInput() {
-        return keyQueue.peek();
+        return keyQueue.poll();
     }
 
     @Override
