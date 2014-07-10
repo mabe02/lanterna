@@ -80,6 +80,7 @@ public abstract class AbstractTerminal implements Terminal {
      * and compatible.
      *
      * @param color Color to use for foreground
+     * @throws java.io.IOException If there was an underlying I/O error
      */
     protected abstract void applyForegroundColor(TextColor.ANSI color) throws IOException;
 
@@ -97,6 +98,7 @@ public abstract class AbstractTerminal implements Terminal {
      * this</a> commit message to Konsole.
      *
      * @param index Color index from the XTerm 256 color space
+     * @throws java.io.IOException If there was an underlying I/O error
      */
     protected abstract void applyForegroundColor(int index) throws IOException;
 
@@ -111,6 +113,7 @@ public abstract class AbstractTerminal implements Terminal {
      * @param r Red intensity, from 0 to 255
      * @param g Green intensity, from 0 to 255
      * @param b Blue intensity, from 0 to 255
+     * @throws java.io.IOException If there was an underlying I/O error
      */
     protected abstract void applyForegroundColor(int r, int g, int b) throws IOException;
 
@@ -125,6 +128,7 @@ public abstract class AbstractTerminal implements Terminal {
      * applyBackgroundColor(..) overloads, is the most safe and compatible.
      *
      * @param color Color to use for the background
+     * @throws java.io.IOException If there was an underlying I/O error
      */
     protected abstract void applyBackgroundColor(TextColor.ANSI color) throws IOException;
 
@@ -142,6 +146,7 @@ public abstract class AbstractTerminal implements Terminal {
      * this</a> commit message to Konsole.
      *
      * @param index Index of the color to use, from the XTerm 256 color extension
+     * @throws java.io.IOException If there was an underlying I/O error
      */
     protected abstract void applyBackgroundColor(int index) throws IOException;
 
@@ -156,6 +161,7 @@ public abstract class AbstractTerminal implements Terminal {
      * @param r Red intensity, from 0 to 255
      * @param g Green intensity, from 0 to 255
      * @param b Blue intensity, from 0 to 255
+     * @throws java.io.IOException If there was an underlying I/O error
      */
     protected abstract void applyBackgroundColor(int r, int g, int b) throws IOException;
 
