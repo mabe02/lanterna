@@ -60,12 +60,12 @@ public abstract class ANSITerminal extends StreamBasedTerminal {
     }
 
     @Override
-    public void applyBackgroundColor(TextColor.ANSI color) throws IOException {
+    public void setBackgroundColor(TextColor.ANSI color) throws IOException {
         writeCSISequenctToTerminal((byte) '4', (byte) ((color.getIndex() + "").charAt(0)), (byte) 'm');
     }
 
     @Override
-    public void applyBackgroundColor(int r, int g, int b) throws IOException {
+    public void setBackgroundColor(int r, int g, int b) throws IOException {
         if(r < 0 || r > 255) {
             throw new IllegalArgumentException("applyForegroundColor: r is outside of valid range (0-255)");
         }
@@ -79,7 +79,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal {
     }
 
     @Override
-    public void applyBackgroundColor(int index) throws IOException {
+    public void setBackgroundColor(int index) throws IOException {
         if(index < 0 || index > 255) {
             throw new IllegalArgumentException("applyBackgroundColor: index is outside of valid range (0-255)");
         }
@@ -88,12 +88,12 @@ public abstract class ANSITerminal extends StreamBasedTerminal {
     }
 
     @Override
-    public void applyForegroundColor(TextColor.ANSI color) throws IOException {
+    public void setForegroundColor(TextColor.ANSI color) throws IOException {
         writeCSISequenctToTerminal((byte) '3', (byte) ((color.getIndex() + "").charAt(0)), (byte) 'm');
     }
 
     @Override
-    public void applyForegroundColor(int r, int g, int b) throws IOException {
+    public void setForegroundColor(int r, int g, int b) throws IOException {
         if(r < 0 || r > 255) {
             throw new IllegalArgumentException("applyForegroundColor: r is outside of valid range (0-255)");
         }
@@ -107,7 +107,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal {
     }
 
     @Override
-    public void applyForegroundColor(int index) throws IOException {
+    public void setForegroundColor(int index) throws IOException {
         if(index < 0 || index > 255) {
             throw new IllegalArgumentException("applyForegroundColor: index is outside of valid range (0-255)");
         }

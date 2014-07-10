@@ -82,7 +82,7 @@ public abstract class AbstractTerminal implements Terminal {
      * @param color Color to use for foreground
      * @throws java.io.IOException If there was an underlying I/O error
      */
-    protected abstract void applyForegroundColor(TextColor.ANSI color) throws IOException;
+    protected abstract void setForegroundColor(TextColor.ANSI color) throws IOException;
 
     /**
      * Changes the foreground color for all the following characters put to the terminal. The foreground color is what
@@ -100,7 +100,7 @@ public abstract class AbstractTerminal implements Terminal {
      * @param index Color index from the XTerm 256 color space
      * @throws java.io.IOException If there was an underlying I/O error
      */
-    protected abstract void applyForegroundColor(int index) throws IOException;
+    protected abstract void setForegroundColor(int index) throws IOException;
 
     /**
      * Changes the foreground color for all the following characters put to the terminal. The foreground color is what
@@ -115,7 +115,7 @@ public abstract class AbstractTerminal implements Terminal {
      * @param b Blue intensity, from 0 to 255
      * @throws java.io.IOException If there was an underlying I/O error
      */
-    protected abstract void applyForegroundColor(int r, int g, int b) throws IOException;
+    protected abstract void setForegroundColor(int r, int g, int b) throws IOException;
 
     @Override
     public void setBackgroundColor(TextColor color) throws IOException {
@@ -130,7 +130,7 @@ public abstract class AbstractTerminal implements Terminal {
      * @param color Color to use for the background
      * @throws java.io.IOException If there was an underlying I/O error
      */
-    protected abstract void applyBackgroundColor(TextColor.ANSI color) throws IOException;
+    protected abstract void setBackgroundColor(TextColor.ANSI color) throws IOException;
 
     /**
      * Changes the background color for all the following characters put to the terminal. The background color is the
@@ -148,7 +148,7 @@ public abstract class AbstractTerminal implements Terminal {
      * @param index Index of the color to use, from the XTerm 256 color extension
      * @throws java.io.IOException If there was an underlying I/O error
      */
-    protected abstract void applyBackgroundColor(int index) throws IOException;
+    protected abstract void setBackgroundColor(int index) throws IOException;
 
     /**
      * Changes the background color for all the following characters put to the terminal. The background color is the
@@ -163,7 +163,7 @@ public abstract class AbstractTerminal implements Terminal {
      * @param b Blue intensity, from 0 to 255
      * @throws java.io.IOException If there was an underlying I/O error
      */
-    protected abstract void applyBackgroundColor(int r, int g, int b) throws IOException;
+    protected abstract void setBackgroundColor(int r, int g, int b) throws IOException;
 
     /**
      * Used internally to get the last size known to the terminal

@@ -159,32 +159,32 @@ public class OldSwingTerminal extends AbstractTerminal implements InputProvider
     }
 
     @Override
-    public void applyBackgroundColor(TextColor.ANSI color) {
+    public void setBackgroundColor(TextColor.ANSI color) {
         currentBackgroundColor = new CharacterANSIColor(color);
     }
 
     @Override
-    public void applyBackgroundColor(int r, int g, int b) {
+    public void setBackgroundColor(int r, int g, int b) {
         currentBackgroundColor = new Character24bitColor(new java.awt.Color(r, g, b));
     }
 
     @Override
-    public void applyBackgroundColor(int index) {
+    public void setBackgroundColor(int index) {
         currentBackgroundColor = new CharacterIndexedColor(index);
     }
 
     @Override
-    public void applyForegroundColor(TextColor.ANSI color) {
+    public void setForegroundColor(TextColor.ANSI color) {
         currentForegroundColor = new CharacterANSIColor(color);
     }
 
     @Override
-    public void applyForegroundColor(int r, int g, int b) {
+    public void setForegroundColor(int r, int g, int b) {
         currentForegroundColor = new Character24bitColor(new java.awt.Color(r, g, b));
     }
 
     @Override
-    public void applyForegroundColor(int index) {
+    public void setForegroundColor(int index) {
         currentForegroundColor = new CharacterIndexedColor(index);
     }
 

@@ -70,12 +70,12 @@ public interface TextColor {
 
         @Override
         public void applyAsForeground(AbstractTerminal terminal) throws IOException {
-            terminal.applyForegroundColor(this);
+            terminal.setForegroundColor(this);
         }
 
         @Override
         public void applyAsBackground(AbstractTerminal terminal) throws IOException {
-            terminal.applyBackgroundColor(this);
+            terminal.setBackgroundColor(this);
         }
     }
 
@@ -382,12 +382,12 @@ public interface TextColor {
 
         @Override
         public void applyAsForeground(AbstractTerminal terminal) throws IOException {
-            terminal.applyForegroundColor(colorIndex);
+            terminal.setForegroundColor(colorIndex);
         }
 
         @Override
         public void applyAsBackground(AbstractTerminal terminal) throws IOException {
-            terminal.applyBackgroundColor(colorIndex);
+            terminal.setBackgroundColor(colorIndex);
         }
 
         /**
@@ -536,12 +536,12 @@ public interface TextColor {
 
         @Override
         public void applyAsForeground(AbstractTerminal terminal) throws IOException {
-            terminal.applyForegroundColor(r, g, b);
+            terminal.setForegroundColor(r, g, b);
         }
 
         @Override
         public void applyAsBackground(AbstractTerminal terminal) throws IOException {
-            terminal.applyBackgroundColor(r, g, b);
+            terminal.setBackgroundColor(r, g, b);
         }
 
         @Override
