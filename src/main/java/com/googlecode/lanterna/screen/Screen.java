@@ -150,6 +150,7 @@ public interface Screen {
      * This method will take the content from the back-buffer and move it into the front-buffer, making the changes
      * visible to the terminal in the process. The common workflow with Screen would involve drawing text and text-like
      * graphics on the back buffer and then finally calling refresh(..) to make it visible to the user.
+     * @throws java.io.IOException If there was an underlying I/O error
      * @see RefreshType
      */
     void refresh() throws IOException;
@@ -162,6 +163,7 @@ public interface Screen {
      * Using this method call instead of {@code refresh()} gives you a little bit more control over how the screen will
      * be refreshed.
      * @param refreshType What type of refresh to do
+     * @throws java.io.IOException If there was an underlying I/O error
      * @see RefreshType
      */
     void refresh(RefreshType refreshType) throws IOException;
