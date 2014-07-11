@@ -18,7 +18,7 @@
  */
 package com.googlecode.lanterna.terminal;
 
-import com.googlecode.lanterna.TerminalFacade;
+import com.googlecode.lanterna.TestTerminalFactory;
 import java.io.IOException;
 
 /**
@@ -28,8 +28,8 @@ import java.io.IOException;
 public class SwingTerminalTest {
 
     public static void main(String[] args) throws InterruptedException, IOException {
-        Terminal terminal = TerminalFacade.createSwingTerminal();
-        //terminal.enterPrivateMode();
+        Terminal terminal = new TestTerminalFactory(args).createSwingTerminal();
+        terminal.enterPrivateMode();
         terminal.clearScreen();
         terminal.setCursorPosition(10, 5);
         terminal.putCharacter('H');
@@ -104,6 +104,6 @@ public class SwingTerminalTest {
         terminal.setCursorPosition(0, 0);
 
         Thread.sleep(5000);
-        //terminal.exitPrivateMode();
+        terminal.exitPrivateMode();
     }
 }

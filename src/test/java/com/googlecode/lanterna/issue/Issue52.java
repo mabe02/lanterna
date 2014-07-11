@@ -1,5 +1,5 @@
 package com.googlecode.lanterna.issue;
-import com.googlecode.lanterna.TerminalFacade;
+import com.googlecode.lanterna.TestTerminalFactory;
 import com.googlecode.lanterna.gui.Action;
 import com.googlecode.lanterna.gui.Component.Alignment;
 import com.googlecode.lanterna.gui.GUIScreen;
@@ -18,7 +18,7 @@ import java.io.IOException;
 
 public class Issue52 {
     public static void main(String[] args) throws IOException {
-        final GUIScreen guiScreen = TerminalFacade.createGUIScreen();
+        final GUIScreen guiScreen = new TestTerminalFactory(args).createGUIScreen();
         final Window window = new Window("Sample window");
         window.setWindowSizeOverride(new TerminalSize(130,50));
         window.setSoloWindow(true);

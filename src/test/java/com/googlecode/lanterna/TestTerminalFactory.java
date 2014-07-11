@@ -20,9 +20,13 @@
 package com.googlecode.lanterna;
 
 import com.googlecode.lanterna.gui.GUIScreen;
+import com.googlecode.lanterna.screen.DefaultScreen;
 import com.googlecode.lanterna.screen.Screen;
+import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
+import com.googlecode.lanterna.terminal.swing.SwingTerminalFrame;
 import java.io.IOException;
+import javax.swing.JFrame;
 
 /**
  * This class provides a unified way for the test program to get their terminal
@@ -31,24 +35,36 @@ import java.io.IOException;
  */
 public class TestTerminalFactory {
 
-    private final boolean forceUnixTerminal;
+    private final DefaultTerminalFactory factory;
 
     public TestTerminalFactory(String[] args) {
-        forceUnixTerminal = args.length > 0 && "--no-swing".equals(args[0]);
+        factory = new DefaultTerminalFactory();
+        factory.setSuppressSwingTerminalFrame(args.length > 0 && "--no-swing".equals(args[0]));
+    }
+    
+    public SwingTerminalFrame createSwingTerminal() {
+        try {
+            return (SwingTerminalFrame)createTerminal();
+        }
+        catch(Throwable e) {
+            throw new IllegalStateException("Unable to create a SwingTerminalFrame", e);
+        }
     }
 
-    public Terminal createTerminal() {
-        if(forceUnixTerminal)
-            return TerminalFacade.createTextTerminal();
-        else
-            return TerminalFacade.createTerminal();
+    public Terminal createTerminal() throws IOException {
+        Terminal terminal = factory.createTerminal();
+        if(terminal instanceof SwingTerminalFrame) {
+            ((SwingTerminalFrame)terminal).setVisible(true);
+            ((SwingTerminalFrame)terminal).setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        }
+        return terminal;
     }
 
     public Screen createScreen() throws IOException {
-        return TerminalFacade.createScreen(createTerminal());
+        return new DefaultScreen(createTerminal());
     }
 
     public GUIScreen createGUIScreen() throws IOException {
-        return TerminalFacade.createGUIScreen(createScreen());
+        return new GUIScreen(createScreen());
     }
 }

@@ -1,19 +1,20 @@
 package com.googlecode.lanterna.issue;
 
-import com.googlecode.lanterna.TerminalFacade;
+import com.googlecode.lanterna.TestTerminalFactory;
 import com.googlecode.lanterna.gui.Action;
 import com.googlecode.lanterna.gui.Border;
 import com.googlecode.lanterna.gui.GUIScreen;
 import com.googlecode.lanterna.gui.Window;
 import com.googlecode.lanterna.gui.component.Button;
 import com.googlecode.lanterna.gui.component.Panel;
+import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import java.io.IOException;
 
 public class Issue98 {
 
     public static void main(String[] args) throws IOException {
 
-        GUIScreen textGUI = TerminalFacade.createGUIScreen();
+        GUIScreen textGUI = new TestTerminalFactory(args).createGUIScreen();
 
         if (textGUI == null) {
             System.err.println("Couldn't allocate a terminal!");

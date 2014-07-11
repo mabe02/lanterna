@@ -1,6 +1,6 @@
 package com.googlecode.lanterna.issue;
 
-import com.googlecode.lanterna.TerminalFacade;
+import com.googlecode.lanterna.TestTerminalFactory;
 import com.googlecode.lanterna.gui.Action;
 import com.googlecode.lanterna.gui.GUIScreen;
 import com.googlecode.lanterna.gui.Window;
@@ -12,7 +12,7 @@ public class Issue2 {
 
     public static void main(String[] args) throws IOException {
 
-        GUIScreen textGUI = TerminalFacade.createGUIScreen();
+        GUIScreen textGUI = new TestTerminalFactory(args).createGUIScreen();
         if (textGUI == null) {
             return;
         }

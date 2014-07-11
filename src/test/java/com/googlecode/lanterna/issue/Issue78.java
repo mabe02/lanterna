@@ -4,7 +4,7 @@
  */
 package com.googlecode.lanterna.issue;
 
-import com.googlecode.lanterna.TerminalFacade;
+import com.googlecode.lanterna.TestTerminalFactory;
 import com.googlecode.lanterna.screen.DefaultScreen;
 import com.googlecode.lanterna.terminal.Terminal;
 import java.io.IOException;
@@ -15,7 +15,7 @@ import java.io.IOException;
  */
 public class Issue78 {
     public static void main(String[] args) throws IOException {
-        Terminal t = TerminalFacade.createTextTerminal();
+        Terminal t = new TestTerminalFactory(args).createTerminal();
         t.enterPrivateMode();
         DefaultScreen s = new DefaultScreen(t);
         s.startScreen();

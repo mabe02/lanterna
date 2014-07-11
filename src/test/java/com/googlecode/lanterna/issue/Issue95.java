@@ -6,11 +6,10 @@
 
 package com.googlecode.lanterna.issue;
 
-import com.googlecode.lanterna.TerminalFacade;
+import com.googlecode.lanterna.screen.DefaultScreen;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.swing.SwingTerminalFrame;
 import java.io.IOException;
-import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
 /**
@@ -22,7 +21,7 @@ public class Issue95 {
         SwingTerminalFrame terminal = new SwingTerminalFrame(SwingTerminalFrame.AutoCloseTrigger.CloseOnExitPrivateMode);
         terminal.setCursorVisible(false);
 
-        Screen screen = TerminalFacade.createScreen(terminal);
+        Screen screen = new DefaultScreen(terminal);
         screen.startScreen();
         
         terminal.setTitle("Freedom: An arena-battle roguelike");

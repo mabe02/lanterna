@@ -4,7 +4,7 @@
  */
 package com.googlecode.lanterna.issue;
 
-import com.googlecode.lanterna.TerminalFacade;
+import com.googlecode.lanterna.TestTerminalFactory;
 import com.googlecode.lanterna.gui.Action;
 import com.googlecode.lanterna.gui.GUIScreen;
 import com.googlecode.lanterna.gui.Window;
@@ -20,7 +20,7 @@ public class Issue82 {
 
     public static void main(String[] args) throws InterruptedException, IOException {
         // Construct the screen
-        final GUIScreen guiScreen = TerminalFacade.createGUIScreen();
+        final GUIScreen guiScreen = new TestTerminalFactory(args).createGUIScreen();
         guiScreen.getScreen().startScreen();
 
         final Window main = new Window("Main");
