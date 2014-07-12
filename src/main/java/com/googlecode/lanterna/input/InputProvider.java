@@ -36,8 +36,9 @@ public interface InputProvider {
     void addInputProfile(KeyMappingProfile profile);
     
     /**
-     * Returns the next {@code Key} off the input queue or null if there is no
+     * Returns the next {@code Key} off the input queue or null if there is none
      * more input events available
+     * @return Next {@code Key} off the input queue or null if there is none
      */
     Key readInput();
 }

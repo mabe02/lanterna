@@ -107,7 +107,9 @@ public class Key
         F11('W'),   //No idea what to pick here, but it doesn't really matter
         F12('Y'),   //No idea what to pick here, but it doesn't really matter
         Unknown('!'),
-        CursorLocation('£');
+        CursorLocation('£'),
+        EOF('$')
+        ;
 
         private char representationKey;
 

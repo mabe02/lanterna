@@ -38,6 +38,7 @@ public class InputDecoder
     private final Set<CharacterPattern> bytePatterns;
     private final List<Character> currentMatching;
     private TerminalPosition lastReportedTerminalPosition;
+    private boolean seenEOF;
 
     public InputDecoder(final Reader source)
     {
@@ -47,6 +48,7 @@ public class InputDecoder
         this.bytePatterns = new HashSet<CharacterPattern>();
         this.currentMatching = new ArrayList<Character>();
         this.lastReportedTerminalPosition = null;
+        this.seenEOF = false;
     }
 
     public InputDecoder(final Reader source, final KeyMappingProfile profile)
@@ -83,8 +85,10 @@ public class InputDecoder
         try {
             while(source.ready()) {
                 int readChar = source.read();
-                if(readChar == -1)
-                    return null;
+                if(readChar == -1) {
+                    seenEOF = true;
+                    break;
+                }
 
                 inputBuffer.add((char)readChar);
             }
@@ -93,8 +97,12 @@ public class InputDecoder
             throw new LanternaException(e);
         }
 
-        if(inputBuffer.size() == 0)
-                return null;
+        if(inputBuffer.size() == 0) {
+            if(seenEOF && System.getProperty("com.googlecode.lanterna.input.enable-eof", "false").equals("true")) {
+                return new Key(Key.Kind.EOF);
+            }
+            return null;
+        }
 
         while(true) {
             //Check all patterns

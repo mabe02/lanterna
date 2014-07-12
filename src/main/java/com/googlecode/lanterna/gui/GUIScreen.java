@@ -254,6 +254,10 @@ public class GUIScreen
 
             Key nextKey = screen.readInput();
             if(nextKey != null) {
+                //If we get EOF, terminate the event loop
+                if(nextKey.getKind() == Key.Kind.EOF) {
+                    break;
+                }
                 windowStack.getLast().window.onKeyPressed(nextKey);
                 invalidate();
             }
