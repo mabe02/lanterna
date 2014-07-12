@@ -25,6 +25,7 @@ import com.googlecode.lanterna.gui.util.ShortcutHelper;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.TerminalSize;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -185,7 +186,7 @@ public class Table extends AbstractComponent implements InteractableContainer
     }
 
     @Override
-    public boolean triggerShortcut(KeyStroke key) {
+    public boolean triggerShortcut(KeyStroke key) throws IOException {
         return shortcutHelper.triggerShortcut(key);
     }
     

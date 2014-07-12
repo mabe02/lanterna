@@ -11,6 +11,8 @@ import com.googlecode.lanterna.gui.Window;
 import com.googlecode.lanterna.gui.dialog.WaitingDialog;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -30,7 +32,12 @@ public class Issue82 {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                guiScreen.showWindow(main, GUIScreen.Position.FULL_SCREEN);
+                try {
+                    guiScreen.showWindow(main, GUIScreen.Position.FULL_SCREEN);
+                }
+                catch(IOException e) {
+                    e.printStackTrace();
+                }
             }
         }).start();
 
@@ -38,7 +45,12 @@ public class Issue82 {
         guiScreen.runInEventThread(new Action() {
             @Override
             public void doAction() {
-                guiScreen.showWindow(waitingDialog);
+                try {
+                    guiScreen.showWindow(waitingDialog);
+                }
+                catch(IOException ex) {
+                    ex.printStackTrace();
+                }
             }
         });
 

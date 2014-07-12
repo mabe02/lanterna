@@ -62,7 +62,7 @@ public class TextAreaTest {
         final TextBox removeBox = new TextBox("0", 5);
         Button removeButton = new Button("Remove line", new Action() {
             @Override
-            public void doAction() {
+            public void doAction() throws IOException {
                 try {
                     int lineNumber = Integer.parseInt(removeBox.getText());
                     textArea.removeLine(lineNumber);

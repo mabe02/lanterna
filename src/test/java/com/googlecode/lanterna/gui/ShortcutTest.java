@@ -66,31 +66,31 @@ public class ShortcutTest {
         buttonPanel.addComponent(button1, LinearLayout.GROWS_HORIZONTALLY);
         buttonPanel.addShortcut(KeyType.Home, new Action() {
             @Override
-            public void doAction() {
+            public void doAction() throws IOException {
                 MessageBox.showMessageBox(guiScreen, "Shortcut triggered", "You triggered a shortcut by pressing home!");
             }
         });
         buttonPanel.addShortcut('m', false, false, new Action() {
             @Override
-            public void doAction() {
+            public void doAction() throws IOException {
                 MessageBox.showMessageBox(guiScreen, "Shortcut triggered", "You triggered a shortcut by pressing 'm'!");
             }
         });
         buttonPanel.addShortcut('c', true, false, new Action() {
             @Override
-            public void doAction() {
+            public void doAction() throws IOException {
                 MessageBox.showMessageBox(guiScreen, "Shortcut triggered", "You triggered a shortcut by pressing ctrl+c!");
             }
         });
         buttonPanel.addShortcut('v', false, true, new Action() {
             @Override
-            public void doAction() {
+            public void doAction() throws IOException {
                 MessageBox.showMessageBox(guiScreen, "Shortcut triggered", "You triggered a shortcut by pressing alt+v!");
             }
         });
         buttonPanel.addShortcut('x', true, true, new Action() {
             @Override
-            public void doAction() {
+            public void doAction() throws IOException {
                 MessageBox.showMessageBox(guiScreen, "Shortcut triggered", "You triggered a shortcut by pressing ctrl+alt+x!");
             }
         });

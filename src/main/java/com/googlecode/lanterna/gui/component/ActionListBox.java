@@ -25,6 +25,7 @@ import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
+import java.io.IOException;
 
 /**
  *
@@ -61,14 +62,14 @@ public class ActionListBox extends AbstractListBox {
             }
 
             @Override
-            public void doAction() {
+            public void doAction() throws IOException {
                 action.doAction();
             }
         });
     }
 
     @Override
-    protected Result unhandledKeyboardEvent(KeyStroke key) {
+    protected Result unhandledKeyboardEvent(KeyStroke key) throws IOException {
         if(key.getKeyType() == KeyType.Enter) {
             ((Item)getSelectedItem()).doAction();
             return Result.EVENT_HANDLED;
@@ -98,6 +99,6 @@ public class ActionListBox extends AbstractListBox {
     
     private static interface Item {
         public String getTitle();
-        public void doAction();
+        public void doAction() throws IOException;
     }
 }

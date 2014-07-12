@@ -21,6 +21,7 @@ package com.googlecode.lanterna.gui.util;
 import com.googlecode.lanterna.gui.Action;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
+import java.io.IOException;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
@@ -58,7 +59,7 @@ public class ShortcutHelper {
         }
     }
 
-    public boolean triggerShortcut(KeyStroke key) {
+    public boolean triggerShortcut(KeyStroke key) throws IOException {
         if(key.getKeyType() == KeyType.Character) {
             NormalKeyShortcut asShortcutKey = new NormalKeyShortcut(key.getCharacter(), key.isCtrlDown(), key.isAltDown());
             synchronized(normalKeysShortcut) {

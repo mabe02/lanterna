@@ -125,7 +125,7 @@ public class DifferentKindsOfListBoxesTest {
         }
 
         @Override
-        public void doAction() {
+        public void doAction() throws IOException {
             MessageBox.showMessageBox(guiScreen, "Action", label + " selected");
         }
 

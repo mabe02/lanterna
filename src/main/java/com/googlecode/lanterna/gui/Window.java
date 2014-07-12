@@ -32,6 +32,7 @@ import com.googlecode.lanterna.gui.listener.WindowListener;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
+import java.io.IOException;
 
 /**
  * The Window class is the basis for Lanternas GUI system. The workflow is to
@@ -251,7 +252,7 @@ public class Window
             return currentlyInFocus.getHotspot();
     }
 
-    public void onKeyPressed(KeyStroke key)
+    public void onKeyPressed(KeyStroke key) throws IOException
     {
         if(currentlyInFocus != null) {
             Interactable.Result result =  currentlyInFocus.keyboardInteraction(key);

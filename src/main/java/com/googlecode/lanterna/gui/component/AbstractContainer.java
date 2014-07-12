@@ -29,6 +29,7 @@ import com.googlecode.lanterna.gui.listener.ContainerListener;
 import com.googlecode.lanterna.gui.util.ShortcutHelper;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -244,7 +245,7 @@ public abstract class AbstractContainer extends AbstractComponent implements Int
     }
 
     @Override
-    public boolean triggerShortcut(KeyStroke key) {
+    public boolean triggerShortcut(KeyStroke key) throws IOException {
         return shortcutHelper.triggerShortcut(key);
     }
 }

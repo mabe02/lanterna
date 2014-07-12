@@ -21,6 +21,7 @@ package com.googlecode.lanterna.gui;
 
 import com.googlecode.lanterna.gui.listener.WindowAdapter;
 import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
@@ -43,7 +44,8 @@ public class GUIScreen
 {
     private final Screen screen;
     private final LinkedList<WindowPlacement> windowStack;
-    protected final Queue<Action> actionToRunInEventThread;
+    private final boolean swallowExceptions;
+    protected final Queue<Action> actionToRunInEventThread;    
     private GUIScreenBackgroundRenderer backgroundRenderer;
     private Theme guiTheme;
     private boolean needsRefresh;
@@ -61,6 +63,11 @@ public class GUIScreen
     
     public GUIScreen(Screen screen, GUIScreenBackgroundRenderer backgroundRenderer)
     {
+        this(screen, backgroundRenderer, true);
+    }
+    
+    public GUIScreen(Screen screen, GUIScreenBackgroundRenderer backgroundRenderer, boolean swallowExceptions)
+    {
         if(backgroundRenderer == null)
             throw new IllegalArgumentException("backgroundRenderer cannot be null");
         
@@ -71,6 +78,7 @@ public class GUIScreen
         this.actionToRunInEventThread = new LinkedList<Action>();
         this.needsRefresh = false;
         this.eventThread = Thread.currentThread();  //We'll be expecting the thread who created us is the same as will be the event thread later
+        this.swallowExceptions = swallowExceptions;
     }
     
     /**
@@ -217,7 +225,7 @@ public class GUIScreen
         needsRefresh = true;
     }
 
-    protected void doEventLoop() {
+    protected void doEventLoop() throws IOException {
         int currentStackLength = windowStack.size();
         if(currentStackLength == 0)
             return;
@@ -255,6 +263,9 @@ public class GUIScreen
 
                 KeyStroke nextKey = screen.readInput();
                 if(nextKey != null) {
+                    if(nextKey.getKeyType() == KeyType.EOF) {
+                        break;
+                    }
                     windowStack.getLast().window.onKeyPressed(nextKey);
                     invalidate();
                 }
@@ -267,8 +278,21 @@ public class GUIScreen
                     }
                 }
             }
-            catch(Throwable e) {
-                e.printStackTrace();
+            catch(IOException e) {
+                if(swallowExceptions) {
+                    e.printStackTrace();
+                }
+                else {
+                    throw e;
+                }
+            }
+            catch(RuntimeException e) {
+                if(swallowExceptions) {
+                    e.printStackTrace();
+                }
+                else {
+                    throw e;
+                }
             }
         }
     }
@@ -276,8 +300,9 @@ public class GUIScreen
     /**
      * Same as calling showWindow(window, Position.OVERLAPPING)
      * @param window Window to be shown
+     * @throws java.io.IOException If there was an underlying I/O error
      */
-    public void showWindow(Window window)
+    public void showWindow(Window window) throws IOException
     {
         showWindow(window, Position.OVERLAPPING);
     }
@@ -292,8 +317,9 @@ public class GUIScreen
      * this new window has been closed.
      * @param window Window to display
      * @param position Where to position the new window
+     * @throws java.io.IOException If there was an underlying I/O error
      */
-    public void showWindow(Window window, Position position)
+    public void showWindow(Window window, Position position) throws IOException
     {
         if(window == null)
             return;

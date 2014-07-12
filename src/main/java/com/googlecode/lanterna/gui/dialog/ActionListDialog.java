@@ -28,6 +28,7 @@ import com.googlecode.lanterna.gui.component.Button;
 import com.googlecode.lanterna.gui.component.Label;
 import com.googlecode.lanterna.gui.component.Panel;
 import com.googlecode.lanterna.terminal.TerminalSize;
+import java.io.IOException;
 
 /**
  *
@@ -62,7 +63,7 @@ public class ActionListDialog extends Window
     private void addAction(final String title, final Action action) {
         actionListBox.addAction(title, new Action() {
             @Override
-            public void doAction() {
+            public void doAction() throws IOException {
                 if(closeBeforeAction) {
                     close();
                 }
@@ -81,7 +82,7 @@ public class ActionListDialog extends Window
      * The label of each action will be the result of calling toString() on each
      * Action object.
      */
-    public static void showActionListDialog(GUIScreen owner, String title, String description, Action... actions)
+    public static void showActionListDialog(GUIScreen owner, String title, String description, Action... actions) throws IOException
     {
         int maxLength = 0;
         for(Action action: actions)
@@ -96,7 +97,7 @@ public class ActionListDialog extends Window
      * The label of each action will be the result of calling toString() on each
      * Action object.
      */
-    public static void showActionListDialog(GUIScreen owner, String title, String description, int itemWidth, Action... actions)
+    public static void showActionListDialog(GUIScreen owner, String title, String description, int itemWidth, Action... actions) throws IOException
     {
         showActionListDialog(owner, title, description, itemWidth, false, actions);
     }
@@ -112,7 +113,7 @@ public class ActionListDialog extends Window
      * @param closeBeforeAction When an action in chosen, should the dialog be closed before the action is executed?
      * @param actions List of actions inside the dialog
      */
-    public static void showActionListDialog(GUIScreen owner, String title, String description, int itemWidth, boolean closeBeforeAction, Action... actions)
+    public static void showActionListDialog(GUIScreen owner, String title, String description, int itemWidth, boolean closeBeforeAction, Action... actions) throws IOException
     {
         //Autodetect width?
         if(itemWidth == 0) {

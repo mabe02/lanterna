@@ -21,6 +21,7 @@ package com.googlecode.lanterna.gui;
 
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.terminal.TerminalPosition;
+import java.io.IOException;
 
 /**
  * Any component which wants to receive keyboard events must implement this
@@ -37,7 +38,7 @@ public interface Interactable
      * parent container to move input focus to a different component or telling that the event was
      * processed by the component and no extra action is required
      */
-    public Result keyboardInteraction(KeyStroke key);
+    public Result keyboardInteraction(KeyStroke key) throws IOException;
     
     /**
      * Method called when this component gained keyboard focus.

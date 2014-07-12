@@ -27,6 +27,7 @@ import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.terminal.ACS;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -199,7 +200,7 @@ public abstract class AbstractListBox extends AbstractInteractableComponent {
     }
 
     @Override
-    public Result keyboardInteraction(KeyStroke key) {
+    public Result keyboardInteraction(KeyStroke key) throws IOException {
         try {
             switch(key.getKeyType()) {
                 case Tab:
@@ -275,7 +276,7 @@ public abstract class AbstractListBox extends AbstractInteractableComponent {
         graphics.drawString(x, y, asText);
     }
     
-    protected Interactable.Result unhandledKeyboardEvent(KeyStroke key) {
+    protected Interactable.Result unhandledKeyboardEvent(KeyStroke key) throws IOException {
         return Result.EVENT_NOT_HANDLED;
     }
 

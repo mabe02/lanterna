@@ -58,7 +58,11 @@ public class InputDecoder {
         while (source.ready()) {
             int readChar = source.read();
             if (readChar == -1) {
-                return null;
+                seenEOF = true;
+                if(currentMatching.isEmpty()) {
+                    return new KeyStroke(KeyType.EOF);
+                }
+                break;
             }
             currentMatching.add((char) readChar);
         }
@@ -91,6 +95,9 @@ public class InputDecoder {
 
         //Did we find anything? Otherwise return null
         if(bestMatch == null) {
+            if(seenEOF) {
+                return new KeyStroke(KeyType.EOF);
+            }
             return null;
         }
 

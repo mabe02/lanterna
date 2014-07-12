@@ -63,7 +63,7 @@ public class BorderLayoutTest {
         buttonPanel.addComponent(new EmptySpace(), LinearLayout.GROWS_HORIZONTALLY);
         Button toggleButton = new Button("Toggle components", new Action() {
             @Override
-            public void doAction() {
+            public void doAction() throws IOException {
                 ActionListDialog.showActionListDialog(
                         guiScreen,
                         "Toggle component",

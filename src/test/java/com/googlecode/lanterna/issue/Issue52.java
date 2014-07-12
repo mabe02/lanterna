@@ -54,9 +54,8 @@ public class Issue52 {
         final Window newWindow = new Window("This window should be of the same size as the previous one");
 
         Button quitButton = new Button("Show next window", new Action() {
-
             @Override
-            public void doAction() {
+            public void doAction() throws IOException {
                 newWindow.setWindowSizeOverride(new TerminalSize(130,50));
                 newWindow.setSoloWindow(true);
 

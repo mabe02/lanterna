@@ -40,7 +40,7 @@ public class AlignmentTest {
         Panel buttonPanel = new Panel(Panel.Orientation.HORIZONTAL);
         Button changeAlignmentButton = new Button("Change alignment", new Action() {
             @Override
-            public void doAction() {
+            public void doAction() throws IOException {
                 Component.Alignment a = ListSelectDialog.<Component.Alignment>showDialog(
                         guiScreen,
                         "Choose alignment",

@@ -43,7 +43,7 @@ public class Issue36 {
         final Window mainWindow = new Window("Window");
         Button listDialogButton = new Button("Show ListSelectDialog", new Action() {
             @Override
-            public void doAction() {
+            public void doAction() throws IOException {
                 String selected = ListSelectDialog.<String>showDialog(guiScreen, "Choose a string",
                         "We are checking the appearance of this dialog",
                         "First",

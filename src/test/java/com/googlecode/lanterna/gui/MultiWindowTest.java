@@ -37,20 +37,20 @@ public class MultiWindowTest {
             addComponent(new Button("Button with no action"));
             addComponent(new Button("Button with action", new Action() {
                 @Override
-                public void doAction() {
+                public void doAction() throws IOException {
                     MessageBox.showMessageBox(getOwner(), "Hello", "You selected the button with an action attached to it!");
                 }
             }));
             addComponent(new Button("MessageBox close", new Action() {
                 @Override
-                public void doAction() {
+                public void doAction() throws IOException {
                     MessageBox.showMessageBox(getOwner(), "Information", "When you close this dialog, the owner window will close too");
                     MyWindow.this.close();
                 }
             }));
             addComponent(new Button("New window", new Action() {
                 @Override
-                public void doAction() {
+                public void doAction() throws IOException {
                     getOwner().showWindow(new MyWindow());
                 }
             }));

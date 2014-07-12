@@ -21,6 +21,7 @@ package com.googlecode.lanterna.gui.dialog;
 
 import com.googlecode.lanterna.gui.Action;
 import com.googlecode.lanterna.gui.GUIScreen;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,7 +45,7 @@ public class ListSelectDialog
      * @return The item the user chose
      */
     public static <T> T showDialog(final GUIScreen owner, final String title,
-            final String description, final T... items)
+            final String description, final T... items) throws IOException
     {
         return showDialog(owner, title, description, 0, items);
     }
@@ -61,7 +62,7 @@ public class ListSelectDialog
      * @return The item the user chose
      */
     public static <T> T showDialog(final GUIScreen owner, final String title,
-            final String description, final int listWidth, final T... items)
+            final String description, final int listWidth, final T... items) throws IOException
     {
         final List<T> result = new ArrayList<T>();
         Action []actionItems = new Action[items.length];

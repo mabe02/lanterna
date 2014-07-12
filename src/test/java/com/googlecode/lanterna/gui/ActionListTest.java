@@ -76,7 +76,7 @@ public class ActionListTest
             return "ActionListBox item #" + nr;
         }
 
-        public void doAction() {
+        public void doAction() throws IOException {
             MessageBox.showMessageBox(owner, "Action", "Selected " + toString());
         }
     }

@@ -6,6 +6,7 @@ import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.ACS;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
+import java.io.IOException;
 
 public class PopupCheckBoxList extends RadioCheckBoxList {
 
@@ -41,7 +42,7 @@ public class PopupCheckBoxList extends RadioCheckBoxList {
 	}
 	
 	@Override
-	public Result keyboardInteraction(KeyStroke key) {
+	public Result keyboardInteraction(KeyStroke key) throws IOException {
 		if (poppedUp) {
 			Result parentRet = super.keyboardInteraction(key);
 			if (key.getKeyType() == KeyType.Enter || key.getCharacter() == ' ') {

@@ -26,6 +26,7 @@ import com.googlecode.lanterna.gui.Theme;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
+import java.io.IOException;
 
 /**
  *
@@ -111,7 +112,7 @@ public class Button extends AbstractInteractableComponent
     }
 
     @Override
-    public Interactable.Result keyboardInteraction(KeyStroke key)
+    public Interactable.Result keyboardInteraction(KeyStroke key) throws IOException
     {
         switch(key.getKeyType()) {
             case Enter:

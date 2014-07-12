@@ -64,7 +64,7 @@ public class MultilevelCloseWindow {
             buttonPanel.addComponent(new EmptySpace(), LinearLayout.GROWS_HORIZONTALLY);
             buttonPanel.addComponent(new Button("New window", new Action() {
                 @Override
-                public void doAction() {
+                public void doAction() throws IOException {
                     MultiCloseWindow multiCloseWindow = new MultiCloseWindow();
                     getOwner().showWindow(multiCloseWindow);
                 }

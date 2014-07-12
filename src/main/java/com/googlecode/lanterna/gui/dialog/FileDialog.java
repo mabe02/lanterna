@@ -32,6 +32,7 @@ import com.googlecode.lanterna.gui.component.TextBox;
 import com.googlecode.lanterna.gui.layout.BorderLayout;
 import com.googlecode.lanterna.gui.layout.LinearLayout;
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -41,13 +42,13 @@ import java.util.Comparator;
  */
 public class FileDialog extends Window {
 
-    public static File showOpenFileDialog(GUIScreen owner, File directory, String title) {
+    public static File showOpenFileDialog(GUIScreen owner, File directory, String title) throws IOException {
         FileDialog dialog = new FileDialog(directory, title, Kind.Open);
         owner.showWindow(dialog);
         return dialog.getSelectedFile();
     }
     
-    public static File showSaveFileDialog(GUIScreen owner, File directory, String title) {
+    public static File showSaveFileDialog(GUIScreen owner, File directory, String title) throws IOException {
         FileDialog dialog = new FileDialog(directory, title, Kind.Save);
         owner.showWindow(dialog);
         return dialog.getSelectedFile();

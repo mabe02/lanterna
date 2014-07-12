@@ -19,6 +19,7 @@
 
 package com.googlecode.lanterna.gui;
 
+import java.io.IOException;
 
 /**
  * This class is similar to the ActionListener in AWT, used to setup actions
@@ -26,5 +27,5 @@ package com.googlecode.lanterna.gui;
  * @author Martin
  */
 public interface Action {
-    public void doAction();
+    public void doAction() throws IOException;
 }

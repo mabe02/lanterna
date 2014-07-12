@@ -60,7 +60,7 @@ public class Issue43 {
                 final String text = textBox.getText().trim();
                 actionListBox.addAction(text, new Action() {
                     @Override
-                    public void doAction() {
+                    public void doAction() throws IOException {
                         MessageBox.showMessageBox(guiScreen, "Action selected", "You selected:\n" + text);
                     }
                 });

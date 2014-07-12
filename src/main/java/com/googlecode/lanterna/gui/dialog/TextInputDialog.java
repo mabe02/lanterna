@@ -27,6 +27,7 @@ import com.googlecode.lanterna.gui.component.PasswordBox;
 import com.googlecode.lanterna.gui.component.TextBox;
 import com.googlecode.lanterna.gui.*;
 import com.googlecode.lanterna.gui.layout.LinearLayout;
+import java.io.IOException;
 
 /**
  *
@@ -78,13 +79,13 @@ public class TextInputDialog extends Window
     }
 
     public static String showTextInputBox(final GUIScreen owner, final String title,
-            final String description, final String initialText)
+            final String description, final String initialText) throws IOException
     {
         return showTextInputBox(owner, title, description, initialText, 0);
     }
 
     public static String showTextInputBox(final GUIScreen owner, final String title,
-            final String description, final String initialText, final int textBoxWidth)
+            final String description, final String initialText, final int textBoxWidth) throws IOException
     {
         final TextInputDialog textInputBox =
                 new TextInputDialog(new NormalTextBoxFactory(), title, description, initialText, textBoxWidth);
@@ -93,13 +94,13 @@ public class TextInputDialog extends Window
     }
 
     public static String showPasswordInputBox(final GUIScreen owner, final String title,
-            final String description, final String initialText)
+            final String description, final String initialText) throws IOException
     {
         return showPasswordInputBox(owner, title, description, initialText, 0);
     }
 
     public static String showPasswordInputBox(final GUIScreen owner, final String title,
-            final String description, final String initialText, final int textBoxWidth)
+            final String description, final String initialText, final int textBoxWidth) throws IOException
     {
         TextInputDialog textInputBox = new TextInputDialog(new PasswordTextBoxFactory(), title, description, initialText, textBoxWidth);
         owner.showWindow(textInputBox, GUIScreen.Position.CENTER);

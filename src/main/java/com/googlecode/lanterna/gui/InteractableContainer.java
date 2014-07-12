@@ -20,6 +20,7 @@ package com.googlecode.lanterna.gui;
 
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
+import java.io.IOException;
 
 /**
  * Containers containing interactable components must implement this interface
@@ -86,5 +87,5 @@ public interface InteractableContainer
      * @param key {@code Key} to check for matching shortcuts
      * @return {@code true} if a shortcut was triggered and executed, {@code false} otherwise.
      */
-    boolean triggerShortcut(KeyStroke key);
+    boolean triggerShortcut(KeyStroke key) throws IOException;
 }

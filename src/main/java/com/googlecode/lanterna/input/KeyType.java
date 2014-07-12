@@ -67,5 +67,6 @@ public enum KeyType {
     F19,
     Unknown,
     CursorLocation,
+    EOF,
     ;
 }

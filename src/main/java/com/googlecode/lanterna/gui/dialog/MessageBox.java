@@ -27,6 +27,7 @@ import com.googlecode.lanterna.gui.component.Button;
 import com.googlecode.lanterna.gui.component.EmptySpace;
 import com.googlecode.lanterna.gui.component.Label;
 import com.googlecode.lanterna.gui.component.Panel;
+import java.io.IOException;
 
 /**
  *
@@ -131,13 +132,13 @@ public class MessageBox extends Window
         }
     }
 
-    public static DialogResult showMessageBox(final GUIScreen owner, final String title, final String message)
+    public static DialogResult showMessageBox(final GUIScreen owner, final String title, final String message) throws IOException
     {
         return showMessageBox(owner, title, message, DialogButtons.OK);
     }
 
     public static DialogResult showMessageBox(final GUIScreen owner, final String title,
-            final String message, final DialogButtons buttons)
+            final String message, final DialogButtons buttons) throws IOException
     {
         MessageBox messageBox = new MessageBox(title, message, buttons);
         owner.showWindow(messageBox, GUIScreen.Position.CENTER);
