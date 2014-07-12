@@ -18,7 +18,6 @@
  */
 package com.googlecode.lanterna.terminal;
 
-import com.googlecode.lanterna.input.KeyDecodingProfile;
 import com.googlecode.lanterna.input.KeyStroke;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;

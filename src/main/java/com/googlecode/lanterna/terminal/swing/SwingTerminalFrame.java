@@ -18,7 +18,6 @@
  */
 package com.googlecode.lanterna.terminal.swing;
 
-import com.googlecode.lanterna.input.KeyDecodingProfile;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.IOSafeTerminal;
