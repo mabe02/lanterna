@@ -33,12 +33,14 @@ public class InputDecoder {
     private final Set<CharacterPattern> bytePatterns;
     private final List<Character> currentMatching;
     private TerminalPosition lastReportedTerminalPosition;
+    private boolean seenEOF;
 
     public InputDecoder(final Reader source) {
         this.source = source;
         this.bytePatterns = new HashSet<CharacterPattern>();
         this.currentMatching = new ArrayList<Character>();
         this.lastReportedTerminalPosition = null;
+        this.seenEOF = false;
     }
 
     public void addProfile(KeyDecodingProfile profile) {
