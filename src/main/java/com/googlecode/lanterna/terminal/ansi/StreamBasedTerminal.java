@@ -45,16 +45,7 @@ import java.util.concurrent.TimeUnit;
  */
 public abstract class StreamBasedTerminal extends AbstractTerminal {
 
-    private static Charset UTF8_REFERENCE;
-
-    static {
-        try {
-            UTF8_REFERENCE = Charset.forName("UTF-8");
-        }
-        catch(Exception e) {
-            UTF8_REFERENCE = null;
-        }
-    }
+    private static final Charset UTF8_REFERENCE = Charset.forName("UTF-8");
 
     private final InputStream terminalInput;
     private final OutputStream terminalOutput;
@@ -82,7 +73,7 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
      * Outputs a single character to the terminal output stream, translating any UTF-8 graphical symbol if necessary
      *
      * @param c Character to write to the output stream
-     * @throws LanternaException
+     * @throws java.io.IOException If there was an underlying I/O error
      */
     @Override
     public void putCharacter(char c) throws IOException {
@@ -91,6 +82,8 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
 
     /**
      * This method will write a list of bytes directly to the output stream of the terminal.
+     * @param bytes Bytes to write to the terminal (synchronized)
+     * @throws java.io.IOException If there was an underlying I/O error
      */
     protected void writeToTerminal(byte... bytes) throws IOException {
         synchronized(terminalOutput) {
