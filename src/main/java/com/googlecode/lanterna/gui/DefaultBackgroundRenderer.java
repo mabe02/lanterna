@@ -25,6 +25,7 @@ import com.googlecode.lanterna.terminal.TerminalPosition;
  * a solid color and, if set, prints a title and the JVM memory usage.
  * @author Martin
  */
+@Deprecated
 public class DefaultBackgroundRenderer implements GUIScreenBackgroundRenderer {
 
     private String title;

@@ -28,6 +28,7 @@ import java.io.IOException;
  * interface.
  * @author Martin
  */
+@Deprecated
 public interface Interactable
 {
     /**

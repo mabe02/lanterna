@@ -41,6 +41,7 @@ import java.io.IOException;
  * back until the window is closed.
  * @author Martin
  */
+@Deprecated
 public class Window
 {
     private final List<WindowListener> windowListeners;

@@ -23,6 +23,7 @@ package com.googlecode.lanterna.gui.component;
  * A TextBox which masks the data entered into it.
  * @author Martin
  */
+@Deprecated
 public class PasswordBox extends TextBox
 {
     /**

@@ -34,6 +34,7 @@ import com.googlecode.lanterna.terminal.TextColor;
  * with, what the current theme is and how big size the drawing area has.
  * @author Martin
  */
+@Deprecated
 class TextGraphicsImpl implements TextGraphics
 {
     private final TerminalPosition topLeft;

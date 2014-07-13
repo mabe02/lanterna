@@ -29,6 +29,7 @@ import com.googlecode.lanterna.terminal.TerminalSize;
  *
  * @author Martin
  */
+@Deprecated
 public class TextBox extends AbstractInteractableComponent
 {
     private final int forceWidth;

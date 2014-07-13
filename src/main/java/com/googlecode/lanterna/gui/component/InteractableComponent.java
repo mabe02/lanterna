@@ -26,6 +26,7 @@ import com.googlecode.lanterna.gui.Interactable;
  * and Components.
  * @author Martin
  */
+@Deprecated
 public interface InteractableComponent extends Interactable, Component{
     
 }

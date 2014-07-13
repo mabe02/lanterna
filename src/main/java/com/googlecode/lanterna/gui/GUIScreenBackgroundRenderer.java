@@ -23,6 +23,7 @@ package com.googlecode.lanterna.gui;
  * background in rendered
  * @author Martin
  */
+@Deprecated
 public interface GUIScreenBackgroundRenderer {
     void drawBackground(TextGraphics textGraphics);
 }

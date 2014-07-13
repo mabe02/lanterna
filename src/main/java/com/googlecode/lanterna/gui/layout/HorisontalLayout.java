@@ -28,6 +28,7 @@ import com.googlecode.lanterna.terminal.TerminalSize;
  *
  * @author Martin
  */
+@Deprecated
 public class HorisontalLayout extends LinearLayout {
 
     public HorisontalLayout() {

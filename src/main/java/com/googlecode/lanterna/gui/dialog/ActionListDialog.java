@@ -34,6 +34,7 @@ import java.io.IOException;
  *
  * @author Martin
  */
+@Deprecated
 public class ActionListDialog extends Window
 {
     private final ActionListBox actionListBox;

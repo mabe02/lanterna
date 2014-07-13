@@ -34,6 +34,7 @@ import com.googlecode.lanterna.terminal.TextColor;
  * @author David John Truman
  * @author Nicolas Pellegrin
  */
+@Deprecated
 public class EditArea extends AbstractInteractableComponent {
     private int minimumCols = 20;
     private int minimumRows = 5;

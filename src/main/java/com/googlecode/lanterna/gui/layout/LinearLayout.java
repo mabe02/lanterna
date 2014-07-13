@@ -35,6 +35,7 @@ import java.util.Set;
  *
  * @author Martin
  */
+@Deprecated
 public abstract class LinearLayout implements LayoutManager {
 
     public static final LayoutParameter MAXIMIZES_HORIZONTALLY = new LayoutParameter("LinearLayout.MAXIMIZES_HORIZONTALLY");

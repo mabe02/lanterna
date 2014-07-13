@@ -26,6 +26,7 @@ import com.googlecode.lanterna.gui.component.InteractableComponent;
  * events required by the {@code ComponentListener}.
  * @author Martin
  */
+@Deprecated
 public class ComponentAdapter implements ComponentListener {
     @Override
     public void onComponentInvalidated(Component component) {

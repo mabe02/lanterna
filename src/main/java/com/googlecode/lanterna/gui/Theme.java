@@ -30,6 +30,7 @@ import com.googlecode.lanterna.terminal.TextColor;
  *
  * @author Martin
  */
+@Deprecated
 public class Theme {
     private static final Definition DEFAULT = new Definition(TextColor.ANSI.BLACK, TextColor.ANSI.WHITE, false);
     private static final Definition SELECTED = new Definition(TextColor.ANSI.WHITE, TextColor.ANSI.BLUE, true);

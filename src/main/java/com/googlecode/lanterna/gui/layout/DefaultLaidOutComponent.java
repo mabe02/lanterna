@@ -26,6 +26,7 @@ import com.googlecode.lanterna.terminal.TerminalSize;
  *
  * @author Martin
  */
+@Deprecated
 public class DefaultLaidOutComponent implements LayoutManager.LaidOutComponent {
     final Component component;
     TerminalSize size;

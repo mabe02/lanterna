@@ -26,6 +26,7 @@ import java.io.IOException;
  * associated with, for example, buttons
  * @author Martin
  */
+@Deprecated
 public interface Action {
     public void doAction() throws IOException;
 }

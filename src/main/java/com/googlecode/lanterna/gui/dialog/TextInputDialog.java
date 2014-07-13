@@ -33,6 +33,7 @@ import java.io.IOException;
  *
  * @author Martin
  */
+@Deprecated
 public class TextInputDialog extends Window
 {
     private final TextBox textBox;

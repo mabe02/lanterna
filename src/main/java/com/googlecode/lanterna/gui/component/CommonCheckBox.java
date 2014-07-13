@@ -30,6 +30,7 @@ import com.googlecode.lanterna.terminal.TerminalSize;
  *
  * @author Martin
  */
+@Deprecated
 public abstract class CommonCheckBox extends AbstractInteractableComponent
 {
     private final Label label;

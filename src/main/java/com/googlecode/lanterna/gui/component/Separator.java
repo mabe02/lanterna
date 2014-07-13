@@ -27,6 +27,7 @@ import com.googlecode.lanterna.terminal.TerminalSize;
  *
  * @author Martin
  */
+@Deprecated
 public class Separator extends AbstractComponent
 {
     @Override

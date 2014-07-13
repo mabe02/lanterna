@@ -34,6 +34,7 @@ import java.util.List;
  *
  * @author Martin
  */
+@Deprecated
 public class Table extends AbstractComponent implements InteractableContainer
 {
     private final ShortcutHelper shortcutHelper;

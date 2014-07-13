@@ -13,6 +13,7 @@ import com.googlecode.lanterna.terminal.TextColor;
  *
  * @author Martin
  */
+@Deprecated
 public interface TextGraphics {
 
     /**

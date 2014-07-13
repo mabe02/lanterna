@@ -28,6 +28,7 @@ import com.googlecode.lanterna.terminal.TerminalSize;
  *
  * @author Martin
  */
+@Deprecated
 public class VerticalLayout extends LinearLayout {
 
     @Override

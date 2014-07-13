@@ -26,6 +26,7 @@ import java.util.ArrayList;
  * @author David John Truman
  * @author Nicolas Pellegrin
  */
+@Deprecated
 public class TextGrid {
 
     public class DataGridCel {

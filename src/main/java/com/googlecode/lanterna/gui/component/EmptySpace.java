@@ -27,6 +27,7 @@ import com.googlecode.lanterna.terminal.TerminalSize;
  *
  * @author Martin
  */
+@Deprecated
 public class EmptySpace extends AbstractComponent
 {
     private final TerminalSize size;

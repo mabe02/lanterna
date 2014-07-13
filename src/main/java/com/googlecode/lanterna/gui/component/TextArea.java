@@ -35,6 +35,7 @@ import java.util.List;
  * user scroll through the text using the arrow keys.
  * @author martin
  */
+@Deprecated
 public class TextArea  extends AbstractInteractableComponent
 { 
     private final List<String> lines;

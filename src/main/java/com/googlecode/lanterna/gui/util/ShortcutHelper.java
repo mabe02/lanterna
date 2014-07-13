@@ -30,6 +30,7 @@ import java.util.Map;
  *
  * @author Martin
  */
+@Deprecated
 public class ShortcutHelper {    
     private final Map<KeyType, Action> specialKeysShortcut;
     private final Map<NormalKeyShortcut, Action> normalKeysShortcut;

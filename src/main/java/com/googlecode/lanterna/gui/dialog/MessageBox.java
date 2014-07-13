@@ -33,6 +33,7 @@ import java.io.IOException;
  *
  * @author Martin
  */
+@Deprecated
 public class MessageBox extends Window
 {
     private DialogResult dialogResult;

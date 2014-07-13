@@ -28,6 +28,7 @@ import com.googlecode.lanterna.gui.Window;
  *
  * @author Martin
  */
+@Deprecated
 public class WaitingDialog extends Window
 {
     private final Thread spinThread;

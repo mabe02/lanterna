@@ -35,6 +35,7 @@ import java.util.List;
  * Common base class for list-type components (check box list, action list, etc)
  * @author Martin
  */
+@Deprecated
 public abstract class AbstractListBox extends AbstractInteractableComponent {
     private final List<Object> items;
     private TerminalSize preferredSizeOverride;

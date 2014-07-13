@@ -31,6 +31,7 @@ import java.util.List;
  * 
  * @author Martin
  */
+@Deprecated
 public interface LayoutManager
 {
     /**

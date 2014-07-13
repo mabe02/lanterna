@@ -35,6 +35,7 @@ import java.util.List;
  *
  * @author Martin
  */
+@Deprecated
 public class Panel extends AbstractContainer
 {
     private Border border;

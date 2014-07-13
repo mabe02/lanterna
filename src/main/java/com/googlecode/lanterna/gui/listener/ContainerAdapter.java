@@ -26,6 +26,7 @@ import com.googlecode.lanterna.gui.Container;
  *
  * @author Martin
  */
+@Deprecated
 public class ContainerAdapter implements ContainerListener
 {
 

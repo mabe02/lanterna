@@ -40,6 +40,7 @@ import java.util.Comparator;
  *
  * @author martin
  */
+@Deprecated
 public class FileDialog extends Window {
 
     public static File showOpenFileDialog(GUIScreen owner, File directory, String title) throws IOException {

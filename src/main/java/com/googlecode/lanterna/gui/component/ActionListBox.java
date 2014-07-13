@@ -31,6 +31,7 @@ import java.io.IOException;
  *
  * @author Martin
  */
+@Deprecated
 public class ActionListBox extends AbstractListBox {
     
     public ActionListBox() {

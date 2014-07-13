@@ -23,6 +23,7 @@ package com.googlecode.lanterna.gui.dialog;
  *
  * @author Martin
  */
+@Deprecated
 public enum DialogResult
 {
     OK,

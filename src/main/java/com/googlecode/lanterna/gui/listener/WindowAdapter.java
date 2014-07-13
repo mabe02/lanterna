@@ -29,6 +29,7 @@ import com.googlecode.lanterna.input.KeyStroke;
  * @see WindowListener
  * @author Martin
  */
+@Deprecated
 public class WindowAdapter implements WindowListener {
     
     @Override

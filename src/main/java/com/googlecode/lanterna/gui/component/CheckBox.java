@@ -23,6 +23,7 @@ package com.googlecode.lanterna.gui.component;
  *
  * @author Martin
  */
+@Deprecated
 public class CheckBox extends CommonCheckBox
 {
     private boolean selected;

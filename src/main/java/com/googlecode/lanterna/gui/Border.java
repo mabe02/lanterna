@@ -28,6 +28,7 @@ import com.googlecode.lanterna.terminal.TerminalSize;
  * actuals border implementations are available through subclasses.
  * @author Martin
  */
+@Deprecated
 public abstract class Border
 {
     public abstract void drawBorder(TextGraphics graphics, TerminalSize actualSize, String title);

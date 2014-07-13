@@ -33,6 +33,7 @@ import java.util.EnumSet;
  *
  * @author Martin
  */
+@Deprecated
 public class Label extends AbstractComponent
 {
     private String []text;

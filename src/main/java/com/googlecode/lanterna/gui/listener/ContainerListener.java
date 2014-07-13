@@ -26,6 +26,7 @@ import com.googlecode.lanterna.gui.Container;
  *
  * @author Martin
  */
+@Deprecated
 public interface ContainerListener
 {
     public void onComponentAdded(Container container, Component component);

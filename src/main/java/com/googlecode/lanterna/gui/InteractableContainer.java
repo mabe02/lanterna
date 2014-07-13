@@ -27,6 +27,7 @@ import java.io.IOException;
  * so that the GUI system knows how to switch between the different components.
  * @author Martin
  */
+@Deprecated
 public interface InteractableContainer
 {
     /**

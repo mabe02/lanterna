@@ -38,6 +38,7 @@ import java.util.List;
  *
  * @author Martin
  */
+@Deprecated
 public abstract class AbstractComponent implements Component
 {
     private final List<ComponentListener> componentListeners;

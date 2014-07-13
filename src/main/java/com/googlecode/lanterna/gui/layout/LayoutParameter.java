@@ -24,6 +24,7 @@ package com.googlecode.lanterna.gui.layout;
  * you will use static final constants belonging to the LayoutManager you have chosen.
  * @author Martin
  */
+@Deprecated
 public class LayoutParameter {
     
     //Give some meaningful description we can use in toString()

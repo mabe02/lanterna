@@ -39,6 +39,7 @@ import java.util.List;
  *
  * @author Martin
  */
+@Deprecated
 public abstract class AbstractContainer extends AbstractComponent implements InteractableContainer, Container
 {
     private final List<ContainerListener> containerListeners;

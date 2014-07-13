@@ -30,6 +30,7 @@ import com.googlecode.lanterna.input.KeyStroke;
  * @see WindowAdapter
  * @author Martin
  */
+@Deprecated
 public interface WindowListener {
     
     /**

@@ -29,6 +29,7 @@ import com.googlecode.lanterna.terminal.TerminalSize;
  *
  * @author Martin
  */
+@Deprecated
 public class ProgressBar extends AbstractComponent
 {
     private final int preferredWidth;

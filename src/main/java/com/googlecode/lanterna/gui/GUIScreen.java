@@ -40,6 +40,7 @@ import java.util.Queue;
  * must be managed by the underlying screen which is the backend for the GUI.
  * @author Martin
  */
+@Deprecated
 public class GUIScreen
 {
     private final Screen screen;
