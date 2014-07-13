@@ -38,7 +38,12 @@ public class TestTerminalFactory {
     private final DefaultTerminalFactory factory;
 
     public TestTerminalFactory(String[] args) {
+        this(args, SwingTerminalFrame.AutoCloseTrigger.CloseOnExitPrivateMode);
+    }
+    
+    public TestTerminalFactory(String[] args, SwingTerminalFrame.AutoCloseTrigger autoCloseTrigger) {
         factory = new DefaultTerminalFactory();
+        factory.setSwingTerminalFrameAutoCloseTrigger(autoCloseTrigger);
         factory.setSuppressSwingTerminalFrame(args.length > 0 && "--no-swing".equals(args[0]));
     }
     
