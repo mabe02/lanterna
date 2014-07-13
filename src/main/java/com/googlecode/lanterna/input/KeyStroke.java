@@ -51,7 +51,7 @@ public class KeyStroke {
     public KeyStroke(KeyType keyType) {
         this(keyType, false, false);
     }
-
+    
     /**
      * Constructs a KeyStroke based on a supplied keyType; character will be null.
      * If you try to construct a KeyStroke with type KeyType.Character with this constructor, it
@@ -77,6 +77,18 @@ public class KeyStroke {
     private KeyStroke(KeyType keyType, Character character, boolean ctrlDown, boolean altDown) {
         if(keyType == KeyType.Character && character == null) {
             throw new IllegalArgumentException("Cannot construct a KeyStroke with type KeyType.Character but no character information");
+        }
+        //Enforce character for some key types
+        switch(keyType) {
+            case Backspace:
+                character = '\b';
+                break;
+            case Enter:
+                character = '\n';
+                break;
+            case Tab:
+                character = '\t';
+                break;
         }
         this.keyType = keyType;
         this.character = character;
