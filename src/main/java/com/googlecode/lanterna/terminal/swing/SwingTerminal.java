@@ -183,13 +183,13 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
     // First implement all the Swing-related methods
     ///////////
     @Override
-    public Dimension getPreferredSize() {
+    public synchronized Dimension getPreferredSize() {
         return new Dimension(fontConfiguration.getFontWidth() * virtualTerminal.getSize().getColumns(),
                 fontConfiguration.getFontHeight() * virtualTerminal.getSize().getRows());
     }
 
     @Override
-    protected void paintComponent(Graphics g) {
+    protected synchronized void paintComponent(Graphics g) {
         //First, resize the buffer width/height if necessary
         int fontWidth = fontConfiguration.getFontWidth();
         int fontHeight = fontConfiguration.getFontHeight();
@@ -342,7 +342,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
     }
 
     @Override
-    public void enterPrivateMode() {
+    public synchronized void enterPrivateMode() {
         virtualTerminal.switchToPrivateMode();
         SwingUtilities.invokeLater(new Runnable() {
             @Override
@@ -353,7 +353,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
     }
 
     @Override
-    public void exitPrivateMode() {
+    public synchronized void exitPrivateMode() {
         virtualTerminal.switchToNormalMode();
         SwingUtilities.invokeLater(new Runnable() {
             @Override
@@ -364,7 +364,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
     }
 
     @Override
-    public void clearScreen() {
+    public synchronized void clearScreen() {
         virtualTerminal.clear();
         SwingUtilities.invokeLater(new Runnable() {
             @Override
@@ -375,7 +375,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
     }
 
     @Override
-    public void setCursorPosition(final int x, final int y) {
+    public synchronized void setCursorPosition(final int x, final int y) {
         virtualTerminal.setCursorPosition(new TerminalPosition(x, y));
     }
 
@@ -385,7 +385,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
     }
 
     @Override
-    public void putCharacter(final char c) {
+    public synchronized void putCharacter(final char c) {
         virtualTerminal.putCharacter(new TerminalCharacter(c, foregroundColor, backgroundColor, activeSGRs));
     }
 
@@ -415,7 +415,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
     }
 
     @Override
-    public TerminalSize getTerminalSize() {
+    public synchronized TerminalSize getTerminalSize() {
         return virtualTerminal.getSize();
     }
 
