@@ -138,7 +138,7 @@ public class DefaultScreen extends TerminalScreen {
         getTerminal().enterPrivateMode();
         getTerminal().getTerminalSize();
         getTerminal().clearScreen();
-        clear();
+        this.fullRedrawHint = true;
         if(cursorPosition != null) {
             getTerminal().setCursorVisible(true);
             getTerminal().setCursorPosition(cursorPosition.getColumn(), cursorPosition.getRow());
