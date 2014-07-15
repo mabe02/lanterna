@@ -27,10 +27,12 @@ public interface TextGUI {
     void start();
     void stop();
     void waitForStop() throws InterruptedException;
+    Status getStatus();
     
     public static enum Status {
         CREATED,
         STARTED,
+        STOPPING,
         STOPPED,
         ;
     }

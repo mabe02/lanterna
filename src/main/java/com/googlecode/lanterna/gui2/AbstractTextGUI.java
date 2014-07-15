@@ -66,16 +66,21 @@ public abstract class AbstractTextGUI implements TextGUI {
 
     @Override
     public void stop() {
-        if(status == Status.CREATED || status == Status.STOPPED) {
+        if(status != Status.STARTED) {
             return;
         }
 
-        status = Status.STOPPED;
+        status = Status.STOPPING;
     }
 
     @Override
     public void waitForStop() throws InterruptedException {
         waitLatch.await();
+    }
+
+    @Override
+    public Status getStatus() {
+        return status;
     }
 
     private void mainGUILoop() {
@@ -133,6 +138,7 @@ public abstract class AbstractTextGUI implements TextGUI {
             }
         }
         finally {
+            status = Status.STOPPED;
             waitLatch.countDown();
         }
     }
