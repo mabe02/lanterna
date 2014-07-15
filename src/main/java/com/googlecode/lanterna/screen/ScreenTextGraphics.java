@@ -21,9 +21,8 @@ import com.googlecode.lanterna.common.TextCharacter;
 import com.googlecode.lanterna.terminal.TerminalSize;
 
 /**
- * This is a helper class to assist you in composing your output on a {@code Screen}. It provides methods for drawing
- * full strings as well as keeping a color and modifier state so that you don't have to specify them for every operation.
- * It also has a position state which moves as you as putting characters, so you can think of this as a pen.
+ * This is an implementation of TextGraphics that targets the output to a Screen. The ScreenTextGraphics object is valid
+ * after screen resizing.
  * @author Martin
  */
 class ScreenTextGraphics extends com.googlecode.lanterna.common.AbstractTextGraphics {
@@ -41,7 +40,7 @@ class ScreenTextGraphics extends com.googlecode.lanterna.common.AbstractTextGrap
     }
 
     @Override
-    public TerminalSize getWritableArea() {
+    public TerminalSize getSize() {
         return screen.getTerminalSize();
     }
 }

@@ -25,9 +25,10 @@ import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.terminal.TextColor;
 
 /**
- * This interface exposes functionality to 'draw' text graphics on a section of the screen. It is used by
- * DefaultScreenWriter as a way to easily draw more complicated text and graphical shapes to a Screen and it's used by
- * TextGUIGraphics as well, where it represents a drawing interface onto limited area of the terminal.
+ * This interface exposes functionality to 'draw' text graphics on a section of the terminal. It has several
+ * implementation for the different levels, including one for Terminal, one for Screen and one which is used by the
+ * TextGUI system to draw components. They are all very similar and has a lot of common functionality in
+ * AbstractTextGraphics.
  * <p/>
  * The basic concept behind a TextGraphics implementation is that it keeps a state on four things:
  * <ul>
@@ -46,25 +47,27 @@ import com.googlecode.lanterna.terminal.TextColor;
  */
 public interface TextGraphics {
     /**
-     * Returns the size of the area that this screen writer can write to. Any attempts of placing characters outside of
+     * Returns the size of the area that this text graphic can write to. Any attempts of placing characters outside of
      * this area will be silently ignored.
      * @return Size of the writable area that this TextGraphics can write too
      */
-    TerminalSize getWritableArea();
+    TerminalSize getSize();
 
     /**
-     * Creates a new TextGraphics of the same type as this one, which can write only to a subsection of the area this
-     * TextGraphics can write too. You can use this if you want to pass drawing to an external component but want to
-     * limit what area it can draw on. Any attempts
+     * Creates a new TextGraphics of the same type as this one, using the same underlying subsystem. Using this method,
+     * you need to specify a section of the current TextGraphics valid area that this new TextGraphic shall be
+     * restricted to. If you call {@code newTextGraphics(TerminalPosition.TOP_LEFT_CORNER, textGraphics.getSize()} then
+     * the resulting object will be identical to this one, but having a separated state for colors, position and
+     * modifiers.
      * @param topLeftCorner Position of this TextGraphics's writable area that is to become the top-left corner (0x0) of
      *                      the new TextGraphics
      * @param size How large area, counted from the topLeftCorner, the new TextGraphics can write to. This cannot be
      *             larger than the current TextGraphics's writable area (adjusted by topLeftCorner)
-     * @return A new TextGraphics that can write to only the specified area
+     * @return A new TextGraphics with the same underlying subsystem, that can write to only the specified area
      * @throws java.lang.IllegalArgumentException If the size the of new TextGraphics exceeds the dimensions of this
      * TextGraphics in any way.
      */
-    TextGraphics getSubTextGraphics(TerminalPosition topLeftCorner, TerminalSize size) throws IllegalArgumentException;
+    TextGraphics newTextGraphics(TerminalPosition topLeftCorner, TerminalSize size) throws IllegalArgumentException;
 
     /**
      * Moves the position state of the TextGraphics to the specified coordinates
@@ -147,14 +150,14 @@ public interface TextGraphics {
     void setTabBehaviour(TabBehaviour tabBehaviour);
 
     /**
-     * Fills the entire screen with a single character, using current foreground color, background color and modifiers.
+     * Fills the entire writable area with a single character, using current foreground color, background color and modifiers.
      * @param c Character to fill the writable area with
      */
     void fillScreen(char c);
 
     /**
-     * Draws a line from the screen writer's current position to a specified position, using a supplied character. After
-     * the operation, this {@code DefaultScreenWriter}'s position will be at the end-point of the line. The current
+     * Draws a line from the current position to a specified position, using a supplied character. After
+     * the operation, this {@code TextGraphics}'s position will be at the end-point of the line. The current
      * foreground color, background color and modifiers will be applied.
      * @param toPoint Where to draw the line
      * @param character Character to use for the line
@@ -163,8 +166,8 @@ public interface TextGraphics {
 
     /**
      * Draws the outline of a triangle on the screen, using a supplied character. The triangle will begin at this
-     * writer's current position, go through both supplied points and then back again to the original position. The
-     * position of this {@code DefaultScreenWriter} after this operation will be the same as where it was before.
+     * object's current position, go through both supplied points and then back again to the original position. The
+     * position of this {@code TextGraphics} after this operation will be the same as where it was before.
      * The current foreground color, background color and modifiers will be applied.
      * @param p1 First point on the screen to draw the triangle with, starting from the current position
      * @param p2 Second point on the screen to draw the triangle with, going from p1 and going back to the original start
@@ -173,9 +176,9 @@ public interface TextGraphics {
     void drawTriangle(TerminalPosition p1, TerminalPosition p2, char character);
 
     /**
-     * Draws a filled triangle on the screen, using a supplied character. The triangle will begin at this
-     * writer's current position, go through both supplied points and then back again to the original position. The
-     * position of this {@code DefaultScreenWriter} after this operation will be the same as where it was before.
+     * Draws a filled triangle, using a supplied character. The triangle will begin at this
+     * object's current position, go through both supplied points and then back again to the original position. The
+     * position of this {@code TextGraphics} after this operation will be the same as where it was before.
      * The current foreground color, background color and modifiers will be applied.
      * @param p1 First point on the screen to draw the triangle with, starting from the current position
      * @param p2 Second point on the screen to draw the triangle with, going from p1 and going back to the original start
@@ -184,9 +187,9 @@ public interface TextGraphics {
     void fillTriangle(TerminalPosition p1, TerminalPosition p2, char character);
 
     /**
-     * Draws the outline of a rectangle in the {@code Screen} with a particular character (and the currently active colors and
-     * modifiers). The top-left corner will be at the current position of this {@code DefaultScreenWriter} (inclusive) and it
-     * will extend to position + size (exclusive). The current position of this {@code DefaultScreenWriter} after this
+     * Draws the outline of a rectangle with a particular character (and the currently active colors and
+     * modifiers). The top-left corner will be at the current position of this {@code TextGraphics} (inclusive) and it
+     * will extend to position + size (exclusive). The current position of this {@code TextGraphics} after this
      * operation will be the same as where it started.
      * <p/>
      * For example, calling drawRectangle with size being the size of the terminal when the writer's position is in the
@@ -199,8 +202,8 @@ public interface TextGraphics {
     void drawRectangle(TerminalSize size, char character);
 
     /**
-     * Takes a rectangle on the screen and fills it with a particular character (and the currently active colors and
-     * modifiers). The top-left corner will be at the current position of this {@code DefaultScreenWriter} (inclusive) and it
+     * Takes a rectangle and fills it with a particular character (and the currently active colors and
+     * modifiers). The top-left corner will be at the current position of this {@code TextGraphics} (inclusive) and it
      * will extend to position + size (exclusive).
      * The current foreground color, background color and modifiers will be applied.
      * @param size Size (in columns and rows) of the area to draw
@@ -272,7 +275,7 @@ public interface TextGraphics {
     TextGraphics putString(TerminalPosition position, String string, Terminal.SGR extraModifier, Terminal.SGR... optionalExtraModifiers);
 
     /**
-     * Prints a string from the current writer position and optionally enables a few extra SGR modifiers. The extra SGR
+     * Prints a string from the current position and optionally enables a few extra SGR modifiers. The extra SGR
      * modifiers, those that wasn't already active on the writer when this method is called, will only be applied to
      * this operation and will be disabled again when the call is done.
      * @param string String to put on the screen

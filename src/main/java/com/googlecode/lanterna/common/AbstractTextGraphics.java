@@ -128,7 +128,7 @@ public abstract class AbstractTextGraphics implements TextGraphics {
     public void fillScreen(char c) {
         TerminalPosition savedPosition = getPosition();
         setPosition(TerminalPosition.TOP_LEFT_CORNER);
-        fillRectangle(getWritableArea(), c);
+        fillRectangle(getSize(), c);
         setPosition(savedPosition);
     }
 
@@ -364,8 +364,8 @@ public abstract class AbstractTextGraphics implements TextGraphics {
     }
 
     @Override
-    public TextGraphics getSubTextGraphics(TerminalPosition topLeftCorner, TerminalSize size) throws IllegalArgumentException {
-        TerminalSize writableArea = getWritableArea();
+    public TextGraphics newTextGraphics(TerminalPosition topLeftCorner, TerminalSize size) throws IllegalArgumentException {
+        TerminalSize writableArea = getSize();
         if(topLeftCorner.getColumn() + size.getColumns() > writableArea.getColumns() ||
                 topLeftCorner.getRow() + size.getRows() > writableArea.getRows()) {
             throw new IllegalArgumentException("Cannot create a sub-text graphics with topLeft = " + topLeftCorner +

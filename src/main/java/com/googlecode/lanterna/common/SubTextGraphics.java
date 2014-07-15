@@ -37,7 +37,7 @@ class SubTextGraphics extends AbstractTextGraphics {
 
     @Override
     protected void setCharacter(int columnIndex, int rowIndex, TextCharacter textCharacter) {
-        TerminalSize writableArea = getWritableArea();
+        TerminalSize writableArea = getSize();
         if(columnIndex < 0 || columnIndex >= writableArea.getColumns() ||
                 rowIndex < 0 || rowIndex >= writableArea.getRows()) {
             return;
@@ -46,7 +46,7 @@ class SubTextGraphics extends AbstractTextGraphics {
     }
 
     @Override
-    public TerminalSize getWritableArea() {
+    public TerminalSize getSize() {
         return writeableAreaSize;
     }
 }
