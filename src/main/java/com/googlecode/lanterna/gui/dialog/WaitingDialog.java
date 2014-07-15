@@ -93,7 +93,7 @@ public class WaitingDialog extends Window
                 try {
                     Thread.sleep(100);
                 }
-                catch(InterruptedException e) {}
+                catch(InterruptedException ignored) {}
             }
         }
     }

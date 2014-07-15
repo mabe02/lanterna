@@ -34,10 +34,12 @@ public class SwingTerminalDeviceConfiguration {
     private final TextColor cursorColor;
     private final boolean cursorBlinking;
 
+    @SuppressWarnings("WeakerAccess")
     public SwingTerminalDeviceConfiguration() {
         this(2000, 500, CursorStyle.REVERSED, TextColor.ANSI.WHITE, false);
     }
 
+    @SuppressWarnings("WeakerAccess")
     public SwingTerminalDeviceConfiguration(int lineBufferScrollbackSize, int blinkLengthInMilliSeconds, CursorStyle cursorStyle, TextColor cursorColor, boolean cursorBlinking) {
         this.lineBufferScrollbackSize = lineBufferScrollbackSize;
         this.blinkLengthInMilliSeconds = blinkLengthInMilliSeconds;

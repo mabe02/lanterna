@@ -30,8 +30,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SwingTerminalColorConfiguration {
 
     public static final SwingTerminalColorConfiguration DEFAULT = newInstance(SwingTerminalPalette.STANDARD_VGA);
-    public static final Map<TextColor, Color> COLOR_STORAGE = new ConcurrentHashMap<TextColor, Color>();
+    private static final Map<TextColor, Color> COLOR_STORAGE = new ConcurrentHashMap<TextColor, Color>();
 
+    @SuppressWarnings("SameParameterValue")
     public static SwingTerminalColorConfiguration newInstance(SwingTerminalPalette colorPalette) {
         return new SwingTerminalColorConfiguration(colorPalette, true);
     }
@@ -39,7 +40,7 @@ public class SwingTerminalColorConfiguration {
     private final SwingTerminalPalette colorPalette;
     private final boolean useBrightColorsOnBold;
 
-    protected SwingTerminalColorConfiguration(SwingTerminalPalette colorPalette, boolean useBrightColorsOnBold) {
+    private SwingTerminalColorConfiguration(SwingTerminalPalette colorPalette, boolean useBrightColorsOnBold) {
         this.colorPalette = colorPalette;
         this.useBrightColorsOnBold = useBrightColorsOnBold;
     }
@@ -67,8 +68,7 @@ public class SwingTerminalColorConfiguration {
         }
         else if(color instanceof TextColor.RGB) {
             TextColor.RGB rgbColor = (TextColor.RGB)color;
-            Color awtColor = new Color(rgbColor.getRed(), rgbColor.getGreen(), rgbColor.getBlue());
-            return awtColor;
+            return new Color(rgbColor.getRed(), rgbColor.getGreen(), rgbColor.getBlue());
         }
         throw new IllegalArgumentException("Unknown color " + color);
     }

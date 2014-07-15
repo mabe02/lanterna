@@ -26,6 +26,7 @@ import com.googlecode.lanterna.terminal.TerminalPosition;
  *
  * @author Martin
  */
+@SuppressWarnings({"WeakerAccess", "UnusedParameters"})
 @Deprecated
 public abstract class AbstractInteractableComponent extends AbstractComponent implements InteractableComponent {
     private boolean hasFocus;

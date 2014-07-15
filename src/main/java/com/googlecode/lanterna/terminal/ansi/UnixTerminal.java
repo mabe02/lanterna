@@ -33,6 +33,7 @@ import java.nio.charset.Charset;
  *
  * @author Martin
  */
+@SuppressWarnings("WeakerAccess")
 public class UnixTerminal extends ANSITerminal {
 
     private final UnixTerminalSizeQuerier terminalSizeQuerier;
@@ -80,6 +81,7 @@ public class UnixTerminal extends ANSITerminal {
      * method
      * @throws java.io.IOException If there was an I/O error initializing the terminal
      */
+    @SuppressWarnings({"SameParameterValue", "WeakerAccess"})
     public UnixTerminal(
             InputStream terminalInput,
             OutputStream terminalOutput,
@@ -100,7 +102,7 @@ public class UnixTerminal extends ANSITerminal {
      * details
      * @throws java.io.IOException If there was an I/O error initializing the terminal
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "SameParameterValue", "WeakerAccess"})
     public UnixTerminal(
             InputStream terminalInput,
             OutputStream terminalOutput,
@@ -136,7 +138,7 @@ public class UnixTerminal extends ANSITerminal {
         }
         
         saveSTTY();
-        sttyMinimumCharacterForRead(1);
+        sttyMinimum1CharacterForRead();
         setCBreak(true);
         setEcho(false);
         Runtime.getRuntime().addShutdownHook(new Thread("Lanterna SSTY restore") {
@@ -145,7 +147,7 @@ public class UnixTerminal extends ANSITerminal {
                 try {
                     restoreSTTY();
                 }
-                catch(IOException e) {}
+                catch(IOException ignored) {}
             }
         });
     }
@@ -222,9 +224,9 @@ public class UnixTerminal extends ANSITerminal {
                 "/bin/stty " + (enable ? "echo" : "-echo") + " < /dev/tty");
     }
 
-    private static void sttyMinimumCharacterForRead(final int nrCharacters) throws IOException {
+    private static void sttyMinimum1CharacterForRead() throws IOException {
         exec("/bin/sh", "-c",
-                "/bin/stty min " + nrCharacters + " < /dev/tty");
+                "/bin/stty min 1 < /dev/tty");
     }
 
     private static void sttyICanon(final boolean enable) throws IOException {

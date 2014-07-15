@@ -26,13 +26,14 @@ import java.util.ArrayList;
  * @author David John Truman
  * @author Nicolas Pellegrin
  */
+@SuppressWarnings({"FieldCanBeLocal", "WeakerAccess"})
 @Deprecated
 public class TextGrid {
 
     public class DataGridCel {
-        private char character;
-        private char displayCharacter;
-        private int bufferIndex;
+        private final char character;
+        private final char displayCharacter;
+        private final int bufferIndex;
         // Constants MUST be static final (otherwise it waste memory)
         private static final char NullDisplayChar = ' ';
         private static final char LFDisplayChar = ' ';
@@ -82,7 +83,7 @@ public class TextGrid {
     }
 
     private static class LineScanner implements java.util.Iterator<Object> {
-        private ArrayList<String> data;
+        private final ArrayList<String> data;
         private int lineCount;
         private int current;
 
@@ -109,10 +110,7 @@ public class TextGrid {
 
         @Override
         public boolean hasNext() {
-            if (current < lineCount) {
-                return true;
-            }
-            return false;
+            return current < lineCount;
         }
 
         @Override
@@ -140,7 +138,7 @@ public class TextGrid {
     private DataGridCel[][] grid;
     private int numberOfCols;
     private int numberOfRows;
-    private char NullDisplayChar = ' ';
+    private final char NullDisplayChar = ' ';
 
     public TextGrid() {
         dataBuffer = new StringBuilder("");
@@ -245,7 +243,7 @@ public class TextGrid {
             if (scan.hasNext()) {
                 line = scan.nextLine();
             } else {
-                line = new String();
+                line = "";
             }
 
             for (int c = 0; c < numberOfCols; c++) {
@@ -273,7 +271,7 @@ public class TextGrid {
     private void updateDataSize() {
         int dataWidth = 0;
         int dataHeight = 0;
-        String Line = null;
+        String Line;
         /* Scanner split ignore blank lines on end.... */
         LineScanner scan = new LineScanner(dataBuffer.toString());
 

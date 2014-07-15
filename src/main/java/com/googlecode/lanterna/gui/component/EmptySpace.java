@@ -27,6 +27,7 @@ import com.googlecode.lanterna.terminal.TerminalSize;
  *
  * @author Martin
  */
+@SuppressWarnings("SameParameterValue")
 @Deprecated
 public class EmptySpace extends AbstractComponent
 {

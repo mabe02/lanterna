@@ -34,6 +34,7 @@ import java.util.List;
  *
  * @author Martin
  */
+@SuppressWarnings({"SameParameterValue", "WeakerAccess"})
 @Deprecated
 public class Table extends AbstractComponent implements InteractableContainer
 {
@@ -132,8 +133,8 @@ public class Table extends AbstractComponent implements InteractableContainer
     public void removeAllRows()
     {
         rows.clear();
-        for(int i = 0; i < columns.length; i++)
-            columns[i].removeAllComponents();
+        for (Panel column : columns)
+            column.removeAllComponents();
 
         invalidate();
     }

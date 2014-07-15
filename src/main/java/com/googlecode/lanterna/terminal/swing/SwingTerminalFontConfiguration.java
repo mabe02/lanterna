@@ -37,6 +37,7 @@ public class SwingTerminalFontConfiguration {
                 new Font("Monospaced", Font.PLAIN, 14)
     );
 
+    @SuppressWarnings("WeakerAccess")
     public static SwingTerminalFontConfiguration newInstance(Font... fontsInOrderOfPriority) {
         return new SwingTerminalFontConfiguration(true, fontsInOrderOfPriority);
     }
@@ -46,6 +47,7 @@ public class SwingTerminalFontConfiguration {
     private final int fontHeight;
     private final boolean useAntiAliasing;
 
+    @SuppressWarnings("WeakerAccess")
     protected SwingTerminalFontConfiguration(boolean useAntiAliasing, Font... fontsInOrderOfPriority) {
         if(fontsInOrderOfPriority == null || fontsInOrderOfPriority.length == 0) {
             throw new IllegalArgumentException("Must pass in a valid list of fonts to SwingTerminalFontConfiguration");

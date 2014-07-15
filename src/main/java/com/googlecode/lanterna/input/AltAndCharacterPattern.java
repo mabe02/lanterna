@@ -29,26 +29,14 @@ public class AltAndCharacterPattern implements CharacterPattern {
 
     @Override
     public boolean isCompleteMatch(List<Character> currentMatching) {
-        if (currentMatching.size() != 2) {
-            return false;
-        }
-        if (currentMatching.get(0) != KeyDecodingProfile.ESC_CODE) {
-            return false;
-        }
-        return Character.isLetterOrDigit(currentMatching.get(1));
+        return currentMatching.size() == 2 &&
+                currentMatching.get(0) == KeyDecodingProfile.ESC_CODE &&
+                Character.isLetterOrDigit(currentMatching.get(1));
     }
 
     @Override
     public boolean matches(List<Character> currentMatching) {
-        if (currentMatching.get(0) != KeyDecodingProfile.ESC_CODE) {
-            return false;
-        }
-        if (currentMatching.size() == 1) {
-            return true;
-        }
-        if (!Character.isLetterOrDigit(currentMatching.get(1))) {
-            return false;
-        }
-        return currentMatching.size() == 2;
+        return currentMatching.get(0) == KeyDecodingProfile.ESC_CODE &&
+                (currentMatching.size() == 1 || (Character.isLetterOrDigit(currentMatching.get(1)) && currentMatching.size() == 2));
     }
 }

@@ -67,6 +67,7 @@ public final class DefaultTerminalFactory implements TerminalFactory {
      * @param inputStream Input stream to use for text-based Terminal implementations
      * @param charset Character set to assume the client is using
      */
+    @SuppressWarnings({"SameParameterValue", "WeakerAccess"})
     public DefaultTerminalFactory(OutputStream outputStream, InputStream inputStream, Charset charset) {
         this.outputStream = outputStream;
         this.inputStream = inputStream;

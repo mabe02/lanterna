@@ -40,7 +40,7 @@ class TextGraphicsImpl implements TextGraphics
     private final TerminalPosition topLeft;
     private final TerminalSize areaSize;
     private final Screen screen;
-    private Theme theme;
+    private final Theme theme;
     private TextColor foregroundColor;
     private TextColor backgroundColor;
     private boolean currentlyBold;

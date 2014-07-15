@@ -35,7 +35,7 @@ import java.io.IOException;
 @Deprecated
 public class Button extends AbstractInteractableComponent
 {
-    private Label buttonLabel;
+    private final Label buttonLabel;
     private Action onPressEvent;
 
     public Button(String text) {

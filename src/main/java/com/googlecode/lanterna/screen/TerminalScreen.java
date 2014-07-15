@@ -35,17 +35,11 @@ public abstract class TerminalScreen extends AbstractScreen {
     private TerminalSize terminalSize;
     private TerminalSize latestResizeRequest;
 
-    protected TerminalScreen(Terminal terminal, TerminalSize terminalSize) throws IOException {
+    @SuppressWarnings("WeakerAccess")
+    protected TerminalScreen(Terminal terminal) throws IOException {
         this.terminal = terminal;
-        
-        if(terminalSize != null) {
-            this.terminalSize = terminalSize; 
-        }
-        else {
-            this.terminalSize = terminal.getTerminalSize();
-        }
+        this.terminalSize = terminal.getTerminalSize();
         this.latestResizeRequest = null;
-        
         this.terminal.addResizeListener(new TerminalResizeListener());
     }
     
@@ -59,6 +53,7 @@ public abstract class TerminalScreen extends AbstractScreen {
      * back-buffer of the {@code Screen}.
      * @return 
      */
+    @SuppressWarnings("WeakerAccess")
     public Terminal getTerminal() {
         return terminal;
     }
@@ -73,7 +68,7 @@ public abstract class TerminalScreen extends AbstractScreen {
         return terminalSize;
     }
     
-    protected synchronized TerminalSize getAndClearPendingResize() {
+    synchronized TerminalSize getAndClearPendingResize() {
         if(latestResizeRequest != null) {
             terminalSize = latestResizeRequest;
             latestResizeRequest = null;

@@ -27,10 +27,11 @@ import com.googlecode.lanterna.terminal.*;
 /**
 Indicates activity by cycling through a set of characters.
 */
+@SuppressWarnings("WeakerAccess")
 @Deprecated
 public class SpinningActivityIndicator extends ActivityIndicator {
 	/** hyphen, backslash, pipe, forward slash */
-	public static char[] BARS = new char[] { '-', '\\',  '|', '/' };
+	public static final char[] BARS = new char[] { '-', '\\',  '|', '/' };
 	/** caret, greater-than, uppercase 'V', less-than */
 	public static char[] CHEVRONS = new char[] { '^', '>', 'V', '<' };
 	/** Unicode dice characters (not supported by all terminals) */

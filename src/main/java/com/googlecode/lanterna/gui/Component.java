@@ -26,6 +26,7 @@ import com.googlecode.lanterna.terminal.TerminalSize;
  * The base component interface, which all components must implement.
  * @author Martin
  */
+@SuppressWarnings("SameParameterValue")
 @Deprecated
 public interface Component
 {

@@ -55,12 +55,14 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
     private final Queue<KeyStroke> keyQueue;
     private final Object readMutex;
     
+    @SuppressWarnings("WeakerAccess")
     public StreamBasedTerminal(InputStream terminalInput, OutputStream terminalOutput, Charset terminalCharset) {
         this.terminalInput = terminalInput;
         this.terminalOutput = terminalOutput;
         this.inputDecoder = new InputDecoder(new InputStreamReader(terminalInput, terminalCharset));
         this.keyQueue = new LinkedList<KeyStroke>();
         this.readMutex = new Object();
+        //noinspection ConstantConditions
         if(terminalCharset == null) {
             this.terminalCharset = Charset.defaultCharset();
         }
@@ -85,6 +87,7 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
      * @param bytes Bytes to write to the terminal (synchronized)
      * @throws java.io.IOException If there was an underlying I/O error
      */
+    @SuppressWarnings("WeakerAccess")
     protected void writeToTerminal(byte... bytes) throws IOException {
         synchronized(terminalOutput) {
             terminalOutput.write(bytes);
@@ -126,17 +129,19 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
      * @see KeyDecodingProfile
      * @param profile
      */
+    @SuppressWarnings("WeakerAccess")
     public void addKeyDecodingProfile(KeyDecodingProfile profile) {
         inputDecoder.addProfile(profile);
     }
 
-    protected TerminalSize waitForTerminalSizeReport(int timeoutMs) throws IOException {
+    @SuppressWarnings("ConstantConditions")
+    TerminalSize waitForTerminalSizeReport() throws IOException {
         long startTime = System.currentTimeMillis();
         synchronized(readMutex) {
             while(true) {
                 KeyStroke key = inputDecoder.getNextCharacter();
                 if(key == null) {
-                    if(System.currentTimeMillis() - startTime > timeoutMs) {
+                    if(System.currentTimeMillis() - startTime > 1000) {  //Wait 1 second for the terminal size report to come, is this reasonable?
                         throw new IOException(
                                 "Timeout while waiting for terminal size report! "
                                 + "Maybe your terminal doesn't support cursor position report, please "
@@ -145,7 +150,7 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
                     try {
                         Thread.sleep(1);
                     }
-                    catch(InterruptedException e) {}
+                    catch(InterruptedException ignored) {}
                     continue;
                 }
 
@@ -196,6 +201,7 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
         }
     }
 
+    @SuppressWarnings("WeakerAccess")
     protected byte[] translateCharacter(char input) {
         if(UTF8_REFERENCE != null && UTF8_REFERENCE == terminalCharset) {
             return convertToCharset(input);

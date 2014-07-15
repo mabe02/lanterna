@@ -26,6 +26,7 @@ import com.googlecode.lanterna.terminal.TerminalSize;
  * UnixTerminal constructor in order to use it.
  * @author martin
  */
+@SuppressWarnings("WeakerAccess")
 public interface UnixTerminalSizeQuerier {
     TerminalSize queryTerminalSize();
 }

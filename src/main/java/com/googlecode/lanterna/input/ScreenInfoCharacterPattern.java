@@ -57,13 +57,7 @@ public class ScreenInfoCharacterPattern implements CharacterPattern {
         for (int i = 1; i < currentMatching.size(); i++) {
             asString += currentMatching.get(i);
         }
-
-        Matcher matcher = REPORT_CURSOR_PATTERN.matcher(asString);
-        if (!matcher.matches()) {
-            return false;
-        }
-
-        return true;
+        return REPORT_CURSOR_PATTERN.matcher(asString).matches();
     }
 
     @Override
@@ -86,7 +80,7 @@ public class ScreenInfoCharacterPattern implements CharacterPattern {
             return true;
         }
 
-        int i = 2;
+        int i;
         for (i = 2; i < currentMatching.size(); i++) {
             if (!Character.isDigit(currentMatching.get(i)) && ';' != currentMatching.get(i)) {
                 return false;

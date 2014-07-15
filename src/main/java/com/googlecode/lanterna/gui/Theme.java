@@ -30,12 +30,13 @@ import com.googlecode.lanterna.terminal.TextColor;
  *
  * @author Martin
  */
+@SuppressWarnings("WeakerAccess")
 @Deprecated
 public class Theme {
     private static final Definition DEFAULT = new Definition(TextColor.ANSI.BLACK, TextColor.ANSI.WHITE, false);
     private static final Definition SELECTED = new Definition(TextColor.ANSI.WHITE, TextColor.ANSI.BLUE, true);
-    private Map<Category, Definition> styles = new EnumMap<Category, Definition>(Category.class);
     private static final Theme DEFAULT_INSTANCE = new Theme();
+    private final Map<Category, Definition> styles = new EnumMap<Category, Definition>(Category.class);
 
     /**
      * Represents things which can be styled.
@@ -239,6 +240,7 @@ public class Theme {
     /**
      * A style definition encompassing colors and effects.
      */
+    @SuppressWarnings("SameParameterValue")
     public static class Definition {
 
         private TextColor foreground;

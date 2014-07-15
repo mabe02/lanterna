@@ -62,6 +62,7 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
         this(AutoCloseTrigger.DontAutoClose);
     }
     
+    @SuppressWarnings({"SameParameterValue", "WeakerAccess"})
     public SwingTerminalFrame(AutoCloseTrigger autoCloseTrigger) {
         this("SwingTerminalFrame", autoCloseTrigger);
     }
@@ -70,6 +71,7 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
         this(title, AutoCloseTrigger.DontAutoClose);
     }
     
+    @SuppressWarnings("WeakerAccess")
     public SwingTerminalFrame(String title, AutoCloseTrigger autoCloseTrigger) throws HeadlessException {
         this(title, new SwingTerminal(), autoCloseTrigger);
     }

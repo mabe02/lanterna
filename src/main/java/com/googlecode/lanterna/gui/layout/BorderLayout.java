@@ -34,6 +34,7 @@ import java.util.Set;
  * Layout manager inspired by java.awt.BorderLayout
  * @author Martin
  */
+@SuppressWarnings("WeakerAccess")
 @Deprecated
 public class BorderLayout implements LayoutManager {
     public static final LayoutParameter CENTER = new LayoutParameter("BorderLayout.CENTER");

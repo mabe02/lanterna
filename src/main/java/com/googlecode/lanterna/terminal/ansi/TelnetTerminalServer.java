@@ -29,6 +29,7 @@ import javax.net.ServerSocketFactory;
  *
  * @author martin
  */
+@SuppressWarnings("WeakerAccess")
 public class TelnetTerminalServer {
     private final Charset charset;
     private final ServerSocket serverSocket;

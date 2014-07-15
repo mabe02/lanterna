@@ -35,6 +35,7 @@ import java.util.List;
  * user scroll through the text using the arrow keys.
  * @author martin
  */
+@SuppressWarnings({"SameParameterValue", "WeakerAccess"})
 @Deprecated
 public class TextArea  extends AbstractInteractableComponent
 { 
@@ -117,7 +118,7 @@ public class TextArea  extends AbstractInteractableComponent
             if(i - scrollTopIndex >= graphics.getHeight())
                 break;
 
-            printItem(graphics, 0, 0 + i - scrollTopIndex, lines.get(i));
+            printItem(graphics, 0, i - scrollTopIndex, lines.get(i));
         }
         
         boolean hasSetHotSpot = false;

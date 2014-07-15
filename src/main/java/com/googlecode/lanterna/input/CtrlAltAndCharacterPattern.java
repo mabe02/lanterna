@@ -29,37 +29,19 @@ public class CtrlAltAndCharacterPattern implements CharacterPattern {
     @Override
     public KeyStroke getResult(List<Character> matching) {
         int firstCode = 'a' - 1;
-        return new KeyStroke((char) (firstCode + (int) matching.get(1).charValue()), true, true);
+        return new KeyStroke((char) (firstCode + (int) matching.get(1)), true, true);
     }
 
     @Override
     public boolean isCompleteMatch(List<Character> currentMatching) {
-        if (currentMatching.size() != 2) {
-            return false;
-        }
-        if (currentMatching.get(0) != KeyDecodingProfile.ESC_CODE) {
-            return false;
-        }
-        if (currentMatching.get(1).charValue() > 26) {
-            return false;
-        }
-        return true;
+        return currentMatching.size() == 2 &&
+                currentMatching.get(0) == KeyDecodingProfile.ESC_CODE &&
+                currentMatching.get(1) <= 26;
     }
 
     @Override
     public boolean matches(List<Character> currentMatching) {
-        if (currentMatching.get(0) != KeyDecodingProfile.ESC_CODE) {
-            return false;
-        }
-        if (currentMatching.size() == 1) {
-            return true;
-        }
-        if (currentMatching.get(1).charValue() > 26) {
-            return false;
-        }
-        if (currentMatching.size() == 2) {
-            return true;
-        }
-        return false;
+        return currentMatching.get(0) == KeyDecodingProfile.ESC_CODE &&
+                (currentMatching.size() == 1 || (currentMatching.get(1) <= 26 && currentMatching.size() == 2));
     }
 }

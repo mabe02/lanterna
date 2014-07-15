@@ -32,6 +32,7 @@ import com.googlecode.lanterna.terminal.TerminalSize;
  * deselected and the highlighted item will be the selected one instead.
  * @author Martin
  */
+@SuppressWarnings({"SameParameterValue", "WeakerAccess"})
 @Deprecated
 public class RadioCheckBoxList extends AbstractListBox {
     private int checkedIndex;

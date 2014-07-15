@@ -73,6 +73,7 @@ class TerminalCharacter {
         return styles.contains(Terminal.SGR.UNDERLINE);
     }
 
+    @SuppressWarnings("SameParameterValue")
     TerminalCharacter withCharacter(char c) {
         if(c == character) {
             return this;

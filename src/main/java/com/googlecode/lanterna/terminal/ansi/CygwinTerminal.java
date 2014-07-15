@@ -72,7 +72,7 @@ public class CygwinTerminal extends UnixTerminal {
         super.enterPrivateMode();
         setCBreak(true);
         setEcho(false);
-        sttyMinimumCharacterForRead(1);
+        stty1CharacterForRead();
         resizeCheckTimer = new Timer("CygwinTerminalResizeChecker");
         resizeCheckTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -108,8 +108,8 @@ public class CygwinTerminal extends UnixTerminal {
          */
     }
 
-    private static void sttyMinimumCharacterForRead(final int nrCharacters) throws IOException {
-        exec(findSTTY(), "-F", "/dev/pty0", "min", nrCharacters + "");
+    private static void stty1CharacterForRead() throws IOException {
+        exec(findSTTY(), "-F", "/dev/pty0", "min", "1");
         /*
          exec(findShell(), "-c",
          "/bin/stty.exe min " + nrCharacters + " < /dev/tty");

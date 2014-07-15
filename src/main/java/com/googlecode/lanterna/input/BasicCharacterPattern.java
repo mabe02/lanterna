@@ -34,7 +34,7 @@ class BasicCharacterPattern implements CharacterPattern {
     public boolean matches(List<Character> currentMatching) {
         int minSize = Math.min(currentMatching.size(), pattern.length);
         for (int i = 0; i < minSize; i++) {
-            if (pattern[i] != currentMatching.get(i).charValue()) {
+            if (pattern[i] != currentMatching.get(i)) {
                 return false;
             }
         }
@@ -53,7 +53,7 @@ class BasicCharacterPattern implements CharacterPattern {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof BasicCharacterPattern == false) {
+        if (!(obj instanceof BasicCharacterPattern)) {
             return false;
         }
 

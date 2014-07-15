@@ -4,6 +4,7 @@ package com.googlecode.lanterna.gui.component;
 /**
 For indicating that the program is working on something and not frozen.
 */
+@SuppressWarnings("WeakerAccess")
 @Deprecated
 public abstract class ActivityIndicator extends AbstractComponent {
 

@@ -138,6 +138,9 @@ public class ScreenBackendTextGUIGraphics implements TextGUIGraphics {
         screenWriter.setPosition(new TerminalPosition(xOffset + topLeftPosition.getColumn(), yOffset + topLeftPosition.getRow()));
     }
 
+    //We don't care about this inspection since we know that the clone overload we are delegating to will always create
+    //a new instance of this object
+    @SuppressWarnings("CloneDoesntCallSuperClone")
     @Override
     protected Object clone() throws CloneNotSupportedException {
         return clone(null, null);

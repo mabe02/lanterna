@@ -35,6 +35,7 @@ import java.util.Set;
  *
  * @author Martin
  */
+@SuppressWarnings({"WeakerAccess", "MismatchedQueryAndUpdateOfCollection"})
 @Deprecated
 public abstract class LinearLayout implements LayoutManager {
 
@@ -230,8 +231,8 @@ public abstract class LinearLayout implements LayoutManager {
     }
 
     protected static class LinearLayoutComponent {
-        public Component component;
-        public Set<LayoutParameter> layoutParameters;
+        public final Component component;
+        public final Set<LayoutParameter> layoutParameters;
 
         public LinearLayoutComponent(Component component, Set<LayoutParameter> layoutParameters) {
             this.component = component;

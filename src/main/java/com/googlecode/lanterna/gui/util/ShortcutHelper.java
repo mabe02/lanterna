@@ -102,6 +102,7 @@ public class ShortcutHelper {
             return hash;
         }
 
+        @SuppressWarnings("SimplifiableIfStatement")
         @Override
         public boolean equals(Object obj) {
             if (obj == null) {
@@ -117,10 +118,7 @@ public class ShortcutHelper {
             if (this.withCtrl != other.withCtrl) {
                 return false;
             }
-            if (this.withAlt != other.withAlt) {
-                return false;
-            }
-            return true;
+            return this.withAlt == other.withAlt;
         }
 
         @Override

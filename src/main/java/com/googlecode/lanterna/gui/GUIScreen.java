@@ -40,6 +40,7 @@ import java.util.Queue;
  * must be managed by the underlying screen which is the backend for the GUI.
  * @author Martin
  */
+@SuppressWarnings({"SameParameterValue", "WeakerAccess", "EmptyCatchBlock"})
 @Deprecated
 public class GUIScreen
 {
@@ -465,7 +466,7 @@ public class GUIScreen
     private class WindowPlacement
     {
         private Window window;
-        private Position positionPolicy;
+        private final Position positionPolicy;
         private TerminalPosition topLeft;
 
         public WindowPlacement(Window window, Position positionPolicy, TerminalPosition topLeft)

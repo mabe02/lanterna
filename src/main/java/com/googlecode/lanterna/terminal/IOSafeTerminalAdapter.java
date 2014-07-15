@@ -68,6 +68,7 @@ public class IOSafeTerminalAdapter implements IOSafeTerminal {
     private final Terminal backend;
     private final ExceptionHandler exceptionHandler;
 
+    @SuppressWarnings("WeakerAccess")
     public IOSafeTerminalAdapter(Terminal backend, ExceptionHandler exceptionHandler) {
         this.backend = backend;
         this.exceptionHandler = exceptionHandler;

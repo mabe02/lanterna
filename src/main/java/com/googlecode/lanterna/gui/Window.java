@@ -41,6 +41,7 @@ import java.io.IOException;
  * back until the window is closed.
  * @author Martin
  */
+@SuppressWarnings({"SameParameterValue", "WeakerAccess"})
 @Deprecated
 public class Window
 {
@@ -380,7 +381,7 @@ public class Window
 
     private class ComponentInvalidatorAlert extends ComponentAdapter
     {
-        private Component component;
+        private final Component component;
 
         public ComponentInvalidatorAlert(Component component)
         {

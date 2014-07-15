@@ -34,10 +34,11 @@ import com.googlecode.lanterna.terminal.TextColor;
  * @author David John Truman
  * @author Nicolas Pellegrin
  */
+@SuppressWarnings({"FieldCanBeLocal", "SameParameterValue", "UnusedParameters", "UnusedAssignment"})
 @Deprecated
 public class EditArea extends AbstractInteractableComponent {
-    private int minimumCols = 20;
-    private int minimumRows = 5;
+    private final int minimumCols = 20;
+    private final int minimumRows = 5;
     private int charlimit = 0;
     private int currentCol = 0;
     private int currentRow = 0;
@@ -45,20 +46,22 @@ public class EditArea extends AbstractInteractableComponent {
     private int colOffset = 0;
     private boolean lockPreferredSize = false;
 
-    private TerminalSize requestedSize;
+    private final TerminalSize requestedSize;
     private int numberOfCols;
     private int numberOfRows;
-    private StringBuilder dataBuffer;
-    private TextGrid grid;
+    private final StringBuilder dataBuffer;
+    private final TextGrid grid;
 
     public EditArea() {
         this(null);
     }
 
+    @SuppressWarnings("WeakerAccess")
     public EditArea(TerminalSize preferredSize) {
         this(preferredSize, "");
     }
 
+    @SuppressWarnings("WeakerAccess")
     public EditArea(TerminalSize preferredSize, String text) {
         dataBuffer = new StringBuilder(text);
         requestedSize = preferredSize;
@@ -78,6 +81,7 @@ public class EditArea extends AbstractInteractableComponent {
     /**
      * Action for "Backspace" key
      * */
+    @SuppressWarnings("WeakerAccess")
     public void backspace() {
         TextGrid.DataGridCel cel;
 
@@ -150,6 +154,7 @@ public class EditArea extends AbstractInteractableComponent {
     /**
      * Action for "Del" key.
      * */
+    @SuppressWarnings("WeakerAccess")
     public void delete() {
         TextGrid.DataGridCel cel;
         TextGrid.DataGridCel nextCel;
@@ -201,6 +206,7 @@ public class EditArea extends AbstractInteractableComponent {
         }
     }
 
+    @SuppressWarnings("WeakerAccess")
     protected void drawDisplay(TextGraphics g) {
         int width = g.getWidth();
         int height = g.getHeight();
@@ -273,6 +279,7 @@ public class EditArea extends AbstractInteractableComponent {
     }
 
     // FIXME: why this ?
+    @SuppressWarnings("WeakerAccess")
     public void fix_issue() {
         if (currentCol < 0) {
             currentCol = 0;
@@ -283,6 +290,7 @@ public class EditArea extends AbstractInteractableComponent {
         return grid.getDataBuffer();
     }
 
+    @SuppressWarnings("WeakerAccess")
     public TerminalSize getDataSize() {
         int dataWidth = 0;
         int dataHeight = 0;
@@ -381,10 +389,7 @@ public class EditArea extends AbstractInteractableComponent {
      * Checks if the line limit is reached.
      * */
     private boolean limitReached() {
-        if (charlimit > 0 && grid.size() >= charlimit) {
-            return true;
-        }
-        return false;
+        return charlimit > 0 && grid.size() >= charlimit;
     }
 
     /**
@@ -507,6 +512,7 @@ public class EditArea extends AbstractInteractableComponent {
     /**
      * Scroll left all text in the area.
      * */
+    @SuppressWarnings("WeakerAccess")
     public void scrollLeft() {
         if (colOffset > 0) {
             colOffset--;
@@ -516,6 +522,7 @@ public class EditArea extends AbstractInteractableComponent {
     /**
      * Scroll right all text in the area.
      * */
+    @SuppressWarnings("WeakerAccess")
     public void scrollRight() {
         if ((numberOfCols + colOffset) < grid.getLineLength(rowOffset + currentRow) + 1) {
             colOffset++;

@@ -30,6 +30,7 @@ import java.util.List;
  * items to pick one from.
  * @author Martin
  */
+@SuppressWarnings({"SameParameterValue", "WeakerAccess"})
 @Deprecated
 public class ListSelectDialog
 {

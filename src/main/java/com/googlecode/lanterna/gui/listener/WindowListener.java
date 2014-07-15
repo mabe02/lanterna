@@ -30,6 +30,7 @@ import com.googlecode.lanterna.input.KeyStroke;
  * @see WindowAdapter
  * @author Martin
  */
+@SuppressWarnings({"EmptyMethod", "UnusedParameters"})
 @Deprecated
 public interface WindowListener {
     

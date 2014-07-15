@@ -34,10 +34,7 @@ public class NormalCharacterPattern implements CharacterPattern {
 
     @Override
     public boolean matches(List<Character> currentMatching) {
-        if (currentMatching.size() != 1) {
-            return false;
-        }
-        return isPrintableChar(currentMatching.get(0));
+        return currentMatching.size() == 1 && isPrintableChar(currentMatching.get(0));
     }
 
     /**

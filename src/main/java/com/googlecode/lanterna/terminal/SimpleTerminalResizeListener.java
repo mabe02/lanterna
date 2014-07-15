@@ -25,6 +25,7 @@ package com.googlecode.lanterna.terminal;
  * 
  * @author martin
  */
+@SuppressWarnings("WeakerAccess")
 public class SimpleTerminalResizeListener implements ResizeListener {
 
     boolean wasResized;

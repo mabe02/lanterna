@@ -29,7 +29,7 @@ public class CtrlAndCharacterPattern implements CharacterPattern {
     @Override
     public KeyStroke getResult(List<Character> matching) {
         int firstCode = 'a' - 1;
-        return new KeyStroke((char) (firstCode + (int) matching.get(0).charValue()), true, false);
+        return new KeyStroke((char) (firstCode + (int) matching.get(0)), true, false);
     }
 
     @Override
@@ -39,16 +39,11 @@ public class CtrlAndCharacterPattern implements CharacterPattern {
 
     @Override
     public boolean matches(List<Character> currentMatching) {
-        if (currentMatching.size() > 1) {
-            return false;
-        }
+        return currentMatching.size() <= 1 &&
+                !(currentMatching.get(0) == '\n' ||
+                        currentMatching.get(0) == '\r' ||
+                        currentMatching.get(0) == '\t') &&
+                currentMatching.get(0) <= 26;
 
-        if (currentMatching.get(0).charValue() == '\n'
-                || currentMatching.get(0).charValue() == '\r'
-                || currentMatching.get(0).charValue() == '\t') {
-            return false;
-        }
-
-        return currentMatching.get(0).charValue() <= 26;
     }
 }

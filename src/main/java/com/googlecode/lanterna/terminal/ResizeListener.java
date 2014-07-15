@@ -33,6 +33,7 @@ public interface ResizeListener {
      * @param terminal Terminal that was resized
      * @param newSize Size of the terminal after the resize
      */
+    @SuppressWarnings("UnusedParameters")
     public void onResized(Terminal terminal, TerminalSize newSize);
     
 }

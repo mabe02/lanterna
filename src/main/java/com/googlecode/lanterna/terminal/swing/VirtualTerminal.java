@@ -41,11 +41,10 @@ class VirtualTerminal {
     public VirtualTerminal(
             int backlog,
             TerminalSize initialSize,
-            TerminalCharacter fillCharacter,
             TerminalScrollController scrollController) {
 
-        this.mainTextBuffer = new TextBuffer(backlog, fillCharacter);
-        this.privateModeTextBuffer = new TextBuffer(0, fillCharacter);
+        this.mainTextBuffer = new TextBuffer(backlog);
+        this.privateModeTextBuffer = new TextBuffer(0);
         this.terminalScrollController = scrollController;
 
         this.currentBuffer = mainTextBuffer;

@@ -18,7 +18,6 @@
  */
 package com.googlecode.lanterna.terminal.ansi;
 
-import com.googlecode.lanterna.input.KeyStroke;
 import static com.googlecode.lanterna.terminal.ansi.TelnetProtocol.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -87,12 +86,6 @@ public class TelnetTerminal extends ANSITerminal {
         return negotiationState;
     }
 
-    @Override
-    public KeyStroke readInput() throws IOException {
-        KeyStroke keyStroke = super.readInput();
-        return keyStroke;
-    }
-    
     public void close() throws IOException {
         socket.close();
     }
@@ -230,7 +223,8 @@ public class TelnetTerminal extends ANSITerminal {
                 if(workingBuffer[i] == COMMAND_IAC) {
                     i++;
                     if(Arrays.asList(COMMAND_DO, COMMAND_DONT, COMMAND_WILL, COMMAND_WONT).contains(workingBuffer[i])) {
-                        i += parseCommand(workingBuffer, i, readBytes);
+                        parseCommand(workingBuffer, i, readBytes);
+                        ++i;
                         continue;
                     }
                     else if(workingBuffer[i] == COMMAND_SUBNEGOTIATION) {   //0xFA = SB = Subnegotiation
@@ -245,7 +239,7 @@ public class TelnetTerminal extends ANSITerminal {
             }
         }
         
-        private int parseCommand(byte[] buffer, int position, int max) throws IOException {
+        private void parseCommand(byte[] buffer, int position, int max) throws IOException {
             if(position + 1 >= max) {
                 throw new IllegalStateException("State error, we got a command signal from the remote telnet client but "
                         + "not enough characters available in the stream");
@@ -285,7 +279,6 @@ public class TelnetTerminal extends ANSITerminal {
                 default:
                     throw new UnsupportedOperationException("No command handler implemented for " + TelnetProtocol.CODE_TO_NAME.get(command));
             }
-            return 1;   //Skip the command value
         }
         
         private int parseSubNegotiation(byte[] buffer, int position, int max) {
@@ -338,6 +331,6 @@ public class TelnetTerminal extends ANSITerminal {
     }
     
     private static int convertTwoBytesToInt2(byte b1, byte b2) {
-        return (int) (( (b2 & 0xFF) << 8) | (b1 & 0xFF));
+        return ( (b2 & 0xFF) << 8) | (b1 & 0xFF);
     }
 }

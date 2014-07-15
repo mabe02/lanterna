@@ -30,6 +30,7 @@ import com.googlecode.lanterna.terminal.TerminalSize;
  *
  * @author Martin
  */
+@SuppressWarnings("WeakerAccess")
 @Deprecated
 public abstract class CommonCheckBox extends AbstractInteractableComponent
 {
@@ -109,6 +110,7 @@ public abstract class CommonCheckBox extends AbstractInteractableComponent
     }
 
     public abstract boolean isSelected();
+    @SuppressWarnings("SameReturnValue")
     protected abstract char getSelectionCharacter();
     protected abstract String surroundCharacter(char character);
     protected abstract void onActivated();

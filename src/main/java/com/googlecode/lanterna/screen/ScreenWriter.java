@@ -35,6 +35,7 @@ import java.util.EnumSet;
  * It also has a position state which moves as you as putting characters, so you can think of this as a pen.
  * @author Martin
  */
+@SuppressWarnings({"WeakerAccess", "UnusedReturnValue"})
 public class ScreenWriter {
 
     private final Screen screen;

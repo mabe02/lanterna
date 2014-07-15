@@ -93,11 +93,8 @@ public class StackedModalWindowManager implements WindowManager {
 
     @Override
     public synchronized boolean handleInput(KeyStroke keyStroke) {
-        if(windowStack.isEmpty()) {
-            return false;
-        }
-        
-        return windowStack.getLast().handleInput(keyStroke);
+        return !windowStack.isEmpty() && windowStack.getLast().handleInput(keyStroke);
+
     }
 
     @Override

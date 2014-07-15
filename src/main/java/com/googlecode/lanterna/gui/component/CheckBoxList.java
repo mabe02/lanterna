@@ -31,6 +31,7 @@ import java.util.List;
  *
  * @author Martin
  */
+@SuppressWarnings({"SameParameterValue", "WeakerAccess"})
 @Deprecated
 public class CheckBoxList extends AbstractListBox
 {
@@ -84,7 +85,7 @@ public class CheckBoxList extends AbstractListBox
             return Result.EVENT_NOT_HANDLED;
         
         if(key.getKeyType() == KeyType.Enter || key.getCharacter() == ' ') {
-            if(itemStatus.get(getSelectedIndex()) == true)
+            if(itemStatus.get(getSelectedIndex()))
                 itemStatus.set(getSelectedIndex(), Boolean.FALSE);
             else
                 itemStatus.set(getSelectedIndex(), Boolean.TRUE);

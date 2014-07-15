@@ -35,10 +35,11 @@ import java.util.List;
  * Common base class for list-type components (check box list, action list, etc)
  * @author Martin
  */
+@SuppressWarnings({"SameParameterValue", "WeakerAccess", "UnusedParameters"})
 @Deprecated
 public abstract class AbstractListBox extends AbstractInteractableComponent {
     private final List<Object> items;
-    private TerminalSize preferredSizeOverride;
+    private final TerminalSize preferredSizeOverride;
     private int selectedIndex;
     private int scrollTopIndex;
     private int pageSize;
@@ -153,7 +154,7 @@ public abstract class AbstractListBox extends AbstractInteractableComponent {
                 graphics.applyTheme(getSelectedListItemThemeDefinition(graphics.getTheme()));
             else
                 graphics.applyTheme(getListItemThemeDefinition(graphics.getTheme()));
-            printItem(graphics, 0, 0 + i - scrollTopIndex, i);
+            printItem(graphics, 0, i - scrollTopIndex, i);
         }
 
         if(items.size() > graphics.getHeight()) {

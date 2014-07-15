@@ -26,6 +26,7 @@ import com.googlecode.lanterna.terminal.TextColor;
  *
  * @author Martin
  */
+@SuppressWarnings("SameParameterValue")
 public interface TextGUIGraphics {
 
     void setForegroundColor(TextColor color);

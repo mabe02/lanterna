@@ -27,6 +27,7 @@ import java.io.IOException;
  * <p/>
  * @author martin
  */
+@SuppressWarnings("WeakerAccess")
 public interface TerminalFactory {
     /**
      * Instantiates a Terminal according to the factory implementation.

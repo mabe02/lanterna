@@ -26,6 +26,7 @@ import com.googlecode.lanterna.gui.component.InteractableComponent;
  *
  * @author Martin
  */
+@SuppressWarnings({"EmptyMethod", "UnusedParameters"})
 @Deprecated
 public interface ComponentListener
 {

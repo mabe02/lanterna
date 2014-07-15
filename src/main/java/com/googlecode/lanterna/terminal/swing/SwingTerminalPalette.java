@@ -27,6 +27,7 @@ import java.awt.Color;
  * normally available 8 + 1.
  * @author Martin
  */
+@SuppressWarnings("WeakerAccess")
 public class SwingTerminalPalette {
     /**
      * Values taken from gnome-terminal on Ubuntu
@@ -373,6 +374,7 @@ public class SwingTerminalPalette {
         throw new IllegalArgumentException("Unknown text color " + color);
     }
 
+    @SuppressWarnings({"SimplifiableIfStatement", "ConstantConditions"})
     @Override
     public boolean equals(Object obj) {
         if(obj == null) {
@@ -436,12 +438,10 @@ public class SwingTerminalPalette {
         if(this.normalWhite != other.normalWhite && (this.normalWhite == null || !this.normalWhite.equals(other.normalWhite))) {
             return false;
         }
-        if(this.brightWhite != other.brightWhite && (this.brightWhite == null || !this.brightWhite.equals(other.brightWhite))) {
-            return false;
-        }
-        return true;
+        return !(this.brightWhite != other.brightWhite && (this.brightWhite == null || !this.brightWhite.equals(other.brightWhite)));
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public int hashCode() {
         int hash = 5;

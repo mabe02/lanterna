@@ -26,6 +26,7 @@ import com.googlecode.lanterna.gui.Container;
  *
  * @author Martin
  */
+@SuppressWarnings({"EmptyMethod", "UnusedParameters"})
 @Deprecated
 public interface ContainerListener
 {

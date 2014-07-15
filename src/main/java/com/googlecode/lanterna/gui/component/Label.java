@@ -33,14 +33,15 @@ import java.util.EnumSet;
  *
  * @author Martin
  */
+@SuppressWarnings({"SameParameterValue", "WeakerAccess", "UnusedParameters"})
 @Deprecated
 public class Label extends AbstractComponent
 {
     private String []text;
     private int height;
     private int width;
-    private int forceWidth;
-    private Boolean textBold;
+    private final int forceWidth;
+    private final Boolean textBold;
     private TextColor textColor;
     private TextColor backgroundColor;
     private Theme.Category style;
@@ -133,7 +134,7 @@ public class Label extends AbstractComponent
                 	stringToDraw = text[i].substring(0, forceWidth - 3) + "...";
 				}
             }
-            graphics.drawString(leftPosition, i, stringToDraw, charStyles.toArray(new Terminal.SGR[0]));
+            graphics.drawString(leftPosition, i, stringToDraw, charStyles.toArray(new Terminal.SGR[charStyles.size()]));
         }
     }
 

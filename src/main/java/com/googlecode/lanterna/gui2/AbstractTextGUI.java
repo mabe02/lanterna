@@ -38,7 +38,7 @@ public abstract class AbstractTextGUI implements TextGUI {
     private Thread textGUIThread;
     private CountDownLatch waitLatch;
 
-    public AbstractTextGUI(Screen screen) {
+    protected AbstractTextGUI(Screen screen) {
         this.screen = screen;
         this.waitLatch = new CountDownLatch(0);
         this.customTasks = new ConcurrentLinkedQueue<Runnable>();
@@ -128,7 +128,7 @@ public abstract class AbstractTextGUI implements TextGUI {
                     try {
                         Thread.sleep(1);
                     }
-                    catch(InterruptedException e) {}
+                    catch(InterruptedException ignored) {}
                 }
             }
         }

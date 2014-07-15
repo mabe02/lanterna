@@ -45,6 +45,7 @@ public class ScrollingSwingTerminal extends JComponent implements IOSafeTerminal
                 SwingTerminalColorConfiguration.DEFAULT);
     }
 
+    @SuppressWarnings({"SameParameterValue", "WeakerAccess"})
     public ScrollingSwingTerminal(
             SwingTerminalDeviceConfiguration deviceConfiguration,
             SwingTerminalFontConfiguration fontConfiguration,

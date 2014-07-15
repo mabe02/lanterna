@@ -59,7 +59,7 @@ public abstract class Border
             // Each row
             for(int i = 1; i < rowsHeight - 1; i++) {
                 graphics.drawString(0, i, ACS.VLINE + "");
-                graphics.drawString(0 + columnsWidth - 1, i, ACS.VLINE + "");
+                graphics.drawString(columnsWidth - 1, i, ACS.VLINE + "");
             }
 
             // Bottom
@@ -114,17 +114,14 @@ public abstract class Border
             } else {
                 surroundSizeRows = terminalSizeRows + surroundRowStretch;
             }
-
-            TerminalSize surroundAreaTerminalSize = new TerminalSize(
-                surroundSizeColumns, surroundSizeRows);
-
-            return surroundAreaTerminalSize;
+            return new TerminalSize(surroundSizeColumns, surroundSizeRows);
         }
     }
 
+    @SuppressWarnings("SameParameterValue")
     public static class Bevel extends Border
     {
-        private boolean isRaised;
+        private final boolean isRaised;
 
         public Bevel(boolean isRaised) {
             this.isRaised = isRaised;
@@ -227,11 +224,7 @@ public abstract class Border
             } else {
                 surroundSizeRows = terminalSizeRows + surroundRowStretch;
             }
-
-            TerminalSize surroundAreaTerminalSize = new TerminalSize(
-                surroundSizeColumns, surroundSizeRows);
-
-            return surroundAreaTerminalSize;
+            return new TerminalSize(surroundSizeColumns, surroundSizeRows);
         }
     }
 

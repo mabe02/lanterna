@@ -36,7 +36,8 @@ public abstract class ANSITerminal extends StreamBasedTerminal {
 
     private boolean inPrivateMode;
 
-    public ANSITerminal(InputStream terminalInput, OutputStream terminalOutput, Charset terminalCharset) {
+    @SuppressWarnings("WeakerAccess")
+    protected ANSITerminal(InputStream terminalInput, OutputStream terminalOutput, Charset terminalCharset) {
         super(terminalInput, terminalOutput, terminalCharset);
         this.inPrivateMode = false;
         addKeyDecodingProfile(new DefaultKeyDecodingProfile());
@@ -56,7 +57,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal {
         setCursorPosition(5000, 5000);
         reportPosition();
         restoreCursorPosition();
-        return waitForTerminalSizeReport(1000); //Wait 1 second for the terminal size report to come, is this reasonable?
+        return waitForTerminalSizeReport();
     }
 
     @Override
@@ -219,28 +220,28 @@ public abstract class ANSITerminal extends StreamBasedTerminal {
      *
      * @return True if there has been a call to enterPrivateMode() but not yet exitPrivateMode()
      */
-    public boolean isInPrivateMode() {
+    boolean isInPrivateMode() {
         return inPrivateMode;
     }
 
     /**
      * Synchronize with writerMutex externally!!!
      */
-    protected void reportPosition() throws IOException {
+    void reportPosition() throws IOException {
         writeCSISequenctToTerminal("6n".getBytes());
     }
 
     /**
      * Synchronize with writerMutex externally!!!
      */
-    protected void restoreCursorPosition() throws IOException {
+    void restoreCursorPosition() throws IOException {
         writeCSISequenctToTerminal("u".getBytes());
     }
 
     /**
      * Synchronize with writerMutex externally!!!
      */
-    protected void saveCursorPosition() throws IOException {
+    void saveCursorPosition() throws IOException {
         writeCSISequenctToTerminal("s".getBytes());
     }
 }

@@ -29,6 +29,7 @@ import com.googlecode.lanterna.terminal.TerminalSize;
  *
  * @author Martin
  */
+@SuppressWarnings("WeakerAccess")
 @Deprecated
 public class ProgressBar extends AbstractComponent
 {

@@ -36,10 +36,10 @@ class TextBuffer {
     private final LinkedList<List<TerminalCharacter>> lineBuffer;
     private final TerminalCharacter fillCharacter;
 
-    TextBuffer(int backlog, TerminalCharacter fillCharacter) {
+    TextBuffer(int backlog) {
         this.backlog = backlog;
         this.lineBuffer = new LinkedList<List<TerminalCharacter>>();
-        this.fillCharacter = fillCharacter;
+        this.fillCharacter = TerminalCharacter.DEFAULT_CHARACTER;
 
         //Initialize the content to one line
         newLine();

@@ -29,6 +29,7 @@ import com.googlecode.lanterna.terminal.TerminalSize;
  *
  * @author Martin
  */
+@SuppressWarnings({"SameParameterValue", "WeakerAccess"})
 @Deprecated
 public class TextBox extends AbstractInteractableComponent
 {
@@ -221,7 +222,7 @@ public class TextBox extends AbstractInteractableComponent
                     if(Character.isISOControl(key.getCharacter()))
                         break;
 
-                    backend = backend.substring(0, editPosition) + (char)key.getCharacter() + backend.substring(editPosition);
+                    backend = backend.substring(0, editPosition) + key.getCharacter() + backend.substring(editPosition);
                     editPosition++;
                     if(editPosition - visibleLeftPosition >= lastKnownWidth)
                         visibleLeftPosition++;

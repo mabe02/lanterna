@@ -154,6 +154,7 @@ public class KeyStroke {
         return hash;
     }
 
+    @SuppressWarnings("SimplifiableIfStatement")
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
@@ -169,13 +170,7 @@ public class KeyStroke {
         if (this.character != other.character && (this.character == null || !this.character.equals(other.character))) {
             return false;
         }
-        if (this.ctrlDown != other.ctrlDown) {
-            return false;
-        }
-        if (this.altDown != other.altDown) {
-            return false;
-        }
-        return true;
+        return this.ctrlDown == other.ctrlDown && this.altDown == other.altDown;
     }
     
     /**

@@ -145,12 +145,6 @@ public class TerminalPosition {
             return false;
         }
         final TerminalPosition other = (TerminalPosition) obj;
-        if (this.row != other.row) {
-            return false;
-        }
-        if (this.column != other.column) {
-            return false;
-        }
-        return true;
+        return this.row == other.row && this.column == other.column;
     }
 }

@@ -26,6 +26,7 @@ import java.util.List;
  *
  * @author martin
  */
+@SuppressWarnings("WeakerAccess")
 public interface CharacterPattern {
 
     /**

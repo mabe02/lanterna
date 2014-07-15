@@ -33,6 +33,7 @@ import java.io.IOException;
  *
  * @author Martin
  */
+@SuppressWarnings({"SameParameterValue", "WeakerAccess"})
 @Deprecated
 public class MessageBox extends Window
 {

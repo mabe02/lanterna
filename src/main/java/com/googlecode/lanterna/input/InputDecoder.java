@@ -142,8 +142,8 @@ public class InputDecoder {
     }
 
     private static class Matching {
-        boolean partialMatch;
-        KeyStroke fullMatch;
+        final boolean partialMatch;
+        final KeyStroke fullMatch;
 
         public Matching(boolean partialMatch, KeyStroke fullMatch) {
             this.partialMatch = partialMatch;

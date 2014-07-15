@@ -22,6 +22,7 @@ package com.googlecode.lanterna.gui2;
  *
  * @author Martin
  */
+@SuppressWarnings("UnusedParameters")
 public interface GUIElement {
     void draw(TextGUIGraphics graphics);
     boolean isInvalid();

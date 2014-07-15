@@ -39,6 +39,7 @@ import java.util.List;
  *
  * @author Martin
  */
+@SuppressWarnings({"WeakerAccess", "MismatchedQueryAndUpdateOfCollection"})
 @Deprecated
 public abstract class AbstractContainer extends AbstractComponent implements InteractableContainer, Container
 {
@@ -181,7 +182,6 @@ public abstract class AbstractContainer extends AbstractComponent implements Int
                     Interactable next = ic.nextFocus(previous);
                     if(next == null) {
                         chooseNextAvailable = true;
-                        continue;
                     }
                     else
                         return next;
@@ -225,7 +225,6 @@ public abstract class AbstractContainer extends AbstractComponent implements Int
                     Interactable next = ic.previousFocus(fromThis);
                     if(next == null) {
                         chooseNextAvailable = true;
-                        continue;
                     }
                     else
                         return next;

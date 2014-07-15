@@ -56,10 +56,10 @@ public class ScreenCharacter {
      * @param character screenCharacter to copy from
      */
     public ScreenCharacter(ScreenCharacter character) {
-        this(character.getCharacter(), 
+        this(character.getCharacter(),
                 character.getForegroundColor(), 
-                character.getBackgroundColor(), 
-                character.getModifiers().toArray(new Terminal.SGR[0]));
+                character.getBackgroundColor(),
+                character.getModifiers().toArray(new Terminal.SGR[character.getModifiers().size()]));
     }
 
     /**
@@ -69,6 +69,7 @@ public class ScreenCharacter {
      * @param backgroundColor Background color the character has
      * @param styles Optional list of modifiers to apply when drawing the character
      */
+    @SuppressWarnings("WeakerAccess")
     public ScreenCharacter(
             char character,
             TextColor foregroundColor,
@@ -136,6 +137,7 @@ public class ScreenCharacter {
         return modifiers.contains(Terminal.SGR.BORDERED);
     }
     
+    @SuppressWarnings("SameParameterValue")
     public ScreenCharacter withCharacter(char character) {
         if(this.character == character) {
             return this;
@@ -143,6 +145,7 @@ public class ScreenCharacter {
         return new ScreenCharacter(character, foregroundColor, backgroundColor, modifiers);
     }
 
+    @SuppressWarnings("SimplifiableIfStatement")
     @Override
     public boolean equals(Object obj) {
         if(obj == null) {
@@ -161,10 +164,7 @@ public class ScreenCharacter {
         if(this.backgroundColor != other.backgroundColor && (this.backgroundColor == null || !this.backgroundColor.equals(other.backgroundColor))) {
             return false;
         }
-        if(this.modifiers != other.modifiers && (this.modifiers == null || !this.modifiers.equals(other.modifiers))) {
-            return false;
-        }
-        return true;
+        return !(this.modifiers != other.modifiers && (this.modifiers == null || !this.modifiers.equals(other.modifiers)));
     }
 
     @Override

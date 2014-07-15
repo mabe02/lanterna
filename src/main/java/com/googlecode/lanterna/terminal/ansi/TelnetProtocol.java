@@ -27,7 +27,7 @@ import java.util.Map;
  *
  * @author martin
  */
-public class TelnetProtocol {
+class TelnetProtocol {
     public static final byte COMMAND_SUBNEGOTIATION_END = (byte)0xf0;  //SE
     public static final byte COMMAND_NO_OPERATION = (byte)0xf1;    //NOP
     public static final byte COMMAND_DATA_MARK = (byte)0xf2;   //DM
@@ -65,9 +65,12 @@ public class TelnetProtocol {
     public static final byte OPTION_LINEMODE = (byte)0x22;
     public static final byte OPTION_AUTHENTICATION = (byte)0x25;
 
+    @SuppressWarnings("unchecked")
     public static final Map<String, Byte> NAME_TO_CODE = createCodeMap(false);
+    @SuppressWarnings("unchecked")
     public static final Map<Byte, String> CODE_TO_NAME = createCodeMap(true);
     
+    @SuppressWarnings("unchecked")
     private static Map createCodeMap(boolean invertKeyValueAssignments) {
         Map result = new HashMap();
         for(Field field: TelnetProtocol.class.getDeclaredFields()) {
@@ -83,13 +86,13 @@ public class TelnetProtocol {
                     result.put(namePart, field.get(null));
                 }
             }
-            catch(IllegalAccessException e) {
+            catch(IllegalAccessException ignored) {
             }
-            catch(IllegalArgumentException e) {
+            catch(IllegalArgumentException ignored) {
             }
         }
         return Collections.unmodifiableMap(result);
     }
     
-    public TelnetProtocol() {}
+    private TelnetProtocol() {}
 }

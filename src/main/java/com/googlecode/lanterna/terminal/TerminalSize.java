@@ -91,7 +91,7 @@ public class TerminalSize {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof TerminalSize == false) {
+        if (!(obj instanceof TerminalSize)) {
             return false;
         }
 

@@ -432,10 +432,7 @@ public interface TextColor {
                 return false;
             }
             final Indexed other = (Indexed) obj;
-            if(this.colorIndex != other.colorIndex) {
-                return false;
-            }
-            return true;
+            return this.colorIndex == other.colorIndex;
         }
 
         /**
@@ -558,6 +555,7 @@ public interface TextColor {
             return hash;
         }
 
+        @SuppressWarnings("SimplifiableIfStatement")
         @Override
         public boolean equals(Object obj) {
             if(obj == null) {
@@ -573,10 +571,7 @@ public interface TextColor {
             if(this.g != other.g) {
                 return false;
             }
-            if(this.b != other.b) {
-                return false;
-            }
-            return true;
+            return this.b == other.b;
         }
     }
 }

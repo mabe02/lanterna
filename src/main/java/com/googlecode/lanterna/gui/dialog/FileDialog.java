@@ -113,6 +113,9 @@ public class FileDialog extends Window {
         fileView.clearItems();
         labelCurrentDirectory.setText(currentDirectory.getAbsolutePath());
         File []entries = directory.listFiles();
+        if(entries == null) {
+            return;
+        }
         Arrays.sort(entries, new Comparator<File>() {
             @Override
             public int compare(File o1, File o2) {

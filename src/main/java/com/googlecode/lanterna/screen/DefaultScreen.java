@@ -39,6 +39,7 @@ public class DefaultScreen extends TerminalScreen {
     private TerminalPosition cursorPosition;
     private ScreenBuffer backBuffer;
     private ScreenBuffer frontBuffer;
+    private ScreenCharacter defaultCharacter;
 
     private boolean isStarted;
     private boolean fullRedrawHint;
@@ -48,27 +49,31 @@ public class DefaultScreen extends TerminalScreen {
 
     /**
      * Creates a new Screen on top of a supplied terminal, will query the terminal for its size. The screen is initially
-     * blank.
+     * blank. The default character used for unused space (the newly initialized state of the screen and new areas after
+     * expanding the terminal size) will be a blankspace in 'default' ANSI front- and background color.
      *
-     * @param terminal
-     * @throws java.io.IOException
+     * @param terminal Terminal object to create the DefaultScreen on top of
+     * @throws java.io.IOException If there was an underlying I/O error when querying the size of the terminal
      */
     public DefaultScreen(Terminal terminal) throws IOException {
-        this(terminal, null);
+        this(terminal, DEFAULT_CHARACTER);
     }
 
     /**
-     * Creates a new Screen on top of a supplied terminal and will set the size of the screen to a supplied value. The
-     * screen is initially blank.
+     * Creates a new Screen on top of a supplied terminal, will query the terminal for its size. The screen is initially
+     * blank. You can specify which character you wish to be used to fill the screen initially; this will also be the
+     * character used if the terminal is enlarged and you don't set anything on the new areas.
      *
-     * @param terminal
-     * @param terminalSize
-     * @throws java.io.IOException
+     * @param terminal Terminal object to create the DefaultScreen on top of.
+     * @param defaultCharacter What character to use for the initial state of the screen and expanded areas
+     * @throws java.io.IOException If there was an underlying I/O error when querying the size of the terminal
      */
-    public DefaultScreen(Terminal terminal, TerminalSize terminalSize) throws IOException {
-        super(terminal, terminalSize);
-        this.frontBuffer = new ScreenBuffer(getTerminalSize(), DEFAULT_CHARACTER);
-        this.backBuffer = new ScreenBuffer(getTerminalSize(), DEFAULT_CHARACTER);
+    @SuppressWarnings({"SameParameterValue", "WeakerAccess"})
+    public DefaultScreen(Terminal terminal, ScreenCharacter defaultCharacter) throws IOException {
+        super(terminal);
+        this.frontBuffer = new ScreenBuffer(getTerminalSize(), defaultCharacter);
+        this.backBuffer = new ScreenBuffer(getTerminalSize(), defaultCharacter);
+        this.defaultCharacter = defaultCharacter;
         this.cursorPosition = new TerminalPosition(0, 0);
         this.tabBehaviour = TabBehaviour.ALIGN_TO_COLUMN_4;
         this.isStarted = false;
@@ -153,6 +158,7 @@ public class DefaultScreen extends TerminalScreen {
             return;
         }
 
+        //noinspection StatementWithEmptyBody
         while(readInput() != null) {
             //Drain the input queue before exiting private mode and closing the Screen.
         }
@@ -162,7 +168,7 @@ public class DefaultScreen extends TerminalScreen {
 
     @Override
     public synchronized void clear() {
-        backBuffer.setAll(DEFAULT_CHARACTER);
+        backBuffer.setAll(defaultCharacter);
         fullRedrawHint = true;
     }
 
@@ -173,8 +179,8 @@ public class DefaultScreen extends TerminalScreen {
             return null;
         }
 
-        backBuffer = backBuffer.resize(pendingResize, DEFAULT_CHARACTER);
-        frontBuffer = frontBuffer.resize(pendingResize, DEFAULT_CHARACTER);
+        backBuffer = backBuffer.resize(pendingResize, defaultCharacter);
+        frontBuffer = frontBuffer.resize(pendingResize, defaultCharacter);
         fullRedrawHint = true;
         return pendingResize;
     }
