@@ -18,6 +18,8 @@
  */
 package com.googlecode.lanterna.terminal;
 
+import com.googlecode.lanterna.common.TextGraphics;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,8 +57,8 @@ public abstract class AbstractTerminal implements Terminal {
      * Call this method when the terminal has been resized or the initial size of the terminal has been discovered. It
      * will trigger all resize listeners, but only if the size has changed from before.
      *
-     * @param columns
-     * @param rows
+     * @param columns Number of columns in the new size
+     * @param rows Number of rows in the new size
      */
     protected synchronized void onResized(int columns, int rows) {
         TerminalSize newSize = new TerminalSize(columns, rows);
@@ -66,6 +68,11 @@ public abstract class AbstractTerminal implements Terminal {
                 resizeListener.onResized(this, lastKnownSize);
             }
         }
+    }
+
+    @Override
+    public TextGraphics newTextGraphics() throws IOException {
+        return new TerminalTextGraphics(this);
     }
 
     @Override
@@ -164,12 +171,4 @@ public abstract class AbstractTerminal implements Terminal {
      * @throws java.io.IOException If there was an underlying I/O error
      */
     protected abstract void setBackgroundColor(int r, int g, int b) throws IOException;
-
-    /**
-     * Used internally to get the last size known to the terminal
-     * @return
-     */
-    protected TerminalSize getLastKnownSize() {
-        return lastKnownSize;
-    }
 }

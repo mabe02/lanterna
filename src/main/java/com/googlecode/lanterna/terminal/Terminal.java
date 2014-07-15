@@ -18,6 +18,7 @@
  */
 package com.googlecode.lanterna.terminal;
 
+import com.googlecode.lanterna.common.TextGraphics;
 import com.googlecode.lanterna.input.InputProvider;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -104,13 +105,21 @@ public interface Terminal extends InputProvider {
     public void putCharacter(char c) throws IOException;
 
     /**
+     * Creates a new TextGraphics object that uses this Terminal directly when outputting. Keep in mind that you are
+     * probably better off to switch to a Screen to make advanced text graphics more efficient. Also, this TextGraphics
+     * implementation will not call {@code .flush()} after any operation, so you'll need to do that on your own.
+     * @return TextGraphics implementation that draws directly using this Terminal interface
+     */
+    public TextGraphics newTextGraphics() throws IOException;
+
+    /**
      * Activates an {@code SGR} (Selected Graphic Rendition) code. This code modifies a state inside the terminal
      * that will apply to all characters written afterwards, such as bold, italic, blinking code and so on.
      *
      * @param sgr SGR code to apply
      * @throws java.io.IOException If there was an underlying I/O error
      * @see Terminal.SGR
-     * @see http://www.vt100.net/docs/vt510-rm/SGR
+     * @see <a href="http://www.vt100.net/docs/vt510-rm/SGR">http://www.vt100.net/docs/vt510-rm/SGR</a>
      */
     public void enableSGR(SGR sgr) throws IOException;
 
@@ -121,7 +130,7 @@ public interface Terminal extends InputProvider {
      * @param sgr SGR code to apply
      * @throws java.io.IOException If there was an underlying I/O error
      * @see Terminal.SGR
-     * @see http://www.vt100.net/docs/vt510-rm/SGR
+     * @see <a href="http://www.vt100.net/docs/vt510-rm/SGR">http://www.vt100.net/docs/vt510-rm/SGR</a>
      */
     public void disableSGR(SGR sgr) throws IOException;
 
@@ -130,7 +139,7 @@ public interface Terminal extends InputProvider {
      *
      * @throws java.io.IOException If there was an underlying I/O error
      * @see Terminal.SGR
-     * @see http://www.vt100.net/docs/vt510-rm/SGR
+     * @see <a href="http://www.vt100.net/docs/vt510-rm/SGR">http://www.vt100.net/docs/vt510-rm/SGR</a>
      */
     public void resetAllSGR() throws IOException;
 
