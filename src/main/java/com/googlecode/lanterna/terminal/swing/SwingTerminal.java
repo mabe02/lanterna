@@ -18,7 +18,8 @@
  */
 package com.googlecode.lanterna.terminal.swing;
 
-import com.googlecode.lanterna.CJKUtils;
+import com.googlecode.lanterna.common.CJKUtils;
+import com.googlecode.lanterna.common.TextCharacter;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.IOSafeTerminal;
@@ -157,6 +158,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
 
         //noinspection unchecked
         setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, Collections.EMPTY_SET);
+        //noinspection unchecked
         setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, Collections.EMPTY_SET);
 
         addKeyListener(new TerminalInputListener());
@@ -216,9 +218,9 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
 
         //Draw line by line, character by character
         int rowIndex = 0;
-        for(List<TerminalCharacter> row: virtualTerminal.getLines()) {
+        for(List<TextCharacter> row: virtualTerminal.getLines()) {
             for(int columnIndex = 0; columnIndex < row.size(); columnIndex++) {
-                TerminalCharacter character = row.get(columnIndex);
+                TextCharacter character = row.get(columnIndex);
                 boolean atCursorLocation = translatedCursorPosition.equals(columnIndex, rowIndex);
                 //If next position is the cursor location and this is a CJK character (i.e. cursor is on the padding),
                 //consider this location the cursor position since otherwise the cursor will be skipped
@@ -272,11 +274,11 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
         }
     }
 
-    private Color deriveTrueForegroundColor(TerminalCharacter character, boolean atCursorLocation) {
+    private Color deriveTrueForegroundColor(TextCharacter character, boolean atCursorLocation) {
         TextColor foregroundColor = character.getForegroundColor();
         TextColor backgroundColor = character.getBackgroundColor();
-        boolean reverse = character.isReverse();
-        boolean blink = character.isBlink();
+        boolean reverse = character.isReversed();
+        boolean blink = character.isBlinking();
 
         if(cursorIsVisible && atCursorLocation) {
             if(deviceConfiguration.getCursorStyle() == SwingTerminalDeviceConfiguration.CursorStyle.REVERSED &&
@@ -296,10 +298,10 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
         }
     }
 
-    private Color deriveTrueBackgroundColor(TerminalCharacter character, boolean atCursorLocation) {
+    private Color deriveTrueBackgroundColor(TextCharacter character, boolean atCursorLocation) {
         TextColor foregroundColor = character.getForegroundColor();
         TextColor backgroundColor = character.getBackgroundColor();
-        boolean reverse = character.isReverse();
+        boolean reverse = character.isReversed();
 
         if(cursorIsVisible && atCursorLocation) {
             if(deviceConfiguration.getCursorStyle() == SwingTerminalDeviceConfiguration.CursorStyle.REVERSED &&
@@ -387,7 +389,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
 
     @Override
     public synchronized void putCharacter(final char c) {
-        virtualTerminal.putCharacter(new TerminalCharacter(c, foregroundColor, backgroundColor, activeSGRs));
+        virtualTerminal.putCharacter(new TextCharacter(c, foregroundColor, backgroundColor, activeSGRs));
     }
 
     @Override

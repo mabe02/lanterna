@@ -18,6 +18,7 @@
  */
 package com.googlecode.lanterna.screen;
 
+import com.googlecode.lanterna.common.TextGraphics;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TextColor;
 import com.googlecode.lanterna.TestTerminalFactory;
@@ -33,7 +34,7 @@ public class TerminalColorTest {
         Screen screen = new TestTerminalFactory(args).createScreen();
         screen.startScreen();
 
-        ScreenWriter writer = new ScreenWriter(screen);
+        TextGraphics writer = new ScreenTextGraphics(screen);
         writer.setForegroundColor(TextColor.ANSI.DEFAULT);
         writer.setBackgroundColor(TextColor.ANSI.DEFAULT);
         writer.setPosition(10, 1).putString("Hello World");
@@ -118,7 +119,7 @@ public class TerminalColorTest {
 
         try {
             Thread.sleep(5000);
-        } catch(InterruptedException e) {
+        } catch(InterruptedException ignored) {
         }
         screen.stopScreen();
     }

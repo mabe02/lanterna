@@ -18,8 +18,8 @@
  */
 package com.googlecode.lanterna.gui2;
 
+import com.googlecode.lanterna.common.TextGraphics;
 import com.googlecode.lanterna.screen.Screen;
-import com.googlecode.lanterna.screen.ScreenWriter;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
@@ -31,15 +31,15 @@ import com.googlecode.lanterna.terminal.TextColor;
  */
 public class ScreenBackendTextGUIGraphics implements TextGUIGraphics {
     
-    private final ScreenWriter screenWriter;
+    private final TextGraphics screenWriter;
     private final TerminalPosition topLeftPosition;
     private final TerminalSize drawableAreaSize;
 
     public ScreenBackendTextGUIGraphics(Screen screen) {
-        this(new  ScreenWriter(screen), new TerminalPosition(0, 0), screen.getTerminalSize());
+        this(screen.newTextGraphics(), new TerminalPosition(0, 0), screen.getTerminalSize());
     }
 
-    public ScreenBackendTextGUIGraphics(ScreenWriter screenWriter, TerminalPosition topLeftPosition, TerminalSize drawableAreaSize) {
+    public ScreenBackendTextGUIGraphics(TextGraphics screenWriter, TerminalPosition topLeftPosition, TerminalSize drawableAreaSize) {
         this.screenWriter = screenWriter;
         this.topLeftPosition = topLeftPosition;
         this.drawableAreaSize = drawableAreaSize;

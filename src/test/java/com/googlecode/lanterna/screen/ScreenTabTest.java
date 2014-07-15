@@ -18,6 +18,7 @@
  */
 package com.googlecode.lanterna.screen;
 
+import com.googlecode.lanterna.common.TextGraphics;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TextColor;
@@ -30,7 +31,7 @@ import java.io.IOException;
  */
 public class ScreenTabTest {
 
-    public static void main(String[] args) throws InterruptedException, IOException, IOException {
+    public static void main(String[] args) throws InterruptedException, IOException {
         new ScreenTabTest(args);
     }
 
@@ -50,7 +51,7 @@ public class ScreenTabTest {
     }
 
     private void putStrings(String topTitle) throws IOException {
-        ScreenWriter writer = new ScreenWriter(screen);
+        TextGraphics writer = new ScreenTextGraphics(screen);
         writer.setForegroundColor(TextColor.ANSI.DEFAULT);
         writer.setBackgroundColor(TextColor.ANSI.DEFAULT);
         writer.fillScreen(' ');

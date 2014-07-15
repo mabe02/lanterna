@@ -1,6 +1,6 @@
 package com.googlecode.lanterna.issue;
 
-import com.googlecode.lanterna.screen.ScreenWriter;
+import com.googlecode.lanterna.common.TextGraphics;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.TestTerminalFactory;
@@ -21,7 +21,7 @@ class IssueX {
     public static class LanternaTerminalWriter {
 
         private Screen screen;
-        private ScreenWriter screenWriter;
+        private TextGraphics screenWriter;
 
         private int current_y = 1;
         private int default_x = 3;
@@ -33,7 +33,7 @@ class IssueX {
             screen = new TestTerminalFactory(args).createScreen();
             screen.startScreen();
 
-            screenWriter = new ScreenWriter(screen);
+            screenWriter = screen.newTextGraphics();
         }
 
         public void close() throws IOException {

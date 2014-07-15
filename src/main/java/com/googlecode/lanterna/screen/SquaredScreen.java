@@ -18,7 +18,8 @@
  */
 package com.googlecode.lanterna.screen;
 
-import com.googlecode.lanterna.CJKUtils;
+import com.googlecode.lanterna.common.CJKUtils;
+import com.googlecode.lanterna.common.TextCharacter;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
@@ -82,7 +83,7 @@ public class SquaredScreen extends AbstractScreen {
     }
 
     @Override
-    public void setCharacter(int column, int row, ScreenCharacter screenCharacter) {
+    public void setCharacter(int column, int row, TextCharacter screenCharacter) {
         column *= 2;
         backend.setCharacter(column, row, screenCharacter);
         if(!CJKUtils.isCharCJK(screenCharacter.getCharacter())) {
@@ -91,12 +92,12 @@ public class SquaredScreen extends AbstractScreen {
     }
 
     @Override
-    public ScreenCharacter getFrontCharacter(TerminalPosition position) {
+    public TextCharacter getFrontCharacter(TerminalPosition position) {
         return backend.getFrontCharacter(position.withColumn(position.getColumn() * 2));
     }
 
     @Override
-    public ScreenCharacter getBackCharacter(TerminalPosition position) {
+    public TextCharacter getBackCharacter(TerminalPosition position) {
         return backend.getBackCharacter(position.withColumn(position.getColumn() * 2));
     }
 

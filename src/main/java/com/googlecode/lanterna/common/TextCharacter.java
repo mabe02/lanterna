@@ -16,7 +16,7 @@
  * 
  * Copyright (C) 2010-2014 Martin
  */
-package com.googlecode.lanterna.screen;
+package com.googlecode.lanterna.common;
 
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TextColor;
@@ -28,7 +28,7 @@ import java.util.EnumSet;
  * typically used when manipulating the screen's contentor when reading out from one of the buffers in the screen.
  * @author martin
  */
-public class ScreenCharacter {    
+public class TextCharacter {
     private static EnumSet<Terminal.SGR> toEnumSet(Terminal.SGR... modifiers) {
         EnumSet<Terminal.SGR> set = EnumSet.noneOf(Terminal.SGR.class);
         //Now assign the modifiers; we can't pass them in using EnumSet.copyOf(..) since that throws is the list is empty
@@ -36,7 +36,8 @@ public class ScreenCharacter {
         return set;
     }
 
-    public static final ScreenCharacter CJK_PADDING_CHARACTER = new ScreenCharacter('\0');
+    public static final TextCharacter CJK_PADDING_CHARACTER = new TextCharacter('\0');
+    public static final TextCharacter DEFAULT_CHARACTER = new TextCharacter(' ', TextColor.ANSI.DEFAULT, TextColor.ANSI.DEFAULT);
 
     private final char character;
     private final TextColor foregroundColor;
@@ -47,7 +48,7 @@ public class ScreenCharacter {
      * Creates a {@code ScreenCharacter} based on a supplied character, with default colors and no extra modifiers.
      * @param character Physical character to use
      */
-    public ScreenCharacter(char character) {
+    public TextCharacter(char character) {
         this(character, TextColor.ANSI.DEFAULT, TextColor.ANSI.DEFAULT);
     }
     
@@ -55,7 +56,7 @@ public class ScreenCharacter {
      * Copies another {@code ScreenCharacter}
      * @param character screenCharacter to copy from
      */
-    public ScreenCharacter(ScreenCharacter character) {
+    public TextCharacter(TextCharacter character) {
         this(character.getCharacter(),
                 character.getForegroundColor(), 
                 character.getBackgroundColor(),
@@ -70,7 +71,7 @@ public class ScreenCharacter {
      * @param styles Optional list of modifiers to apply when drawing the character
      */
     @SuppressWarnings("WeakerAccess")
-    public ScreenCharacter(
+    public TextCharacter(
             char character,
             TextColor foregroundColor,
             TextColor backgroundColor,
@@ -82,7 +83,7 @@ public class ScreenCharacter {
                 toEnumSet(styles));
     }
         
-    ScreenCharacter(
+    public TextCharacter(
             char character,
             TextColor foregroundColor,
             TextColor backgroundColor,
@@ -136,13 +137,18 @@ public class ScreenCharacter {
     public boolean isBordered() {
         return modifiers.contains(Terminal.SGR.BORDERED);
     }
-    
+
+    public boolean isCrossedOut() {
+        return modifiers.contains(Terminal.SGR.CROSSEDOUT);
+    }
+
+
     @SuppressWarnings("SameParameterValue")
-    public ScreenCharacter withCharacter(char character) {
+    public TextCharacter withCharacter(char character) {
         if(this.character == character) {
             return this;
         }
-        return new ScreenCharacter(character, foregroundColor, backgroundColor, modifiers);
+        return new TextCharacter(character, foregroundColor, backgroundColor, modifiers);
     }
 
     @SuppressWarnings("SimplifiableIfStatement")
@@ -154,7 +160,7 @@ public class ScreenCharacter {
         if(getClass() != obj.getClass()) {
             return false;
         }
-        final ScreenCharacter other = (ScreenCharacter) obj;
+        final TextCharacter other = (TextCharacter) obj;
         if(this.character != other.character) {
             return false;
         }

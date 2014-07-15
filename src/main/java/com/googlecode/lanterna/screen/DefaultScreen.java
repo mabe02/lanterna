@@ -18,7 +18,8 @@
  */
 package com.googlecode.lanterna.screen;
 
-import com.googlecode.lanterna.CJKUtils;
+import com.googlecode.lanterna.common.CJKUtils;
+import com.googlecode.lanterna.common.TextCharacter;
 import com.googlecode.lanterna.terminal.TextColor;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalPosition;
@@ -34,12 +35,12 @@ import java.util.*;
  */
 public class DefaultScreen extends TerminalScreen {
 
-    private static final ScreenCharacter DEFAULT_CHARACTER = new ScreenCharacter(' ');
+    private static final TextCharacter DEFAULT_CHARACTER = new TextCharacter(' ');
 
     private TerminalPosition cursorPosition;
     private ScreenBuffer backBuffer;
     private ScreenBuffer frontBuffer;
-    private ScreenCharacter defaultCharacter;
+    private TextCharacter defaultCharacter;
 
     private boolean isStarted;
     private boolean fullRedrawHint;
@@ -69,7 +70,7 @@ public class DefaultScreen extends TerminalScreen {
      * @throws java.io.IOException If there was an underlying I/O error when querying the size of the terminal
      */
     @SuppressWarnings({"SameParameterValue", "WeakerAccess"})
-    public DefaultScreen(Terminal terminal, ScreenCharacter defaultCharacter) throws IOException {
+    public DefaultScreen(Terminal terminal, TextCharacter defaultCharacter) throws IOException {
         super(terminal);
         this.frontBuffer = new ScreenBuffer(getTerminalSize(), defaultCharacter);
         this.backBuffer = new ScreenBuffer(getTerminalSize(), defaultCharacter);
@@ -186,7 +187,7 @@ public class DefaultScreen extends TerminalScreen {
     }
 
     @Override
-    public synchronized void setCharacter(int column, int row, ScreenCharacter screenCharacter) {
+    public synchronized void setCharacter(int column, int row, TextCharacter screenCharacter) {
         //It would be nice if we didn't have to care about tabs at this level, but we have no such luxury
         if(screenCharacter.getCharacter() == '\t') {
             //Swap out the tab for a space
@@ -213,16 +214,16 @@ public class DefaultScreen extends TerminalScreen {
     }
 
     @Override
-    public synchronized ScreenCharacter getFrontCharacter(TerminalPosition position) {
+    public synchronized TextCharacter getFrontCharacter(TerminalPosition position) {
         return getCharacterFromBuffer(frontBuffer, position);
     }
 
     @Override
-    public synchronized ScreenCharacter getBackCharacter(TerminalPosition position) {
+    public synchronized TextCharacter getBackCharacter(TerminalPosition position) {
         return getCharacterFromBuffer(backBuffer, position);
     }
     
-    private ScreenCharacter getCharacterFromBuffer(ScreenBuffer buffer, TerminalPosition position) {
+    private TextCharacter getCharacterFromBuffer(ScreenBuffer buffer, TerminalPosition position) {
         //If we are picking the padding of a CJK character, pick the actual CJK character instead of the padding
         if(position.getColumn() > 0 && CJKUtils.isCharCJK(buffer.getCharacterAt(position.withRelativeColumn(-1)).getCharacter())) {
             return buffer.getCharacterAt(position.withRelativeColumn(-1));
@@ -273,11 +274,11 @@ public class DefaultScreen extends TerminalScreen {
     }
 
     private void refreshByDelta() throws IOException {
-        Map<TerminalPosition, ScreenCharacter> updateMap = new TreeMap<TerminalPosition, ScreenCharacter>(new ScreenPointComparator());
+        Map<TerminalPosition, TextCharacter> updateMap = new TreeMap<TerminalPosition, TextCharacter>(new ScreenPointComparator());
         TerminalSize terminalSize = getTerminalSize();
         for(int y = 0; y < terminalSize.getRows(); y++) {
             for(int x = 0; x < terminalSize.getColumns(); x++) {
-                ScreenCharacter backBufferCharacter = backBuffer.getCharacterAt(x, y);
+                TextCharacter backBufferCharacter = backBuffer.getCharacterAt(x, y);
                 if(!backBufferCharacter.equals(frontBuffer.getCharacterAt(x, y))) {
                     updateMap.put(new TerminalPosition(x, y), backBufferCharacter);
                 }
@@ -293,7 +294,7 @@ public class DefaultScreen extends TerminalScreen {
         TerminalPosition currentPosition = updateMap.keySet().iterator().next();
         getTerminal().setCursorPosition(currentPosition.getColumn(), currentPosition.getRow());
 
-        ScreenCharacter firstScreenCharacterToUpdate = updateMap.values().iterator().next();
+        TextCharacter firstScreenCharacterToUpdate = updateMap.values().iterator().next();
         EnumSet<Terminal.SGR> currentSGR = firstScreenCharacterToUpdate.getModifiers();
         getTerminal().resetAllSGR();
         for(Terminal.SGR sgr: currentSGR) {
@@ -307,7 +308,7 @@ public class DefaultScreen extends TerminalScreen {
             if(!position.equals(currentPosition)) {
                 getTerminal().setCursorPosition(position.getColumn(), position.getRow());
             }
-            ScreenCharacter newCharacter = updateMap.get(position);
+            TextCharacter newCharacter = updateMap.get(position);
             if(!currentForegroundColor.equals(newCharacter.getForegroundColor())) {
                 getTerminal().setForegroundColor(newCharacter.getForegroundColor());
                 currentForegroundColor = newCharacter.getForegroundColor();
@@ -351,7 +352,7 @@ public class DefaultScreen extends TerminalScreen {
             getTerminal().setCursorPosition(0, y);
             int currentColumn = 0;
             for(int x = 0; x < getTerminalSize().getColumns(); x++) {
-                ScreenCharacter newCharacter = backBuffer.getCharacterAt(x, y);
+                TextCharacter newCharacter = backBuffer.getCharacterAt(x, y);
                 if(newCharacter.equals(DEFAULT_CHARACTER)) {
                     continue;
                 }

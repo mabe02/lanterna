@@ -18,6 +18,7 @@
  */
 package com.googlecode.lanterna.screen;
 
+import com.googlecode.lanterna.common.TextGraphics;
 import com.googlecode.lanterna.terminal.TextColor;
 import com.googlecode.lanterna.TestTerminalFactory;
 import java.io.IOException;
@@ -31,7 +32,7 @@ public class CJKScreenTest {
         Screen screen = new TestTerminalFactory(args).createScreen();
         screen.startScreen();
 
-        ScreenWriter writer = new ScreenWriter(screen);
+        TextGraphics writer = new ScreenTextGraphics(screen);
         writer.setForegroundColor(TextColor.ANSI.DEFAULT);
         writer.setBackgroundColor(TextColor.ANSI.DEFAULT);
         writer.putString(5, 5,  "Chinese (simplified):  斯瓦尔巴群岛是位于北极地区的群岛，为挪威最北界的国土范围。");
@@ -43,7 +44,7 @@ public class CJKScreenTest {
         try {
             Thread.sleep(5000);
         }
-        catch (InterruptedException e) {
+        catch (InterruptedException ignored) {
         }
         screen.stopScreen();
     }

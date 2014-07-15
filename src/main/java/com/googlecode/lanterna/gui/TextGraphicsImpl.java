@@ -20,7 +20,7 @@
 package com.googlecode.lanterna.gui;
 
 import com.googlecode.lanterna.screen.Screen;
-import com.googlecode.lanterna.screen.ScreenWriter;
+import com.googlecode.lanterna.common.TextGraphics;
 import com.googlecode.lanterna.screen.TabBehaviour;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalPosition;
@@ -35,7 +35,7 @@ import com.googlecode.lanterna.terminal.TextColor;
  * @author Martin
  */
 @Deprecated
-class TextGraphicsImpl implements TextGraphics
+class TextGraphicsImpl implements com.googlecode.lanterna.gui.TextGraphics
 {
     private final TerminalPosition topLeft;
     private final TerminalSize areaSize;
@@ -77,7 +77,7 @@ class TextGraphicsImpl implements TextGraphics
      * this
      */
     @Override
-    public TextGraphics subAreaGraphics(final TerminalPosition terminalPosition)
+    public com.googlecode.lanterna.gui.TextGraphics subAreaGraphics(final TerminalPosition terminalPosition)
     {
         TerminalSize newArea;
         newArea = areaSize.withColumns(areaSize.getColumns() - terminalPosition.getColumn());
@@ -97,7 +97,7 @@ class TextGraphicsImpl implements TextGraphics
      * this
      */
     @Override
-    public TextGraphics subAreaGraphics(TerminalPosition topLeft, TerminalSize subAreaSize)
+    public com.googlecode.lanterna.gui.TextGraphics subAreaGraphics(TerminalPosition topLeft, TerminalSize subAreaSize)
     {
         if(topLeft.getColumn() >= areaSize.getColumns() ||
                 topLeft.getRow() >= areaSize.getRows()) {
@@ -132,7 +132,7 @@ class TextGraphicsImpl implements TextGraphics
         if(string.length() + column > areaSize.getColumns())
             string = string.substring(0, areaSize.getColumns() - column);
 
-        ScreenWriter screenWriter = new ScreenWriter(screen);
+        TextGraphics screenWriter = screen.newTextGraphics();
         screenWriter.setPosition(new TerminalPosition(column + topLeft.getColumn(), row + topLeft.getRow()));
         screenWriter.setForegroundColor(foregroundColor);
         screenWriter.setBackgroundColor(backgroundColor);
@@ -278,7 +278,7 @@ class TextGraphicsImpl implements TextGraphics
         return "TextGraphics {topLeft: " + topLeft.toString() + ", size: " + areaSize.toString() + "}";
     }
     
-    private static class NullTextGraphics implements TextGraphics {
+    private static class NullTextGraphics implements com.googlecode.lanterna.gui.TextGraphics {
         @Override
         public void applyTheme(Theme.Category category) { }
 
@@ -322,12 +322,12 @@ class TextGraphicsImpl implements TextGraphics
         public void setForegroundColor(TextColor foregroundColor) { }
 
         @Override
-        public TextGraphics subAreaGraphics(TerminalPosition terminalPosition) { 
+        public com.googlecode.lanterna.gui.TextGraphics subAreaGraphics(TerminalPosition terminalPosition) {
             return new NullTextGraphics();
         }
 
         @Override
-        public TextGraphics subAreaGraphics(TerminalPosition topLeft, TerminalSize subAreaSize) {
+        public com.googlecode.lanterna.gui.TextGraphics subAreaGraphics(TerminalPosition topLeft, TerminalSize subAreaSize) {
             return new NullTextGraphics();
         }
 

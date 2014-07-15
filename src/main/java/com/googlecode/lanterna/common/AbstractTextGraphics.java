@@ -16,125 +16,123 @@
  *
  * Copyright (C) 2010-2014 Martin
  */
-package com.googlecode.lanterna.screen;
+package com.googlecode.lanterna.common;
 
-import com.googlecode.lanterna.CJKUtils;
+import com.googlecode.lanterna.screen.TabBehaviour;
 import com.googlecode.lanterna.terminal.Terminal;
-import java.util.Arrays;
-
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.terminal.TextColor;
+
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.EnumSet;
 
 /**
- * This is a helper class to assist you in composing your output on a {@code Screen}. It provides methods for drawing
- * full strings as well as keeping a color and modifier state so that you don't have to specify them for every operation.
- * It also has a position state which moves as you as putting characters, so you can think of this as a pen.
- * @author Martin
+ * Created by martin on 15/07/14.
  */
-@SuppressWarnings({"WeakerAccess", "UnusedReturnValue"})
-public class ScreenWriter {
+public abstract class AbstractTextGraphics implements TextGraphics {
 
-    private final Screen screen;
-    private TerminalPosition currentPosition;
-    private TextColor foregroundColor;
-    private TextColor backgroundColor;
-    private TabBehaviour tabBehaviour;
-    private final EnumSet<Terminal.SGR> activeModifiers;
-    
-    public ScreenWriter(Screen screen) {
-        this.screen = screen;
+    protected TerminalPosition currentPosition;
+    protected TextColor foregroundColor;
+    protected TextColor backgroundColor;
+    protected TabBehaviour tabBehaviour;
+    protected final EnumSet<Terminal.SGR> activeModifiers;
+
+    protected AbstractTextGraphics() {
+        this.activeModifiers = EnumSet.noneOf(Terminal.SGR.class);
+        this.tabBehaviour = TabBehaviour.ALIGN_TO_COLUMN_4;
         this.foregroundColor = TextColor.ANSI.DEFAULT;
         this.backgroundColor = TextColor.ANSI.DEFAULT;
         this.currentPosition = new TerminalPosition(0, 0);
-        this.tabBehaviour = screen.getTabBehaviour();
-        this.activeModifiers = EnumSet.noneOf(Terminal.SGR.class);
     }
-    
-    public ScreenWriter setPosition(int column, int row) {
+
+    @Override
+    public TextGraphics setPosition(int column, int row) {
         return setPosition(new TerminalPosition(column, row));
     }
 
-    public ScreenWriter setPosition(TerminalPosition newPosition) {
+    @Override
+    public TextGraphics setPosition(TerminalPosition newPosition) {
         this.currentPosition = newPosition;
         return this;
     }
 
+    @Override
     public TerminalPosition getPosition() {
         return currentPosition;
     }
 
+    @Override
     public TextColor getBackgroundColor() {
         return backgroundColor;
     }
 
-    public ScreenWriter setBackgroundColor(final TextColor backgroundColor) {
+    @Override
+    public TextGraphics setBackgroundColor(final TextColor backgroundColor) {
         this.backgroundColor = backgroundColor;
         return this;
     }
 
+    @Override
     public TextColor getForegroundColor() {
         return foregroundColor;
     }
 
-    public ScreenWriter setForegroundColor(final TextColor foregroundColor) {
+    @Override
+    public TextGraphics setForegroundColor(final TextColor foregroundColor) {
         this.foregroundColor = foregroundColor;
         return this;
     }
 
-    public ScreenWriter enableModifiers(Terminal.SGR... modifiers) {
+    @Override
+    public TextGraphics enableModifiers(Terminal.SGR... modifiers) {
         enableModifiers(Arrays.asList(modifiers));
         return this;
     }
-    
-    private void enableModifiers(Collection<Terminal.SGR> modifiers) { 
+
+    private void enableModifiers(Collection<Terminal.SGR> modifiers) {
         this.activeModifiers.addAll(modifiers);
     }
 
-    public ScreenWriter disableModifiers(Terminal.SGR... modifiers) {
+    @Override
+    public TextGraphics disableModifiers(Terminal.SGR... modifiers) {
         disableModifiers(Arrays.asList(modifiers));
         return this;
     }
-    
-    private void disableModifiers(Collection<Terminal.SGR> modifiers) { 
+
+    private void disableModifiers(Collection<Terminal.SGR> modifiers) {
         this.activeModifiers.removeAll(modifiers);
     }
 
-    public ScreenWriter clearModifiers() {
+    @Override
+    public TextGraphics clearModifiers() {
         this.activeModifiers.clear();
         return this;
     }
 
+    @Override
     public TabBehaviour getTabBehaviour() {
         return tabBehaviour;
     }
 
+    @Override
     public void setTabBehaviour(TabBehaviour tabBehaviour) {
         if(tabBehaviour != null) {
             this.tabBehaviour = tabBehaviour;
         }
     }
 
-    /**
-     * Fills the entire screen with a single character
-     * @param c
-     */
+    @Override
     public void fillScreen(char c) {
         TerminalPosition savedPosition = getPosition();
         setPosition(TerminalPosition.TOP_LEFT_CORNER);
-        fillRectangle(screen.getTerminalSize(), c);
+        fillRectangle(getWritableArea(), c);
         setPosition(savedPosition);
     }
 
-    /**
-     * Draws a line from the screen writer's current position to a specified position, using a supplied character. After
-     * the operation, this {@code ScreenWriter}'s position will be at the end-point of the line.
-     * @param toPoint Where to draw the line
-     * @param character Character to use for the line
-     */
+    @Override
     public void drawLine(TerminalPosition toPoint, char character) {
         drawLine(currentPosition, toPoint, character);
         currentPosition = toPoint;
@@ -169,15 +167,15 @@ public class ScreenWriter {
             }
         }
     }
-    
+
     private void drawLine0(TerminalPosition start, int deltaX, int deltaY, boolean leftToRight, char character) {
-        ScreenCharacter screenCharacter = newScreenCharacter(character);
+        TextCharacter screenCharacter = newScreenCharacter(character);
         int x = start.getColumn();
         int y = start.getRow();
         int deltaYx2 = deltaY * 2;
         int deltaYx2MinusDeltaXx2 = deltaYx2 - (deltaX * 2);
         int errorTerm = deltaYx2 - deltaX;
-        screen.setCharacter(start, screenCharacter);
+        setCharacter(start, screenCharacter);
         while(deltaX-- > 0) {
             if(errorTerm >= 0) {
                 y++;
@@ -187,18 +185,18 @@ public class ScreenWriter {
                 errorTerm += deltaYx2;
             }
             x += leftToRight ? 1 : -1;
-            screen.setCharacter(x, y, screenCharacter);
+            setCharacter(x, y, screenCharacter);
         }
     }
-    
+
     private void drawLine1(TerminalPosition start, int deltaX, int deltaY, boolean leftToRight, char character) {
-        ScreenCharacter screenCharacter = newScreenCharacter(character);
+        TextCharacter screenCharacter = newScreenCharacter(character);
         int x = start.getColumn();
         int y = start.getRow();
         int deltaXx2 = deltaX * 2;
         int deltaXx2MinusDeltaYx2 = deltaXx2 - (deltaY * 2);
         int errorTerm = deltaXx2 - deltaY;
-        screen.setCharacter(start, screenCharacter);
+        setCharacter(start, screenCharacter);
         while(deltaY-- > 0) {
             if(errorTerm >= 0) {
                 x += leftToRight ? 1 : -1;
@@ -208,18 +206,11 @@ public class ScreenWriter {
                 errorTerm += deltaXx2;
             }
             y++;
-            screen.setCharacter(x, y, screenCharacter);
+            setCharacter(x, y, screenCharacter);
         }
     }
-    
-    /**
-     * Draws the outline of a triangle on the screen, using a supplied character. The triangle will begin at this
-     * writer's current position, go through both supplied points and then back again to the original position. The
-     * position of this {@code ScreenWriter} after this operation will be the same as where it was before.
-     * @param p1 First point on the screen to draw the triangle with, starting from the current position
-     * @param p2 Second point on the screen to draw the triangle with, going from p1 and going back to the original start
-     * @param character What character to use when drawing the lines of the triangle
-     */
+
+    @Override
     public void drawTriangle(TerminalPosition p1, TerminalPosition p2, char character) {
         TerminalPosition originalStart = currentPosition;
         drawLine(p1, character);
@@ -227,14 +218,7 @@ public class ScreenWriter {
         drawLine(originalStart, character);
     }
 
-    /**
-     * Draws a filled triangle on the screen, using a supplied character. The triangle will begin at this
-     * writer's current position, go through both supplied points and then back again to the original position. The
-     * position of this {@code ScreenWriter} after this operation will be the same as where it was before.
-     * @param p1 First point on the screen to draw the triangle with, starting from the current position
-     * @param p2 Second point on the screen to draw the triangle with, going from p1 and going back to the original start
-     * @param character What character to use when drawing the lines of the triangle
-     */
+    @Override
     public void fillTriangle(TerminalPosition p1, TerminalPosition p2, char character) {
         //I've used the algorithm described here:
         //http://www-users.mat.uni.torun.pl/~wrona/3d_tutor/tri_fillers.html
@@ -290,17 +274,7 @@ public class ScreenWriter {
         }
     }
 
-    /**
-     * Draws the outline of a rectangle in the {@code Screen} with a particular character (and the currently active colors and
-     * modifiers). The top-left corner will be at the current position of this {@code ScreenWriter} (inclusive) and it
-     * will extend to position + size (exclusive). The current position of this {@code ScreenWriter} after this
-     * operation will be the same as where it started.
-     * <p/>
-     * For example, calling drawRectangle with size being the size of the terminal when the writer's position is in the 
-     * top-left (0x0) corner will draw a border around the terminal.
-     * @param size Size (in columns and rows) of the area to draw
-     * @param character What character to use when drawing the outline of the rectangle
-     */
+    @Override
     public void drawRectangle(TerminalSize size, char character) {
         TerminalPosition originalStart = currentPosition;
         drawLine(currentPosition.withRelativeColumn(size.getColumns() - 1), character);
@@ -309,19 +283,13 @@ public class ScreenWriter {
         drawLine(originalStart, character);
     }
 
-    /**
-     * Takes a rectangle on the screen and fills it with a particular character (and the currently active colors and
-     * modifiers). The top-left corner will be at the current position of this {@code ScreenWriter} (inclusive) and it
-     * will extend to position + size (exclusive).
-     * @param size Size (in columns and rows) of the area to draw
-     * @param character What character to use when filling the rectangle
-     */
+    @Override
     public void fillRectangle(TerminalSize size, char character) {
         for(int y = 0; y < size.getRows(); y++) {
             for(int x = 0; x < size.getColumns(); x++) {
-                screen.setCharacter(
+                setCharacter(
                     currentPosition.withRelativeColumn(x).withRelativeRow(y),
-                    new ScreenCharacter(
+                    new TextCharacter(
                             character,
                             foregroundColor,
                             backgroundColor,
@@ -330,15 +298,8 @@ public class ScreenWriter {
         }
     }
 
-    /**
-     * Puts a string on the screen at the current position with the current colors and modifiers. If the string
-     * contains newlines (\r and/or \n), the method will stop at the character before that; you have to manage
-     * multi-line strings yourself!
-     *
-     * @param string Text to put on the screen
-     * @return Itself
-     */
-    public ScreenWriter putString(String string) {
+    @Override
+    public TextGraphics putString(String string) {
         if(string.contains("\n")) {
             string = string.substring(0, string.indexOf("\n"));
         }
@@ -348,14 +309,14 @@ public class ScreenWriter {
         string = tabBehaviour.replaceTabs(string, currentPosition.getColumn());
         for(int i = 0; i < string.length(); i++) {
             char character = string.charAt(i);
-            screen.setCharacter(
+            setCharacter(
                     currentPosition.withRelativeColumn(i),
-                    new ScreenCharacter(
+                    new TextCharacter(
                             character,
                             foregroundColor,
                             backgroundColor,
                             activeModifiers.clone()));
-            
+
             //CJK characters are twice the normal characters in width
             if(CJKUtils.isCharCJK(character)) {
                 i++;
@@ -364,83 +325,35 @@ public class ScreenWriter {
         currentPosition = currentPosition.withRelativeColumn(string.length());
         return this;
     }
-    
-    /**
-     * Shortcut to calling:
-     * <pre>
-     *  putString(new TerminalPosition(column, row), string);
-     * </pre>
-     * @param column What column to put the string at
-     * @param row What row to put the string at
-     * @param string String to put on the screen
-     * @return Itself
-     */
-    public ScreenWriter putString(int column, int row, String string) {
+
+    @Override
+    public TextGraphics putString(int column, int row, String string) {
         putString(new TerminalPosition(column, row), string);
         return this;
     }
-    
-    /**
-     * Shortcut to calling:
-     * <pre>
-     *  setPosition(position);
-     *  putString(string);
-     * </pre>
-     * @param position Position to put the string at
-     * @param string String to put on the screen
-     * @return Itself
-     */
-    public ScreenWriter putString(TerminalPosition position, String string) {
+
+    @Override
+    public TextGraphics putString(TerminalPosition position, String string) {
         setPosition(position);
         putString(string);
         return this;
     }
-    
-    /**
-     * Shortcut to calling:
-     * <pre>
-     *  putString(new TerminalPosition(column, row), string, modifiers, optionalExtraModifiers);
-     * </pre>
-     * @param column What column to put the string at
-     * @param row What row to put the string at
-     * @param string String to put on the screen
-     * @param extraModifier Modifier to apply to the string
-     * @param optionalExtraModifiers Optional extra modifiers to apply to the string
-     * @return Itself
-     */
-    public ScreenWriter putString(int column, int row, String string, Terminal.SGR extraModifier, Terminal.SGR... optionalExtraModifiers) {
+
+    @Override
+    public TextGraphics putString(int column, int row, String string, Terminal.SGR extraModifier, Terminal.SGR... optionalExtraModifiers) {
         putString(new TerminalPosition(column, row), string, extraModifier, optionalExtraModifiers);
         return this;
     }
-    
-    /**
-     * Shortcut to calling:
-     * <pre>
-     *  setPosition(position);
-     *  putString(string, modifiers, optionalExtraModifiers);
-     * </pre>
-     * @param position Position to put the string at
-     * @param string String to put on the screen
-     * @param extraModifier Modifier to apply to the string
-     * @param optionalExtraModifiers Optional extra modifiers to apply to the string
-     * @return Itself
-     */
-    public ScreenWriter putString(TerminalPosition position, String string, Terminal.SGR extraModifier, Terminal.SGR... optionalExtraModifiers) {
+
+    @Override
+    public TextGraphics putString(TerminalPosition position, String string, Terminal.SGR extraModifier, Terminal.SGR... optionalExtraModifiers) {
         setPosition(position);
         putString(string, extraModifier, optionalExtraModifiers);
         return this;
     }
-    
-    /**
-     * Prints a string from the current writer position and optionally enables a few extra SGR modifiers. The extra SGR
-     * modifiers, those that wasn't already active on the writer when this method is called, will only be applied to 
-     * this operation and will be disabled again when the call is done.
-     * @param string String to put on the screen
-     * @param extraModifier Extra modifier to apply to the string
-     * @param optionalExtraModifiers Optional extra modifiers to apply to the string
-     * @return Itself
-     */
-    public ScreenWriter putString(String string, Terminal.SGR extraModifier, Terminal.SGR... optionalExtraModifiers) {
+
+    @Override
+    public TextGraphics putString(String string, Terminal.SGR extraModifier, Terminal.SGR... optionalExtraModifiers) {
         clearModifiers();
         EnumSet<Terminal.SGR> extraModifiers = EnumSet.of(extraModifier, optionalExtraModifiers);
         extraModifiers.removeAll(activeModifiers);
@@ -450,7 +363,24 @@ public class ScreenWriter {
         return this;
     }
 
-    private ScreenCharacter newScreenCharacter(char character) {
-        return new ScreenCharacter(character, foregroundColor, backgroundColor, activeModifiers);
+    @Override
+    public TextGraphics getSubTextGraphics(TerminalPosition topLeftCorner, TerminalSize size) throws IllegalArgumentException {
+        TerminalSize writableArea = getWritableArea();
+        if(topLeftCorner.getColumn() + size.getColumns() > writableArea.getColumns() ||
+                topLeftCorner.getRow() + size.getRows() > writableArea.getRows()) {
+            throw new IllegalArgumentException("Cannot create a sub-text graphics with topLeft = " + topLeftCorner +
+                    " and size = " + size + " when writable area of the current text graphics is " + writableArea);
+        }
+        return new SubTextGraphics(this, topLeftCorner, size);
+    }
+
+    protected void setCharacter(TerminalPosition position, TextCharacter textCharacter) {
+        setCharacter(position.getColumn(), position.getRow(), textCharacter);
+    }
+
+    protected abstract void setCharacter(int columnIndex, int rowIndex, TextCharacter textCharacter);
+
+    private TextCharacter newScreenCharacter(char character) {
+        return new TextCharacter(character, foregroundColor, backgroundColor, activeModifiers);
     }
 }

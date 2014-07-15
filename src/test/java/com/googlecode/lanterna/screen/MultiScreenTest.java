@@ -19,6 +19,7 @@
 package com.googlecode.lanterna.screen;
 
 import com.googlecode.lanterna.TestTerminalFactory;
+import com.googlecode.lanterna.common.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.Terminal;
@@ -40,14 +41,14 @@ public class MultiScreenTest {
             ((SwingTerminalFrame)terminal).setVisible(true);
         }
         
-        ScreenWriter screenWriter = new ScreenWriter(redScreen);
+        TextGraphics screenWriter = new ScreenTextGraphics(redScreen);
         screenWriter.setForegroundColor(TextColor.ANSI.BLACK);
         screenWriter.setBackgroundColor(TextColor.ANSI.RED);
         screenWriter.fillScreen(' ');
         screenWriter.putString(2, 2, "Press space to switch screen or ESC to exit");
         
         
-        screenWriter = new ScreenWriter(greenScreen);
+        screenWriter = new ScreenTextGraphics(greenScreen);
         screenWriter.setBackgroundColor(TextColor.ANSI.GREEN);
         screenWriter.fillScreen(' ');
         screenWriter.putString(4, 4, "Press space to switch screen or ESC to exit");

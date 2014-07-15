@@ -18,6 +18,8 @@
  */
 package com.googlecode.lanterna.terminal.swing;
 
+import com.googlecode.lanterna.common.TextCharacter;
+
 import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
@@ -78,7 +80,7 @@ public class SwingTerminalFontConfiguration {
         }
     }
 
-    Font getFontForCharacter(TerminalCharacter character) {
+    Font getFontForCharacter(TextCharacter character) {
         Font normalFont = getFontForCharacter(character.getCharacter());
         if(character.isBold()) {
             normalFont = normalFont.deriveFont(Font.BOLD);

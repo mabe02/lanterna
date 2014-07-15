@@ -18,7 +18,8 @@
  */
 package com.googlecode.lanterna.terminal.swing;
 
-import com.googlecode.lanterna.CJKUtils;
+import com.googlecode.lanterna.common.CJKUtils;
+import com.googlecode.lanterna.common.TextCharacter;
 import com.googlecode.lanterna.screen.TabBehaviour;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
@@ -92,7 +93,7 @@ class VirtualTerminal {
                         Math.max(cursorPosition.getRow(), 0));
     }
 
-    public void putCharacter(TerminalCharacter terminalCharacter) {
+    public void putCharacter(TextCharacter terminalCharacter) {
         if(terminalCharacter.getCharacter() == '\n') {
             moveCursorToNextLine();
         }
@@ -140,7 +141,7 @@ class VirtualTerminal {
         setCursorPosition(TerminalPosition.TOP_LEFT_CORNER);
     }
 
-    Iterable<List<TerminalCharacter>> getLines() {
+    Iterable<List<TextCharacter>> getLines() {
         int scrollingOffset = terminalScrollController.getScrollingOffset();
         int visibleRows = size.getRows();
         //Make sure scrolling isn't too far off (can be sometimes when the terminal is being resized and the scrollbar

@@ -17,23 +17,31 @@
  * Copyright (C) 2010-2014 Martin
  */
 package com.googlecode.lanterna.screen;
-
 import com.googlecode.lanterna.common.TextCharacter;
-import com.googlecode.lanterna.common.TextGraphics;
-import com.googlecode.lanterna.terminal.TerminalPosition;
+import com.googlecode.lanterna.terminal.TerminalSize;
 
 /**
- * Simple abstract implemenation of Screen that sets up a few helper methods
- * @author martin
+ * This is a helper class to assist you in composing your output on a {@code Screen}. It provides methods for drawing
+ * full strings as well as keeping a color and modifier state so that you don't have to specify them for every operation.
+ * It also has a position state which moves as you as putting characters, so you can think of this as a pen.
+ * @author Martin
  */
-public abstract class AbstractScreen implements Screen {
-    @Override
-    public void setCharacter(TerminalPosition position, TextCharacter screenCharacter) {
-        setCharacter(position.getColumn(), position.getRow(), screenCharacter);
+class ScreenTextGraphics extends com.googlecode.lanterna.common.AbstractTextGraphics {
+    private final Screen screen;
+
+    ScreenTextGraphics(Screen screen) {
+        super();
+        this.screen = screen;
     }
 
     @Override
-    public TextGraphics newTextGraphics() {
-        return new ScreenTextGraphics(this);
+    protected void setCharacter(int columnIndex, int rowIndex, TextCharacter textCharacter) {
+        //Let the screen do culling
+        screen.setCharacter(columnIndex, rowIndex, textCharacter);
+    }
+
+    @Override
+    public TerminalSize getWritableArea() {
+        return screen.getTerminalSize();
     }
 }

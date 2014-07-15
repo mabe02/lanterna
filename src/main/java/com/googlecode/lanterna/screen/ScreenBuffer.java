@@ -18,6 +18,7 @@
  */
 package com.googlecode.lanterna.screen;
 
+import com.googlecode.lanterna.common.TextCharacter;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 
@@ -26,18 +27,18 @@ import com.googlecode.lanterna.terminal.TerminalSize;
  * @author martin
  */
 class ScreenBuffer {
-    private final ScreenCharacter[][] buffer;
+    private final TextCharacter[][] buffer;
     
-    public ScreenBuffer(TerminalSize size, ScreenCharacter filler) {
-        this(size, new ScreenCharacter[0][], filler);
+    public ScreenBuffer(TerminalSize size, TextCharacter filler) {
+        this(size, new TextCharacter[0][], filler);
     }    
     
-    private ScreenBuffer(TerminalSize size, ScreenCharacter[][] toCopy, ScreenCharacter filler) {
+    private ScreenBuffer(TerminalSize size, TextCharacter[][] toCopy, TextCharacter filler) {
         int rows = size.getRows();
         int columns = size.getColumns();
-        buffer = new ScreenCharacter[rows][];
+        buffer = new TextCharacter[rows][];
         for(int y = 0; y < rows; y++) {
-            buffer[y] = new ScreenCharacter[columns];
+            buffer[y] = new TextCharacter[columns];
             for(int x = 0; x < columns; x++) {
                 if(y < toCopy.length && x < toCopy[y].length) {
                     buffer[y][x] = toCopy[y][x];
@@ -49,15 +50,15 @@ class ScreenBuffer {
         }
     }
     
-    void setAll(ScreenCharacter character) {
-        for(ScreenCharacter[] line : buffer) {
+    void setAll(TextCharacter character) {
+        for(TextCharacter[] line : buffer) {
             for(int x = 0; x < line.length; x++) {
                 line[x] = character;
             }
         }
     }
 
-    ScreenBuffer resize(TerminalSize pendingResize, ScreenCharacter filler) {
+    ScreenBuffer resize(TerminalSize pendingResize, TextCharacter filler) {
         if(pendingResize.getRows() == buffer.length &&
                 (buffer.length == 0 || pendingResize.getColumns() == buffer[0].length)) {
             return this;
@@ -66,7 +67,7 @@ class ScreenBuffer {
     }
 
     
-    void setCharacterAt(int column, int row, ScreenCharacter screenCharacter) {
+    void setCharacterAt(int column, int row, TextCharacter screenCharacter) {
         if(column < 0 || row < 0 || row >= buffer.length || column >= buffer[0].length) {
             return;
         }
@@ -74,15 +75,15 @@ class ScreenBuffer {
         buffer[row][column] = screenCharacter;
     }
     
-    void setCharacterAt(TerminalPosition position, ScreenCharacter screenCharacter) {
+    void setCharacterAt(TerminalPosition position, TextCharacter screenCharacter) {
         setCharacterAt(position.getColumn(), position.getRow(), screenCharacter);
     }
 
-    ScreenCharacter getCharacterAt(TerminalPosition position) {
+    TextCharacter getCharacterAt(TerminalPosition position) {
         return getCharacterAt(position.getColumn(), position.getRow());
     }
     
-    ScreenCharacter getCharacterAt(int x, int y) {
+    TextCharacter getCharacterAt(int x, int y) {
         if(x < 0 || y < 0 || y >= buffer.length || x >= buffer[0].length) {
             return null;
         }

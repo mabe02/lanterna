@@ -18,6 +18,8 @@
  */
 package com.googlecode.lanterna.screen;
 
+import com.googlecode.lanterna.common.TextCharacter;
+import com.googlecode.lanterna.common.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
@@ -30,7 +32,7 @@ import java.io.IOException;
  * screen tracks what's visible through a front-buffer, but this is completely managed internally and cannot be expected
  * to know what the terminal looks like if it's being modified externally.
  * </p>
- * If you want to do more complicated drawing operations, please see the class {@code ScreenWriter} which has many
+ * If you want to do more complicated drawing operations, please see the class {@code DefaultScreenWriter} which has many
  * utility methods that works on Screens.
  *
  * @author Martin
@@ -113,14 +115,20 @@ public interface Screen {
      * @param row Row of the character to modify (y coordinate)
      * @param screenCharacter New data to put at the specified position
      */
-    void setCharacter(int column, int row, ScreenCharacter screenCharacter);
+    void setCharacter(int column, int row, TextCharacter screenCharacter);
     
     /**
      * Sets a character in the back-buffer to a specified value with specified colors and modifiers.
      * @param position Which position in the terminal to modify
      * @param screenCharacter New data to put at the specified position
      */
-    void setCharacter(TerminalPosition position, ScreenCharacter screenCharacter);
+    void setCharacter(TerminalPosition position, TextCharacter screenCharacter);
+
+    /**
+     * Creates a new TextGraphics objects that is targeting this Screen for writing to.
+     * @return New TextGraphic object targeting this Screen
+     */
+    TextGraphics newTextGraphics();
     
     /**
      * Reads a character and its associated meta-data from the front-buffer and returns it encapsulated as a 
@@ -128,7 +136,7 @@ public interface Screen {
      * @param position What position to read the character from
      * @return A {@code ScreenCharacter} representation of the character in the front-buffer at the specified location
      */
-    ScreenCharacter getFrontCharacter(TerminalPosition position);
+    TextCharacter getFrontCharacter(TerminalPosition position);
     
     /**
      * Reads a character and its associated meta-data from the back-buffer and returns it encapsulated as a 
@@ -136,7 +144,7 @@ public interface Screen {
      * @param position What position to read the character from
      * @return A {@code ScreenCharacter} representation of the character in the back-buffer at the specified location
      */
-    ScreenCharacter getBackCharacter(TerminalPosition position);
+    TextCharacter getBackCharacter(TerminalPosition position);
 
     /**
      * Reads the next {@code KeyStroke} from the input queue, or returns null if there is nothing on the queue. This

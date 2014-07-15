@@ -18,7 +18,8 @@
  */
 package com.googlecode.lanterna.terminal.swing;
 
-import com.googlecode.lanterna.CJKUtils;
+import com.googlecode.lanterna.common.CJKUtils;
+import com.googlecode.lanterna.common.TextCharacter;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import java.util.ArrayList;
@@ -33,13 +34,13 @@ import java.util.ListIterator;
  */
 class TextBuffer {
     private final int backlog;
-    private final LinkedList<List<TerminalCharacter>> lineBuffer;
-    private final TerminalCharacter fillCharacter;
+    private final LinkedList<List<TextCharacter>> lineBuffer;
+    private final TextCharacter fillCharacter;
 
     TextBuffer(int backlog) {
         this.backlog = backlog;
-        this.lineBuffer = new LinkedList<List<TerminalCharacter>>();
-        this.fillCharacter = TerminalCharacter.DEFAULT_CHARACTER;
+        this.lineBuffer = new LinkedList<List<TextCharacter>>();
+        this.fillCharacter = TextCharacter.DEFAULT_CHARACTER;
 
         //Initialize the content to one line
         newLine();
@@ -51,23 +52,23 @@ class TextBuffer {
     }
 
     void newLine() {
-        ArrayList<TerminalCharacter> line = new ArrayList<TerminalCharacter>(200);
+        ArrayList<TextCharacter> line = new ArrayList<TextCharacter>(200);
         line.add(fillCharacter);
         lineBuffer.addFirst(line);
     }
 
 
-    Iterable<List<TerminalCharacter>> getVisibleLines(final int visibleRows, final int scrollOffset) {
+    Iterable<List<TextCharacter>> getVisibleLines(final int visibleRows, final int scrollOffset) {
         final int length = Math.min(visibleRows, lineBuffer.size());
-        return new Iterable<List<TerminalCharacter>>() {
+        return new Iterable<List<TextCharacter>>() {
             @Override
-            public Iterator<List<TerminalCharacter>> iterator() {
-                return new Iterator<List<TerminalCharacter>>() {
-                    private final ListIterator<List<TerminalCharacter>> listIter = lineBuffer.subList(scrollOffset, scrollOffset + length).listIterator(length);
+            public Iterator<List<TextCharacter>> iterator() {
+                return new Iterator<List<TextCharacter>>() {
+                    private final ListIterator<List<TextCharacter>> listIter = lineBuffer.subList(scrollOffset, scrollOffset + length).listIterator(length);
                     @Override
                     public boolean hasNext() { return listIter.hasPrevious(); }
                     @Override
-                    public List<TerminalCharacter> next() { return listIter.previous(); }
+                    public List<TextCharacter> next() { return listIter.previous(); }
                     @Override
                     public void remove() { listIter.remove(); }
                 };
@@ -90,8 +91,8 @@ class TextBuffer {
     }
 
 
-    void setCharacter(TerminalSize terminalSize, TerminalPosition currentPosition, TerminalCharacter terminalCharacter) {
-        List<TerminalCharacter> line = getLine(terminalSize, currentPosition);
+    void setCharacter(TerminalSize terminalSize, TerminalPosition currentPosition, TextCharacter terminalCharacter) {
+        List<TextCharacter> line = getLine(terminalSize, currentPosition);
         line.set(currentPosition.getColumn(), terminalCharacter);
 
         //Pad CJK character with a trailing space
@@ -105,12 +106,12 @@ class TextBuffer {
         }
     }
 
-    private List<TerminalCharacter> getLine(TerminalSize terminalSize, TerminalPosition position) {
+    private List<TextCharacter> getLine(TerminalSize terminalSize, TerminalPosition position) {
         while(position.getRow() >= lineBuffer.size()) {
             newLine();
         }
         int lineIndex = Math.min(terminalSize.getRows(), lineBuffer.size()) - 1 - position.getRow();
-        List<TerminalCharacter> line = lineBuffer.get(lineIndex);
+        List<TextCharacter> line = lineBuffer.get(lineIndex);
         while(line.size() <= position.getColumn()) {
             line.add(fillCharacter);
         }

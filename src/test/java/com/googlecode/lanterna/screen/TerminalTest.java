@@ -19,6 +19,8 @@
 package com.googlecode.lanterna.screen;
 
 import com.googlecode.lanterna.TestTerminalFactory;
+import com.googlecode.lanterna.common.TextGraphics;
+
 import java.io.IOException;
 
 /**
@@ -29,96 +31,96 @@ public class TerminalTest {
 
     public static void main(String[] args) throws IOException {
         Screen screen = new TestTerminalFactory(args).createScreen();
-        ScreenWriter writer = new ScreenWriter(screen);
+        TextGraphics writer = new ScreenTextGraphics(screen);
         screen.startScreen();
         try {
             Thread.sleep(500);
         }
-        catch(InterruptedException e) {
+        catch(InterruptedException ignored) {
         }
         writer.setPosition(10, 10).putString("Hello world!");
         screen.refresh();
         try {
             Thread.sleep(500);
         }
-        catch(InterruptedException e) {
+        catch(InterruptedException ignored) {
         }
         writer.setPosition(10, 10).putString(" ello world!");
         screen.refresh();
         try {
             Thread.sleep(500);
         }
-        catch(InterruptedException e) {
+        catch(InterruptedException ignored) {
         }
         writer.setPosition(10, 10).putString("  llo world!");
         screen.refresh();
         try {
             Thread.sleep(500);
         }
-        catch(InterruptedException e) {
+        catch(InterruptedException ignored) {
         }
         writer.setPosition(10, 10).putString("   lo world!");
         screen.refresh();
         try {
             Thread.sleep(500);
         }
-        catch(InterruptedException e) {
+        catch(InterruptedException ignored) {
         }
         writer.setPosition(10, 10).putString("    o world!");
         screen.refresh();
         try {
             Thread.sleep(500);
         }
-        catch(InterruptedException e) {
+        catch(InterruptedException ignored) {
         }
         writer.setPosition(10, 10).putString("      world!");
         screen.refresh();
         try {
             Thread.sleep(500);
         }
-        catch(InterruptedException e) {
+        catch(InterruptedException ignored) {
         }
         writer.setPosition(10, 10).putString("       orld!");
         screen.refresh();
         try {
             Thread.sleep(500);
         }
-        catch(InterruptedException e) {
+        catch(InterruptedException ignored) {
         }
         writer.setPosition(10, 10).putString("        rld!");
         screen.refresh();
         try {
             Thread.sleep(500);
         }
-        catch(InterruptedException e) {
+        catch(InterruptedException ignored) {
         }
         writer.setPosition(10, 10).putString("         ld!");
         screen.refresh();
         try {
             Thread.sleep(500);
         }
-        catch(InterruptedException e) {
+        catch(InterruptedException ignored) {
         }
         writer.setPosition(10, 10).putString("          d!");
         screen.refresh();
         try {
             Thread.sleep(500);
         }
-        catch(InterruptedException e) {
+        catch(InterruptedException ignored) {
         }
         writer.setPosition(10, 10).putString("           !");
         screen.refresh();
         try {
             Thread.sleep(500);
         }
-        catch(InterruptedException e) {
+        catch(InterruptedException ignored) {
         }
         writer.setPosition(10, 10).putString("            ");
         screen.refresh();
         try {
             Thread.sleep(500);
         }
-        catch(InterruptedException e) {
+        catch(InterruptedException ignored) {
         }
         screen.stopScreen();
     }
