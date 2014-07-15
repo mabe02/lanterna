@@ -22,17 +22,19 @@ import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 
 /**
- * Created by martin on 15/07/14.
+ * This implementation of TextGraphics will take a 'proper' object and composite a view on top of it, by using a
+ * top-left position and a size. Any attempts to put text outside of this area will be dropped.
+ * @author Martin
  */
 class SubTextGraphics extends AbstractTextGraphics {
     private final AbstractTextGraphics underlyingTextGraphics;
     private final TerminalPosition topLeft;
-    private final TerminalSize writeableAreaSize;
+    private final TerminalSize writableAreaSize;
 
-    SubTextGraphics(AbstractTextGraphics underlyingTextGraphics, TerminalPosition topLeft, TerminalSize writeableAreaSize) {
+    SubTextGraphics(AbstractTextGraphics underlyingTextGraphics, TerminalPosition topLeft, TerminalSize writableAreaSize) {
         this.underlyingTextGraphics = underlyingTextGraphics;
         this.topLeft = topLeft;
-        this.writeableAreaSize = writeableAreaSize;
+        this.writableAreaSize = writableAreaSize;
     }
 
     @Override
@@ -47,6 +49,6 @@ class SubTextGraphics extends AbstractTextGraphics {
 
     @Override
     public TerminalSize getSize() {
-        return writeableAreaSize;
+        return writableAreaSize;
     }
 }
