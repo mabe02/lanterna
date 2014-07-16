@@ -52,10 +52,22 @@ class TerminalTextGraphics extends AbstractTextGraphics {
     }
 
     @Override
+    public TextGraphics setPosition(TerminalPosition newPosition) {
+        super.setPosition(newPosition);
+        try {
+            terminal.setCursorPosition(newPosition.getColumn(), newPosition.getRow());
+        }
+        catch(IOException e) {
+            throw new RuntimeException(e);
+        }
+        return this;
+    }
+
+    @Override
     protected synchronized void setCharacter(int columnIndex, int rowIndex, TextCharacter textCharacter) {
         try {
             if(inManagedCall) {
-                if(lastCharacter != null && !lastCharacter.equals(textCharacter)) {
+                if(lastCharacter == null || !lastCharacter.equals(textCharacter)) {
                     applyGraphicState(textCharacter);
                     lastCharacter = textCharacter;
                 }
@@ -79,7 +91,7 @@ class TerminalTextGraphics extends AbstractTextGraphics {
     }
 
     private void applyGraphicState(TextCharacter textCharacter) throws IOException {
-        terminal.resetAllSGR();
+        terminal.resetColorAndSGR();
         terminal.setForegroundColor(textCharacter.getForegroundColor());
         terminal.setBackgroundColor(textCharacter.getBackgroundColor());
         for(Terminal.SGR sgr: textCharacter.getModifiers()) {

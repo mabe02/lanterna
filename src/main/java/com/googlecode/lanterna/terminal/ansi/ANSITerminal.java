@@ -176,7 +176,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal {
     }
 
     @Override
-    public void resetAllSGR() throws IOException {
+    public void resetColorAndSGR() throws IOException {
         writeCSISequenctToTerminal((byte) '0', (byte) 'm');
     }
 
@@ -199,7 +199,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal {
         if(!inPrivateMode) {
             throw new IllegalStateException("Cannot call exitPrivateMode() when not in private mode");
         }
-        resetAllSGR();
+        resetColorAndSGR();
         setCursorVisible(true);
         writeCSISequenctToTerminal((byte) '?', (byte) '1', (byte) '0', (byte) '4', (byte) '9', (byte) 'l');
         inPrivateMode = false;

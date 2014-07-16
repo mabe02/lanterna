@@ -135,13 +135,13 @@ public interface Terminal extends InputProvider {
     public void disableSGR(SGR sgr) throws IOException;
 
     /**
-     * Removes all currently active SGR codes.
+     * Removes all currently active SGR codes and sets foreground and background colors back to default.
      *
      * @throws java.io.IOException If there was an underlying I/O error
      * @see Terminal.SGR
      * @see <a href="http://www.vt100.net/docs/vt510-rm/SGR">http://www.vt100.net/docs/vt510-rm/SGR</a>
      */
-    public void resetAllSGR() throws IOException;
+    public void resetColorAndSGR() throws IOException;
 
     /**
      * Changes the foreground color for all the following characters put to the terminal. The foreground color is what

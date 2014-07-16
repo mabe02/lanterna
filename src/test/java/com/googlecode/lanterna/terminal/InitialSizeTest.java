@@ -41,7 +41,7 @@ public class InitialSizeTest {
         printString(rawTerminal, "Initial size: ");
         rawTerminal.enableSGR(Terminal.SGR.BOLD);
         printString(rawTerminal, initialSize.toString());
-        rawTerminal.resetAllSGR();
+        rawTerminal.resetColorAndSGR();
         rawTerminal.flush();
 
         try {

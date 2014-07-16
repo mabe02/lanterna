@@ -296,7 +296,7 @@ public class DefaultScreen extends TerminalScreen {
 
         TextCharacter firstScreenCharacterToUpdate = updateMap.values().iterator().next();
         EnumSet<Terminal.SGR> currentSGR = firstScreenCharacterToUpdate.getModifiers();
-        getTerminal().resetAllSGR();
+        getTerminal().resetColorAndSGR();
         for(Terminal.SGR sgr: currentSGR) {
             getTerminal().enableSGR(sgr);
         }
@@ -343,7 +343,7 @@ public class DefaultScreen extends TerminalScreen {
         getTerminal().setForegroundColor(TextColor.ANSI.DEFAULT);
         getTerminal().setBackgroundColor(TextColor.ANSI.DEFAULT);
         getTerminal().clearScreen();
-        getTerminal().resetAllSGR();
+        getTerminal().resetColorAndSGR();
 
         EnumSet<Terminal.SGR> currentSGR = EnumSet.noneOf(Terminal.SGR.class);
         TextColor currentForegroundColor = TextColor.ANSI.DEFAULT;

@@ -100,7 +100,7 @@ public class SwingTerminalTest {
         terminal.putCharacter(ACS.DOUBLE_LINE_T_DOWN);
         terminal.putCharacter(ACS.SINGLE_LINE_VERTICAL);
         terminal.putCharacter(ACS.SINGLE_LINE_HORIZONTAL);
-        terminal.resetAllSGR();
+        terminal.resetColorAndSGR();
         terminal.setCursorPosition(0, 0);
 
         Thread.sleep(5000);

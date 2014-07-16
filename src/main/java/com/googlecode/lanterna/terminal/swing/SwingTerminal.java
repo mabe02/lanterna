@@ -411,7 +411,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
     }
 
     @Override
-    public void resetAllSGR() {
+    public void resetColorAndSGR() {
         activeSGRs.clear();
     }
 

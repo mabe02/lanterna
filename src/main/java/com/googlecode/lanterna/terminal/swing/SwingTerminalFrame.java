@@ -177,8 +177,8 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
     }
 
     @Override
-    public void resetAllSGR() {
-        swingTerminal.resetAllSGR();
+    public void resetColorAndSGR() {
+        swingTerminal.resetColorAndSGR();
     }
 
     @Override

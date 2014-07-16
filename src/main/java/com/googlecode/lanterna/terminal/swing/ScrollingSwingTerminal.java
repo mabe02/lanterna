@@ -157,8 +157,8 @@ public class ScrollingSwingTerminal extends JComponent implements IOSafeTerminal
     }
 
     @Override
-    public void resetAllSGR() {
-        swingTerminal.resetAllSGR();
+    public void resetColorAndSGR() {
+        swingTerminal.resetColorAndSGR();
     }
 
     @Override

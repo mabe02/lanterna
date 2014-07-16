@@ -40,7 +40,7 @@ public class ResetAllTest {
         terminal.putCharacter('l');
         terminal.enableSGR(Terminal.SGR.REVERSE);
         terminal.putCharacter('o');
-        terminal.resetAllSGR();
+        terminal.resetColorAndSGR();
         terminal.putCharacter('!');
         terminal.setCursorPosition(0, 0);
 

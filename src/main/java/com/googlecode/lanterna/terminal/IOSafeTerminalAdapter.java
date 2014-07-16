@@ -161,9 +161,9 @@ public class IOSafeTerminalAdapter implements IOSafeTerminal {
     }
 
     @Override
-    public void resetAllSGR() {
+    public void resetColorAndSGR() {
         try {
-            backend.resetAllSGR();
+            backend.resetColorAndSGR();
         }
         catch(IOException e) {
             exceptionHandler.onException(e);
