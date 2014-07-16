@@ -20,6 +20,7 @@ package com.googlecode.lanterna.terminal.swing;
 
 import com.googlecode.lanterna.common.AbstractTextGraphics;
 import com.googlecode.lanterna.common.TextCharacter;
+import com.googlecode.lanterna.common.TextGraphics;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 
@@ -33,6 +34,13 @@ public class VirtualTerminalTextGraphics extends AbstractTextGraphics {
 
     public VirtualTerminalTextGraphics(VirtualTerminal virtualTerminal) {
         this.virtualTerminal = virtualTerminal;
+    }
+
+    @Override
+    public TextGraphics setPosition(TerminalPosition newPosition) {
+        super.setPosition(newPosition);
+        virtualTerminal.setCursorPosition(newPosition);
+        return this;
     }
 
     @Override
