@@ -18,6 +18,7 @@
  */
 package com.googlecode.lanterna.terminal.swing;
 
+import com.googlecode.lanterna.common.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.terminal.IOSafeTerminal;
 import com.googlecode.lanterna.terminal.ResizeListener;
@@ -26,6 +27,7 @@ import com.googlecode.lanterna.terminal.TextColor;
 import java.awt.BorderLayout;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import javax.swing.JComponent;
 import javax.swing.JScrollBar;
@@ -95,8 +97,6 @@ public class ScrollingSwingTerminal extends JComponent implements IOSafeTerminal
     }
 
     private class ScrollbarListener implements AdjustmentListener {
-        int lastValue = -1;
-
         @Override
         public synchronized void adjustmentValueChanged(AdjustmentEvent e) {
             swingTerminal.repaint();
@@ -139,6 +139,11 @@ public class ScrollingSwingTerminal extends JComponent implements IOSafeTerminal
     @Override
     public void putCharacter(char c) {
         swingTerminal.putCharacter(c);
+    }
+
+    @Override
+    public TextGraphics newTextGraphics() throws IOException {
+        return swingTerminal.newTextGraphics();
     }
 
     @Override

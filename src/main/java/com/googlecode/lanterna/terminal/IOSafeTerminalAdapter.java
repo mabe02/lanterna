@@ -18,6 +18,7 @@
  */
 package com.googlecode.lanterna.terminal;
 
+import com.googlecode.lanterna.common.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -132,6 +133,11 @@ public class IOSafeTerminalAdapter implements IOSafeTerminal {
         catch(IOException e) {
             exceptionHandler.onException(e);
         }
+    }
+
+    @Override
+    public TextGraphics newTextGraphics() throws IOException {
+        return backend.newTextGraphics();
     }
 
     @Override

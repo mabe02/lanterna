@@ -20,6 +20,7 @@ package com.googlecode.lanterna.terminal.swing;
 
 import com.googlecode.lanterna.common.CJKUtils;
 import com.googlecode.lanterna.common.TextCharacter;
+import com.googlecode.lanterna.common.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.IOSafeTerminal;
@@ -40,6 +41,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -94,9 +96,9 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
 
     /**
      * Creates a new SwingTerminal component.
-     * @param deviceConfiguration
-     * @param fontConfiguration
-     * @param colorConfiguration
+     * @param deviceConfiguration Device configuration to use for this SwingTerminal
+     * @param fontConfiguration Font configuration to use for this SwingTerminal
+     * @param colorConfiguration Color configuration to use for this SwingTerminal
      */
     public SwingTerminal(
             SwingTerminalDeviceConfiguration deviceConfiguration,
@@ -108,10 +110,11 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
 
     /**
      * Creates a new SwingTerminal component.
-     * @param deviceConfiguration
-     * @param fontConfiguration
-     * @param colorConfiguration
-     * @param scrollController
+     * @param deviceConfiguration Device configuration to use for this SwingTerminal
+     * @param fontConfiguration Font configuration to use for this SwingTerminal
+     * @param colorConfiguration Color configuration to use for this SwingTerminal
+     * @param scrollController Controller to use for scrolling, the object passed in will be notified whenever the
+     *                         scrollable area has changed
      */
     public SwingTerminal(
             SwingTerminalDeviceConfiguration deviceConfiguration,
@@ -390,6 +393,11 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
     @Override
     public synchronized void putCharacter(final char c) {
         virtualTerminal.putCharacter(new TextCharacter(c, foregroundColor, backgroundColor, activeSGRs));
+    }
+
+    @Override
+    public TextGraphics newTextGraphics() throws IOException {
+        return new VirtualTerminalTextGraphics(virtualTerminal);
     }
 
     @Override

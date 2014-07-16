@@ -18,6 +18,7 @@
  */
 package com.googlecode.lanterna.terminal.swing;
 
+import com.googlecode.lanterna.common.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.IOSafeTerminal;
@@ -26,6 +27,7 @@ import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.terminal.TextColor;
 import java.awt.BorderLayout;
 import java.awt.HeadlessException;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import javax.swing.JFrame;
 
@@ -157,6 +159,11 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
     @Override
     public void putCharacter(char c) {
         swingTerminal.putCharacter(c);
+    }
+
+    @Override
+    public TextGraphics newTextGraphics() throws IOException {
+        return swingTerminal.newTextGraphics();
     }
 
     @Override
