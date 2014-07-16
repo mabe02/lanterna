@@ -412,6 +412,8 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
 
     @Override
     public void resetColorAndSGR() {
+        foregroundColor = TextColor.ANSI.DEFAULT;
+        backgroundColor = TextColor.ANSI.DEFAULT;
         activeSGRs.clear();
     }
 
