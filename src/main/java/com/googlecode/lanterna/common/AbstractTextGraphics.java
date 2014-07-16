@@ -30,7 +30,9 @@ import java.util.Comparator;
 import java.util.EnumSet;
 
 /**
- * Created by martin on 15/07/14.
+ * This class hold the default logic for drawing the basic text graphic as exposed by TextGraphic. All implementations
+ * reply on a setCharacter method being implemented in subclasses.
+ * @author Martin
  */
 public abstract class AbstractTextGraphics implements TextGraphics {
 
@@ -135,7 +137,7 @@ public abstract class AbstractTextGraphics implements TextGraphics {
     @Override
     public void drawLine(TerminalPosition toPoint, char character) {
         drawLine(currentPosition, toPoint, character);
-        currentPosition = toPoint;
+        setPosition(toPoint);
     }
 
     private void drawLine(TerminalPosition fromPoint, TerminalPosition toPoint, char character) {
