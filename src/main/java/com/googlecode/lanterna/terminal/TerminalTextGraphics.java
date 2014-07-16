@@ -23,6 +23,7 @@ import com.googlecode.lanterna.common.TextCharacter;
 import com.googlecode.lanterna.common.TextGraphics;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * This is the Terminal's implementation of TextGraphics. Upon creation it takes a snapshot for the Terminal's size, so
@@ -39,14 +40,14 @@ class TerminalTextGraphics extends AbstractTextGraphics {
     private final Terminal terminal;
     private final TerminalSize terminalSize;
 
-    private boolean inManagedCall;
+    private AtomicInteger manageCallStackSize;
     private TextCharacter lastCharacter;
     private TerminalPosition lastPosition;
 
     TerminalTextGraphics(Terminal terminal) throws IOException {
         this.terminal = terminal;
         this.terminalSize = terminal.getTerminalSize();
-        this.inManagedCall = false;
+        this.manageCallStackSize = new AtomicInteger(0);
         this.lastCharacter = null;
         this.lastPosition = null;
     }
@@ -66,12 +67,12 @@ class TerminalTextGraphics extends AbstractTextGraphics {
     @Override
     protected synchronized void setCharacter(int columnIndex, int rowIndex, TextCharacter textCharacter) {
         try {
-            if(inManagedCall) {
+            if(manageCallStackSize.get() > 0) {
                 if(lastCharacter == null || !lastCharacter.equals(textCharacter)) {
                     applyGraphicState(textCharacter);
                     lastCharacter = textCharacter;
                 }
-                if(lastPosition != null && !lastPosition.equals(columnIndex, rowIndex)) {
+                if(lastPosition == null || !lastPosition.equals(columnIndex, rowIndex)) {
                     terminal.setCursorPosition(columnIndex, rowIndex);
                     lastPosition = new TerminalPosition(columnIndex, rowIndex);
                 }
@@ -81,7 +82,7 @@ class TerminalTextGraphics extends AbstractTextGraphics {
                 applyGraphicState(textCharacter);
             }
             terminal.putCharacter(textCharacter.getCharacter());
-            if(inManagedCall) {
+            if(manageCallStackSize.get() > 0) {
                 lastPosition = new TerminalPosition(columnIndex + 1, rowIndex);
             }
         }
@@ -107,76 +108,86 @@ class TerminalTextGraphics extends AbstractTextGraphics {
     @Override
     public synchronized void drawLine(TerminalPosition toPoint, char character) {
         try {
-            inManagedCall = true;
+            enterAtomic();
             super.drawLine(toPoint, character);
         }
         finally {
-            inManagedCall = false;
-            lastPosition = null;
-            lastCharacter = null;
+            leaveAtomic();
         }
     }
 
     @Override
     public synchronized void drawTriangle(TerminalPosition p1, TerminalPosition p2, char character) {
         try {
-            inManagedCall = true;
+            enterAtomic();
             super.drawTriangle(p1, p2, character);
         }
         finally {
-            inManagedCall = false;
-            lastPosition = null;
-            lastCharacter = null;
+            leaveAtomic();
         }
     }
 
     @Override
     public synchronized void fillTriangle(TerminalPosition p1, TerminalPosition p2, char character) {
         try {
-            inManagedCall = true;
+            enterAtomic();
             super.fillTriangle(p1, p2, character);
         }
         finally {
-            inManagedCall = false;
-            lastPosition = null;
-            lastCharacter = null;
+            leaveAtomic();
         }
     }
 
     @Override
     public synchronized void fillRectangle(TerminalSize size, char character) {
         try {
-            inManagedCall = true;
+            enterAtomic();
             super.fillRectangle(size, character);
         }
         finally {
-            inManagedCall = false;
-            lastPosition = null;
-            lastCharacter = null;
+            leaveAtomic();
         }
     }
 
     @Override
     public synchronized void drawRectangle(TerminalSize size, char character) {
         try {
-            inManagedCall = true;
+            enterAtomic();
             super.drawRectangle(size, character);
         }
         finally {
-            inManagedCall = false;
-            lastPosition = null;
-            lastCharacter = null;
+            leaveAtomic();
         }
     }
 
     @Override
     public synchronized TextGraphics putString(String string) {
         try {
-            inManagedCall = true;
+            enterAtomic();
             return super.putString(string);
         }
         finally {
-            inManagedCall = false;
+            leaveAtomic();
+        }
+    }
+
+    /**
+     * It's tricky with this implementation because we can't rely on any state in between two calls to setCharacter
+     * since the caller might modify the terminal's state outside of this writer. However, many calls inside
+     * TextGraphics will indeed make multiple calls in setCharacter where we know that the state won't change (actually,
+     * we can't be 100% sure since the caller might create a separate thread and maliciously write directly to the
+     * terminal while call one of the draw/fill/put methods in here). We could just set the state before writing every
+     * single character but that would be inefficient. Rather, we keep a counter of if we are inside an 'atomic'
+     * (meaning we know multiple calls to setCharacter will have the same state). Some drawing methods call other
+     * drawing methods internally for their implementation so that's why this is implemented with an integer value
+     * instead of a boolean; when the counter reaches zero we remove the memory of what state the terminal is in.
+     */
+    private void enterAtomic() {
+        manageCallStackSize.incrementAndGet();
+    }
+
+    private void leaveAtomic() {
+        if(manageCallStackSize.decrementAndGet() == 0) {
             lastPosition = null;
             lastCharacter = null;
         }
