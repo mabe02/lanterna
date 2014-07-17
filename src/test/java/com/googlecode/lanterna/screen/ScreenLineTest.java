@@ -52,7 +52,7 @@ public class ScreenLineTest {
         Screen screen = new TestTerminalFactory(args).createScreen();
         screen.startScreen();
 
-        TextGraphics writer = new ScreenTextGraphics(screen);
+        TextGraphics textGraphics = new ScreenTextGraphics(screen);
         Random random = new Random();
         while(true) {
             KeyStroke keyStroke = screen.readInput();
@@ -60,7 +60,7 @@ public class ScreenLineTest {
                 break;
             }
             screen.doResizeIfNecessary();
-            TerminalSize size = screen.getTerminalSize();
+            TerminalSize size = textGraphics.getSize();
             TextColor color;
             if(useAnsiColors) {
                 color = TextColor.ANSI.values()[random.nextInt(TextColor.ANSI.values().length)];
@@ -107,12 +107,12 @@ public class ScreenLineTest {
                 p1 = new TerminalPosition(random.nextInt(size.getColumns()), random.nextInt(size.getRows()));
                 p2 = new TerminalPosition(random.nextInt(size.getColumns()), random.nextInt(size.getRows()));
             }
-            writer.setBackgroundColor(color);
-            writer.setPosition(p1);
-            writer.drawLine(p2, ' ');
-            writer.setBackgroundColor(TextColor.ANSI.BLACK);
-            writer.setForegroundColor(TextColor.ANSI.WHITE);
-            writer.putString(4, size.getRows() - 1, "P1 " + p1 + " -> P2 " + p2);
+            textGraphics.setBackgroundColor(color);
+            textGraphics.setPosition(p1);
+            textGraphics.drawLine(p2, ' ');
+            textGraphics.setBackgroundColor(TextColor.ANSI.BLACK);
+            textGraphics.setForegroundColor(TextColor.ANSI.WHITE);
+            textGraphics.putString(4, size.getRows() - 1, "P1 " + p1 + " -> P2 " + p2);
             screen.refresh(Screen.RefreshType.DELTA);
             if(slow) {
                 Thread.sleep(500);

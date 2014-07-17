@@ -51,7 +51,7 @@ public class ScreenRectangleTest {
         Screen screen = new TestTerminalFactory(args).createScreen();
         screen.startScreen();
 
-        TextGraphics writer = new ScreenTextGraphics(screen);
+        TextGraphics textGraphics = new ScreenTextGraphics(screen);
         Random random = new Random();
 
         long startTime = System.currentTimeMillis();
@@ -61,7 +61,7 @@ public class ScreenRectangleTest {
                 break;
             }
             screen.doResizeIfNecessary();
-            TerminalSize size = screen.getTerminalSize();
+            TerminalSize size = textGraphics.getSize();
             TextColor color;
             if(useAnsiColors) {
                 color = TextColor.ANSI.values()[random.nextInt(TextColor.ANSI.values().length)];
@@ -74,13 +74,13 @@ public class ScreenRectangleTest {
             TerminalPosition topLeft = new TerminalPosition(random.nextInt(size.getColumns()), random.nextInt(size.getRows()));
             TerminalSize rectangleSize = new TerminalSize(random.nextInt(size.getColumns() - topLeft.getColumn()), random.nextInt(size.getRows() - topLeft.getRow()));
 
-            writer.setBackgroundColor(color);
-            writer.setPosition(topLeft);
+            textGraphics.setBackgroundColor(color);
+            textGraphics.setPosition(topLeft);
             if(useFilled) {
-                writer.fillRectangle(rectangleSize, ' ');
+                textGraphics.fillRectangle(rectangleSize, ' ');
             }
             else {
-                writer.drawRectangle(rectangleSize, ' ');
+                textGraphics.drawRectangle(rectangleSize, ' ');
             }
             screen.refresh(Screen.RefreshType.DELTA);
             if(slow) {

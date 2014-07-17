@@ -19,6 +19,8 @@
 package com.googlecode.lanterna.screen;
 
 import com.googlecode.lanterna.TestTerminalFactory;
+import com.googlecode.lanterna.common.AbstractTextGraphics;
+import com.googlecode.lanterna.common.DoublePrintingTextGraphics;
 import com.googlecode.lanterna.common.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
@@ -61,12 +63,12 @@ public class ScreenTriangleTest {
             }
         }
         Screen screen = new TestTerminalFactory(args).createScreen();
-        if(square) {
-            screen = new SquaredScreen(screen);
-        }
         screen.startScreen();
 
-        TextGraphics writer = new ScreenTextGraphics(screen);
+        TextGraphics graphics = new ScreenTextGraphics(screen);
+        if(square) {
+            graphics = new DoublePrintingTextGraphics((AbstractTextGraphics)graphics);
+        }
         Random random = new Random();
 
         TextColor color = null;
@@ -77,7 +79,7 @@ public class ScreenTriangleTest {
                 break;
             }
             screen.doResizeIfNecessary();
-            TerminalSize size = screen.getTerminalSize();
+            TerminalSize size = graphics.getSize();
             if(useAnsiColors) {
                 if(color == null || !rotating) {
                     color = TextColor.ANSI.values()[random.nextInt(TextColor.ANSI.values().length)];
@@ -113,13 +115,13 @@ public class ScreenTriangleTest {
                 p3 = new TerminalPosition(random.nextInt(size.getColumns()), random.nextInt(size.getRows()));
             }
 
-            writer.setBackgroundColor(color);
-            writer.setPosition(p1);
+            graphics.setBackgroundColor(color);
+            graphics.setPosition(p1);
             if(useFilled) {
-                writer.fillTriangle(p2, p3, ' ');
+                graphics.fillTriangle(p2, p3, ' ');
             }
             else {
-                writer.drawTriangle(p2, p3, ' ');
+                graphics.drawTriangle(p2, p3, ' ');
             }
             screen.refresh(Screen.RefreshType.DELTA);
             if(slow) {

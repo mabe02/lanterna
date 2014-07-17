@@ -106,10 +106,11 @@ class TerminalTextGraphics extends AbstractTextGraphics {
     }
 
     @Override
-    public synchronized void drawLine(TerminalPosition toPoint, char character) {
+    public synchronized TextGraphics drawLine(TerminalPosition toPoint, char character) {
         try {
             enterAtomic();
             super.drawLine(toPoint, character);
+            return this;
         }
         finally {
             leaveAtomic();
@@ -117,10 +118,11 @@ class TerminalTextGraphics extends AbstractTextGraphics {
     }
 
     @Override
-    public synchronized void drawTriangle(TerminalPosition p1, TerminalPosition p2, char character) {
+    public synchronized TextGraphics drawTriangle(TerminalPosition p1, TerminalPosition p2, char character) {
         try {
             enterAtomic();
             super.drawTriangle(p1, p2, character);
+            return this;
         }
         finally {
             leaveAtomic();
@@ -128,10 +130,11 @@ class TerminalTextGraphics extends AbstractTextGraphics {
     }
 
     @Override
-    public synchronized void fillTriangle(TerminalPosition p1, TerminalPosition p2, char character) {
+    public synchronized TextGraphics fillTriangle(TerminalPosition p1, TerminalPosition p2, char character) {
         try {
             enterAtomic();
             super.fillTriangle(p1, p2, character);
+            return this;
         }
         finally {
             leaveAtomic();
@@ -139,10 +142,11 @@ class TerminalTextGraphics extends AbstractTextGraphics {
     }
 
     @Override
-    public synchronized void fillRectangle(TerminalSize size, char character) {
+    public synchronized TextGraphics fillRectangle(TerminalSize size, char character) {
         try {
             enterAtomic();
             super.fillRectangle(size, character);
+            return this;
         }
         finally {
             leaveAtomic();
@@ -150,10 +154,11 @@ class TerminalTextGraphics extends AbstractTextGraphics {
     }
 
     @Override
-    public synchronized void drawRectangle(TerminalSize size, char character) {
+    public synchronized TextGraphics drawRectangle(TerminalSize size, char character) {
         try {
             enterAtomic();
             super.drawRectangle(size, character);
+            return this;
         }
         finally {
             leaveAtomic();

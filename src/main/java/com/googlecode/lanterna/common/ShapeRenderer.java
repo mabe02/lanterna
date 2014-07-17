@@ -1,0 +1,35 @@
+/*
+ * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ *
+ * lanterna is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright (C) 2010-2014 Martin
+ */
+package com.googlecode.lanterna.common;
+
+import com.googlecode.lanterna.terminal.TerminalPosition;
+import com.googlecode.lanterna.terminal.TerminalSize;
+
+/**
+ * This package private interface exposes methods for translating abstract lines, triangles and rectangles to discreet
+ * points on a grid.
+ * @author Martin
+ */
+interface ShapeRenderer {
+    void drawLine(TerminalPosition p1, TerminalPosition p2, char character);
+    void drawTriangle(TerminalPosition p1, TerminalPosition p2, TerminalPosition p3, char character);
+    void drawRectangle(TerminalPosition topLeft, TerminalSize size, char character);
+    void fillTriangle(TerminalPosition p1, TerminalPosition p2, TerminalPosition p3, char character);
+    void fillRectangle(TerminalPosition topLeft, TerminalSize size, char character);
+}

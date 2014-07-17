@@ -19,6 +19,8 @@
 package com.googlecode.lanterna.terminal;
 
 import com.googlecode.lanterna.TestTerminalFactory;
+import com.googlecode.lanterna.common.AbstractTextGraphics;
+import com.googlecode.lanterna.common.DoublePrintingTextGraphics;
 import com.googlecode.lanterna.common.TextGraphics;
 
 import javax.swing.*;
@@ -32,6 +34,10 @@ public class TerminalTextGraphicsTest {
     public static void main(String[] args) throws IOException, InterruptedException {
         Terminal terminal = new TestTerminalFactory(args).createTerminal();
         TextGraphics textGraphics = terminal.newTextGraphics();
+        if((args.length > 0 && args[0].equals("--square")) ||
+                (args.length > 1 && args[1].equals("--square"))) {
+            textGraphics = new DoublePrintingTextGraphics((AbstractTextGraphics)textGraphics);
+        }
         textGraphics.setForegroundColor(TextColor.ANSI.BLUE);
         textGraphics.putString(3, 3, "Hello World!");
         textGraphics.setForegroundColor(TextColor.ANSI.CYAN);

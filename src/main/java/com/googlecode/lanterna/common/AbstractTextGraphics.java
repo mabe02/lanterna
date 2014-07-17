@@ -26,7 +26,6 @@ import com.googlecode.lanterna.terminal.TextColor;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.EnumSet;
 
 /**
@@ -41,6 +40,7 @@ public abstract class AbstractTextGraphics implements TextGraphics {
     protected TextColor backgroundColor;
     protected TabBehaviour tabBehaviour;
     protected final EnumSet<Terminal.SGR> activeModifiers;
+    private final ShapeRenderer shapeRenderer;
 
     protected AbstractTextGraphics() {
         this.activeModifiers = EnumSet.noneOf(Terminal.SGR.class);
@@ -48,6 +48,12 @@ public abstract class AbstractTextGraphics implements TextGraphics {
         this.foregroundColor = TextColor.ANSI.DEFAULT;
         this.backgroundColor = TextColor.ANSI.DEFAULT;
         this.currentPosition = new TerminalPosition(0, 0);
+        this.shapeRenderer = new DefaultShapeRenderer(new DefaultShapeRenderer.Callback() {
+            @Override
+            public void onPoint(int column, int row, char character) {
+                setCharacter(column, row, newScreenCharacter(character));
+            }
+        });
     }
 
     @Override
@@ -121,189 +127,65 @@ public abstract class AbstractTextGraphics implements TextGraphics {
     }
 
     @Override
+    public EnumSet<Terminal.SGR> getActiveModifiers() {
+        return activeModifiers;
+    }
+
+    @Override
     public TabBehaviour getTabBehaviour() {
         return tabBehaviour;
     }
 
     @Override
-    public void setTabBehaviour(TabBehaviour tabBehaviour) {
+    public TextGraphics setTabBehaviour(TabBehaviour tabBehaviour) {
         if(tabBehaviour != null) {
             this.tabBehaviour = tabBehaviour;
         }
+        return this;
     }
 
     @Override
-    public void fillScreen(char c) {
+    public TextGraphics fillScreen(char c) {
         TerminalPosition savedPosition = getPosition();
         setPosition(TerminalPosition.TOP_LEFT_CORNER);
         fillRectangle(getSize(), c);
         setPosition(savedPosition);
+        return this;
     }
 
     @Override
-    public void drawLine(TerminalPosition toPoint, char character) {
-        drawLine(currentPosition, toPoint, character);
+    public TextGraphics drawLine(TerminalPosition toPoint, char character) {
+        shapeRenderer.drawLine(getPosition(), toPoint, character);
         setPosition(toPoint);
-    }
-
-    private void drawLine(TerminalPosition fromPoint, TerminalPosition toPoint, char character) {
-        //http://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
-        //Implementation from Graphics Programming Black Book by Michael Abrash
-        //Available at http://www.gamedev.net/page/resources/_/technical/graphics-programming-and-theory/graphics-programming-black-book-r1698
-        if(fromPoint.getRow() > toPoint.getRow()) {
-            TerminalPosition temp = fromPoint;
-            fromPoint = toPoint;
-            toPoint = temp;
-        }
-        int deltaX = toPoint.getColumn() - fromPoint.getColumn();
-        int deltaY = toPoint.getRow() - fromPoint.getRow();
-        if(deltaX > 0) {
-            if(deltaX > deltaY) {
-                drawLine0(fromPoint, deltaX, deltaY, true, character);
-            }
-            else {
-                drawLine1(fromPoint, deltaX, deltaY, true, character);
-            }
-        }
-        else {
-            deltaX = Math.abs(deltaX);
-            if(deltaX > deltaY) {
-                drawLine0(fromPoint, deltaX, deltaY, false, character);
-            }
-            else {
-                drawLine1(fromPoint, deltaX, deltaY, false, character);
-            }
-        }
-    }
-
-    private void drawLine0(TerminalPosition start, int deltaX, int deltaY, boolean leftToRight, char character) {
-        TextCharacter screenCharacter = newScreenCharacter(character);
-        int x = start.getColumn();
-        int y = start.getRow();
-        int deltaYx2 = deltaY * 2;
-        int deltaYx2MinusDeltaXx2 = deltaYx2 - (deltaX * 2);
-        int errorTerm = deltaYx2 - deltaX;
-        setCharacter(start, screenCharacter);
-        while(deltaX-- > 0) {
-            if(errorTerm >= 0) {
-                y++;
-                errorTerm += deltaYx2MinusDeltaXx2;
-            }
-            else {
-                errorTerm += deltaYx2;
-            }
-            x += leftToRight ? 1 : -1;
-            setCharacter(x, y, screenCharacter);
-        }
-    }
-
-    private void drawLine1(TerminalPosition start, int deltaX, int deltaY, boolean leftToRight, char character) {
-        TextCharacter screenCharacter = newScreenCharacter(character);
-        int x = start.getColumn();
-        int y = start.getRow();
-        int deltaXx2 = deltaX * 2;
-        int deltaXx2MinusDeltaYx2 = deltaXx2 - (deltaY * 2);
-        int errorTerm = deltaXx2 - deltaY;
-        setCharacter(start, screenCharacter);
-        while(deltaY-- > 0) {
-            if(errorTerm >= 0) {
-                x += leftToRight ? 1 : -1;
-                errorTerm += deltaXx2MinusDeltaYx2;
-            }
-            else {
-                errorTerm += deltaXx2;
-            }
-            y++;
-            setCharacter(x, y, screenCharacter);
-        }
+        return this;
     }
 
     @Override
-    public void drawTriangle(TerminalPosition p1, TerminalPosition p2, char character) {
-        TerminalPosition originalStart = currentPosition;
-        drawLine(p1, character);
-        drawLine(p2, character);
-        drawLine(originalStart, character);
+    public TextGraphics drawTriangle(TerminalPosition p1, TerminalPosition p2, char character) {
+        TerminalPosition position = getPosition();
+        shapeRenderer.drawTriangle(position, p1, p2, character);
+        setPosition(position);
+        return this;
     }
 
     @Override
-    public void fillTriangle(TerminalPosition p1, TerminalPosition p2, char character) {
-        //I've used the algorithm described here:
-        //http://www-users.mat.uni.torun.pl/~wrona/3d_tutor/tri_fillers.html
-        TerminalPosition[] points = new TerminalPosition[]{currentPosition, p1, p2};
-        Arrays.sort(points, new Comparator<TerminalPosition>() {
-            @Override
-            public int compare(TerminalPosition o1, TerminalPosition o2) {
-                return (o1.getRow() < o2.getRow()) ? -1 : ((o1.getRow() == o2.getRow()) ? 0 : 1);
-            }
-        });
-
-        float dx1, dx2, dx3;
-        if (points[1].getRow() - points[0].getRow() > 0) {
-            dx1 = (float)(points[1].getColumn() - points[0].getColumn()) / (float)(points[1].getRow() - points[0].getRow());
-        }
-        else {
-            dx1 = 0;
-        }
-        if (points[2].getRow() - points[0].getRow() > 0) {
-            dx2 = (float)(points[2].getColumn() - points[0].getColumn()) / (float)(points[2].getRow() - points[0].getRow());
-        }
-        else {
-            dx2 = 0;
-        }
-        if (points[2].getRow() - points[1].getRow() > 0) {
-            dx3 = (float)(points[2].getColumn() - points[1].getColumn()) / (float)(points[2].getRow() - points[1].getRow());
-        }
-        else {
-            dx3 = 0;
-        }
-
-        float startX, startY, endX, endY;
-        startX = endX = points[0].getColumn();
-        startY = endY = points[0].getRow();
-        if (dx1 > dx2) {
-            for (; startY <= points[1].getRow(); startY++, endY++, startX += dx2, endX += dx1) {
-                drawLine(new TerminalPosition((int)startX, (int)startY), new TerminalPosition((int)endX, (int)startY), character);
-            }
-            endX = points[1].getColumn();
-            endY = points[1].getRow();
-            for (; startY <= points[2].getRow(); startY++, endY++, startX += dx2, endX += dx3) {
-                drawLine(new TerminalPosition((int)startX, (int)startY), new TerminalPosition((int)endX, (int)startY), character);
-            }
-        } else {
-            for (; startY <= points[1].getRow(); startY++, endY++, startX += dx1, endX += dx2) {
-                drawLine(new TerminalPosition((int)startX, (int)startY), new TerminalPosition((int)endX, (int)startY), character);
-            }
-            startX = points[1].getColumn();
-            startY = points[1].getRow();
-            for (; startY <= points[2].getRow(); startY++, endY++, startX += dx3, endX += dx2) {
-                drawLine(new TerminalPosition((int)startX, (int)startY), new TerminalPosition((int)endX, (int)startY), character);
-            }
-        }
+    public TextGraphics fillTriangle(TerminalPosition p1, TerminalPosition p2, char character) {
+        TerminalPosition position = getPosition();
+        shapeRenderer.fillTriangle(position, p1, p2, character);
+        setPosition(position);
+        return this;
     }
 
     @Override
-    public void drawRectangle(TerminalSize size, char character) {
-        TerminalPosition originalStart = currentPosition;
-        drawLine(currentPosition.withRelativeColumn(size.getColumns() - 1), character);
-        drawLine(currentPosition.withRelativeRow(size.getRows() - 1), character);
-        drawLine(originalStart.withRelativeRow(size.getRows() - 1), character);
-        drawLine(originalStart, character);
+    public TextGraphics drawRectangle(TerminalSize size, char character) {
+        shapeRenderer.drawRectangle(getPosition(), size, character);
+        return this;
     }
 
     @Override
-    public void fillRectangle(TerminalSize size, char character) {
-        for(int y = 0; y < size.getRows(); y++) {
-            for(int x = 0; x < size.getColumns(); x++) {
-                setCharacter(
-                    currentPosition.withRelativeColumn(x).withRelativeRow(y),
-                    new TextCharacter(
-                            character,
-                            foregroundColor,
-                            backgroundColor,
-                            activeModifiers.clone()));
-            }
-        }
+    public TextGraphics fillRectangle(TerminalSize size, char character) {
+        shapeRenderer.fillRectangle(getPosition(), size, character);
+        return this;
     }
 
     @Override
@@ -382,7 +264,7 @@ public abstract class AbstractTextGraphics implements TextGraphics {
         return new SubTextGraphics(this, topLeftCorner, size);
     }
 
-    protected void setCharacter(TerminalPosition position, TextCharacter textCharacter) {
+    private void setCharacter(TerminalPosition position, TextCharacter textCharacter) {
         setCharacter(position.getColumn(), position.getRow(), textCharacter);
     }
 

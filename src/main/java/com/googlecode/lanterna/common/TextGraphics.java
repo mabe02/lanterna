@@ -24,6 +24,8 @@ import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import com.googlecode.lanterna.terminal.TextColor;
 
+import java.util.EnumSet;
+
 /**
  * This interface exposes functionality to 'draw' text graphics on a section of the terminal. It has several
  * implementation for the different levels, including one for Terminal, one for Screen and one which is used by the
@@ -146,6 +148,12 @@ public interface TextGraphics {
     TextGraphics clearModifiers();
 
     /**
+     * Returns all the SGR codes that are currently active in the TextGraphic
+     * @return Currently active SGR modifiers
+     */
+    EnumSet<Terminal.SGR> getActiveModifiers();
+
+    /**
      * Retrieves the current tab behaviour, which is what the TextGraphics will use when expanding \t characters to
      * spaces.
      * @return Current behaviour in use for expanding tab to spaces
@@ -156,13 +164,13 @@ public interface TextGraphics {
      * Sets the behaviour to use when expanding tab characters (\t) to spaces
      * @param tabBehaviour Behaviour to use when expanding tabs to spaces
      */
-    void setTabBehaviour(TabBehaviour tabBehaviour);
+    TextGraphics setTabBehaviour(TabBehaviour tabBehaviour);
 
     /**
      * Fills the entire writable area with a single character, using current foreground color, background color and modifiers.
      * @param c Character to fill the writable area with
      */
-    void fillScreen(char c);
+    TextGraphics fillScreen(char c);
 
     /**
      * Draws a line from the current position to a specified position, using a supplied character. After
@@ -171,7 +179,7 @@ public interface TextGraphics {
      * @param toPoint Where to draw the line
      * @param character Character to use for the line
      */
-    void drawLine(TerminalPosition toPoint, char character);
+    TextGraphics drawLine(TerminalPosition toPoint, char character);
 
     /**
      * Draws the outline of a triangle on the screen, using a supplied character. The triangle will begin at this
@@ -182,7 +190,7 @@ public interface TextGraphics {
      * @param p2 Second point on the screen to draw the triangle with, going from p1 and going back to the original start
      * @param character What character to use when drawing the lines of the triangle
      */
-    void drawTriangle(TerminalPosition p1, TerminalPosition p2, char character);
+    TextGraphics drawTriangle(TerminalPosition p1, TerminalPosition p2, char character);
 
     /**
      * Draws a filled triangle, using a supplied character. The triangle will begin at this
@@ -193,7 +201,7 @@ public interface TextGraphics {
      * @param p2 Second point on the screen to draw the triangle with, going from p1 and going back to the original start
      * @param character What character to use when drawing the lines of the triangle
      */
-    void fillTriangle(TerminalPosition p1, TerminalPosition p2, char character);
+    TextGraphics fillTriangle(TerminalPosition p1, TerminalPosition p2, char character);
 
     /**
      * Draws the outline of a rectangle with a particular character (and the currently active colors and
@@ -208,7 +216,7 @@ public interface TextGraphics {
      * @param size Size (in columns and rows) of the area to draw
      * @param character What character to use when drawing the outline of the rectangle
      */
-    void drawRectangle(TerminalSize size, char character);
+    TextGraphics drawRectangle(TerminalSize size, char character);
 
     /**
      * Takes a rectangle and fills it with a particular character (and the currently active colors and
@@ -218,7 +226,7 @@ public interface TextGraphics {
      * @param size Size (in columns and rows) of the area to draw
      * @param character What character to use when filling the rectangle
      */
-    void fillRectangle(TerminalSize size, char character);
+    TextGraphics fillRectangle(TerminalSize size, char character);
 
     /**
      * Puts a string on the screen at the current position with the current colors and modifiers. If the string
