@@ -16,7 +16,7 @@
  *
  * Copyright (C) 2010-2014 Martin
  */
-package com.googlecode.lanterna.common;
+package com.googlecode.lanterna.graphics;
 
 import com.googlecode.lanterna.screen.TabBehaviour;
 import com.googlecode.lanterna.terminal.Terminal;
@@ -29,7 +29,7 @@ import java.util.EnumSet;
 /**
  * This interface exposes functionality to 'draw' text graphics on a section of the terminal. It has several
  * implementation for the different levels, including one for Terminal, one for Screen and one which is used by the
- * TextGUI system to draw components. They are all very similar and has a lot of common functionality in
+ * TextGUI system to draw components. They are all very similar and has a lot of graphics functionality in
  * AbstractTextGraphics.
  * <p/>
  * The basic concept behind a TextGraphics implementation is that it keeps a state on four things:

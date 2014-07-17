@@ -18,7 +18,7 @@
  */
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.common.TextGraphics;
+import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalPosition;

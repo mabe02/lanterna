@@ -18,7 +18,7 @@
  */
 package com.googlecode.lanterna.terminal;
 
-import com.googlecode.lanterna.common.TextGraphics;
+import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;

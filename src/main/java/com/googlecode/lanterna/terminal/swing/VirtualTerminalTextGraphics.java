@@ -18,9 +18,9 @@
  */
 package com.googlecode.lanterna.terminal.swing;
 
-import com.googlecode.lanterna.common.AbstractTextGraphics;
-import com.googlecode.lanterna.common.TextCharacter;
-import com.googlecode.lanterna.common.TextGraphics;
+import com.googlecode.lanterna.graphics.AbstractTextGraphics;
+import com.googlecode.lanterna.TextCharacter;
+import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 

@@ -18,8 +18,8 @@
  */
 package com.googlecode.lanterna.screen;
 
-import com.googlecode.lanterna.common.CJKUtils;
-import com.googlecode.lanterna.common.TextCharacter;
+import com.googlecode.lanterna.CJKUtils;
+import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.terminal.TextColor;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalPosition;

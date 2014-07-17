@@ -19,9 +19,9 @@
 package com.googlecode.lanterna.terminal;
 
 import com.googlecode.lanterna.TestTerminalFactory;
-import com.googlecode.lanterna.common.AbstractTextGraphics;
-import com.googlecode.lanterna.common.DoublePrintingTextGraphics;
-import com.googlecode.lanterna.common.TextGraphics;
+import com.googlecode.lanterna.graphics.AbstractTextGraphics;
+import com.googlecode.lanterna.graphics.DoublePrintingTextGraphics;
+import com.googlecode.lanterna.graphics.TextGraphics;
 
 import javax.swing.*;
 import java.io.IOException;

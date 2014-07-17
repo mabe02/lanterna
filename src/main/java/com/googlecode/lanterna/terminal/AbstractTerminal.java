@@ -18,14 +18,14 @@
  */
 package com.googlecode.lanterna.terminal;
 
-import com.googlecode.lanterna.common.TextGraphics;
+import com.googlecode.lanterna.graphics.TextGraphics;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Containing a some very fundamental functionality that should be common for all terminal implementations.
+ * Containing a some very fundamental functionality that should be graphics for all terminal implementations.
  *
  * @author Martin
  */

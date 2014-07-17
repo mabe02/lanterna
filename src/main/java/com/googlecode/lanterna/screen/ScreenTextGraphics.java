@@ -17,7 +17,7 @@
  * Copyright (C) 2010-2014 Martin
  */
 package com.googlecode.lanterna.screen;
-import com.googlecode.lanterna.common.TextCharacter;
+import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.terminal.TerminalSize;
 
 /**
@@ -25,7 +25,7 @@ import com.googlecode.lanterna.terminal.TerminalSize;
  * after screen resizing.
  * @author Martin
  */
-class ScreenTextGraphics extends com.googlecode.lanterna.common.AbstractTextGraphics {
+class ScreenTextGraphics extends com.googlecode.lanterna.graphics.AbstractTextGraphics {
     private final Screen screen;
 
     ScreenTextGraphics(Screen screen) {

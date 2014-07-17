@@ -28,7 +28,7 @@ import java.lang.reflect.Proxy;
 import java.nio.charset.Charset;
 
 /**
- * A common ANSI terminal extention with support for Unix resize signals and the stty program to control cbreak and key
+ * A graphics ANSI terminal extention with support for Unix resize signals and the stty program to control cbreak and key
  * echo
  *
  * @author Martin

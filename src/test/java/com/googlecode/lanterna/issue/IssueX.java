@@ -1,6 +1,6 @@
 package com.googlecode.lanterna.issue;
 
-import com.googlecode.lanterna.common.TextGraphics;
+import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.TestTerminalFactory;

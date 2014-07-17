@@ -19,7 +19,7 @@
 package com.googlecode.lanterna.screen;
 
 import com.googlecode.lanterna.TestTerminalFactory;
-import com.googlecode.lanterna.common.TextGraphics;
+import com.googlecode.lanterna.graphics.TextGraphics;
 
 import java.io.IOException;
 

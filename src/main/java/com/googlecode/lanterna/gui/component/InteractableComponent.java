@@ -22,7 +22,7 @@ import com.googlecode.lanterna.gui.Component;
 import com.googlecode.lanterna.gui.Interactable;
 
 /**
- * This interface doesn't add anything, it's just for making a common interface for Interactables
+ * This interface doesn't add anything, it's just for making a graphics interface for Interactables
  * and Components.
  * @author Martin
  */

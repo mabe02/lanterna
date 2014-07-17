@@ -18,8 +18,8 @@
  */
 package com.googlecode.lanterna.screen;
 
-import com.googlecode.lanterna.common.TextCharacter;
-import com.googlecode.lanterna.common.TextGraphics;
+import com.googlecode.lanterna.TextCharacter;
+import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
@@ -156,7 +156,7 @@ public interface Screen {
 
     /**
      * This method will take the content from the back-buffer and move it into the front-buffer, making the changes
-     * visible to the terminal in the process. The common workflow with Screen would involve drawing text and text-like
+     * visible to the terminal in the process. The graphics workflow with Screen would involve drawing text and text-like
      * graphics on the back buffer and then finally calling refresh(..) to make it visible to the user.
      * @throws java.io.IOException If there was an underlying I/O error
      * @see RefreshType
@@ -165,7 +165,7 @@ public interface Screen {
 
     /**
      * This method will take the content from the back-buffer and move it into the front-buffer, making the changes
-     * visible to the terminal in the process. The common workflow with Screen would involve drawing text and text-like
+     * visible to the terminal in the process. The graphics workflow with Screen would involve drawing text and text-like
      * graphics on the back buffer and then finally calling refresh(..) to make it visible to the user.
      * <p/>
      * Using this method call instead of {@code refresh()} gives you a little bit more control over how the screen will

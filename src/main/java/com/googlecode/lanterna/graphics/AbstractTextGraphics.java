@@ -16,8 +16,10 @@
  *
  * Copyright (C) 2010-2014 Martin
  */
-package com.googlecode.lanterna.common;
+package com.googlecode.lanterna.graphics;
 
+import com.googlecode.lanterna.CJKUtils;
+import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.screen.TabBehaviour;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalPosition;

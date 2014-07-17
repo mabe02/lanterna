@@ -18,9 +18,9 @@
  */
 package com.googlecode.lanterna.terminal;
 
-import com.googlecode.lanterna.common.AbstractTextGraphics;
-import com.googlecode.lanterna.common.TextCharacter;
-import com.googlecode.lanterna.common.TextGraphics;
+import com.googlecode.lanterna.graphics.AbstractTextGraphics;
+import com.googlecode.lanterna.TextCharacter;
+import com.googlecode.lanterna.graphics.TextGraphics;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;

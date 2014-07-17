@@ -18,7 +18,7 @@
  */
 package com.googlecode.lanterna.terminal.swing;
 
-import com.googlecode.lanterna.common.TextCharacter;
+import com.googlecode.lanterna.TextCharacter;
 
 import java.awt.*;
 import java.awt.font.FontRenderContext;

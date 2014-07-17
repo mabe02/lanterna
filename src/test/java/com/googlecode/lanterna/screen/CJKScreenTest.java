@@ -18,7 +18,7 @@
  */
 package com.googlecode.lanterna.screen;
 
-import com.googlecode.lanterna.common.TextGraphics;
+import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.terminal.TextColor;
 import com.googlecode.lanterna.TestTerminalFactory;
 import java.io.IOException;
