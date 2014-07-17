@@ -62,6 +62,12 @@ public abstract class AbstractTextGraphics implements TextGraphics {
     }
 
     @Override
+    public TextGraphics movePosition(int columns, int rows) {
+        setPosition(getPosition().withRelativeColumn(columns).withRelativeRow(rows));
+        return this;
+    }
+
+    @Override
     public TerminalPosition getPosition() {
         return currentPosition;
     }

@@ -56,7 +56,7 @@ public interface TextGraphics {
     /**
      * Creates a new TextGraphics of the same type as this one, using the same underlying subsystem. Using this method,
      * you need to specify a section of the current TextGraphics valid area that this new TextGraphic shall be
-     * restricted to. If you call {@code newTextGraphics(TerminalPosition.TOP_LEFT_CORNER, textGraphics.getSize()} then
+     * restricted to. If you call {@code newTextGraphics(TerminalPosition.TOP_LEFT_CORNER, textGraphics.getSize())} then
      * the resulting object will be identical to this one, but having a separated state for colors, position and
      * modifiers.
      * @param topLeftCorner Position of this TextGraphics's writable area that is to become the top-left corner (0x0) of
@@ -83,6 +83,15 @@ public interface TextGraphics {
      * @return Itself
      */
     TextGraphics setPosition(TerminalPosition newPosition);
+
+    /**
+     * Moves the position state of this TextGraphics to a new position relative to the current position. Do not mix this
+     * up with {@code setPosition(int column, int row)} that specifies the next position directly.
+     * @param columns Number of columns to move to the right from the current position
+     * @param rows Number of rows to move down from the current position
+     * @return Itself
+     */
+    TextGraphics movePosition(int columns, int rows);
 
     /**
      * Returns the current position the TextGraphics has
