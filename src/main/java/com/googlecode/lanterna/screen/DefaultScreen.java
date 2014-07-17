@@ -113,7 +113,7 @@ public class DefaultScreen extends TerminalScreen {
     /**
      * Sets the behaviour for what to do about tab characters.
      *
-     * @param tabBehaviour
+     * @param tabBehaviour Tab behaviour to use
      * @see TabBehaviour
      */
     @Override
@@ -126,7 +126,7 @@ public class DefaultScreen extends TerminalScreen {
     /**
      * Gets the behaviour for what to do about tab characters.
      *
-     * @return
+     * @return Tab behaviour that is used currently
      * @see TabBehaviour
      */
     @Override
@@ -208,8 +208,11 @@ public class DefaultScreen extends TerminalScreen {
             backBuffer.setCharacterAt(column + 1, row, screenCharacter.withCharacter(' '));
         }
         //If there's a CJK character immediately to our left, reset it
-        if(column > 0 && CJKUtils.isCharCJK(backBuffer.getCharacterAt(column - 1, row).getCharacter())) {
-            backBuffer.setCharacterAt(column - 1, row, backBuffer.getCharacterAt(column - 1, row).withCharacter(' '));
+        if(column > 0) {
+            TextCharacter cjkTest = backBuffer.getCharacterAt(column - 1, row);
+            if(cjkTest != null && CJKUtils.isCharCJK(cjkTest.getCharacter())) {
+                backBuffer.setCharacterAt(column - 1, row, backBuffer.getCharacterAt(column - 1, row).withCharacter(' '));
+            }
         }
     }
 
