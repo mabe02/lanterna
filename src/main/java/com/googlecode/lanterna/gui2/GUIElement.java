@@ -18,12 +18,14 @@
  */
 package com.googlecode.lanterna.gui2;
 
+import com.googlecode.lanterna.graphics.TextGraphics;
+
 /**
  *
  * @author Martin
  */
 @SuppressWarnings("UnusedParameters")
 public interface GUIElement {
-    void draw(TextGUIGraphics graphics);
+    void draw(TextGraphics graphics);
     boolean isInvalid();
 }

@@ -1,39 +1,39 @@
-/*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
- * 
- * lanterna is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
- * Copyright (C) 2010-2014 Martin
- */
 package com.googlecode.lanterna.gui2;
 
+import java.io.IOException;
+
 /**
- *
+ * This is the base interface for advanced text GUIs supported in Lanterna. You may want to use this in combination with
+ * a TextGUIThread, that can be created/retrieved by using {@code getGUIThread()}.
  * @author Martin
  */
 public interface TextGUI {
-    
-    void start();
-    void stop();
-    void waitForStop() throws InterruptedException;
-    Status getStatus();
-    
-    public static enum Status {
-        CREATED,
-        STARTED,
-        STOPPING,
-        STOPPED,
-        ;
-    }
+    /**
+     * Reads a KeyStroke from the input queue and passes it through the GUI system. For window-based system, it will
+     * send the keystroke to the active window for processing.
+     * @return {@code true} if an event was processed, {@code false} if there was nothing on the input queue
+     * @throws java.io.IOException In case there was an underlying I/O error
+     */
+    boolean processInput() throws IOException;
+
+    /**
+     * Updates the screen, to make any changes visible to the user.
+     * @throws java.io.IOException In case there was an underlying I/O error
+     */
+    void updateScreen() throws IOException;
+
+    /**
+     * This method can be used to determine if any component has requested a redraw. If this method returns
+     * {@code true}, you may want to call {@code updateScreen()}.
+     * @return {@code true} if this TextGUI has a change and is waiting for someone to call {@code updateScreen()}
+     */
+    boolean isPendingUpdate();
+
+    /**
+     * The first time this method is called, it will create a new TextGUIThread object that you can use to automatically
+     * manage this TextGUI instead of manually calling {@code processInput()} and {@code updateScreen()}. After the
+     * initial call, it will return the same object as it was originally returning.
+     * @return A {@code TextGUIThread} implementation that can be used to asynchronously manage the GUI
+     */
+    TextGUIThread getGUIThread();
 }

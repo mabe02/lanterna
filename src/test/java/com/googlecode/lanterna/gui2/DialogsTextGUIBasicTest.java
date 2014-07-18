@@ -18,6 +18,7 @@
  */
 package com.googlecode.lanterna.gui2;
 
+import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.terminal.TextColor;
 import com.googlecode.lanterna.TestTerminalFactory;
 import com.googlecode.lanterna.screen.Screen;
@@ -34,9 +35,9 @@ public class DialogsTextGUIBasicTest {
 
         TextGUI textGUI = new DefaultWindowTextGUI(screen, null, new GUIElement() {
             @Override
-            public void draw(TextGUIGraphics graphics) {
+            public void draw(TextGraphics graphics) {
                 graphics.setBackgroundColor(TextColor.ANSI.BLUE);
-                graphics.fill(' ');
+                graphics.fillScreen(' ');
             }
 
             @Override
@@ -44,11 +45,11 @@ public class DialogsTextGUIBasicTest {
                 return false;
             }
         });
-        textGUI.start();
+        textGUI.getGUIThread().start();
         try {
-            textGUI.waitForStop();
+            textGUI.getGUIThread().waitForStop();
         }
-        catch(InterruptedException e) {}
+        catch(InterruptedException ignored) {}
         //This text GUI will terminate itself, so we don't need to
 
         screen.stopScreen();

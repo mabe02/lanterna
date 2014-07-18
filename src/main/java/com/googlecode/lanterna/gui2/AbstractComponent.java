@@ -18,6 +18,8 @@
  */
 package com.googlecode.lanterna.gui2;
 
+import com.googlecode.lanterna.graphics.TextGraphics;
+
 /**
  *
  * @author Martin
@@ -35,7 +37,7 @@ public abstract class AbstractComponent implements Component {
     }
 
     @Override
-    public void draw(TextGUIGraphics graphics) {
+    public void draw(TextGraphics graphics) {
         invalid = false;
     }
     

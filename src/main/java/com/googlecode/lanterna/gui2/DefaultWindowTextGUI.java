@@ -18,6 +18,7 @@
  */
 package com.googlecode.lanterna.gui2;
 
+import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.gui2.WindowManager.Hint;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.screen.Screen;
@@ -38,12 +39,12 @@ public class DefaultWindowTextGUI extends AbstractTextGUI implements WindowBased
     }
 
     @Override
-    protected boolean isInvalid() {
-        return background.isInvalid() || windowManager.isInvalid();
+    public boolean isPendingUpdate() {
+        return super.isPendingUpdate() || background.isInvalid() || windowManager.isInvalid();
     }
 
     @Override
-    protected void drawGUI(TextGUIGraphics graphics) {
+    protected void drawGUI(TextGraphics graphics) {
         background.draw(graphics);
     }
 

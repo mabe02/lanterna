@@ -1,164 +1,58 @@
-/*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
- *
- * lanterna is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright (C) 2010-2014 Martin
- */
 package com.googlecode.lanterna.gui2;
 
+import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
+
 import java.io.IOException;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.CountDownLatch;
 
 /**
- *
+ * This abstract implementation of TextGUI contains some basic management of the underlying Screen and translates the
+ * input event queue into an abstract method call.
  * @author Martin
  */
 public abstract class AbstractTextGUI implements TextGUI {
-    private final Screen screen;
-    private final Queue<Runnable> customTasks;
 
-    private Status status;
-    private Thread textGUIThread;
-    private CountDownLatch waitLatch;
+    private final Screen screen;
+    private boolean dirty;
+    private TextGUIThread textGUIThread;
 
     protected AbstractTextGUI(Screen screen) {
         this.screen = screen;
-        this.waitLatch = new CountDownLatch(0);
-        this.customTasks = new ConcurrentLinkedQueue<Runnable>();
-
-        this.status = Status.CREATED;
+        this.dirty = false;
         this.textGUIThread = null;
     }
 
     @Override
-    public synchronized void start() {
-        if(status == Status.STARTED) {
-            throw new IllegalStateException("TextGUI is already started");
+    public boolean processInput() throws IOException {
+        KeyStroke keyStroke = screen.readInput();
+        if(keyStroke != null) {
+            dirty = handleInput(keyStroke) || dirty;
         }
-
-        textGUIThread = new Thread("LanternaGUI") {
-            @Override
-            public void run() {
-                mainGUILoop();
-            }
-        };
-        textGUIThread.start();
-        status = Status.STARTED;
-        this.waitLatch = new CountDownLatch(1);
+        return keyStroke != null;
     }
 
     @Override
-    public void stop() {
-        if(status != Status.STARTED) {
-            return;
-        }
-
-        status = Status.STOPPING;
+    public void updateScreen() throws IOException {
+        screen.doResizeIfNecessary();
+        drawGUI(screen.newTextGraphics());
+        screen.refresh();
     }
 
     @Override
-    public void waitForStop() throws InterruptedException {
-        waitLatch.await();
+    public boolean isPendingUpdate() {
+        return screen.doResizeIfNecessary() != null || dirty;
     }
 
     @Override
-    public Status getStatus() {
-        return status;
-    }
-
-    private void mainGUILoop() {
-        try {
-            //Draw initial screen, after this only draw when the GUI is marked as invalid
-            drawGUI();
-            while(status == Status.STARTED) {
-                KeyStroke keyStroke;
-                try {
-                    keyStroke = screen.readInput();
-                }
-                catch(IOException e) {
-                    //TODO: Fix this
-                    e.printStackTrace();
-                    continue;
-                }
-                boolean needsRefresh = false;
-                if(screen.doResizeIfNecessary() != null) {
-                    needsRefresh = true;
-                }
-                if(keyStroke != null) {
-                    //Handle input
-                    //TODO: Remove this after more testing
-                    if(keyStroke.getKeyType() == KeyType.Escape) {
-                        stop();
-                    }
-                    if(handleInput(keyStroke)) {
-                        needsRefresh = true;
-                    }
-                }
-                while(!customTasks.isEmpty()) {
-                    Runnable r = customTasks.poll();
-                    if(r != null) {
-                        try {
-                            r.run();
-                        }
-                        catch(Throwable t) {
-                            t.printStackTrace();
-                        }
-                    }
-                }
-                if(isInvalid()) {
-                    needsRefresh = true;
-                }
-
-                if(needsRefresh) {
-                    drawGUI();
-                }
-                else {
-                    try {
-                        Thread.sleep(1);
-                    }
-                    catch(InterruptedException ignored) {}
-                }
-            }
+    public TextGUIThread getGUIThread() {
+        if(textGUIThread != null) {
+            return textGUIThread;
         }
-        finally {
-            status = Status.STOPPED;
-            waitLatch.countDown();
-        }
-    }
-
-    private void drawGUI() {
-        try {
-            TextGUIGraphics graphics = new ScreenBackendTextGUIGraphics(screen);
-            drawGUI(graphics);
-            screen.refresh();
-        }
-        catch(Throwable t) {
-            t.printStackTrace();
-        }
-    }
-
-    protected Thread getTextGUIThread() {
+        textGUIThread = new DefaultTextGUIThread(this);
         return textGUIThread;
     }
 
-    protected abstract boolean isInvalid();
-    protected abstract void drawGUI(TextGUIGraphics graphics);
+    protected abstract void drawGUI(TextGraphics graphics);
     protected abstract boolean handleInput(KeyStroke key);
 }
