@@ -41,7 +41,7 @@ class DefaultTextGUIThread implements TextGUIThread {
     @Override
     public void start() throws IllegalStateException {
         if(status == Status.STARTED) {
-            throw new IllegalStateException("TextGUI is already started");
+            throw new IllegalStateException("TextGUIThread is already started");
         }
 
         textGUIThread = new Thread("LanternaGUI") {
