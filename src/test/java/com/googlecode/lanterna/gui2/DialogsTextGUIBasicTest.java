@@ -33,7 +33,7 @@ public class DialogsTextGUIBasicTest {
         Screen screen = new TestTerminalFactory(args).createScreen();
         screen.startScreen();
 
-        TextGUI textGUI = new DefaultWindowTextGUI(screen, null, new GUIElement() {
+        TextGUI textGUI = new DefaultWindowTextGUI(screen, null, new TextGUIElement() {
             @Override
             public void draw(TextGraphics graphics) {
                 graphics.setBackgroundColor(TextColor.ANSI.BLUE);

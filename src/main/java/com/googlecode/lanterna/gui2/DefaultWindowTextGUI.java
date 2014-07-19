@@ -30,9 +30,9 @@ import java.util.Collection;
  */
 public class DefaultWindowTextGUI extends AbstractTextGUI implements WindowBasedTextGUI {
     private final WindowManager windowManager;
-    private final GUIElement background;
+    private final TextGUIElement background;
 
-    public DefaultWindowTextGUI(Screen screen, WindowManager windowManager, GUIElement background) {
+    public DefaultWindowTextGUI(Screen screen, WindowManager windowManager, TextGUIElement background) {
         super(screen);
         this.windowManager = windowManager;
         this.background = background;

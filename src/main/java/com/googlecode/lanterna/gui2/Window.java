@@ -20,6 +20,7 @@ package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 
 /**
@@ -27,13 +28,22 @@ import com.googlecode.lanterna.terminal.TerminalSize;
  * @author Martin
  */
 public interface Window {
+    /**
+     * @return title of the window
+     */
     String getTitle();
+
+    /**
+     * @return The coordinates of the top-left position of the window.
+     */
+    TerminalPosition getTopLeftPosition();
+    TerminalSize getSize();
     TerminalSize getPreferredSize();
     TerminalSize getMinimumSize();
     TerminalSize getMaximumSize();
     boolean isVisible();
     boolean isInvalid();
-    void redraw(TextGraphics graphics);
+    void draw(TextGraphics graphics);
     boolean handleInput(KeyStroke key);
     void close();
 }

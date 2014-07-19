@@ -24,6 +24,6 @@ import com.googlecode.lanterna.terminal.TerminalSize;
  *
  * @author Martin
  */
-public interface Component extends GUIElement {
+public interface Component extends TextGUIElement {
     TerminalSize getPreferredSize();
 }

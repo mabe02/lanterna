@@ -107,6 +107,11 @@ public class StackedModalWindowManager implements WindowManager {
         return false;
     }
 
+    @Override
+    public void setDefaultWindowRenderer(WindowRenderer windowRenderer) {
+
+    }
+
     private boolean isCentered(Hint... windowManagerHints) {
         for(Hint hint: windowManagerHints) {
             if(hint == LOCATION_CENTERED) {

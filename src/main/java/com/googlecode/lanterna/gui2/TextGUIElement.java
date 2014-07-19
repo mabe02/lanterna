@@ -24,8 +24,7 @@ import com.googlecode.lanterna.graphics.TextGraphics;
  *
  * @author Martin
  */
-@SuppressWarnings("UnusedParameters")
-public interface GUIElement {
+public interface TextGUIElement {
     void draw(TextGraphics graphics);
     boolean isInvalid();
 }

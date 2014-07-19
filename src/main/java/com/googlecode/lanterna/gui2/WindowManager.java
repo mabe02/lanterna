@@ -26,7 +26,6 @@ import java.util.Collection;
  * @author Martin
  */
 public interface WindowManager {
-    
     void addWindow(Window window, Hint... windowManagerHints);
     void removeWindow(Window window);
     
@@ -34,6 +33,8 @@ public interface WindowManager {
     Window getActiveWindow();
     boolean handleInput(KeyStroke key);
     boolean isInvalid();
+
+    void setDefaultWindowRenderer(WindowRenderer windowRenderer);
     
     public static class Hint {
         protected Hint() {
