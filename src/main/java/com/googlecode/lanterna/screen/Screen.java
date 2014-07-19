@@ -204,7 +204,7 @@ public interface Screen {
          */
         DELTA,
         /**
-         * In {@code RefreshType.COMPLETE} mode, the screen will send a clear command to the terminal, when redraw the 
+         * In {@code RefreshType.COMPLETE} mode, the screen will send a clear command to the terminal, then redraw the
          * whole back-buffer line by line. This is more expensive than {@code RefreshType.COMPLETE}, especially when you
          * have only touched smaller parts of the screen, but can be faster if you have modified most of the content, 
          * as well as if you suspect the screen's internal front buffer is out-of-sync with what's really showing on the
