@@ -57,6 +57,15 @@ public interface TextGUIThread {
     void invokeLater(Runnable runnable) throws IllegalStateException;
 
     /**
+     * Schedules custom code to be executed on the GUI thread and waits until the code has been executed before
+     * returning.
+     * @param runnable Code to run
+     * @throws IllegalStateException If the GUI thread is not running
+     * @throws InterruptedException If the caller thread was interrupted while waiting for the task to be executed
+     */
+    void invokeAndWait(Runnable runnable) throws IllegalStateException, InterruptedException;
+
+    /**
      * Updates the exception handler used by this TextGUIThread. The exception handler will be invoked when an exception
      * occurs in the main event loop. You can then decide how to log this exception and if you want to terminate the
      * thread or not.

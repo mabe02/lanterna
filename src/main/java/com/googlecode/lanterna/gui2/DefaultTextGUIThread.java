@@ -89,6 +89,19 @@ class DefaultTextGUIThread implements TextGUIThread {
     }
 
     @Override
+    public void invokeAndWait(final Runnable runnable) throws IllegalStateException, InterruptedException {
+        final CountDownLatch countDownLatch = new CountDownLatch(1);
+        invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                runnable.run();
+                countDownLatch.countDown();
+            }
+        });
+        countDownLatch.await();
+    }
+
+    @Override
     public void setExceptionHandler(ExceptionHandler exceptionHandler) {
         if(exceptionHandler == null) {
             throw new IllegalArgumentException("Cannot call setExceptionHandler(null)");
