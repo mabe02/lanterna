@@ -21,8 +21,8 @@ package com.googlecode.lanterna.screen;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.terminal.TerminalPosition;
-import com.googlecode.lanterna.terminal.TerminalSize;
+import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.TerminalSize;
 import java.io.IOException;
 
 /**

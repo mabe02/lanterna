@@ -18,6 +18,8 @@
  */
 package com.googlecode.lanterna.terminal;
 
+import com.googlecode.lanterna.TerminalSize;
+
 /**
  * Listener interface that can be used to be alerted on terminal resizing
  */

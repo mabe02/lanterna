@@ -21,7 +21,7 @@ package com.googlecode.lanterna.screen;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.terminal.ResizeListener;
 import com.googlecode.lanterna.terminal.Terminal;
-import com.googlecode.lanterna.terminal.TerminalSize;
+import com.googlecode.lanterna.TerminalSize;
 import java.io.IOException;
 
 /**

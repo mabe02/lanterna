@@ -2,7 +2,7 @@ package com.googlecode.lanterna.issue;
 
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.terminal.Terminal;
-import com.googlecode.lanterna.terminal.TerminalPosition;
+import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TestTerminalFactory;
 import com.googlecode.lanterna.screen.Screen;
 import java.io.IOException;

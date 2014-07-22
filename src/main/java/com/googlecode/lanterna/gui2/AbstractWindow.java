@@ -2,8 +2,8 @@ package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.terminal.TerminalSize;
-import com.googlecode.lanterna.terminal.TextColor;
+import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TextColor;
 
 /**
  * Created by martin on 19/07/14.

@@ -25,9 +25,9 @@ import com.googlecode.lanterna.gui.TextGraphics;
 import com.googlecode.lanterna.gui.Theme;
 import com.googlecode.lanterna.gui.component.TextGrid.DataGridCel;
 import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.terminal.TerminalPosition;
-import com.googlecode.lanterna.terminal.TerminalSize;
-import com.googlecode.lanterna.terminal.TextColor;
+import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TextColor;
 
 /**
  * Multi-line text edit component

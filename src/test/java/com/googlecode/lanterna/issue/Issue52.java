@@ -12,7 +12,7 @@ import com.googlecode.lanterna.gui.component.Panel.Orientation;
 import com.googlecode.lanterna.gui.component.Table;
 import com.googlecode.lanterna.gui.layout.LinearLayout;
 import com.googlecode.lanterna.gui.layout.VerticalLayout;
-import com.googlecode.lanterna.terminal.TerminalSize;
+import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui.Component;
 import java.io.IOException;
 

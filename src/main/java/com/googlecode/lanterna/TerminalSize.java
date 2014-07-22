@@ -16,7 +16,7 @@
  *
  * Copyright (C) 2010-2014 Martin
  */
-package com.googlecode.lanterna.terminal;
+package com.googlecode.lanterna;
 
 /**
  * Terminal dimensions in 2-d space, measured in number of rows and columns. This class is immutable and cannot change

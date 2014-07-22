@@ -22,9 +22,9 @@ import com.googlecode.lanterna.TestTerminalFactory;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
-import com.googlecode.lanterna.terminal.TerminalPosition;
-import com.googlecode.lanterna.terminal.TerminalSize;
-import com.googlecode.lanterna.terminal.TextColor;
+import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TextColor;
 import java.io.IOException;
 import java.util.Random;
 

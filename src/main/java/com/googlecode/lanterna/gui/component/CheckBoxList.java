@@ -23,7 +23,7 @@ import com.googlecode.lanterna.gui.Theme;
 import com.googlecode.lanterna.gui.Theme.Definition;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
-import com.googlecode.lanterna.terminal.TerminalSize;
+import com.googlecode.lanterna.TerminalSize;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -23,7 +23,7 @@ import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.Terminal;
-import com.googlecode.lanterna.terminal.TextColor;
+import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.terminal.swing.SwingTerminalFrame;
 import java.io.IOException;
 

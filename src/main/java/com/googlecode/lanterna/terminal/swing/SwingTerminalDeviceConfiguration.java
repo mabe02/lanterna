@@ -18,7 +18,7 @@
  */
 package com.googlecode.lanterna.terminal.swing;
 
-import com.googlecode.lanterna.terminal.TextColor;
+import com.googlecode.lanterna.TextColor;
 
 /**
  *

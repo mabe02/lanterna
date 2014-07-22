@@ -19,7 +19,7 @@
 package com.googlecode.lanterna.gui;
 
 import com.googlecode.lanterna.gui.component.*;
-import com.googlecode.lanterna.terminal.TerminalSize;
+import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TestTerminalFactory;
 import java.io.IOException;
 

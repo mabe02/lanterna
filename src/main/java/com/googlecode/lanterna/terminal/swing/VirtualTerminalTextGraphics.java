@@ -21,8 +21,8 @@ package com.googlecode.lanterna.terminal.swing;
 import com.googlecode.lanterna.graphics.AbstractTextGraphics;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.graphics.TextGraphics;
-import com.googlecode.lanterna.terminal.TerminalPosition;
-import com.googlecode.lanterna.terminal.TerminalSize;
+import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.TerminalSize;
 
 /**
  * Implementation of TextGraphics for the SwingTerminal, which is able to access directly into the TextBuffer and set

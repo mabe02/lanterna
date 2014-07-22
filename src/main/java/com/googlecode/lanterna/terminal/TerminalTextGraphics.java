@@ -18,6 +18,8 @@
  */
 package com.googlecode.lanterna.terminal;
 
+import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.graphics.AbstractTextGraphics;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.graphics.TextGraphics;

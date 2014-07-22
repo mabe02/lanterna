@@ -20,7 +20,7 @@
 package com.googlecode.lanterna.gui;
 
 import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.terminal.TerminalPosition;
+import com.googlecode.lanterna.TerminalPosition;
 import java.io.IOException;
 
 /**

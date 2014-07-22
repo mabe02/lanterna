@@ -19,8 +19,8 @@
 package com.googlecode.lanterna.terminal.ansi;
 
 import com.googlecode.lanterna.input.DefaultKeyDecodingProfile;
-import com.googlecode.lanterna.terminal.TerminalSize;
-import com.googlecode.lanterna.terminal.TextColor;
+import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TextColor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;

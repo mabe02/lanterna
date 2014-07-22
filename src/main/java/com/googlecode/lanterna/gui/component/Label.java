@@ -25,8 +25,8 @@ import com.googlecode.lanterna.gui.TextGraphics;
 import com.googlecode.lanterna.gui.Theme;
 import com.googlecode.lanterna.gui.Theme.Category;
 import com.googlecode.lanterna.terminal.Terminal;
-import com.googlecode.lanterna.terminal.TerminalSize;
-import com.googlecode.lanterna.terminal.TextColor;
+import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TextColor;
 import java.util.EnumSet;
 
 /**

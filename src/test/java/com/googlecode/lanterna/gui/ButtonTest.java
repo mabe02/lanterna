@@ -25,7 +25,7 @@ import com.googlecode.lanterna.gui.component.Button;
 import com.googlecode.lanterna.gui.component.Panel;
 import com.googlecode.lanterna.screen.DefaultScreen;
 import com.googlecode.lanterna.terminal.Terminal;
-import com.googlecode.lanterna.terminal.TerminalSize;
+import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.terminal.ansi.UnixTerminal;
 import com.googlecode.lanterna.TestTerminalFactory;
 import java.io.IOException;

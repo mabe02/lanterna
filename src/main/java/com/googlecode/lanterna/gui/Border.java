@@ -20,8 +20,8 @@
 package com.googlecode.lanterna.gui;
 
 import com.googlecode.lanterna.ACS;
-import com.googlecode.lanterna.terminal.TerminalPosition;
-import com.googlecode.lanterna.terminal.TerminalSize;
+import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.TerminalSize;
 
 /**
  * Class responsible for defining and rendering a border around a component. The

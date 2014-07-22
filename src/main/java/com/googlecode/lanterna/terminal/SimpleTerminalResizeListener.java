@@ -18,6 +18,8 @@
  */
 package com.googlecode.lanterna.terminal;
 
+import com.googlecode.lanterna.TerminalSize;
+
 /**
  * This class is a simple implementation of Terminal.ResizeListener which will keep track of the size of the terminal
  * and let you know if the terminal has been resized since you last checked. This can be useful to avoid threading 

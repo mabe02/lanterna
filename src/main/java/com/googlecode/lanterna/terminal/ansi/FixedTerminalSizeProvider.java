@@ -19,7 +19,7 @@
 
 package com.googlecode.lanterna.terminal.ansi;
 
-import com.googlecode.lanterna.terminal.TerminalSize;
+import com.googlecode.lanterna.TerminalSize;
 
 /**
  * Using this terminal size provider, your terminal will be set to a fixed size

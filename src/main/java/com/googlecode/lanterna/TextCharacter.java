@@ -19,7 +19,7 @@
 package com.googlecode.lanterna;
 
 import com.googlecode.lanterna.terminal.Terminal;
-import com.googlecode.lanterna.terminal.TextColor;
+
 import java.util.Arrays;
 import java.util.EnumSet;
 

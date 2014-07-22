@@ -18,7 +18,7 @@
  */
 package com.googlecode.lanterna.terminal.ansi;
 
-import com.googlecode.lanterna.terminal.TerminalSize;
+import com.googlecode.lanterna.TerminalSize;
 
 /**
  * This class allows you to override by what means Lanterna detects the size of

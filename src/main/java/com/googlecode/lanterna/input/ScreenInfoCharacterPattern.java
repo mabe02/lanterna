@@ -18,7 +18,7 @@
  */
 package com.googlecode.lanterna.input;
 
-import com.googlecode.lanterna.terminal.TerminalPosition;
+import com.googlecode.lanterna.TerminalPosition;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

@@ -19,7 +19,7 @@
 package com.googlecode.lanterna.terminal.ansi;
 
 import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.terminal.TerminalSize;
+import com.googlecode.lanterna.TerminalSize;
 
 import java.io.*;
 import java.lang.reflect.InvocationHandler;

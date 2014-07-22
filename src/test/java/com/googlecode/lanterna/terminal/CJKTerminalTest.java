@@ -19,6 +19,8 @@
 package com.googlecode.lanterna.terminal;
 
 import com.googlecode.lanterna.TestTerminalFactory;
+import com.googlecode.lanterna.TextColor;
+
 import java.io.IOException;
 
 /**

@@ -30,7 +30,7 @@ import com.googlecode.lanterna.gui.component.Panel;
 import com.googlecode.lanterna.gui.component.TextBox;
 import com.googlecode.lanterna.gui.dialog.MessageBox;
 import com.googlecode.lanterna.gui.layout.LinearLayout;
-import com.googlecode.lanterna.terminal.TerminalSize;
+import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TestTerminalFactory;
 import java.io.IOException;
 

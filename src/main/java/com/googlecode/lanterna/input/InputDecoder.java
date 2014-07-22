@@ -18,7 +18,7 @@
  */
 package com.googlecode.lanterna.input;
 
-import com.googlecode.lanterna.terminal.TerminalPosition;
+import com.googlecode.lanterna.TerminalPosition;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.*;

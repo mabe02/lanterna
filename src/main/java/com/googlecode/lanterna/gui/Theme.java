@@ -21,7 +21,7 @@ package com.googlecode.lanterna.gui;
 import java.util.EnumMap;
 import java.util.Map;
 
-import com.googlecode.lanterna.terminal.TextColor;
+import com.googlecode.lanterna.TextColor;
 
 /**
  * Extend this class to create your own themes. A {@code Theme} consists of several

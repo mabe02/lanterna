@@ -19,14 +19,11 @@
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.graphics.TextGraphics;
-import com.googlecode.lanterna.gui2.WindowManager.Hint;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.screen.Screen;
-import com.googlecode.lanterna.terminal.TerminalPosition;
-import com.googlecode.lanterna.terminal.TerminalSize;
-import com.googlecode.lanterna.terminal.TextColor;
-
-import java.util.Collection;
+import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TextColor;
 
 /**
  *

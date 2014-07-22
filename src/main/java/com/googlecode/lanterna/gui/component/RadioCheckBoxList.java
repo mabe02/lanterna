@@ -23,7 +23,7 @@ import com.googlecode.lanterna.gui.Interactable;
 import com.googlecode.lanterna.gui.Theme;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
-import com.googlecode.lanterna.terminal.TerminalSize;
+import com.googlecode.lanterna.TerminalSize;
 
 /**
  * The list box will display a number of items, of which one and only one can be marked as selected.

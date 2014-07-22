@@ -20,7 +20,7 @@
 package com.googlecode.lanterna.gui.component;
 
 import com.googlecode.lanterna.gui.listener.ComponentListener;
-import com.googlecode.lanterna.terminal.TerminalPosition;
+import com.googlecode.lanterna.TerminalPosition;
 
 /**
  *

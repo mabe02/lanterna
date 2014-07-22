@@ -20,8 +20,8 @@ package com.googlecode.lanterna.gui.layout;
 
 import com.googlecode.lanterna.gui.Component;
 import com.googlecode.lanterna.gui.component.Panel;
-import com.googlecode.lanterna.terminal.TerminalPosition;
-import com.googlecode.lanterna.terminal.TerminalSize;
+import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.TerminalSize;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;

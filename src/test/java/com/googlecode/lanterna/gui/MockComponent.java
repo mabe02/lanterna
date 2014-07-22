@@ -19,7 +19,7 @@
 package com.googlecode.lanterna.gui;
 
 import com.googlecode.lanterna.gui.component.AbstractComponent;
-import com.googlecode.lanterna.terminal.TerminalSize;
+import com.googlecode.lanterna.TerminalSize;
 
 /**
  *

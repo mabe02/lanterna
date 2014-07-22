@@ -18,7 +18,7 @@
  */
 package com.googlecode.lanterna.screen;
 import com.googlecode.lanterna.TextCharacter;
-import com.googlecode.lanterna.terminal.TerminalSize;
+import com.googlecode.lanterna.TerminalSize;
 
 /**
  * This is an implementation of TextGraphics that targets the output to a Screen. The ScreenTextGraphics object is valid

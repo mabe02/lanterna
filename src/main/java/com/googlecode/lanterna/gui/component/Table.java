@@ -24,7 +24,7 @@ import com.googlecode.lanterna.gui.layout.LinearLayout;
 import com.googlecode.lanterna.gui.util.ShortcutHelper;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
-import com.googlecode.lanterna.terminal.TerminalSize;
+import com.googlecode.lanterna.TerminalSize;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;

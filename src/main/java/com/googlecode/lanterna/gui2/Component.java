@@ -18,7 +18,7 @@
  */
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.terminal.TerminalSize;
+import com.googlecode.lanterna.TerminalSize;
 
 /**
  *

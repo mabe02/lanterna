@@ -27,8 +27,8 @@ import com.googlecode.lanterna.gui.TextGraphics;
 import com.googlecode.lanterna.gui.Window;
 import com.googlecode.lanterna.gui.layout.LinearLayout;
 import com.googlecode.lanterna.gui.listener.ComponentListener;
-import com.googlecode.lanterna.terminal.TerminalPosition;
-import com.googlecode.lanterna.terminal.TerminalSize;
+import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.TerminalSize;
 
 import java.util.Collections;
 import java.util.LinkedList;

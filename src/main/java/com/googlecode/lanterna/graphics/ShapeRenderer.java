@@ -18,8 +18,8 @@
  */
 package com.googlecode.lanterna.graphics;
 
-import com.googlecode.lanterna.terminal.TerminalPosition;
-import com.googlecode.lanterna.terminal.TerminalSize;
+import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.TerminalSize;
 
 /**
  * This package private interface exposes methods for translating abstract lines, triangles and rectangles to discreet

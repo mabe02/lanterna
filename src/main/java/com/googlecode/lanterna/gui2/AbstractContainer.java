@@ -19,7 +19,7 @@
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.gui2.LayoutManager.Parameter;
-import com.googlecode.lanterna.terminal.TerminalSize;
+import com.googlecode.lanterna.TerminalSize;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

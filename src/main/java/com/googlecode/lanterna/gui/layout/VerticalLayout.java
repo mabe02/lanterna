@@ -19,8 +19,8 @@
 package com.googlecode.lanterna.gui.layout;
 
 import com.googlecode.lanterna.gui.component.Panel;
-import com.googlecode.lanterna.terminal.TerminalPosition;
-import com.googlecode.lanterna.terminal.TerminalSize;
+import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.TerminalSize;
 
 /**
  * Layout which will put components along a vertical line. The width of the container will be the

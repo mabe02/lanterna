@@ -20,7 +20,7 @@
 package com.googlecode.lanterna.gui;
 
 import com.googlecode.lanterna.gui.listener.ComponentListener;
-import com.googlecode.lanterna.terminal.TerminalSize;
+import com.googlecode.lanterna.TerminalSize;
 
 /**
  * The base component interface, which all components must implement.

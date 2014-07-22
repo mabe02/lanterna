@@ -21,9 +21,9 @@ package com.googlecode.lanterna.gui.component;
 
 import java.util.*;
 
+import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui.*;
-import com.googlecode.lanterna.terminal.*;
-                                
+
 /**
 Indicates activity by cycling through a set of characters.
 */

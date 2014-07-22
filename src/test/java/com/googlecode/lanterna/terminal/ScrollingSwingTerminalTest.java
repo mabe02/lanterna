@@ -18,6 +18,7 @@
  */
 package com.googlecode.lanterna.terminal;
 
+import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.terminal.swing.ScrollingSwingTerminal;
 import com.googlecode.lanterna.terminal.swing.SwingTerminalColorConfiguration;
 import com.googlecode.lanterna.terminal.swing.SwingTerminalDeviceConfiguration;

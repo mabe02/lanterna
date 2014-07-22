@@ -18,8 +18,8 @@
  */
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.terminal.TerminalPosition;
-import com.googlecode.lanterna.terminal.TerminalSize;
+import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.TerminalSize;
 import java.util.List;
 
 /**

@@ -21,8 +21,8 @@ package com.googlecode.lanterna.terminal.swing;
 import com.googlecode.lanterna.CJKUtils;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.screen.TabBehaviour;
-import com.googlecode.lanterna.terminal.TerminalPosition;
-import com.googlecode.lanterna.terminal.TerminalSize;
+import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.TerminalSize;
 import java.util.List;
 
 /**

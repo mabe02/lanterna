@@ -18,7 +18,7 @@
  */
 package com.googlecode.lanterna.gui;
 
-import com.googlecode.lanterna.terminal.TerminalPosition;
+import com.googlecode.lanterna.TerminalPosition;
 
 /**
  * A default background renderer implementation that draws the background as
