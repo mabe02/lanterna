@@ -229,7 +229,7 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
             case ACS.FACE_WHITE:
             case ACS.DIAMOND:
                 return convertToVT100((char) 96);
-            case ACS.DOT:
+            case ACS.BULLET:
                 return convertToVT100((char) 102);
             case ACS.DOUBLE_LINE_CROSS:
             case ACS.SINGLE_LINE_CROSS:
@@ -237,11 +237,11 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
             case ACS.DOUBLE_LINE_HORIZONTAL:
             case ACS.SINGLE_LINE_HORIZONTAL:
                 return convertToVT100((char) 113);
-            case ACS.DOUBLE_LINE_LOW_LEFT_CORNER:
-            case ACS.SINGLE_LINE_LOW_LEFT_CORNER:
+            case ACS.DOUBLE_LINE_BOTTOM_LEFT_CORNER:
+            case ACS.SINGLE_LINE_BOTTOM_LEFT_CORNER:
                 return convertToVT100((char) 109);
-            case ACS.DOUBLE_LINE_LOW_RIGHT_CORNER:
-            case ACS.SINGLE_LINE_LOW_RIGHT_CORNER:
+            case ACS.DOUBLE_LINE_BOTTOM_RIGHT_CORNER:
+            case ACS.SINGLE_LINE_BOTTOM_RIGHT_CORNER:
                 return convertToVT100((char) 106);
             case ACS.DOUBLE_LINE_T_DOWN:
             case ACS.SINGLE_LINE_T_DOWN:
@@ -263,11 +263,11 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
             case ACS.DOUBLE_LINE_T_SINGLE_UP:
             case ACS.SINGLE_LINE_T_DOUBLE_UP:
                 return convertToVT100((char) 118);
-            case ACS.DOUBLE_LINE_UP_LEFT_CORNER:
-            case ACS.SINGLE_LINE_UP_LEFT_CORNER:
+            case ACS.DOUBLE_LINE_TOP_LEFT_CORNER:
+            case ACS.SINGLE_LINE_TOP_LEFT_CORNER:
                 return convertToVT100((char) 108);
-            case ACS.DOUBLE_LINE_UP_RIGHT_CORNER:
-            case ACS.SINGLE_LINE_UP_RIGHT_CORNER:
+            case ACS.DOUBLE_LINE_TOP_RIGHT_CORNER:
+            case ACS.SINGLE_LINE_TOP_RIGHT_CORNER:
                 return convertToVT100((char) 107);
             case ACS.DOUBLE_LINE_VERTICAL:
             case ACS.SINGLE_LINE_VERTICAL:
