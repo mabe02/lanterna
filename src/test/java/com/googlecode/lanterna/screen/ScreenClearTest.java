@@ -18,8 +18,8 @@
  */
 package com.googlecode.lanterna.screen;
 
+import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.graphics.TextGraphics;
-import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.TestTerminalFactory;
 import java.io.IOException;
@@ -57,13 +57,13 @@ public class ScreenClearTest {
         writer.putString(12, 3, "Hello World");
         writer.setForegroundColor(TextColor.ANSI.BLACK);
         writer.setBackgroundColor(TextColor.ANSI.WHITE);
-        writer.putString(13, 4, "Hello World", Terminal.SGR.BOLD);
+        writer.putString(13, 4, "Hello World", SGR.BOLD);
         writer.setForegroundColor(TextColor.ANSI.WHITE);
         writer.setBackgroundColor(TextColor.ANSI.BLACK);
-        writer.putString(14, 5, "Hello World", Terminal.SGR.BOLD);
+        writer.putString(14, 5, "Hello World", SGR.BOLD);
         writer.setForegroundColor(TextColor.ANSI.DEFAULT);
         writer.setBackgroundColor(TextColor.ANSI.DEFAULT);
-        writer.putString(15, 6, "Hello World", Terminal.SGR.BOLD);
+        writer.putString(15, 6, "Hello World", SGR.BOLD);
         writer.setForegroundColor(TextColor.ANSI.DEFAULT);
         writer.setBackgroundColor(TextColor.ANSI.DEFAULT);
         writer.putString(16, 7, "Hello World");
@@ -95,28 +95,28 @@ public class ScreenClearTest {
 
         writer.setForegroundColor(TextColor.ANSI.BLUE);
         writer.setBackgroundColor(TextColor.ANSI.DEFAULT);
-        writer.putString(10, 20, "Hello World", Terminal.SGR.BOLD);
+        writer.putString(10, 20, "Hello World", SGR.BOLD);
         writer.setForegroundColor(TextColor.ANSI.BLUE);
         writer.setBackgroundColor(TextColor.ANSI.WHITE);
-        writer.putString(11, 21, "Hello World", Terminal.SGR.BOLD);
+        writer.putString(11, 21, "Hello World", SGR.BOLD);
         writer.setForegroundColor(TextColor.ANSI.BLUE);
         writer.setBackgroundColor(TextColor.ANSI.BLACK);
-        writer.putString(12, 22, "Hello World", Terminal.SGR.BOLD);
+        writer.putString(12, 22, "Hello World", SGR.BOLD);
         writer.setForegroundColor(TextColor.ANSI.BLUE);
         writer.setBackgroundColor(TextColor.ANSI.MAGENTA);
-        writer.putString(13, 23, "Hello World", Terminal.SGR.BOLD);
+        writer.putString(13, 23, "Hello World", SGR.BOLD);
         writer.setForegroundColor(TextColor.ANSI.GREEN);
         writer.setBackgroundColor(TextColor.ANSI.DEFAULT);
-        writer.putString(14, 24, "Hello World", Terminal.SGR.BOLD);
+        writer.putString(14, 24, "Hello World", SGR.BOLD);
         writer.setForegroundColor(TextColor.ANSI.GREEN);
         writer.setBackgroundColor(TextColor.ANSI.WHITE);
-        writer.putString(15, 25, "Hello World", Terminal.SGR.BOLD);
+        writer.putString(15, 25, "Hello World", SGR.BOLD);
         writer.setForegroundColor(TextColor.ANSI.GREEN);
         writer.setBackgroundColor(TextColor.ANSI.BLACK);
-        writer.putString(16, 26, "Hello World", Terminal.SGR.BOLD);
+        writer.putString(16, 26, "Hello World", SGR.BOLD);
         writer.setForegroundColor(TextColor.ANSI.CYAN);
         writer.setBackgroundColor(TextColor.ANSI.BLUE);
-        writer.putString(17, 27, "Hello World", Terminal.SGR.BOLD);
+        writer.putString(17, 27, "Hello World", SGR.BOLD);
     }
 
     private static void sleep(int i) {

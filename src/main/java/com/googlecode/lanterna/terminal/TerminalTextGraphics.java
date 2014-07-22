@@ -18,6 +18,7 @@
  */
 package com.googlecode.lanterna.terminal;
 
+import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.graphics.AbstractTextGraphics;
@@ -97,7 +98,7 @@ class TerminalTextGraphics extends AbstractTextGraphics {
         terminal.resetColorAndSGR();
         terminal.setForegroundColor(textCharacter.getForegroundColor());
         terminal.setBackgroundColor(textCharacter.getBackgroundColor());
-        for(Terminal.SGR sgr: textCharacter.getModifiers()) {
+        for(SGR sgr: textCharacter.getModifiers()) {
             terminal.enableSGR(sgr);
         }
     }

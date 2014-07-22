@@ -21,6 +21,7 @@ package com.googlecode.lanterna.gui.component;
 
 import java.util.Arrays;
 
+import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.gui.TextGraphics;
 import com.googlecode.lanterna.gui.Theme;
 import com.googlecode.lanterna.gui.Theme.Category;
@@ -45,7 +46,7 @@ public class Label extends AbstractComponent
     private TextColor textColor;
     private TextColor backgroundColor;
     private Theme.Category style;
-    private final EnumSet<Terminal.SGR> charStyles;
+    private final EnumSet<SGR> charStyles;
 
     public Label()
     {
@@ -94,7 +95,7 @@ public class Label extends AbstractComponent
         this.width = 0;
         this.forceWidth = fixedWidth;
         this.style = Theme.Category.DIALOG_AREA;
-        this.charStyles = EnumSet.noneOf(Terminal.SGR.class);
+        this.charStyles = EnumSet.noneOf(SGR.class);
         updateMetrics();
     }
 
@@ -134,7 +135,7 @@ public class Label extends AbstractComponent
                 	stringToDraw = text[i].substring(0, forceWidth - 3) + "...";
 				}
             }
-            graphics.drawString(leftPosition, i, stringToDraw, charStyles.toArray(new Terminal.SGR[charStyles.size()]));
+            graphics.drawString(leftPosition, i, stringToDraw, charStyles.toArray(new SGR[charStyles.size()]));
         }
     }
 
@@ -201,12 +202,12 @@ public class Label extends AbstractComponent
         }
     }
 
-    public EnumSet<Terminal.SGR> getCharStyles() {
+    public EnumSet<SGR> getCharStyles() {
         return charStyles;
     }
     
 
-    public void setCharStyles(EnumSet<Terminal.SGR> styles) {
+    public void setCharStyles(EnumSet<SGR> styles) {
         charStyles.clear();
         charStyles.addAll(styles);
     }

@@ -18,13 +18,9 @@
  */
 package com.googlecode.lanterna.graphics;
 
-import com.googlecode.lanterna.CJKUtils;
-import com.googlecode.lanterna.TextCharacter;
+import com.googlecode.lanterna.*;
 import com.googlecode.lanterna.screen.TabBehaviour;
 import com.googlecode.lanterna.terminal.Terminal;
-import com.googlecode.lanterna.TerminalPosition;
-import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.TextColor;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -41,11 +37,11 @@ public abstract class AbstractTextGraphics implements TextGraphics {
     protected TextColor foregroundColor;
     protected TextColor backgroundColor;
     protected TabBehaviour tabBehaviour;
-    protected final EnumSet<Terminal.SGR> activeModifiers;
+    protected final EnumSet<SGR> activeModifiers;
     private final ShapeRenderer shapeRenderer;
 
     protected AbstractTextGraphics() {
-        this.activeModifiers = EnumSet.noneOf(Terminal.SGR.class);
+        this.activeModifiers = EnumSet.noneOf(SGR.class);
         this.tabBehaviour = TabBehaviour.ALIGN_TO_COLUMN_4;
         this.foregroundColor = TextColor.ANSI.DEFAULT;
         this.backgroundColor = TextColor.ANSI.DEFAULT;
@@ -103,22 +99,22 @@ public abstract class AbstractTextGraphics implements TextGraphics {
     }
 
     @Override
-    public TextGraphics enableModifiers(Terminal.SGR... modifiers) {
+    public TextGraphics enableModifiers(SGR... modifiers) {
         enableModifiers(Arrays.asList(modifiers));
         return this;
     }
 
-    private void enableModifiers(Collection<Terminal.SGR> modifiers) {
+    private void enableModifiers(Collection<SGR> modifiers) {
         this.activeModifiers.addAll(modifiers);
     }
 
     @Override
-    public TextGraphics disableModifiers(Terminal.SGR... modifiers) {
+    public TextGraphics disableModifiers(SGR... modifiers) {
         disableModifiers(Arrays.asList(modifiers));
         return this;
     }
 
-    private void disableModifiers(Collection<Terminal.SGR> modifiers) {
+    private void disableModifiers(Collection<SGR> modifiers) {
         this.activeModifiers.removeAll(modifiers);
     }
 
@@ -129,7 +125,7 @@ public abstract class AbstractTextGraphics implements TextGraphics {
     }
 
     @Override
-    public EnumSet<Terminal.SGR> getActiveModifiers() {
+    public EnumSet<SGR> getActiveModifiers() {
         return activeModifiers;
     }
 
@@ -238,22 +234,22 @@ public abstract class AbstractTextGraphics implements TextGraphics {
     }
 
     @Override
-    public TextGraphics putString(int column, int row, String string, Terminal.SGR extraModifier, Terminal.SGR... optionalExtraModifiers) {
+    public TextGraphics putString(int column, int row, String string, SGR extraModifier, SGR... optionalExtraModifiers) {
         putString(new TerminalPosition(column, row), string, extraModifier, optionalExtraModifiers);
         return this;
     }
 
     @Override
-    public TextGraphics putString(TerminalPosition position, String string, Terminal.SGR extraModifier, Terminal.SGR... optionalExtraModifiers) {
+    public TextGraphics putString(TerminalPosition position, String string, SGR extraModifier, SGR... optionalExtraModifiers) {
         setPosition(position);
         putString(string, extraModifier, optionalExtraModifiers);
         return this;
     }
 
     @Override
-    public TextGraphics putString(String string, Terminal.SGR extraModifier, Terminal.SGR... optionalExtraModifiers) {
+    public TextGraphics putString(String string, SGR extraModifier, SGR... optionalExtraModifiers) {
         clearModifiers();
-        EnumSet<Terminal.SGR> extraModifiers = EnumSet.of(extraModifier, optionalExtraModifiers);
+        EnumSet<SGR> extraModifiers = EnumSet.of(extraModifier, optionalExtraModifiers);
         extraModifiers.removeAll(activeModifiers);
         enableModifiers(extraModifiers);
         putString(string);

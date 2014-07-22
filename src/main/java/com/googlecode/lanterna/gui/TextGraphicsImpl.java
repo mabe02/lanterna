@@ -19,6 +19,7 @@
 
 package com.googlecode.lanterna.gui;
 
+import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.screen.TabBehaviour;
@@ -122,7 +123,7 @@ class TextGraphicsImpl implements com.googlecode.lanterna.gui.TextGraphics
      * @param styles Which styles to apply to the string
      */
     @Override
-    public void drawString(int column, int row, String string, Terminal.SGR... styles)
+    public void drawString(int column, int row, String string, SGR... styles)
     {
         if(column >= areaSize.getColumns() || row >= areaSize.getRows() || string == null)
             return;
@@ -138,7 +139,7 @@ class TextGraphicsImpl implements com.googlecode.lanterna.gui.TextGraphics
         screenWriter.setBackgroundColor(backgroundColor);
         screenWriter.enableModifiers(styles);
         if(currentlyBold) {
-            screenWriter.enableModifiers(Terminal.SGR.BOLD);
+            screenWriter.enableModifiers(SGR.BOLD);
         }
         screenWriter.putString(string);
     }
@@ -289,7 +290,7 @@ class TextGraphicsImpl implements com.googlecode.lanterna.gui.TextGraphics
         public void applyTheme(Theme.Definition themeItem) { }
 
         @Override
-        public void drawString(int column, int row, String string, Terminal.SGR... styles) { }
+        public void drawString(int column, int row, String string, SGR... styles) { }
 
         @Override
         public void fillArea(char character) { }

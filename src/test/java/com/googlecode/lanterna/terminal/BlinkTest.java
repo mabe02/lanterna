@@ -19,6 +19,7 @@
 
 package com.googlecode.lanterna.terminal;
 
+import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.TestTerminalFactory;
 import com.googlecode.lanterna.TextColor;
 
@@ -34,7 +35,7 @@ public class BlinkTest {
         rawTerminal.enterPrivateMode();
         rawTerminal.clearScreen();
         rawTerminal.setForegroundColor(TextColor.ANSI.RED);
-        rawTerminal.enableSGR(Terminal.SGR.BLINK);
+        rawTerminal.enableSGR(SGR.BLINK);
         rawTerminal.setCursorPosition(10, 10);
         rawTerminal.putCharacter('H');
         rawTerminal.putCharacter('e');

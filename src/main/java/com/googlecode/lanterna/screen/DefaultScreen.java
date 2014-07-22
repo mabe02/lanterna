@@ -18,12 +18,9 @@
  */
 package com.googlecode.lanterna.screen;
 
-import com.googlecode.lanterna.CJKUtils;
-import com.googlecode.lanterna.TextCharacter;
-import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.*;
 import com.googlecode.lanterna.terminal.Terminal;
-import com.googlecode.lanterna.TerminalPosition;
-import com.googlecode.lanterna.TerminalSize;
+
 import java.io.IOException;
 import java.util.*;
 
@@ -298,9 +295,9 @@ public class DefaultScreen extends TerminalScreen {
         getTerminal().setCursorPosition(currentPosition.getColumn(), currentPosition.getRow());
 
         TextCharacter firstScreenCharacterToUpdate = updateMap.values().iterator().next();
-        EnumSet<Terminal.SGR> currentSGR = firstScreenCharacterToUpdate.getModifiers();
+        EnumSet<SGR> currentSGR = firstScreenCharacterToUpdate.getModifiers();
         getTerminal().resetColorAndSGR();
-        for(Terminal.SGR sgr: currentSGR) {
+        for(SGR sgr: currentSGR) {
             getTerminal().enableSGR(sgr);
         }
         TextColor currentForegroundColor = firstScreenCharacterToUpdate.getForegroundColor();
@@ -320,7 +317,7 @@ public class DefaultScreen extends TerminalScreen {
                 getTerminal().setBackgroundColor(newCharacter.getBackgroundColor());
                 currentBackgroundColor = newCharacter.getBackgroundColor();
             }
-            for(Terminal.SGR sgr: Terminal.SGR.values()) {
+            for(SGR sgr: SGR.values()) {
                 if(currentSGR.contains(sgr) && !newCharacter.getModifiers().contains(sgr)) {
                     getTerminal().disableSGR(sgr);
                     currentSGR.remove(sgr);
@@ -348,7 +345,7 @@ public class DefaultScreen extends TerminalScreen {
         getTerminal().clearScreen();
         getTerminal().resetColorAndSGR();
 
-        EnumSet<Terminal.SGR> currentSGR = EnumSet.noneOf(Terminal.SGR.class);
+        EnumSet<SGR> currentSGR = EnumSet.noneOf(SGR.class);
         TextColor currentForegroundColor = TextColor.ANSI.DEFAULT;
         TextColor currentBackgroundColor = TextColor.ANSI.DEFAULT;
         for(int y = 0; y < getTerminalSize().getRows(); y++) {
@@ -368,7 +365,7 @@ public class DefaultScreen extends TerminalScreen {
                     getTerminal().setBackgroundColor(newCharacter.getBackgroundColor());
                     currentBackgroundColor = newCharacter.getBackgroundColor();
                 }
-                for(Terminal.SGR sgr: Terminal.SGR.values()) {
+                for(SGR sgr: SGR.values()) {
                     if(currentSGR.contains(sgr) && !newCharacter.getModifiers().contains(sgr)) {
                         getTerminal().disableSGR(sgr);
                         currentSGR.remove(sgr);

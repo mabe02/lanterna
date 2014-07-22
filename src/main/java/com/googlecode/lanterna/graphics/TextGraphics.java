@@ -18,6 +18,7 @@
  */
 package com.googlecode.lanterna.graphics;
 
+import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.screen.TabBehaviour;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.TerminalPosition;
@@ -132,14 +133,14 @@ public interface TextGraphics {
      * @param modifiers Modifiers to add to the set of currently active modifiers
      * @return Itself
      */
-    TextGraphics enableModifiers(Terminal.SGR... modifiers);
+    TextGraphics enableModifiers(SGR... modifiers);
 
     /**
      * Removes zero or more modifiers from the set of currently active modifiers
      * @param modifiers Modifiers to remove from the set of currently active modifiers
      * @return Itself
      */
-    TextGraphics disableModifiers(Terminal.SGR... modifiers);
+    TextGraphics disableModifiers(SGR... modifiers);
 
     /**
      * Removes all active modifiers
@@ -151,7 +152,7 @@ public interface TextGraphics {
      * Returns all the SGR codes that are currently active in the TextGraphic
      * @return Currently active SGR modifiers
      */
-    EnumSet<Terminal.SGR> getActiveModifiers();
+    EnumSet<SGR> getActiveModifiers();
 
     /**
      * Retrieves the current tab behaviour, which is what the TextGraphics will use when expanding \t characters to
@@ -283,7 +284,7 @@ public interface TextGraphics {
      * @param optionalExtraModifiers Optional extra modifiers to apply to the string
      * @return Itself
      */
-    TextGraphics putString(int column, int row, String string, Terminal.SGR extraModifier, Terminal.SGR... optionalExtraModifiers);
+    TextGraphics putString(int column, int row, String string, SGR extraModifier, SGR... optionalExtraModifiers);
 
     /**
      * Shortcut to calling:
@@ -297,7 +298,7 @@ public interface TextGraphics {
      * @param optionalExtraModifiers Optional extra modifiers to apply to the string
      * @return Itself
      */
-    TextGraphics putString(TerminalPosition position, String string, Terminal.SGR extraModifier, Terminal.SGR... optionalExtraModifiers);
+    TextGraphics putString(TerminalPosition position, String string, SGR extraModifier, SGR... optionalExtraModifiers);
 
     /**
      * Prints a string from the current position and optionally enables a few extra SGR modifiers. The extra SGR
@@ -308,5 +309,5 @@ public interface TextGraphics {
      * @param optionalExtraModifiers Optional extra modifiers to apply to the string
      * @return Itself
      */
-    TextGraphics putString(String string, Terminal.SGR extraModifier, Terminal.SGR... optionalExtraModifiers);
+    TextGraphics putString(String string, SGR extraModifier, SGR... optionalExtraModifiers);
 }

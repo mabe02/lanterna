@@ -19,6 +19,7 @@
 
 package com.googlecode.lanterna.terminal;
 
+import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.TestTerminalFactory;
 import com.googlecode.lanterna.TextColor;
 
@@ -36,11 +37,11 @@ public class ResetAllTest {
         terminal.setCursorPosition(10, 5);
         terminal.putCharacter('H');
         terminal.putCharacter('e');
-        terminal.enableSGR(Terminal.SGR.BOLD);
+        terminal.enableSGR(SGR.BOLD);
         terminal.putCharacter('l');
         terminal.setForegroundColor(TextColor.ANSI.CYAN);
         terminal.putCharacter('l');
-        terminal.enableSGR(Terminal.SGR.REVERSE);
+        terminal.enableSGR(SGR.REVERSE);
         terminal.putCharacter('o');
         terminal.resetColorAndSGR();
         terminal.putCharacter('!');

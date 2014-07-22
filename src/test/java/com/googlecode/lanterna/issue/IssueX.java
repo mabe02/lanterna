@@ -1,7 +1,7 @@
 package com.googlecode.lanterna.issue;
 
+import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.graphics.TextGraphics;
-import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TestTerminalFactory;
 import com.googlecode.lanterna.screen.Screen;
@@ -12,7 +12,7 @@ class IssueX {
     public static void main(String[] args) throws InterruptedException, IOException {
         LanternaTerminalWriter writer = new LanternaTerminalWriter(args);
         for (int i = 0; i < 1000; i++) {
-            writer.write(String.valueOf(i), Terminal.SGR.BOLD);
+            writer.write(String.valueOf(i), SGR.BOLD);
             Thread.sleep(100);
         }
         writer.close();
@@ -41,7 +41,7 @@ class IssueX {
             conversionFinished = true;
         }
 
-        public void write(String string, Terminal.SGR... styles) throws IOException {
+        public void write(String string, SGR... styles) throws IOException {
             screenWriter.setPosition(new TerminalPosition(default_x, current_y));
             screenWriter.enableModifiers(styles);
             screenWriter.putString(string);

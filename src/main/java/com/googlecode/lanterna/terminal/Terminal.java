@@ -18,6 +18,7 @@
  */
 package com.googlecode.lanterna.terminal;
 
+import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
@@ -120,7 +121,7 @@ public interface Terminal extends InputProvider {
      *
      * @param sgr SGR code to apply
      * @throws java.io.IOException If there was an underlying I/O error
-     * @see Terminal.SGR
+     * @see SGR
      * @see <a href="http://www.vt100.net/docs/vt510-rm/SGR">http://www.vt100.net/docs/vt510-rm/SGR</a>
      */
     public void enableSGR(SGR sgr) throws IOException;
@@ -131,7 +132,7 @@ public interface Terminal extends InputProvider {
      *
      * @param sgr SGR code to apply
      * @throws java.io.IOException If there was an underlying I/O error
-     * @see Terminal.SGR
+     * @see SGR
      * @see <a href="http://www.vt100.net/docs/vt510-rm/SGR">http://www.vt100.net/docs/vt510-rm/SGR</a>
      */
     public void disableSGR(SGR sgr) throws IOException;
@@ -140,7 +141,7 @@ public interface Terminal extends InputProvider {
      * Removes all currently active SGR codes and sets foreground and background colors back to default.
      *
      * @throws java.io.IOException If there was an underlying I/O error
-     * @see Terminal.SGR
+     * @see SGR
      * @see <a href="http://www.vt100.net/docs/vt510-rm/SGR">http://www.vt100.net/docs/vt510-rm/SGR</a>
      */
     public void resetColorAndSGR() throws IOException;
@@ -231,53 +232,4 @@ public interface Terminal extends InputProvider {
      * @throws java.io.IOException If there was an underlying I/O error
      */
     public void flush() throws IOException;
-
-    /**
-     * SGR - Select Graphic Rendition, changes the state of the terminal as to what kind of text to print after this
-     * command. When applying an ENTER SGR code, it normally applies until you send the corresponding EXIT code.
-     * RESET_ALL will clear any code currently enabled.
-     */
-    public enum SGR {
-        /**
-         * Please note that on some terminal implementations, instead of making the text bold, it will draw the text in
-         * a slightly different color
-         */
-        BOLD,
-
-        /**
-         * Reverse mode will flip the foreground and background colors
-         */
-        REVERSE,
-
-        /**
-         * Not widely supported
-         */
-        UNDERLINE,
-
-        /**
-         * Not widely supported
-         */
-        BLINK,
-
-        /**
-         * Rarely supported
-         */
-        BORDERED,
-
-        /**
-         * Exotic extension, please send me a reference screenshot!
-         */
-        FRAKTUR,
-
-        /**
-         * Rarely supported
-         */
-        CROSSEDOUT,
-
-        /**
-         * Rarely supported
-         */
-        CIRCLED,
-        ;
-    }
 }

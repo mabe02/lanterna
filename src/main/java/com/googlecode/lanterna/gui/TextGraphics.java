@@ -4,6 +4,7 @@
  */
 package com.googlecode.lanterna.gui;
 
+import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
@@ -41,7 +42,7 @@ public interface TextGraphics {
      * @param string String to print to terminal
      * @param styles Which styles to apply to the string
      */
-    void drawString(int column, int row, String string, Terminal.SGR... styles);
+    void drawString(int column, int row, String string, SGR... styles);
 
     /**
      * Replaces the content of the entire TextGraphic object with one character

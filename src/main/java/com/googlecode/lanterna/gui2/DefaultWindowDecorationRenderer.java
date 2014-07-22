@@ -1,9 +1,6 @@
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.ACS;
-import com.googlecode.lanterna.TerminalPosition;
-import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.*;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.terminal.*;
 
@@ -23,7 +20,7 @@ public class DefaultWindowDecorationRenderer implements WindowDecorationRenderer
         title = title.substring(0, Math.min(title.length(), drawableArea.getColumns() - 3));
         graphics.setForegroundColor(TextColor.ANSI.WHITE)
                 .setBackgroundColor(TextColor.ANSI.WHITE)
-                .enableModifiers(Terminal.SGR.BOLD);
+                .enableModifiers(SGR.BOLD);
 
         graphics.setPosition(0, drawableArea.getRows() - 1)
                 .setCharacter(ACS.SINGLE_LINE_BOTTOM_LEFT_CORNER);
@@ -36,7 +33,7 @@ public class DefaultWindowDecorationRenderer implements WindowDecorationRenderer
 
         graphics.setForegroundColor(TextColor.ANSI.BLACK)
                 .setBackgroundColor(TextColor.ANSI.WHITE)
-                .enableModifiers(Terminal.SGR.BOLD);
+                .enableModifiers(SGR.BOLD);
 
         graphics.setPosition(drawableArea.getColumns() - 1, 0)
                 .setCharacter(ACS.SINGLE_LINE_TOP_RIGHT_CORNER);

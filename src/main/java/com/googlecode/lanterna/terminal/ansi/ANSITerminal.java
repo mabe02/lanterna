@@ -18,6 +18,7 @@
  */
 package com.googlecode.lanterna.terminal.ansi;
 
+import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.input.DefaultKeyDecodingProfile;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;

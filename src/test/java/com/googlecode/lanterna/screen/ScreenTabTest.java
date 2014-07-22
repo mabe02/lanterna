@@ -18,8 +18,8 @@
  */
 package com.googlecode.lanterna.screen;
 
+import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.graphics.TextGraphics;
-import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.TestTerminalFactory;
@@ -58,7 +58,7 @@ public class ScreenTabTest {
 
         writer.setForegroundColor(TextColor.ANSI.DEFAULT);
         writer.setBackgroundColor(TextColor.ANSI.DEFAULT);
-        writer.putString(0, 0, topTitle, Terminal.SGR.BLINK);
+        writer.putString(0, 0, topTitle, SGR.BLINK);
         writer.setTabBehaviour(TabBehaviour.CONVERT_TO_ONE_SPACE);
         writer.putString(10, 1, "TabBehaviour.CONVERT_TO_ONE_SPACE:    |\t|\t|\t|\t|");
         writer.setTabBehaviour(TabBehaviour.CONVERT_TO_TWO_SPACES);

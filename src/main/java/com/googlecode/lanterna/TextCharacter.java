@@ -29,8 +29,8 @@ import java.util.EnumSet;
  * @author Martin
  */
 public class TextCharacter {
-    private static EnumSet<Terminal.SGR> toEnumSet(Terminal.SGR... modifiers) {
-        EnumSet<Terminal.SGR> set = EnumSet.noneOf(Terminal.SGR.class);
+    private static EnumSet<SGR> toEnumSet(SGR... modifiers) {
+        EnumSet<SGR> set = EnumSet.noneOf(SGR.class);
         //Now assign the modifiers; we can't pass them in using EnumSet.copyOf(..) since that throws is the list is empty
         set.addAll(Arrays.asList(modifiers));
         return set;
@@ -41,7 +41,7 @@ public class TextCharacter {
     private final char character;
     private final TextColor foregroundColor;
     private final TextColor backgroundColor;
-    private final EnumSet<Terminal.SGR> modifiers;  //This isn't immutable, but we should treat it as such!
+    private final EnumSet<SGR> modifiers;  //This isn't immutable, but we should treat it as such!
 
     /**
      * Creates a {@code ScreenCharacter} based on a supplied character, with default colors and no extra modifiers.
@@ -59,7 +59,7 @@ public class TextCharacter {
         this(character.getCharacter(),
                 character.getForegroundColor(), 
                 character.getBackgroundColor(),
-                character.getModifiers().toArray(new Terminal.SGR[character.getModifiers().size()]));
+                character.getModifiers().toArray(new SGR[character.getModifiers().size()]));
     }
 
     /**
@@ -74,7 +74,7 @@ public class TextCharacter {
             char character,
             TextColor foregroundColor,
             TextColor backgroundColor,
-            Terminal.SGR... styles) {
+            SGR... styles) {
         
         this(character, 
                 foregroundColor, 
@@ -86,7 +86,7 @@ public class TextCharacter {
             char character,
             TextColor foregroundColor,
             TextColor backgroundColor,
-            EnumSet<Terminal.SGR> modifiers) {
+            EnumSet<SGR> modifiers) {
         
         if(foregroundColor == null) {
             foregroundColor = TextColor.ANSI.DEFAULT;
@@ -113,32 +113,32 @@ public class TextCharacter {
         return backgroundColor;
     }
 
-    public EnumSet<Terminal.SGR> getModifiers() {
+    public EnumSet<SGR> getModifiers() {
         return EnumSet.copyOf(modifiers);
     }
 
     public boolean isBold() {
-        return modifiers.contains(Terminal.SGR.BOLD);
+        return modifiers.contains(SGR.BOLD);
     }
 
     public boolean isReversed() {
-        return modifiers.contains(Terminal.SGR.REVERSE);
+        return modifiers.contains(SGR.REVERSE);
     }
 
     public boolean isUnderlined() {
-        return modifiers.contains(Terminal.SGR.UNDERLINE);
+        return modifiers.contains(SGR.UNDERLINE);
     }
 
     public boolean isBlinking() {
-        return modifiers.contains(Terminal.SGR.BLINK);
+        return modifiers.contains(SGR.BLINK);
     }
 
     public boolean isBordered() {
-        return modifiers.contains(Terminal.SGR.BORDERED);
+        return modifiers.contains(SGR.BORDERED);
     }
 
     public boolean isCrossedOut() {
-        return modifiers.contains(Terminal.SGR.CROSSEDOUT);
+        return modifiers.contains(SGR.CROSSEDOUT);
     }
 
 

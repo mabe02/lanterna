@@ -19,6 +19,7 @@
 package com.googlecode.lanterna.terminal;
 
 import com.googlecode.lanterna.ACS;
+import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.TestTerminalFactory;
 import java.io.IOException;
 
@@ -50,7 +51,7 @@ public class SwingTerminalTest {
         terminal.putCharacter(ACS.SINGLE_LINE_VERTICAL);
         terminal.putCharacter(ACS.SINGLE_LINE_HORIZONTAL);
         terminal.setCursorPosition(10, 7);
-        terminal.enableSGR(Terminal.SGR.BOLD);
+        terminal.enableSGR(SGR.BOLD);
         terminal.putCharacter('H');
         terminal.putCharacter('e');
         terminal.putCharacter('l');
@@ -68,15 +69,15 @@ public class SwingTerminalTest {
         terminal.putCharacter(ACS.SINGLE_LINE_VERTICAL);
         terminal.putCharacter(ACS.SINGLE_LINE_HORIZONTAL);
         terminal.setCursorPosition(10, 9);
-        terminal.enableSGR(Terminal.SGR.UNDERLINE);
+        terminal.enableSGR(SGR.UNDERLINE);
         terminal.putCharacter('H');
         terminal.putCharacter('e');
-        terminal.enableSGR(Terminal.SGR.BOLD);
+        terminal.enableSGR(SGR.BOLD);
         terminal.putCharacter('l');
-        terminal.enableSGR(Terminal.SGR.UNDERLINE);
+        terminal.enableSGR(SGR.UNDERLINE);
         terminal.putCharacter('l');
         terminal.putCharacter('o');
-        terminal.enableSGR(Terminal.SGR.UNDERLINE);
+        terminal.enableSGR(SGR.UNDERLINE);
         terminal.putCharacter('!');
         terminal.putCharacter(' ');
         terminal.putCharacter(ACS.HEART);
@@ -89,7 +90,7 @@ public class SwingTerminalTest {
         terminal.putCharacter(ACS.SINGLE_LINE_VERTICAL);
         terminal.putCharacter(ACS.SINGLE_LINE_HORIZONTAL);
         terminal.setCursorPosition(10, 11);
-        terminal.enableSGR(Terminal.SGR.BORDERED);
+        terminal.enableSGR(SGR.BORDERED);
         terminal.putCharacter('!');
         terminal.putCharacter(' ');
         terminal.putCharacter(ACS.HEART);
