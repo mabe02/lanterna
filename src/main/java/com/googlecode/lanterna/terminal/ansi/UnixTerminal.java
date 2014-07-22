@@ -56,6 +56,10 @@ public class UnixTerminal extends ANSITerminal {
     private final Behaviour terminalBehaviour;
     private String sttyStatusToRestore;
 
+    public UnixTerminal() throws IOException {
+        this(System.in, System.out, Charset.defaultCharset());
+    }
+
     /**
      * Creates a UnixTerminal using a specified input stream, output stream and character set.
      *
