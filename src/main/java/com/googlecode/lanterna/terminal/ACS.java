@@ -27,12 +27,6 @@ package com.googlecode.lanterna.terminal;
 public class ACS {
     private ACS() {}
 
-    public static final char ULCORNER = 0x250C;
-    public static final char URCORNER = 0x2510;
-    public static final char LLCORNER = 0x2514;
-    public static final char LRCORNER = 0x2518;
-    public static final char HLINE = 0x2500;
-    public static final char VLINE = 0x2502;
     public static final char FACE_WHITE = 0x263A;
     public static final char FACE_BLACK = 0x263B;
     public static final char HEART = 0x2665;
@@ -56,19 +50,19 @@ public class ACS {
     public static final char BLOCK_MIDDLE = 0x2592;
     public static final char BLOCK_SPARSE = 0x2591;
 
-    public static final char SINGLE_LINE_HORIZONTAL = HLINE;
+    public static final char SINGLE_LINE_HORIZONTAL = 0x2500;
     public static final char DOUBLE_LINE_HORIZONTAL = 0x2550;
-    public static final char SINGLE_LINE_VERTICAL = VLINE;
+    public static final char SINGLE_LINE_VERTICAL = 0x2502;
     public static final char DOUBLE_LINE_VERTICAL = 0x2551;
 
-    public static final char SINGLE_LINE_UP_LEFT_CORNER = ULCORNER;
+    public static final char SINGLE_LINE_UP_LEFT_CORNER = 0x250C;
     public static final char DOUBLE_LINE_UP_LEFT_CORNER = 0x2554;
-    public static final char SINGLE_LINE_UP_RIGHT_CORNER = URCORNER;
+    public static final char SINGLE_LINE_UP_RIGHT_CORNER = 0x2510;
     public static final char DOUBLE_LINE_UP_RIGHT_CORNER = 0x2557;
 
-    public static final char SINGLE_LINE_LOW_LEFT_CORNER = LLCORNER;
+    public static final char SINGLE_LINE_LOW_LEFT_CORNER = 0x2514;
     public static final char DOUBLE_LINE_LOW_LEFT_CORNER = 0x255A;
-    public static final char SINGLE_LINE_LOW_RIGHT_CORNER = LRCORNER;
+    public static final char SINGLE_LINE_LOW_RIGHT_CORNER = 0x2518;
     public static final char DOUBLE_LINE_LOW_RIGHT_CORNER = 0x255D;
 
     public static final char SINGLE_LINE_CROSS = 0x253C;
