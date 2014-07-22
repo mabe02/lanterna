@@ -22,6 +22,9 @@ import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.input.DefaultKeyDecodingProfile;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.terminal.ExtendedTerminal;
+
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -33,7 +36,7 @@ import java.nio.charset.Charset;
  * @see <a href="http://en.wikipedia.org/wiki/ANSI_escape_code">Wikipedia</a>
  * @author Martin
  */
-public abstract class ANSITerminal extends StreamBasedTerminal {
+public abstract class ANSITerminal extends StreamBasedTerminal implements ExtendedTerminal {
 
     private boolean inPrivateMode;
 
@@ -59,6 +62,15 @@ public abstract class ANSITerminal extends StreamBasedTerminal {
         reportPosition();
         restoreCursorPosition();
         return waitForTerminalSizeReport();
+    }
+
+    @Override
+    public void setTerminalSize(int columns, int rows) throws IOException {
+        writeCSISequenctToTerminal(("8;" + rows + ";" + columns + "t").getBytes());
+
+        //We can't trust that the previous call was honoured by the terminal so force a re-query here, which will
+        //trigger a resize event if one actually took place
+        getTerminalSize();
     }
 
     @Override
