@@ -149,28 +149,28 @@ public abstract class ANSITerminal extends StreamBasedTerminal {
     public void disableSGR(SGR sgr) throws IOException {
         switch(sgr) {
             case BLINK:
-                writeToTerminal((byte) '2', (byte) '5', (byte) 'm');
+                writeCSISequenctToTerminal((byte) '2', (byte) '5', (byte) 'm');
                 break;
             case BOLD:
-                writeToTerminal((byte) '2', (byte) '2', (byte) 'm');
+                writeCSISequenctToTerminal((byte) '2', (byte) '2', (byte) 'm');
                 break;
             case BORDERED:
-                writeToTerminal((byte) '5', (byte) '4', (byte) 'm');
+                writeCSISequenctToTerminal((byte) '5', (byte) '4', (byte) 'm');
                 break;
             case CIRCLED:
-                writeToTerminal((byte) '5', (byte) '4', (byte) 'm');
+                writeCSISequenctToTerminal((byte) '5', (byte) '4', (byte) 'm');
                 break;
             case CROSSEDOUT:
-                writeToTerminal((byte) '2', (byte) '9', (byte) 'm');
+                writeCSISequenctToTerminal((byte) '2', (byte) '9', (byte) 'm');
                 break;
             case FRAKTUR:
-                writeToTerminal((byte) '2', (byte) '3', (byte) 'm');
+                writeCSISequenctToTerminal((byte) '2', (byte) '3', (byte) 'm');
                 break;
             case REVERSE:
-                writeToTerminal((byte) '2', (byte) '7', (byte) 'm');
+                writeCSISequenctToTerminal((byte) '2', (byte) '7', (byte) 'm');
                 break;
             case UNDERLINE:
-                writeToTerminal((byte) '2', (byte) '4', (byte) 'm');
+                writeCSISequenctToTerminal((byte) '2', (byte) '4', (byte) 'm');
                 break;
         }
     }
