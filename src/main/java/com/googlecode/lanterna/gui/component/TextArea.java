@@ -22,7 +22,7 @@ package com.googlecode.lanterna.gui.component;
 import com.googlecode.lanterna.gui.TextGraphics;
 import com.googlecode.lanterna.gui.Theme;
 import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.terminal.ACS;
+import com.googlecode.lanterna.ACS;
 import com.googlecode.lanterna.terminal.TerminalPosition;
 import com.googlecode.lanterna.terminal.TerminalSize;
 import java.util.ArrayList;
