@@ -320,7 +320,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
             return colorConfiguration.toAWTColor(foregroundColor, backgroundColor == TextColor.ANSI.DEFAULT, character.isBold());
         }
         else {
-            return colorConfiguration.toAWTColor(backgroundColor, false, character.isBold());
+            return colorConfiguration.toAWTColor(backgroundColor, false, false);
         }
     }
 
