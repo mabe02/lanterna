@@ -37,7 +37,7 @@ public abstract class AbstractComponent implements Component {
     }
 
     @Override
-    public void draw(TextGraphics graphics) {
+    public void draw(TextGUI textGUI, Window window, TextGraphics graphics) {
         invalid = false;
     }
     

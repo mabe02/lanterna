@@ -25,7 +25,5 @@ import java.util.Collection;
  * @author Martin
  */
 public interface WindowBasedTextGUI extends TextGUI {
-    void addWindow(Window window, WindowManager.Hint... windowManagerHints);
-    void removeWindow(Window window);
-    Collection<Window> getWindows();
+    WindowManager getWindowManager();
 }

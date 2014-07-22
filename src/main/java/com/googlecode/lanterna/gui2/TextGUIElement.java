@@ -25,6 +25,6 @@ import com.googlecode.lanterna.graphics.TextGraphics;
  * @author Martin
  */
 public interface TextGUIElement {
-    void draw(TextGraphics graphics);
+    void draw(TextGUI textGUI, Window window, TextGraphics graphics);
     boolean isInvalid();
 }

@@ -84,6 +84,34 @@ public class TerminalSize {
         return new TerminalSize(this.columns, rows);
     }
 
+    /**
+     * Creates a new TerminalSize object representing a size with the same number of rows, but with a column size offset by a
+     * supplied value. Calling this method with delta 0 will return this, calling it with a positive delta will return
+     * a terminal size <i>delta</i> number of columns wider and for negative numbers shorter.
+     * @param delta Column offset
+     * @return New terminal size based off this one but with an applied transformation
+     */
+    public TerminalSize withRelativeColumns(int delta) {
+        if(delta == 0) {
+            return this;
+        }
+        return withColumns(columns + delta);
+    }
+
+    /**
+     * Creates a new TerminalSize object representing a size with the same number of columns, but with a row size offset by a
+     * supplied value. Calling this method with delta 0 will return this, calling it with a positive delta will return
+     * a terminal size <i>delta</i> number of rows longer and for negative numbers shorter.
+     * @param delta Row offset
+     * @return New terminal size based off this one but with an applied transformation
+     */
+    public TerminalSize withRelativeRows(int delta) {
+        if(delta == 0) {
+            return this;
+        }
+        return withRows(rows + delta);
+    }
+
     @Override
     public String toString() {
         return "{" + columns + "x" + rows + "}";

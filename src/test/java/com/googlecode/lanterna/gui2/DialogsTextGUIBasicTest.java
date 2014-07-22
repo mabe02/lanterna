@@ -18,8 +18,6 @@
  */
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.graphics.TextGraphics;
-import com.googlecode.lanterna.terminal.TextColor;
 import com.googlecode.lanterna.TestTerminalFactory;
 import com.googlecode.lanterna.screen.Screen;
 import java.io.IOException;
@@ -29,29 +27,26 @@ import java.io.IOException;
  * @author Martin
  */
 public class DialogsTextGUIBasicTest {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         Screen screen = new TestTerminalFactory(args).createScreen();
         screen.startScreen();
-
-        TextGUI textGUI = new DefaultWindowTextGUI(screen, null, new TextGUIElement() {
-            @Override
-            public void draw(TextGraphics graphics) {
-                graphics.setBackgroundColor(TextColor.ANSI.BLUE);
-                graphics.fillScreen(' ');
-            }
-
-            @Override
-            public boolean isInvalid() {
-                return false;
-            }
-        });
-        textGUI.getGUIThread().start();
+        WindowBasedTextGUI textGUI = new DefaultWindowTextGUI(screen);
         try {
-            textGUI.getGUIThread().waitForStop();
+            AbstractWindow window = new DefaultWindow("Dialog test");
+            textGUI.getWindowManager().addWindow(window);
+            textGUI.updateScreen();
+            while(!textGUI.getWindowManager().getWindows().isEmpty()) {
+                textGUI.processInput();
+                if(textGUI.isPendingUpdate()) {
+                    textGUI.updateScreen();
+                }
+                else {
+                    Thread.sleep(1);
+                }
+            }
         }
-        catch(InterruptedException ignored) {}
-        //This text GUI will terminate itself, so we don't need to
-
-        screen.stopScreen();
+        finally {
+            screen.stopScreen();
+        }
     }
 }

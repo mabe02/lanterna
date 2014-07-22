@@ -32,18 +32,10 @@ public interface Window {
      * @return title of the window
      */
     String getTitle();
-
-    /**
-     * @return The coordinates of the top-left position of the window.
-     */
-    TerminalPosition getTopLeftPosition();
-    TerminalSize getSize();
-    TerminalSize getPreferredSize();
-    TerminalSize getMinimumSize();
-    TerminalSize getMaximumSize();
     boolean isVisible();
     boolean isInvalid();
-    void draw(TextGraphics graphics);
+    TerminalSize getPreferredSize();
+    void draw(TextGUI textGUI, TextGraphics graphics);
     boolean handleInput(KeyStroke key);
     void close();
 }

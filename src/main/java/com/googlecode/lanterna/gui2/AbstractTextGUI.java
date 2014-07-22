@@ -36,6 +36,7 @@ public abstract class AbstractTextGUI implements TextGUI {
     public void updateScreen() throws IOException {
         screen.doResizeIfNecessary();
         drawGUI(screen.newTextGraphics());
+        screen.setCursorPosition(null);
         screen.refresh();
     }
 

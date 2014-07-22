@@ -22,6 +22,10 @@ import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.gui2.WindowManager.Hint;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.screen.Screen;
+import com.googlecode.lanterna.terminal.TerminalPosition;
+import com.googlecode.lanterna.terminal.TerminalSize;
+import com.googlecode.lanterna.terminal.TextColor;
+
 import java.util.Collection;
 
 /**
@@ -31,6 +35,14 @@ import java.util.Collection;
 public class DefaultWindowTextGUI extends AbstractTextGUI implements WindowBasedTextGUI {
     private final WindowManager windowManager;
     private final TextGUIElement background;
+
+    public DefaultWindowTextGUI(Screen screen) {
+        this(screen, TextColor.ANSI.BLUE);
+    }
+
+    public DefaultWindowTextGUI(Screen screen, final TextColor backgroundColor) {
+        this(screen, new StackedModalWindowManager(), new SolidColorComponent(backgroundColor));
+    }
 
     public DefaultWindowTextGUI(Screen screen, WindowManager windowManager, TextGUIElement background) {
         super(screen);
@@ -45,7 +57,13 @@ public class DefaultWindowTextGUI extends AbstractTextGUI implements WindowBased
 
     @Override
     protected void drawGUI(TextGraphics graphics) {
-        background.draw(graphics);
+        background.draw(this, null, graphics);
+        for(Window window: getWindowManager().getWindows()) {
+            TerminalPosition topLeft = getWindowManager().getTopLeftPosition(window, graphics.getSize());
+            TerminalSize windowSize = getWindowManager().getSize(window, topLeft, graphics.getSize());
+            TextGraphics windowGraphics = graphics.newTextGraphics(topLeft, windowSize);
+            window.draw(this, windowGraphics);
+        }
     }
 
     @Override
@@ -54,17 +72,7 @@ public class DefaultWindowTextGUI extends AbstractTextGUI implements WindowBased
     }
 
     @Override
-    public void addWindow(Window window, Hint... windowManagerHints) {
-        windowManager.addWindow(window, windowManagerHints);
-    }
-
-    @Override
-    public void removeWindow(Window window) {
-        windowManager.removeWindow(window);
-    }
-
-    @Override
-    public Collection<Window> getWindows() {
-        return windowManager.getWindows();
+    public WindowManager getWindowManager() {
+        return windowManager;
     }
 }

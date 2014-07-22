@@ -20,9 +20,9 @@ package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.terminal.TerminalPosition;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
+import com.googlecode.lanterna.terminal.TerminalSize;
+
+import java.util.*;
 
 /**
  *
@@ -32,16 +32,15 @@ public class StackedModalWindowManager implements WindowManager {
     
     public static final Hint LOCATION_CENTERED = new Hint();
     public static final Hint LOCATION_CASCADE = new Hint();
+    public static final Hint DONT_RESIZE_TO_FIT_SCREEN = new Hint();
     private static final int CASCADE_SHIFT_RIGHT = 2;
     private static final int CASCADE_SHIFT_DOWN = 1;
-    
-    private final LinkedList<Window> windowStack;
-    private final LinkedList<TerminalPosition> topLeftPositions;
+
+    private final SortedSet<ManagedWindow> windowStack;
     private TerminalPosition nextTopLeftPosition;
 
     public StackedModalWindowManager() {
-        this.windowStack = new LinkedList<Window>();
-        this.topLeftPositions = new LinkedList<TerminalPosition>();
+        this.windowStack = new TreeSet<ManagedWindow>();
         nextTopLeftPosition = new TerminalPosition(CASCADE_SHIFT_RIGHT, CASCADE_SHIFT_DOWN);
     }    
 
@@ -50,15 +49,24 @@ public class StackedModalWindowManager implements WindowManager {
         if(window == null) {
             throw new IllegalArgumentException("Cannot call addWindow(...) with null window");
         }
-        windowStack.add(window);
-        if(isCentered(windowManagerHints)) {
-            topLeftPositions.add(null);
-        }
-        else {
-            topLeftPositions.add(nextTopLeftPosition);
+        TerminalPosition topLeftPosition;
+        if(hasHint(LOCATION_CASCADE, windowManagerHints) || windowManagerHints.length == 0) {
+            topLeftPosition = nextTopLeftPosition;
             nextTopLeftPosition = nextTopLeftPosition
                                     .withColumn(nextTopLeftPosition.getColumn() + CASCADE_SHIFT_RIGHT)
                                     .withRow(nextTopLeftPosition.getRow() + CASCADE_SHIFT_DOWN);
+        }
+        else {
+            topLeftPosition = null;
+        }
+        ManagedWindow managedWindow = new ManagedWindow(
+                window,
+                topLeftPosition,
+                hasHint(DONT_RESIZE_TO_FIT_SCREEN, windowManagerHints),
+                windowStack.size());
+        windowStack.add(managedWindow);
+        if(window instanceof AbstractWindow) {
+            ((AbstractWindow)window).setWindowManager(this);
         }
     }
 
@@ -67,18 +75,21 @@ public class StackedModalWindowManager implements WindowManager {
         if(window == null) {
             throw new IllegalArgumentException("Cannot call removeWindow(...) with null window");
         }
-        int index = windowStack.indexOf(window);
-        if(index == -1) {
+        ManagedWindow managedWindow = getManagedWindow(window);
+        if(managedWindow == null) {
             throw new IllegalArgumentException("Unknown window passed to removeWindow(...), this window manager doesn't"
                     + " contain " + window);
         }
-        topLeftPositions.remove(index);
-        windowStack.remove(index);
+        windowStack.remove(managedWindow);
     }
 
     @Override
-    public Collection<Window> getWindows() {
-        return new ArrayList<Window>(windowStack);
+    public synchronized Collection<Window> getWindows() {
+        List<Window> result = new ArrayList<Window>();
+        for(ManagedWindow managedWindow: windowStack) {
+            result.add(managedWindow.window);
+        }
+        return result;
     }
 
     @Override
@@ -87,20 +98,20 @@ public class StackedModalWindowManager implements WindowManager {
             return null;
         }
         else {
-            return windowStack.getLast();
+            return windowStack.last().window;
         }
     }
 
     @Override
     public synchronized boolean handleInput(KeyStroke keyStroke) {
-        return !windowStack.isEmpty() && windowStack.getLast().handleInput(keyStroke);
+        return !windowStack.isEmpty() && windowStack.last().window.handleInput(keyStroke);
 
     }
 
     @Override
     public boolean isInvalid() {
-        for(Window window: windowStack) {
-            if(window.isInvalid()) {
+        for(ManagedWindow managedWindow: windowStack) {
+            if(managedWindow.window.isInvalid()) {
                 return true;
             }
         }
@@ -108,17 +119,87 @@ public class StackedModalWindowManager implements WindowManager {
     }
 
     @Override
-    public void setDefaultWindowRenderer(WindowRenderer windowRenderer) {
+    public void setDefaultWindowRenderer(WindowDecorationRenderer windowDecorationRenderer) {
 
     }
 
-    private boolean isCentered(Hint... windowManagerHints) {
+    @Override
+    public synchronized TerminalPosition getTopLeftPosition(Window window, TerminalSize screenSize) {
+        ManagedWindow managedWindow = getManagedWindow(window);
+        if(managedWindow == null) {
+            throw new IllegalArgumentException("Cannot call getTopLeftPosition of " + window + " on " + toString() +
+                    " as it's not managed by this window manager");
+        }
+        if(managedWindow.topLeftPosition != null) {
+            return managedWindow.topLeftPosition;
+        }
+
+        //If the stored position was null, then center the window
+        TerminalSize size = getSize(window, null, screenSize);
+        return new TerminalPosition(
+                (screenSize.getColumns() / 2) - (size.getColumns() / 2),
+                (screenSize.getRows() / 2) - (size.getRows() / 2));
+    }
+
+    @Override
+    public synchronized TerminalSize getSize(Window window, TerminalPosition topLeft, TerminalSize screenSize) {
+        ManagedWindow managedWindow = getManagedWindow(window);
+        if(managedWindow == null) {
+            throw new IllegalArgumentException("Cannot call getTopLeftPosition of " + window + " on " + toString() +
+                    " as it's not managed by this window manager");
+        }
+
+        TerminalSize preferredSize = window.getPreferredSize();
+        if(managedWindow.allowLargerThanScreenSize) {
+            return preferredSize;
+        }
+        if(topLeft == null) {
+            //Assume the window can take up the full screen
+            return preferredSize
+                    .withColumns(Math.min(preferredSize.getColumns(), screenSize.getColumns()))
+                    .withRows(Math.min(preferredSize.getRows(), screenSize.getRows()));
+        }
+
+        //We can only take up screen size - top left
+        return preferredSize
+                .withColumns(Math.min(preferredSize.getColumns(), screenSize.getColumns() - topLeft.getColumn()))
+                .withRows(Math.min(preferredSize.getRows(), screenSize.getRows() - topLeft.getRow()));
+    }
+
+    private ManagedWindow getManagedWindow(Window forWindow) {
+        for(ManagedWindow managedWindow: windowStack) {
+            if(forWindow == managedWindow.window) {
+                return managedWindow;
+            }
+        }
+        return null;
+    }
+
+    private boolean hasHint(Hint hintToCheck, Hint... windowManagerHints) {
         for(Hint hint: windowManagerHints) {
-            if(hint == LOCATION_CENTERED) {
+            if(hint == hintToCheck) {
                 return true;
             }
         }
         return false;
     }
-    
+
+    private static class ManagedWindow implements Comparable<ManagedWindow>{
+        private final Window window;
+        private final TerminalPosition topLeftPosition;
+        private final boolean allowLargerThanScreenSize;
+        private final int ordinal;
+
+        private ManagedWindow(Window window, TerminalPosition topLeftPosition, boolean allowLargerThanScreenSize, int ordinal) {
+            this.window = window;
+            this.topLeftPosition = topLeftPosition;
+            this.allowLargerThanScreenSize = allowLargerThanScreenSize;
+            this.ordinal = ordinal;
+        }
+
+        @Override
+        public int compareTo(ManagedWindow o) {
+            return Integer.compare(ordinal, o.ordinal);
+        }
+    }
 }

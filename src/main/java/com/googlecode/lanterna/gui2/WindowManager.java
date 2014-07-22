@@ -19,6 +19,9 @@
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.terminal.TerminalPosition;
+import com.googlecode.lanterna.terminal.TerminalSize;
+
 import java.util.Collection;
 
 /**
@@ -34,8 +37,12 @@ public interface WindowManager {
     boolean handleInput(KeyStroke key);
     boolean isInvalid();
 
-    void setDefaultWindowRenderer(WindowRenderer windowRenderer);
-    
+    void setDefaultWindowRenderer(WindowDecorationRenderer windowDecorationRenderer);
+
+    TerminalPosition getTopLeftPosition(Window window, TerminalSize screenSize);
+
+    TerminalSize getSize(Window window, TerminalPosition topLeftPosition, TerminalSize screenSize);
+
     public static class Hint {
         protected Hint() {
         }
