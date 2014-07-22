@@ -81,6 +81,13 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
     }
 
     @Override
+    public void setTitle(String title) throws IOException {
+        //The bell character is our 'null terminator', make sure there's none in the title
+        title = title.replace("\007", "");
+        writeOSCSequenceToTerminal(("2;" + title + "\007").getBytes());
+    }
+
+    @Override
     public void setBackgroundColor(TextColor.ANSI color) throws IOException {
         writeCSISequenceToTerminal((byte) '4', (byte) ((color.getIndex() + "").charAt(0)), (byte) 'm');
     }
