@@ -137,6 +137,9 @@ class TextGraphicsImpl implements com.googlecode.lanterna.gui.TextGraphics
         screenWriter.setForegroundColor(foregroundColor);
         screenWriter.setBackgroundColor(backgroundColor);
         screenWriter.enableModifiers(styles);
+        if(currentlyBold) {
+            screenWriter.enableModifiers(Terminal.SGR.BOLD);
+        }
         screenWriter.putString(string);
     }
 
