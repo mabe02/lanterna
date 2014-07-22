@@ -24,7 +24,6 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.terminal.ExtendedTerminal;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -47,10 +46,18 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
         addKeyDecodingProfile(new DefaultKeyDecodingProfile());
     }
 
-    private void writeCSISequenctToTerminal(byte... tail) throws IOException {
+    private void writeCSISequenceToTerminal(byte... tail) throws IOException {
         byte[] completeSequence = new byte[tail.length + 2];
         completeSequence[0] = (byte)0x1b;
         completeSequence[1] = (byte)'[';
+        System.arraycopy(tail, 0, completeSequence, 2, tail.length);
+        writeToTerminal(completeSequence);
+    }
+
+    private void writeOSCSequenceToTerminal(byte... tail) throws IOException {
+        byte[] completeSequence = new byte[tail.length + 2];
+        completeSequence[0] = (byte)0x1b;
+        completeSequence[1] = (byte)']';
         System.arraycopy(tail, 0, completeSequence, 2, tail.length);
         writeToTerminal(completeSequence);
     }
@@ -66,7 +73,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
 
     @Override
     public void setTerminalSize(int columns, int rows) throws IOException {
-        writeCSISequenctToTerminal(("8;" + rows + ";" + columns + "t").getBytes());
+        writeCSISequenceToTerminal(("8;" + rows + ";" + columns + "t").getBytes());
 
         //We can't trust that the previous call was honoured by the terminal so force a re-query here, which will
         //trigger a resize event if one actually took place
@@ -75,7 +82,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
 
     @Override
     public void setBackgroundColor(TextColor.ANSI color) throws IOException {
-        writeCSISequenctToTerminal((byte) '4', (byte) ((color.getIndex() + "").charAt(0)), (byte) 'm');
+        writeCSISequenceToTerminal((byte) '4', (byte) ((color.getIndex() + "").charAt(0)), (byte) 'm');
     }
 
     @Override
@@ -89,7 +96,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
         if(b < 0 || b > 255) {
             throw new IllegalArgumentException("applyForegroundColor: b is outside of valid range (0-255)");
         }
-        writeCSISequenctToTerminal(("48;2;" + r + ";" + g + ";" + b + "m").getBytes());
+        writeCSISequenceToTerminal(("48;2;" + r + ";" + g + ";" + b + "m").getBytes());
     }
 
     @Override
@@ -98,12 +105,12 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
             throw new IllegalArgumentException("applyBackgroundColor: index is outside of valid range (0-255)");
         }
 
-        writeCSISequenctToTerminal(("48;5;" + index + "m").getBytes());
+        writeCSISequenceToTerminal(("48;5;" + index + "m").getBytes());
     }
 
     @Override
     public void setForegroundColor(TextColor.ANSI color) throws IOException {
-        writeCSISequenctToTerminal((byte) '3', (byte) ((color.getIndex() + "").charAt(0)), (byte) 'm');
+        writeCSISequenceToTerminal((byte) '3', (byte) ((color.getIndex() + "").charAt(0)), (byte) 'm');
     }
 
     @Override
@@ -117,7 +124,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
         if(b < 0 || b > 255) {
             throw new IllegalArgumentException("applyForegroundColor: b is outside of valid range (0-255)");
         }
-        writeCSISequenctToTerminal(("38;2;" + r + ";" + g + ";" + b + "m").getBytes());
+        writeCSISequenceToTerminal(("38;2;" + r + ";" + g + ";" + b + "m").getBytes());
     }
 
     @Override
@@ -125,35 +132,35 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
         if(index < 0 || index > 255) {
             throw new IllegalArgumentException("applyForegroundColor: index is outside of valid range (0-255)");
         }
-        writeCSISequenctToTerminal(("38;5;" + index + "m").getBytes());
+        writeCSISequenceToTerminal(("38;5;" + index + "m").getBytes());
     }
 
     @Override
     public void enableSGR(SGR sgr) throws IOException {
         switch(sgr) {
             case BLINK:
-                writeCSISequenctToTerminal((byte) '5', (byte) 'm');
+                writeCSISequenceToTerminal((byte) '5', (byte) 'm');
                 break;
             case BOLD:
-                writeCSISequenctToTerminal((byte) '1', (byte) 'm');
+                writeCSISequenceToTerminal((byte) '1', (byte) 'm');
                 break;
             case BORDERED:
-                writeCSISequenctToTerminal((byte) '5', (byte) '1', (byte) 'm');
+                writeCSISequenceToTerminal((byte) '5', (byte) '1', (byte) 'm');
                 break;
             case CIRCLED:
-                writeCSISequenctToTerminal((byte) '5', (byte) '2', (byte) 'm');
+                writeCSISequenceToTerminal((byte) '5', (byte) '2', (byte) 'm');
                 break;
             case CROSSEDOUT:
-                writeCSISequenctToTerminal((byte) '9', (byte) 'm');
+                writeCSISequenceToTerminal((byte) '9', (byte) 'm');
                 break;
             case FRAKTUR:
-                writeCSISequenctToTerminal((byte) '2', (byte) '0', (byte) 'm');
+                writeCSISequenceToTerminal((byte) '2', (byte) '0', (byte) 'm');
                 break;
             case REVERSE:
-                writeCSISequenctToTerminal((byte) '7', (byte) 'm');
+                writeCSISequenceToTerminal((byte) '7', (byte) 'm');
                 break;
             case UNDERLINE:
-                writeCSISequenctToTerminal((byte) '4', (byte) 'm');
+                writeCSISequenceToTerminal((byte) '4', (byte) 'm');
                 break;
         }
     }
@@ -162,40 +169,40 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
     public void disableSGR(SGR sgr) throws IOException {
         switch(sgr) {
             case BLINK:
-                writeCSISequenctToTerminal((byte) '2', (byte) '5', (byte) 'm');
+                writeCSISequenceToTerminal((byte) '2', (byte) '5', (byte) 'm');
                 break;
             case BOLD:
-                writeCSISequenctToTerminal((byte) '2', (byte) '2', (byte) 'm');
+                writeCSISequenceToTerminal((byte) '2', (byte) '2', (byte) 'm');
                 break;
             case BORDERED:
-                writeCSISequenctToTerminal((byte) '5', (byte) '4', (byte) 'm');
+                writeCSISequenceToTerminal((byte) '5', (byte) '4', (byte) 'm');
                 break;
             case CIRCLED:
-                writeCSISequenctToTerminal((byte) '5', (byte) '4', (byte) 'm');
+                writeCSISequenceToTerminal((byte) '5', (byte) '4', (byte) 'm');
                 break;
             case CROSSEDOUT:
-                writeCSISequenctToTerminal((byte) '2', (byte) '9', (byte) 'm');
+                writeCSISequenceToTerminal((byte) '2', (byte) '9', (byte) 'm');
                 break;
             case FRAKTUR:
-                writeCSISequenctToTerminal((byte) '2', (byte) '3', (byte) 'm');
+                writeCSISequenceToTerminal((byte) '2', (byte) '3', (byte) 'm');
                 break;
             case REVERSE:
-                writeCSISequenctToTerminal((byte) '2', (byte) '7', (byte) 'm');
+                writeCSISequenceToTerminal((byte) '2', (byte) '7', (byte) 'm');
                 break;
             case UNDERLINE:
-                writeCSISequenctToTerminal((byte) '2', (byte) '4', (byte) 'm');
+                writeCSISequenceToTerminal((byte) '2', (byte) '4', (byte) 'm');
                 break;
         }
     }
 
     @Override
     public void resetColorAndSGR() throws IOException {
-        writeCSISequenctToTerminal((byte) '0', (byte) 'm');
+        writeCSISequenceToTerminal((byte) '0', (byte) 'm');
     }
 
     @Override
     public void clearScreen() throws IOException {
-        writeCSISequenctToTerminal((byte) '2', (byte) 'J');
+        writeCSISequenceToTerminal((byte) '2', (byte) 'J');
     }
 
     @Override
@@ -203,7 +210,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
         if(inPrivateMode) {
             throw new IllegalStateException("Cannot call enterPrivateMode() when already in private mode");
         }
-        writeCSISequenctToTerminal((byte) '?', (byte) '1', (byte) '0', (byte) '4', (byte) '9', (byte) 'h');
+        writeCSISequenceToTerminal((byte) '?', (byte) '1', (byte) '0', (byte) '4', (byte) '9', (byte) 'h');
         inPrivateMode = true;
     }
 
@@ -214,18 +221,18 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
         }
         resetColorAndSGR();
         setCursorVisible(true);
-        writeCSISequenctToTerminal((byte) '?', (byte) '1', (byte) '0', (byte) '4', (byte) '9', (byte) 'l');
+        writeCSISequenceToTerminal((byte) '?', (byte) '1', (byte) '0', (byte) '4', (byte) '9', (byte) 'l');
         inPrivateMode = false;
     }
 
     @Override
     public void setCursorPosition(int x, int y) throws IOException {
-        writeCSISequenctToTerminal(((y + 1) + ";" + (x + 1) + "H").getBytes());
+        writeCSISequenceToTerminal(((y + 1) + ";" + (x + 1) + "H").getBytes());
     }
 
     @Override
     public void setCursorVisible(boolean visible) throws IOException {
-        writeCSISequenctToTerminal(("?25" + (visible ? "h" : "l")).getBytes());
+        writeCSISequenceToTerminal(("?25" + (visible ? "h" : "l")).getBytes());
     }
 
     /**
@@ -241,20 +248,20 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
      * Synchronize with writerMutex externally!!!
      */
     void reportPosition() throws IOException {
-        writeCSISequenctToTerminal("6n".getBytes());
+        writeCSISequenceToTerminal("6n".getBytes());
     }
 
     /**
      * Synchronize with writerMutex externally!!!
      */
     void restoreCursorPosition() throws IOException {
-        writeCSISequenctToTerminal("u".getBytes());
+        writeCSISequenceToTerminal("u".getBytes());
     }
 
     /**
      * Synchronize with writerMutex externally!!!
      */
     void saveCursorPosition() throws IOException {
-        writeCSISequenctToTerminal("s".getBytes());
+        writeCSISequenceToTerminal("s".getBytes());
     }
 }
