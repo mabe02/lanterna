@@ -34,7 +34,7 @@ public class TestACS
         System.out.println("CLUB = " + ACS.CLUB);
         System.out.println("DIAMOND = " + ACS.DIAMOND);
         System.out.println("SPADES = " + ACS.SPADES);
-        System.out.println("DOT = " + ACS.DOT);
+        System.out.println("BULLET = " + ACS.BULLET);
         System.out.println("INVERSE_BULLET = " + ACS.INVERSE_BULLET);
         System.out.println("WHITE_CIRCLE = " + ACS.WHITE_CIRCLE);
         System.out.println("INVERSE_WHITE_CIRCLE = " + ACS.INVERSE_WHITE_CIRCLE);
