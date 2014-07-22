@@ -98,7 +98,7 @@ public class TextCharacter {
         this.character = character;
         this.foregroundColor = foregroundColor;
         this.backgroundColor = backgroundColor;
-        this.modifiers = modifiers;
+        this.modifiers = EnumSet.copyOf(modifiers);
     }
 
     public char getCharacter() {
