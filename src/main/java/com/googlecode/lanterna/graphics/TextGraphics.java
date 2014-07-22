@@ -173,11 +173,19 @@ public interface TextGraphics {
     TextGraphics fillScreen(char c);
 
     /**
+     * Sets the character at the current position to the specified value
+     * @param character Character to set at the current position
+     * @return Itself
+     */
+    TextGraphics setCharacter(char character);
+
+    /**
      * Draws a line from the current position to a specified position, using a supplied character. After
      * the operation, this {@code TextGraphics}'s position will be at the end-point of the line. The current
      * foreground color, background color and modifiers will be applied.
      * @param toPoint Where to draw the line
      * @param character Character to use for the line
+     * @return Itself
      */
     TextGraphics drawLine(TerminalPosition toPoint, char character);
 

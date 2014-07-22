@@ -156,6 +156,12 @@ public abstract class AbstractTextGraphics implements TextGraphics {
     }
 
     @Override
+    public TextGraphics setCharacter(char character) {
+        setCharacter(getPosition(), newScreenCharacter(character));
+        return this;
+    }
+
+    @Override
     public TextGraphics drawLine(TerminalPosition toPoint, char character) {
         shapeRenderer.drawLine(getPosition(), toPoint, character);
         setPosition(toPoint);
