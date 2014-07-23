@@ -23,6 +23,7 @@ import com.googlecode.lanterna.input.DefaultKeyDecodingProfile;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.terminal.ExtendedTerminal;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -240,6 +241,46 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
     @Override
     public void setCursorVisible(boolean visible) throws IOException {
         writeCSISequenceToTerminal(("?25" + (visible ? "h" : "l")).getBytes());
+    }
+
+    @Override
+    public void pushTitle() throws IOException {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public void popTitle() throws IOException {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public void iconify() throws IOException {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public void deiconify() throws IOException {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public void maximize() throws IOException {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public void demaximize() throws IOException {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public void setMouseMovementCapturingEnabled(boolean enabled) throws IOException {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public void setMouseClicksCapturingEnabled(boolean enable) throws IOException {
+        throw new NotImplementedException();
     }
 
     /**
