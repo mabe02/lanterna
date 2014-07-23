@@ -12,31 +12,31 @@ import java.io.IOException;
  */
 public class ExtendedTerminalTests {
     public static void main(String[] args) throws IOException, InterruptedException {
-        UnixTerminal unixTerminal = new UnixTerminal();
-        unixTerminal.clearScreen();
-        TextGraphics textGraphics = unixTerminal.newTextGraphics();
+        ExtendedTerminal extendedTerminal = new UnixTerminal();
+        extendedTerminal.clearScreen();
+        TextGraphics textGraphics = extendedTerminal.newTextGraphics();
         textGraphics.setForegroundColor(TextColor.ANSI.CYAN);
         textGraphics.putString(4, 4, "Please wait four seconds and the terminal will be resized", SGR.BLINK);
-        unixTerminal.flush();
+        extendedTerminal.flush();
         Thread.sleep(4 * 1000);
-        unixTerminal.setTerminalSize(80, 40);
-        unixTerminal.clearScreen();
+        extendedTerminal.setTerminalSize(80, 40);
+        extendedTerminal.clearScreen();
         textGraphics.putString(4, 4, "There, did anything happen? Will set a title in 3 seconds...");
-        unixTerminal.flush();
+        extendedTerminal.flush();
         Thread.sleep(3 * 1000);
-        unixTerminal.setTitle("ExtendedTerminalTests");
-        unixTerminal.clearScreen();
+        extendedTerminal.setTitle("ExtendedTerminalTests");
+        extendedTerminal.clearScreen();
         textGraphics.putString(4, 4, "Check the title, did it change?");
         textGraphics.setForegroundColor(TextColor.ANSI.RED);
         textGraphics.putString(0, textGraphics.getSize().getRows() - 1, "Will terminate in 3 seconds...", SGR.BLINK);
-        unixTerminal.setCursorPosition(0, 0);
-        unixTerminal.flush();
+        extendedTerminal.setCursorPosition(0, 0);
+        extendedTerminal.flush();
         Thread.sleep(3 * 1000);
-        unixTerminal.clearScreen();
-        unixTerminal.resetColorAndSGR();
-        unixTerminal.flush();
+        extendedTerminal.clearScreen();
+        extendedTerminal.resetColorAndSGR();
+        extendedTerminal.flush();
 
         //Drain the input queue (could hold the size reply)
-        while(unixTerminal.readInput() != null);
+        while(extendedTerminal.readInput() != null);
     }
 }
