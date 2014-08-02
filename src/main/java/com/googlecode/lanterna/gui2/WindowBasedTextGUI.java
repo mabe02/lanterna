@@ -19,7 +19,8 @@
 package com.googlecode.lanterna.gui2;
 
 /**
- *
+ * Extension of the TextGUI interface, this is intended as the base interface for any TextGUI that intends to make use
+ * of the Window class.
  * @author Martin
  */
 public interface WindowBasedTextGUI extends TextGUI {
