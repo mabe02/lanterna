@@ -18,12 +18,15 @@
  */
 package com.googlecode.lanterna.gui2;
 
-import java.util.Collection;
-
 /**
  *
  * @author Martin
  */
 public interface WindowBasedTextGUI extends TextGUI {
+    /**
+     * Returns the window manager that is currently controlling this TextGUI. The window manager is in charge of placing
+     * the windows on the surface and also deciding how they behave and move around.
+     * @return Window manager that is currently controlling the windows in the terminal
+     */
     WindowManager getWindowManager();
 }
