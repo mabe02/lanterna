@@ -18,7 +18,6 @@
  */
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.TerminalSize;
 
@@ -34,7 +33,7 @@ public interface Window {
     boolean isVisible();
     boolean isInvalid();
     TerminalSize getPreferredSize();
-    void draw(TextGUI textGUI, TextGraphics graphics);
+    void draw(TextGUI textGUI, TextGUIGraphics graphics);
     boolean handleInput(KeyStroke key);
     void close();
 }

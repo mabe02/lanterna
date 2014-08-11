@@ -1,12 +1,13 @@
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 
 /**
- * Created by martin on 19/07/14.
+ * Abstract Window implementation that contains much code that is shared between different concrete Window
+ * implementations.
+ * @author Martin
  */
 public class AbstractWindow implements Window {
     private WindowDecorationRenderer windowDecorationRenderer;
@@ -50,7 +51,7 @@ public class AbstractWindow implements Window {
     }
 
     @Override
-    public void draw(TextGUI textGUI, TextGraphics graphics) {
+    public void draw(TextGUI textGUI, TextGUIGraphics graphics) {
         graphics = windowDecorationRenderer.draw(textGUI, graphics, this);
         graphics.setBackgroundColor(TextColor.ANSI.WHITE);
         graphics.fillScreen(' ');

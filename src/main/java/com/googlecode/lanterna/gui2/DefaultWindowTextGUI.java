@@ -18,7 +18,6 @@
  */
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.TerminalPosition;
@@ -60,12 +59,12 @@ public class DefaultWindowTextGUI extends AbstractTextGUI implements WindowBased
     }
 
     @Override
-    protected void drawGUI(TextGraphics graphics) {
+    protected void drawGUI(TextGUIGraphics graphics) {
         background.draw(this, null, graphics);
         for(Window window: getWindowManager().getWindows()) {
             TerminalPosition topLeft = getWindowManager().getTopLeftPosition(window, graphics.getSize());
             TerminalSize windowSize = getWindowManager().getSize(window, topLeft, graphics.getSize());
-            TextGraphics windowGraphics = graphics.newTextGraphics(topLeft, windowSize);
+            TextGUIGraphics windowGraphics = graphics.newTextGraphics(topLeft, windowSize);
             window.draw(this, windowGraphics);
             if(postRenderer != null) {
                 postRenderer.postRender(graphics, this, window, topLeft, windowSize);

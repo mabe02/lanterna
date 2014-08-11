@@ -1,7 +1,6 @@
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.graphics.PropertiesTheme;
-import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.graphics.Theme;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.screen.Screen;
@@ -64,6 +63,6 @@ public abstract class AbstractTextGUI implements TextGUI {
         return textGUIThread;
     }
 
-    protected abstract void drawGUI(TextGraphics graphics);
+    protected abstract void drawGUI(TextGUIGraphics graphics);
     protected abstract boolean handleInput(KeyStroke key);
 }

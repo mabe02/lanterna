@@ -1,15 +1,14 @@
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.*;
-import com.googlecode.lanterna.graphics.TextGraphics;
-import com.googlecode.lanterna.terminal.*;
 
 /**
- * Created by martin on 19/07/14.
+ * Default window decoration renderer
+ * @author Martin
  */
 public class DefaultWindowDecorationRenderer implements WindowDecorationRenderer {
     @Override
-    public TextGraphics draw(TextGUI textGUI, TextGraphics graphics, Window window) {
+    public TextGUIGraphics draw(TextGUI textGUI, TextGUIGraphics graphics, Window window) {
         String title = window.getTitle();
         if(title == null) {
             title = "";

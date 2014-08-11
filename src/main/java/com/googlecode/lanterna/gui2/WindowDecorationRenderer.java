@@ -1,6 +1,5 @@
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.TerminalSize;
 
 /**
@@ -16,7 +15,7 @@ public interface WindowDecorationRenderer {
      * @param window Window to draw
      * @return A new TextGraphics that is limited to the area inside the decorations just drawn
      */
-    TextGraphics draw(TextGUI textGUI, TextGraphics graphics, Window window);
+    TextGUIGraphics draw(TextGUI textGUI, TextGUIGraphics graphics, Window window);
 
     /**
      * Retrieves the full size of the window, including all window decorations, given all components inside the window.
