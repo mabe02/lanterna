@@ -1,10 +1,13 @@
 package com.googlecode.lanterna.gui2;
 
+import com.googlecode.lanterna.graphics.PropertiesTheme;
 import com.googlecode.lanterna.graphics.TextGraphics;
+import com.googlecode.lanterna.graphics.Theme;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.screen.Screen;
 
 import java.io.IOException;
+import java.util.Properties;
 
 /**
  * This abstract implementation of TextGUI contains some basic management of the underlying Screen and translates the
@@ -16,11 +19,13 @@ public abstract class AbstractTextGUI implements TextGUI {
     private final Screen screen;
     private boolean dirty;
     private TextGUIThread textGUIThread;
+    private Theme guiTheme;
 
     protected AbstractTextGUI(Screen screen) {
         this.screen = screen;
         this.dirty = false;
         this.textGUIThread = null;
+        this.guiTheme = new PropertiesTheme(new Properties());
     }
 
     @Override
@@ -33,9 +38,14 @@ public abstract class AbstractTextGUI implements TextGUI {
     }
 
     @Override
+    public void setTheme(Theme theme) {
+        this.guiTheme = theme;
+    }
+
+    @Override
     public void updateScreen() throws IOException {
         screen.doResizeIfNecessary();
-        drawGUI(screen.newTextGraphics());
+        drawGUI(new TextGUIGraphics(screen.newTextGraphics(), guiTheme));
         screen.setCursorPosition(null);
         screen.refresh();
     }
