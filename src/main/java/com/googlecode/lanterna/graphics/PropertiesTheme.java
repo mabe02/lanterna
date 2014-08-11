@@ -212,7 +212,7 @@ public final class PropertiesTheme implements Theme {
         }
 
         @Override
-        public Set<SGR> getSGRs() {
+        public EnumSet<SGR> getSGRs() {
             ListIterator<ThemeTreeNode> iterator = path.listIterator(path.size());
             while(iterator.hasPrevious()) {
                 ThemeTreeNode node = iterator.previous();

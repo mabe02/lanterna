@@ -17,9 +17,11 @@
  * Copyright (C) 2010-2014 Martin
  */
 package com.googlecode.lanterna.graphics;
+
 import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.TextColor;
-import java.util.Set;
+
+import java.util.EnumSet;
 
 /**
  * ThemeStyle is the lowest entry in the theme hierarchy, containing the actual colors and SGRs to use.
@@ -28,5 +30,5 @@ import java.util.Set;
 public interface ThemeStyle {
     TextColor getForeground();
     TextColor getBackground();
-    Set<SGR> getSGRs();
+    EnumSet<SGR> getSGRs();
 }
