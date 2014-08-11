@@ -36,6 +36,7 @@ public interface ThemedTextGraphics extends TextGraphics {
      * Takes a ThemeStyle as applies it to this TextGraphics. This will effectively set the foreground color, the
      * background color and all the SGRs.
      * @param themeStyle ThemeStyle to apply
+     * @return Itself
      */
-    void applyThemeStyle(ThemeStyle themeStyle);
+    ThemedTextGraphics applyThemeStyle(ThemeStyle themeStyle);
 }
