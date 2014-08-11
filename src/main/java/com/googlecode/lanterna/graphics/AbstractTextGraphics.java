@@ -20,7 +20,6 @@ package com.googlecode.lanterna.graphics;
 
 import com.googlecode.lanterna.*;
 import com.googlecode.lanterna.screen.TabBehaviour;
-import com.googlecode.lanterna.terminal.Terminal;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -116,6 +115,13 @@ public abstract class AbstractTextGraphics implements TextGraphics {
 
     private void disableModifiers(Collection<SGR> modifiers) {
         this.activeModifiers.removeAll(modifiers);
+    }
+
+    @Override
+    public synchronized TextGraphics setModifiers(EnumSet<SGR> modifiers) {
+        activeModifiers.clear();
+        activeModifiers.addAll(modifiers);
+        return this;
     }
 
     @Override

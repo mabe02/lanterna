@@ -20,7 +20,6 @@ package com.googlecode.lanterna.graphics;
 
 import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.screen.TabBehaviour;
-import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
@@ -141,6 +140,14 @@ public interface TextGraphics {
      * @return Itself
      */
     TextGraphics disableModifiers(SGR... modifiers);
+
+    /**
+     * Sets the active modifiers to exactly the set passed in to this method. Any previous state of which modifiers are
+     * enabled doesn't matter.
+     * @param modifiers Modifiers to set as active
+     * @return Itself
+     */
+    TextGraphics setModifiers(EnumSet<SGR> modifiers);
 
     /**
      * Removes all active modifiers
