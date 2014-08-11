@@ -1,5 +1,7 @@
 package com.googlecode.lanterna.gui2;
 
+import com.googlecode.lanterna.graphics.Theme;
+
 import java.io.IOException;
 
 /**
@@ -8,6 +10,14 @@ import java.io.IOException;
  * @author Martin
  */
 public interface TextGUI {
+    /**
+     * Sets the global theme to be used by this TextGUI. This value will be set on every TextGUIGraphics object created
+     * for drawing the GUI, but individual components can override this if they want. If you don't call this method
+     * you should assume that a default theme is assigned by the library.
+     * @param theme Theme to use as an application-wide global theme
+     */
+    void setTheme(Theme theme);
+
     /**
      * Reads a KeyStroke from the input queue and passes it through the GUI system. For window-based system, it will
      * send the keystroke to the active window for processing.
