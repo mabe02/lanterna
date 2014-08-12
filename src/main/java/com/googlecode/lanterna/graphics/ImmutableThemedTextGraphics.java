@@ -27,8 +27,12 @@ public class ImmutableThemedTextGraphics implements ThemedTextGraphics {
         return new ImmutableThemedTextGraphics(backend, theme);
     }
 
-    protected TextGraphics getBackend() {
+    public TextGraphics getUnderlyingTextGraphics() {
         return backend;
+    }
+
+    public Theme getTheme() {
+        return theme;
     }
 
     @Override
@@ -51,8 +55,7 @@ public class ImmutableThemedTextGraphics implements ThemedTextGraphics {
 
     @Override
     public ImmutableThemedTextGraphics newTextGraphics(TerminalPosition topLeftCorner, TerminalSize size) throws IllegalArgumentException {
-        backend.newTextGraphics(topLeftCorner, size);
-        return this;
+        return new ImmutableThemedTextGraphics(backend.newTextGraphics(topLeftCorner, size), theme);
     }
 
     @Override
