@@ -44,7 +44,7 @@ public abstract class AbstractTextGUI implements TextGUI {
     @Override
     public void updateScreen() throws IOException {
         screen.doResizeIfNecessary();
-        drawGUI(new TextGUIGraphics(screen.newTextGraphics(), guiTheme));
+        drawGUI(new TextGUIGraphics(this, screen.newTextGraphics(), guiTheme));
         screen.setCursorPosition(null);
         screen.refresh();
     }
