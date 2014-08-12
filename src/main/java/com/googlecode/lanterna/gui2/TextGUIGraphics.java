@@ -28,20 +28,20 @@ import com.googlecode.lanterna.screen.TabBehaviour;
 import java.util.EnumSet;
 
 /**
- * TextGraphics implementation used by TextGUI when doing any drawing operation. It's extending from
- * ImmutableThemedTextGraphics so you have theme support built in.
+ * TextGraphics implementation used by TextGUI when doing any drawing operation.
  * @author Martin
  */
-public class TextGUIGraphics extends ImmutableThemedTextGraphics {
+public class TextGUIGraphics implements ThemedTextGraphics {
     private final TextGUI textGUI;
+    private final ImmutableThemedTextGraphics backend;
 
     public TextGUIGraphics(TextGUI textGUI, TextGraphics backend, Theme theme) {
-        super(backend, theme);
+        this.backend = new ImmutableThemedTextGraphics(backend, theme);
         this.textGUI = textGUI;
     }
 
     public TextGUIGraphics withTheme(Theme theme) {
-        return new TextGUIGraphics(textGUI, getBackend(), theme);
+        return new TextGUIGraphics(textGUI, backend.getUnderlyingTextGraphics(), theme);
     }
 
     public TextGUI getTextGUI() {
@@ -49,177 +49,186 @@ public class TextGUIGraphics extends ImmutableThemedTextGraphics {
     }
 
     @Override
+    public TextGUIGraphics newTextGraphics(TerminalPosition topLeftCorner, TerminalSize size) throws IllegalArgumentException {
+        return new TextGUIGraphics(textGUI, backend.getUnderlyingTextGraphics().newTextGraphics(topLeftCorner, size), backend.getTheme());
+    }
+
+    @Override
     public TextGUIGraphics applyThemeStyle(ThemeStyle themeStyle) {
-        super.applyThemeStyle(themeStyle);
+        backend.applyThemeStyle(themeStyle);
         return this;
     }
 
     @Override
-    public TextGUIGraphics newTextGraphics(TerminalPosition topLeftCorner, TerminalSize size) throws IllegalArgumentException {
-        super.newTextGraphics(topLeftCorner, size);
-        return this;
+    public ThemeDefinition getThemeDefinition(Class clazz) {
+        return backend.getThemeDefinition(clazz);
+    }
+
+    @Override
+    public TerminalSize getSize() {
+        return backend.getSize();
     }
 
     @Override
     public TextGUIGraphics setPosition(int column, int row) {
-        super.setPosition(column, row);
+        backend.setPosition(column, row);
         return this;
     }
 
     @Override
     public TextGUIGraphics setPosition(TerminalPosition newPosition) {
-        super.setPosition(newPosition);
+        backend.setPosition(newPosition);
         return this;
     }
 
     @Override
     public TextGUIGraphics movePosition(int columns, int rows) {
-        super.movePosition(columns, rows);
+        backend.movePosition(columns, rows);
         return this;
     }
 
     @Override
     public TerminalPosition getPosition() {
-        return super.getPosition();
+        return backend.getPosition();
     }
 
     @Override
     public TextColor getBackgroundColor() {
-        return super.getBackgroundColor();
+        return backend.getBackgroundColor();
     }
 
     @Override
     public TextGUIGraphics setBackgroundColor(TextColor backgroundColor) {
-        super.setBackgroundColor(backgroundColor);
+        backend.setBackgroundColor(backgroundColor);
         return this;
     }
 
     @Override
     public TextColor getForegroundColor() {
-        return super.getForegroundColor();
+        return backend.getForegroundColor();
     }
 
     @Override
     public TextGUIGraphics setForegroundColor(TextColor foregroundColor) {
-        super.setForegroundColor(foregroundColor);
+        backend.setForegroundColor(foregroundColor);
         return this;
     }
 
     @Override
     public TextGUIGraphics enableModifiers(SGR... modifiers) {
-        super.enableModifiers(modifiers);
+        backend.enableModifiers(modifiers);
         return this;
     }
 
     @Override
     public TextGUIGraphics disableModifiers(SGR... modifiers) {
-        super.disableModifiers(modifiers);
+        backend.disableModifiers(modifiers);
         return this;
     }
 
     @Override
     public TextGUIGraphics setModifiers(EnumSet<SGR> modifiers) {
-        super.setModifiers(modifiers);
+        backend.setModifiers(modifiers);
         return this;
     }
 
     @Override
     public TextGUIGraphics clearModifiers() {
-        super.clearModifiers();
+        backend.clearModifiers();
         return this;
     }
 
     @Override
     public EnumSet<SGR> getActiveModifiers() {
-        return super.getActiveModifiers();
+        return backend.getActiveModifiers();
     }
 
     @Override
     public TabBehaviour getTabBehaviour() {
-        return super.getTabBehaviour();
+        return backend.getTabBehaviour();
     }
 
     @Override
     public TextGUIGraphics setTabBehaviour(TabBehaviour tabBehaviour) {
-        super.setTabBehaviour(tabBehaviour);
+        backend.setTabBehaviour(tabBehaviour);
         return this;
     }
 
     @Override
     public TextGUIGraphics fillScreen(char c) {
-        super.fillScreen(c);
+        backend.fillScreen(c);
         return this;
     }
 
     @Override
     public TextGUIGraphics setCharacter(char character) {
-        super.setCharacter(character);
+        backend.setCharacter(character);
         return this;
     }
 
     @Override
     public TextGUIGraphics drawLine(TerminalPosition toPoint, char character) {
-        super.drawLine(toPoint, character);
+        backend.drawLine(toPoint, character);
         return this;
     }
 
     @Override
     public TextGUIGraphics drawTriangle(TerminalPosition p1, TerminalPosition p2, char character) {
-        super.drawTriangle(p1, p2, character);
+        backend.drawTriangle(p1, p2, character);
         return this;
     }
 
     @Override
     public TextGUIGraphics fillTriangle(TerminalPosition p1, TerminalPosition p2, char character) {
-        super.fillTriangle(p1, p2, character);
+        backend.fillTriangle(p1, p2, character);
         return this;
     }
 
     @Override
     public TextGUIGraphics drawRectangle(TerminalSize size, char character) {
-        super.drawRectangle(size, character);
+        backend.drawRectangle(size, character);
         return this;
     }
 
     @Override
     public TextGUIGraphics fillRectangle(TerminalSize size, char character) {
-        super.fillRectangle(size, character);
+        backend.fillRectangle(size, character);
         return this;
     }
 
     @Override
     public TextGUIGraphics putString(String string) {
-        super.putString(string);
+        backend.putString(string);
         return this;
     }
 
     @Override
     public TextGUIGraphics putString(int column, int row, String string) {
-        super.putString(column, row, string);
+        backend.putString(column, row, string);
         return this;
     }
 
     @Override
     public TextGUIGraphics putString(TerminalPosition position, String string) {
-        super.putString(position, string);
+        backend.putString(position, string);
         return this;
     }
 
     @Override
     public TextGUIGraphics putString(int column, int row, String string, SGR extraModifier, SGR... optionalExtraModifiers) {
-        super.putString(column, row, string, extraModifier, optionalExtraModifiers);
+        backend.putString(column, row, string, extraModifier, optionalExtraModifiers);
         return this;
     }
 
     @Override
     public TextGUIGraphics putString(TerminalPosition position, String string, SGR extraModifier, SGR... optionalExtraModifiers) {
-        super.putString(position, string, extraModifier, optionalExtraModifiers);
+        backend.putString(position, string, extraModifier, optionalExtraModifiers);
         return this;
     }
 
     @Override
     public TextGUIGraphics putString(String string, SGR extraModifier, SGR... optionalExtraModifiers) {
-        super.putString(string, extraModifier, optionalExtraModifiers);
+        backend.putString(string, extraModifier, optionalExtraModifiers);
         return this;
     }
 }
