@@ -107,7 +107,7 @@ public class CommonProfile extends KeyMappingProfile
                 }));
 
     @Override
-    Collection<CharacterPattern> getPatterns()
+    public Collection<CharacterPattern> getPatterns()
     {
         return new ArrayList<CharacterPattern>(COMMON_PATTERNS);
     }

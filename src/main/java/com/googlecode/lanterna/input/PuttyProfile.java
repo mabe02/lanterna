@@ -29,7 +29,7 @@ import java.util.Collection;
 public class PuttyProfile extends CommonProfile
 {
     @Override
-    Collection<CharacterPattern> getPatterns()
+    public Collection<CharacterPattern> getPatterns()
     {
         Collection<CharacterPattern> puttyPatterns = super.getPatterns();
         puttyPatterns.add(new BasicCharacterPattern(new Key(Key.Kind.Home), ESC_CODE, '[', '1', '~'));

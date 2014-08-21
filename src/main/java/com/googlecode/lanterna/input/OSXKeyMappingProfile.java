@@ -34,7 +34,7 @@ public class OSXKeyMappingProfile extends KeyMappingProfile {
                 }));
 
     @Override
-    Collection<CharacterPattern> getPatterns() {
+    public Collection<CharacterPattern> getPatterns() {
         return OSX_PATTERNS;
     }
 }

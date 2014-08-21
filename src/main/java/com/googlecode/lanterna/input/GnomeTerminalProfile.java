@@ -28,7 +28,7 @@ import java.util.Collection;
 public class GnomeTerminalProfile extends CommonProfile
 {
     @Override
-    Collection<CharacterPattern> getPatterns()
+    public Collection<CharacterPattern> getPatterns()
     {
         Collection<CharacterPattern> gnomePatterns = super.getPatterns();
         gnomePatterns.add(new BasicCharacterPattern(new Key(Key.Kind.Home), ESC_CODE, 'O', 'H'));
