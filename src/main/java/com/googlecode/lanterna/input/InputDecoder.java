@@ -157,6 +157,10 @@ public class InputDecoder
         if (currentMatching.isEmpty()) {
             return null;
         }
+        else if(currentMatching.size() == 1 && currentMatching.get(0) == 0x1b) {
+            currentMatching.clear();
+            return new Key(Key.Kind.Escape);
+        }
 
         Key bestMatch = null;
         int nrOfCharactersMatched = 0;
