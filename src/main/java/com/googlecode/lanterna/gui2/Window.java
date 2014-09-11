@@ -36,4 +36,5 @@ public interface Window {
     void draw(TextGUI textGUI, TextGUIGraphics graphics);
     boolean handleInput(KeyStroke key);
     void close();
+    WindowManager.Hint[] getWindowManagerHints();
 }

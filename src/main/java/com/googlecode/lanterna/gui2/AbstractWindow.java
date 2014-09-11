@@ -65,6 +65,11 @@ public class AbstractWindow implements Window {
     }
 
     @Override
+    public WindowManager.Hint[] getWindowManagerHints() {
+        return WindowManager.NO_HINTS;
+    }
+
+    @Override
     public void close() {
         if(windowManager == null) {
             throw new IllegalStateException("Cannot close " + toString() + " because it is not managed by any window manager");

@@ -48,12 +48,12 @@ public class StackedModalWindowManager implements WindowManager {
     }    
 
     @Override
-    public synchronized void addWindow(Window window, Hint... windowManagerHints) {
+    public synchronized void addWindow(Window window) {
         if(window == null) {
             throw new IllegalArgumentException("Cannot call addWindow(...) with null window");
         }
         TerminalPosition topLeftPosition;
-        if(hasHint(LOCATION_CASCADE, windowManagerHints) || windowManagerHints.length == 0) {
+        if(hasHint(window, LOCATION_CASCADE) || window.getWindowManagerHints().length == 0) {
             topLeftPosition = nextTopLeftPosition;
             nextTopLeftPosition = nextTopLeftPosition
                                     .withColumn(nextTopLeftPosition.getColumn() + CASCADE_SHIFT_RIGHT)
@@ -65,7 +65,7 @@ public class StackedModalWindowManager implements WindowManager {
         ManagedWindow managedWindow = new ManagedWindow(
                 window,
                 topLeftPosition,
-                hasHint(DONT_RESIZE_TO_FIT_SCREEN, windowManagerHints),
+                hasHint(window, DONT_RESIZE_TO_FIT_SCREEN),
                 windowStack.size());
         windowStack.add(managedWindow);
         if(window instanceof AbstractWindow) {
@@ -182,9 +182,9 @@ public class StackedModalWindowManager implements WindowManager {
         return null;
     }
 
-    private boolean hasHint(Hint hintToCheck, Hint... windowManagerHints) {
-        for(Hint hint: windowManagerHints) {
-            if(hint == hintToCheck) {
+    private boolean hasHint(Window window, Hint hintToFind) {
+        for(Hint hint: window.getWindowManagerHints()) {
+            if(hint == hintToFind) {
                 return true;
             }
         }

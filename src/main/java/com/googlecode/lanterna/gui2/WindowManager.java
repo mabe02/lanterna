@@ -29,7 +29,7 @@ import java.util.Collection;
  * @author Martin
  */
 public interface WindowManager {
-    void addWindow(Window window, Hint... windowManagerHints);
+    void addWindow(Window window);
     void removeWindow(Window window);
     
     Collection<Window> getWindows();
@@ -42,9 +42,10 @@ public interface WindowManager {
     TerminalPosition getTopLeftPosition(Window window, TerminalSize screenSize);
 
     TerminalSize getSize(Window window, TerminalPosition topLeftPosition, TerminalSize screenSize);
-
+    
     public static class Hint {
         protected Hint() {
         }
     }
+    public final static Hint[] NO_HINTS = new Hint[0];
 }
