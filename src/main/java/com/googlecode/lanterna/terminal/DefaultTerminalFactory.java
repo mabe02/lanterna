@@ -49,6 +49,7 @@ public final class DefaultTerminalFactory implements TerminalFactory {
     
     private boolean suppressSwingTerminalFrame;
     private String title;
+    private boolean autoOpenSwingTerminalFrame;
     private SwingTerminalFrame.AutoCloseTrigger autoCloseTrigger;
     private SwingTerminalColorConfiguration colorConfiguration;
     private SwingTerminalDeviceConfiguration deviceConfiguration;
@@ -74,6 +75,7 @@ public final class DefaultTerminalFactory implements TerminalFactory {
         this.charset = charset;
         
         this.suppressSwingTerminalFrame = false;
+        this.autoOpenSwingTerminalFrame = true;
         this.title = "SwingTerminalFrame";
         this.autoCloseTrigger = SwingTerminalFrame.AutoCloseTrigger.CloseOnExitPrivateMode;
         this.colorConfiguration = SwingTerminalColorConfiguration.DEFAULT;
@@ -92,7 +94,11 @@ public final class DefaultTerminalFactory implements TerminalFactory {
             }
         }
         else {
-            return new SwingTerminalFrame(title, deviceConfiguration, fontConfiguration, colorConfiguration, autoCloseTrigger);
+            SwingTerminalFrame swingTerminalFrame = new SwingTerminalFrame(title, deviceConfiguration, fontConfiguration, colorConfiguration, autoCloseTrigger);
+            if(autoOpenSwingTerminalFrame) {
+                swingTerminalFrame.setVisible(true);
+            }
+            return swingTerminalFrame;
         }
     }
 
@@ -106,6 +112,16 @@ public final class DefaultTerminalFactory implements TerminalFactory {
         return this;
     }
 
+    /**
+     * Controls whether a SwingTerminalFrame shall be automatically shown (.setVisible(true)) immediately after 
+     * creation. If {@code false}, you will manually need to call {@code .setVisible(true)} on the JFrame to actually
+     * see the terminal window. Default for this value is {@code true}.
+     * @param autoOpenSwingTerminalFrame Automatically open SwingTerminalFrame after creation
+     */
+    public void setAutoOpenSwingTerminalFrame(boolean autoOpenSwingTerminalFrame) {
+        this.autoOpenSwingTerminalFrame = autoOpenSwingTerminalFrame;
+    }
+    
     /**
      * Sets the title to use on created SwingTerminalFrames created by this factory
      * @param title Title to use on created SwingTerminalFrames created by this factory
