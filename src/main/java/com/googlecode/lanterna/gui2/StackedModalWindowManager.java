@@ -33,15 +33,18 @@ public class StackedModalWindowManager implements WindowManager {
     public static final Hint LOCATION_CENTERED = new Hint();
     public static final Hint LOCATION_CASCADE = new Hint();
     public static final Hint DONT_RESIZE_TO_FIT_SCREEN = new Hint();
+    public static final Hint NO_WINDOW_DECORATIONS = new Hint();
     private static final int CASCADE_SHIFT_RIGHT = 2;
     private static final int CASCADE_SHIFT_DOWN = 1;
 
     private final SortedSet<ManagedWindow> windowStack;
+    private final WindowDecorationRenderer windowDecorationRenderer;
     private TerminalPosition nextTopLeftPosition;
 
     public StackedModalWindowManager() {
         this.windowStack = new TreeSet<ManagedWindow>();
-        nextTopLeftPosition = new TerminalPosition(CASCADE_SHIFT_RIGHT, CASCADE_SHIFT_DOWN);
+        this.nextTopLeftPosition = new TerminalPosition(CASCADE_SHIFT_RIGHT, CASCADE_SHIFT_DOWN);
+        this.windowDecorationRenderer = new DefaultWindowDecorationRenderer();
     }    
 
     @Override
@@ -119,8 +122,8 @@ public class StackedModalWindowManager implements WindowManager {
     }
 
     @Override
-    public void setDefaultWindowRenderer(WindowDecorationRenderer windowDecorationRenderer) {
-
+    public WindowDecorationRenderer getWindowDecorationRenderer(Window window) {
+        return windowDecorationRenderer;
     }
 
     @Override
@@ -143,6 +146,10 @@ public class StackedModalWindowManager implements WindowManager {
 
     @Override
     public synchronized TerminalSize getSize(Window window, TerminalPosition topLeft, TerminalSize screenSize) {
+        return getWindowDecorationRenderer(window).getDecoratedSize(window, getUndecoratedSize(window, topLeft, screenSize));
+    }
+
+    private TerminalSize getUndecoratedSize(Window window, TerminalPosition topLeft, TerminalSize screenSize) throws IllegalArgumentException {
         ManagedWindow managedWindow = getManagedWindow(window);
         if(managedWindow == null) {
             throw new IllegalArgumentException("Cannot call getTopLeftPosition of " + window + " on " + toString() +

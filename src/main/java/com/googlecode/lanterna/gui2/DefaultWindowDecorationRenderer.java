@@ -67,7 +67,7 @@ public class DefaultWindowDecorationRenderer implements WindowDecorationRenderer
     }
 
     @Override
-    public TerminalSize getDecoratedSize(TextGUI textGUI, Window window, TerminalSize componentSize) {
+    public TerminalSize getDecoratedSize(Window window, TerminalSize componentSize) {
         return componentSize.withColumns(componentSize.getColumns() + 2).withRows(componentSize.getRows() + 2);
     }
 }

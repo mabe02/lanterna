@@ -10,7 +10,6 @@ import com.googlecode.lanterna.TextColor;
  * @author Martin
  */
 public class AbstractWindow implements Window {
-    private WindowDecorationRenderer windowDecorationRenderer;
     private String title;
     private WindowManager windowManager;
     private boolean visible;
@@ -21,7 +20,6 @@ public class AbstractWindow implements Window {
     }
 
     public AbstractWindow(String title) {
-        this.windowDecorationRenderer = new DefaultWindowDecorationRenderer();
         this.title = title;
         this.visible = true;
         this.invalid = false;
@@ -52,7 +50,6 @@ public class AbstractWindow implements Window {
 
     @Override
     public void draw(TextGUI textGUI, TextGUIGraphics graphics) {
-        graphics = windowDecorationRenderer.draw(textGUI, graphics, this);
         graphics.setBackgroundColor(TextColor.ANSI.WHITE);
         graphics.fillScreen(' ');
     }

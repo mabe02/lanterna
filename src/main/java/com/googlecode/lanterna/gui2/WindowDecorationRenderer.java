@@ -19,10 +19,9 @@ public interface WindowDecorationRenderer {
 
     /**
      * Retrieves the full size of the window, including all window decorations, given all components inside the window.
-     * @param textGUI Which TextGUI is calling
      * @param window Window to calculate size for
      * @param componentSize Size of the components
      * @return Full size of the window, including decorations
      */
-    TerminalSize getDecoratedSize(TextGUI textGUI, Window window, TerminalSize componentSize);
+    TerminalSize getDecoratedSize(Window window, TerminalSize componentSize);
 }

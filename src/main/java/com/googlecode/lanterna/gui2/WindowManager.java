@@ -37,7 +37,7 @@ public interface WindowManager {
     boolean handleInput(KeyStroke key);
     boolean isInvalid();
 
-    void setDefaultWindowRenderer(WindowDecorationRenderer windowDecorationRenderer);
+    WindowDecorationRenderer getWindowDecorationRenderer(Window window);
 
     TerminalPosition getTopLeftPosition(Window window, TerminalSize screenSize);
 
