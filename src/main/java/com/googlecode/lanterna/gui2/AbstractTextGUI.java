@@ -4,8 +4,10 @@ import com.googlecode.lanterna.graphics.PropertiesTheme;
 import com.googlecode.lanterna.graphics.Theme;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.screen.Screen;
+import java.io.FileInputStream;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 /**
@@ -24,7 +26,24 @@ public abstract class AbstractTextGUI implements TextGUI {
         this.screen = screen;
         this.dirty = false;
         this.textGUIThread = null;
-        this.guiTheme = new PropertiesTheme(new Properties());
+        this.guiTheme = new PropertiesTheme(loadDefaultThemeProperties());
+    }
+
+    private static Properties loadDefaultThemeProperties() {
+        Properties properties = new Properties();
+        try {
+            ClassLoader classLoader = AbstractTextGUI.class.getClassLoader();
+            InputStream resourceAsStream = classLoader.getResourceAsStream("default-theme.properties");
+            if(resourceAsStream == null) {
+                resourceAsStream = new FileInputStream("src/main/resources/default-theme.properties");
+            }
+            properties.load(resourceAsStream);
+            resourceAsStream.close();
+            return properties;
+        }
+        catch(IOException e) {
+            return properties;
+        }
     }
 
     @Override
