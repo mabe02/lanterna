@@ -47,5 +47,4 @@ public interface WindowManager {
         protected Hint() {
         }
     }
-    public final static Hint[] NO_HINTS = new Hint[0];
 }

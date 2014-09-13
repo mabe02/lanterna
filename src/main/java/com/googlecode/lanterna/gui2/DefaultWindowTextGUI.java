@@ -66,7 +66,7 @@ public class DefaultWindowTextGUI extends AbstractTextGUI implements WindowBased
             TerminalPosition topLeft = getWindowManager().getTopLeftPosition(window, graphics.getSize());
             TerminalSize windowSize = getWindowManager().getSize(window, topLeft, graphics.getSize());
             TextGUIGraphics windowGraphics = decorationRenderer.draw(this, graphics.newTextGraphics(topLeft, windowSize), window);
-            window.draw(this, windowGraphics);
+            window.draw(windowGraphics);
             if(postRenderer != null) {
                 postRenderer.postRender(graphics, this, window, topLeft, windowSize);
             }

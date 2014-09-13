@@ -3,6 +3,10 @@ package com.googlecode.lanterna.gui2;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.input.KeyType;
+
+import java.util.Collections;
+import java.util.Set;
 
 /**
  * Abstract Window implementation that contains much code that is shared between different concrete Window
@@ -44,18 +48,22 @@ public class AbstractWindow implements Window {
     }
 
     @Override
-    public boolean isInvalid() {
+    public boolean isEnabled() {
         return invalid;
     }
 
     @Override
-    public void draw(TextGUI textGUI, TextGUIGraphics graphics) {
+    public void draw(TextGUIGraphics graphics) {
         graphics.setBackgroundColor(TextColor.ANSI.WHITE);
         graphics.fillScreen(' ');
     }
 
     @Override
     public boolean handleInput(KeyStroke key) {
+        if(key.getKeyType() == KeyType.Escape) {
+            close();
+            return true;
+        }
         return false;
     }
 
@@ -65,8 +73,8 @@ public class AbstractWindow implements Window {
     }
 
     @Override
-    public WindowManager.Hint[] getWindowManagerHints() {
-        return WindowManager.NO_HINTS;
+    public Set<WindowManager.Hint> getWindowManagerHints() {
+        return Collections.emptySet();
     }
 
     @Override
