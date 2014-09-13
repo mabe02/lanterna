@@ -60,6 +60,7 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
 
     private final SwingTerminal swingTerminal;
     private AutoCloseTrigger autoCloseTrigger;
+    private boolean disposed;
 
     public SwingTerminalFrame() throws HeadlessException {
         this(AutoCloseTrigger.DontAutoClose);
@@ -98,6 +99,7 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
         super(title);
         this.swingTerminal = swingTerminal;
         this.autoCloseTrigger = autoCloseTrigger;
+        this.disposed = false;
 
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(swingTerminal, BorderLayout.CENTER);
@@ -115,11 +117,20 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
         this.autoCloseTrigger = autoCloseTrigger;
     }
 
+    @Override
+    public void dispose() {
+        super.dispose();
+        disposed = true;
+    }
+    
     ///////////
     // Delegate all Terminal interface implementations to SwingTerminal
     ///////////
     @Override
     public KeyStroke readInput() {
+        if(disposed) {
+            return new KeyStroke(KeyType.EOF);
+        }
         KeyStroke keyStroke = swingTerminal.readInput();
         if(autoCloseTrigger == AutoCloseTrigger.CloseOnEscape && 
                 keyStroke != null && 
