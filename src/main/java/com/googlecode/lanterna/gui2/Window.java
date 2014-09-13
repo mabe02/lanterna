@@ -42,11 +42,11 @@ public interface Window {
     boolean isVisible();
 
     /**
-     * Is the window enabled or not. A disabled window will still be rendered (sometimes with a different color scheme)
-     * but cannot accept any input.
-     * @return Whether the window is enabled or not
+     * This method is used to determine if the window requires re-drawing. The most common cause for this is the some
+     * of its components has changed and we need a re-draw to make these changes visible.
+     * @return {@code true} if the window would like to be re-drawn, {@code false} if the window doesn't need
      */
-    boolean isEnabled();
+    boolean isInvalid();
 
     /**
      * Returns the size this window would like to be

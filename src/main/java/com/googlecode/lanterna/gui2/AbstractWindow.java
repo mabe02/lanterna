@@ -48,7 +48,7 @@ public class AbstractWindow implements Window {
     }
 
     @Override
-    public boolean isEnabled() {
+    public boolean isInvalid() {
         return invalid;
     }
 

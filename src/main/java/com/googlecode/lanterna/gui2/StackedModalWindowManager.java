@@ -114,7 +114,7 @@ public class StackedModalWindowManager implements WindowManager {
     @Override
     public boolean isInvalid() {
         for(ManagedWindow managedWindow: windowStack) {
-            if(managedWindow.window.isEnabled()) {
+            if(managedWindow.window.isInvalid()) {
                 return true;
             }
         }
