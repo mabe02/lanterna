@@ -53,7 +53,7 @@ public class StackedModalWindowManager implements WindowManager {
             throw new IllegalArgumentException("Cannot call addWindow(...) with null window");
         }
         TerminalPosition topLeftPosition;
-        if(hasHint(window, LOCATION_CASCADE) || window.getWindowManagerHints().length == 0) {
+        if(hasHint(window, LOCATION_CASCADE) || window.getWindowManagerHints().isEmpty()) {
             topLeftPosition = nextTopLeftPosition;
             nextTopLeftPosition = nextTopLeftPosition
                                     .withColumn(nextTopLeftPosition.getColumn() + CASCADE_SHIFT_RIGHT)
@@ -114,7 +114,7 @@ public class StackedModalWindowManager implements WindowManager {
     @Override
     public boolean isInvalid() {
         for(ManagedWindow managedWindow: windowStack) {
-            if(managedWindow.window.isInvalid()) {
+            if(managedWindow.window.isEnabled()) {
                 return true;
             }
         }

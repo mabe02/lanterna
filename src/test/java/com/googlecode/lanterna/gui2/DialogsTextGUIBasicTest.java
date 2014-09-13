@@ -32,7 +32,7 @@ public class DialogsTextGUIBasicTest {
         screen.startScreen();
         WindowBasedTextGUI textGUI = new DefaultWindowTextGUI(screen);
         try {
-            AbstractWindow window = new DefaultWindow("Dialog test");
+            AbstractWindow window = new BasicWindow("Dialog test");
             textGUI.getWindowManager().addWindow(window);
             textGUI.updateScreen();
             while(!textGUI.getWindowManager().getWindows().isEmpty()) {
