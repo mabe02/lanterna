@@ -46,4 +46,21 @@ public class CJKUtils {
                 || (unicodeBlock == Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION)
                 || (unicodeBlock == Character.UnicodeBlock.ENCLOSED_CJK_LETTERS_AND_MONTHS);
     }
+
+    /**
+     * Given a string, returns how many columns this string would need to occupy in a terminal, taking into account that
+     * CJK characters takes up two columns.
+     * @param s String to check length
+     * @return Number of actual terminal columns the string would occupy
+     */
+    public static int getTrueWidth(String s) {
+        int count = 0;
+        for(int i = 0; i < s.length(); i++) {
+            if(isCharCJK(s.charAt(i))) {
+                count++;
+            }
+            count++;
+        }
+        return count;
+    }
 }
