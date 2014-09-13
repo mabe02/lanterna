@@ -25,6 +25,7 @@ package com.googlecode.lanterna;
  * @author Martin
  */
 public class TerminalSize {
+    public static final TerminalSize ZERO = new TerminalSize(0, 0);
 
     private final int columns;
     private final int rows;
@@ -61,6 +62,9 @@ public class TerminalSize {
         if(this.columns == columns) {
             return this;
         }
+        if(columns == 0 && this.rows == 0) {
+            return ZERO;
+        }
         return new TerminalSize(columns, this.rows);
     }
 
@@ -80,6 +84,9 @@ public class TerminalSize {
     public TerminalSize withRows(int rows) {
         if(this.rows == rows) {
             return this;
+        }
+        if(rows == 0 && this.columns == 0) {
+            return ZERO;
         }
         return new TerminalSize(this.columns, rows);
     }
@@ -119,6 +126,9 @@ public class TerminalSize {
 
     @Override
     public boolean equals(Object obj) {
+        if(this == obj) {
+            return true;
+        }
         if (!(obj instanceof TerminalSize)) {
             return false;
         }
