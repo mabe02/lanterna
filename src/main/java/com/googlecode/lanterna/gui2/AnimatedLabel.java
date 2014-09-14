@@ -1,0 +1,100 @@
+package com.googlecode.lanterna.gui2;
+
+import com.googlecode.lanterna.TerminalSize;
+
+import java.lang.ref.WeakReference;
+import java.util.*;
+
+/**
+ * Created by martin on 14/09/14.
+ */
+public class AnimatedLabel extends Label {
+    private static Timer TIMER = null;
+    private static WeakHashMap<AnimatedLabel, TimerTask> SCHEDULED_TASKS = new WeakHashMap<AnimatedLabel, TimerTask>();
+
+    public static AnimatedLabel createClassicSpinningLine() {
+        AnimatedLabel animatedLabel = new AnimatedLabel("-");
+        animatedLabel.addFrame("\\");
+        animatedLabel.addFrame("|");
+        animatedLabel.addFrame("/");
+        animatedLabel.startAnimation(100);
+        return animatedLabel;
+    }
+
+    private final List<String[]> frames;
+    private TerminalSize combinedMaximumPreferredSize;
+    private int currentFrame;
+
+    public AnimatedLabel(String firstFrameText) {
+        super(firstFrameText);
+        frames = new ArrayList<String[]>();
+        currentFrame = 0;
+        combinedMaximumPreferredSize = TerminalSize.ZERO;
+
+        ensurePreferredSize(splitIntoMultipleLines(firstFrameText));
+    }
+
+    public void addFrame(String text) {
+        String[] lines = splitIntoMultipleLines(text);
+        frames.add(lines);
+        ensurePreferredSize(lines);
+    }
+
+    private void ensurePreferredSize(String[] lines) {
+        combinedMaximumPreferredSize = combinedMaximumPreferredSize.max(getBounds(lines, combinedMaximumPreferredSize));
+    }
+
+    public void nextFrame() {
+        currentFrame++;
+        if(currentFrame >= frames.size()) {
+            currentFrame = 0;
+        }
+        super.setLines(frames.get(currentFrame));
+        invalidate();
+    }
+
+    public synchronized void startAnimation(long millisecondsPerFrame) {
+        if(TIMER == null) {
+            TIMER = new Timer("AnimatedLabel");
+        }
+        AnimationTimerTask animationTimerTask = new AnimationTimerTask(this);
+        SCHEDULED_TASKS.put(this, animationTimerTask);
+        TIMER.scheduleAtFixedRate(animationTimerTask, millisecondsPerFrame, millisecondsPerFrame);
+    }
+
+    public void stopAnimation() {
+        removeTaskFromTimer(this);
+    }
+
+    private static synchronized void removeTaskFromTimer(AnimatedLabel animatedLabel) {
+        SCHEDULED_TASKS.get(animatedLabel).cancel();
+        canCloseTimer();
+    }
+
+    private static synchronized void canCloseTimer() {
+        if(SCHEDULED_TASKS.isEmpty()) {
+            TIMER.cancel();
+            TIMER = null;
+        }
+    }
+
+    private static class AnimationTimerTask extends TimerTask {
+        private final WeakReference<AnimatedLabel> labelRef;
+
+        private AnimationTimerTask(AnimatedLabel label) {
+            this.labelRef = new WeakReference<AnimatedLabel>(label);
+        }
+
+        @Override
+        public void run() {
+            AnimatedLabel animatedLabel = labelRef.get();
+            if(animatedLabel == null) {
+                cancel();
+                canCloseTimer();
+            }
+            else {
+                animatedLabel.nextFrame();
+            }
+        }
+    }
+}

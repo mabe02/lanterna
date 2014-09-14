@@ -28,9 +28,25 @@ public class Label extends AbstractComponent {
         setText(text);
     }
 
+    protected void setLines(String[] lines) {
+        this.lines = lines;
+    }
+
     public void setText(String text) {
-        this.lines = text.replace("\r", "").split("\n");
-        this.preferredSize = preferredSize.withRows(lines.length);
+        setLines(splitIntoMultipleLines(text));
+        this.preferredSize = getBounds(lines, preferredSize);
+        invalidate();
+    }
+
+    protected String[] splitIntoMultipleLines(String text) {
+        return text.replace("\r", "").split("\n");
+    }
+
+    protected TerminalSize getBounds(String[] lines, TerminalSize currentBounds) {
+        if(currentBounds == null) {
+            currentBounds = TerminalSize.ZERO;
+        }
+        currentBounds = currentBounds.withRows(lines.length);
         int preferredWidth = 0;
         for(String line: lines) {
             int lineWidth = CJKUtils.getTrueWidth(line);
@@ -38,8 +54,8 @@ public class Label extends AbstractComponent {
                 preferredWidth = lineWidth;
             }
         }
-        this.preferredSize = preferredSize.withColumns(preferredWidth);
-        invalidate();
+        currentBounds = currentBounds.withColumns(preferredWidth);
+        return currentBounds;
     }
 
     public void setForegroundColor(TextColor foregroundColor) {
