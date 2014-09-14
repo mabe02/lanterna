@@ -119,6 +119,28 @@ public class TerminalSize {
         return withRows(rows + delta);
     }
 
+    /**
+     * Takes a different TerminalSize and returns a new TerminalSize that has the largest dimensions of the two,
+     * measured separately. So calling 3x5 on a 5x3 will return 5x5.
+     * @param other Other TerminalSize to compare with
+     * @return TerminalSize that combines the maximum width between the two and the maximum height
+     */
+    public TerminalSize max(TerminalSize other) {
+        return withColumns(Math.max(columns, other.columns))
+                .withRows(Math.max(rows, other.rows));
+    }
+
+    /**
+     * Takes a different TerminalSize and returns a new TerminalSize that has the smallest dimensions of the two,
+     * measured separately. So calling 3x5 on a 5x3 will return 3x3.
+     * @param other Other TerminalSize to compare with
+     * @return TerminalSize that combines the minimum width between the two and the minimum height
+     */
+    public TerminalSize min(TerminalSize other) {
+        return withColumns(Math.min(columns, other.columns))
+                .withRows(Math.min(rows, other.rows));
+    }
+
     @Override
     public String toString() {
         return "{" + columns + "x" + rows + "}";
