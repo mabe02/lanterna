@@ -18,13 +18,11 @@
  */
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.graphics.TextGraphics;
-
 /**
- *
+ * This interface is the base part in the Lanterna Text GUI component hierarchy
  * @author Martin
  */
 public interface TextGUIElement {
-    void draw(TextGUI textGUI, Window window, TextGraphics graphics);
+    void draw(TextGUIGraphics graphics);
     boolean isInvalid();
 }

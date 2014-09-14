@@ -22,7 +22,7 @@ package com.googlecode.lanterna.gui2;
  *
  * @author Martin
  */
-public interface Container extends Component {
+public interface Container {
     void addComponent(Component component, LayoutManager.Parameter... layoutParameters);
     void removeComponent(Component component);
     void removeAllComponents();
@@ -31,4 +31,10 @@ public interface Container extends Component {
     int getComponentIndex(Component component);
     Component getComponentAt(int index);
     int getNumberOfComponents();
+
+    /**
+     * Sets the layout manager responsible to placing and sizing the components in the window
+     * @param layoutManager Layout manager this container should use
+     */
+    void setLayoutManager(LayoutManager layoutManager);
 }

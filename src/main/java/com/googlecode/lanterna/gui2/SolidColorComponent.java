@@ -22,7 +22,7 @@ public class SolidColorComponent implements TextGUIElement {
     }
 
     @Override
-    public void draw(TextGUI textGUI, Window window, TextGraphics graphics) {
+    public void draw(TextGUIGraphics graphics) {
         graphics.setBackgroundColor(color);
         if(bold) {
             graphics.enableModifiers(SGR.BOLD);

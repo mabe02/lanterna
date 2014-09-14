@@ -60,7 +60,7 @@ public class DefaultWindowTextGUI extends AbstractTextGUI implements WindowBased
 
     @Override
     protected void drawGUI(TextGUIGraphics graphics) {
-        background.draw(this, null, graphics);
+        background.draw(graphics);
         for(Window window: getWindowManager().getWindows()) {
             WindowDecorationRenderer decorationRenderer = getWindowManager().getWindowDecorationRenderer(window);
             TerminalPosition topLeft = getWindowManager().getTopLeftPosition(window, graphics.getSize());

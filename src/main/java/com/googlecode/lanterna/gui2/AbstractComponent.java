@@ -18,6 +18,8 @@
  */
 package com.googlecode.lanterna.gui2;
 
+import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.graphics.TextGraphics;
 
 /**
@@ -25,25 +27,61 @@ import com.googlecode.lanterna.graphics.TextGraphics;
  * @author Martin
  */
 public abstract class AbstractComponent implements Component {
-
+    private TerminalSize size;
+    private TerminalPosition position;
     private boolean invalid;
+    private Border border;
 
     public AbstractComponent() {
         invalid = true;
+        border = null;
     }
-    
+
+    /**
+     * Implement this method and return how large you want the component to be, taking no borders into account.
+     * AbstractComponent calls this in its implementation of {@code getPreferredSize()} and adds on border size
+     * automatically.
+     * @return Size this component would like to have, without taking borders into consideration
+     */
+    protected abstract TerminalSize getPreferredSizeWithoutBorder();
+
     protected void invalidate() {
         invalid = true;
     }
 
     @Override
-    public void draw(TextGUI textGUI, Window window, TextGraphics graphics) {
-        invalid = false;
+    public void setSize(TerminalSize size) {
+        this.size = size;
+    }
+
+    @Override
+    public TerminalSize getSize() {
+        return size;
+    }
+
+    @Override
+    public void setPosition(TerminalPosition position) {
+        this.position = position;
+    }
+
+    @Override
+    public TerminalPosition getPosition() {
+        return position;
+    }
+
+    @Override
+    public TerminalSize getPreferredSize() {
+        return getPreferredSizeWithoutBorder();
     }
     
     @Override
     public boolean isInvalid() {
         return invalid;
     }
-    
+
+    @Override
+    public AbstractComponent withBorder(Border border) {
+        this.border = border;
+        return this;
+    }
 }

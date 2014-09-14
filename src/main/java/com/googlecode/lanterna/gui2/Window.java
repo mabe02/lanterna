@@ -82,4 +82,10 @@ public interface Window {
      * @return Hints for the window manager
      */
     Set<WindowManager.Hint> getWindowManagerHints();
+
+    /**
+     * Returns a container that can be used as the parent for top-level components added to the window
+     * @return Container that represents the main component area of the window
+     */
+    Container getContentArea();
 }

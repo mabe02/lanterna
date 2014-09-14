@@ -14,6 +14,7 @@ import java.util.Set;
  * @author Martin
  */
 public class AbstractWindow implements Window {
+    private final ContentArea contentArea;
     private String title;
     private WindowManager windowManager;
     private boolean visible;
@@ -24,6 +25,7 @@ public class AbstractWindow implements Window {
     }
 
     public AbstractWindow(String title) {
+        this.contentArea = new ContentArea();
         this.title = title;
         this.visible = true;
         this.invalid = false;
@@ -54,8 +56,9 @@ public class AbstractWindow implements Window {
 
     @Override
     public void draw(TextGUIGraphics graphics) {
-        graphics.setBackgroundColor(TextColor.ANSI.WHITE);
+        graphics.applyThemeStyle(graphics.getThemeDefinition(Window.class).getNormal());
         graphics.fillScreen(' ');
+        contentArea.draw(graphics);
     }
 
     @Override
@@ -68,8 +71,13 @@ public class AbstractWindow implements Window {
     }
 
     @Override
+    public Container getContentArea() {
+        return null;
+    }
+
+    @Override
     public TerminalSize getPreferredSize() {
-        return new TerminalSize(40, 10);
+        return contentArea.getPreferredSize();
     }
 
     @Override
@@ -83,5 +91,17 @@ public class AbstractWindow implements Window {
             throw new IllegalStateException("Cannot close " + toString() + " because it is not managed by any window manager");
         }
         windowManager.removeWindow(this);
+    }
+
+    private class ContentArea extends AbstractContainer {
+        @Override
+        protected TerminalSize getPreferredSizeWithoutBorder() {
+            return null;
+        }
+
+        @Override
+        public void draw(TextGUIGraphics graphics) {
+
+        }
     }
 }

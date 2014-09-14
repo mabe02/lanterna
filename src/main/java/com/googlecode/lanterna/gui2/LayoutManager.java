@@ -27,18 +27,27 @@ import java.util.List;
  * @author Martin
  */
 public interface LayoutManager {
-    
-    List<LaidOutComponent> doLayout(TerminalSize area, List<Component> components, List<Parameter[]> layoutParameters);
-    
+
+    /**
+     * This method returns the dimensions it would prefer to have to be able to layout all components while giving all
+     * of them as much space as they are asking for.
+     * @param components List of components
+     * @param parameters List of layout parameters attached to each component
+     * @return Size the layout manager would like to have
+     */
+    TerminalSize getPreferredSize(List<Component> components, List<Parameter[]> parameters);
+
+    /**
+     * Given a size constraint, update the location and size of each component in the component list by laying them out
+     * in the available area. This method will call {@code setPosition(..)} and {@code setSize(..)} on the Components.
+     * @param area Size available to this layout manager to lay out the components on
+     * @param components List of components to lay out
+     * @param layoutParameters List of parameters attached to each component
+     */
+    void doLayout(TerminalSize area, List<Component> components, List<Parameter[]> layoutParameters);
+
     public static class Parameter {
         protected Parameter() {
         }
-    }
-    
-    public static interface LaidOutComponent {
-        TerminalPosition getTopLeftCorner();
-        TerminalSize getSize();
-        Component getComponent();
-        boolean isVisible();
     }
 }

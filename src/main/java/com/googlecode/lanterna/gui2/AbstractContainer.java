@@ -29,13 +29,19 @@ import java.util.List;
  * @author Martin
  */
 public abstract class AbstractContainer extends AbstractComponent implements Container {
-    
     private final List<Component> components;
     private final List<LayoutManager.Parameter[]> layoutParameters;
 
+    private LayoutManager layoutManager;
+    private boolean needsReLayout;
+    private TerminalSize preferredSize;
+
     public AbstractContainer() {
+        layoutManager = new LinearLayout();
         components = new ArrayList<Component>();
         layoutParameters = new ArrayList<Parameter[]>();
+        needsReLayout = false;
+        preferredSize = null;
     }
 
     @Override
@@ -52,7 +58,7 @@ public abstract class AbstractContainer extends AbstractComponent implements Con
                 this.layoutParameters.add(layoutParameters);
             }
         }
-        invalidate();
+        onStructureChanged();
     }
 
     @Override
@@ -68,7 +74,7 @@ public abstract class AbstractContainer extends AbstractComponent implements Con
             components.remove(index);
             layoutParameters.remove(index);
         }
-        invalidate();
+        onStructureChanged();
     }
 
     @Override
@@ -77,7 +83,7 @@ public abstract class AbstractContainer extends AbstractComponent implements Con
             components.clear();
             layoutParameters.clear();
         }
-        invalidate();
+        onStructureChanged();
     }
 
     @Override
@@ -119,11 +125,48 @@ public abstract class AbstractContainer extends AbstractComponent implements Con
             return components.size();
         }
     }
-    
-    protected List<LayoutManager.LaidOutComponent> sendToLayoutManager(LayoutManager layoutManager, TerminalSize areaSize) {
-        return layoutManager.doLayout(
-                areaSize, 
+
+    @Override
+    public void setLayoutManager(LayoutManager layoutManager) {
+        if(layoutManager == null) {
+            throw new IllegalArgumentException("Cannot set a null layout manager");
+        }
+        this.layoutManager = layoutManager;
+        onStructureChanged();
+    }
+
+    @Override
+    public void draw(TextGUIGraphics graphics) {
+        if(needsReLayout) {
+            layout(graphics.getSize());
+        }
+        for(Component component: components) {
+            TextGUIGraphics componentGraphics = graphics.newTextGraphics(component.getPosition(), component.getSize());
+            component.draw(componentGraphics);
+        }
+    }
+
+    @Override
+    protected TerminalSize getPreferredSizeWithoutBorder() {
+        if(preferredSize == null) {
+            preferredSize = layoutManager.getPreferredSize(
+                    Collections.unmodifiableList(components),
+                    Collections.unmodifiableList(layoutParameters));
+        }
+        return null;
+    }
+
+    private void onStructureChanged() {
+        needsReLayout = true;
+        preferredSize = null;
+        invalidate();
+    }
+
+    private void layout(TerminalSize size) {
+        layoutManager.doLayout(
+                size,
                 Collections.unmodifiableList(components),
                 Collections.unmodifiableList(layoutParameters));
+        needsReLayout = false;
     }
 }
