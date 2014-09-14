@@ -37,6 +37,7 @@ public class AbstractWindow implements Window {
 
     public void setTitle(String title) {
         this.title = title;
+        invalidate();
     }
 
     @Override
@@ -51,7 +52,7 @@ public class AbstractWindow implements Window {
 
     @Override
     public boolean isInvalid() {
-        return invalid;
+        return invalid || contentArea.isInvalid();
     }
 
     @Override
@@ -59,6 +60,7 @@ public class AbstractWindow implements Window {
         graphics.applyThemeStyle(graphics.getThemeDefinition(Window.class).getNormal());
         graphics.fillScreen(' ');
         contentArea.draw(graphics);
+        invalid = false;
     }
 
     @Override
@@ -91,6 +93,10 @@ public class AbstractWindow implements Window {
             throw new IllegalStateException("Cannot close " + toString() + " because it is not managed by any window manager");
         }
         windowManager.removeWindow(this);
+    }
+
+    private void invalidate() {
+        invalid = true;
     }
 
     private class ContentArea extends AbstractContainer {

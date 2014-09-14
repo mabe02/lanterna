@@ -156,6 +156,16 @@ public abstract class AbstractContainer extends AbstractComponent implements Con
         return preferredSize;
     }
 
+    @Override
+    public boolean isInvalid() {
+        for(Component component: components) {
+            if(component.isInvalid()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void onStructureChanged() {
         needsReLayout = true;
         preferredSize = null;

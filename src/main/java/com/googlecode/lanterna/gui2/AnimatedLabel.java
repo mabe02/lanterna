@@ -13,11 +13,15 @@ public class AnimatedLabel extends Label {
     private static WeakHashMap<AnimatedLabel, TimerTask> SCHEDULED_TASKS = new WeakHashMap<AnimatedLabel, TimerTask>();
 
     public static AnimatedLabel createClassicSpinningLine() {
+        return createClassicSpinningLine(150);
+    }
+
+    public static AnimatedLabel createClassicSpinningLine(int speed) {
         AnimatedLabel animatedLabel = new AnimatedLabel("-");
         animatedLabel.addFrame("\\");
         animatedLabel.addFrame("|");
         animatedLabel.addFrame("/");
-        animatedLabel.startAnimation(100);
+        animatedLabel.startAnimation(speed);
         return animatedLabel;
     }
 
@@ -31,7 +35,9 @@ public class AnimatedLabel extends Label {
         currentFrame = 0;
         combinedMaximumPreferredSize = TerminalSize.ZERO;
 
-        ensurePreferredSize(splitIntoMultipleLines(firstFrameText));
+        String[] lines = splitIntoMultipleLines(firstFrameText);
+        frames.add(lines);
+        ensurePreferredSize(lines);
     }
 
     public void addFrame(String text) {
