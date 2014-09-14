@@ -153,7 +153,7 @@ public abstract class AbstractContainer extends AbstractComponent implements Con
                     Collections.unmodifiableList(components),
                     Collections.unmodifiableList(layoutParameters));
         }
-        return null;
+        return preferredSize;
     }
 
     private void onStructureChanged() {

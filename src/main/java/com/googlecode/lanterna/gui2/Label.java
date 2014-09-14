@@ -19,7 +19,7 @@ public class Label extends AbstractComponent {
     private TextColor backgroundColor;
     private EnumSet<SGR> additionalStyles;
 
-    public Label(Container parentContainer, String text) {
+    public Label(String text) {
         this.lines = null;
         this.preferredSize = TerminalSize.ZERO;
         this.foregroundColor = null;

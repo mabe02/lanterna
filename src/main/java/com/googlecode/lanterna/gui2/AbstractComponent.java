@@ -33,6 +33,8 @@ public abstract class AbstractComponent implements Component {
     private Border border;
 
     public AbstractComponent() {
+        size = TerminalSize.ZERO;
+        position = TerminalPosition.TOP_LEFT_CORNER;
         invalid = true;
         border = null;
     }

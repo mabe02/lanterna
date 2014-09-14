@@ -72,7 +72,7 @@ public class AbstractWindow implements Window {
 
     @Override
     public Container getContentArea() {
-        return null;
+        return contentArea;
     }
 
     @Override
@@ -94,14 +94,5 @@ public class AbstractWindow implements Window {
     }
 
     private class ContentArea extends AbstractContainer {
-        @Override
-        protected TerminalSize getPreferredSizeWithoutBorder() {
-            return null;
-        }
-
-        @Override
-        public void draw(TextGUIGraphics graphics) {
-
-        }
     }
 }
