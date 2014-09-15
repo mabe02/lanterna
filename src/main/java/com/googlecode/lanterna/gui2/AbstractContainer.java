@@ -24,7 +24,8 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- *
+ * Abstract base implementation of Container that extends from AbstractComponent. This implementation provides a common
+ * base for most of the container interface.
  * @author Martin
  */
 public abstract class AbstractContainer extends AbstractComponent implements Container {
@@ -47,6 +48,9 @@ public abstract class AbstractContainer extends AbstractComponent implements Con
             throw new IllegalArgumentException("Cannot add null component");
         }
         synchronized(components) {
+            if(components.contains(component)) {
+                return;
+            }
             components.add(component);
             component.setParent(this);
         }
