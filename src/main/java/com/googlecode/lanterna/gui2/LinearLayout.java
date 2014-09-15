@@ -6,7 +6,7 @@ import com.googlecode.lanterna.TerminalSize;
 import java.util.List;
 
 /**
- * Created by martin on 13/09/14.
+ * Simple layout manager the puts all components on a single line
  */
 public class LinearLayout implements LayoutManager {
     public static enum Direction {
@@ -26,7 +26,7 @@ public class LinearLayout implements LayoutManager {
     }
 
     @Override
-    public TerminalSize getPreferredSize(List<Component> components, List<Parameter[]> parameters) {
+    public TerminalSize getPreferredSize(List<Component> components) {
         int maxWidth = 0;
         int height = 0;
         for(Component component: components) {
@@ -40,7 +40,7 @@ public class LinearLayout implements LayoutManager {
     }
 
     @Override
-    public void doLayout(TerminalSize area, List<Component> components, List<Parameter[]> layoutParameters) {
+    public void doLayout(TerminalSize area, List<Component> components) {
         int remainingVerticalSpace = area.getRows();
         int availableHorizontalSpace = area.getColumns();
         for(Component component: components) {

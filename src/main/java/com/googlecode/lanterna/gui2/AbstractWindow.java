@@ -2,7 +2,6 @@ package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.input.KeyType;
 
 import java.util.Collections;
@@ -89,6 +88,7 @@ public class AbstractWindow implements Window {
 
     @Override
     public void close() {
+        contentArea.dispose();
         if(windowManager == null) {
             throw new IllegalStateException("Cannot close " + toString() + " because it is not managed by any window manager");
         }

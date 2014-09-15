@@ -21,6 +21,8 @@ package com.googlecode.lanterna.gui2;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 
+import java.util.Set;
+
 /**
  *
  * @author Martin
@@ -66,4 +68,40 @@ public interface Component extends TextGUIElement {
      * @return Itself
      */
     Component withBorder(Border border);
+
+    /**
+     * Sets the layout manager parameters
+     * @param parameters List of layout manager parameters
+     */
+    void setLayoutManagerParameters(LayoutManager.Parameter... parameters);
+
+    /**
+     * Returns the set of parameters this component wants to pass to the layout manager of its parent
+     * @return Parameters for the layout manager
+     */
+    Set<LayoutManager.Parameter> getLayoutManagerParameters();
+
+    /**
+     * Returns the container which is holding this component, or {@code null} if it's not assigned to anything.
+     * @return Parent container or null
+     */
+    Container getParent();
+
+    /**
+     * Assigns the component to a new container. If the component already belongs to a different container, it will be
+     * removed from there first. Calling {@code setParent(null)} is the same as removing the component from the
+     * container.
+     * @param parent New parent container or {@code null} if you want to remove the component from its current parent
+     */
+    void setParent(Container parent);
+
+    /**
+     * Removes the component from its parent and frees up any resources (threads, etc) associated with the component.
+     * After this call, the component cannot be used anymore. It is not required to call dispose on components when you
+     * want to remove them or want to close the window they are part of, this is in general cared for automatically.
+     * Calling dispose() manually is only required for certain components (like AnimatedLabel) when you want to free up
+     * resources like background threads. When you close a window, Lanterna will call dispose on all child components of
+     * that window.
+     */
+    void dispose();
 }

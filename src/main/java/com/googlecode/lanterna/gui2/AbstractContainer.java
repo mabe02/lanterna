@@ -18,7 +18,6 @@
  */
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.gui2.LayoutManager.Parameter;
 import com.googlecode.lanterna.TerminalSize;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,7 +29,6 @@ import java.util.List;
  */
 public abstract class AbstractContainer extends AbstractComponent implements Container {
     private final List<Component> components;
-    private final List<LayoutManager.Parameter[]> layoutParameters;
 
     private LayoutManager layoutManager;
     private boolean needsReLayout;
@@ -39,24 +37,18 @@ public abstract class AbstractContainer extends AbstractComponent implements Con
     public AbstractContainer() {
         layoutManager = new LinearLayout();
         components = new ArrayList<Component>();
-        layoutParameters = new ArrayList<Parameter[]>();
         needsReLayout = false;
         preferredSize = null;
     }
 
     @Override
-    public void addComponent(Component component, Parameter... layoutParameters) {
+    public void addComponent(Component component) {
         if(component == null) {
             throw new IllegalArgumentException("Cannot add null component");
         }
         synchronized(components) {
             components.add(component);
-            if(layoutParameters == null) {
-                this.layoutParameters.add(new Parameter[0]);
-            }
-            else {
-                this.layoutParameters.add(layoutParameters);
-            }
+            component.setParent(this);
         }
         onStructureChanged();
     }
@@ -72,7 +64,7 @@ public abstract class AbstractContainer extends AbstractComponent implements Con
                 return;
             }
             components.remove(index);
-            layoutParameters.remove(index);
+            component.setParent(null);
         }
         onStructureChanged();
     }
@@ -80,10 +72,10 @@ public abstract class AbstractContainer extends AbstractComponent implements Con
     @Override
     public void removeAllComponents() {
         synchronized(components) {
-            components.clear();
-            layoutParameters.clear();
+            for(Component component: new ArrayList<Component>(components)) {
+                removeComponent(component);
+            }
         }
-        onStructureChanged();
     }
 
     @Override
@@ -149,21 +141,16 @@ public abstract class AbstractContainer extends AbstractComponent implements Con
     @Override
     protected TerminalSize getPreferredSizeWithoutBorder() {
         if(preferredSize == null) {
-            preferredSize = layoutManager.getPreferredSize(
-                    Collections.unmodifiableList(components),
-                    Collections.unmodifiableList(layoutParameters));
+            preferredSize = layoutManager.getPreferredSize(Collections.unmodifiableList(components));
         }
         return preferredSize;
     }
 
     @Override
-    public boolean isInvalid() {
-        for(Component component: components) {
-            if(component.isInvalid()) {
-                return true;
-            }
+    protected void onDisposed() {
+        for(Component component: new ArrayList<Component>(components)) {
+            component.dispose();
         }
-        return false;
     }
 
     private void onStructureChanged() {
@@ -173,10 +160,7 @@ public abstract class AbstractContainer extends AbstractComponent implements Con
     }
 
     private void layout(TerminalSize size) {
-        layoutManager.doLayout(
-                size,
-                Collections.unmodifiableList(components),
-                Collections.unmodifiableList(layoutParameters));
+        layoutManager.doLayout(size, Collections.unmodifiableList(components));
         needsReLayout = false;
     }
 }

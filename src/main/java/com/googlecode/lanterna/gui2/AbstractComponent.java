@@ -20,23 +20,30 @@ package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.graphics.TextGraphics;
+
+import java.util.*;
 
 /**
  *
  * @author Martin
  */
 public abstract class AbstractComponent implements Component {
+    private final Set<LayoutManager.Parameter> layoutManagerParameters;
+    private Container parent;
     private TerminalSize size;
     private TerminalPosition position;
     private boolean invalid;
+    private boolean disposed;
     private Border border;
 
     public AbstractComponent() {
+        layoutManagerParameters = new HashSet<LayoutManager.Parameter>();
         size = TerminalSize.ZERO;
         position = TerminalPosition.TOP_LEFT_CORNER;
         invalid = true;
+        disposed = false;
         border = null;
+        parent = null;
     }
 
     /**
@@ -48,11 +55,13 @@ public abstract class AbstractComponent implements Component {
     protected abstract TerminalSize getPreferredSizeWithoutBorder();
 
     protected void invalidate() {
+        ensureNotDisposed();
         invalid = true;
     }
 
     @Override
     public void setSize(TerminalSize size) {
+        ensureNotDisposed();
         this.size = size;
     }
 
@@ -63,6 +72,7 @@ public abstract class AbstractComponent implements Component {
 
     @Override
     public void setPosition(TerminalPosition position) {
+        ensureNotDisposed();
         this.position = position;
     }
 
@@ -82,8 +92,77 @@ public abstract class AbstractComponent implements Component {
     }
 
     @Override
+    public void setLayoutManagerParameters(LayoutManager.Parameter... parameters) {
+        ensureNotDisposed();
+        Set<LayoutManager.Parameter> newSet = new HashSet<LayoutManager.Parameter>(Arrays.asList(parameters));
+        layoutManagerParameters.retainAll(newSet);
+        layoutManagerParameters.addAll(newSet);
+    }
+
+    @Override
+    public Set<LayoutManager.Parameter> getLayoutManagerParameters() {
+        return layoutManagerParameters;
+    }
+
+    @Override
+    public Container getParent() {
+        return parent;
+    }
+
+    @Override
+    public void setParent(Container parent) {
+        ensureNotDisposed();
+        if(this.parent == parent) {
+            return;
+        }
+        Container oldParent = this.parent;
+        this.parent = null;
+        if(oldParent != null && oldParent.containsComponent(this)) {
+            oldParent.removeComponent(this);
+        }
+        this.parent = parent;
+        if(parent != null) {
+            if(!parent.containsComponent(this)) {
+                parent.addComponent(this);
+            }
+        }
+    }
+
+    @Override
     public AbstractComponent withBorder(Border border) {
+        ensureNotDisposed();
         this.border = border;
         return this;
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        if(!disposed) {
+            dispose();
+        }
+    }
+
+    @Override
+    public final void dispose() {
+        if(disposed) {
+            //We could throw an error here but let's be nice
+            return;
+        }
+        if(parent != null) {
+            parent.removeComponent(this);
+        }
+        onDisposed();
+        disposed = true;
+    }
+
+    protected void onDisposed() {
+        //Available for custom implementation
+    }
+
+    protected void ensureNotDisposed() {
+        if(disposed) {
+            throw new IllegalStateException("Component " + toString() + " is already disposed");
+        }
     }
 }

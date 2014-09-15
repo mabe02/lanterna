@@ -23,7 +23,7 @@ package com.googlecode.lanterna.gui2;
  * @author Martin
  */
 public interface Container {
-    void addComponent(Component component, LayoutManager.Parameter... layoutParameters);
+    void addComponent(Component component);
     void removeComponent(Component component);
     void removeAllComponents();
     

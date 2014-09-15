@@ -18,7 +18,6 @@
  */
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import java.util.List;
 
@@ -32,19 +31,17 @@ public interface LayoutManager {
      * This method returns the dimensions it would prefer to have to be able to layout all components while giving all
      * of them as much space as they are asking for.
      * @param components List of components
-     * @param parameters List of layout parameters attached to each component
      * @return Size the layout manager would like to have
      */
-    TerminalSize getPreferredSize(List<Component> components, List<Parameter[]> parameters);
+    TerminalSize getPreferredSize(List<Component> components);
 
     /**
      * Given a size constraint, update the location and size of each component in the component list by laying them out
      * in the available area. This method will call {@code setPosition(..)} and {@code setSize(..)} on the Components.
      * @param area Size available to this layout manager to lay out the components on
      * @param components List of components to lay out
-     * @param layoutParameters List of parameters attached to each component
      */
-    void doLayout(TerminalSize area, List<Component> components, List<Parameter[]> layoutParameters);
+    void doLayout(TerminalSize area, List<Component> components);
 
     public static class Parameter {
         protected Parameter() {

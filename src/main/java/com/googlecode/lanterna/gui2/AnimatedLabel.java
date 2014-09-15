@@ -6,7 +6,7 @@ import java.lang.ref.WeakReference;
 import java.util.*;
 
 /**
- * Created by martin on 14/09/14.
+ * Special kind of label that cycles through a list of texts
  */
 public class AnimatedLabel extends Label {
     private static Timer TIMER = null;
@@ -59,6 +59,11 @@ public class AnimatedLabel extends Label {
         invalidate();
     }
 
+    @Override
+    protected void onDisposed() {
+        stopAnimation();
+    }
+
     public synchronized void startAnimation(long millisecondsPerFrame) {
         if(TIMER == null) {
             TIMER = new Timer("AnimatedLabel");
@@ -74,6 +79,7 @@ public class AnimatedLabel extends Label {
 
     private static synchronized void removeTaskFromTimer(AnimatedLabel animatedLabel) {
         SCHEDULED_TASKS.get(animatedLabel).cancel();
+        SCHEDULED_TASKS.remove(animatedLabel);
         canCloseTimer();
     }
 
