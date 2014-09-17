@@ -14,10 +14,12 @@ import java.util.Set;
  */
 public class AbstractWindow implements Window {
     private final ContentArea contentArea;
+
     private String title;
     private WindowManager windowManager;
     private boolean visible;
     private boolean invalid;
+    private Interactable focusedComponent;
 
     public AbstractWindow() {
         this("");
@@ -87,6 +89,11 @@ public class AbstractWindow implements Window {
     }
 
     @Override
+    public Interactable getFocusedInteractable() {
+        return focusedComponent;
+    }
+
+    @Override
     public void close() {
         contentArea.dispose();
         if(windowManager == null) {
@@ -100,5 +107,14 @@ public class AbstractWindow implements Window {
     }
 
     private class ContentArea extends AbstractContainer {
+        @Override
+        public void addComponent(Component component) {
+            super.addComponent(component);
+        }
+
+        @Override
+        public void removeComponent(Component component) {
+            super.removeComponent(component);
+        }
     }
 }

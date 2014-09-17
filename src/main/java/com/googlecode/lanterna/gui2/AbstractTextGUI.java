@@ -1,5 +1,6 @@
 package com.googlecode.lanterna.gui2;
 
+import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.graphics.PropertiesTheme;
 import com.googlecode.lanterna.graphics.Theme;
 import com.googlecode.lanterna.input.KeyStroke;
@@ -8,6 +9,7 @@ import java.io.FileInputStream;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Properties;
 
 /**
@@ -21,12 +23,14 @@ public abstract class AbstractTextGUI implements TextGUI {
     private boolean dirty;
     private TextGUIThread textGUIThread;
     private Theme guiTheme;
+    private int[][] interactableLookupMap;
 
     protected AbstractTextGUI(Screen screen) {
         this.screen = screen;
         this.dirty = false;
         this.textGUIThread = null;
         this.guiTheme = new PropertiesTheme(loadDefaultThemeProperties());
+        this.interactableLookupMap = new int[1][1];
     }
 
     private static Properties loadDefaultThemeProperties() {
@@ -63,7 +67,22 @@ public abstract class AbstractTextGUI implements TextGUI {
     @Override
     public void updateScreen() throws IOException {
         screen.doResizeIfNecessary();
-        drawGUI(new TextGUIGraphics(this, screen.newTextGraphics(), guiTheme));
+        TerminalSize terminalSize = screen.getTerminalSize();
+        if(interactableLookupMap.length != terminalSize.getRows() ||
+                interactableLookupMap[0].length != terminalSize.getColumns()) {
+            interactableLookupMap = new int[terminalSize.getRows()][terminalSize.getColumns()];
+        }
+        for(int y = 0; y < interactableLookupMap.length; y++) {
+            Arrays.fill(interactableLookupMap[y], 8);
+        }
+        drawGUI(new TextGUIGraphics(this, screen.newTextGraphics(), guiTheme, interactableLookupMap));
+        for(int y = 0; y < interactableLookupMap.length; y++) {
+            for(int x = 0; x < interactableLookupMap[0].length; x++) {
+                System.out.print(interactableLookupMap[y][x]);
+            }
+            System.out.println();
+        }
+        System.out.println();
         screen.setCursorPosition(null);
         screen.refresh();
     }

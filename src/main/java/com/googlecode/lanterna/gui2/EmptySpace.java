@@ -29,7 +29,7 @@ public class EmptySpace extends AbstractComponent {
     }
 
     @Override
-    public void draw(TextGUIGraphics graphics) {
+    public void drawComponent(TextGUIGraphics graphics) {
         graphics.applyThemeStyle(graphics.getThemeDefinition(EmptySpace.class).getNormal());
         if(color != null) {
             graphics.setBackgroundColor(color);

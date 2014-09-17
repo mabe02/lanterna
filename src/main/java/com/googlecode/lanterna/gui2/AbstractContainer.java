@@ -132,13 +132,16 @@ public abstract class AbstractContainer extends AbstractComponent implements Con
     }
 
     @Override
-    public void draw(TextGUIGraphics graphics) {
+    public void drawComponent(TextGUIGraphics graphics) {
         if(needsReLayout) {
             layout(graphics.getSize());
         }
         for(Component component: components) {
             TextGUIGraphics componentGraphics = graphics.newTextGraphics(component.getPosition(), component.getSize());
             component.draw(componentGraphics);
+            if(component instanceof Interactable) {
+                graphics.addInteractableToLookupMap((Interactable)component);
+            }
         }
     }
 

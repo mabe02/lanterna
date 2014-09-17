@@ -88,7 +88,7 @@ public class Label extends AbstractComponent {
     }
 
     @Override
-    public void draw(TextGUIGraphics graphics) {
+    public void drawComponent(TextGUIGraphics graphics) {
         ThemeDefinition themeDefinition = graphics.getThemeDefinition(Label.class);
         graphics.applyThemeStyle(themeDefinition.getNormal());
         if(foregroundColor != null) {

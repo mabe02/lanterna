@@ -39,6 +39,14 @@ class SubTextGraphics extends AbstractTextGraphics {
     }
 
     @Override
+    public TerminalPosition getRealPosition(TerminalPosition position) {
+        TerminalPosition translated = underlyingTextGraphics.getRealPosition(position);
+        TerminalPosition adjusted = translated.withRelativeColumn(topLeft.getColumn()).withRelativeRow(topLeft.getRow());
+        System.out.println(position + " -> " + translated + " -> " + adjusted);
+        return adjusted;
+    }
+
+    @Override
     protected void setCharacter(int columnIndex, int rowIndex, TextCharacter textCharacter) {
         TerminalSize writableArea = getSize();
         if(columnIndex < 0 || columnIndex >= writableArea.getColumns() ||

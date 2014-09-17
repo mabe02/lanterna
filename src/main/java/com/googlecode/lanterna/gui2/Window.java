@@ -88,4 +88,11 @@ public interface Window {
      * @return Container that represents the main component area of the window
      */
     Container getContentArea();
+
+    /**
+     * Returns the component in the window that currently has input focus. There can only be one component at a time
+     * being in focus.
+     * @return Interactable component that is currently in receiving input focus
+     */
+    Interactable getFocusedInteractable();
 }

@@ -91,6 +91,21 @@ public abstract class AbstractComponent implements Component {
         return invalid;
     }
 
+    /**
+     * Implement this method to define the logic to draw the component. The reason for this abstract method, instead of
+     * overriding {@code Component.draw(..)} is because {@code AbstractComponent.draw(..)} calls this method and then
+     * resets the invalid flag. If you could override {@code draw}, you might forget to call the super method and
+     * probably won't notice that your code keeps refreshing the GUI even though nothing has changed.
+     * @param graphics TextGraphics to be used to draw the component
+     */
+    public abstract void drawComponent(TextGUIGraphics graphics);
+
+    @Override
+    public final void draw(TextGUIGraphics graphics) {
+        drawComponent(graphics);
+        invalid = false;
+    }
+
     @Override
     public void setLayoutManagerParameters(LayoutManager.Parameter... parameters) {
         ensureNotDisposed();

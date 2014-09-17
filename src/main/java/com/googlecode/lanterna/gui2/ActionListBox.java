@@ -21,7 +21,7 @@ public class ActionListBox extends AbstractComponent {
     }
 
     @Override
-    public void draw(TextGUIGraphics graphics) {
+    public void drawComponent(TextGUIGraphics graphics) {
 
     }
 }

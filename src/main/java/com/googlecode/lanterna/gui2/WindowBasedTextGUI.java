@@ -23,7 +23,7 @@ package com.googlecode.lanterna.gui2;
  * of the Window class.
  * @author Martin
  */
-public interface WindowBasedTextGUI extends TextGUI {
+public interface WindowBasedTextGUI extends ComponentBasedTextGUI {
     /**
      * Returns the window manager that is currently controlling this TextGUI. The window manager is in charge of placing
      * the windows on the surface and also deciding how they behave and move around.

@@ -25,23 +25,33 @@ import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.*;
 import com.googlecode.lanterna.screen.TabBehaviour;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.List;
 
 /**
  * TextGraphics implementation used by TextGUI when doing any drawing operation.
  * @author Martin
  */
-public class TextGUIGraphics implements ThemedTextGraphics {
+public final class TextGUIGraphics implements ThemedTextGraphics {
     private final TextGUI textGUI;
     private final ImmutableThemedTextGraphics backend;
+    private final List<Interactable> interactables;
+    private final int interactableLookupMap[][];
 
-    public TextGUIGraphics(TextGUI textGUI, TextGraphics backend, Theme theme) {
+    TextGUIGraphics(TextGUI textGUI, TextGraphics backend, Theme theme, int interactableLookupMap[][]) {
+        this(textGUI, backend, theme, interactableLookupMap, new ArrayList<Interactable>());
+    }
+
+    TextGUIGraphics(TextGUI textGUI, TextGraphics backend, Theme theme, int interactableLookupMap[][], List<Interactable> interactables) {
         this.backend = new ImmutableThemedTextGraphics(backend, theme);
         this.textGUI = textGUI;
+        this.interactableLookupMap = interactableLookupMap;
+        this.interactables = interactables;
     }
 
     public TextGUIGraphics withTheme(Theme theme) {
-        return new TextGUIGraphics(textGUI, backend.getUnderlyingTextGraphics(), theme);
+        return new TextGUIGraphics(textGUI, backend.getUnderlyingTextGraphics(), theme, interactableLookupMap);
     }
 
     public TextGUI getTextGUI() {
@@ -50,7 +60,27 @@ public class TextGUIGraphics implements ThemedTextGraphics {
 
     @Override
     public TextGUIGraphics newTextGraphics(TerminalPosition topLeftCorner, TerminalSize size) throws IllegalArgumentException {
-        return new TextGUIGraphics(textGUI, backend.getUnderlyingTextGraphics().newTextGraphics(topLeftCorner, size), backend.getTheme());
+        return new TextGUIGraphics(textGUI, backend.getUnderlyingTextGraphics().newTextGraphics(topLeftCorner, size), backend.getTheme(), interactableLookupMap);
+    }
+
+    public void addInteractableToLookupMap(Interactable interactable) {
+        TerminalPosition topLeft = getRealPosition(interactable.getPosition());
+        TerminalSize size = interactable.getSize();
+        int index = interactables.indexOf(interactable);
+        if(index == -1) {
+            interactables.add(interactable);
+            index = interactables.size() - 1;
+        }
+        for(int y = topLeft.getRow(); y < topLeft.getRow() + size.getRows(); y++) {
+            for(int x = topLeft.getColumn(); x < topLeft.getColumn() + size.getColumns(); x++) {
+                interactableLookupMap[y][x] = index;
+            }
+        }
+    }
+
+    @Override
+    public TerminalPosition getRealPosition(TerminalPosition position) {
+        return backend.getRealPosition(position);
     }
 
     @Override

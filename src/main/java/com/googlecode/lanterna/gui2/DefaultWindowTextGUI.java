@@ -74,6 +74,11 @@ public class DefaultWindowTextGUI extends AbstractTextGUI implements WindowBased
     }
 
     @Override
+    public Interactable getFocusedInteractable() {
+        return windowManager.getFocusedInteractable();
+    }
+
+    @Override
     protected boolean handleInput(KeyStroke keyStroke) {
         return windowManager.handleInput(keyStroke);
     }
