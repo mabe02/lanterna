@@ -42,7 +42,6 @@ class SubTextGraphics extends AbstractTextGraphics {
     public TerminalPosition getRealPosition(TerminalPosition position) {
         TerminalPosition translated = underlyingTextGraphics.getRealPosition(position);
         TerminalPosition adjusted = translated.withRelativeColumn(topLeft.getColumn()).withRelativeRow(topLeft.getRow());
-        System.out.println(position + " -> " + translated + " -> " + adjusted);
         return adjusted;
     }
 

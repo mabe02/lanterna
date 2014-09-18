@@ -1,5 +1,6 @@
 package com.googlecode.lanterna.gui2;
 
+import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 
 /**
@@ -24,4 +25,12 @@ public interface WindowDecorationRenderer {
      * @return Full size of the window, including decorations
      */
     TerminalSize getDecoratedSize(Window window, TerminalSize componentSize);
+
+    /**
+     * Returns how much to step right and down from the top left position of the window decorations to the top left
+     * position of the actual window
+     * @param window Window to get the offset for
+     * @return Position of the top left corner of the window, relative to the top left corner of the window decoration
+     */
+    TerminalPosition getOffset(Window window);
 }

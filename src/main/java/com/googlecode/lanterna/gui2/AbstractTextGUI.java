@@ -1,5 +1,6 @@
 package com.googlecode.lanterna.gui2;
 
+import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.graphics.PropertiesTheme;
 import com.googlecode.lanterna.graphics.Theme;
@@ -76,6 +77,7 @@ public abstract class AbstractTextGUI implements TextGUI {
             Arrays.fill(interactableLookupMap[y], 8);
         }
         drawGUI(new TextGUIGraphics(this, screen.newTextGraphics(), guiTheme, interactableLookupMap));
+        /*
         for(int y = 0; y < interactableLookupMap.length; y++) {
             for(int x = 0; x < interactableLookupMap[0].length; x++) {
                 System.out.print(interactableLookupMap[y][x]);
@@ -83,7 +85,8 @@ public abstract class AbstractTextGUI implements TextGUI {
             System.out.println();
         }
         System.out.println();
-        screen.setCursorPosition(null);
+        */
+        screen.setCursorPosition(getCursorPosition());
         screen.refresh();
     }
 
@@ -102,5 +105,6 @@ public abstract class AbstractTextGUI implements TextGUI {
     }
 
     protected abstract void drawGUI(TextGUIGraphics graphics);
+    protected abstract TerminalPosition getCursorPosition();
     protected abstract boolean handleInput(KeyStroke key);
 }

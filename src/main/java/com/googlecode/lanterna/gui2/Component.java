@@ -88,6 +88,19 @@ public interface Component extends TextGUIElement {
     Container getParent();
 
     /**
+     * Returns the root container that this component belongs to. In a window-based GUI system, this will be a Window.
+     * @return The root container this component is placed on, or {@code null} if none
+     */
+    RootContainer getRootContainer();
+
+    /**
+     * Translates a position local to the component to the root container's coordinate space
+     * @param position Position to translate (relative to the component's top-left corner)
+     * @return Position in root container space
+     */
+    TerminalPosition toRootContainer(TerminalPosition position);
+
+    /**
      * Assigns the component to a new container. If the component already belongs to a different container, it will be
      * removed from there first. Calling {@code setParent(null)} is the same as removing the component from the
      * container.

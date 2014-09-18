@@ -35,6 +35,9 @@ public abstract class AbstractInteractableContainer extends AbstractContainer im
 
     @Override
     public void removeComponent(Component component) {
+        if(getRootContainer() != null && getRootContainer().getFocusedInteractable() == component) {
+            getRootContainer().setFocusedInteractable(null);
+        }
         super.removeComponent(component);
         if (component instanceof Interactable) {
             synchronized (interactables) {

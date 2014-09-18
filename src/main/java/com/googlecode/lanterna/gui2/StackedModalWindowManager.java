@@ -106,20 +106,6 @@ public class StackedModalWindowManager implements WindowManager {
     }
 
     @Override
-    public Interactable getFocusedInteractable() {
-        if(windowStack.isEmpty()) {
-            return null;
-        }
-        return windowStack.last().window.getFocusedInteractable();
-    }
-
-    @Override
-    public synchronized boolean handleInput(KeyStroke keyStroke) {
-        return !windowStack.isEmpty() && windowStack.last().window.handleInput(keyStroke);
-
-    }
-
-    @Override
     public boolean isInvalid() {
         for(ManagedWindow managedWindow: windowStack) {
             if(managedWindow.window.isInvalid()) {

@@ -70,4 +70,11 @@ public class DefaultWindowDecorationRenderer implements WindowDecorationRenderer
     public TerminalSize getDecoratedSize(Window window, TerminalSize componentSize) {
         return componentSize.withColumns(componentSize.getColumns() + 2).withRows(componentSize.getRows() + 2);
     }
+
+    private static final TerminalPosition OFFSET = new TerminalPosition(1, 1);
+
+    @Override
+    public TerminalPosition getOffset(Window window) {
+        return OFFSET;
+    }
 }

@@ -65,6 +65,8 @@ public class DefaultWindowTextGUI extends AbstractTextGUI implements WindowBased
             WindowDecorationRenderer decorationRenderer = getWindowManager().getWindowDecorationRenderer(window);
             TerminalPosition topLeft = getWindowManager().getTopLeftPosition(window, graphics.getSize());
             TerminalSize windowSize = getWindowManager().getSize(window, topLeft, graphics.getSize());
+            window.setPosition(topLeft.withRelative(decorationRenderer.getOffset(window)));
+            window.setDecoratedSize(windowSize);
             TextGUIGraphics windowGraphics = decorationRenderer.draw(this, graphics.newTextGraphics(topLeft, windowSize), window);
             window.draw(windowGraphics);
             if(postRenderer != null) {
@@ -74,13 +76,30 @@ public class DefaultWindowTextGUI extends AbstractTextGUI implements WindowBased
     }
 
     @Override
+    protected TerminalPosition getCursorPosition() {
+        Window activeWindow = windowManager.getActiveWindow();
+        if(activeWindow == null) {
+            return null;
+        }
+        return activeWindow.toGlobal(activeWindow.getCursorPosition());
+    }
+
+    @Override
     public Interactable getFocusedInteractable() {
-        return windowManager.getFocusedInteractable();
+        Window activeWindow = windowManager.getActiveWindow();
+        if(activeWindow == null) {
+            return null;
+        }
+        return activeWindow.getFocusedInteractable();
     }
 
     @Override
     protected boolean handleInput(KeyStroke keyStroke) {
-        return windowManager.handleInput(keyStroke);
+        Window activeWindow = windowManager.getActiveWindow();
+        if(activeWindow == null) {
+            return false;
+        }
+        return activeWindow.handleInput(keyStroke);
     }
 
     @Override

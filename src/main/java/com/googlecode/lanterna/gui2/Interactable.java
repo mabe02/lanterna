@@ -9,8 +9,9 @@ import com.googlecode.lanterna.input.KeyStroke;
  */
 public interface Interactable extends Component {
     /**
-     * Returns, in global coordinates, where to put the cursor on the screen when this component has focus. If null, the
-     * cursor should be hidden.
+     * Returns, in local coordinates, where to put the cursor on the screen when this component has focus. If null, the
+     * cursor should be hidden. If you component is 5x1 and you want to have the cursor in the middle (when in focus),
+     * return [2,0]. The GUI system will convert the position to global coordinates.
      * @return Coordinates of where to place the cursor when this component has focus
      */
     TerminalPosition getCursorLocation();
@@ -27,6 +28,20 @@ public interface Interactable extends Component {
      * @return Result of processing the key-stroke
      */
     Result handleKeyStroke(KeyStroke keyStroke);
+
+    /**
+     * Method called when this component gained keyboard focus.
+     * @param direction What direction did the focus come from
+     * @param previouslyInFocus Which component had focus previously ({@code null} if none)
+     */
+    public void onEnterFocus(FocusChangeDirection direction, Interactable previouslyInFocus);
+
+    /**
+     * Method called when keyboard focus moves away from this component
+     * @param direction What direction is focus going in
+     * @param nextInFocus Which component is receiving focus next (or {@code null} if none)
+     */
+    public void onLeaveFocus(FocusChangeDirection direction, Interactable nextInFocus);
 
     /**
      * Enum to represent the various results coming out of the handleKeyStroke method
@@ -76,6 +91,47 @@ public interface Interactable extends Component {
          * instead. This should generally be returned if moving focus by using the down array key.
          */
         MOVE_FOCUS_DOWN,
+        ;
+    }
+
+    /**
+     * When focus has changed, which direction.
+     */
+    public enum FocusChangeDirection {
+        /**
+         * The next interactable component, going down. This direction usually comes from the user pressing down array.
+         */
+        DOWN,
+        /**
+         * The next interactable component, going right. This direction usually comes from the user pressing right array.
+         */
+        RIGHT,
+        /**
+         * The next interactable component, going up. This direction usually comes from the user pressing up array.
+         */
+        UP,
+        /**
+         * The next interactable component, going left. This direction usually comes from the user pressing left array.
+         */
+        LEFT,
+        /**
+         * The next interactable component, in layout manager order (usually left->right, up->down). This direction
+         * usually comes from the user pressing tab key.
+         */
+        NEXT,
+        /**
+         * The previous interactable component, reversed layout manager order (usually right-left, down->up). This
+         * direction usually comes from the user pressing shift and tab key (reverse tab).
+         */
+        PREVIOUS,
+        /**
+         * Focus was changed by calling the {@code RootContainer.setFocusedInteractable(..)} method directly.
+         */
+        TELEPORT,
+        /**
+         * Focus has gone away and no component is now in focus
+         */
+        RESET,
         ;
     }
 }

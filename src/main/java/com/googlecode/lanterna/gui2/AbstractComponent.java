@@ -125,6 +125,19 @@ public abstract class AbstractComponent implements Component {
     }
 
     @Override
+    public RootContainer getRootContainer() {
+        if(parent == null) {
+            return null;
+        }
+        return parent.getRootContainer();
+    }
+
+    @Override
+    public TerminalPosition toRootContainer(TerminalPosition position) {
+        return getParent().toRootContainer(getPosition().withRelative(position));
+    }
+
+    @Override
     public void setParent(Container parent) {
         ensureNotDisposed();
         if(this.parent == parent) {

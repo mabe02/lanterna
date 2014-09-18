@@ -34,7 +34,6 @@ public interface WindowManager {
     
     Collection<Window> getWindows();
     Window getActiveWindow();
-    boolean handleInput(KeyStroke key);
     boolean isInvalid();
 
     WindowDecorationRenderer getWindowDecorationRenderer(Window window);
@@ -42,8 +41,6 @@ public interface WindowManager {
     TerminalPosition getTopLeftPosition(Window window, TerminalSize screenSize);
 
     TerminalSize getSize(Window window, TerminalPosition topLeftPosition, TerminalSize screenSize);
-
-    Interactable getFocusedInteractable();
 
     public static class Hint {
         protected Hint() {
