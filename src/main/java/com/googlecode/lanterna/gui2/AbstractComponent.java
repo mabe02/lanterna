@@ -35,6 +35,7 @@ public abstract class AbstractComponent implements Component {
     private boolean invalid;
     private boolean disposed;
     private Border border;
+    private ComponentRenderer<? extends Component> renderer;
 
     public AbstractComponent() {
         layoutManagerParameters = new HashSet<LayoutManager.Parameter>();
@@ -192,5 +193,32 @@ public abstract class AbstractComponent implements Component {
         if(disposed) {
             throw new IllegalStateException("Component " + toString() + " is already disposed");
         }
+    }
+
+    protected void updateRenderer(String className) {
+        if(className == null) {
+            return;
+        }
+        if(renderer != null && renderer.getClass().getName().equals(className)) {
+            return;
+        }
+        try {
+            Object newRenderer = Class.forName(className).newInstance();
+            setRenderer((ComponentRenderer)newRenderer);
+        } catch (InstantiationException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    protected void setRenderer(ComponentRenderer<? extends Component> renderer) {
+        this.renderer = renderer;
+    }
+
+    protected ComponentRenderer<? extends Component> getRenderer() {
+        return renderer;
     }
 }

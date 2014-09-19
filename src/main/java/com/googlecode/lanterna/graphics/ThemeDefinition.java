@@ -76,4 +76,11 @@ public interface ThemeDefinition {
      * any character defined with this name
      */
     char getCharacter(String name, char fallback);
+
+    /**
+     * Returns the class name of the ComponentRenderer attached to this definition. If none is declared, it will return
+     * {@code null} instead of going up in the hierarchy, unlike the other methods of this interface.
+     * @return Full name of the renderer class or {@code null}
+     */
+    String getRenderer();
 }

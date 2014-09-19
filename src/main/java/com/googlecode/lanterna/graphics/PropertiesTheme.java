@@ -170,6 +170,11 @@ public final class PropertiesTheme implements Theme {
             }
             return character;
         }
+
+        @Override
+        public String getRenderer() {
+            return path.get(path.size() - 1).renderer;
+        }
     }
 
     private class StyleImpl implements ThemeStyle {
@@ -233,6 +238,7 @@ public final class PropertiesTheme implements Theme {
         private final Map<String, TextColor> backgroundMap;
         private final Map<String, EnumSet<SGR>> sgrMap;
         private final Map<String, Character> characterMap;
+        private String renderer;
 
         private ThemeTreeNode() {
             childMap = new HashMap<String, ThemeTreeNode>();
@@ -240,6 +246,7 @@ public final class PropertiesTheme implements Theme {
             backgroundMap = new HashMap<String, TextColor>();
             sgrMap = new HashMap<String, EnumSet<SGR>>();
             characterMap = new HashMap<String, Character>();
+            renderer = null;
         }
 
         public void apply(String style, String value) {
@@ -261,6 +268,9 @@ public final class PropertiesTheme implements Theme {
             }
             else if(styleComponent.toLowerCase().trim().equals("char")) {
                 characterMap.put(getCategory(group), value.isEmpty() ? null : value.charAt(0));
+            }
+            else if(styleComponent.toLowerCase().trim().equals("renderer")) {
+                renderer = value.trim().isEmpty() ? null : value.trim();
             }
             else {
                 throw new IllegalArgumentException("Unknown style component \"" + styleComponent + "\" in style \"" + style + "\"");

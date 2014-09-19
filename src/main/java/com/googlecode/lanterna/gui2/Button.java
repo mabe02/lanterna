@@ -2,27 +2,28 @@ package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.graphics.ThemeDefinition;
 import com.googlecode.lanterna.input.KeyStroke;
 
 /**
  * Created by martin on 17/09/14.
  */
 public class Button extends AbstractInteractableComponent {
-    private final String label;
+    private String label;
 
     public Button(String label) {
-        this.label = label;
+        setLabel(label);
+        setRenderer(new DefaultButtonRenderer());
     }
 
     @Override
     public TerminalPosition getCursorLocation() {
-        return new TerminalPosition(3, 0);
+        return getRenderer().getCursorLocation(this);
     }
 
     @Override
     protected TerminalSize getPreferredSizeWithoutBorder() {
-        return new TerminalSize(label.length() + 6, 1);
+        return getRenderer().getPreferredSizeWithoutBorder(this);
     }
 
     @Override
@@ -32,8 +33,91 @@ public class Button extends AbstractInteractableComponent {
 
     @Override
     public void drawComponent(TextGUIGraphics graphics) {
-        graphics.setBackgroundColor(TextColor.ANSI.RED);
-        graphics.setForegroundColor(TextColor.ANSI.BLACK);
-        graphics.putString(0, 0, " < " + label + " > ");
+        updateRenderer(getThemeDefinition(graphics).getRenderer());
+        getRenderer().drawComponent(graphics, this);
+    }
+
+    @Override
+    protected ButtonRenderer getRenderer() {
+        return (ButtonRenderer)super.getRenderer();
+    }
+
+    public final void setLabel(String label) {
+        if(label == null) {
+            throw new IllegalArgumentException("null label to a button is not allowed");
+        }
+        if(label.isEmpty()) {
+            label = " ";
+        }
+        this.label = label;
+        invalidate();
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    private static interface ButtonRenderer extends InteractableRenderer<Button> {
+    }
+
+    public static class DefaultButtonRenderer implements ButtonRenderer {
+        @Override
+        public TerminalPosition getCursorLocation(Button button) {
+            return new TerminalPosition(1 + Math.max(0, 2 - button.getLabel().length() / 2), 0);
+        }
+
+        @Override
+        public TerminalSize getPreferredSizeWithoutBorder(Button button) {
+            return new TerminalSize(Math.max(8, button.getLabel().length() + 2), 1);
+        }
+
+        @Override
+        public void drawComponent(TextGUIGraphics graphics, Button button) {
+            if(button.isFocused()) {
+                graphics.applyThemeStyle(getThemeDefinition(graphics).getActive());
+            }
+            else {
+                graphics.applyThemeStyle(getThemeDefinition(graphics).getInsensitive());
+            }
+            graphics.fillScreen(' ');
+            graphics.setPosition(0, 0);
+            graphics.setCharacter(getThemeDefinition(graphics).getCharacter("LEFT_BORDER", '<'));
+            graphics.setPosition(graphics.getSize().getColumns() - 1, 0);
+            graphics.setCharacter(getThemeDefinition(graphics).getCharacter("RIGHT_BORDER", '>'));
+
+            int availableSpace = graphics.getSize().getColumns() - 2;
+            if(availableSpace <= 0) {
+                return;
+            }
+
+            int labelShift = 0;
+            if(availableSpace > button.getLabel().length()) {
+                labelShift = (graphics.getSize().getColumns() - 2 - button.getLabel().length()) / 2;
+            }
+
+            if(button.isFocused()) {
+                graphics.applyThemeStyle(getThemeDefinition(graphics).getActive());
+            }
+            else {
+                graphics.applyThemeStyle(getThemeDefinition(graphics).getPreLight());
+            }
+            graphics.setPosition(1 + labelShift, 0);
+            graphics.setCharacter(button.getLabel().charAt(0));
+
+            if(button.getLabel().length() == 1) {
+                return;
+            }
+            if(button.isFocused()) {
+                graphics.applyThemeStyle(getThemeDefinition(graphics).getSelected());
+            }
+            else {
+                graphics.applyThemeStyle(getThemeDefinition(graphics).getNormal());
+            }
+            graphics.putString(1 + labelShift + 1, 0, button.getLabel().substring(1));
+        }
+    }
+
+    private static ThemeDefinition getThemeDefinition(TextGUIGraphics graphics) {
+        return graphics.getThemeDefinition(Button.class);
     }
 }

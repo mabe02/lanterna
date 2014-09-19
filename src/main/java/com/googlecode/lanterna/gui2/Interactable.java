@@ -44,6 +44,12 @@ public interface Interactable extends Component {
     public void onLeaveFocus(FocusChangeDirection direction, Interactable nextInFocus);
 
     /**
+     * Returns {@code true} if this component currently has input focus in its root container.
+     * @return {@code true} if the interactable has input focus, {@code false} otherwise
+     */
+    public boolean isFocused();
+
+    /**
      * Enum to represent the various results coming out of the handleKeyStroke method
      */
     public static enum Result {

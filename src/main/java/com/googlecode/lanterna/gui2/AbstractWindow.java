@@ -191,10 +191,10 @@ public class AbstractWindow implements Window {
         public void addComponent(Component component) {
             super.addComponent(component);
             if(focusedInteractable == null && component instanceof Interactable) {
-                focusedInteractable = (Interactable)component;
+                setFocusedInteractable((Interactable)component);
             }
             else if(focusedInteractable == null && component instanceof InteractableContainer) {
-                focusedInteractable = ((InteractableContainer)component).nextFocus(null);
+                setFocusedInteractable(((InteractableContainer)component).nextFocus(null));
             }
         }
 

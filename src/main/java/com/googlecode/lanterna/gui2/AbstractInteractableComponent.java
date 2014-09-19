@@ -35,4 +35,23 @@ public abstract class AbstractInteractableComponent extends AbstractComponent im
 
     protected void afterLeaveFocus(FocusChangeDirection direction, Interactable nextInFocus) {
     }
+
+    @Override
+    public boolean isFocused() {
+        return inFocus;
+    }
+
+    @Override
+    protected void setRenderer(ComponentRenderer<? extends Component> renderer) {
+        if(!(renderer instanceof InteractableRenderer)) {
+            throw new IllegalArgumentException("Cannot assign " + renderer + " as renderer for " + toString() + ", " +
+                    "need to implement InteractableRenderer");
+        }
+        super.setRenderer(renderer);
+    }
+
+    @Override
+    protected InteractableRenderer<? extends Interactable> getRenderer() {
+        return (InteractableRenderer)super.getRenderer();
+    }
 }
