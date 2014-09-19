@@ -54,7 +54,7 @@ public class ScreenTabTest {
         TextGraphics writer = new ScreenTextGraphics(screen);
         writer.setForegroundColor(TextColor.ANSI.DEFAULT);
         writer.setBackgroundColor(TextColor.ANSI.DEFAULT);
-        writer.fillScreen(' ');
+        writer.fill(' ');
 
         writer.setForegroundColor(TextColor.ANSI.DEFAULT);
         writer.setBackgroundColor(TextColor.ANSI.DEFAULT);

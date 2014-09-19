@@ -154,7 +154,7 @@ public abstract class AbstractTextGraphics implements TextGraphics {
     }
 
     @Override
-    public TextGraphics fillScreen(char c) {
+    public TextGraphics fill(char c) {
         TerminalPosition savedPosition = getPosition();
         setPosition(TerminalPosition.TOP_LEFT_CORNER);
         fillRectangle(getSize(), c);

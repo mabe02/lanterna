@@ -67,7 +67,7 @@ public class AbstractWindow implements Window {
     public void draw(TextGUIGraphics graphics) {
         lastKnownSize = graphics.getSize();
         graphics.applyThemeStyle(graphics.getThemeDefinition(Window.class).getNormal());
-        graphics.fillScreen(' ');
+        graphics.fill(' ');
         contentArea.draw(graphics);
         invalid = false;
     }

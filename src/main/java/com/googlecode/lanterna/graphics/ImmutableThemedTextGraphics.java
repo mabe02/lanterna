@@ -149,8 +149,8 @@ public class ImmutableThemedTextGraphics implements ThemedTextGraphics {
     }
 
     @Override
-    public ImmutableThemedTextGraphics fillScreen(char c) {
-        backend.fillScreen(c);
+    public ImmutableThemedTextGraphics fill(char c) {
+        backend.fill(c);
         return this;
     }
 

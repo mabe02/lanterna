@@ -44,13 +44,13 @@ public class MultiScreenTest {
         TextGraphics screenWriter = new ScreenTextGraphics(redScreen);
         screenWriter.setForegroundColor(TextColor.ANSI.BLACK);
         screenWriter.setBackgroundColor(TextColor.ANSI.RED);
-        screenWriter.fillScreen(' ');
+        screenWriter.fill(' ');
         screenWriter.putString(2, 2, "Press space to switch screen or ESC to exit");
         
         
         screenWriter = new ScreenTextGraphics(greenScreen);
         screenWriter.setBackgroundColor(TextColor.ANSI.GREEN);
-        screenWriter.fillScreen(' ');
+        screenWriter.fill(' ');
         screenWriter.putString(4, 4, "Press space to switch screen or ESC to exit");
         
         mainLoop:

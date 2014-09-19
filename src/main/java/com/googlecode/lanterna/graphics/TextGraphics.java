@@ -188,7 +188,7 @@ public interface TextGraphics {
      * Fills the entire writable area with a single character, using current foreground color, background color and modifiers.
      * @param c Character to fill the writable area with
      */
-    TextGraphics fillScreen(char c);
+    TextGraphics fill(char c);
 
     /**
      * Sets the character at the current position to the specified value

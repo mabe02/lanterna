@@ -34,6 +34,6 @@ public class EmptySpace extends AbstractComponent {
         if(color != null) {
             graphics.setBackgroundColor(color);
         }
-        graphics.fillScreen(' ');
+        graphics.fill(' ');
     }
 }

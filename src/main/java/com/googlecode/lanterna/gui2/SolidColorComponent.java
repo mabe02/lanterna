@@ -1,8 +1,6 @@
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.SGR;
-import com.googlecode.lanterna.graphics.TextGraphics;
-import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.TextColor;
 
 /**
@@ -27,7 +25,7 @@ public class SolidColorComponent implements TextGUIElement {
         if(bold) {
             graphics.enableModifiers(SGR.BOLD);
         }
-        graphics.fillScreen(' ');
+        graphics.fill(' ');
     }
 
     @Override

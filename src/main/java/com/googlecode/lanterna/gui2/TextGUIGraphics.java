@@ -185,8 +185,8 @@ public final class TextGUIGraphics implements ThemedTextGraphics {
     }
 
     @Override
-    public TextGUIGraphics fillScreen(char c) {
-        backend.fillScreen(c);
+    public TextGUIGraphics fill(char c) {
+        backend.fill(c);
         return this;
     }
 

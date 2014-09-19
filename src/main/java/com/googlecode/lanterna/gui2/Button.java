@@ -79,7 +79,7 @@ public class Button extends AbstractInteractableComponent {
             else {
                 graphics.applyThemeStyle(getThemeDefinition(graphics).getInsensitive());
             }
-            graphics.fillScreen(' ');
+            graphics.fill(' ');
             graphics.setPosition(0, 0);
             graphics.setCharacter(getThemeDefinition(graphics).getCharacter("LEFT_BORDER", '<'));
             graphics.setPosition(graphics.getSize().getColumns() - 1, 0);
