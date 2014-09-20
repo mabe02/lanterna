@@ -141,6 +141,20 @@ public class TerminalSize {
                 .withRows(Math.min(rows, other.rows));
     }
 
+    /**
+     * Returns itself if it is equal to the supplied size, otherwise the supplied size. You can use this if you have a
+     * size field which is frequently recalculated but often resolves to the same size; it will keep the same object
+     * in memory instead of swapping it out every cycle.
+     * @param size Size you want to return
+     * @return Itself if this size equals the size passed in, otherwise the size passed in
+     */
+    public TerminalSize with(TerminalSize size) {
+        if(equals(size)) {
+            return this;
+        }
+        return size;
+    }
+
     @Override
     public String toString() {
         return "{" + columns + "x" + rows + "}";
