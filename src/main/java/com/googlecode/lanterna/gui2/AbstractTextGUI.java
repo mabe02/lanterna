@@ -1,7 +1,6 @@
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.TerminalPosition;
-import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.graphics.PropertiesTheme;
 import com.googlecode.lanterna.graphics.Theme;
 import com.googlecode.lanterna.input.KeyStroke;
@@ -13,7 +12,6 @@ import java.io.FileInputStream;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.Properties;
 
 /**
@@ -76,7 +74,6 @@ public abstract class AbstractTextGUI implements TextGUI {
     @Override
     public void updateScreen() throws IOException {
         screen.doResizeIfNecessary();
-        TerminalSize terminalSize = screen.getTerminalSize();
         drawGUI(new TextGUIGraphics(this, screen.newTextGraphics(), guiTheme));
         screen.setCursorPosition(getCursorPosition());
         screen.refresh();

@@ -18,9 +18,9 @@
  */
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
+import com.sun.istack.internal.NotNull;
 
 import java.util.*;
 
@@ -32,7 +32,7 @@ public class StackedModalWindowManager implements WindowManager {
     
     public static final Hint LOCATION_CENTERED = new Hint();
     public static final Hint LOCATION_CASCADE = new Hint();
-    public static final Hint DONT_RESIZE_TO_FIT_SCREEN = new Hint();
+    public static final Hint DO_NOT_RESIZE_TO_FIT_SCREEN = new Hint();
     public static final Hint NO_WINDOW_DECORATIONS = new Hint();
     private static final int CASCADE_SHIFT_RIGHT = 2;
     private static final int CASCADE_SHIFT_DOWN = 1;
@@ -65,7 +65,7 @@ public class StackedModalWindowManager implements WindowManager {
         ManagedWindow managedWindow = new ManagedWindow(
                 window,
                 topLeftPosition,
-                hasHint(window, DONT_RESIZE_TO_FIT_SCREEN),
+                hasHint(window, DO_NOT_RESIZE_TO_FIT_SCREEN),
                 windowStack.size());
         windowStack.add(managedWindow);
         if(window instanceof AbstractWindow) {
@@ -199,7 +199,7 @@ public class StackedModalWindowManager implements WindowManager {
         }
 
         @Override
-        public int compareTo(ManagedWindow o) {
+        public int compareTo(@NotNull ManagedWindow o) {
             return Integer.compare(ordinal, o.ordinal);
         }
     }

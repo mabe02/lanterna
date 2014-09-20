@@ -60,7 +60,7 @@ public interface ExtendedTerminal extends Terminal {
      * Restores the terminal back to its previous size, after having been maximized
      * @throws IOException If the was an underlying I/O error
      */
-    void demaximize() throws IOException;
+    void unmaximize() throws IOException;
 
     /**
      * If set to true, will listen for mouse motions and add them to the input queue

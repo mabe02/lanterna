@@ -158,7 +158,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
             case CIRCLED:
                 writeCSISequenceToTerminal((byte) '5', (byte) '2', (byte) 'm');
                 break;
-            case CROSSEDOUT:
+            case CROSSED_OUT:
                 writeCSISequenceToTerminal((byte) '9', (byte) 'm');
                 break;
             case FRAKTUR:
@@ -188,7 +188,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
             case CIRCLED:
                 writeCSISequenceToTerminal((byte) '5', (byte) '4', (byte) 'm');
                 break;
-            case CROSSEDOUT:
+            case CROSSED_OUT:
                 writeCSISequenceToTerminal((byte) '2', (byte) '9', (byte) 'm');
                 break;
             case FRAKTUR:
@@ -269,7 +269,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
     }
 
     @Override
-    public void demaximize() throws IOException {
+    public void unmaximize() throws IOException {
         throw new NotImplementedException();
     }
 

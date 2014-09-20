@@ -29,7 +29,7 @@ public abstract class AbstractInteractableContainer extends AbstractContainer im
         if (component instanceof Interactable || component instanceof InteractableContainer) {
             synchronized (interactables) {
                 if (!interactables.contains(component)) {
-                    interactables.add((Interactable) component);
+                    interactables.add(component);
                 }
             }
         }

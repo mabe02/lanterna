@@ -20,7 +20,7 @@ public class EmptySpace extends AbstractComponent {
     }
 
     /**
-     * Creates an EmptySpace with a specified preferred size (color will be chosed from the theme)
+     * Creates an EmptySpace with a specified preferred size (color will be chosen from the theme)
      * @param size Preferred size
      */
     public EmptySpace(TerminalSize size) {

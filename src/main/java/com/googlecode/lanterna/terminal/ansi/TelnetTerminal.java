@@ -18,6 +18,8 @@
  */
 package com.googlecode.lanterna.terminal.ansi;
 
+import com.sun.istack.internal.NotNull;
+
 import static com.googlecode.lanterna.terminal.ansi.TelnetProtocol.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -200,7 +202,7 @@ public class TelnetTerminal extends ANSITerminal {
         }
 
         @Override
-        public int read(byte[] b, int off, int len) throws IOException {
+        public int read(@NotNull byte[] b, int off, int len) throws IOException {
             if(inputStream.available() > 0) {
                 fillBuffer();
             }
@@ -288,11 +290,11 @@ public class TelnetTerminal extends ANSITerminal {
             byte operation = buffer[position++];
             
             //Read until [IAC SE]            
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ByteArrayOutputStream outputBuffer = new ByteArrayOutputStream();
             while(position < max) {
                 byte read = buffer[position];
                 if(read != COMMAND_IAC) {
-                    baos.write(read);
+                    outputBuffer.write(read);
                 }
                 else {
                     if(position + 1 == max) {
@@ -300,10 +302,10 @@ public class TelnetTerminal extends ANSITerminal {
                     }
                     position++;
                     if(buffer[position] == COMMAND_IAC) {
-                        baos.write(COMMAND_IAC);    //Escaped IAC
+                        outputBuffer.write(COMMAND_IAC);    //Escaped IAC
                     }
                     else if(buffer[position] == COMMAND_SUBNEGOTIATION_END) {
-                        parseSubNegotiation(operation, baos.toByteArray());
+                        parseSubNegotiation(operation, outputBuffer.toByteArray());
                         return ++position - originalPosition;
                     }
                 }

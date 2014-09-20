@@ -58,8 +58,8 @@ public interface TextGraphics {
     /**
      * Creates a new TextGraphics of the same type as this one, using the same underlying subsystem. Using this method,
      * you need to specify a section of the current TextGraphics valid area that this new TextGraphic shall be
-     * restricted to. If you call {@code newTextGraphics(TerminalPosition.TOP_LEFT_CORNER, textGraphics.getSize())} then
-     * the resulting object will be identical to this one, but having a separated state for colors, position and
+     * restricted to. If you call <code>newTextGraphics(TerminalPosition.TOP_LEFT_CORNER, textGraphics.getSize())</code>
+     * then the resulting object will be identical to this one, but having a separated state for colors, position and
      * modifiers.
      * @param topLeftCorner Position of this TextGraphics's writable area that is to become the top-left corner (0x0) of
      *                      the new TextGraphics

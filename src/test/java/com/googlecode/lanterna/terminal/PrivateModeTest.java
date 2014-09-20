@@ -33,7 +33,7 @@ public class PrivateModeTest {
     public static void main(String[] args) throws IOException, InterruptedException {
         Terminal terminal = new TestTerminalFactory(args).createTerminal();
         if(terminal instanceof SwingTerminalFrame) {
-            ((SwingTerminalFrame) terminal).setAutoCloseTrigger(SwingTerminalFrame.AutoCloseTrigger.DontAutoClose);
+            ((SwingTerminalFrame) terminal).setAutoCloseTrigger(SwingTerminalFrame.AutoCloseTrigger.DoNotAutoClose);
         }
         boolean normalTerminal = true;
         printNormalTerminalText(terminal);

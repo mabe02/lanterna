@@ -326,8 +326,8 @@ public class SwingTerminalPalette {
         return normalYellow;
     }
 
-    public Color get(TextColor.ANSI color, boolean isForeground, boolean useBrighTones) {
-        if(useBrighTones) {
+    public Color get(TextColor.ANSI color, boolean isForeground, boolean useBrightTones) {
+        if(useBrightTones) {
             switch(color) {
                 case BLACK:
                     return brightBlack;

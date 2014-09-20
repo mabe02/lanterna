@@ -50,7 +50,7 @@ public class DefaultScreen extends TerminalScreen {
     /**
      * Creates a new Screen on top of a supplied terminal, will query the terminal for its size. The screen is initially
      * blank. The default character used for unused space (the newly initialized state of the screen and new areas after
-     * expanding the terminal size) will be a blankspace in 'default' ANSI front- and background color.
+     * expanding the terminal size) will be a blank space in 'default' ANSI front- and background color.
      * <p/>
      * Before you can display the content of this buffered screen to the real underlying terminal, you must call the 
      * {@code startScreen()} method. This will ask the terminal to enter private mode (which is required for Screens to

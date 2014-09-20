@@ -116,18 +116,18 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
         }
         
         //We have at least one character, read as far as we can and return
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         while(terminalInput.available() > 0) {
-            baos.write(terminalInput.read());
+            buffer.write(terminalInput.read());
         }
-        return baos.toByteArray();
+        return buffer.toByteArray();
     }
     
     /**
      * Adds a KeyDecodingProfile to be used when converting raw user input characters to {@code Key} objects.
      *
      * @see KeyDecodingProfile
-     * @param profile
+     * @param profile Decoding profile to add
      */
     @SuppressWarnings("WeakerAccess")
     public void addKeyDecodingProfile(KeyDecodingProfile profile) {

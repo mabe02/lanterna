@@ -147,15 +147,15 @@ public class CygwinTerminal extends UnixTerminal {
     private static String exec(String... cmd) throws IOException {
         ProcessBuilder pb = new ProcessBuilder(cmd);
         Process process = pb.start();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ByteArrayOutputStream stdoutBuffer = new ByteArrayOutputStream();
         InputStream stdout = process.getInputStream();
         int readByte = stdout.read();
         while(readByte >= 0) {
-            baos.write(readByte);
+            stdoutBuffer.write(readByte);
             readByte = stdout.read();
         }
-        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        BufferedReader reader = new BufferedReader(new InputStreamReader(bais));
+        ByteArrayInputStream stdoutBufferInputStream = new ByteArrayInputStream(stdoutBuffer.toByteArray());
+        BufferedReader reader = new BufferedReader(new InputStreamReader(stdoutBufferInputStream));
         StringBuilder builder = new StringBuilder();
         while(reader.ready()) {
             builder.append(reader.readLine());

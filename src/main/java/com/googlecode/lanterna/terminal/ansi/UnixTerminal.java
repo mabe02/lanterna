@@ -28,7 +28,7 @@ import java.lang.reflect.Proxy;
 import java.nio.charset.Charset;
 
 /**
- * A graphics ANSI terminal extention with support for Unix resize signals and the stty program to control cbreak and key
+ * A graphics ANSI terminal extension with support for Unix resize signals and the stty program to control cbreak and key
  * echo
  *
  * @author Martin
@@ -145,7 +145,7 @@ public class UnixTerminal extends ANSITerminal {
         sttyMinimum1CharacterForRead();
         setCBreak(true);
         setEcho(false);
-        Runtime.getRuntime().addShutdownHook(new Thread("Lanterna SSTY restore") {
+        Runtime.getRuntime().addShutdownHook(new Thread("Lanterna STTY restore") {
             @Override
             public void run() {
                 try {
@@ -204,7 +204,7 @@ public class UnixTerminal extends ANSITerminal {
      * keyboard, you probably want to enable cbreak mode.
      *
      * @see <a href="http://en.wikipedia.org/wiki/POSIX_terminal_interface">POSIX terminal interface</a>
-     * @param cbreakOn
+     * @param cbreakOn Should cbreak be turned on or not
      * @throws IOException
      */
     public void setCBreak(boolean cbreakOn) throws IOException {
@@ -277,15 +277,15 @@ public class UnixTerminal extends ANSITerminal {
     private static String exec(String... cmd) throws IOException {
         ProcessBuilder pb = new ProcessBuilder(cmd);
         Process process = pb.start();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ByteArrayOutputStream stdoutBuffer = new ByteArrayOutputStream();
         InputStream stdout = process.getInputStream();
         int readByte = stdout.read();
         while(readByte >= 0) {
-            baos.write(readByte);
+            stdoutBuffer.write(readByte);
             readByte = stdout.read();
         }
-        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        BufferedReader reader = new BufferedReader(new InputStreamReader(bais));
+        ByteArrayInputStream stdoutBufferInputStream = new ByteArrayInputStream(stdoutBuffer.toByteArray());
+        BufferedReader reader = new BufferedReader(new InputStreamReader(stdoutBufferInputStream));
         StringBuilder builder = new StringBuilder();
         while(reader.ready()) {
             builder.append(reader.readLine());

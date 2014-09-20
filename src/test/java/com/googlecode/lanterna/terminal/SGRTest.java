@@ -71,7 +71,7 @@ public class SGRTest {
         rawTerminal.putCharacter('o');
         rawTerminal.putCharacter('!');
         rawTerminal.disableSGR(SGR.CIRCLED);
-        rawTerminal.enableSGR(SGR.CROSSEDOUT);
+        rawTerminal.enableSGR(SGR.CROSSED_OUT);
         rawTerminal.setCursorPosition(10, 10);
         rawTerminal.putCharacter('H');
         rawTerminal.putCharacter('e');
@@ -79,7 +79,7 @@ public class SGRTest {
         rawTerminal.putCharacter('l');
         rawTerminal.putCharacter('o');
         rawTerminal.putCharacter('!');
-        rawTerminal.disableSGR(SGR.CROSSEDOUT);
+        rawTerminal.disableSGR(SGR.CROSSED_OUT);
         rawTerminal.enableSGR(SGR.UNDERLINE);
         rawTerminal.setCursorPosition(10, 12);
         rawTerminal.putCharacter('H');

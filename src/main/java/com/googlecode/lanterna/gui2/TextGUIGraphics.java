@@ -25,9 +25,7 @@ import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.*;
 import com.googlecode.lanterna.screen.TabBehaviour;
 
-import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.List;
 
 /**
  * TextGraphics implementation used by TextGUI when doing any drawing operation.

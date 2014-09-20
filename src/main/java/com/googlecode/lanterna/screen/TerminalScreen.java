@@ -51,7 +51,7 @@ public abstract class TerminalScreen extends AbstractScreen {
      * the operations you are going on the Terminal and won't be able to properly generate a refresh unless you enforce
      * a {@code Screen.RefreshType.COMPLETE}, at which the entire terminal area will be repainted according to the 
      * back-buffer of the {@code Screen}.
-     * @return 
+     * @return Underlying terminal used by the screen
      */
     @SuppressWarnings("WeakerAccess")
     public Terminal getTerminal() {

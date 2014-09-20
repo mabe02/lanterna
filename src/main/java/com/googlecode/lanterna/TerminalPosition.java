@@ -120,7 +120,8 @@ public class TerminalPosition {
 
     /**
      * Creates a new TerminalPosition object that is 'translated' by an amount of rows and columns specified by another
-     * TerminalPosition. Same as calling {@code withRelativeRow(translate.getRow()).withRelativeColumn(translate.getColumn())}.
+     * TerminalPosition. Same as calling
+     * <code>withRelativeRow(translate.getRow()).withRelativeColumn(translate.getColumn())</code>
      * @param translate How many columns and rows to translate
      * @return New TerminalPosition that is the result of the original added translation
      */

@@ -26,7 +26,7 @@ import java.util.Arrays;
  * this may be recorded in this class, depending on the terminal implementation and if such information in available.
  * KeyStroke objects are normally constructed by a KeyDecodingProfile, which works off a character stream that likely
  * coming from the system's standard input. Because of this, the class can only represent what can be read and 
- * interpreted from the input stream; for example, certain key-combinations like ctrl+i is indistiguishable from a tab
+ * interpreted from the input stream; for example, certain key-combinations like ctrl+i is indistinguishable from a tab
  * key press.
  * <p/>
  * Use the <tt>keyType</tt> field to determine what kind of key was pressed. For ordinary letters, numbers and symbols, the 
@@ -133,7 +133,7 @@ public class KeyStroke {
     /**
      * Gets the time when the keystroke was recorded. This isn't necessarily the time the keystroke happened, but when
      * Lanterna received the event, so it may not be accurate down to the millisecond.
-     * @return The unixtime of when the keystroke happened, in milliseconds
+     * @return The unix time of when the keystroke happened, in milliseconds
      */
     public long getEventTime() {
         return eventTime;
@@ -232,9 +232,9 @@ public class KeyStroke {
                     k = new KeyStroke(KeyType.Home);
                 } else if (keyStrLC.equals("<end>")) {
                     k = new KeyStroke(KeyType.End);
-                } else if (keyStrLC.equals("<pageup>")) {
+                } else if (keyStrLC.equals("<page up>")) {
                     k = new KeyStroke(KeyType.PageUp);
-                } else if (keyStrLC.equals("<pagedown>")) {
+                } else if (keyStrLC.equals("<page down>")) {
                     k = new KeyStroke(KeyType.PageDown);
                 } else if (keyStrLC.equals("<f1>")) {
                     k = new KeyStroke(KeyType.F1);

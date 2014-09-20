@@ -1,7 +1,7 @@
  * Label background color
  * Editable TextArea
  * Overlapping windows - X-Y offset
- * ListBox pageup/pagedown
+ * ListBox page up/page down
  * Menus
  * TextBox fill character (Issue 66)
  * [DONE] Telnet support

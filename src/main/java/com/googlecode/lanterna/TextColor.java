@@ -46,8 +46,8 @@ public interface TextColor {
      * This class represent classic ANSI colors that are likely to be very compatible with most terminal
      * implementations. It is limited to 8 colors (plus the 'default' color) but as a norm, using bold mode (SGR code)
      * will slightly alter the color, giving it a bit brighter tone, so in total this will give you 16 (+1) colors.
-     *
-     * @see http://en.wikipedia.org/wiki/File:Ansi.png
+     * </p>
+     * For more information, see http://en.wikipedia.org/wiki/File:Ansi.png
      */
     public static enum ANSI implements TextColor {
         BLACK(0),

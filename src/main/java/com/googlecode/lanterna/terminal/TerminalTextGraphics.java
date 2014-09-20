@@ -29,10 +29,10 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * This is the Terminal's implementation of TextGraphics. Upon creation it takes a snapshot for the Terminal's size, so
+ * This is the terminal's implementation of TextGraphics. Upon creation it takes a snapshot for the terminal's size, so
  * that it won't require to do an expensive lookup on every call to {@code getSize()}, but this also means that it can
  * go stale quickly if the terminal is resized. You should try to use the object quickly and then let it be GC:ed. It
- * will not pick up on terminal resizes! Also, the state of the Terminal after an operation performed by this
+ * will not pick up on terminal resize! Also, the state of the Terminal after an operation performed by this
  * TextGraphics implementation is undefined and you should probably re-initialize colors and modifiers.
  * <p/>
  * Any write operation that results in an IOException will be wrapped by a RuntimeException since the TextGraphics

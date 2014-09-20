@@ -257,7 +257,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
                     g.drawLine(lineStartX, lineStartY, lineEndX, lineStartY);
                 }
 
-                if(atCursorLocation && deviceConfiguration.getCursorStyle() == SwingTerminalDeviceConfiguration.CursorStyle.DOUBLE_UNDERBAR) {
+                if(atCursorLocation && deviceConfiguration.getCursorStyle() == SwingTerminalDeviceConfiguration.CursorStyle.DOUBLE_UNDER_BAR) {
                     g.setColor(colorConfiguration.toAWTColor(deviceConfiguration.getCursorColor(), false, false));
                     g.fillRect(columnIndex * fontWidth, (rowIndex * fontHeight) + fontHeight - 2, characterWidth, 2);
                 }

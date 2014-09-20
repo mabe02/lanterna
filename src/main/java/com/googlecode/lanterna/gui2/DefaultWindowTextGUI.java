@@ -25,7 +25,6 @@ import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 
-import java.io.EOFException;
 import java.io.IOException;
 
 /**
@@ -130,10 +129,7 @@ public class DefaultWindowTextGUI extends AbstractTextGUI implements WindowBased
     @Override
     protected boolean handleInput(KeyStroke keyStroke) {
         Window activeWindow = windowManager.getActiveWindow();
-        if(activeWindow == null) {
-            return false;
-        }
-        return activeWindow.handleInput(keyStroke);
+        return activeWindow != null && activeWindow.handleInput(keyStroke);
     }
 
     @Override

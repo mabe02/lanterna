@@ -21,8 +21,8 @@ public class InteractableLookupMap {
 
     public void reset() {
         interactables.clear();
-        for(int y = 0; y < lookupMap.length; y++) {
-            Arrays.fill(lookupMap[y], -1);
+        for (int[] aLookupMap : lookupMap) {
+            Arrays.fill(aLookupMap, -1);
         }
     }
 

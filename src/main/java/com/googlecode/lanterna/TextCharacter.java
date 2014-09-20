@@ -18,8 +18,6 @@
  */
 package com.googlecode.lanterna;
 
-import com.googlecode.lanterna.terminal.Terminal;
-
 import java.util.Arrays;
 import java.util.EnumSet;
 
@@ -138,7 +136,7 @@ public class TextCharacter {
     }
 
     public boolean isCrossedOut() {
-        return modifiers.contains(SGR.CROSSEDOUT);
+        return modifiers.contains(SGR.CROSSED_OUT);
     }
 
 

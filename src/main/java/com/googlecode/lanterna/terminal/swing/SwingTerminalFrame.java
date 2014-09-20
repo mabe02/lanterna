@@ -46,7 +46,7 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
         /**
          * Auto-close disabled
          */
-        DontAutoClose,
+        DoNotAutoClose,
         /**
          * Close the frame when exiting from private mode
          */
@@ -63,7 +63,7 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
     private boolean disposed;
 
     public SwingTerminalFrame() throws HeadlessException {
-        this(AutoCloseTrigger.DontAutoClose);
+        this(AutoCloseTrigger.DoNotAutoClose);
     }
     
     @SuppressWarnings({"SameParameterValue", "WeakerAccess"})
@@ -72,7 +72,7 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
     }
 
     public SwingTerminalFrame(String title) throws HeadlessException {
-        this(title, AutoCloseTrigger.DontAutoClose);
+        this(title, AutoCloseTrigger.DoNotAutoClose);
     }
     
     @SuppressWarnings("WeakerAccess")
@@ -84,7 +84,7 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
             SwingTerminalDeviceConfiguration deviceConfiguration,
             SwingTerminalFontConfiguration fontConfiguration,
             SwingTerminalColorConfiguration colorConfiguration) {
-        this(title, deviceConfiguration, fontConfiguration, colorConfiguration, AutoCloseTrigger.DontAutoClose);
+        this(title, deviceConfiguration, fontConfiguration, colorConfiguration, AutoCloseTrigger.DoNotAutoClose);
     }
     
     public SwingTerminalFrame(String title,

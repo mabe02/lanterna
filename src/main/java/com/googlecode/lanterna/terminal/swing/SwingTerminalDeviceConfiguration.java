@@ -142,7 +142,7 @@ public class SwingTerminalDeviceConfiguration {
     public static enum CursorStyle {
         REVERSED,
         FIXED_BACKGROUND,
-        DOUBLE_UNDERBAR,
+        DOUBLE_UNDER_BAR,
         ;
     }
 }

@@ -33,14 +33,14 @@ public enum SGR {
     BORDERED,
 
     /**
-     * Exotic extension, please send me a reference screenshot!
+     * Exotic extension, please send me a reference screen shots!
      */
     FRAKTUR,
 
     /**
      * Rarely supported
      */
-    CROSSEDOUT,
+    CROSSED_OUT,
 
     /**
      * Rarely supported

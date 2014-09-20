@@ -64,13 +64,13 @@ class TextBuffer {
             @Override
             public Iterator<List<TextCharacter>> iterator() {
                 return new Iterator<List<TextCharacter>>() {
-                    private final ListIterator<List<TextCharacter>> listIter = lineBuffer.subList(scrollOffset, scrollOffset + length).listIterator(length);
+                    private final ListIterator<List<TextCharacter>> listIterator = lineBuffer.subList(scrollOffset, scrollOffset + length).listIterator(length);
                     @Override
-                    public boolean hasNext() { return listIter.hasPrevious(); }
+                    public boolean hasNext() { return listIterator.hasPrevious(); }
                     @Override
-                    public List<TextCharacter> next() { return listIter.previous(); }
+                    public List<TextCharacter> next() { return listIterator.previous(); }
                     @Override
-                    public void remove() { listIter.remove(); }
+                    public void remove() { listIterator.remove(); }
                 };
             }
         };

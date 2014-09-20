@@ -205,7 +205,7 @@ public interface Terminal extends InputProvider {
      * terminal, like moving the cursor to position 5000x5000 and then read back the location, unless the terminal
      * implementation has a more smooth way of getting this data. Keep this in mind and see if you can avoid calling
      * this method too often. There is a helper class, SimpleTerminalResizeListener, that you can use to cache the size
-     * and update it only when resize events are received (which depends on resizes being detectable, which they are not
+     * and update it only when resize events are received (which depends on if a resize is detectable, which they are not
      * on all platforms).
      *
      * @return Size of the terminal
@@ -216,11 +216,11 @@ public interface Terminal extends InputProvider {
     /**
      * Retrieves optional information from the terminal by printing the ENQ ({@literal \}u005) character. Terminals and terminal
      * emulators may or may not respond to this command, sometimes it's configurable.
-     * @param timeout How long to wait for the talkback message, if there's nothing immediately available on the input
+     * @param timeout How long to wait for the talk-back message, if there's nothing immediately available on the input
      * stream, you should probably set this to a somewhat small value to prevent unnecessary blockage on the input stream
      * but large enough to accommodate a round-trip to the user's terminal (~300 ms if you are connection across the globe).
      * @param timeoutUnit What unit to use when interpreting the {@code timeout} parameter
-     * @return Answerback message from the terminal or empty if there was nothing
+     * @return Answer-back message from the terminal or empty if there was nothing
      * @throws java.io.IOException If there was an I/O error while trying to read the enquiry reply
      */
     public byte[] enquireTerminal(int timeout, TimeUnit timeoutUnit) throws IOException;

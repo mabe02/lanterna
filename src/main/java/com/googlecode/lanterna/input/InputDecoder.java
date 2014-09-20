@@ -50,9 +50,9 @@ public class InputDecoder {
     }
 
     /**
-     *
-     * @return
-     * @throws IOException
+     * Reads and decodes the next key stroke from the input stream
+     * @return Key stroke read from the input stream, or {@code null} if none
+     * @throws IOException If there was an I/O error when reading from the input stream
      */
     public KeyStroke getNextCharacter() throws IOException {
         while (source.ready()) {
