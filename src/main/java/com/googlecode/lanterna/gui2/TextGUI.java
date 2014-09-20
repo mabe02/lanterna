@@ -2,6 +2,7 @@ package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.graphics.Theme;
 
+import java.io.EOFException;
 import java.io.IOException;
 
 /**
@@ -20,11 +21,13 @@ public interface TextGUI {
 
     /**
      * Reads a KeyStroke from the input queue and passes it through the GUI system. For window-based system, it will
-     * send the keystroke to the active window for processing.
+     * send the keystroke to the active window for processing. If the input read gives an EOF, it will throw
+     * EOFException and this is normally the signal to shut down the GUI.
      * @return {@code true} if an event was processed, {@code false} if there was nothing on the input queue
      * @throws java.io.IOException In case there was an underlying I/O error
+     * @throws java.io.EOFException In the input stream received an EOF marker
      */
-    boolean processInput() throws IOException;
+    boolean processInput() throws EOFException, IOException;
 
     /**
      * Updates the screen, to make any changes visible to the user.
