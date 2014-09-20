@@ -89,32 +89,47 @@ public class AbstractWindow implements Window {
         }
         if(focusedInteractable != null) {
             Interactable next = null;
+            Interactable.FocusChangeDirection direction = Interactable.FocusChangeDirection.TELEPORT; //Default
             switch (focusedInteractable.handleKeyStroke(key)) {
                 case HANDLED:
                     return true;
                 case UNHANDLED:
                     break;
                 case MOVE_FOCUS_NEXT:
-                    return true;
+                    next = contentArea.nextFocus(focusedInteractable);
+                    if(next == null) {
+                        next = contentArea.nextFocus(null);
+                    }
+                    direction = Interactable.FocusChangeDirection.NEXT;
+                    break;
                 case MOVE_FOCUS_PREVIOUS:
-                    return true;
+                    next = contentArea.previousFocus(focusedInteractable);
+                    if(next == null) {
+                        next = contentArea.previousFocus(null);
+                    }
+                    direction = Interactable.FocusChangeDirection.PREVIOUS;
+                    break;
                 case MOVE_FOCUS_DOWN:
                     next = interactableLookupMap.findNextDown(focusedInteractable);
-                    if(next != null) {
-                        setFocusedInteractable(next, Interactable.FocusChangeDirection.DOWN);
-                    }
-                    return true;
+                    direction = Interactable.FocusChangeDirection.DOWN;
+                    break;
                 case MOVE_FOCUS_LEFT:
-                    return true;
+                    next = interactableLookupMap.findNextLeft(focusedInteractable);
+                    direction = Interactable.FocusChangeDirection.LEFT;
+                    break;
                 case MOVE_FOCUS_RIGHT:
-                    return true;
+                    next = interactableLookupMap.findNextRight(focusedInteractable);
+                    direction = Interactable.FocusChangeDirection.RIGHT;
+                    break;
                 case MOVE_FOCUS_UP:
                     next = interactableLookupMap.findNextUp(focusedInteractable);
-                    if(next != null) {
-                        setFocusedInteractable(next, Interactable.FocusChangeDirection.UP);
-                    }
-                    return true;
+                    direction = Interactable.FocusChangeDirection.UP;
+                    break;
             }
+            if(next != null) {
+                setFocusedInteractable(next, direction);
+            }
+            return true;
         }
         return false;
     }

@@ -62,8 +62,8 @@ public abstract class AbstractInteractableContainer extends AbstractContainer im
     }
 
     @Override
-    public Interactable nextFocus(Interactable previous) {
-        boolean chooseNextAvailable = (previous == null);
+    public Interactable nextFocus(Interactable fromThis) {
+        boolean chooseNextAvailable = (fromThis == null);
 
         for (Component component : interactables) {
             if (chooseNextAvailable) {
@@ -79,15 +79,15 @@ public abstract class AbstractInteractableContainer extends AbstractContainer im
                 continue;
             }
 
-            if (component == previous) {
+            if (component == fromThis) {
                 chooseNextAvailable = true;
                 continue;
             }
 
             if (component instanceof InteractableContainer) {
                 InteractableContainer ic = (InteractableContainer) component;
-                if (ic.hasInteractable(previous)) {
-                    Interactable next = ic.nextFocus(previous);
+                if (ic.hasInteractable(fromThis)) {
+                    Interactable next = ic.nextFocus(fromThis);
                     if (next == null) {
                         chooseNextAvailable = true;
                     } else {
