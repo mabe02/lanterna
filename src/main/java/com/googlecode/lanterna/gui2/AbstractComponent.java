@@ -204,7 +204,7 @@ public abstract class AbstractComponent implements Component {
         }
         try {
             Object newRenderer = Class.forName(className).newInstance();
-            setThemeRenderer((ComponentRenderer) newRenderer);
+            setThemeRenderer((ComponentRenderer<? extends Component>) newRenderer);
         } catch (InstantiationException e) {
             throw new RuntimeException(e);
         } catch (IllegalAccessException e) {

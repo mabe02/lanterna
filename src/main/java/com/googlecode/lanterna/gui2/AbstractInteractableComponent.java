@@ -74,6 +74,6 @@ public abstract class AbstractInteractableComponent extends AbstractComponent im
 
     @Override
     protected InteractableRenderer<? extends Interactable> getThemeRenderer() {
-        return (InteractableRenderer)super.getThemeRenderer();
+        return (InteractableRenderer<? extends Interactable>)super.getThemeRenderer();
     }
 }
