@@ -5,7 +5,10 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.graphics.PropertiesTheme;
 import com.googlecode.lanterna.graphics.Theme;
 import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
+
+import java.io.EOFException;
 import java.io.FileInputStream;
 
 import java.io.IOException;
@@ -53,6 +56,9 @@ public abstract class AbstractTextGUI implements TextGUI {
     public boolean processInput() throws IOException {
         KeyStroke keyStroke = screen.readInput();
         if(keyStroke != null) {
+            if(keyStroke.getKeyType() == KeyType.EOF) {
+                throw new EOFException();
+            }
             dirty = handleInput(keyStroke) || dirty;
         }
         return keyStroke != null;
