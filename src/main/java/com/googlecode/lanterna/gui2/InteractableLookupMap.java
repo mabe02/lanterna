@@ -42,41 +42,30 @@ public class InteractableLookupMap {
     }
 
     public Interactable findNextUp(Interactable interactable) {
-        TerminalPosition startPosition = interactable.toRootContainer(interactable.getCursorLocation());
-        for(int xShift = 0; xShift < Math.max(startPosition.getColumn(), getSize().getColumns() - startPosition.getColumn()); xShift++) {
-            for(int modifier: new int[] { 1, -1 }) {
-                if(xShift == 0 && modifier == -1) {
-                    break;
-                }
-                xShift *= modifier;
-                int searchColumn = startPosition.getColumn() + xShift;
-                if(searchColumn < 0 || searchColumn >= getSize().getColumns()) {
-                    continue;
-                }
-                for(int searchRow = startPosition.getRow() - 1; searchRow >= 0; searchRow--) {
-                    int index = lookupMap[searchRow][searchColumn];
-                    if(index != -1 && interactables.get(index) != interactable) {
-                        return interactables.get(index);
-                    }
-                }
-            }
-        }
-        return null;
+        return findNextUpOrDown(interactable, false);
     }
 
     public Interactable findNextDown(Interactable interactable) {
+        return findNextUpOrDown(interactable, true);
+    }
+
+    //Avoid code duplication in above two methods
+    private Interactable findNextUpOrDown(Interactable interactable, boolean isDown) {
+        int directionTerm = isDown ? 1 : -1;
         TerminalPosition startPosition = interactable.toRootContainer(interactable.getCursorLocation());
-        for(int xShift = 0; xShift < Math.max(startPosition.getColumn(), getSize().getColumns() - startPosition.getColumn()); xShift++) {
+        int maxShift = Math.max(startPosition.getColumn(), getSize().getColumns() - startPosition.getColumn());
+        for(int xShift = 0; xShift < maxShift; xShift++) {
             for(int modifier: new int[] { 1, -1 }) {
                 if(xShift == 0 && modifier == -1) {
                     break;
                 }
-                xShift *= modifier;
-                int searchColumn = startPosition.getColumn() + xShift;
+                int searchColumn = startPosition.getColumn() + (xShift * modifier);
                 if(searchColumn < 0 || searchColumn >= getSize().getColumns()) {
                     continue;
                 }
-                for(int searchRow = startPosition.getRow() + 1; searchRow < getSize().getRows(); searchRow++) {
+                for(int searchRow = startPosition.getRow() + directionTerm;
+                        searchRow >= 0 && searchRow < getSize().getRows();
+                        searchRow += directionTerm) {
                     int index = lookupMap[searchRow][searchColumn];
                     if(index != -1 && interactables.get(index) != interactable) {
                         return interactables.get(index);
