@@ -28,7 +28,7 @@ public class Button extends AbstractInteractableComponent {
 
     @Override
     public Result handleKeyStroke(KeyStroke keyStroke) {
-        return Result.UNHANDLED;
+        return super.handleKeyStroke(keyStroke);
     }
 
     @Override

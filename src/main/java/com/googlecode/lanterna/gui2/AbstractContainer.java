@@ -122,6 +122,10 @@ public abstract class AbstractContainer extends AbstractComponent implements Con
         }
     }
 
+    protected List<Component> getComponents() {
+        return Collections.unmodifiableList(components);
+    }
+
     @Override
     public void setLayoutManager(LayoutManager layoutManager) {
         if(layoutManager == null) {
@@ -139,9 +143,6 @@ public abstract class AbstractContainer extends AbstractComponent implements Con
         for(Component component: components) {
             TextGUIGraphics componentGraphics = graphics.newTextGraphics(component.getPosition(), component.getSize());
             component.draw(componentGraphics);
-            if(component instanceof Interactable) {
-                graphics.addInteractableToLookupMap((Interactable)component);
-            }
         }
     }
 

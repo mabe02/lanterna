@@ -24,6 +24,7 @@ public class AbstractWindow implements Window {
     private TerminalSize lastKnownDecoratedSize;
     private TerminalPosition lastKnownPosition;
     private Interactable focusedInteractable;
+    private InteractableLookupMap interactableLookupMap;
 
     public AbstractWindow() {
         this("");
@@ -37,6 +38,7 @@ public class AbstractWindow implements Window {
         this.lastKnownPosition = null;
         this.lastKnownSize = null;
         this.lastKnownDecoratedSize = null;
+        this.interactableLookupMap = new InteractableLookupMap(new TerminalSize(80, 20));
     }
 
     public void setWindowManager(WindowManager windowManager) {
@@ -69,6 +71,13 @@ public class AbstractWindow implements Window {
         graphics.applyThemeStyle(graphics.getThemeDefinition(Window.class).getNormal());
         graphics.fill(' ');
         contentArea.draw(graphics);
+
+        if(!interactableLookupMap.getSize().equals(graphics.getSize())) {
+            interactableLookupMap = new InteractableLookupMap(graphics.getSize());
+        }
+        interactableLookupMap.reset();
+        contentArea.updateLookupMap(interactableLookupMap);
+
         invalid = false;
     }
 
@@ -79,15 +88,32 @@ public class AbstractWindow implements Window {
             return true;
         }
         if(focusedInteractable != null) {
+            Interactable next = null;
             switch (focusedInteractable.handleKeyStroke(key)) {
                 case HANDLED:
+                    return true;
                 case UNHANDLED:
+                    break;
                 case MOVE_FOCUS_NEXT:
+                    return true;
                 case MOVE_FOCUS_PREVIOUS:
+                    return true;
                 case MOVE_FOCUS_DOWN:
+                    next = interactableLookupMap.findNextDown(focusedInteractable);
+                    if(next != null) {
+                        setFocusedInteractable(next, Interactable.FocusChangeDirection.DOWN);
+                    }
+                    return true;
                 case MOVE_FOCUS_LEFT:
+                    return true;
                 case MOVE_FOCUS_RIGHT:
+                    return true;
                 case MOVE_FOCUS_UP:
+                    next = interactableLookupMap.findNextUp(focusedInteractable);
+                    if(next != null) {
+                        setFocusedInteractable(next, Interactable.FocusChangeDirection.UP);
+                    }
+                    return true;
             }
         }
         return false;
@@ -186,7 +212,7 @@ public class AbstractWindow implements Window {
         invalid = true;
     }
 
-    private class ContentArea extends AbstractContainer {
+    private class ContentArea extends AbstractInteractableContainer {
         @Override
         public void addComponent(Component component) {
             super.addComponent(component);

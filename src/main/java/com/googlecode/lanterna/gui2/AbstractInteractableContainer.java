@@ -139,4 +139,15 @@ public abstract class AbstractInteractableContainer extends AbstractContainer im
         }
         return null;
     }
+
+    public void updateLookupMap(InteractableLookupMap interactableLookupMap) {
+        for(Component component: getComponents()) {
+            if(component instanceof AbstractInteractableContainer) {
+                ((AbstractInteractableContainer)component).updateLookupMap(interactableLookupMap);
+            }
+            else if(component instanceof Interactable) {
+                interactableLookupMap.add((Interactable)component);
+            }
+        }
+    }
 }

@@ -1,6 +1,7 @@
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.input.KeyStroke;
 
 /**
  * Created by martin on 15/09/14.
@@ -39,6 +40,25 @@ public abstract class AbstractInteractableComponent extends AbstractComponent im
     @Override
     public boolean isFocused() {
         return inFocus;
+    }
+
+    @Override
+    public Result handleKeyStroke(KeyStroke keyStroke) {
+        switch (keyStroke.getKeyType()) {
+            case ArrowDown:
+                return Result.MOVE_FOCUS_DOWN;
+            case ArrowLeft:
+                return Result.MOVE_FOCUS_LEFT;
+            case ArrowRight:
+                return Result.MOVE_FOCUS_RIGHT;
+            case ArrowUp:
+                return Result.MOVE_FOCUS_UP;
+            case Tab:
+                return Result.MOVE_FOCUS_NEXT;
+            case ReverseTab:
+                return Result.MOVE_FOCUS_PREVIOUS;
+        }
+        return Result.UNHANDLED;
     }
 
     @Override

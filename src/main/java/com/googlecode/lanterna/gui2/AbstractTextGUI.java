@@ -24,14 +24,12 @@ public abstract class AbstractTextGUI implements TextGUI {
     private boolean dirty;
     private TextGUIThread textGUIThread;
     private Theme guiTheme;
-    private int[][] interactableLookupMap;
 
     protected AbstractTextGUI(Screen screen) {
         this.screen = screen;
         this.dirty = false;
         this.textGUIThread = null;
         this.guiTheme = new PropertiesTheme(loadDefaultThemeProperties());
-        this.interactableLookupMap = new int[1][1];
     }
 
     private static Properties loadDefaultThemeProperties() {
@@ -69,25 +67,10 @@ public abstract class AbstractTextGUI implements TextGUI {
     public void updateScreen() throws IOException {
         screen.doResizeIfNecessary();
         TerminalSize terminalSize = screen.getTerminalSize();
-        if(interactableLookupMap.length != terminalSize.getRows() ||
-                interactableLookupMap[0].length != terminalSize.getColumns()) {
-            interactableLookupMap = new int[terminalSize.getRows()][terminalSize.getColumns()];
-        }
-        for(int y = 0; y < interactableLookupMap.length; y++) {
-            Arrays.fill(interactableLookupMap[y], 8);
-        }
-        drawGUI(new TextGUIGraphics(this, screen.newTextGraphics(), guiTheme, interactableLookupMap));
-        /*
-        for(int y = 0; y < interactableLookupMap.length; y++) {
-            for(int x = 0; x < interactableLookupMap[0].length; x++) {
-                System.out.print(interactableLookupMap[y][x]);
-            }
-            System.out.println();
-        }
-        System.out.println();
-        */
+        drawGUI(new TextGUIGraphics(this, screen.newTextGraphics(), guiTheme));
         screen.setCursorPosition(getCursorPosition());
         screen.refresh();
+        dirty = false;
     }
 
     @Override
