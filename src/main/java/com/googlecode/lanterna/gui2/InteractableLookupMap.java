@@ -77,10 +77,37 @@ public class InteractableLookupMap {
     }
 
     public Interactable findNextLeft(Interactable interactable) {
-        return null;
+        return findNextLeftOrRight(interactable, true);
     }
 
     public Interactable findNextRight(Interactable interactable) {
+        return findNextLeftOrRight(interactable, true);
+    }
+
+    //Avoid code duplication in above two methods
+    private Interactable findNextLeftOrRight(Interactable interactable, boolean isRight) {
+        int directionTerm = isRight ? 1 : -1;
+        TerminalPosition startPosition = interactable.toRootContainer(interactable.getCursorLocation());
+        int maxShift = Math.max(startPosition.getRow(), getSize().getRows() - startPosition.getRow());
+        for(int yShift = 0; yShift < maxShift; yShift++) {
+            for(int modifier: new int[] { 1, -1 }) {
+                if(yShift == 0 && modifier == -1) {
+                    break;
+                }
+                int searchRow = startPosition.getRow() + (yShift * modifier);
+                if(searchRow < 0 || searchRow >= getSize().getRows()) {
+                    continue;
+                }
+                for(int searchColumn = startPosition.getColumn() + directionTerm;
+                        searchColumn >= 0 && searchColumn < getSize().getColumns();
+                        searchColumn += directionTerm) {
+                    int index = lookupMap[searchColumn][searchColumn];
+                    if(index != -1 && interactables.get(index) != interactable) {
+                        return interactables.get(index);
+                    }
+                }
+            }
+        }
         return null;
     }
 }
