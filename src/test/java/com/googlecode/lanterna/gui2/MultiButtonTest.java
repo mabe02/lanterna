@@ -17,13 +17,19 @@ public class MultiButtonTest {
         screen.startScreen();
         WindowBasedTextGUI textGUI = new DefaultWindowTextGUI(screen);
         try {
-            BasicWindow window = new BasicWindow("Button test");
+            final BasicWindow window = new BasicWindow("Button test");
+            window.getContentArea().addComponent(new Button(""));
             window.getContentArea().addComponent(new Button("TRE"));
             window.getContentArea().addComponent(new Button("Button"));
             window.getContentArea().addComponent(new Button("Another button"));
             window.getContentArea().addComponent(new EmptySpace(new TerminalSize(5, 1)));
             //window.getContentArea().addComponent(new Button("Here is a\nmulti-line\ntext segment that is using \\n"));
-            window.getContentArea().addComponent(new Button("OK"));
+            window.getContentArea().addComponent(new Button("OK", new Runnable() {
+                @Override
+                public void run() {
+                    window.close();
+                }
+            }));
 
             textGUI.getWindowManager().addWindow(window);
             textGUI.updateScreen();
