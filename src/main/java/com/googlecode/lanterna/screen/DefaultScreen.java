@@ -19,6 +19,8 @@
 package com.googlecode.lanterna.screen;
 
 import com.googlecode.lanterna.*;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.Terminal;
 
 import java.io.IOException;
@@ -160,10 +162,13 @@ public class DefaultScreen extends TerminalScreen {
             return;
         }
 
-        //noinspection StatementWithEmptyBody
-        while(readInput() != null) {
-            //Drain the input queue before exiting private mode and closing the Screen.
+        //Drain the input queue
+        KeyStroke keyStroke;
+        do {
+            keyStroke = readInput();
         }
+        while(keyStroke != null && keyStroke.getKeyType() != KeyType.EOF);
+
         getTerminal().exitPrivateMode();
         isStarted = false;
     }
