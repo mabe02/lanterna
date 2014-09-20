@@ -3,9 +3,7 @@ package com.googlecode.lanterna.gui2;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by martin on 20/09/14.
@@ -20,6 +18,7 @@ public class InteractableLookupMap {
     }
 
     public void reset() {
+        interactables.clear();
         for(int y = 0; y < lookupMap.length; y++) {
             Arrays.fill(lookupMap[y], -1);
         }
@@ -53,21 +52,23 @@ public class InteractableLookupMap {
     private Interactable findNextUpOrDown(Interactable interactable, boolean isDown) {
         int directionTerm = isDown ? 1 : -1;
         TerminalPosition startPosition = interactable.toRootContainer(interactable.getCursorLocation());
-        int maxShift = Math.max(startPosition.getColumn(), getSize().getColumns() - startPosition.getColumn());
+        Set<Interactable> disqualified = getDisqualifiedInteractables(startPosition, true);
+        TerminalSize size = getSize();
+        int maxShift = Math.max(startPosition.getColumn(), size.getColumns() - startPosition.getColumn());
         for(int xShift = 0; xShift < maxShift; xShift++) {
             for(int modifier: new int[] { 1, -1 }) {
                 if(xShift == 0 && modifier == -1) {
                     break;
                 }
                 int searchColumn = startPosition.getColumn() + (xShift * modifier);
-                if(searchColumn < 0 || searchColumn >= getSize().getColumns()) {
+                if(searchColumn < 0 || searchColumn >= size.getColumns()) {
                     continue;
                 }
                 for(int searchRow = startPosition.getRow() + directionTerm;
-                        searchRow >= 0 && searchRow < getSize().getRows();
+                        searchRow >= 0 && searchRow < size.getRows();
                         searchRow += directionTerm) {
                     int index = lookupMap[searchRow][searchColumn];
-                    if(index != -1 && interactables.get(index) != interactable) {
+                    if(index != -1 && !disqualified.contains(interactables.get(index))) {
                         return interactables.get(index);
                     }
                 }
@@ -88,26 +89,50 @@ public class InteractableLookupMap {
     private Interactable findNextLeftOrRight(Interactable interactable, boolean isRight) {
         int directionTerm = isRight ? 1 : -1;
         TerminalPosition startPosition = interactable.toRootContainer(interactable.getCursorLocation());
-        int maxShift = Math.max(startPosition.getRow(), getSize().getRows() - startPosition.getRow());
+        Set<Interactable> disqualified = getDisqualifiedInteractables(startPosition, false);
+        TerminalSize size = getSize();
+        int maxShift = Math.max(startPosition.getRow(), size.getRows() - startPosition.getRow());
         for(int yShift = 0; yShift < maxShift; yShift++) {
             for(int modifier: new int[] { 1, -1 }) {
                 if(yShift == 0 && modifier == -1) {
                     break;
                 }
                 int searchRow = startPosition.getRow() + (yShift * modifier);
-                if(searchRow < 0 || searchRow >= getSize().getRows()) {
+                if(searchRow < 0 || searchRow >= size.getRows()) {
                     continue;
                 }
                 for(int searchColumn = startPosition.getColumn() + directionTerm;
-                        searchColumn >= 0 && searchColumn < getSize().getColumns();
+                        searchColumn >= 0 && searchColumn < size.getColumns();
                         searchColumn += directionTerm) {
-                    int index = lookupMap[searchColumn][searchColumn];
-                    if(index != -1 && interactables.get(index) != interactable) {
+                    int index = lookupMap[searchRow][searchColumn];
+                    if (index != -1 && !disqualified.contains(interactables.get(index))) {
                         return interactables.get(index);
                     }
                 }
             }
         }
         return null;
+    }
+
+    private Set<Interactable> getDisqualifiedInteractables(TerminalPosition startPosition, boolean scanHorizontally) {
+        Set<Interactable> disqualified = new HashSet<Interactable>();
+        TerminalSize size = getSize();
+        if(scanHorizontally) {
+            for(int column = 0; column < size.getColumns(); column++) {
+                int index = lookupMap[startPosition.getRow()][column];
+                if(index != -1) {
+                    disqualified.add(interactables.get(index));
+                }
+            }
+        }
+        else {
+            for(int row = 0; row < size.getRows(); row++) {
+                int index = lookupMap[row][startPosition.getColumn()];
+                if(index != -1) {
+                    disqualified.add(interactables.get(index));
+                }
+            }
+        }
+        return disqualified;
     }
 }
