@@ -42,9 +42,4 @@ public interface LayoutManager {
      * @param components List of components to lay out
      */
     void doLayout(TerminalSize area, List<Component> components);
-
-    public static class Parameter {
-        protected Parameter() {
-        }
-    }
 }

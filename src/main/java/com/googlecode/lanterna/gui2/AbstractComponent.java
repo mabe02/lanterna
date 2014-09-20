@@ -28,19 +28,19 @@ import java.util.*;
  * @author Martin
  */
 public abstract class AbstractComponent implements Component {
-    private final Set<LayoutManager.Parameter> layoutManagerParameters;
     private Container parent;
     private TerminalSize size;
     private TerminalPosition position;
+    private Object layoutData;
     private boolean invalid;
     private boolean disposed;
     private Border border;
     private ComponentRenderer<? extends Component> themeRenderer;
 
     public AbstractComponent() {
-        layoutManagerParameters = new HashSet<LayoutManager.Parameter>();
         size = TerminalSize.ZERO;
         position = TerminalPosition.TOP_LEFT_CORNER;
+        layoutData = null;
         invalid = true;
         disposed = false;
         border = null;
@@ -108,16 +108,18 @@ public abstract class AbstractComponent implements Component {
     }
 
     @Override
-    public void setLayoutManagerParameters(LayoutManager.Parameter... parameters) {
+    public AbstractComponent setLayoutData(Object data) {
         ensureNotDisposed();
-        Set<LayoutManager.Parameter> newSet = new HashSet<LayoutManager.Parameter>(Arrays.asList(parameters));
-        layoutManagerParameters.retainAll(newSet);
-        layoutManagerParameters.addAll(newSet);
+        if(layoutData != data) {
+            layoutData = data;
+            invalidate();
+        }
+        return this;
     }
 
     @Override
-    public Set<LayoutManager.Parameter> getLayoutManagerParameters() {
-        return layoutManagerParameters;
+    public Object getLayoutData() {
+        return layoutData;
     }
 
     @Override

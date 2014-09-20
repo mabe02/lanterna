@@ -70,16 +70,19 @@ public interface Component extends TextGUIElement {
     Component withBorder(Border border);
 
     /**
-     * Sets the layout manager parameters
-     * @param parameters List of layout manager parameters
+     * Sets optional layout data associated with this component. This meaning of this data is up to the layout manager
+     * to figure out, see each layout manager for examples of how to use it.
+     * @param data Layout data associated with this component
+     * @return Itself
      */
-    void setLayoutManagerParameters(LayoutManager.Parameter... parameters);
+    Component setLayoutData(Object data);
 
     /**
-     * Returns the set of parameters this component wants to pass to the layout manager of its parent
-     * @return Parameters for the layout manager
+     * Returns the layout data associated with this component. This data will optionally be used by the layout manager,
+     * see the documentation for each layout manager for more details on valid values and their meaning.
+     * @return This component's layout data
      */
-    Set<LayoutManager.Parameter> getLayoutManagerParameters();
+    Object getLayoutData();
 
     /**
      * Returns the container which is holding this component, or {@code null} if it's not assigned to anything.
