@@ -70,7 +70,7 @@ public class GridLayout implements LayoutManager {
     }
 
     private void setLayoutData(Component child, GridData gridData) {
-        child.getLayoutData(gridData);
+        child.setLayoutData(gridData);
     }
 
     public static Object createLayoutData(
@@ -115,23 +115,23 @@ public class GridLayout implements LayoutManager {
     public boolean makeColumnsEqualWidth = false;
 
     /**
-     * marginWidth specifies the number of pixels of horizontal margin
+     * marginWidth specifies the number of columns of horizontal margin
      * that will be placed along the left and right edges of the layout.
      * <p/>
-     * The default value is 5.
+     * The default value is 0.
      */
-    public int marginWidth = 5;
+    public int marginWidth = 0;
 
     /**
-     * marginHeight specifies the number of pixels of vertical margin
+     * marginHeight specifies the number of rows of vertical margin
      * that will be placed along the top and bottom edges of the layout.
      * <p/>
-     * The default value is 5.
+     * The default value is 0.
      */
-    public int marginHeight = 5;
+    public int marginHeight = 0;
 
     /**
-     * marginLeft specifies the number of pixels of horizontal margin
+     * marginLeft specifies the number of columns of horizontal margin
      * that will be placed along the left edge of the layout.
      * <p/>
      * The default value is 0.
@@ -141,7 +141,7 @@ public class GridLayout implements LayoutManager {
     public int marginLeft = 0;
 
     /**
-     * marginTop specifies the number of pixels of vertical margin
+     * marginTop specifies the number of rows of vertical margin
      * that will be placed along the top edge of the layout.
      * <p/>
      * The default value is 0.
@@ -151,7 +151,7 @@ public class GridLayout implements LayoutManager {
     public int marginTop = 0;
 
     /**
-     * marginRight specifies the number of pixels of horizontal margin
+     * marginRight specifies the number of columns of horizontal margin
      * that will be placed along the right edge of the layout.
      * <p/>
      * The default value is 0.
@@ -161,7 +161,7 @@ public class GridLayout implements LayoutManager {
     public int marginRight = 0;
 
     /**
-     * marginBottom specifies the number of pixels of vertical margin
+     * marginBottom specifies the number of rows of vertical margin
      * that will be placed along the bottom edge of the layout.
      * <p/>
      * The default value is 0.
@@ -171,21 +171,21 @@ public class GridLayout implements LayoutManager {
     public int marginBottom = 0;
 
     /**
-     * horizontalSpacing specifies the number of pixels between the right
+     * horizontalSpacing specifies the number of columns between the right
      * edge of one cell and the left edge of its neighbouring cell to
      * the right.
      * <p/>
-     * The default value is 5.
+     * The default value is 1.
      */
-    public int horizontalSpacing = 5;
+    public int horizontalSpacing = 1;
 
     /**
-     * verticalSpacing specifies the number of pixels between the bottom
+     * verticalSpacing specifies the number of rows between the bottom
      * edge of one cell and the top edge of its neighbouring cell underneath.
      * <p/>
-     * The default value is 5.
+     * The default value is 1.
      */
-    public int verticalSpacing = 5;
+    public int verticalSpacing = 1;
 
     /**
      * Constructs a new instance of this class
