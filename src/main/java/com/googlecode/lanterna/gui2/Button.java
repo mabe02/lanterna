@@ -13,17 +13,17 @@ public class Button extends AbstractInteractableComponent {
 
     public Button(String label) {
         setLabel(label);
-        setRenderer(new DefaultButtonRenderer());
+        setThemeRenderer(new DefaultButtonRenderer());
     }
 
     @Override
     public TerminalPosition getCursorLocation() {
-        return getRenderer().getCursorLocation(this);
+        return getThemeRenderer().getCursorLocation(this);
     }
 
     @Override
     protected TerminalSize getPreferredSizeWithoutBorder() {
-        return getRenderer().getPreferredSizeWithoutBorder(this);
+        return getThemeRenderer().getPreferredSizeWithoutBorder(this);
     }
 
     @Override
@@ -34,12 +34,12 @@ public class Button extends AbstractInteractableComponent {
     @Override
     public void drawComponent(TextGUIGraphics graphics) {
         updateRenderer(getThemeDefinition(graphics).getRenderer());
-        getRenderer().drawComponent(graphics, this);
+        getThemeRenderer().drawComponent(graphics, this);
     }
 
     @Override
-    protected ButtonRenderer getRenderer() {
-        return (ButtonRenderer)super.getRenderer();
+    protected ButtonRenderer getThemeRenderer() {
+        return (ButtonRenderer)super.getThemeRenderer();
     }
 
     public final void setLabel(String label) {

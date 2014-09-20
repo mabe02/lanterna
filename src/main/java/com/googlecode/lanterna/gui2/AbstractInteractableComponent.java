@@ -42,16 +42,16 @@ public abstract class AbstractInteractableComponent extends AbstractComponent im
     }
 
     @Override
-    protected void setRenderer(ComponentRenderer<? extends Component> renderer) {
+    protected void setThemeRenderer(ComponentRenderer<? extends Component> renderer) {
         if(!(renderer instanceof InteractableRenderer)) {
             throw new IllegalArgumentException("Cannot assign " + renderer + " as renderer for " + toString() + ", " +
                     "need to implement InteractableRenderer");
         }
-        super.setRenderer(renderer);
+        super.setThemeRenderer(renderer);
     }
 
     @Override
-    protected InteractableRenderer<? extends Interactable> getRenderer() {
-        return (InteractableRenderer)super.getRenderer();
+    protected InteractableRenderer<? extends Interactable> getThemeRenderer() {
+        return (InteractableRenderer)super.getThemeRenderer();
     }
 }

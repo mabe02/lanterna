@@ -35,7 +35,7 @@ public abstract class AbstractComponent implements Component {
     private boolean invalid;
     private boolean disposed;
     private Border border;
-    private ComponentRenderer<? extends Component> renderer;
+    private ComponentRenderer<? extends Component> themeRenderer;
 
     public AbstractComponent() {
         layoutManagerParameters = new HashSet<LayoutManager.Parameter>();
@@ -199,12 +199,12 @@ public abstract class AbstractComponent implements Component {
         if(className == null) {
             return;
         }
-        if(renderer != null && renderer.getClass().getName().equals(className)) {
+        if(themeRenderer != null && themeRenderer.getClass().getName().equals(className)) {
             return;
         }
         try {
             Object newRenderer = Class.forName(className).newInstance();
-            setRenderer((ComponentRenderer)newRenderer);
+            setThemeRenderer((ComponentRenderer) newRenderer);
         } catch (InstantiationException e) {
             throw new RuntimeException(e);
         } catch (IllegalAccessException e) {
@@ -214,11 +214,11 @@ public abstract class AbstractComponent implements Component {
         }
     }
 
-    protected void setRenderer(ComponentRenderer<? extends Component> renderer) {
-        this.renderer = renderer;
+    protected void setThemeRenderer(ComponentRenderer<? extends Component> themeRenderer) {
+        this.themeRenderer = themeRenderer;
     }
 
-    protected ComponentRenderer<? extends Component> getRenderer() {
-        return renderer;
+    protected ComponentRenderer<? extends Component> getThemeRenderer() {
+        return themeRenderer;
     }
 }
