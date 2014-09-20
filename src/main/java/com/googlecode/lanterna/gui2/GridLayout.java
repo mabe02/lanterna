@@ -1224,8 +1224,8 @@ public class GridLayout implements LayoutManager {
         public static final int FILL_BOTH = FILL_VERTICAL | FILL_HORIZONTAL;
 
         int cacheWidth = -1, cacheHeight = -1;
-        int defaultWhint, defaultHhint, defaultWidth = -1, defaultHeight = -1;
-        int currentWhint, currentHhint, currentWidth = -1, currentHeight = -1;
+        int defaultWidthHint, defaultHeightHint, defaultWidth = -1, defaultHeight = -1;
+        int currentWidthHint, currentHeightHint, currentWidth = -1, currentHeight = -1;
 
         /**
          * Constructs a new instance of GridData using
@@ -1314,10 +1314,10 @@ public class GridLayout implements LayoutManager {
         void computeSize (Component control, int wHint, int hHint, boolean flushCache) {
             if (cacheWidth != -1 && cacheHeight != -1) return;
             if (wHint == this.widthHint && hHint == this.heightHint) {
-                if (defaultWidth == -1 || defaultHeight == -1 || wHint != defaultWhint || hHint != defaultHhint) {
+                if (defaultWidth == -1 || defaultHeight == -1 || wHint != defaultWidthHint || hHint != defaultHeightHint) {
                     Point size = new Point(control.getPreferredSize());
-                    defaultWhint = wHint;
-                    defaultHhint = hHint;
+                    defaultWidthHint = wHint;
+                    defaultHeightHint = hHint;
                     defaultWidth = size.x;
                     defaultHeight = size.y;
                 }
@@ -1325,10 +1325,10 @@ public class GridLayout implements LayoutManager {
                 cacheHeight = defaultHeight;
                 return;
             }
-            if (currentWidth == -1 || currentHeight == -1 || wHint != currentWhint || hHint != currentHhint) {
+            if (currentWidth == -1 || currentHeight == -1 || wHint != currentWidthHint || hHint != currentHeightHint) {
                 Point size = new Point(control.getPreferredSize());
-                currentWhint = wHint;
-                currentHhint = hHint;
+                currentWidthHint = wHint;
+                currentHeightHint = hHint;
                 currentWidth = size.x;
                 currentHeight = size.y;
             }
@@ -1357,7 +1357,7 @@ public class GridLayout implements LayoutManager {
          */
         @Override
         public String toString () {
-            String hAlign = "";
+            String hAlign;
             switch (horizontalAlignment) {
                 case SWT.FILL: hAlign = "SWT.FILL"; break;
                 case SWT.BEGINNING: hAlign = "SWT.BEGINNING"; break;
@@ -1369,7 +1369,7 @@ public class GridLayout implements LayoutManager {
                 case CENTER: hAlign = "GridData.CENTER"; break;
                 default: hAlign = "Undefined "+horizontalAlignment; break;
             }
-            String vAlign = "";
+            String vAlign;
             switch (verticalAlignment) {
                 case SWT.FILL: vAlign = "SWT.FILL"; break;
                 case SWT.BEGINNING: vAlign = "SWT.BEGINNING"; break;

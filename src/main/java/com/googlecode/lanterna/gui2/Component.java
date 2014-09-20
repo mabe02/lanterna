@@ -21,8 +21,6 @@ package com.googlecode.lanterna.gui2;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 
-import java.util.Set;
-
 /**
  *
  * @author Martin
