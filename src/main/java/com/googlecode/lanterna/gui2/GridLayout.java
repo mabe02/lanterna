@@ -10,33 +10,91 @@
  *******************************************************************************/
 package com.googlecode.lanterna.gui2;
 
+import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
+
+import java.util.List;
 
 /**
  * Created by martin on 20/09/14.
  */
-public class GridLayout {
+public class GridLayout implements LayoutManager {
+
+    public static enum Alignment {
+        BEGINNING(SWT.BEGINNING),
+        CENTER(SWT.CENTER),
+        END(SWT.END),
+        FILL(SWT.FILL),
+        ;
+
+        private final int swtCode;
+
+        Alignment(int swtCode) {
+            this.swtCode = swtCode;
+        }
+    }
 
     private static class Point {
         int x, y;
-
-        Point() {
-            x = y = 0;
-        }
 
         Point(TerminalSize size) {
             x = size.getColumns();
             y = size.getRows();
         }
-    }
 
-    private static class Rectangle {
-        int x, y;
-        int width, height;
+        public Point(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
     }
 
     private static class SWT {
-        private final int DEFAULT = -1;
+        static final int FILL = 4;
+        static final int BEGINNING = 1;
+        static final int TOP = 128;
+        static final int END = 16777224;
+        static final int BOTTOM = 1024;
+        static final int CENTER = 16777216;
+        static final int LEFT = 16384;
+        static final int RIGHT = 131072;
+        static final int DEFAULT = -1;
+    }
+
+    private GridData getGridData(Component control) {
+        Object data = control.getLayoutData();
+        if(data instanceof GridData) {
+            return (GridData)data;
+        }
+        setLayoutData(control, new GridData());
+        return getGridData(control);
+    }
+
+    private void setLayoutData(Component child, GridData gridData) {
+        child.getLayoutData(gridData);
+    }
+
+    public static Object createLayoutData(
+            Alignment horizontalAlignment,
+            Alignment verticalAlignment,
+            boolean expandHorizontally,
+            boolean expandVertically) {
+        return createLayoutData(horizontalAlignment, verticalAlignment, expandHorizontally, expandVertically, 1, 1);
+    }
+
+    public static Object createLayoutData(
+            Alignment horizontalAlignment,
+            Alignment verticalAlignment,
+            boolean expandHorizontally,
+            boolean expandVertically,
+            int horizontalSpan,
+            int verticalSpan) {
+        return new GridData(
+                horizontalAlignment.swtCode,
+                verticalAlignment.swtCode,
+                expandHorizontally,
+                expandVertically,
+                horizontalSpan,
+                verticalSpan);
     }
 
     /**
@@ -153,21 +211,16 @@ public class GridLayout {
     }
 
     @Override
-    protected Point computeSize(Component composite, int wHint, int hHint, boolean flushCache) {
-        Point size = layout(composite, false, 0, 0, wHint, hHint, flushCache);
-        if (wHint != SWT.DEFAULT) {
-            size.x = wHint;
-        }
-        if (hHint != SWT.DEFAULT) {
-            size.y = hHint;
-        }
-        return size;
+    public TerminalSize getPreferredSize(List<Component> components) {
+        Component[] children = components.toArray(new Component[components.size()]);
+        Point size = layout(children, false, 0, 0, SWT.DEFAULT, SWT.DEFAULT, true);
+        return new TerminalSize(size.x, size.y);
     }
 
-    GridData getData(Component[][] grid, int row, int column, int rowCount, int columnCount, boolean first) {
+    private GridData getData(Component[][] grid, int row, int column, int rowCount, int columnCount, boolean first) {
         Component control = grid[row][column];
         if (control != null) {
-            GridData data = (GridData) control.getLayoutData();
+            GridData data = getGridData(control);
             int hSpan = Math.max(1, Math.min(data.horizontalSpan, columnCount));
             int vSpan = Math.max(1, data.verticalSpan);
             int i = first ? row + vSpan - 1 : row - vSpan + 1;
@@ -184,20 +237,19 @@ public class GridLayout {
     }
 
     @Override
-    protected void layout(Component composite, boolean flushCache) {
-        Rectangle rect = composite.getClientArea();
-        layout(composite, true, rect.x, rect.y, rect.width, rect.height, flushCache);
+    public void doLayout(TerminalSize area, List<Component> components) {
+        Component[] children = components.toArray(new Component[components.size()]);
+        layout(children, true, 0, 0, area.getColumns(), area.getRows(), true);
     }
 
-    Point layout(Component composite, boolean move, int x, int y, int width, int height, boolean flushCache) {
+    private Point layout(Component[] children, boolean move, int x, int y, int width, int height, boolean flushCache) {
         if (numColumns < 1) {
             return new Point(marginLeft + marginWidth * 2 + marginRight, marginTop + marginHeight * 2 + marginBottom);
         }
-        Component[] children = composite.getChildren();
         int count = 0;
         for (int i = 0; i < children.length; i++) {
             Component control = children[i];
-            GridData data = (GridData) control.getLayoutData();
+            GridData data = getGridData(control);
             if (data == null || !data.exclude) {
                 children[count++] = children[i];
             }
@@ -207,9 +259,9 @@ public class GridLayout {
         }
         for (int i = 0; i < count; i++) {
             Component child = children[i];
-            GridData data = (GridData) child.getLayoutData();
+            GridData data = getGridData(child);
             if (data == null) {
-                child.setLayoutData(data = new GridData());
+                setLayoutData(child, new GridData());
             }
             if (flushCache) {
                 data.flushCache();
@@ -218,13 +270,6 @@ public class GridLayout {
             if (data.grabExcessHorizontalSpace && data.minimumWidth > 0) {
                 if (data.cacheWidth < data.minimumWidth) {
                     int trim = 0;
-                    //TEMPORARY CODE
-                    if (child instanceof Scrollable) {
-                        Rectangle rect = ((Scrollable) child).computeTrim(0, 0, 0, 0);
-                        trim = rect.width;
-                    } else {
-                        trim = child.getBorderWidth() * 2;
-                    }
                     data.cacheWidth = data.cacheHeight = SWT.DEFAULT;
                     data.computeSize(child, Math.max(0, data.minimumWidth - trim), data.heightHint, false);
                 }
@@ -239,7 +284,7 @@ public class GridLayout {
         Component[][] grid = new Component[4][columnCount];
         for (int i = 0; i < count; i++) {
             Component child = children[i];
-            GridData data = (GridData) child.getLayoutData();
+            GridData data = getGridData(child);
             int hSpan = Math.max(1, Math.min(data.horizontalSpan, columnCount));
             int vSpan = Math.max(1, data.verticalSpan);
             while (true) {
@@ -488,12 +533,6 @@ public class GridLayout {
                             currentWidth += (hSpan - 1) * horizontalSpacing - data.horizontalIndent;
                             if ((currentWidth != data.cacheWidth && data.horizontalAlignment == SWT.FILL) || (data.cacheWidth > currentWidth)) {
                                 int trim = 0;
-                                if (child instanceof Scrollable) {
-                                    Rectangle rect = ((Scrollable) child).computeTrim(0, 0, 0, 0);
-                                    trim = rect.width;
-                                } else {
-                                    trim = child.getBorderWidth() * 2;
-                                }
                                 data.cacheWidth = data.cacheHeight = SWT.DEFAULT;
                                 data.computeSize(child, Math.max(0, currentWidth - trim), data.heightHint, false);
                                 if (data.grabExcessVerticalSpace && data.minimumHeight > 0) {
@@ -724,7 +763,8 @@ public class GridLayout {
                         }
                         Component child = grid[i][j];
                         if (child != null) {
-                            child.setBounds(childX, childY, childWidth, childHeight);
+                            child.setPosition(new TerminalPosition(childX, childY));
+                            child.setSize(new TerminalSize(childWidth, childHeight));
                         }
                     }
                     gridX += widths[j] + horizontalSpacing;
@@ -751,7 +791,7 @@ public class GridLayout {
         return new Point(totalDefaultWidth, totalDefaultHeight);
     }
 
-    String getName() {
+    private String getName() {
         String string = getClass().getName();
         int index = string.lastIndexOf('.');
         if (index == -1) {
@@ -842,10 +882,9 @@ public class GridLayout {
      * </p>
      *
      * @see GridLayout
-     * @see Control#setLayoutData
      * @see <a href="http://www.eclipse.org/swt/">Sample code and further information</a>
      */
-    public static final class GridData {
+    private static final class GridData {
         /**
          * verticalAlignment specifies how controls will be positioned
          * vertically within a cell.
@@ -883,7 +922,6 @@ public class GridLayout {
          *
          * The default value is SWT.DEFAULT.
          *
-         * @see Control#computeSize(int, int, boolean)
          */
         public int widthHint = SWT.DEFAULT;
 
@@ -894,7 +932,6 @@ public class GridLayout {
          *
          * The default value is SWT.DEFAULT.
          *
-         * @see Control#computeSize(int, int, boolean)
          */
         public int heightHint = SWT.DEFAULT;
 
@@ -1004,7 +1041,6 @@ public class GridLayout {
          * The default value is 0.
          *
          * @since 3.1
-         * @see Control#computeSize(int, int, boolean)
          * @see GridData#widthHint
          */
         public int minimumWidth = 0;
@@ -1019,7 +1055,6 @@ public class GridLayout {
          * The default value is 0.
          *
          * @since 3.1
-         * @see Control#computeSize(int, int, boolean)
          * @see GridData#heightHint
          */
         public int minimumHeight = 0;
@@ -1291,7 +1326,7 @@ public class GridLayout {
                 return;
             }
             if (currentWidth == -1 || currentHeight == -1 || wHint != currentWhint || hHint != currentHhint) {
-                Point size = control.computeSize (wHint, hHint, flushCache);
+                Point size = new Point(control.getPreferredSize());
                 currentWhint = wHint;
                 currentHhint = hHint;
                 currentWidth = size.x;
