@@ -1,7 +1,8 @@
 package com.googlecode.lanterna.gui2;
 
 /**
- * Created by martin on 15/09/14.
+ * This interface adds the ability to a Container to keep Interactables and switch between them.
+ * @author Martin
  */
 public interface InteractableContainer extends Container {
     /**

@@ -26,6 +26,7 @@ package com.googlecode.lanterna;
  */
 public class TerminalSize {
     public static final TerminalSize ZERO = new TerminalSize(0, 0);
+    public static final TerminalSize ONE = new TerminalSize(1, 1);
 
     private final int columns;
     private final int rows;

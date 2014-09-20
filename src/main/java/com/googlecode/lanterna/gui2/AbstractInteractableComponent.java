@@ -4,7 +4,9 @@ import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.input.KeyStroke;
 
 /**
- * Created by martin on 15/09/14.
+ * Default implementation of Interactable that extends from AbstractComponent. You will want to extend from this class
+ * if you want to make your own interactable component.
+ * @author Martin
  */
 public abstract class AbstractInteractableComponent extends AbstractComponent implements Interactable {
 

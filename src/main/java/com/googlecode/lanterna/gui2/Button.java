@@ -7,7 +7,9 @@ import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 
 /**
- * Created by martin on 17/09/14.
+ * Simple labeled button with an option action attached to it. You trigger the action by pressing the Enter key on the
+ * keyboard.
+ * @author Martin
  */
 public class Button extends AbstractInteractableComponent {
     private final Runnable action;

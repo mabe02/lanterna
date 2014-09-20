@@ -72,16 +72,6 @@ public interface TextGraphics {
     TextGraphics newTextGraphics(TerminalPosition topLeftCorner, TerminalSize size) throws IllegalArgumentException;
 
     /**
-     * Returns the real 'coordinates' for the TerminalPosition supplied in the terminal. This is useful if you may or
-     * may not be using a {@code TextGraphics} object created through {@code newTextGraphics} that is a view of a
-     * section of the full terminal window. This method will give you back a position in the real terminal for a
-     * position as understood to be in this TextGraphics coordinate space.
-     * @param position Position to translate to real coordinates
-     * @return The translated position, in real coordinates
-     */
-    TerminalPosition getRealPosition(TerminalPosition position);
-
-    /**
      * Moves the position state of the TextGraphics to the specified coordinates
      * @param column Column index of the new position
      * @param row Row index of the new position

@@ -6,7 +6,9 @@ import com.googlecode.lanterna.TerminalSize;
 import java.util.*;
 
 /**
- * Created by martin on 20/09/14.
+ * This class is used to keep a 'map' of the usable area and note where all the interact:ables are. It can then be used
+ * to find the next interactable in any direction. It is used inside the GUI system to drive arrow key navigation.
+ * @author Martin
  */
 public class InteractableLookupMap {
     private final int[][] lookupMap;

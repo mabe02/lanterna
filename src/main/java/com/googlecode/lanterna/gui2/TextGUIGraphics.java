@@ -56,11 +56,6 @@ public final class TextGUIGraphics implements ThemedTextGraphics {
     }
 
     @Override
-    public TerminalPosition getRealPosition(TerminalPosition position) {
-        return backend.getRealPosition(position);
-    }
-
-    @Override
     public TextGUIGraphics applyThemeStyle(ThemeStyle themeStyle) {
         backend.applyThemeStyle(themeStyle);
         return this;

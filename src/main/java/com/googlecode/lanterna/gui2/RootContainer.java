@@ -4,7 +4,9 @@ import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.input.KeyStroke;
 
 /**
- * Created by martin on 18/09/14.
+ * RootContainer is the base container in a Text GUI. A text gui may have several root containers, although they are
+ * always independent. One example of this is a multi-window system where each window is a root container.
+ * @author Martin
  */
 public interface RootContainer {
     /**

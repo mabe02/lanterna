@@ -43,7 +43,7 @@ public class DefaultWindowTextGUI extends AbstractTextGUI implements WindowBased
     }
 
     public DefaultWindowTextGUI(Screen screen, TextColor backgroundColor) {
-        this(screen, new StackedModalWindowManager(), new SolidColorComponent(backgroundColor));
+        this(screen, new StackedModalWindowManager(), new EmptySpace(backgroundColor));
     }
 
     public DefaultWindowTextGUI(Screen screen, WindowManager windowManager, TextGUIElement background) {

@@ -49,11 +49,6 @@ public class ImmutableThemedTextGraphics implements ThemedTextGraphics {
     }
 
     @Override
-    public TerminalPosition getRealPosition(TerminalPosition position) {
-        return backend.getRealPosition(position);
-    }
-
-    @Override
     public TerminalSize getSize() {
         return backend.getSize();
     }

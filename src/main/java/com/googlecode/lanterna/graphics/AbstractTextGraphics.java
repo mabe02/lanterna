@@ -59,11 +59,6 @@ public abstract class AbstractTextGraphics implements TextGraphics {
     }
 
     @Override
-    public TerminalPosition getRealPosition(TerminalPosition position) {
-        return position;
-    }
-
-    @Override
     public TextGraphics setPosition(TerminalPosition newPosition) {
         this.currentPosition = newPosition;
         return this;

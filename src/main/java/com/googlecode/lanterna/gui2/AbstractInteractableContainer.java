@@ -5,7 +5,9 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Created by martin on 15/09/14.
+ * Default implementation of InteractableContainer that extends from AbstractContainer. If you want to create a custom
+ * container that can keep interactable components, you probably want to extend from this class.
+ * @author Martin
  */
 public abstract class AbstractInteractableContainer extends AbstractContainer implements InteractableContainer {
     private final List<Component> interactables;

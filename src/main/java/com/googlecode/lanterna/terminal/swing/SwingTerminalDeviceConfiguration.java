@@ -64,6 +64,7 @@ public class SwingTerminalDeviceConfiguration {
         return cursorColor;
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isCursorBlinking() {
         return cursorBlinking;
     }
