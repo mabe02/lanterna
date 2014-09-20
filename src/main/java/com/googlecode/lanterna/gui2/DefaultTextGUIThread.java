@@ -1,5 +1,6 @@
 package com.googlecode.lanterna.gui2;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.util.Queue;
 import java.util.concurrent.CountDownLatch;
@@ -121,6 +122,7 @@ class DefaultTextGUIThread implements TextGUIThread {
             catch(RuntimeException e) {
                 exceptionHandler.onRuntimeException(e);
             }
+            mainLoop:
             while(status == Status.STARTED) {
                 //Process up to ten keystrokes per cycle
                 for(int i = 0; i < 10; i++) {
@@ -128,6 +130,10 @@ class DefaultTextGUIThread implements TextGUIThread {
                         if (textGUI.processInput()) {
                             continue;
                         }
+                    }
+                    catch(EOFException e) {
+                        stop();
+                        break mainLoop; //Break out quickly from the main loop
                     }
                     catch(IOException e) {
                         exceptionHandler.onIOException(e);
