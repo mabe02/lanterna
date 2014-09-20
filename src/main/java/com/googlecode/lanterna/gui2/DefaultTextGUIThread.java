@@ -136,10 +136,16 @@ class DefaultTextGUIThread implements TextGUIThread {
                         break mainLoop; //Break out quickly from the main loop
                     }
                     catch(IOException e) {
-                        exceptionHandler.onIOException(e);
+                        if(exceptionHandler.onIOException(e)) {
+                            stop();
+                            break mainLoop;
+                        }
                     }
                     catch(RuntimeException e) {
-                        exceptionHandler.onRuntimeException(e);
+                        if(exceptionHandler.onRuntimeException(e)) {
+                            stop();
+                            break mainLoop;
+                        }
                     }
                     break;
                 }
@@ -154,10 +160,16 @@ class DefaultTextGUIThread implements TextGUIThread {
                         textGUI.updateScreen();
                     }
                     catch(IOException e) {
-                        exceptionHandler.onIOException(e);
+                        if(exceptionHandler.onIOException(e)) {
+                            stop();
+                            break;
+                        }
                     }
                     catch(RuntimeException e) {
-                        exceptionHandler.onRuntimeException(e);
+                        if(exceptionHandler.onRuntimeException(e)) {
+                            stop();
+                            break;
+                        }
                     }
                 }
                 else {

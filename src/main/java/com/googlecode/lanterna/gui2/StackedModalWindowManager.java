@@ -20,7 +20,6 @@ package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
-import com.sun.istack.internal.NotNull;
 
 import java.util.*;
 
@@ -199,7 +198,8 @@ public class StackedModalWindowManager implements WindowManager {
         }
 
         @Override
-        public int compareTo(@NotNull ManagedWindow o) {
+        @SuppressWarnings("NullableProblems")   //I can't find the correct way to fix this!
+        public int compareTo(ManagedWindow o) {
             return Integer.compare(ordinal, o.ordinal);
         }
     }

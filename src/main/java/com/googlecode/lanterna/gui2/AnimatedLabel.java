@@ -10,7 +10,7 @@ import java.util.*;
  */
 public class AnimatedLabel extends Label {
     private static Timer TIMER = null;
-    private static WeakHashMap<AnimatedLabel, TimerTask> SCHEDULED_TASKS = new WeakHashMap<AnimatedLabel, TimerTask>();
+    private static final WeakHashMap<AnimatedLabel, TimerTask> SCHEDULED_TASKS = new WeakHashMap<AnimatedLabel, TimerTask>();
 
     public static AnimatedLabel createClassicSpinningLine() {
         return createClassicSpinningLine(150);

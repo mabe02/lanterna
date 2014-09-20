@@ -18,8 +18,6 @@
  */
 package com.googlecode.lanterna.terminal.ansi;
 
-import com.sun.istack.internal.NotNull;
-
 import static com.googlecode.lanterna.terminal.ansi.TelnetProtocol.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -202,7 +200,8 @@ public class TelnetTerminal extends ANSITerminal {
         }
 
         @Override
-        public int read(@NotNull byte[] b, int off, int len) throws IOException {
+        @SuppressWarnings("NullableProblems")   //I can't find the correct way to fix this!
+        public int read(byte[] b, int off, int len) throws IOException {
             if(inputStream.available() > 0) {
                 fillBuffer();
             }

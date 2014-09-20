@@ -2,7 +2,6 @@ package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.graphics.Theme;
 
-import java.io.EOFException;
 import java.io.IOException;
 
 /**
@@ -27,7 +26,7 @@ public interface TextGUI {
      * @throws java.io.IOException In case there was an underlying I/O error
      * @throws java.io.EOFException In the input stream received an EOF marker
      */
-    boolean processInput() throws EOFException, IOException;
+    boolean processInput() throws IOException;
 
     /**
      * Updates the screen, to make any changes visible to the user.
