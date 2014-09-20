@@ -32,16 +32,9 @@ public class MultiButtonTest {
             }));
 
             textGUI.getWindowManager().addWindow(window);
-            textGUI.updateScreen();
-            while(!textGUI.getWindowManager().getWindows().isEmpty()) {
-                textGUI.processInput();
-                if(textGUI.isPendingUpdate()) {
-                    textGUI.updateScreen();
-                }
-                else {
-                    Thread.sleep(1);
-                }
-            }
+            TextGUIThread guiThread = textGUI.getGUIThread();
+            guiThread.start();
+            guiThread.waitForStop();
         }
         finally {
             screen.stopScreen();
