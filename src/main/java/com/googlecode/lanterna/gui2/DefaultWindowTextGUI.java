@@ -19,10 +19,14 @@
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
+
+import java.io.EOFException;
+import java.io.IOException;
 
 /**
  *
@@ -32,6 +36,7 @@ public class DefaultWindowTextGUI extends AbstractTextGUI implements WindowBased
     private final WindowManager windowManager;
     private final TextGUIElement background;
     private final WindowPostRenderer postRenderer;
+    private boolean eofWhenNoWindows;
 
     public DefaultWindowTextGUI(Screen screen) {
         this(screen, TextColor.ANSI.BLUE);
@@ -40,7 +45,6 @@ public class DefaultWindowTextGUI extends AbstractTextGUI implements WindowBased
     public DefaultWindowTextGUI(Screen screen, TextColor backgroundColor) {
         this(screen, new StackedModalWindowManager(), new SolidColorComponent(backgroundColor));
     }
-
 
     public DefaultWindowTextGUI(Screen screen, WindowManager windowManager, TextGUIElement background) {
         this(screen, windowManager, new WindowShadowRenderer(), background);
@@ -51,11 +55,21 @@ public class DefaultWindowTextGUI extends AbstractTextGUI implements WindowBased
         this.windowManager = windowManager;
         this.background = background;
         this.postRenderer = postRenderer;
+        this.eofWhenNoWindows = true;
     }
 
     @Override
     public boolean isPendingUpdate() {
         return super.isPendingUpdate() || background.isInvalid() || windowManager.isInvalid();
+    }
+
+    @Override
+    protected KeyStroke readKeyStroke() throws IOException {
+        KeyStroke keyStroke = super.readKeyStroke();
+        if(eofWhenNoWindows && keyStroke == null && windowManager.getWindows().isEmpty()) {
+            return new KeyStroke(KeyType.EOF);
+        }
+        return keyStroke;
     }
 
     @Override
@@ -82,6 +96,26 @@ public class DefaultWindowTextGUI extends AbstractTextGUI implements WindowBased
             return null;
         }
         return activeWindow.toGlobal(activeWindow.getCursorPosition());
+    }
+
+    /**
+     * Sets whether the TextGUI should return EOF when you try to read input while there are no windows in the window
+     * manager. Setting this to true (on by default) will make the GUI automatically exit when the last window has been
+     * closed.
+     * @param eofWhenNoWindows Should the GUI return EOF when there are no windows left
+     */
+    public void setEOFWhenNoWindows(boolean eofWhenNoWindows) {
+        this.eofWhenNoWindows = eofWhenNoWindows;
+    }
+
+    /**
+     * Returns whether the TextGUI should return EOF when you try to read input while there are no windows in the window
+     * manager. When this is true (true by default) will make the GUI automatically exit when the last window has been
+     * closed.
+     * @return Should the GUI return EOF when there are no windows left
+     */
+    public boolean isEOFWhenNoWindows() {
+        return eofWhenNoWindows;
     }
 
     @Override

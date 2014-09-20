@@ -52,9 +52,13 @@ public abstract class AbstractTextGUI implements TextGUI {
         }
     }
 
+    protected KeyStroke readKeyStroke() throws IOException {
+        return screen.readInput();
+    }
+
     @Override
     public boolean processInput() throws IOException {
-        KeyStroke keyStroke = screen.readInput();
+        KeyStroke keyStroke = readKeyStroke();
         if(keyStroke != null) {
             if(keyStroke.getKeyType() == KeyType.EOF) {
                 throw new EOFException();
