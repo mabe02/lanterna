@@ -21,10 +21,10 @@ public interface WindowDecorationRenderer {
     /**
      * Retrieves the full size of the window, including all window decorations, given all components inside the window.
      * @param window Window to calculate size for
-     * @param componentSize Size of the components
+     * @param contentAreaSize Size of the content area in the window
      * @return Full size of the window, including decorations
      */
-    TerminalSize getDecoratedSize(Window window, TerminalSize componentSize);
+    TerminalSize getDecoratedSize(Window window, TerminalSize contentAreaSize);
 
     /**
      * Returns how much to step right and down from the top left position of the window decorations to the top left
