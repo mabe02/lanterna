@@ -232,9 +232,9 @@ public class KeyStroke {
                     k = new KeyStroke(KeyType.Home);
                 } else if (keyStrLC.equals("<end>")) {
                     k = new KeyStroke(KeyType.End);
-                } else if (keyStrLC.equals("<page up>")) {
+                } else if (keyStrLC.equals("<pageup>")) {
                     k = new KeyStroke(KeyType.PageUp);
-                } else if (keyStrLC.equals("<page down>")) {
+                } else if (keyStrLC.equals("<pagedown>")) {
                     k = new KeyStroke(KeyType.PageDown);
                 } else if (keyStrLC.equals("<f1>")) {
                     k = new KeyStroke(KeyType.F1);
