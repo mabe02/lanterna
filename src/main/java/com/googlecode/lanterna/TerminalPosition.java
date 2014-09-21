@@ -31,6 +31,7 @@ public class TerminalPosition {
      * Constant for the top-left corner (0x0)
      */
     public static final TerminalPosition TOP_LEFT_CORNER = new TerminalPosition(0, 0);
+    public static final TerminalPosition OFFSET_1x1 = new TerminalPosition(1, 1);
 
     private final int row;
     private final int column;

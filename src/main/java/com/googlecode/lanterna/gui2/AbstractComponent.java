@@ -82,7 +82,11 @@ public abstract class AbstractComponent implements Component {
 
     @Override
     public TerminalSize getPreferredSize() {
-        return getPreferredSizeWithoutBorder();
+        TerminalSize preferredSize = getPreferredSizeWithoutBorder();
+        if(border != null) {
+            preferredSize = border.getBorderSize(this, preferredSize);
+        }
+        return preferredSize;
     }
     
     @Override
@@ -101,6 +105,9 @@ public abstract class AbstractComponent implements Component {
 
     @Override
     public final void draw(TextGUIGraphics graphics) {
+        if(border != null) {
+            graphics = border.draw(graphics);
+        }
         drawComponent(graphics);
         invalid = false;
     }
