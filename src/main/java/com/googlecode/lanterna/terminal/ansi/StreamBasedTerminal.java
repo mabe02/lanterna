@@ -177,11 +177,20 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
 
     @Override
     public KeyStroke pollInput() throws IOException {
+        return readInput(false);
+    }
+
+    @Override
+    public KeyStroke readInput() throws IOException {
+        return readInput(true);
+    }
+
+    private KeyStroke readInput(boolean blocking) throws IOException {
         synchronized(readMutex) {
             if(!keyQueue.isEmpty())
                 return keyQueue.poll();
 
-            KeyStroke key = inputDecoder.getNextCharacter(false);
+            KeyStroke key = inputDecoder.getNextCharacter(blocking);
             if (key != null && key.getKeyType() == KeyType.CursorLocation) {
                 TerminalPosition reportedTerminalPosition = inputDecoder.getLastReportedTerminalPosition();
                 if (reportedTerminalPosition != null)
@@ -192,11 +201,6 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
                 return key;
             }
         }
-    }
-
-    @Override
-    public KeyStroke readInput() throws IOException {
-        return null;
     }
 
     @Override

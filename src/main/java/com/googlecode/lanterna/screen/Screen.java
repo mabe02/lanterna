@@ -20,6 +20,7 @@ package com.googlecode.lanterna.screen;
 
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.graphics.TextGraphics;
+import com.googlecode.lanterna.input.InputProvider;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
@@ -37,7 +38,7 @@ import java.io.IOException;
  *
  * @author Martin
  */
-public interface Screen {
+public interface Screen extends InputProvider {
     /**
      * Before you can use a Screen, you need to start it. By starting the screen, Lanterna will make sure the terminal
      * is in private mode (Screen only supports private mode), clears it (so that is can set the front and back buffers
@@ -145,14 +146,6 @@ public interface Screen {
      * @return A {@code ScreenCharacter} representation of the character in the back-buffer at the specified location
      */
     TextCharacter getBackCharacter(TerminalPosition position);
-
-    /**
-     * Reads the next {@code KeyStroke} from the input queue, or returns null if there is nothing on the queue. This
-     * method will <b>not</b> block until input is available, you'll need to poll it periodically.
-     * @return The KeyStroke that came from the underlying system, or null if there was no input available
-     * @throws java.io.IOException In case there was a problem with the underlying input system
-     */
-    KeyStroke readInput() throws IOException;
 
     /**
      * This method will take the content from the back-buffer and move it into the front-buffer, making the changes

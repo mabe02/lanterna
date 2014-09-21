@@ -64,11 +64,16 @@ public class DefaultWindowTextGUI extends AbstractTextGUI implements WindowBased
 
     @Override
     protected KeyStroke readKeyStroke() throws IOException {
-        KeyStroke keyStroke = super.readKeyStroke();
+        KeyStroke keyStroke = super.pollInput();
         if(eofWhenNoWindows && keyStroke == null && windowManager.getWindows().isEmpty()) {
             return new KeyStroke(KeyType.EOF);
         }
-        return keyStroke;
+        else if(keyStroke != null) {
+            return keyStroke;
+        }
+        else {
+            return super.readKeyStroke();
+        }
     }
 
     @Override

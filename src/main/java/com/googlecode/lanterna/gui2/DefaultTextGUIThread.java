@@ -124,30 +124,24 @@ class DefaultTextGUIThread implements TextGUIThread {
             }
             mainLoop:
             while(status == Status.STARTED) {
-                //Process up to ten keystrokes per cycle
-                for(int i = 0; i < 10; i++) {
-                    try {
-                        if (textGUI.processInput()) {
-                            continue;
-                        }
-                    }
-                    catch(EOFException e) {
+                try {
+                    textGUI.processInput();
+                }
+                catch(EOFException e) {
+                    stop();
+                    break; //Break out quickly from the main loop
+                }
+                catch(IOException e) {
+                    if(exceptionHandler.onIOException(e)) {
                         stop();
-                        break mainLoop; //Break out quickly from the main loop
+                        break;
                     }
-                    catch(IOException e) {
-                        if(exceptionHandler.onIOException(e)) {
-                            stop();
-                            break mainLoop;
-                        }
+                }
+                catch(RuntimeException e) {
+                    if(exceptionHandler.onRuntimeException(e)) {
+                        stop();
+                        break;
                     }
-                    catch(RuntimeException e) {
-                        if(exceptionHandler.onRuntimeException(e)) {
-                            stop();
-                            break mainLoop;
-                        }
-                    }
-                    break;
                 }
                 while(!customTasks.isEmpty()) {
                     Runnable r = customTasks.poll();

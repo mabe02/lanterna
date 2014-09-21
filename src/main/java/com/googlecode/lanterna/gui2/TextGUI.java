@@ -19,10 +19,12 @@ public interface TextGUI {
     void setTheme(Theme theme);
 
     /**
-     * Reads a KeyStroke from the input queue and passes it through the GUI system. For window-based system, it will
-     * send the keystroke to the active window for processing. If the input read gives an EOF, it will throw
-     * EOFException and this is normally the signal to shut down the GUI.
-     * @return {@code true} if an event was processed, {@code false} if there was nothing on the input queue
+     * Drains the input queue and passes the key strokes to the GUI system for processing. For window-based system, it
+     * will send each key stroke to the active window for processing. If the input read gives an EOF, it will throw
+     * EOFException and this is normally the signal to shut down the GUI (any command coming in before the EOF will be
+     * processed as usual before this).
+     * @return {@code true} if at least one key stroke was read and processed, {@code false} if there was nothing on the
+     * input queue (only for non-blocking IO)
      * @throws java.io.IOException In case there was an underlying I/O error
      * @throws java.io.EOFException In the input stream received an EOF marker
      */

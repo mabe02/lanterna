@@ -22,12 +22,14 @@ import java.util.Properties;
 public abstract class AbstractTextGUI implements TextGUI {
 
     private final Screen screen;
+    private boolean blockingIO;
     private boolean dirty;
     private TextGUIThread textGUIThread;
     private Theme guiTheme;
 
     protected AbstractTextGUI(Screen screen) {
         this.screen = screen;
+        this.blockingIO = false;
         this.dirty = false;
         this.textGUIThread = null;
         this.guiTheme = new PropertiesTheme(loadDefaultThemeProperties());
@@ -51,19 +53,28 @@ public abstract class AbstractTextGUI implements TextGUI {
     }
 
     protected KeyStroke readKeyStroke() throws IOException {
-        return screen.readInput();
+        return blockingIO ? screen.readInput() : pollInput();
+    }
+
+    protected KeyStroke pollInput() throws IOException {
+        return screen.pollInput();
     }
 
     @Override
     public boolean processInput() throws IOException {
+        boolean gotInput = false;
         KeyStroke keyStroke = readKeyStroke();
         if(keyStroke != null) {
-            if(keyStroke.getKeyType() == KeyType.EOF) {
-                throw new EOFException();
-            }
-            dirty = handleInput(keyStroke) || dirty;
+            gotInput = true;
+            do {
+                if (keyStroke.getKeyType() == KeyType.EOF) {
+                    throw new EOFException();
+                }
+                dirty = handleInput(keyStroke) || dirty;
+                keyStroke = pollInput();
+            } while(keyStroke != null);
         }
-        return keyStroke != null;
+        return gotInput;
     }
 
     @Override
@@ -92,6 +103,14 @@ public abstract class AbstractTextGUI implements TextGUI {
         }
         textGUIThread = new DefaultTextGUIThread(this);
         return textGUIThread;
+    }
+
+    public void setBlockingIO(boolean blockingIO) {
+        this.blockingIO = blockingIO;
+    }
+
+    public boolean isBlockingIO() {
+        return blockingIO;
     }
 
     protected abstract void drawGUI(TextGUIGraphics graphics);

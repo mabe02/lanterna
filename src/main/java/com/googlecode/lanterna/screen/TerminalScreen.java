@@ -60,6 +60,11 @@ public abstract class TerminalScreen extends AbstractScreen {
 
     @Override
     public KeyStroke readInput() throws IOException {
+        return terminal.readInput();
+    }
+
+    @Override
+    public KeyStroke pollInput() throws IOException {
         return terminal.pollInput();
     }
 

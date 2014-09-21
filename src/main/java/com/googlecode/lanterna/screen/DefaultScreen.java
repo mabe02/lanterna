@@ -165,7 +165,7 @@ public class DefaultScreen extends TerminalScreen {
         //Drain the input queue
         KeyStroke keyStroke;
         do {
-            keyStroke = readInput();
+            keyStroke = pollInput();
         }
         while(keyStroke != null && keyStroke.getKeyType() != KeyType.EOF);
 
