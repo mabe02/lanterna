@@ -38,8 +38,13 @@ public class Borders {
         }
 
         @Override
-        public TerminalSize getBorderSize(Component component, TerminalSize preferredSizeWithoutBorder) {
+        public TerminalSize getBorderSize(TerminalSize preferredSizeWithoutBorder) {
             return preferredSizeWithoutBorder.withRelativeColumns(2).withRelativeRows(2);
+        }
+
+        @Override
+        public TerminalPosition getOffset() {
+            return TerminalPosition.OFFSET_1x1;
         }
 
         @Override
@@ -76,7 +81,7 @@ public class Borders {
                 graphics.putString(2, 0, title);
             }
 
-            return graphics.newTextGraphics(TerminalPosition.OFFSET_1x1, drawableArea.withRelativeColumns(-2).withRows(-2));
+            return graphics.newTextGraphics(TerminalPosition.OFFSET_1x1, drawableArea.withRelativeColumns(-2).withRelativeRows(-2));
         }
 
         protected abstract char getHorizontalLine(TextGUIGraphics graphics);

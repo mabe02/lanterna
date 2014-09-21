@@ -84,7 +84,7 @@ public abstract class AbstractComponent implements Component {
     public TerminalSize getPreferredSize() {
         TerminalSize preferredSize = getPreferredSizeWithoutBorder();
         if(border != null) {
-            preferredSize = border.getBorderSize(this, preferredSize);
+            preferredSize = border.getBorderSize(preferredSize);
         }
         return preferredSize;
     }
@@ -142,7 +142,11 @@ public abstract class AbstractComponent implements Component {
 
     @Override
     public TerminalPosition toRootContainer(TerminalPosition position) {
-        return getParent().toRootContainer(getPosition().withRelative(position));
+        TerminalPosition borderOffset = TerminalPosition.TOP_LEFT_CORNER;
+        if(border != null) {
+            borderOffset = border.getOffset();
+        }
+        return getParent().toRootContainer(getPosition().withRelative(borderOffset).withRelative(position));
     }
 
     @Override
