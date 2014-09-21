@@ -173,7 +173,9 @@ public class Window
     {
         if(currentlyInFocus == null) {
             setFocus(contentPane.nextFocus(null));
-            invalidate();
+            if(currentlyInFocus != null) {
+                invalidate();
+            }
         }
     }
 
@@ -334,6 +336,9 @@ public class Window
 
     protected void setFocus(Interactable newFocus, Interactable.FocusChangeDirection direction)
     {
+        if(newFocus == currentlyInFocus) {
+            return;
+        }
         if(currentlyInFocus != null)
             currentlyInFocus.onLeaveFocus(direction);
         
