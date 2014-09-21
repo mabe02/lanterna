@@ -26,13 +26,12 @@ import com.googlecode.lanterna.TerminalSize;
  * @author Martin
  */
 public abstract class AbstractComponent implements Component {
-    private Container parent;
+    private Composite parent;
     private TerminalSize size;
     private TerminalPosition position;
     private Object layoutData;
     private boolean invalid;
     private boolean disposed;
-    private Border border;
     private ComponentRenderer<? extends Component> themeRenderer;
 
     public AbstractComponent() {
@@ -41,17 +40,8 @@ public abstract class AbstractComponent implements Component {
         layoutData = null;
         invalid = true;
         disposed = false;
-        border = null;
         parent = null;
     }
-
-    /**
-     * Implement this method and return how large you want the component to be, taking no borders into account.
-     * AbstractComponent calls this in its implementation of {@code getPreferredSize()} and adds on border size
-     * automatically.
-     * @return Size this component would like to have, without taking borders into consideration
-     */
-    protected abstract TerminalSize getPreferredSizeWithoutBorder();
 
     protected void invalidate() {
         ensureNotDisposed();
@@ -79,15 +69,6 @@ public abstract class AbstractComponent implements Component {
     public TerminalPosition getPosition() {
         return position;
     }
-
-    @Override
-    public TerminalSize getPreferredSize() {
-        TerminalSize preferredSize = getPreferredSizeWithoutBorder();
-        if(border != null) {
-            preferredSize = border.getBorderSize(preferredSize);
-        }
-        return preferredSize;
-    }
     
     @Override
     public boolean isInvalid() {
@@ -105,9 +86,6 @@ public abstract class AbstractComponent implements Component {
 
     @Override
     public final void draw(TextGUIGraphics graphics) {
-        if(border != null) {
-            graphics = border.draw(graphics);
-        }
         drawComponent(graphics);
         invalid = false;
     }
@@ -128,7 +106,7 @@ public abstract class AbstractComponent implements Component {
     }
 
     @Override
-    public Container getParent() {
+    public Composite getParent() {
         return parent;
     }
 
@@ -142,20 +120,16 @@ public abstract class AbstractComponent implements Component {
 
     @Override
     public TerminalPosition toRootContainer(TerminalPosition position) {
-        TerminalPosition borderOffset = TerminalPosition.TOP_LEFT_CORNER;
-        if(border != null) {
-            borderOffset = border.getOffset();
-        }
-        return getParent().toRootContainer(getPosition().withRelative(borderOffset).withRelative(position));
+        return getParent().toRootContainer(getPosition().withRelative(position));
     }
 
     @Override
-    public void setParent(Container parent) {
+    public void setParent(Composite parent) {
         ensureNotDisposed();
         if(this.parent == parent) {
             return;
         }
-        Container oldParent = this.parent;
+        Composite oldParent = this.parent;
         this.parent = null;
         if(oldParent != null && oldParent.containsComponent(this)) {
             oldParent.removeComponent(this);
@@ -169,10 +143,9 @@ public abstract class AbstractComponent implements Component {
     }
 
     @Override
-    public AbstractComponent withBorder(Border border) {
-        ensureNotDisposed();
-        this.border = border;
-        return this;
+    public Border withBorder(Border border) {
+        border.addComponent(this);
+        return border;
     }
 
     @Override

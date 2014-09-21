@@ -230,15 +230,15 @@ public class AbstractWindow implements Window {
         invalid = true;
     }
 
-    private class ContentArea extends AbstractInteractableContainer {
+    private class ContentArea extends AbstractInteractableComposite {
         @Override
         public void addComponent(Component component) {
             super.addComponent(component);
             if(focusedInteractable == null && component instanceof Interactable) {
                 setFocusedInteractable((Interactable)component);
             }
-            else if(focusedInteractable == null && component instanceof InteractableContainer) {
-                setFocusedInteractable(((InteractableContainer)component).nextFocus(null));
+            else if(focusedInteractable == null && component instanceof InteractableComposite) {
+                setFocusedInteractable(((InteractableComposite)component).nextFocus(null));
             }
         }
 

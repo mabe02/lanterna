@@ -18,18 +18,13 @@
  */
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.TerminalPosition;
-
 /**
  *
  * @author Martin
  */
-public interface Container {
-    void addComponent(Component component);
-    void removeComponent(Component component);
+public interface Container extends Composite {
     void removeAllComponents();
     
-    boolean containsComponent(Component component);
     int getComponentIndex(Component component);
     Component getComponentAt(int index);
     int getNumberOfComponents();
@@ -40,22 +35,4 @@ public interface Container {
      */
     void setLayoutManager(LayoutManager layoutManager);
 
-    /**
-     * Returns the container which is holding this container, or {@code null} if it's not assigned to anything.
-     * @return Parent container or null
-     */
-    Container getParent();
-
-    /**
-     * Returns the root container that this container belongs to. In a window-based GUI system, this will be a Window.
-     * @return The root container this component is placed on, or {@code null} if none
-     */
-    RootContainer getRootContainer();
-
-    /**
-     * Translates a position local to the container to the root container's coordinate space
-     * @param position Position to translate (relative to the container's top-left corner)
-     * @return Position in root container space
-     */
-    TerminalPosition toRootContainer(TerminalPosition position);
 }

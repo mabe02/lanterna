@@ -6,6 +6,6 @@ import com.googlecode.lanterna.TerminalSize;
  * @author Martin
  */
 public interface ComponentRenderer<T extends Component> {
-    TerminalSize getPreferredSizeWithoutBorder(T component);
+    TerminalSize getPreferredSize(T component);
     void drawComponent(TextGUIGraphics graphics, T component);
 }

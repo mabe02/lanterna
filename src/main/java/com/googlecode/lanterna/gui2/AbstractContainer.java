@@ -147,7 +147,7 @@ public abstract class AbstractContainer extends AbstractComponent implements Con
     }
 
     @Override
-    protected TerminalSize getPreferredSizeWithoutBorder() {
+    public TerminalSize getPreferredSize() {
         if(preferredSize == null) {
             preferredSize = layoutManager.getPreferredSize(Collections.unmodifiableList(components));
         }

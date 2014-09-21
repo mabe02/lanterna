@@ -27,7 +27,7 @@ public class Borders {
         return new DoubleLine(title);
     }
 
-    private static abstract class StandardBorder implements Border {
+    private static abstract class StandardBorder extends AbstractBorder {
         private final String title;
 
         protected StandardBorder(String title) {
@@ -38,17 +38,25 @@ public class Borders {
         }
 
         @Override
-        public TerminalSize getBorderSize(TerminalSize preferredSizeWithoutBorder) {
-            return preferredSizeWithoutBorder.withRelativeColumns(2).withRelativeRows(2);
+        public TerminalSize getPreferredSize() {
+            Component wrappedComponent = getWrappedComponent();
+            if(wrappedComponent == null) {
+                return TerminalSize.ZERO;
+            }
+            return wrappedComponent.getPreferredSize().withRelativeColumns(2).withRelativeRows(2);
         }
 
         @Override
-        public TerminalPosition getOffset() {
-            return TerminalPosition.OFFSET_1x1;
+        public TerminalPosition toRootContainer(TerminalPosition position) {
+            return getParent().toRootContainer(getPosition().withRelative(position).withRelative(TerminalPosition.OFFSET_1x1));
         }
 
         @Override
-        public TextGUIGraphics draw(TextGUIGraphics graphics) {
+        public void drawComponent(TextGUIGraphics graphics) {
+            Component wrappedComponent = getWrappedComponent();
+            if(wrappedComponent == null) {
+                return;
+            }
             TerminalSize drawableArea = graphics.getSize();
             graphics.applyThemeStyle(graphics.getThemeDefinition(StandardBorder.class).getNormal());
 
@@ -81,7 +89,7 @@ public class Borders {
                 graphics.putString(2, 0, title);
             }
 
-            return graphics.newTextGraphics(TerminalPosition.OFFSET_1x1, drawableArea.withRelativeColumns(-2).withRelativeRows(-2));
+            wrappedComponent.draw(graphics.newTextGraphics(TerminalPosition.OFFSET_1x1, drawableArea.withRelativeColumns(-2).withRelativeRows(-2)));
         }
 
         protected abstract char getHorizontalLine(TextGUIGraphics graphics);

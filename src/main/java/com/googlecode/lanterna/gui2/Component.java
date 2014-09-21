@@ -61,13 +61,6 @@ public interface Component extends TextGUIElement {
     TerminalSize getPreferredSize();
 
     /**
-     * Adds a border around the component.
-     * @param border Border to use around the component
-     * @return Itself
-     */
-    Component withBorder(Border border);
-
-    /**
      * Sets optional layout data associated with this component. This meaning of this data is up to the layout manager
      * to figure out, see each layout manager for examples of how to use it.
      * @param data Layout data associated with this component
@@ -83,31 +76,14 @@ public interface Component extends TextGUIElement {
     Object getLayoutData();
 
     /**
-     * Returns the container which is holding this component, or {@code null} if it's not assigned to anything.
-     * @return Parent container or null
-     */
-    Container getParent();
-
-    /**
-     * Returns the root container that this component belongs to. In a window-based GUI system, this will be a Window.
-     * @return The root container this component is placed on, or {@code null} if none
-     */
-    RootContainer getRootContainer();
-
-    /**
-     * Translates a position local to the component to the root container's coordinate space
-     * @param position Position to translate (relative to the component's top-left corner)
-     * @return Position in root container space
-     */
-    TerminalPosition toRootContainer(TerminalPosition position);
-
-    /**
      * Assigns the component to a new container. If the component already belongs to a different container, it will be
      * removed from there first. Calling {@code setParent(null)} is the same as removing the component from the
      * container.
      * @param parent New parent container or {@code null} if you want to remove the component from its current parent
      */
-    void setParent(Container parent);
+    void setParent(Composite parent);
+    
+    Border withBorder(Border border);
 
     /**
      * Removes the component from its parent and frees up any resources (threads, etc) associated with the component.

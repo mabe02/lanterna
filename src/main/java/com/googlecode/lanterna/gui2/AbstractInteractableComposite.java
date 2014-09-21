@@ -9,10 +9,10 @@ import java.util.List;
  * container that can keep interactable components, you probably want to extend from this class.
  * @author Martin
  */
-public abstract class AbstractInteractableContainer extends AbstractContainer implements InteractableContainer {
+public abstract class AbstractInteractableComposite extends AbstractContainer implements InteractableComposite {
     private final List<Component> interactables;
 
-    protected AbstractInteractableContainer() {
+    protected AbstractInteractableComposite() {
         //Make sure the user hasn't implemented Interactable too
         if(this instanceof Interactable) {
             throw new IllegalStateException("Class " + this.getClass().getName() + " is implementing Interactable and " +
@@ -26,7 +26,7 @@ public abstract class AbstractInteractableContainer extends AbstractContainer im
     @Override
     public void addComponent(Component component) {
         super.addComponent(component);
-        if (component instanceof Interactable || component instanceof InteractableContainer) {
+        if (component instanceof Interactable || component instanceof InteractableComposite) {
             synchronized (interactables) {
                 if (!interactables.contains(component)) {
                     interactables.add(component);
@@ -51,8 +51,8 @@ public abstract class AbstractInteractableContainer extends AbstractContainer im
     @Override
     public boolean hasInteractable(Interactable interactable) {
         for (Component component : interactables) {
-            if (component instanceof InteractableContainer) {
-                if (((InteractableContainer) (component)).hasInteractable(interactable)) {
+            if (component instanceof InteractableComposite) {
+                if (((InteractableComposite) (component)).hasInteractable(interactable)) {
                     return true;
                 }
             }
@@ -72,8 +72,8 @@ public abstract class AbstractInteractableContainer extends AbstractContainer im
                 if (component instanceof Interactable) {
                     return (Interactable) component;
                 }
-                if (component instanceof InteractableContainer) {
-                    Interactable firstInteractable = ((InteractableContainer) (component)).nextFocus(null);
+                if (component instanceof InteractableComposite) {
+                    Interactable firstInteractable = ((InteractableComposite) (component)).nextFocus(null);
                     if (firstInteractable != null) {
                         return firstInteractable;
                     }
@@ -86,8 +86,8 @@ public abstract class AbstractInteractableContainer extends AbstractContainer im
                 continue;
             }
 
-            if (component instanceof InteractableContainer) {
-                InteractableContainer ic = (InteractableContainer) component;
+            if (component instanceof InteractableComposite) {
+                InteractableComposite ic = (InteractableComposite) component;
                 if (ic.hasInteractable(fromThis)) {
                     Interactable next = ic.nextFocus(fromThis);
                     if (next == null) {
@@ -113,8 +113,8 @@ public abstract class AbstractInteractableContainer extends AbstractContainer im
                 if (component instanceof Interactable) {
                     return (Interactable) component;
                 }
-                if (component instanceof InteractableContainer) {
-                    Interactable lastInteractable = ((InteractableContainer) (component)).previousFocus(null);
+                if (component instanceof InteractableComposite) {
+                    Interactable lastInteractable = ((InteractableComposite) (component)).previousFocus(null);
                     if (lastInteractable != null) {
                         return lastInteractable;
                     }
@@ -127,8 +127,8 @@ public abstract class AbstractInteractableContainer extends AbstractContainer im
                 continue;
             }
 
-            if (component instanceof InteractableContainer) {
-                InteractableContainer ic = (InteractableContainer) component;
+            if (component instanceof InteractableComposite) {
+                InteractableComposite ic = (InteractableComposite) component;
                 if (ic.hasInteractable(fromThis)) {
                     Interactable next = ic.previousFocus(fromThis);
                     if (next == null) {
@@ -142,10 +142,11 @@ public abstract class AbstractInteractableContainer extends AbstractContainer im
         return null;
     }
 
+    @Override
     public void updateLookupMap(InteractableLookupMap interactableLookupMap) {
         for(Component component: getComponents()) {
-            if(component instanceof AbstractInteractableContainer) {
-                ((AbstractInteractableContainer)component).updateLookupMap(interactableLookupMap);
+            if(component instanceof InteractableComposite) {
+                ((InteractableComposite)component).updateLookupMap(interactableLookupMap);
             }
             else if(component instanceof Interactable) {
                 interactableLookupMap.add((Interactable)component);

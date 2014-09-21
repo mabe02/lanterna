@@ -4,7 +4,7 @@ package com.googlecode.lanterna.gui2;
  * This interface adds the ability to a Container to keep Interactables and switch between them.
  * @author Martin
  */
-public interface InteractableContainer extends Container {
+public interface InteractableComposite extends Composite {
     /**
      * Returns true if this container contains the {@code interactable} passed in as the parameter
      *
@@ -32,4 +32,6 @@ public interface InteractableContainer extends Container {
      * interactables in the list
      */
     Interactable previousFocus(Interactable fromThis);
+    
+    void updateLookupMap(InteractableLookupMap interactableLookupMap);
 }

@@ -18,6 +18,8 @@
  */
 package com.googlecode.lanterna.gui2;
 
+import com.googlecode.lanterna.TerminalPosition;
+
 /**
  * This interface is the base part in the Lanterna Text GUI component hierarchy
  * @author Martin
@@ -25,4 +27,23 @@ package com.googlecode.lanterna.gui2;
 public interface TextGUIElement {
     void draw(TextGUIGraphics graphics);
     boolean isInvalid();
+    
+    /**
+     * Translates a position local to the container to the root container's coordinate space
+     * @param position Position to translate (relative to the container's top-left corner)
+     * @return Position in root container space
+     */
+    TerminalPosition toRootContainer(TerminalPosition position);
+    
+    /**
+     * Returns the container which is holding this container, or {@code null} if it's not assigned to anything.
+     * @return Parent container or null
+     */
+    Composite getParent();
+
+    /**
+     * Returns the root container that this container belongs to. In a window-based GUI system, this will be a Window.
+     * @return The root container this component is placed on, or {@code null} if none
+     */
+    RootContainer getRootContainer();
 }

@@ -14,18 +14,18 @@ public class PanelTest extends TestBase {
     public void init(WindowBasedTextGUI textGUI) {
         final BasicWindow window = new BasicWindow("Grid layout test");
         Container contentArea = window.getContentArea();
-        Panel panel = new Panel().withBorder(Borders.singleLine());
+        Panel panel = new Panel();
         panel.addComponent(new Button("Panel 1 Button"));
-        contentArea.addComponent(panel);
-        panel = new Panel().withBorder(Borders.singleLine());
+        contentArea.addComponent(panel.withBorder(Borders.singleLine()));
+        panel = new Panel();
         panel.addComponent(new Button("Panel 2 Button"));
-        contentArea.addComponent(panel);
-        panel = new Panel().withBorder(Borders.singleLine());
+        contentArea.addComponent(panel.withBorder(Borders.singleLine()));
+        panel = new Panel();
         panel.addComponent(new Button("Panel 3 Button"));
-        contentArea.addComponent(panel);
-        panel = new Panel().withBorder(Borders.singleLine());
+        contentArea.addComponent(panel.withBorder(Borders.singleLine()));
+        panel = new Panel();
         panel.addComponent(new Button("Panel 4 Button"));
-        contentArea.addComponent(panel);
+        contentArea.addComponent(panel.withBorder(Borders.singleLine()));
         contentArea.addComponent(new Button("OK", new Runnable() {
             @Override
             public void run() {

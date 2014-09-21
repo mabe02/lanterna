@@ -35,8 +35,8 @@ public class Button extends AbstractInteractableComponent {
     }
 
     @Override
-    protected TerminalSize getPreferredSizeWithoutBorder() {
-        return getThemeRenderer().getPreferredSizeWithoutBorder(this);
+    public TerminalSize getPreferredSize() {
+        return getThemeRenderer().getPreferredSize(this);
     }
 
     @Override
@@ -84,7 +84,7 @@ public class Button extends AbstractInteractableComponent {
         }
 
         @Override
-        public TerminalSize getPreferredSizeWithoutBorder(Button button) {
+        public TerminalSize getPreferredSize(Button button) {
             return new TerminalSize(Math.max(8, button.getLabel().length() + 2), 1);
         }
 
