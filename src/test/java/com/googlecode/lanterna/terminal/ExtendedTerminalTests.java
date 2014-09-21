@@ -37,6 +37,6 @@ public class ExtendedTerminalTests {
         extendedTerminal.flush();
 
         //Drain the input queue (could hold the size reply)
-        while(extendedTerminal.readInput() != null);
+        while(extendedTerminal.pollInput() != null);
     }
 }

@@ -236,9 +236,9 @@ public class IOSafeTerminalAdapter implements IOSafeTerminal {
     }
 
     @Override
-    public KeyStroke readInput() {
+    public KeyStroke pollInput() {
         try {
-            return backend.readInput();
+            return backend.pollInput();
         }
         catch(IOException e) {
             exceptionHandler.onException(e);

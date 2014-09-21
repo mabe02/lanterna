@@ -137,7 +137,7 @@ public class PseudoTerminal {
                 public void run() {
                     try {
                         while(!stop) {
-                            KeyStroke keyStroke = terminalEmulator.readInput();
+                            KeyStroke keyStroke = terminalEmulator.pollInput();
                             if(keyStroke == null) {
                                 Thread.sleep(1);
                             }

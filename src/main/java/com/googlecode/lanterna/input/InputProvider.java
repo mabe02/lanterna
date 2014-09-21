@@ -33,5 +33,5 @@ public interface InputProvider {
      * @return Key object which represents a keystroke coming in through the input stream
      * @throws java.io.IOException Propagated error if the underlying stream gave errors
      */
-    KeyStroke readInput() throws IOException;
+    KeyStroke pollInput() throws IOException;
 }

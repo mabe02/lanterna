@@ -39,7 +39,7 @@ public class CJKTerminalTest {
         int pos = 0;
         int line = 1;
         for(int i = 0; i < 50; i++) {
-            if(terminal.readInput() != null) {
+            if(terminal.pollInput() != null) {
                 break;
             }
             terminal.setCursorPosition(0, 0);
@@ -55,7 +55,7 @@ public class CJKTerminalTest {
         terminal.setForegroundColor(TextColor.ANSI.WHITE);
         terminal.setBackgroundColor(TextColor.ANSI.RED);
         for(int i = 0; i < 5; i++) {
-            if(terminal.readInput() != null) {
+            if(terminal.pollInput() != null) {
                 break;
             }
             terminal.setCursorPosition(5, i + 1);

@@ -41,7 +41,7 @@ public class Terminal24bitColorTest {
         TerminalSize size = terminal.getTerminalSize();
 
         while(true) {
-            if(terminal.readInput() != null) {
+            if(terminal.pollInput() != null) {
                 terminal.exitPrivateMode();
                 return;
             }

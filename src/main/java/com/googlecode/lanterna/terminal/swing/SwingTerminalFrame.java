@@ -127,11 +127,11 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
     // Delegate all Terminal interface implementations to SwingTerminal
     ///////////
     @Override
-    public KeyStroke readInput() {
+    public KeyStroke pollInput() {
         if(disposed) {
             return new KeyStroke(KeyType.EOF);
         }
-        KeyStroke keyStroke = swingTerminal.readInput();
+        KeyStroke keyStroke = swingTerminal.pollInput();
         if(autoCloseTrigger == AutoCloseTrigger.CloseOnEscape && 
                 keyStroke != null && 
                 keyStroke.getKeyType() == KeyType.Escape) {

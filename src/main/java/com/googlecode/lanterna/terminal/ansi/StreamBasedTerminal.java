@@ -176,7 +176,7 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
     }
 
     @Override
-    public KeyStroke readInput() throws IOException {
+    public KeyStroke pollInput() throws IOException {
         synchronized(readMutex) {
             if(!keyQueue.isEmpty())
                 return keyQueue.poll();
@@ -187,7 +187,7 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
                 if (reportedTerminalPosition != null)
                     onResized(reportedTerminalPosition.getColumn(), reportedTerminalPosition.getRow());
 
-                return readInput();
+                return pollInput();
             } else {
                 return key;
             }

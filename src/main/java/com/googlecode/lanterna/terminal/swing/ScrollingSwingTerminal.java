@@ -108,8 +108,8 @@ public class ScrollingSwingTerminal extends JComponent implements IOSafeTerminal
     // Delegate all Terminal interface implementations to SwingTerminal
     ///////////
     @Override
-    public KeyStroke readInput() {
-        return swingTerminal.readInput();
+    public KeyStroke pollInput() {
+        return swingTerminal.pollInput();
     }
 
     @Override

@@ -40,7 +40,7 @@ public class Terminal8bitIndexedColorTest {
         TerminalSize size = terminal.getTerminalSize();
 
         while(true) {
-            if(terminal.readInput() != null) {
+            if(terminal.pollInput() != null) {
                 terminal.exitPrivateMode();
                 return;
             }

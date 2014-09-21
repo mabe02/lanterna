@@ -46,7 +46,7 @@ public class TerminalResizeTest implements ResizeListener {
         terminal.addResizeListener(new TerminalResizeTest());
 
         while(true) {
-            KeyStroke key = terminal.readInput();
+            KeyStroke key = terminal.pollInput();
             if(key == null || key.getCharacter() != 'q') {
                 Thread.sleep(1);
             }

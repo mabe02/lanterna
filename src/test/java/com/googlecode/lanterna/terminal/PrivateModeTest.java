@@ -39,7 +39,7 @@ public class PrivateModeTest {
         printNormalTerminalText(terminal);
         KeyStroke keyStroke = null;
         while(keyStroke == null || keyStroke.getKeyType() != KeyType.Escape) {
-            keyStroke = terminal.readInput();
+            keyStroke = terminal.pollInput();
             if(keyStroke != null && keyStroke.getKeyType() == KeyType.Character && keyStroke.getCharacter() == ' ') {
                 normalTerminal = !normalTerminal;
                 if(normalTerminal) {

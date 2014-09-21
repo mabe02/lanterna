@@ -36,7 +36,7 @@ public class TerminalInputTest {
         int currentRow = 0;
         rawTerminal.setCursorPosition(0, 0);
         while(true) {
-            KeyStroke key = rawTerminal.readInput();
+            KeyStroke key = rawTerminal.pollInput();
             if(key == null) {
                 Thread.sleep(1);
                 continue;

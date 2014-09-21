@@ -110,7 +110,7 @@ public class SGRTest {
         rawTerminal.setCursorPosition(0, 0);
         rawTerminal.flush();
         try {
-            while(rawTerminal.readInput() == null) {
+            while(rawTerminal.pollInput() == null) {
                 Thread.sleep(1);
             }
         }

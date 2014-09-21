@@ -166,9 +166,9 @@ public class UnixTerminal extends ANSITerminal {
     }
 
     @Override
-    public KeyStroke readInput() throws IOException {
+    public KeyStroke pollInput() throws IOException {
         //Check if we have ctrl+c coming
-        KeyStroke key = super.readInput();
+        KeyStroke key = super.pollInput();
         if(key != null
                 && terminalBehaviour == Behaviour.CTRL_C_KILLS_APPLICATION
                 && key.getCharacter() != null

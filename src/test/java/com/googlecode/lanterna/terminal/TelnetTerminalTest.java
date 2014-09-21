@@ -65,7 +65,7 @@ public class TelnetTerminalTest {
                     size = terminal.getTerminalSize();
 
                     while(true) {
-                        KeyStroke key = terminal.readInput();
+                        KeyStroke key = terminal.pollInput();
                         if(key != null) {
                             System.out.println(key);
                             if(key.getKeyType() == KeyType.Escape) {
