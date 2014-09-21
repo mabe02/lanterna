@@ -200,7 +200,15 @@ public class StackedModalWindowManager implements WindowManager {
         @Override
         @SuppressWarnings("NullableProblems")   //I can't find the correct way to fix this!
         public int compareTo(ManagedWindow o) {
-            return Integer.compare(ordinal, o.ordinal);
+            if(ordinal < o.ordinal) {
+                return -1;
+            }
+            else if(ordinal == o.ordinal) {
+                return 0;
+            }
+            else {
+                return 1;
+            }
         }
     }
 }
