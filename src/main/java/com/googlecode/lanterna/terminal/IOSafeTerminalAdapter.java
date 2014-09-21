@@ -245,4 +245,15 @@ public class IOSafeTerminalAdapter implements IOSafeTerminal {
         }
         return null;
     }
+
+    @Override
+    public KeyStroke readInput() {
+        try {
+            return backend.readInput();
+        }
+        catch(IOException e) {
+            exceptionHandler.onException(e);
+        }
+        return null;
+    }
 }

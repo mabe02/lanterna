@@ -19,6 +19,8 @@
 package com.googlecode.lanterna.input;
 
 import com.googlecode.lanterna.TerminalPosition;
+
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.*;
@@ -36,7 +38,7 @@ public class InputDecoder {
     private boolean seenEOF;
 
     public InputDecoder(final Reader source) {
-        this.source = source;
+        this.source = new BufferedReader(source);
         this.bytePatterns = new HashSet<CharacterPattern>();
         this.currentMatching = new ArrayList<Character>();
         this.lastReportedTerminalPosition = null;
@@ -54,8 +56,8 @@ public class InputDecoder {
      * @return Key stroke read from the input stream, or {@code null} if none
      * @throws IOException If there was an I/O error when reading from the input stream
      */
-    public KeyStroke getNextCharacter() throws IOException {
-        while (source.ready()) {
+    public KeyStroke getNextCharacter(boolean blockingIO) throws IOException {
+        while ((blockingIO && currentMatching.isEmpty()) || source.ready()) {
             int readChar = source.read();
             if (readChar == -1) {
                 seenEOF = true;

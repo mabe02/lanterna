@@ -139,7 +139,7 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
         long startTime = System.currentTimeMillis();
         synchronized(readMutex) {
             while(true) {
-                KeyStroke key = inputDecoder.getNextCharacter();
+                KeyStroke key = inputDecoder.getNextCharacter(false);
                 if(key == null) {
                     if(System.currentTimeMillis() - startTime > 1000) {  //Wait 1 second for the terminal size report to come, is this reasonable?
                         throw new IOException(
@@ -181,7 +181,7 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
             if(!keyQueue.isEmpty())
                 return keyQueue.poll();
 
-            KeyStroke key = inputDecoder.getNextCharacter();
+            KeyStroke key = inputDecoder.getNextCharacter(false);
             if (key != null && key.getKeyType() == KeyType.CursorLocation) {
                 TerminalPosition reportedTerminalPosition = inputDecoder.getLastReportedTerminalPosition();
                 if (reportedTerminalPosition != null)
@@ -192,6 +192,11 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
                 return key;
             }
         }
+    }
+
+    @Override
+    public KeyStroke readInput() throws IOException {
+        return null;
     }
 
     @Override

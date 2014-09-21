@@ -141,6 +141,12 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
     }
 
     @Override
+    public KeyStroke readInput() {
+        //todo: Fix proper implementation
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
     public void enterPrivateMode() {
         swingTerminal.enterPrivateMode();
     }

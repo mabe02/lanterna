@@ -34,4 +34,13 @@ public interface InputProvider {
      * @throws java.io.IOException Propagated error if the underlying stream gave errors
      */
     KeyStroke pollInput() throws IOException;
+
+    /**
+     * Returns the next {@code Key} off the input queue or blocks until one is available. <b>NOTE:</b> In previous
+     * versions of Lanterna, this method was <b>not</b> blocking. From lanterna 3, it is blocking and you can call
+     * {@code pollInput()} for the non-blocking version.
+     * @return Key object which represents a keystroke coming in through the input stream
+     * @throws java.io.IOException Propagated error if the underlying stream gave errors
+     */
+    KeyStroke readInput() throws IOException;
 }

@@ -169,6 +169,19 @@ public class UnixTerminal extends ANSITerminal {
     public KeyStroke pollInput() throws IOException {
         //Check if we have ctrl+c coming
         KeyStroke key = super.pollInput();
+        isCtrlC(key);
+        return key;
+    }
+
+    @Override
+    public KeyStroke readInput() throws IOException {
+        //Check if we have ctrl+c coming
+        KeyStroke key = super.readInput();
+        isCtrlC(key);
+        return key;
+    }
+
+    private void isCtrlC(KeyStroke key) throws IOException {
         if(key != null
                 && terminalBehaviour == Behaviour.CTRL_C_KILLS_APPLICATION
                 && key.getCharacter() != null
@@ -179,7 +192,6 @@ public class UnixTerminal extends ANSITerminal {
             exitPrivateMode();
             System.exit(1);
         }
-        return key;
     }
 
     @Override

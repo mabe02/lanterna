@@ -113,6 +113,11 @@ public class ScrollingSwingTerminal extends JComponent implements IOSafeTerminal
     }
 
     @Override
+    public KeyStroke readInput() {
+        return swingTerminal.readInput();
+    }
+
+    @Override
     public void enterPrivateMode() {
         swingTerminal.enterPrivateMode();
     }

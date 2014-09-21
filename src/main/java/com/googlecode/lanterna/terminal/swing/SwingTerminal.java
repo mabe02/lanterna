@@ -345,6 +345,12 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
     }
 
     @Override
+    public KeyStroke readInput() {
+        //todo: Fix proper implementation
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
     public synchronized void enterPrivateMode() {
         virtualTerminal.switchToPrivateMode();
         SwingUtilities.invokeLater(new Runnable() {
