@@ -77,7 +77,7 @@ public class AbstractWindow implements Window {
         }
         interactableLookupMap.reset();
         contentArea.updateLookupMap(interactableLookupMap);
-
+        //interactableLookupMap.debug();
         invalid = false;
     }
 
@@ -193,6 +193,9 @@ public class AbstractWindow implements Window {
 
     @Override
     public TerminalPosition toGlobal(TerminalPosition localPosition) {
+        if(localPosition == null) {
+            return null;
+        }
         return lastKnownPosition.withRelative(localPosition);
     }
 

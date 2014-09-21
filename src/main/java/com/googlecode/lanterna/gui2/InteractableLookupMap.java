@@ -31,7 +31,7 @@ public class InteractableLookupMap {
     }
 
     public void add(Interactable interactable) {
-        TerminalPosition topLeft = interactable.getPosition();
+        TerminalPosition topLeft = interactable.toRootContainer(TerminalPosition.TOP_LEFT_CORNER);
         TerminalSize size = interactable.getSize();
         interactables.add(interactable);
         int index = interactables.size() - 1;
@@ -136,5 +136,18 @@ public class InteractableLookupMap {
             }
         }
         return disqualified;
+    }
+
+    void debug() {
+        for(int[] row: lookupMap) {
+            for(int value: row) {
+                if(value >= 0) {
+                    System.out.print(" ");
+                }
+                System.out.print(value);
+            }
+            System.out.println();
+        }
+        System.out.println();
     }
 }
