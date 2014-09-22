@@ -30,7 +30,7 @@ import java.awt.BorderLayout;
 import java.awt.HeadlessException;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
-import javax.swing.JFrame;
+import javax.swing.*;
 
 /**
  *
@@ -141,9 +141,8 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
     }
 
     @Override
-    public KeyStroke readInput() {
-        //todo: Fix proper implementation
-        throw new UnsupportedOperationException("Not implemented yet");
+    public KeyStroke readInput() throws IOException {
+        return swingTerminal.readInput();
     }
 
     @Override

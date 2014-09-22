@@ -47,9 +47,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Queue;
 import java.util.Set;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
@@ -67,7 +65,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
     private final SwingTerminalFontConfiguration fontConfiguration;
     private final SwingTerminalColorConfiguration colorConfiguration;
     private final VirtualTerminal virtualTerminal;
-    private final Queue<KeyStroke> keyQueue;
+    private final BlockingQueue<KeyStroke> keyQueue;
     private final List<ResizeListener> resizeListeners;
     private final Timer blinkTimer;
 
@@ -137,7 +135,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
                 deviceConfiguration.getLineBufferScrollbackSize(),
                 terminalSize,
                 scrollController);
-        this.keyQueue = new ConcurrentLinkedQueue<KeyStroke>();
+        this.keyQueue = new LinkedBlockingQueue<KeyStroke>();
         this.resizeListeners = new CopyOnWriteArrayList<ResizeListener>();
         this.deviceConfiguration = deviceConfiguration;
         this.fontConfiguration = fontConfiguration;
@@ -345,9 +343,16 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
     }
 
     @Override
-    public KeyStroke readInput() {
-        //todo: Fix proper implementation
-        throw new UnsupportedOperationException("Not implemented yet");
+    public KeyStroke readInput() throws IOException {
+        if(SwingUtilities.isEventDispatchThread()) {
+            throw new UnsupportedOperationException("Cannot call SwingTerminal.readInput() on the AWT thread");
+        }
+        try {
+            return keyQueue.take();
+        }
+        catch(InterruptedException ignore) {
+            throw new IOException("Blocking input was interrupted");
+        }
     }
 
     @Override

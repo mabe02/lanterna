@@ -113,7 +113,7 @@ public class ScrollingSwingTerminal extends JComponent implements IOSafeTerminal
     }
 
     @Override
-    public KeyStroke readInput() {
+    public KeyStroke readInput() throws IOException {
         return swingTerminal.readInput();
     }
 

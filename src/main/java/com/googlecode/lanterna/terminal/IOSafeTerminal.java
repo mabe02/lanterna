@@ -29,7 +29,8 @@ import java.util.concurrent.TimeUnit;
 /**
  * Interface extending Terminal that removes the IOException throw clause. You can for example use this instead of 
  * Terminal if you use an implementation that doesn't throw any IOExceptions or if you wrap your terminal in an 
- * IOSafeTerminalAdapter.
+ * IOSafeTerminalAdapter. Please note that readInput() still throws IOException when it is interrupted, in order to fit
+ * better in with what normal terminal do when they are blocked on input and you interrupt them.
  * @author Martin
  */
 public interface IOSafeTerminal extends Terminal {
@@ -64,5 +65,5 @@ public interface IOSafeTerminal extends Terminal {
     @Override
     KeyStroke pollInput();
     @Override
-    KeyStroke readInput();
+    KeyStroke readInput() throws IOException;
 }
