@@ -27,7 +27,9 @@ import com.googlecode.lanterna.TerminalPosition;
 import java.io.IOException;
 
 /**
- * Simple abstract implemenation of Screen that sets up a few helper methods
+ * This class implements some of the Screen logic that is not directly tied to the actual implementation of how the
+ * Screen translate to the terminal. It keeps data structures for the front- and back buffers, the cursor location and
+ * some other simpler states.
  * @author martin
  */
 public abstract class AbstractScreen implements Screen {
@@ -43,17 +45,7 @@ public abstract class AbstractScreen implements Screen {
     private TabBehaviour tabBehaviour;
 
 
-    /**
-     * Creates a new Screen on top of a supplied terminal, will query the terminal for its size. The screen is initially
-     * blank. The default character used for unused space (the newly initialized state of the screen and new areas after
-     * expanding the terminal size) will be a blank space in 'default' ANSI front- and background color.
-     * <p/>
-     * Before you can display the content of this buffered screen to the real underlying terminal, you must call the
-     * {@code startScreen()} method. This will ask the terminal to enter private mode (which is required for Screens to
-     * work properly). Similarly, when you are done, you should call {@code stopScreen()} which will exit private mode.
-     *
-     * @throws java.io.IOException If there was an underlying I/O error when querying the size of the terminal
-     */
+
     public AbstractScreen(TerminalSize initialSize) {
         this(initialSize, DEFAULT_CHARACTER);
     }

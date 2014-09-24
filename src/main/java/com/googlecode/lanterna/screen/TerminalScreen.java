@@ -31,7 +31,8 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * This class keeps some simple code dealing with handling the Terminal interface that the Screen sits on top of.
+ * This is the default concrete implementation of the Screen interface, a buffered layer sitting on top of a Terminal.
+ * If you want to get started with the Screen layer, this is probably the class you want to use.
  * @author martin
  */
 public class TerminalScreen extends AbstractScreen {
@@ -60,14 +61,17 @@ public class TerminalScreen extends AbstractScreen {
 
     /**
      * Creates a new Screen on top of a supplied terminal, will query the terminal for its size. The screen is initially
-     * blank. You can specify which character you wish to be used to fill the screen initially; this will also be the
-     * character used if the terminal is enlarged and you don't set anything on the new areas.
+     * blank. The default character used for unused space (the newly initialized state of the screen and new areas after
+     * expanding the terminal size) will be a blank space in 'default' ANSI front- and background color.
+     * <p/>
+     * Before you can display the content of this buffered screen to the real underlying terminal, you must call the
+     * {@code startScreen()} method. This will ask the terminal to enter private mode (which is required for Screens to
+     * work properly). Similarly, when you are done, you should call {@code stopScreen()} which will exit private mode.
      *
      * @param terminal Terminal object to create the DefaultScreen on top of.
      * @param defaultCharacter What character to use for the initial state of the screen and expanded areas
      * @throws java.io.IOException If there was an underlying I/O error when querying the size of the terminal
      */
-    @SuppressWarnings({"SameParameterValue", "WeakerAccess"})
     public TerminalScreen(Terminal terminal, TextCharacter defaultCharacter) throws IOException {
         super(terminal.getTerminalSize(), defaultCharacter);
         this.terminal = terminal;
