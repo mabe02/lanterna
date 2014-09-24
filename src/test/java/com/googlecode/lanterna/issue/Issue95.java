@@ -41,7 +41,7 @@ public class Issue95 {
         terminal.setResizable(false);
         terminal.setVisible(true);
 
-        while(screen.readInput() == null) {
+        while(screen.pollInput() == null) {
             if(screen.doResizeIfNecessary() != null) {
                 screen.refresh();
             }

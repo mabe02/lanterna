@@ -263,7 +263,7 @@ public class GUIScreen
 
                 boolean repainted = update();
 
-                KeyStroke nextKey = screen.readInput();
+                KeyStroke nextKey = screen.pollInput();
                 if(nextKey != null) {
                     if(nextKey.getKeyType() == KeyType.EOF) {
                         break;

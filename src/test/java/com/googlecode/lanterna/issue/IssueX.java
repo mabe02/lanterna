@@ -45,7 +45,7 @@ class IssueX {
             screenWriter.setPosition(new TerminalPosition(default_x, current_y));
             screenWriter.enableModifiers(styles);
             screenWriter.putString(string);
-            screen.readInput();
+            screen.pollInput();
             screen.refresh();
         }
 

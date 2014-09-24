@@ -55,7 +55,7 @@ public class ScreenLineTest {
         TextGraphics textGraphics = new ScreenTextGraphics(screen);
         Random random = new Random();
         while(true) {
-            KeyStroke keyStroke = screen.readInput();
+            KeyStroke keyStroke = screen.pollInput();
             if(keyStroke != null && keyStroke.getKeyType() == KeyType.Escape) {
                 break;
             }

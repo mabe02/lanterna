@@ -74,7 +74,7 @@ public class ScreenTriangleTest {
         TextColor color = null;
         double rad = 0.0;
         while(true) {
-            KeyStroke keyStroke = screen.readInput();
+            KeyStroke keyStroke = screen.pollInput();
             if(keyStroke != null && keyStroke.getKeyType() == KeyType.Escape) {
                 break;
             }
