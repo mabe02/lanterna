@@ -37,9 +37,6 @@ import java.util.TreeMap;
  */
 public class TerminalScreen extends AbstractScreen {
     private final Terminal terminal;
-    private TerminalSize terminalSize;
-    private TerminalSize latestResizeRequest;
-
     private boolean isStarted;
     private boolean fullRedrawHint;
 
@@ -75,8 +72,6 @@ public class TerminalScreen extends AbstractScreen {
     public TerminalScreen(Terminal terminal, TextCharacter defaultCharacter) throws IOException {
         super(terminal.getTerminalSize(), defaultCharacter);
         this.terminal = terminal;
-        this.terminalSize = terminal.getTerminalSize();
-        this.latestResizeRequest = null;
         this.terminal.addResizeListener(new TerminalResizeListener());
         this.isStarted = false;
         this.fullRedrawHint = true;
@@ -302,11 +297,6 @@ public class TerminalScreen extends AbstractScreen {
     }
 
     @Override
-    public TerminalSize getTerminalSize() {
-        return terminalSize;
-    }
-
-    @Override
     public synchronized void clear() {
         super.clear();
         fullRedrawHint = true;
@@ -321,19 +311,10 @@ public class TerminalScreen extends AbstractScreen {
         return newSize;
     }
     
-    protected synchronized TerminalSize getAndClearPendingResize() {
-        if(latestResizeRequest != null) {
-            terminalSize = latestResizeRequest;
-            latestResizeRequest = null;
-            return terminalSize;
-        }
-        return null;
-    }
-    
     private class TerminalResizeListener implements ResizeListener {
         @Override
         public void onResized(Terminal terminal, TerminalSize newSize) {
-            latestResizeRequest = newSize;
+            addResizeRequest(newSize);
         }
     }
 

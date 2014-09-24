@@ -40,6 +40,12 @@ import java.io.IOException;
  */
 public interface Screen extends InputProvider {
     /**
+     * This is the character Screen implementations should use as a filler is there are areas not set to any particular
+     * character.
+     */
+    public static final TextCharacter DEFAULT_CHARACTER = new TextCharacter(' ');
+
+    /**
      * Before you can use a Screen, you need to start it. By starting the screen, Lanterna will make sure the terminal
      * is in private mode (Screen only supports private mode), clears it (so that is can set the front and back buffers
      * to a known value) and places the cursor in the top left corner. After calling startScreen(), you can begin using

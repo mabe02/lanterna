@@ -33,9 +33,6 @@ import java.io.IOException;
  * @author martin
  */
 public abstract class AbstractScreen implements Screen {
-
-    protected static final TextCharacter DEFAULT_CHARACTER = new TextCharacter(' ');
-
     private TerminalPosition cursorPosition;
     private ScreenBuffer backBuffer;
     private ScreenBuffer frontBuffer;
@@ -44,7 +41,11 @@ public abstract class AbstractScreen implements Screen {
     //How to deal with \t characters
     private TabBehaviour tabBehaviour;
 
+    //Current size of the screen
+    private TerminalSize terminalSize;
 
+    //Pending resize of the screen
+    private TerminalSize latestResizeRequest;
 
     public AbstractScreen(TerminalSize initialSize) {
         this(initialSize, DEFAULT_CHARACTER);
@@ -65,6 +66,8 @@ public abstract class AbstractScreen implements Screen {
         this.defaultCharacter = defaultCharacter;
         this.cursorPosition = new TerminalPosition(0, 0);
         this.tabBehaviour = TabBehaviour.ALIGN_TO_COLUMN_4;
+        this.terminalSize = initialSize;
+        this.latestResizeRequest = null;
     }
 
     /**
@@ -193,6 +196,11 @@ public abstract class AbstractScreen implements Screen {
         return pendingResize;
     }
 
+    @Override
+    public TerminalSize getTerminalSize() {
+        return terminalSize;
+    }
+
     protected ScreenBuffer getFrontBuffer() {
         return frontBuffer;
     }
@@ -201,7 +209,18 @@ public abstract class AbstractScreen implements Screen {
         return backBuffer;
     }
 
-    protected abstract TerminalSize getAndClearPendingResize();
+    private synchronized TerminalSize getAndClearPendingResize() {
+        if(latestResizeRequest != null) {
+            terminalSize = latestResizeRequest;
+            latestResizeRequest = null;
+            return terminalSize;
+        }
+        return null;
+    }
+
+    protected void addResizeRequest(TerminalSize newSize) {
+        latestResizeRequest = newSize;
+    }
 
     private TextCharacter getCharacterFromBuffer(ScreenBuffer buffer, TerminalPosition position) {
         //If we are picking the padding of a CJK character, pick the actual CJK character instead of the padding
@@ -210,6 +229,4 @@ public abstract class AbstractScreen implements Screen {
         }
         return buffer.getCharacterAt(position);
     }
-
-
 }
