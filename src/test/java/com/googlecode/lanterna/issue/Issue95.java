@@ -18,7 +18,7 @@
  */
 package com.googlecode.lanterna.issue;
 
-import com.googlecode.lanterna.screen.DefaultScreen;
+import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.swing.SwingTerminalFrame;
 import java.io.IOException;
@@ -33,7 +33,7 @@ public class Issue95 {
         SwingTerminalFrame terminal = new SwingTerminalFrame(SwingTerminalFrame.AutoCloseTrigger.CloseOnExitPrivateMode);
         terminal.setCursorVisible(false);
 
-        Screen screen = new DefaultScreen(terminal);
+        Screen screen = new TerminalScreen(terminal);
         screen.startScreen();
         
         terminal.setTitle("Freedom: An arena-battle roguelike");

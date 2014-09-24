@@ -34,8 +34,8 @@ import java.io.IOException;
 public class MultiScreenTest {
     public static void main(String[] args) throws IOException, InterruptedException {
         Terminal terminal = new TestTerminalFactory(args, SwingTerminalFrame.AutoCloseTrigger.DoNotAutoClose).createTerminal();
-        Screen redScreen = new DefaultScreen(terminal);
-        Screen greenScreen = new DefaultScreen(terminal);
+        Screen redScreen = new TerminalScreen(terminal);
+        Screen greenScreen = new TerminalScreen(terminal);
         
         if(terminal instanceof SwingTerminalFrame) {
             ((SwingTerminalFrame)terminal).setVisible(true);

@@ -23,7 +23,7 @@ import com.googlecode.lanterna.gui.Theme.Category;
 import com.googlecode.lanterna.gui.component.AbstractComponent;
 import com.googlecode.lanterna.gui.component.Button;
 import com.googlecode.lanterna.gui.component.Panel;
-import com.googlecode.lanterna.screen.DefaultScreen;
+import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.terminal.ansi.UnixTerminal;
@@ -44,7 +44,7 @@ public class ButtonTest
             terminal = new UnixTerminal(System.in, System.out, Charset.forName("UTF-8"),
                                             null, UnixTerminal.Behaviour.CTRL_C_KILLS_APPLICATION);
         }
-        final GUIScreen guiScreen = new GUIScreen(new DefaultScreen(terminal));
+        final GUIScreen guiScreen = new GUIScreen(new TerminalScreen(terminal));
         guiScreen.getScreen().startScreen();
         guiScreen.setBackgroundRenderer(new DefaultBackgroundRenderer("GUI Test"));
 

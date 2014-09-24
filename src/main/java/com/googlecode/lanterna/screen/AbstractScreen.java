@@ -18,15 +18,116 @@
  */
 package com.googlecode.lanterna.screen;
 
+import com.googlecode.lanterna.CJKUtils;
+import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.TerminalPosition;
+
+import java.io.IOException;
 
 /**
  * Simple abstract implemenation of Screen that sets up a few helper methods
  * @author martin
  */
 public abstract class AbstractScreen implements Screen {
+
+    protected static final TextCharacter DEFAULT_CHARACTER = new TextCharacter(' ');
+
+    private TerminalPosition cursorPosition;
+    private ScreenBuffer backBuffer;
+    private ScreenBuffer frontBuffer;
+    private TextCharacter defaultCharacter;
+
+    //How to deal with \t characters
+    private TabBehaviour tabBehaviour;
+
+
+    /**
+     * Creates a new Screen on top of a supplied terminal, will query the terminal for its size. The screen is initially
+     * blank. The default character used for unused space (the newly initialized state of the screen and new areas after
+     * expanding the terminal size) will be a blank space in 'default' ANSI front- and background color.
+     * <p/>
+     * Before you can display the content of this buffered screen to the real underlying terminal, you must call the
+     * {@code startScreen()} method. This will ask the terminal to enter private mode (which is required for Screens to
+     * work properly). Similarly, when you are done, you should call {@code stopScreen()} which will exit private mode.
+     *
+     * @throws java.io.IOException If there was an underlying I/O error when querying the size of the terminal
+     */
+    public AbstractScreen(TerminalSize initialSize) {
+        this(initialSize, DEFAULT_CHARACTER);
+    }
+
+    /**
+     * Creates a new Screen on top of a supplied terminal, will query the terminal for its size. The screen is initially
+     * blank. You can specify which character you wish to be used to fill the screen initially; this will also be the
+     * character used if the terminal is enlarged and you don't set anything on the new areas.
+     *
+     * @param defaultCharacter What character to use for the initial state of the screen and expanded areas
+     * @throws java.io.IOException If there was an underlying I/O error when querying the size of the terminal
+     */
+    @SuppressWarnings({"SameParameterValue", "WeakerAccess"})
+    public AbstractScreen(TerminalSize initialSize, TextCharacter defaultCharacter) {
+        this.frontBuffer = new ScreenBuffer(initialSize, defaultCharacter);
+        this.backBuffer = new ScreenBuffer(initialSize, defaultCharacter);
+        this.defaultCharacter = defaultCharacter;
+        this.cursorPosition = new TerminalPosition(0, 0);
+        this.tabBehaviour = TabBehaviour.ALIGN_TO_COLUMN_4;
+    }
+
+    /**
+     * @return Position where the cursor will be located after the screen has been refreshed or {@code null} if the
+     * cursor is not visible
+     */
+    @Override
+    public TerminalPosition getCursorPosition() {
+        return cursorPosition;
+    }
+
+    /**
+     * Moves the current cursor position or hides it. If the cursor is hidden and given a new position, it will be
+     * visible after this method call.
+     *
+     * @param position 0-indexed column and row numbers of the new position, or if {@code null}, hides the cursor
+     */
+    @Override
+    public void setCursorPosition(TerminalPosition position) {
+        if(position == null) {
+            //Skip any validation checks if we just want to hide the cursor
+            this.cursorPosition = null;
+            return;
+        }
+        TerminalSize terminalSize = getTerminalSize();
+        if(position.getColumn() >= 0 && position.getColumn() < terminalSize.getColumns()
+                && position.getRow() >= 0 && position.getRow() < terminalSize.getRows()) {
+            this.cursorPosition = position;
+        }
+    }
+
+    /**
+     * Sets the behaviour for what to do about tab characters.
+     *
+     * @param tabBehaviour Tab behaviour to use
+     * @see TabBehaviour
+     */
+    @Override
+    public void setTabBehaviour(TabBehaviour tabBehaviour) {
+        if(tabBehaviour != null) {
+            this.tabBehaviour = tabBehaviour;
+        }
+    }
+
+    /**
+     * Gets the behaviour for what to do about tab characters.
+     *
+     * @return Tab behaviour that is used currently
+     * @see TabBehaviour
+     */
+    @Override
+    public TabBehaviour getTabBehaviour() {
+        return tabBehaviour;
+    }
+
     @Override
     public void setCharacter(TerminalPosition position, TextCharacter screenCharacter) {
         setCharacter(position.getColumn(), position.getRow(), screenCharacter);
@@ -36,4 +137,87 @@ public abstract class AbstractScreen implements Screen {
     public TextGraphics newTextGraphics() {
         return new ScreenTextGraphics(this);
     }
+
+    @Override
+    public synchronized void setCharacter(int column, int row, TextCharacter screenCharacter) {
+        //It would be nice if we didn't have to care about tabs at this level, but we have no such luxury
+        if(screenCharacter.getCharacter() == '\t') {
+            //Swap out the tab for a space
+            screenCharacter = screenCharacter.withCharacter(' ');
+
+            //Now see how many times we have to put spaces...
+            for(int i = 0; i < tabBehaviour.replaceTabs("\t", column).length(); i++) {
+                backBuffer.setCharacterAt(column + i, row, screenCharacter);
+            }
+        }
+        else {
+            //This is the normal case, no special character
+            backBuffer.setCharacterAt(column, row, screenCharacter);
+        }
+
+        //Pad CJK character with a trailing space
+        if(CJKUtils.isCharCJK(screenCharacter.getCharacter())) {
+            backBuffer.setCharacterAt(column + 1, row, screenCharacter.withCharacter(' '));
+        }
+        //If there's a CJK character immediately to our left, reset it
+        if(column > 0) {
+            TextCharacter cjkTest = backBuffer.getCharacterAt(column - 1, row);
+            if(cjkTest != null && CJKUtils.isCharCJK(cjkTest.getCharacter())) {
+                backBuffer.setCharacterAt(column - 1, row, backBuffer.getCharacterAt(column - 1, row).withCharacter(' '));
+            }
+        }
+    }
+
+    @Override
+    public synchronized TextCharacter getFrontCharacter(TerminalPosition position) {
+        return getCharacterFromBuffer(frontBuffer, position);
+    }
+
+    @Override
+    public synchronized TextCharacter getBackCharacter(TerminalPosition position) {
+        return getCharacterFromBuffer(backBuffer, position);
+    }
+
+    @Override
+    public void refresh() throws IOException {
+        refresh(RefreshType.AUTOMATIC);
+    }
+
+
+    @Override
+    public synchronized void clear() {
+        backBuffer.setAll(defaultCharacter);
+    }
+
+    @Override
+    public synchronized TerminalSize doResizeIfNecessary() {
+        TerminalSize pendingResize = getAndClearPendingResize();
+        if(pendingResize == null) {
+            return null;
+        }
+
+        backBuffer = backBuffer.resize(pendingResize, defaultCharacter);
+        frontBuffer = frontBuffer.resize(pendingResize, defaultCharacter);
+        return pendingResize;
+    }
+
+    protected ScreenBuffer getFrontBuffer() {
+        return frontBuffer;
+    }
+
+    protected ScreenBuffer getBackBuffer() {
+        return backBuffer;
+    }
+
+    protected abstract TerminalSize getAndClearPendingResize();
+
+    private TextCharacter getCharacterFromBuffer(ScreenBuffer buffer, TerminalPosition position) {
+        //If we are picking the padding of a CJK character, pick the actual CJK character instead of the padding
+        if(position.getColumn() > 0 && CJKUtils.isCharCJK(buffer.getCharacterAt(position.withRelativeColumn(-1)).getCharacter())) {
+            return buffer.getCharacterAt(position.withRelativeColumn(-1));
+        }
+        return buffer.getCharacterAt(position);
+    }
+
+
 }
