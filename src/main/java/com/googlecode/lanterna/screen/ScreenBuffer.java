@@ -106,8 +106,12 @@ class ScreenBuffer {
     }
 
     void copyTo(ScreenBuffer destination) {
-        for(int y = 0; y < buffer.length; y++) {
-            System.arraycopy(buffer[y], 0, destination.buffer[y], 0, buffer[0].length);
+        copyTo(destination, 0, buffer.length, 0, buffer[0].length);
+    }
+
+    void copyTo(ScreenBuffer destination, int startRowIndex, int rows, int startColumnIndex, int columns) {
+        for(int y = startRowIndex; y < startRowIndex + rows; y++) {
+            System.arraycopy(buffer[y], startColumnIndex, destination.buffer[y - startRowIndex], 0, columns);
         }
     }
 }
