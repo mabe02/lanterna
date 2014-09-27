@@ -27,6 +27,15 @@ public class LinearLayout implements LayoutManager {
 
     @Override
     public TerminalSize getPreferredSize(List<Component> components) {
+        if(direction == Direction.VERTICAL) {
+            return getPreferredSizeVertically(components);
+        }
+        else {
+            return getPreferredSizeHorizontally(components);
+        }
+    }
+
+    private TerminalSize getPreferredSizeVertically(List<Component> components) {
         int maxWidth = 0;
         int height = 0;
         for(Component component: components) {
@@ -37,6 +46,19 @@ public class LinearLayout implements LayoutManager {
             height += preferredSize.getRows();
         }
         return new TerminalSize(maxWidth, height);
+    }
+
+    private TerminalSize getPreferredSizeHorizontally(List<Component> components) {
+        int maxHeight = 0;
+        int width = 0;
+        for(Component component: components) {
+            TerminalSize preferredSize = component.getPreferredSize();
+            if(maxHeight < preferredSize.getRows()) {
+                maxHeight = preferredSize.getRows();
+            }
+            width += preferredSize.getColumns();
+        }
+        return new TerminalSize(width, maxHeight);
     }
 
     @Override
