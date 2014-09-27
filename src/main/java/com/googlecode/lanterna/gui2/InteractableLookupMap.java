@@ -80,7 +80,7 @@ public class InteractableLookupMap {
     }
 
     public Interactable findNextLeft(Interactable interactable) {
-        return findNextLeftOrRight(interactable, true);
+        return findNextLeftOrRight(interactable, false);
     }
 
     public Interactable findNextRight(Interactable interactable) {
