@@ -36,6 +36,7 @@ public class VirtualScreen extends AbstractScreen {
             addResizeRequest(virtualSize);
             super.doResizeIfNecessary();
         }
+        calculateViewport(realScreen.getTerminalSize());
     }
 
     public TerminalSize getMinimumSize() {
@@ -81,13 +82,22 @@ public class VirtualScreen extends AbstractScreen {
             return null;
         }
 
-        TerminalSize newVirtualSize = minimumSize.max(underlyingSize);
-        if(newVirtualSize.equals(underlyingSize)) {
-            viewportSize = underlyingSize;
+        TerminalSize newVirtualSize = calculateViewport(underlyingSize);
+        if(!getTerminalSize().equals(newVirtualSize)) {
+            addResizeRequest(newVirtualSize);
+            return super.doResizeIfNecessary();
+        }
+        return newVirtualSize;
+    }
+
+    private TerminalSize calculateViewport(TerminalSize realTerminalSize) {
+        TerminalSize newVirtualSize = minimumSize.max(realTerminalSize);
+        if(newVirtualSize.equals(realTerminalSize)) {
+            viewportSize = realTerminalSize;
             viewportTopLeft = TerminalPosition.TOP_LEFT_CORNER;
         }
         else {
-            TerminalSize newViewportSize = frameRenderer.getViewportSize(underlyingSize, newVirtualSize);
+            TerminalSize newViewportSize = frameRenderer.getViewportSize(realTerminalSize, newVirtualSize);
             if(newViewportSize.getRows() > viewportSize.getRows()) {
                 viewportTopLeft = viewportTopLeft.withRow(Math.max(0, viewportTopLeft.getRow() - (newViewportSize.getRows() - viewportSize.getRows())));
             }
@@ -97,10 +107,6 @@ public class VirtualScreen extends AbstractScreen {
             viewportSize = newViewportSize;
         }
         setCursorPosition(getCursorPosition()); //Re-calculate the cursor's position
-        if(!getTerminalSize().equals(newVirtualSize)) {
-            addResizeRequest(newVirtualSize);
-            return super.doResizeIfNecessary();
-        }
         return newVirtualSize;
     }
 
