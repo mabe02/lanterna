@@ -74,6 +74,11 @@ public class Button extends AbstractInteractableComponent {
         return label;
     }
 
+    @Override
+    public String toString() {
+        return "Button{" + label + "}";
+    }
+
     private static interface ButtonRenderer extends InteractableRenderer<Button> {
     }
 
@@ -85,7 +90,8 @@ public class Button extends AbstractInteractableComponent {
 
         @Override
         public TerminalSize getPreferredSize(Button button) {
-            return new TerminalSize(Math.max(8, button.getLabel().length() + 2), 1);
+            TerminalSize preferredSize = new TerminalSize(Math.max(8, button.getLabel().length() + 2), 1);
+            return preferredSize;
         }
 
         @Override
