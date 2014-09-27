@@ -14,7 +14,7 @@ public abstract class TestBase {
         Screen screen = new TestTerminalFactory(args).createScreen();
         screen.startScreen();
         WindowBasedTextGUI textGUI = new DefaultWindowTextGUI(screen);
-        ((AbstractTextGUI)textGUI).setBlockingIO(true);
+        ((AbstractTextGUI)textGUI).setBlockingIO(false);
         try {
             init(textGUI);
             TextGUIThread guiThread = textGUI.getGUIThread();
