@@ -157,29 +157,29 @@ public class VirtualScreen extends AbstractScreen {
             if(viewportTopLeft.getColumn() > 0) {
                 viewportTopLeft = viewportTopLeft.withRelativeColumn(-1);
                 refresh();
-                return null;
             }
+            return null;
         }
         else if(keyStroke.isCtrlDown() && keyStroke.getKeyType() == KeyType.ArrowRight) {
             if(viewportTopLeft.getColumn() + viewportSize.getColumns() < getTerminalSize().getColumns()) {
                 viewportTopLeft = viewportTopLeft.withRelativeColumn(1);
                 refresh();
-                return null;
             }
+            return null;
         }
         else if(keyStroke.isCtrlDown() && keyStroke.getKeyType() == KeyType.ArrowUp) {
             if(viewportTopLeft.getRow() > 0) {
                 viewportTopLeft = viewportTopLeft.withRelativeRow(-1);
                 refresh();
-                return null;
             }
+            return null;
         }
         else if(keyStroke.isCtrlDown() && keyStroke.getKeyType() == KeyType.ArrowDown) {
             if(viewportTopLeft.getRow() + viewportSize.getRows() < getTerminalSize().getRows()) {
                 viewportTopLeft = viewportTopLeft.withRelativeRow(1);
                 refresh();
-                return null;
             }
+            return null;
         }
         return keyStroke;
     }
