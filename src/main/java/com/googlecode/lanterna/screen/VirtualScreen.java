@@ -31,6 +31,11 @@ public class VirtualScreen extends AbstractScreen {
 
     public void setMinimumSize(TerminalSize minimumSize) {
         this.minimumSize = minimumSize;
+        TerminalSize virtualSize = minimumSize.max(getTerminalSize());
+        if(!minimumSize.equals(virtualSize)) {
+            addResizeRequest(virtualSize);
+            super.doResizeIfNecessary();
+        }
     }
 
     public TerminalSize getMinimumSize() {
