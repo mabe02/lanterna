@@ -36,7 +36,7 @@ public abstract class AbstractScreen implements Screen {
     private TerminalPosition cursorPosition;
     private ScreenBuffer backBuffer;
     private ScreenBuffer frontBuffer;
-    private TextCharacter defaultCharacter;
+    private final TextCharacter defaultCharacter;
 
     //How to deal with \t characters
     private TabBehaviour tabBehaviour;
@@ -57,7 +57,6 @@ public abstract class AbstractScreen implements Screen {
      * character used if the terminal is enlarged and you don't set anything on the new areas.
      *
      * @param defaultCharacter What character to use for the initial state of the screen and expanded areas
-     * @throws java.io.IOException If there was an underlying I/O error when querying the size of the terminal
      */
     @SuppressWarnings({"SameParameterValue", "WeakerAccess"})
     public AbstractScreen(TerminalSize initialSize, TextCharacter defaultCharacter) {

@@ -1,7 +1,8 @@
 package com.googlecode.lanterna.gui2;
 
 /**
- * Created by martin on 21/09/14.
+ * Simple container for other components
+ * @author Martin
  */
 public class Panel extends AbstractInteractableComposite {
 

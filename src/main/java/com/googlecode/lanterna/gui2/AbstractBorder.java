@@ -63,15 +63,12 @@ public abstract class AbstractBorder extends AbstractComponent implements Border
                     " because Border had component " + this.component);
         }
         this.component = null;
-        this.component.setParent(null);
+        component.setParent(null);
     }
 
     @Override
     public boolean isInvalid() {
-        if(component != null) {
-            return component.isInvalid();
-        }
-        return false;
+        return component != null && component.isInvalid();
     }
 
     @Override
