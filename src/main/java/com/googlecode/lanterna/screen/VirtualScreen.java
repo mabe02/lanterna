@@ -58,6 +58,23 @@ public class VirtualScreen extends AbstractScreen {
     }
 
     @Override
+    public void setCursorPosition(TerminalPosition position) {
+        super.setCursorPosition(position);
+        if(position == null) {
+            realScreen.setCursorPosition(null);
+            return;
+        }
+        position = position.withRelativeColumn(-viewportTopLeft.getColumn()).withRelativeRow(-viewportTopLeft.getRow());
+        if(position.getColumn() >= 0 && position.getColumn() < viewportSize.getColumns() &&
+                position.getRow() >= 0 && position.getRow() < viewportSize.getRows()) {
+            realScreen.setCursorPosition(position);
+        }
+        else {
+            realScreen.setCursorPosition(null);
+        }
+    }
+
+    @Override
     public synchronized TerminalSize doResizeIfNecessary() {
         TerminalSize underlyingSize = realScreen.doResizeIfNecessary();
         if(underlyingSize == null) {
@@ -79,6 +96,7 @@ public class VirtualScreen extends AbstractScreen {
             }
             viewportSize = newViewportSize;
         }
+        setCursorPosition(getCursorPosition()); //Re-calculate the cursor's position
         if(!getTerminalSize().equals(newVirtualSize)) {
             addResizeRequest(newVirtualSize);
             return super.doResizeIfNecessary();
