@@ -75,12 +75,11 @@ public class ScreenRectangleTest {
             TerminalSize rectangleSize = new TerminalSize(random.nextInt(size.getColumns() - topLeft.getColumn()), random.nextInt(size.getRows() - topLeft.getRow()));
 
             textGraphics.setBackgroundColor(color);
-            textGraphics.setPosition(topLeft);
             if(useFilled) {
-                textGraphics.fillRectangle(rectangleSize, ' ');
+                textGraphics.fillRectangle(topLeft, rectangleSize, ' ');
             }
             else {
-                textGraphics.drawRectangle(rectangleSize, ' ');
+                textGraphics.drawRectangle(topLeft, rectangleSize, ' ');
             }
             screen.refresh(Screen.RefreshType.DELTA);
             if(slow) {

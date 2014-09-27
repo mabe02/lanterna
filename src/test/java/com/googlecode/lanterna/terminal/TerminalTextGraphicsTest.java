@@ -18,10 +18,7 @@
  */
 package com.googlecode.lanterna.terminal;
 
-import com.googlecode.lanterna.ACS;
-import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.TestTerminalFactory;
-import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.*;
 import com.googlecode.lanterna.graphics.AbstractTextGraphics;
 import com.googlecode.lanterna.graphics.DoublePrintingTextGraphics;
 import com.googlecode.lanterna.graphics.TextGraphics;
@@ -44,22 +41,25 @@ public class TerminalTextGraphicsTest {
         textGraphics.setForegroundColor(TextColor.ANSI.BLUE);
         textGraphics.putString(3, 3, "Hello World!");
         textGraphics.setForegroundColor(TextColor.ANSI.CYAN);
-        textGraphics.drawLine(textGraphics.getPosition().withRelativeColumn(2).withRelativeRow(6), ACS.BLOCK_SOLID);
+        TerminalPosition lineStart = new TerminalPosition(3 + "Hello World!".length(), 3);
+        textGraphics.drawLine(lineStart, lineStart.withRelativeColumn(2).withRelativeRow(6), ACS.BLOCK_SOLID);
         textGraphics.setForegroundColor(TextColor.ANSI.RED);
-        textGraphics.drawRectangle(new TerminalSize(5, 3), ACS.BULLET);
+        textGraphics.drawRectangle(lineStart.withRelativeColumn(2).withRelativeRow(6), new TerminalSize(5, 3), ACS.BULLET);
         textGraphics.setForegroundColor(TextColor.ANSI.MAGENTA);
+        TerminalPosition triangleStart = lineStart.withRelativeColumn(7).withRelativeRow(9);
         textGraphics.drawTriangle(
-                textGraphics.getPosition().withColumn(0).withRelativeRow(-1),
-                textGraphics.getPosition().withColumn(5).withRelativeRow(3),
+                triangleStart,
+                triangleStart.withColumn(0).withRelativeRow(-1),
+                triangleStart.withColumn(5).withRelativeRow(3),
                 ACS.SPADES);
-        textGraphics.setPosition(30, 1);
         textGraphics.setForegroundColor(TextColor.ANSI.YELLOW);
-        textGraphics.fillRectangle(new TerminalSize(8, 5), ACS.DIAMOND);
-        textGraphics.movePosition(0, 5);
+        textGraphics.fillRectangle(new TerminalPosition(30, 1), new TerminalSize(8, 5), ACS.DIAMOND);
         textGraphics.setForegroundColor(TextColor.ANSI.GREEN);
+        triangleStart = new TerminalPosition(30, 6);
         textGraphics.fillTriangle(
-                textGraphics.getPosition().withRelativeRow(5).withRelativeColumn(-2),
-                textGraphics.getPosition().withRelativeRow(5).withRelativeColumn(4),
+                triangleStart,
+                triangleStart.withRelativeRow(5).withRelativeColumn(-2),
+                triangleStart.withRelativeRow(5).withRelativeColumn(4),
                 ACS.CLUB);
 
         terminal.resetColorAndSGR();

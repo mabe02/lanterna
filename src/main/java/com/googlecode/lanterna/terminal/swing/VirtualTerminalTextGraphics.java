@@ -37,13 +37,6 @@ public class VirtualTerminalTextGraphics extends AbstractTextGraphics {
     }
 
     @Override
-    public TextGraphics setPosition(TerminalPosition newPosition) {
-        super.setPosition(newPosition);
-        virtualTerminal.setCursorPosition(newPosition);
-        return this;
-    }
-
-    @Override
     protected void setCharacter(int columnIndex, int rowIndex, TextCharacter textCharacter) {
         TerminalSize size = getSize();
         if(columnIndex < 0 || columnIndex >= size.getColumns() ||

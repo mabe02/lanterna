@@ -116,12 +116,11 @@ public class ScreenTriangleTest {
             }
 
             graphics.setBackgroundColor(color);
-            graphics.setPosition(p1);
             if(useFilled) {
-                graphics.fillTriangle(p2, p3, ' ');
+                graphics.fillTriangle(p1, p2, p3, ' ');
             }
             else {
-                graphics.drawTriangle(p2, p3, ' ');
+                graphics.drawTriangle(p1, p2, p3, ' ');
             }
             screen.refresh(Screen.RefreshType.DELTA);
             if(slow) {

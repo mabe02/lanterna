@@ -34,14 +34,10 @@ public class DefaultWindowDecorationRenderer implements WindowDecorationRenderer
         char bottomRightCorner = themeDefinition.getCharacter("BOTTOM_RIGHT_CORNER", ACS.SINGLE_LINE_BOTTOM_RIGHT_CORNER);
         char topRightCorner = themeDefinition.getCharacter("TOP_RIGHT_CORNER", ACS.SINGLE_LINE_TOP_RIGHT_CORNER);
 
-        graphics.setPosition(0, drawableArea.getRows() - 1)
-                .setCharacter(bottomLeftCorner);
-        graphics.setPosition(0, drawableArea.getRows() - 2)
-                .drawLine(new TerminalPosition(0, 1), verticalLine);
-        graphics.setPosition(0, 0)
-                .setCharacter(topLeftCorner);
-        graphics.setPosition(1, 0)
-                .drawLine(new TerminalPosition(drawableArea.getColumns() - 2, 0), horizontalLine);
+        graphics.setCharacter(0, drawableArea.getRows() - 1, bottomLeftCorner);
+        graphics.drawLine(new TerminalPosition(0, drawableArea.getRows() - 2), new TerminalPosition(0, 1), verticalLine);
+        graphics.setCharacter(0, 0, topLeftCorner);
+        graphics.drawLine(new TerminalPosition(1, 0), new TerminalPosition(drawableArea.getColumns() - 2, 0), horizontalLine);
 
         /*
         graphics.setForegroundColor(TextColor.ANSI.BLACK)
@@ -50,14 +46,16 @@ public class DefaultWindowDecorationRenderer implements WindowDecorationRenderer
         */
         graphics.applyThemeStyle(themeDefinition.getNormal());
 
-        graphics.setPosition(drawableArea.getColumns() - 1, 0)
-                .setCharacter(topRightCorner);
-        graphics.setPosition(drawableArea.getColumns() - 1, 1)
-                .drawLine(new TerminalPosition(drawableArea.getColumns() - 1, drawableArea.getRows() - 2), verticalLine);
-        graphics.setPosition(drawableArea.getColumns() - 1, drawableArea.getRows() - 1)
-                .setCharacter(bottomRightCorner);
-        graphics.setPosition(1, drawableArea.getRows() - 1)
-                .drawLine(new TerminalPosition(drawableArea.getColumns() - 2, drawableArea.getRows() - 1), horizontalLine);
+        graphics.setCharacter(drawableArea.getColumns() - 1, 0, topRightCorner);
+        graphics.drawLine(
+                new TerminalPosition(drawableArea.getColumns() - 1, 1),
+                new TerminalPosition(drawableArea.getColumns() - 1, drawableArea.getRows() - 2),
+                verticalLine);
+        graphics.setCharacter(drawableArea.getColumns() - 1, drawableArea.getRows() - 1, bottomRightCorner);
+        graphics.drawLine(
+                new TerminalPosition(1, drawableArea.getRows() - 1),
+                new TerminalPosition(drawableArea.getColumns() - 2, drawableArea.getRows() - 1),
+                horizontalLine);
 
         if(title.length() > 0) {
             graphics.putString(2, 0, title);

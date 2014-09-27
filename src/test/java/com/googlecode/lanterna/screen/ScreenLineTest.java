@@ -108,8 +108,7 @@ public class ScreenLineTest {
                 p2 = new TerminalPosition(random.nextInt(size.getColumns()), random.nextInt(size.getRows()));
             }
             textGraphics.setBackgroundColor(color);
-            textGraphics.setPosition(p1);
-            textGraphics.drawLine(p2, ' ');
+            textGraphics.drawLine(p1, p2, ' ');
             textGraphics.setBackgroundColor(TextColor.ANSI.BLACK);
             textGraphics.setForegroundColor(TextColor.ANSI.WHITE);
             textGraphics.putString(4, size.getRows() - 1, "P1 " + p1 + " -> P2 " + p2);

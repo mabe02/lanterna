@@ -70,29 +70,6 @@ public final class TextGUIGraphics implements ThemedTextGraphics {
     }
 
     @Override
-    public TextGUIGraphics setPosition(int column, int row) {
-        backend.setPosition(column, row);
-        return this;
-    }
-
-    @Override
-    public TextGUIGraphics setPosition(TerminalPosition newPosition) {
-        backend.setPosition(newPosition);
-        return this;
-    }
-
-    @Override
-    public TextGUIGraphics movePosition(int columns, int rows) {
-        backend.movePosition(columns, rows);
-        return this;
-    }
-
-    @Override
-    public TerminalPosition getPosition() {
-        return backend.getPosition();
-    }
-
-    @Override
     public TextColor getBackgroundColor() {
         return backend.getBackgroundColor();
     }
@@ -161,45 +138,38 @@ public final class TextGUIGraphics implements ThemedTextGraphics {
     }
 
     @Override
-    public TextGUIGraphics setCharacter(char character) {
-        backend.setCharacter(character);
-        return this;
+    public TextGraphics fillRectangle(TerminalPosition topLeft, TerminalSize size, char character) {
+        return backend.fillRectangle(topLeft, size, character);
     }
 
     @Override
-    public TextGUIGraphics drawLine(TerminalPosition toPoint, char character) {
-        backend.drawLine(toPoint, character);
-        return this;
+    public TextGraphics drawRectangle(TerminalPosition topLeft, TerminalSize size, char character) {
+        return backend.drawRectangle(topLeft, size, character);
     }
 
     @Override
-    public TextGUIGraphics drawTriangle(TerminalPosition p1, TerminalPosition p2, char character) {
-        backend.drawTriangle(p1, p2, character);
-        return this;
+    public TextGraphics fillTriangle(TerminalPosition p1, TerminalPosition p2, TerminalPosition p3, char character) {
+        return backend.fillTriangle(p1, p2, p3, character);
     }
 
     @Override
-    public TextGUIGraphics fillTriangle(TerminalPosition p1, TerminalPosition p2, char character) {
-        backend.fillTriangle(p1, p2, character);
-        return this;
+    public TextGraphics drawTriangle(TerminalPosition p1, TerminalPosition p2, TerminalPosition p3, char character) {
+        return backend.drawTriangle(p1, p2, p3, character);
     }
 
     @Override
-    public TextGUIGraphics drawRectangle(TerminalSize size, char character) {
-        backend.drawRectangle(size, character);
-        return this;
+    public TextGraphics drawLine(TerminalPosition fromPoint, TerminalPosition toPoint, char character) {
+        return backend.drawLine(fromPoint, toPoint, character);
     }
 
     @Override
-    public TextGUIGraphics fillRectangle(TerminalSize size, char character) {
-        backend.fillRectangle(size, character);
-        return this;
+    public TextGraphics setCharacter(TerminalPosition position, char character) {
+        return backend.setCharacter(position, character);
     }
 
     @Override
-    public TextGUIGraphics putString(String string) {
-        backend.putString(string);
-        return this;
+    public TextGraphics setCharacter(int column, int row, char character) {
+        return backend.setCharacter(column, row, character);
     }
 
     @Override
@@ -223,12 +193,6 @@ public final class TextGUIGraphics implements ThemedTextGraphics {
     @Override
     public TextGUIGraphics putString(TerminalPosition position, String string, SGR extraModifier, SGR... optionalExtraModifiers) {
         backend.putString(position, string, extraModifier, optionalExtraModifiers);
-        return this;
-    }
-
-    @Override
-    public TextGUIGraphics putString(String string, SGR extraModifier, SGR... optionalExtraModifiers) {
-        backend.putString(string, extraModifier, optionalExtraModifiers);
         return this;
     }
 }

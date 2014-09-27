@@ -102,10 +102,8 @@ public class Button extends AbstractInteractableComponent {
                 graphics.applyThemeStyle(getThemeDefinition(graphics).getInsensitive());
             }
             graphics.fill(' ');
-            graphics.setPosition(0, 0);
-            graphics.setCharacter(getThemeDefinition(graphics).getCharacter("LEFT_BORDER", '<'));
-            graphics.setPosition(graphics.getSize().getColumns() - 1, 0);
-            graphics.setCharacter(getThemeDefinition(graphics).getCharacter("RIGHT_BORDER", '>'));
+            graphics.setCharacter(0, 0, getThemeDefinition(graphics).getCharacter("LEFT_BORDER", '<'));
+            graphics.setCharacter(graphics.getSize().getColumns() - 1, 0, getThemeDefinition(graphics).getCharacter("RIGHT_BORDER", '>'));
 
             if(button.isFocused()) {
                 graphics.applyThemeStyle(getThemeDefinition(graphics).getActive());
@@ -114,8 +112,7 @@ public class Button extends AbstractInteractableComponent {
                 graphics.applyThemeStyle(getThemeDefinition(graphics).getPreLight());
             }
             int labelShift = getLabelShift(button, graphics.getSize());
-            graphics.setPosition(1 + labelShift, 0);
-            graphics.setCharacter(button.getLabel().charAt(0));
+            graphics.setCharacter(1 + labelShift, 0, button.getLabel().charAt(0));
 
             if(button.getLabel().length() == 1) {
                 return;

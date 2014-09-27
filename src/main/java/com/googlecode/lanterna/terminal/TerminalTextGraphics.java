@@ -56,18 +56,6 @@ class TerminalTextGraphics extends AbstractTextGraphics {
     }
 
     @Override
-    public TextGraphics setPosition(TerminalPosition newPosition) {
-        super.setPosition(newPosition);
-        try {
-            terminal.setCursorPosition(newPosition.getColumn(), newPosition.getRow());
-        }
-        catch(IOException e) {
-            throw new RuntimeException(e);
-        }
-        return this;
-    }
-
-    @Override
     protected synchronized void setCharacter(int columnIndex, int rowIndex, TextCharacter textCharacter) {
         try {
             if(manageCallStackSize.get() > 0) {
@@ -109,10 +97,10 @@ class TerminalTextGraphics extends AbstractTextGraphics {
     }
 
     @Override
-    public synchronized TextGraphics drawLine(TerminalPosition toPoint, char character) {
+    public synchronized TextGraphics drawLine(TerminalPosition fromPoint, TerminalPosition toPoint, char character) {
         try {
             enterAtomic();
-            super.drawLine(toPoint, character);
+            super.drawLine(fromPoint, toPoint, character);
             return this;
         }
         finally {
@@ -121,10 +109,10 @@ class TerminalTextGraphics extends AbstractTextGraphics {
     }
 
     @Override
-    public synchronized TextGraphics drawTriangle(TerminalPosition p1, TerminalPosition p2, char character) {
+    public synchronized TextGraphics drawTriangle(TerminalPosition p1, TerminalPosition p2, TerminalPosition p3, char character) {
         try {
             enterAtomic();
-            super.drawTriangle(p1, p2, character);
+            super.drawTriangle(p1, p2, p3, character);
             return this;
         }
         finally {
@@ -133,10 +121,10 @@ class TerminalTextGraphics extends AbstractTextGraphics {
     }
 
     @Override
-    public synchronized TextGraphics fillTriangle(TerminalPosition p1, TerminalPosition p2, char character) {
+    public synchronized TextGraphics fillTriangle(TerminalPosition p1, TerminalPosition p2, TerminalPosition p3, char character) {
         try {
             enterAtomic();
-            super.fillTriangle(p1, p2, character);
+            super.fillTriangle(p1, p2, p3, character);
             return this;
         }
         finally {
@@ -145,10 +133,10 @@ class TerminalTextGraphics extends AbstractTextGraphics {
     }
 
     @Override
-    public synchronized TextGraphics fillRectangle(TerminalSize size, char character) {
+    public synchronized TextGraphics fillRectangle(TerminalPosition topLeft, TerminalSize size, char character) {
         try {
             enterAtomic();
-            super.fillRectangle(size, character);
+            super.fillRectangle(topLeft, size, character);
             return this;
         }
         finally {
@@ -157,10 +145,10 @@ class TerminalTextGraphics extends AbstractTextGraphics {
     }
 
     @Override
-    public synchronized TextGraphics drawRectangle(TerminalSize size, char character) {
+    public synchronized TextGraphics drawRectangle(TerminalPosition topLeft, TerminalSize size, char character) {
         try {
             enterAtomic();
-            super.drawRectangle(size, character);
+            super.drawRectangle(topLeft, size, character);
             return this;
         }
         finally {
@@ -169,10 +157,10 @@ class TerminalTextGraphics extends AbstractTextGraphics {
     }
 
     @Override
-    public synchronized TextGraphics putString(String string) {
+    public synchronized TextGraphics putString(int column, int row, String string) {
         try {
             enterAtomic();
-            return super.putString(string);
+            return super.putString(column, row, string);
         }
         finally {
             leaveAtomic();

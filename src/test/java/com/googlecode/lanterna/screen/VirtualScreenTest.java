@@ -28,10 +28,9 @@ public class VirtualScreenTest {
 
         TextGraphics textGraphics = screen.newTextGraphics();
         textGraphics.setBackgroundColor(TextColor.ANSI.GREEN);
-        textGraphics.setPosition(40, 0).fillTriangle(new TerminalPosition(25,19), new TerminalPosition(65, 19), ' ');
+        textGraphics.fillTriangle(new TerminalPosition(40, 0), new TerminalPosition(25,19), new TerminalPosition(65, 19), ' ');
         textGraphics.setBackgroundColor(TextColor.ANSI.RED);
-        textGraphics.setPosition(0, 0);
-        textGraphics.drawRectangle(screen.getTerminalSize(), ' ');
+        textGraphics.drawRectangle(TerminalPosition.TOP_LEFT_CORNER, screen.getTerminalSize(), ' ');
         screen.refresh();
 
         while(true) {

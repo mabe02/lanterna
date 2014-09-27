@@ -34,7 +34,6 @@ import java.util.EnumSet;
  * <p/>
  * The basic concept behind a TextGraphics implementation is that it keeps a state on four things:
  * <ul>
- *     <li>Position</li>
  *     <li>Foreground color</li>
  *     <li>Background color</li>
  *     <li>Modifiers</li>
@@ -70,36 +69,6 @@ public interface TextGraphics {
      * TextGraphics in any way.
      */
     TextGraphics newTextGraphics(TerminalPosition topLeftCorner, TerminalSize size) throws IllegalArgumentException;
-
-    /**
-     * Moves the position state of the TextGraphics to the specified coordinates
-     * @param column Column index of the new position
-     * @param row Row index of the new position
-     * @return Itself
-     */
-    TextGraphics setPosition(int column, int row);
-
-    /**
-     * Moves the position state of the TextGraphics to the specified coordinates
-     * @param newPosition New position
-     * @return Itself
-     */
-    TextGraphics setPosition(TerminalPosition newPosition);
-
-    /**
-     * Moves the position state of this TextGraphics to a new position relative to the current position. Do not mix this
-     * up with {@code setPosition(int column, int row)} that specifies the next position directly.
-     * @param columns Number of columns to move to the right from the current position
-     * @param rows Number of rows to move down from the current position
-     * @return Itself
-     */
-    TextGraphics movePosition(int columns, int rows);
-
-    /**
-     * Returns the current position the TextGraphics has
-     * @return Current position of the TextGraphics
-     */
-    TerminalPosition getPosition();
 
     /**
      * Returns the current background color
@@ -182,84 +151,85 @@ public interface TextGraphics {
 
     /**
      * Sets the character at the current position to the specified value
+     * @param column column of the location to set the character
+     * @param row row of the location to set the character
      * @param character Character to set at the current position
      * @return Itself
      */
-    TextGraphics setCharacter(char character);
+    TextGraphics setCharacter(int column, int row, char character);
 
     /**
-     * Draws a line from the current position to a specified position, using a supplied character. After
-     * the operation, this {@code TextGraphics}'s position will be at the end-point of the line. The current
+     * Sets the character at the current position to the specified value
+     * @param position position of the location to set the character
+     * @param character Character to set at the current position
+     * @return Itself
+     */
+    TextGraphics setCharacter(TerminalPosition position, char character);
+
+    /**
+     * Draws a line from a specified position to a specified position, using a supplied character. The current
      * foreground color, background color and modifiers will be applied.
+     * @param fromPoint From where to draw the line
      * @param toPoint Where to draw the line
      * @param character Character to use for the line
      * @return Itself
      */
-    TextGraphics drawLine(TerminalPosition toPoint, char character);
+    TextGraphics drawLine(TerminalPosition fromPoint, TerminalPosition toPoint, char character);
 
     /**
-     * Draws the outline of a triangle on the screen, using a supplied character. The triangle will begin at this
-     * object's current position, go through both supplied points and then back again to the original position. The
-     * position of this {@code TextGraphics} after this operation will be the same as where it was before.
-     * The current foreground color, background color and modifiers will be applied.
-     * @param p1 First point on the screen to draw the triangle with, starting from the current position
-     * @param p2 Second point on the screen to draw the triangle with, going from p1 and going back to the original start
+     * Draws the outline of a triangle on the screen, using a supplied character. The triangle will begin at p1, go
+     * through p2 and then p3 and then back to p1. The current foreground color, background color and modifiers will be
+     * applied.
+     * @param p1 First point on the screen of the triangle
+     * @param p2 Second point on the screen of the triangle
+     * @param p3 Third point on the screen of the triangle
      * @param character What character to use when drawing the lines of the triangle
      */
-    TextGraphics drawTriangle(TerminalPosition p1, TerminalPosition p2, char character);
+    TextGraphics drawTriangle(TerminalPosition p1, TerminalPosition p2, TerminalPosition p3, char character);
 
     /**
-     * Draws a filled triangle, using a supplied character. The triangle will begin at this
-     * object's current position, go through both supplied points and then back again to the original position. The
-     * position of this {@code TextGraphics} after this operation will be the same as where it was before.
-     * The current foreground color, background color and modifiers will be applied.
-     * @param p1 First point on the screen to draw the triangle with, starting from the current position
-     * @param p2 Second point on the screen to draw the triangle with, going from p1 and going back to the original start
+     * Draws a filled triangle, using a supplied character. The triangle will begin at p1, go
+     * through p2 and then p3 and then back to p1. The current foreground color, background color and modifiers will be
+     * applied.
+     * @param p1 First point on the screen of the triangle
+     * @param p2 Second point on the screen of the triangle
+     * @param p3 Third point on the screen of the triangle
      * @param character What character to use when drawing the lines of the triangle
      */
-    TextGraphics fillTriangle(TerminalPosition p1, TerminalPosition p2, char character);
+    TextGraphics fillTriangle(TerminalPosition p1, TerminalPosition p2, TerminalPosition p3, char character);
 
     /**
      * Draws the outline of a rectangle with a particular character (and the currently active colors and
-     * modifiers). The top-left corner will be at the current position of this {@code TextGraphics} (inclusive) and it
-     * will extend to position + size (exclusive). The current position of this {@code TextGraphics} after this
-     * operation will be the same as where it started.
+     * modifiers). The topLeft coordinate is inclusive.
      * <p/>
-     * For example, calling drawRectangle with size being the size of the terminal when the writer's position is in the
+     * For example, calling drawRectangle with size being the size of the terminal and top-left value being the terminal's
      * top-left (0x0) corner will draw a border around the terminal.
      * <p/>
      * The current foreground color, background color and modifiers will be applied.
+     * @param topLeft Coordinates of the top-left position of the rectangle
      * @param size Size (in columns and rows) of the area to draw
      * @param character What character to use when drawing the outline of the rectangle
      */
-    TextGraphics drawRectangle(TerminalSize size, char character);
+    TextGraphics drawRectangle(TerminalPosition topLeft, TerminalSize size, char character);
 
     /**
      * Takes a rectangle and fills it with a particular character (and the currently active colors and
-     * modifiers). The top-left corner will be at the current position of this {@code TextGraphics} (inclusive) and it
-     * will extend to position + size (exclusive).
+     * modifiers). The topLeft coordinate is inclusive.
+     * <p/>
+     * For example, calling fillRectangle with size being the size of the terminal and top-left value being the terminal's
+     * top-left (0x0) corner will fill the entire terminal with this character.
+     * <p/>
      * The current foreground color, background color and modifiers will be applied.
+     * @param topLeft Coordinates of the top-left position of the rectangle
      * @param size Size (in columns and rows) of the area to draw
      * @param character What character to use when filling the rectangle
      */
-    TextGraphics fillRectangle(TerminalSize size, char character);
+    TextGraphics fillRectangle(TerminalPosition topLeft, TerminalSize size, char character);
 
     /**
-     * Puts a string on the screen at the current position with the current colors and modifiers. If the string
+     * Puts a string on the screen at the specified position with the current colors and modifiers. If the string
      * contains newlines (\r and/or \n), the method will stop at the character before that; you have to manage
-     * multi-line strings yourself! The current position after this operation will be the old position shifted right
-     * string.length() number of columns. The current foreground color, background color and modifiers will be applied.
-     *
-     * @param string Text to put on the screen
-     * @return Itself
-     */
-    TextGraphics putString(String string);
-
-    /**
-     * Shortcut to calling:
-     * <pre>
-     *  putString(new TerminalPosition(column, row), string);
-     * </pre>
+     * multi-line strings yourself! The current foreground color, background color and modifiers will be applied.
      * @param column What column to put the string at
      * @param row What row to put the string at
      * @param string String to put on the screen
@@ -270,8 +240,7 @@ public interface TextGraphics {
     /**
      * Shortcut to calling:
      * <pre>
-     *  setPosition(position);
-     *  putString(string);
+     *  putString(position.getColumn(), position.getRow(), string);
      * </pre>
      * @param position Position to put the string at
      * @param string String to put on the screen
@@ -280,10 +249,10 @@ public interface TextGraphics {
     TextGraphics putString(TerminalPosition position, String string);
 
     /**
-     * Shortcut to calling:
-     * <pre>
-     *  putString(new TerminalPosition(column, row), string, modifiers, optionalExtraModifiers);
-     * </pre>
+     * Puts a string on the screen at the specified position with the current colors and modifiers. If the string
+     * contains newlines (\r and/or \n), the method will stop at the character before that; you have to manage
+     * multi-line strings yourself! If you supplied any extra modifiers, they will be applied when writing the string
+     * as well.
      * @param column What column to put the string at
      * @param row What row to put the string at
      * @param string String to put on the screen
@@ -296,8 +265,7 @@ public interface TextGraphics {
     /**
      * Shortcut to calling:
      * <pre>
-     *  setPosition(position);
-     *  putString(string, modifiers, optionalExtraModifiers);
+     *  putString(position.getColumn(), position.getRow(), string, modifiers, optionalExtraModifiers);
      * </pre>
      * @param position Position to put the string at
      * @param string String to put on the screen
@@ -306,15 +274,4 @@ public interface TextGraphics {
      * @return Itself
      */
     TextGraphics putString(TerminalPosition position, String string, SGR extraModifier, SGR... optionalExtraModifiers);
-
-    /**
-     * Prints a string from the current position and optionally enables a few extra SGR modifiers. The extra SGR
-     * modifiers, those that wasn't already active on the writer when this method is called, will only be applied to
-     * this operation and will be disabled again when the call is done.
-     * @param string String to put on the screen
-     * @param extraModifier Extra modifier to apply to the string
-     * @param optionalExtraModifiers Optional extra modifiers to apply to the string
-     * @return Itself
-     */
-    TextGraphics putString(String string, SGR extraModifier, SGR... optionalExtraModifiers);
 }

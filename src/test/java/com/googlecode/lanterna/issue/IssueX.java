@@ -42,9 +42,8 @@ class IssueX {
         }
 
         public void write(String string, SGR... styles) throws IOException {
-            screenWriter.setPosition(new TerminalPosition(default_x, current_y));
             screenWriter.enableModifiers(styles);
-            screenWriter.putString(string);
+            screenWriter.putString(default_x, current_y, string);
             screen.pollInput();
             screen.refresh();
         }

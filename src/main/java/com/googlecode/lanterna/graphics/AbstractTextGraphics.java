@@ -31,8 +31,6 @@ import java.util.EnumSet;
  * @author Martin
  */
 public abstract class AbstractTextGraphics implements TextGraphics {
-
-    protected TerminalPosition currentPosition;
     protected TextColor foregroundColor;
     protected TextColor backgroundColor;
     protected TabBehaviour tabBehaviour;
@@ -44,35 +42,12 @@ public abstract class AbstractTextGraphics implements TextGraphics {
         this.tabBehaviour = TabBehaviour.ALIGN_TO_COLUMN_4;
         this.foregroundColor = TextColor.ANSI.DEFAULT;
         this.backgroundColor = TextColor.ANSI.DEFAULT;
-        this.currentPosition = new TerminalPosition(0, 0);
         this.shapeRenderer = new DefaultShapeRenderer(new DefaultShapeRenderer.Callback() {
             @Override
             public void onPoint(int column, int row, char character) {
                 setCharacter(column, row, newScreenCharacter(character));
             }
         });
-    }
-
-    @Override
-    public TextGraphics setPosition(int column, int row) {
-        return setPosition(new TerminalPosition(column, row));
-    }
-
-    @Override
-    public TextGraphics setPosition(TerminalPosition newPosition) {
-        this.currentPosition = newPosition;
-        return this;
-    }
-
-    @Override
-    public TextGraphics movePosition(int columns, int rows) {
-        setPosition(getPosition().withRelativeColumn(columns).withRelativeRow(rows));
-        return this;
-    }
-
-    @Override
-    public TerminalPosition getPosition() {
-        return currentPosition;
     }
 
     @Override
@@ -150,67 +125,66 @@ public abstract class AbstractTextGraphics implements TextGraphics {
 
     @Override
     public TextGraphics fill(char c) {
-        TerminalPosition savedPosition = getPosition();
-        setPosition(TerminalPosition.TOP_LEFT_CORNER);
-        fillRectangle(getSize(), c);
-        setPosition(savedPosition);
+        fillRectangle(TerminalPosition.TOP_LEFT_CORNER, getSize(), c);
         return this;
     }
 
     @Override
-    public TextGraphics setCharacter(char character) {
-        setCharacter(getPosition(), newScreenCharacter(character));
+    public TextGraphics setCharacter(int column, int row, char character) {
+        setCharacter(column, row, newScreenCharacter(character));
         return this;
     }
 
     @Override
-    public TextGraphics drawLine(TerminalPosition toPoint, char character) {
-        shapeRenderer.drawLine(getPosition(), toPoint, character);
-        setPosition(toPoint);
+    public TextGraphics setCharacter(TerminalPosition position, char character) {
+        setCharacter(position, newScreenCharacter(character));
         return this;
     }
 
     @Override
-    public TextGraphics drawTriangle(TerminalPosition p1, TerminalPosition p2, char character) {
-        TerminalPosition position = getPosition();
-        shapeRenderer.drawTriangle(position, p1, p2, character);
-        setPosition(position);
+    public TextGraphics drawLine(TerminalPosition fromPosition, TerminalPosition toPoint, char character) {
+        shapeRenderer.drawLine(fromPosition, toPoint, character);
         return this;
     }
 
     @Override
-    public TextGraphics fillTriangle(TerminalPosition p1, TerminalPosition p2, char character) {
-        TerminalPosition position = getPosition();
-        shapeRenderer.fillTriangle(position, p1, p2, character);
-        setPosition(position);
+    public TextGraphics drawTriangle(TerminalPosition p1, TerminalPosition p2, TerminalPosition p3, char character) {
+        shapeRenderer.drawTriangle(p1, p2, p3, character);
         return this;
     }
 
     @Override
-    public TextGraphics drawRectangle(TerminalSize size, char character) {
-        shapeRenderer.drawRectangle(getPosition(), size, character);
+    public TextGraphics fillTriangle(TerminalPosition p1, TerminalPosition p2, TerminalPosition p3, char character) {
+        shapeRenderer.fillTriangle(p1, p2, p3, character);
         return this;
     }
 
     @Override
-    public TextGraphics fillRectangle(TerminalSize size, char character) {
-        shapeRenderer.fillRectangle(getPosition(), size, character);
+    public TextGraphics drawRectangle(TerminalPosition topLeft, TerminalSize size, char character) {
+        shapeRenderer.drawRectangle(topLeft, size, character);
         return this;
     }
 
     @Override
-    public TextGraphics putString(String string) {
+    public TextGraphics fillRectangle(TerminalPosition topLeft, TerminalSize size, char character) {
+        shapeRenderer.fillRectangle(topLeft, size, character);
+        return this;
+    }
+
+    @Override
+    public TextGraphics putString(int column, int row, String string) {
         if(string.contains("\n")) {
             string = string.substring(0, string.indexOf("\n"));
         }
         if(string.contains("\r")) {
             string = string.substring(0, string.indexOf("\r"));
         }
-        string = tabBehaviour.replaceTabs(string, currentPosition.getColumn());
+        string = tabBehaviour.replaceTabs(string, column);
         for(int i = 0; i < string.length(); i++) {
             char character = string.charAt(i);
             setCharacter(
-                    currentPosition.withRelativeColumn(i),
+                    column + i,
+                    row,
                     new TextCharacter(
                             character,
                             foregroundColor,
@@ -222,44 +196,28 @@ public abstract class AbstractTextGraphics implements TextGraphics {
                 i++;
             }
         }
-        currentPosition = currentPosition.withRelativeColumn(string.length());
-        return this;
-    }
-
-    @Override
-    public TextGraphics putString(int column, int row, String string) {
-        putString(new TerminalPosition(column, row), string);
         return this;
     }
 
     @Override
     public TextGraphics putString(TerminalPosition position, String string) {
-        setPosition(position);
-        putString(string);
+        putString(position.getColumn(), position.getRow(), string);
         return this;
     }
 
     @Override
-    public TextGraphics putString(int column, int row, String string, SGR extraModifier, SGR... optionalExtraModifiers) {
-        putString(new TerminalPosition(column, row), string, extraModifier, optionalExtraModifiers);
+    public TextGraphics putString(int column, int row, String string, SGR extraModifier, SGR... optionalExtraModifiers) {clearModifiers();
+        EnumSet<SGR> extraModifiers = EnumSet.of(extraModifier, optionalExtraModifiers);
+        extraModifiers.removeAll(activeModifiers);
+        enableModifiers(extraModifiers);
+        putString(column, row, string);
+        disableModifiers(extraModifiers);
         return this;
     }
 
     @Override
     public TextGraphics putString(TerminalPosition position, String string, SGR extraModifier, SGR... optionalExtraModifiers) {
-        setPosition(position);
-        putString(string, extraModifier, optionalExtraModifiers);
-        return this;
-    }
-
-    @Override
-    public TextGraphics putString(String string, SGR extraModifier, SGR... optionalExtraModifiers) {
-        clearModifiers();
-        EnumSet<SGR> extraModifiers = EnumSet.of(extraModifier, optionalExtraModifiers);
-        extraModifiers.removeAll(activeModifiers);
-        enableModifiers(extraModifiers);
-        putString(string);
-        disableModifiers(extraModifiers);
+        putString(position.getColumn(), position.getRow(), string, extraModifier, optionalExtraModifiers);
         return this;
     }
 

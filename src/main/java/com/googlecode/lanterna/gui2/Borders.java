@@ -73,30 +73,26 @@ public class Borders {
             char bottomRightCorner = getBottomRightCorner(graphics);
             char topRightCorner = getTopRightCorner(graphics);
 
-            graphics.setPosition(0, drawableArea.getRows() - 1)
-                    .setCharacter(bottomLeftCorner);
+            graphics.setCharacter(0, drawableArea.getRows() - 1, bottomLeftCorner);
             if(drawableArea.getRows() > 2) {
-                graphics.setPosition(0, drawableArea.getRows() - 2)
-                        .drawLine(new TerminalPosition(0, 1), verticalLine);
+                graphics.drawLine(new TerminalPosition(0, drawableArea.getRows() - 2), new TerminalPosition(0, 1), verticalLine);
             }
-            graphics.setPosition(0, 0)
-                    .setCharacter(topLeftCorner);
+            graphics.setCharacter(0, 0, topLeftCorner);
             if(drawableArea.getColumns() > 2) {
-                graphics.setPosition(1, 0)
-                        .drawLine(new TerminalPosition(drawableArea.getColumns() - 2, 0), horizontalLine);
+                graphics.drawLine(new TerminalPosition(1, 0), new TerminalPosition(drawableArea.getColumns() - 2, 0), horizontalLine);
             }
 
-            graphics.setPosition(drawableArea.getColumns() - 1, 0)
-                    .setCharacter(topRightCorner);
+            graphics.setCharacter(drawableArea.getColumns() - 1, 0, topRightCorner);
             if(drawableArea.getRows() > 2) {
-                graphics.setPosition(drawableArea.getColumns() - 1, 1)
-                        .drawLine(new TerminalPosition(drawableArea.getColumns() - 1, drawableArea.getRows() - 2), verticalLine);
+                graphics.drawLine(new TerminalPosition(drawableArea.getColumns() - 1, 1),
+                                    new TerminalPosition(drawableArea.getColumns() - 1, drawableArea.getRows() - 2),
+                                    verticalLine);
             }
-            graphics.setPosition(drawableArea.getColumns() - 1, drawableArea.getRows() - 1)
-                    .setCharacter(bottomRightCorner);
+            graphics.setCharacter(drawableArea.getColumns() - 1, drawableArea.getRows() - 1, bottomRightCorner);
             if(drawableArea.getColumns() > 2) {
-                graphics.setPosition(1, drawableArea.getRows() - 1)
-                        .drawLine(new TerminalPosition(drawableArea.getColumns() - 2, drawableArea.getRows() - 1), horizontalLine);
+                graphics.drawLine(new TerminalPosition(1, drawableArea.getRows() - 1),
+                                    new TerminalPosition(drawableArea.getColumns() - 2, drawableArea.getRows() - 1),
+                                    horizontalLine);
             }
 
             if(drawableArea.getColumns() >= title.length() + 4) {

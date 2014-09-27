@@ -38,84 +38,84 @@ public class TerminalTest {
         }
         catch(InterruptedException ignored) {
         }
-        writer.setPosition(10, 10).putString("Hello world!");
+        writer.putString(10, 10, "Hello world!");
         screen.refresh();
         try {
             Thread.sleep(500);
         }
         catch(InterruptedException ignored) {
         }
-        writer.setPosition(10, 10).putString(" ello world!");
+        writer.putString(10, 10, " ello world!");
         screen.refresh();
         try {
             Thread.sleep(500);
         }
         catch(InterruptedException ignored) {
         }
-        writer.setPosition(10, 10).putString("  llo world!");
+        writer.putString(10, 10, "  llo world!");
         screen.refresh();
         try {
             Thread.sleep(500);
         }
         catch(InterruptedException ignored) {
         }
-        writer.setPosition(10, 10).putString("   lo world!");
+        writer.putString(10, 10, "   lo world!");
         screen.refresh();
         try {
             Thread.sleep(500);
         }
         catch(InterruptedException ignored) {
         }
-        writer.setPosition(10, 10).putString("    o world!");
+        writer.putString(10, 10, "    o world!");
         screen.refresh();
         try {
             Thread.sleep(500);
         }
         catch(InterruptedException ignored) {
         }
-        writer.setPosition(10, 10).putString("      world!");
+        writer.putString(10, 10, "      world!");
         screen.refresh();
         try {
             Thread.sleep(500);
         }
         catch(InterruptedException ignored) {
         }
-        writer.setPosition(10, 10).putString("       orld!");
+        writer.putString(10, 10, "       orld!");
         screen.refresh();
         try {
             Thread.sleep(500);
         }
         catch(InterruptedException ignored) {
         }
-        writer.setPosition(10, 10).putString("        rld!");
+        writer.putString(10, 10, "        rld!");
         screen.refresh();
         try {
             Thread.sleep(500);
         }
         catch(InterruptedException ignored) {
         }
-        writer.setPosition(10, 10).putString("         ld!");
+        writer.putString(10, 10, "         ld!");
         screen.refresh();
         try {
             Thread.sleep(500);
         }
         catch(InterruptedException ignored) {
         }
-        writer.setPosition(10, 10).putString("          d!");
+        writer.putString(10, 10, "          d!");
         screen.refresh();
         try {
             Thread.sleep(500);
         }
         catch(InterruptedException ignored) {
         }
-        writer.setPosition(10, 10).putString("           !");
+        writer.putString(10, 10, "           !");
         screen.refresh();
         try {
             Thread.sleep(500);
         }
         catch(InterruptedException ignored) {
         }
-        writer.setPosition(10, 10).putString("            ");
+        writer.putString(10, 10, "            ");
         screen.refresh();
         try {
             Thread.sleep(500);

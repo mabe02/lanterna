@@ -215,14 +215,18 @@ public class VirtualScreen extends AbstractScreen {
             int horizontalSize = (int)(((double)(viewportSize.getColumns()) / (double)virtualSize.getColumns()) * (viewportSize.getColumns()));
             int scrollable = viewportSize.getColumns() - horizontalSize - 1;
             int horizontalPosition = (int)((double)scrollable * ((double)viewportTopLeft.getColumn() / (double)(virtualSize.getColumns() - viewportSize.getColumns())));
-            graphics.setPosition(horizontalPosition, graphics.getSize().getRows() - 2);
-            graphics.drawLine(new TerminalPosition(horizontalPosition + horizontalSize, graphics.getSize().getRows() - 2), ACS.BLOCK_MIDDLE);
+            graphics.drawLine(
+                    new TerminalPosition(horizontalPosition, graphics.getSize().getRows() - 2),
+                    new TerminalPosition(horizontalPosition + horizontalSize, graphics.getSize().getRows() - 2),
+                    ACS.BLOCK_MIDDLE);
 
             int verticalSize = (int)(((double)(viewportSize.getRows()) / (double)virtualSize.getRows()) * (viewportSize.getRows()));
             scrollable = viewportSize.getRows() - verticalSize - 1;
             int verticalPosition = (int)((double)scrollable * ((double)viewportTopLeft.getRow() / (double)(virtualSize.getRows() - viewportSize.getRows())));
-            graphics.setPosition(graphics.getSize().getColumns() - 1, verticalPosition);
-            graphics.drawLine(new TerminalPosition(graphics.getSize().getColumns() - 1, verticalPosition + verticalSize), ACS.BLOCK_MIDDLE);
+            graphics.drawLine(
+                    new TerminalPosition(graphics.getSize().getColumns() - 1, verticalPosition),
+                    new TerminalPosition(graphics.getSize().getColumns() - 1, verticalPosition + verticalSize),
+                    ACS.BLOCK_MIDDLE);
         }
     }
 }

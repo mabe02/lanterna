@@ -111,8 +111,7 @@ public class Label extends AbstractComponent {
                     char c = line.charAt(i);
                     int width = CJKUtils.isCharCJK(c) ? 2 : 1;
                     if(remainingColumns >= width) {
-                        graphics.setPosition(graphics.getSize().getColumns() - remainingColumns, row);
-                        graphics.setCharacter(c);
+                        graphics.setCharacter(graphics.getSize().getColumns() - remainingColumns, row, c);
                         remainingColumns -= width;
                     }
                 }

@@ -134,14 +134,13 @@ class TextGraphicsImpl implements com.googlecode.lanterna.gui.TextGraphics
             string = string.substring(0, areaSize.getColumns() - column);
 
         TextGraphics screenWriter = screen.newTextGraphics();
-        screenWriter.setPosition(new TerminalPosition(column + topLeft.getColumn(), row + topLeft.getRow()));
         screenWriter.setForegroundColor(foregroundColor);
         screenWriter.setBackgroundColor(backgroundColor);
         screenWriter.enableModifiers(styles);
         if(currentlyBold) {
             screenWriter.enableModifiers(SGR.BOLD);
         }
-        screenWriter.putString(string);
+        screenWriter.putString(column + topLeft.getColumn(), row + topLeft.getRow(), string);
     }
 
     @Override
