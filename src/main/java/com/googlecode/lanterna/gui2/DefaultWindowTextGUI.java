@@ -24,6 +24,7 @@ import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.screen.VirtualScreen;
 
 import java.io.IOException;
 
@@ -32,6 +33,7 @@ import java.io.IOException;
  * @author Martin
  */
 public class DefaultWindowTextGUI extends AbstractTextGUI implements WindowBasedTextGUI {
+    private final VirtualScreen virtualScreen;
     private final WindowManager windowManager;
     private final TextGUIElement background;
     private final WindowPostRenderer postRenderer;
@@ -50,7 +52,12 @@ public class DefaultWindowTextGUI extends AbstractTextGUI implements WindowBased
     }
 
     public DefaultWindowTextGUI(Screen screen, WindowManager windowManager, WindowPostRenderer postRenderer, TextGUIElement background) {
+        this(new VirtualScreen(screen), windowManager, postRenderer, background);
+    }
+
+    private DefaultWindowTextGUI(VirtualScreen screen, WindowManager windowManager, WindowPostRenderer postRenderer, TextGUIElement background) {
         super(screen);
+        this.virtualScreen = screen;
         this.windowManager = windowManager;
         this.background = background;
         this.postRenderer = postRenderer;
@@ -60,6 +67,16 @@ public class DefaultWindowTextGUI extends AbstractTextGUI implements WindowBased
     @Override
     public boolean isPendingUpdate() {
         return super.isPendingUpdate() || background.isInvalid() || windowManager.isInvalid();
+    }
+
+    @Override
+    public void updateScreen() throws IOException {
+        TerminalSize preferredSize = TerminalSize.ONE;
+        for(Window window: windowManager.getWindows()) {
+            preferredSize = preferredSize.max(window.getPreferredSize());
+        }
+        virtualScreen.setMinimumSize(preferredSize.withRelativeColumns(10).withRelativeRows(5));
+        super.updateScreen();
     }
 
     @Override
