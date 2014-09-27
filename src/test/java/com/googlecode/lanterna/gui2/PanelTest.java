@@ -19,7 +19,7 @@ public class PanelTest extends TestBase {
         mainPanel.setLayoutManager(new LinearLayout(LinearLayout.Direction.HORIZONTAL));
 
         Panel leftPanel = new Panel();
-        mainPanel.addComponent(leftPanel.withBorder(Borders.singleLine()));
+        mainPanel.addComponent(leftPanel.withBorder(Borders.singleLine("Left")));
 
         Panel panel = new Panel();
         panel.addComponent(new Button("Panel 1 Button"));
@@ -35,11 +35,13 @@ public class PanelTest extends TestBase {
         leftPanel.addComponent(panel.withBorder(Borders.doubleLine("Title")));
 
         Panel rightPanel = new Panel();
-        mainPanel.addComponent(rightPanel.withBorder(Borders.singleLine()));
+        mainPanel.addComponent(rightPanel.withBorder(Borders.singleLine("Right")));
 
         panel = new Panel();
         panel.addComponent(new Button("Panel 1 Button"));
-        rightPanel.addComponent(panel.withBorder(Borders.singleLine()));
+        panel.addComponent(new Panel().withBorder(Borders.singleLine("A")));
+        panel.addComponent(new Panel().withBorder(Borders.singleLine("Some Text")));
+        rightPanel.addComponent(panel.withBorder(Borders.singleLine("B")));
         panel = new Panel();
         panel.addComponent(new Button("Panel 2 Button"));
         rightPanel.addComponent(panel.withBorder(Borders.singleLine("Title")));
@@ -50,13 +52,14 @@ public class PanelTest extends TestBase {
         panel.addComponent(new Button("Panel 4 Button"));
         rightPanel.addComponent(panel.withBorder(Borders.doubleLine("Title")));
 
-        contentArea.addComponent(mainPanel.withBorder(Borders.singleLine()));
+        contentArea.addComponent(mainPanel.withBorder(Borders.singleLine("Main")));
         contentArea.addComponent(new Button("OK", new Runnable() {
             @Override
             public void run() {
                 window.close();
             }
         }));
+        mainPanel.getPreferredSize();
         textGUI.getWindowManager().addWindow(window);
     }
 }
