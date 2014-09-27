@@ -15,13 +15,17 @@ public abstract class AbstractBorder extends AbstractComponent implements Border
     
     @Override
     public boolean hasInteractable(Interactable interactable) {
-        return interactable != null && interactable == component;
+        return interactable != null && (interactable == component ||
+                (component instanceof InteractableComposite && ((InteractableComposite)component).hasInteractable(interactable)));
     }
 
     @Override
     public Interactable nextFocus(Interactable fromThis) {
         if(fromThis == null && component instanceof Interactable) {
             return (Interactable)component;
+        }
+        else if(component instanceof InteractableComposite) {
+            return ((InteractableComposite)component).nextFocus(fromThis);
         }
         return null;
     }
@@ -30,6 +34,9 @@ public abstract class AbstractBorder extends AbstractComponent implements Border
     public Interactable previousFocus(Interactable fromThis) {
         if(fromThis == null && component instanceof Interactable) {
             return (Interactable)component;
+        }
+        else if(component instanceof InteractableComposite) {
+            return ((InteractableComposite)component).previousFocus(fromThis);
         }
         return null;
     }
