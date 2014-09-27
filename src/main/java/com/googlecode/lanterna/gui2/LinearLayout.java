@@ -81,8 +81,8 @@ public class LinearLayout implements LayoutManager {
             else {
                 TerminalSize preferredSize = component.getPreferredSize();
                 TerminalSize decidedSize = new TerminalSize(
-                        Math.min(availableVerticalSpace, preferredSize.getColumns()),
-                        Math.min(remainingHorizontalSpace, preferredSize.getRows()));
+                        Math.min(remainingHorizontalSpace, preferredSize.getColumns()),
+                        Math.min(availableVerticalSpace, preferredSize.getRows()));
 
                 component.setPosition(component.getPosition().withRow(0).withColumn(area.getColumns() - remainingHorizontalSpace));
                 component.setSize(component.getSize().with(decidedSize));
