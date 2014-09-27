@@ -40,10 +40,16 @@ public class Borders {
         @Override
         public TerminalSize getPreferredSize() {
             Component wrappedComponent = getWrappedComponent();
+            TerminalSize wrappedComponentPreferredSize;
             if(wrappedComponent == null) {
-                return TerminalSize.ZERO;
+                wrappedComponentPreferredSize = TerminalSize.ZERO;
             }
-            return wrappedComponent.getPreferredSize().withRelativeColumns(2).withRelativeRows(2);
+            else {
+                wrappedComponentPreferredSize = wrappedComponent.getPreferredSize();
+            }
+            TerminalSize size = wrappedComponentPreferredSize.withRelativeColumns(2).withRelativeRows(2);
+            size = size.max(new TerminalSize((title.isEmpty() ? 2 : title.length() + 4), 2));
+            return size;
         }
 
         @Override
@@ -69,27 +75,40 @@ public class Borders {
 
             graphics.setPosition(0, drawableArea.getRows() - 1)
                     .setCharacter(bottomLeftCorner);
-            graphics.setPosition(0, drawableArea.getRows() - 2)
-                    .drawLine(new TerminalPosition(0, 1), verticalLine);
+            if(drawableArea.getRows() > 2) {
+                graphics.setPosition(0, drawableArea.getRows() - 2)
+                        .drawLine(new TerminalPosition(0, 1), verticalLine);
+            }
             graphics.setPosition(0, 0)
                     .setCharacter(topLeftCorner);
-            graphics.setPosition(1, 0)
-                    .drawLine(new TerminalPosition(drawableArea.getColumns() - 2, 0), horizontalLine);
+            if(drawableArea.getColumns() > 2) {
+                graphics.setPosition(1, 0)
+                        .drawLine(new TerminalPosition(drawableArea.getColumns() - 2, 0), horizontalLine);
+            }
 
             graphics.setPosition(drawableArea.getColumns() - 1, 0)
                     .setCharacter(topRightCorner);
-            graphics.setPosition(drawableArea.getColumns() - 1, 1)
-                    .drawLine(new TerminalPosition(drawableArea.getColumns() - 1, drawableArea.getRows() - 2), verticalLine);
+            if(drawableArea.getRows() > 2) {
+                graphics.setPosition(drawableArea.getColumns() - 1, 1)
+                        .drawLine(new TerminalPosition(drawableArea.getColumns() - 1, drawableArea.getRows() - 2), verticalLine);
+            }
             graphics.setPosition(drawableArea.getColumns() - 1, drawableArea.getRows() - 1)
                     .setCharacter(bottomRightCorner);
-            graphics.setPosition(1, drawableArea.getRows() - 1)
-                    .drawLine(new TerminalPosition(drawableArea.getColumns() - 2, drawableArea.getRows() - 1), horizontalLine);
+            if(drawableArea.getColumns() > 2) {
+                graphics.setPosition(1, drawableArea.getRows() - 1)
+                        .drawLine(new TerminalPosition(drawableArea.getColumns() - 2, drawableArea.getRows() - 1), horizontalLine);
+            }
 
-            if(drawableArea.getColumns() > title.length() + 4) {
+            if(drawableArea.getColumns() >= title.length() + 4) {
                 graphics.putString(2, 0, title);
             }
 
             wrappedComponent.draw(graphics.newTextGraphics(TerminalPosition.OFFSET_1x1, drawableArea.withRelativeColumns(-2).withRelativeRows(-2)));
+        }
+
+        @Override
+        public String toString() {
+            return getClass().getSimpleName() + "{" + title + "}";
         }
 
         protected abstract char getHorizontalLine(TextGUIGraphics graphics);
