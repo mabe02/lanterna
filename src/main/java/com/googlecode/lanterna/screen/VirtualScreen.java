@@ -106,12 +106,12 @@ public class VirtualScreen extends AbstractScreen {
             }
             viewportSize = newViewportSize;
         }
-        setCursorPosition(getCursorPosition()); //Re-calculate the cursor's position
         return newVirtualSize;
     }
 
     @Override
     public void refresh(RefreshType refreshType) throws IOException {
+        setCursorPosition(getCursorPosition()); //Make sure the cursor is at the correct position
         if(!viewportSize.equals(realScreen.getTerminalSize())) {
             frameRenderer.drawFrame(realScreen.newTextGraphics(), viewportTopLeft, viewportSize, getTerminalSize());
         }
