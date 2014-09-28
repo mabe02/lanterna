@@ -22,10 +22,16 @@ public class WindowShadowRenderer implements WindowPostRenderer {
         textGraphics.setForegroundColor(TextColor.ANSI.BLACK);
         textGraphics.setBackgroundColor(TextColor.ANSI.BLACK);
         textGraphics.enableModifiers(SGR.BOLD);
-        TerminalPosition start = windowPosition.withRelativeColumn(2).withRelativeRow(windowSize.getRows());
-        textGraphics.drawLine(start, start.withRelativeColumn(windowSize.getColumns() - 1), ' ');
-        textGraphics.drawLine(start, start.withRelativeRow(-windowSize.getRows() + 1), ' ');
-        start = start.withRelativeColumn(-1);
-        textGraphics.drawLine(start, start.withRelativeRow(windowSize.getRows() - 2), ' ');
+        TerminalPosition lowerLeft = windowPosition.withRelativeColumn(2).withRelativeRow(windowSize.getRows());
+        TerminalPosition lowerRight = lowerLeft.withRelativeColumn(windowSize.getColumns() - 1);
+        textGraphics.drawLine(lowerLeft, lowerRight, ' ');
+        TerminalPosition upperRight = lowerRight.withRelativeRow(-windowSize.getRows() + 1);
+        textGraphics.drawLine(lowerRight, upperRight, ' ');
+
+        //Fill the remaining hole
+        upperRight = upperRight.withRelativeColumn(-1);
+        lowerRight = upperRight.withRelativeRow(windowSize.getRows() - 2);
+        textGraphics.drawLine(upperRight, lowerRight, ' ');
+
     }
 }
