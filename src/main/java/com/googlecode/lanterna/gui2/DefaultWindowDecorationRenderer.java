@@ -19,12 +19,7 @@ public class DefaultWindowDecorationRenderer implements WindowDecorationRenderer
 
         //Resize if necessary
         TerminalSize drawableArea = graphics.getSize();
-        title = title.substring(0, Math.min(title.length(), drawableArea.getColumns() - 3));
-        /*
-        graphics.setForegroundColor(TextColor.ANSI.WHITE)
-                .setBackgroundColor(TextColor.ANSI.WHITE)
-                .enableModifiers(SGR.BOLD);
-        */
+        title = title.substring(0, Math.max(0, Math.min(title.length(), drawableArea.getColumns() - 3)));
         graphics.applyThemeStyle(themeDefinition.getPreLight());
 
         char horizontalLine = themeDefinition.getCharacter("HORIZONTAL_LINE", ACS.SINGLE_LINE_HORIZONTAL);
