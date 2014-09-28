@@ -139,7 +139,12 @@ public class StackedModalWindowManager implements WindowManager {
 
     @Override
     public synchronized TerminalSize getSize(Window window, TerminalPosition topLeft, TerminalSize screenSize) {
-        return getWindowDecorationRenderer(window).getDecoratedSize(window, getUndecoratedSize(window, topLeft, screenSize));
+        TerminalSize undecoratedSize = getUndecoratedSize(window, topLeft, screenSize);
+        undecoratedSize = undecoratedSize.max(TerminalSize.ONE);    //Make sure the size is it least one
+        if(window.getWindowManagerHints().contains(NO_WINDOW_DECORATIONS)) {
+            return undecoratedSize;
+        }
+        return getWindowDecorationRenderer(window).getDecoratedSize(window, undecoratedSize);
     }
 
     private TerminalSize getUndecoratedSize(Window window, TerminalPosition topLeft, TerminalSize screenSize) throws IllegalArgumentException {

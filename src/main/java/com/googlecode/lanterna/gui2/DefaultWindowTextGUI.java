@@ -102,9 +102,12 @@ public class DefaultWindowTextGUI extends AbstractTextGUI implements WindowBased
             TerminalSize windowSize = getWindowManager().getSize(window, topLeft, graphics.getSize());
             window.setPosition(topLeft.withRelative(decorationRenderer.getOffset(window)));
             window.setDecoratedSize(windowSize);
-            TextGUIGraphics windowGraphics = decorationRenderer.draw(this, graphics.newTextGraphics(topLeft, windowSize), window);
+            TextGUIGraphics windowGraphics = graphics.newTextGraphics(topLeft, windowSize);
+            if(!window.getWindowManagerHints().contains(StackedModalWindowManager.NO_WINDOW_DECORATIONS)) {
+                windowGraphics = decorationRenderer.draw(this, windowGraphics, window);
+            }
             window.draw(windowGraphics);
-            if(postRenderer != null) {
+            if(postRenderer != null && !window.getWindowManagerHints().contains(StackedModalWindowManager.NO_WINDOW_DECORATIONS)) {
                 postRenderer.postRender(graphics, this, window, topLeft, windowSize);
             }
         }
