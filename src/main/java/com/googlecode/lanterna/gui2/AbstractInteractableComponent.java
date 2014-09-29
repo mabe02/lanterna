@@ -17,11 +17,6 @@ public abstract class AbstractInteractableComponent extends AbstractComponent im
     }
 
     @Override
-    public TerminalPosition getCursorLocation() {
-        return TerminalPosition.TOP_LEFT_CORNER;
-    }
-
-    @Override
     public final void onEnterFocus(FocusChangeDirection direction, Interactable previouslyInFocus) {
         inFocus = true;
         afterEnterFocus(direction, previouslyInFocus);

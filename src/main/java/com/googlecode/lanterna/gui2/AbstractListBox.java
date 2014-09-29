@@ -1,6 +1,7 @@
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.ACS;
+import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.input.KeyStroke;
 
@@ -40,6 +41,11 @@ public abstract class AbstractListBox extends AbstractInteractableComponent {
             }
         }
         return new TerminalSize(maxWidth + 1, items.size());
+    }
+
+    @Override
+    public TerminalPosition getCursorLocation() {
+        return new TerminalPosition(getHotSpotPositionOnLine(selectedIndex), selectedIndex - scrollTopIndex);
     }
 
     @Override
