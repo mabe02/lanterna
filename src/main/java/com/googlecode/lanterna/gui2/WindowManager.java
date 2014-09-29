@@ -40,9 +40,4 @@ public interface WindowManager {
     TerminalPosition getTopLeftPosition(Window window, TerminalSize screenSize);
 
     TerminalSize getSize(Window window, TerminalPosition topLeftPosition, TerminalSize screenSize);
-
-    public static class Hint {
-        protected Hint() {
-        }
-    }
 }

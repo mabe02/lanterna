@@ -1,20 +1,23 @@
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TestTerminalFactory;
 import com.googlecode.lanterna.screen.Screen;
 
 import java.io.IOException;
 
 /**
- * Created by martin on 20/09/14.
+ * Some common code for the GUI tests to get a text system up and running on a separate thread
+ * @author Martin
  */
 public abstract class TestBase {
     void run(String[] args) throws IOException, InterruptedException {
         Screen screen = new TestTerminalFactory(args).createScreen();
         screen.startScreen();
-        WindowBasedTextGUI textGUI = new DefaultWindowTextGUI(screen);
-        ((AbstractTextGUI)textGUI).setBlockingIO(false);
+        DefaultWindowTextGUI textGUI = new DefaultWindowTextGUI(screen);
+        textGUI.setBlockingIO(false);
+        textGUI.setEOFWhenNoWindows(true);
+        textGUI.isEOFWhenNoWindows();   //No meaning, just to silence IntelliJ:s "is never used" alert
+
         try {
             init(textGUI);
             TextGUIThread guiThread = textGUI.getGUIThread();

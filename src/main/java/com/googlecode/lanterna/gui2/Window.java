@@ -32,6 +32,37 @@ import java.util.Set;
  */
 public interface Window extends RootContainer {
     /**
+     * Window hints are meta-data stored along with the window that can be used to give the GUI system some ideas of how
+     * this window wants to be treated. There are no guarantees that the hints will be honoured though. You can declare
+     * your own window hints by sub-classing this class.
+     */
+    public static class Hint {
+        /**
+         * With this hint, the TextGUI system should not draw any decorations around the window. Decorated size will be
+         * the same as the window size.
+         */
+        public static final Hint NO_DECORATIONS = new Hint();
+        /**
+         * With this hint, the TextGUI system should skip running any post renderers for the window. By default this
+         * means the window won't have any shadow.
+         */
+        public static final Hint NO_POST_RENDERING = new Hint();
+        /**
+         * With this hint, the window wants to be at the center of the terminal instead of using the cascading layout
+         * which is the standard.
+         */
+        public static final Hint CENTERED = new Hint();
+        /**
+         * With this hint, don't let the window grow larger than the terminal screen, rather set components to a smaller
+         * size than they prefer.
+         */
+        public static final Hint FIT_TERMINAL_WINDOW = new Hint();
+
+        protected Hint() {
+        }
+    }
+
+    /**
      * @return title of the window
      */
     String getTitle();
@@ -61,11 +92,11 @@ public interface Window extends RootContainer {
     void close();
 
     /**
-     * Returns a collection of hints for the Window manager. It's then up to the window manager to decide which ones it
-     * understands and which ones it will honour. Please see each individual WindowManager for a list of valid values.
-     * @return Hints for the window manager
+     * Returns a set of window hints that can be used by the text gui system, the window manager or any other part that
+     * is interacting with windows.
+     * @return Set of hints defined for this window
      */
-    Set<WindowManager.Hint> getWindowManagerHints();
+    Set<Hint> getHints();
 
     /**
      * Returns the position of the window, as last specified by the window manager. This position does not include
@@ -107,7 +138,6 @@ public interface Window extends RootContainer {
     //// Below here are methods from RootContainer             ////
     //// We duplicate them here to make the JavaDoc more clear ////
     ///////////////////////////////////////////////////////////////
-
     /**
      * Called by the GUI system (or something imitating the GUI system) to draw the window. The TextGUIGraphics object
      * should be used to perform the drawing operations.

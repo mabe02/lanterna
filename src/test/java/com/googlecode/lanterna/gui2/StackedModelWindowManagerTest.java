@@ -35,8 +35,7 @@ public class StackedModelWindowManagerTest extends TestBase {
                 mainWindow.close();
             }
         }));
-        textGUI.getWindowManager().addWindow(mainWindow
-        );
+        textGUI.getWindowManager().addWindow(mainWindow);
     }
 
     private static class CenteredWindow extends TestWindow {
@@ -45,8 +44,8 @@ public class StackedModelWindowManagerTest extends TestBase {
         }
 
         @Override
-        public Set<WindowManager.Hint> getWindowManagerHints() {
-            return new HashSet<WindowManager.Hint>(Arrays.asList(StackedModalWindowManager.LOCATION_CENTERED));
+        public Set<Hint> getHints() {
+            return new HashSet<Hint>(Arrays.asList(Hint.CENTERED));
         }
     }
 
@@ -56,8 +55,14 @@ public class StackedModelWindowManagerTest extends TestBase {
         }
 
         @Override
-        public Set<WindowManager.Hint> getWindowManagerHints() {
-            return new HashSet<WindowManager.Hint>(Arrays.asList(StackedModalWindowManager.NO_WINDOW_DECORATIONS));
+        public Set<Hint> getHints() {
+            return new HashSet<Hint>(Arrays.asList(Hint.NO_DECORATIONS));
+        }
+
+        @Override
+        public void draw(TextGUIGraphics graphics) {
+            super.draw(graphics);
+            System.out.println("Undecorated window size is " + getSize() + " and getDecoratedSize() returns " + getDecoratedSize());
         }
     }
 

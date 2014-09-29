@@ -103,11 +103,11 @@ public class DefaultWindowTextGUI extends AbstractTextGUI implements WindowBased
             window.setPosition(topLeft.withRelative(decorationRenderer.getOffset(window)));
             window.setDecoratedSize(windowSize);
             TextGUIGraphics windowGraphics = graphics.newTextGraphics(topLeft, windowSize);
-            if(!window.getWindowManagerHints().contains(StackedModalWindowManager.NO_WINDOW_DECORATIONS)) {
+            if(!window.getHints().contains(Window.Hint.NO_DECORATIONS)) {
                 windowGraphics = decorationRenderer.draw(this, windowGraphics, window);
             }
             window.draw(windowGraphics);
-            if(postRenderer != null && !window.getWindowManagerHints().contains(StackedModalWindowManager.NO_WINDOW_DECORATIONS)) {
+            if(postRenderer != null && !window.getHints().contains(Window.Hint.NO_POST_RENDERING)) {
                 postRenderer.postRender(graphics, this, window, topLeft, windowSize);
             }
         }

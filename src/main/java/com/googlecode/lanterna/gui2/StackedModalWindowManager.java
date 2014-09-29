@@ -28,11 +28,6 @@ import java.util.*;
  * @author Martin
  */
 public class StackedModalWindowManager implements WindowManager {
-    
-    public static final Hint LOCATION_CENTERED = new Hint();
-    public static final Hint LOCATION_CASCADE = new Hint();
-    public static final Hint DO_NOT_RESIZE_TO_FIT_SCREEN = new Hint();
-    public static final Hint NO_WINDOW_DECORATIONS = new Hint();
     private static final int CASCADE_SHIFT_RIGHT = 2;
     private static final int CASCADE_SHIFT_DOWN = 1;
 
@@ -52,7 +47,7 @@ public class StackedModalWindowManager implements WindowManager {
             throw new IllegalArgumentException("Cannot call addWindow(...) with null window");
         }
         TerminalPosition topLeftPosition;
-        if(hasHint(window, LOCATION_CASCADE) || window.getWindowManagerHints().isEmpty()) {
+        if(!window.getHints().contains(Window.Hint.CENTERED)) {
             topLeftPosition = nextTopLeftPosition;
             nextTopLeftPosition = nextTopLeftPosition
                                     .withColumn(nextTopLeftPosition.getColumn() + CASCADE_SHIFT_RIGHT)
@@ -64,7 +59,6 @@ public class StackedModalWindowManager implements WindowManager {
         ManagedWindow managedWindow = new ManagedWindow(
                 window,
                 topLeftPosition,
-                hasHint(window, DO_NOT_RESIZE_TO_FIT_SCREEN),
                 windowStack.size());
         windowStack.add(managedWindow);
         if(window instanceof AbstractWindow) {
@@ -141,7 +135,7 @@ public class StackedModalWindowManager implements WindowManager {
     public synchronized TerminalSize getSize(Window window, TerminalPosition topLeft, TerminalSize screenSize) {
         TerminalSize undecoratedSize = getUndecoratedSize(window, topLeft, screenSize);
         undecoratedSize = undecoratedSize.max(TerminalSize.ONE);    //Make sure the size is it least one
-        if(window.getWindowManagerHints().contains(NO_WINDOW_DECORATIONS)) {
+        if(window.getHints().contains(Window.Hint.NO_DECORATIONS)) {
             return undecoratedSize;
         }
         return getWindowDecorationRenderer(window).getDecoratedSize(window, undecoratedSize);
@@ -155,7 +149,7 @@ public class StackedModalWindowManager implements WindowManager {
         }
 
         TerminalSize preferredSize = window.getPreferredSize();
-        if(managedWindow.allowLargerThanScreenSize) {
+        if(!window.getHints().contains(Window.Hint.FIT_TERMINAL_WINDOW)) {
             return preferredSize;
         }
         if(topLeft == null) {
@@ -180,25 +174,14 @@ public class StackedModalWindowManager implements WindowManager {
         return null;
     }
 
-    private boolean hasHint(Window window, Hint hintToFind) {
-        for(Hint hint: window.getWindowManagerHints()) {
-            if(hint == hintToFind) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     private static class ManagedWindow implements Comparable<ManagedWindow>{
         private final Window window;
         private final TerminalPosition topLeftPosition;
-        private final boolean allowLargerThanScreenSize;
         private final int ordinal;
 
-        private ManagedWindow(Window window, TerminalPosition topLeftPosition, boolean allowLargerThanScreenSize, int ordinal) {
+        private ManagedWindow(Window window, TerminalPosition topLeftPosition, int ordinal) {
             this.window = window;
             this.topLeftPosition = topLeftPosition;
-            this.allowLargerThanScreenSize = allowLargerThanScreenSize;
             this.ordinal = ordinal;
         }
 

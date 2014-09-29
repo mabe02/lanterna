@@ -145,7 +145,7 @@ public class AbstractWindow implements Window {
     }
 
     @Override
-    public Set<WindowManager.Hint> getWindowManagerHints() {
+    public Set<Hint> getHints() {
         return Collections.emptySet();
     }
 
