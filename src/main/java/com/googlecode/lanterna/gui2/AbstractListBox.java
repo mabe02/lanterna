@@ -45,27 +45,29 @@ public abstract class AbstractListBox extends AbstractInteractableComponent {
     @Override
     public void drawComponent(TextGUIGraphics graphics) {
         //update the page size, used for page up and page down keys
-        pageSize = graphics.getSize().getRows();
+        int componentHeight = graphics.getSize().getRows();
+        int componentWidth = graphics.getSize().getColumns();
+        pageSize = componentHeight;
 
         if(selectedIndex != -1) {
             if(selectedIndex < scrollTopIndex)
                 scrollTopIndex = selectedIndex;
-            else if(selectedIndex >= graphics.getSize().getRows() + scrollTopIndex)
-                scrollTopIndex = selectedIndex - graphics.getSize().getRows() + 1;
+            else if(selectedIndex >= componentHeight + scrollTopIndex)
+                scrollTopIndex = selectedIndex - componentHeight + 1;
         }
 
         //Do we need to recalculate the scroll position?
         //This code would be triggered by resizing the window when the scroll
         //position is at the bottom
-        if(items.size() > graphics.getSize().getRows() &&
-                items.size() - scrollTopIndex < graphics.getSize().getRows()) {
-            scrollTopIndex = items.size() - graphics.getSize().getRows();
+        if(items.size() > componentHeight &&
+                items.size() - scrollTopIndex < componentHeight) {
+            scrollTopIndex = items.size() - componentHeight;
         }
 
         graphics.fill(' ');
 
         for(int i = scrollTopIndex; i < items.size(); i++) {
-            if(i - scrollTopIndex >= graphics.getSize().getRows())
+            if(i - scrollTopIndex >= componentHeight)
                 break;
 
 //            if(i == selectedIndex && isFocused())
@@ -75,24 +77,24 @@ public abstract class AbstractListBox extends AbstractInteractableComponent {
             graphics.putString(0, i - scrollTopIndex, getLabel(i, items.get(i)));
         }
 
-        if(items.size() > graphics.getSize().getRows()) {
+        if(items.size() > componentHeight) {
             //graphics.applyTheme(Theme.Category.DIALOG_AREA);
-            graphics.putString(graphics.getSize().getColumns() - 1, 0, ACS.ARROW_UP + "");
+            graphics.putString(componentWidth - 1, 0, ACS.ARROW_UP + "");
 
             //graphics.applyTheme(Theme.Category.DIALOG_AREA);
-            for(int i = 1; i < graphics.getSize().getRows() - 1; i++)
-                graphics.putString(graphics.getSize().getColumns() - 1, i, ACS.BLOCK_MIDDLE + "");
+            for(int i = 1; i < componentHeight - 1; i++)
+                graphics.putString(componentWidth - 1, i, ACS.BLOCK_MIDDLE + "");
 
             //graphics.applyTheme(Theme.Category.DIALOG_AREA);
-            graphics.putString(graphics.getSize().getColumns() - 1, graphics.getSize().getRows() - 1, ACS.ARROW_DOWN + "");
+            graphics.putString(componentWidth - 1, componentHeight - 1, ACS.ARROW_DOWN + "");
 
             //Finally print the 'tick'
-            int scrollableSize = items.size() - graphics.getSize().getRows();
+            int scrollableSize = items.size() - componentHeight;
             double position = (double)scrollTopIndex / ((double)scrollableSize);
-            int tickPosition = (int)(((double)graphics.getSize().getRows() - 3.0) * position);
+            int tickPosition = (int)(((double) componentHeight - 3.0) * position);
 
             //graphics.applyTheme(Theme.Category.SHADOW);
-            graphics.putString(graphics.getSize().getColumns() - 1, 1 + tickPosition, " ");
+            graphics.putString(componentWidth - 1, 1 + tickPosition, " ");
         }
 //        if(selectedIndex == -1 || items.isEmpty())
 //            setHotspot(new TerminalPosition(0, 0));
