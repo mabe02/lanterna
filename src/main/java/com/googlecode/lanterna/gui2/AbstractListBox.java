@@ -17,11 +17,11 @@ public abstract class AbstractListBox extends AbstractInteractableComponent {
     private int scrollTopIndex;
     private int pageSize;
 
-    public AbstractListBox() {
+    protected AbstractListBox() {
         this(null);
     }
 
-    public AbstractListBox(TerminalSize size) {
+    protected AbstractListBox(TerminalSize size) {
         this.items = new ArrayList<Object>();
         this.selectedIndex = -1;
         this.scrollTopIndex = 0;
@@ -32,8 +32,9 @@ public abstract class AbstractListBox extends AbstractInteractableComponent {
     @Override
     public TerminalSize calculatePreferredSize() {
         int maxWidth = 5;   //Set it to something...
+        int index = 0;
         for (Object item : items) {
-            String itemString = getLabel(item);
+            String itemString = getLabel(index++, item);
             if (itemString.length() > maxWidth) {
                 maxWidth = itemString.length();
             }
@@ -71,7 +72,7 @@ public abstract class AbstractListBox extends AbstractInteractableComponent {
 //                graphics.applyTheme(getSelectedListItemThemeDefinition(graphics.getTheme()));
 //            else
 //                graphics.applyTheme(getListItemThemeDefinition(graphics.getTheme()));
-            graphics.putString(0, i - scrollTopIndex, getLabel(items.get(i)));
+            graphics.putString(0, i - scrollTopIndex, getLabel(i, items.get(i)));
         }
 
         if(items.size() > graphics.getSize().getRows()) {
@@ -222,5 +223,5 @@ public abstract class AbstractListBox extends AbstractInteractableComponent {
         return 0;
     }
 
-    protected abstract String getLabel(Object item);
+    protected abstract String getLabel(int index, Object item);
 }
