@@ -35,7 +35,7 @@ public class Button extends AbstractInteractableComponent {
     }
 
     @Override
-    public TerminalSize getPreferredSize() {
+    public TerminalSize calculatePreferredSize() {
         return getThemeRenderer().getPreferredSize(this);
     }
 

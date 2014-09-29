@@ -38,7 +38,7 @@ public class Borders {
         }
 
         @Override
-        public TerminalSize getPreferredSize() {
+        public TerminalSize calculatePreferredSize() {
             Component wrappedComponent = getWrappedComponent();
             TerminalSize wrappedComponentPreferredSize;
             if(wrappedComponent == null) {

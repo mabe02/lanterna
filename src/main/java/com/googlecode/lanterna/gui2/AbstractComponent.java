@@ -28,6 +28,7 @@ import com.googlecode.lanterna.TerminalSize;
 public abstract class AbstractComponent implements Component {
     private Composite parent;
     private TerminalSize size;
+    private TerminalSize explicitPreferredSize;   //This is keeping the value set by the user (if setPreferredSize() is used)
     private TerminalPosition position;
     private Object layoutData;
     private boolean invalid;
@@ -37,6 +38,7 @@ public abstract class AbstractComponent implements Component {
     public AbstractComponent() {
         size = TerminalSize.ZERO;
         position = TerminalPosition.TOP_LEFT_CORNER;
+        explicitPreferredSize = null;
         layoutData = null;
         invalid = true;
         disposed = false;
@@ -58,6 +60,23 @@ public abstract class AbstractComponent implements Component {
     public TerminalSize getSize() {
         return size;
     }
+
+    @Override
+    public final TerminalSize getPreferredSize() {
+        if(explicitPreferredSize != null) {
+            return explicitPreferredSize;
+        }
+        else {
+            return calculatePreferredSize();
+        }
+    }
+
+    @Override
+    public final void setPreferredSize(TerminalSize explicitPreferredSize) {
+        this.explicitPreferredSize = explicitPreferredSize;
+    }
+
+    public abstract TerminalSize calculatePreferredSize();
 
     @Override
     public void setPosition(TerminalPosition position) {

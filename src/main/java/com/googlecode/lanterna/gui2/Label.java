@@ -83,7 +83,7 @@ public class Label extends AbstractComponent {
     }
 
     @Override
-    public TerminalSize getPreferredSize() {
+    public TerminalSize calculatePreferredSize() {
         return preferredSize;
     }
 

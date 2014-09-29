@@ -147,7 +147,7 @@ public abstract class AbstractContainer extends AbstractComponent implements Con
     }
 
     @Override
-    public TerminalSize getPreferredSize() {
+    public TerminalSize calculatePreferredSize() {
         if(preferredSize == null) {
             preferredSize = layoutManager.getPreferredSize(Collections.unmodifiableList(components));
         }

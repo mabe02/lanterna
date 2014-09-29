@@ -46,7 +46,7 @@ public class EmptySpace extends AbstractComponent {
     }
 
     @Override
-    public TerminalSize getPreferredSize() {
+    public TerminalSize calculatePreferredSize() {
         return size;
     }
 
