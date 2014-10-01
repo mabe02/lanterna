@@ -1,6 +1,9 @@
 package com.googlecode.lanterna.gui2;
 
 
+import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.TerminalSize;
+
 /**
  *
  * @author Martin
@@ -49,6 +52,7 @@ public abstract class AbstractBorder extends AbstractComponent implements Border
         }
         this.component = component;
         this.component.setParent(this);
+        this.component.setPosition(getWrappedComponentTopLeftOffset());
     }
 
     @Override
@@ -72,6 +76,12 @@ public abstract class AbstractBorder extends AbstractComponent implements Border
     }
 
     @Override
+    public void setSize(TerminalSize size) {
+        super.setSize(size);
+        component.setSize(getWrappedComponentSize(size));
+    }
+
+    @Override
     public void updateLookupMap(InteractableLookupMap interactableLookupMap) {
         if(component instanceof InteractableComposite) {
             ((InteractableComposite)component).updateLookupMap(interactableLookupMap);
@@ -84,4 +94,18 @@ public abstract class AbstractBorder extends AbstractComponent implements Border
     protected Component getWrappedComponent() {
         return component;
     }
+
+    /**
+     * How large is the offset from the top left corner of the border to the top left corner of the wrapped component?
+     * @return Position of the wrapped components top left position, relative to the top left corner of the border
+     */
+    protected abstract TerminalPosition getWrappedComponentTopLeftOffset();
+
+    /**
+     * Given a total size of the border composite and it's wrapped component, how large would the actual wrapped
+     * component be?
+     * @param borderSize Size to calculate for, this should be the total size of the border and the inner component
+     * @return Size of the inner component if the total size of inner + border is borderSize
+     */
+    protected abstract TerminalSize getWrappedComponentSize(TerminalSize borderSize);
 }

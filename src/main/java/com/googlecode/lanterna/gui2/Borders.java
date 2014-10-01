@@ -54,7 +54,7 @@ public class Borders {
 
         @Override
         public TerminalPosition toRootContainer(TerminalPosition position) {
-            return getParent().toRootContainer(getPosition().withRelative(position).withRelative(TerminalPosition.OFFSET_1x1));
+            return getParent().toRootContainer(getPosition().withRelative(position));
         }
 
         @Override
@@ -99,7 +99,17 @@ public class Borders {
                 graphics.putString(2, 0, title);
             }
 
-            wrappedComponent.draw(graphics.newTextGraphics(TerminalPosition.OFFSET_1x1, drawableArea.withRelativeColumns(-2).withRelativeRows(-2)));
+            wrappedComponent.draw(graphics.newTextGraphics(getWrappedComponentTopLeftOffset(), getWrappedComponentSize(drawableArea)));
+        }
+
+        @Override
+        protected TerminalPosition getWrappedComponentTopLeftOffset() {
+            return TerminalPosition.OFFSET_1x1;
+        }
+
+        @Override
+        protected TerminalSize getWrappedComponentSize(TerminalSize borderSize) {
+            return borderSize.withRelativeColumns(-2).withRelativeRows(-2);
         }
 
         @Override
