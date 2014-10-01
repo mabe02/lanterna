@@ -70,42 +70,41 @@ public abstract class AbstractListBox extends AbstractInteractableComponent {
             scrollTopIndex = items.size() - componentHeight;
         }
 
+        graphics.applyThemeStyle(graphics.getThemeDefinition(AbstractListBox.class).getNormal());
         graphics.fill(' ');
 
         for(int i = scrollTopIndex; i < items.size(); i++) {
-            if(i - scrollTopIndex >= componentHeight)
+            if(i - scrollTopIndex >= componentHeight) {
                 break;
+            }
 
-//            if(i == selectedIndex && isFocused())
-//                graphics.applyTheme(getSelectedListItemThemeDefinition(graphics.getTheme()));
-//            else
-//                graphics.applyTheme(getListItemThemeDefinition(graphics.getTheme()));
+            if(i == selectedIndex && isFocused()) {
+                graphics.applyThemeStyle(graphics.getThemeDefinition(AbstractListBox.class).getSelected());
+            }
+            else {
+                graphics.applyThemeStyle(graphics.getThemeDefinition(AbstractListBox.class).getNormal());
+            }
             graphics.putString(0, i - scrollTopIndex, getLabel(i, items.get(i)));
         }
 
+        graphics.applyThemeStyle(graphics.getThemeDefinition(AbstractListBox.class).getNormal());
         if(items.size() > componentHeight) {
-            //graphics.applyTheme(Theme.Category.DIALOG_AREA);
             graphics.putString(componentWidth - 1, 0, ACS.ARROW_UP + "");
 
-            //graphics.applyTheme(Theme.Category.DIALOG_AREA);
+            graphics.applyThemeStyle(graphics.getThemeDefinition(AbstractListBox.class).getInsensitive());
             for(int i = 1; i < componentHeight - 1; i++)
                 graphics.putString(componentWidth - 1, i, ACS.BLOCK_MIDDLE + "");
 
-            //graphics.applyTheme(Theme.Category.DIALOG_AREA);
+            graphics.applyThemeStyle(graphics.getThemeDefinition(AbstractListBox.class).getNormal());
             graphics.putString(componentWidth - 1, componentHeight - 1, ACS.ARROW_DOWN + "");
 
             //Finally print the 'tick'
             int scrollableSize = items.size() - componentHeight;
             double position = (double)scrollTopIndex / ((double)scrollableSize);
             int tickPosition = (int)(((double) componentHeight - 3.0) * position);
-
-            //graphics.applyTheme(Theme.Category.SHADOW);
+            graphics.applyThemeStyle(graphics.getThemeDefinition(AbstractListBox.class).getInsensitive());
             graphics.putString(componentWidth - 1, 1 + tickPosition, " ");
         }
-//        if(selectedIndex == -1 || items.isEmpty())
-//            setHotspot(new TerminalPosition(0, 0));
-//        else
-//            setHotspot(graphics.translateToGlobalCoordinates(new TerminalPosition(getHotSpotPositionOnLine(selectedIndex), selectedIndex - scrollTopIndex)));
     }
 
     @Override
