@@ -21,11 +21,16 @@ public class ListBoxTest extends TestBase {
         Panel horizontalPanel = new Panel();
         horizontalPanel.setLayoutManager(new LinearLayout(LinearLayout.Direction.HORIZONTAL));
 
-        CheckBoxList checkBoxList = new CheckBoxList(new TerminalSize(14, 10));
+        TerminalSize size = new TerminalSize(14, 10);
+        CheckBoxList checkBoxList = new CheckBoxList(size);
+        RadioBoxList radioBoxList = new RadioBoxList(size);
         for(int i = 0; i < 30; i++) {
-            checkBoxList.addItem("Item " + (i+1));
+            String itemText = "Item " + (i + 1);
+            checkBoxList.addItem(itemText);
+            radioBoxList.addItem(itemText);
         }
         horizontalPanel.addComponent(checkBoxList.withBorder(Borders.singleLine("CheckBoxList")));
+        horizontalPanel.addComponent(radioBoxList.withBorder(Borders.singleLine("RadioBoxList")));
 
         contentArea.addComponent(horizontalPanel);
         contentArea.addComponent(new Button("OK", new Runnable() {
