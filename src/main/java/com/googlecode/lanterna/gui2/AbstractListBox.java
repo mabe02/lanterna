@@ -207,7 +207,7 @@ public abstract class AbstractListBox extends AbstractInteractableComponent<Abst
             int maxWidth = 5;   //Set it to something...
             int index = 0;
             for (Object item : listBox.getItems()) {
-                String itemString = listBox.getListItemRenderer().getLabel(index++, item);
+                String itemString = listBox.getListItemRenderer().getLabel(listBox, index++, item);
                 if (itemString.length() > maxWidth) {
                     maxWidth = itemString.length();
                 }
@@ -283,7 +283,7 @@ public abstract class AbstractListBox extends AbstractInteractableComponent<Abst
             return 0;
         }
 
-        protected String getLabel(int index, Object item) {
+        protected String getLabel(AbstractListBox listBox, int index, Object item) {
             return item != null ? item.toString() : "<null>";
         }
 
@@ -294,7 +294,7 @@ public abstract class AbstractListBox extends AbstractInteractableComponent<Abst
             else {
                 graphics.applyThemeStyle(graphics.getThemeDefinition(AbstractListBox.class).getNormal());
             }
-            graphics.putString(0, 0, getLabel(index, item));
+            graphics.putString(0, 0, getLabel(listBox, index, item));
         }
     }
 }

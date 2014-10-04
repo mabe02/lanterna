@@ -23,6 +23,11 @@ public class CheckBoxList extends AbstractListBox {
     }
 
     @Override
+    protected ListItemRenderer createDefaultListItemRenderer() {
+        return new CheckBoxListItemRenderer();
+    }
+
+    @Override
     public void clearItems() {
         itemStatus.clear();
         super.clearItems();
@@ -67,20 +72,21 @@ public class CheckBoxList extends AbstractListBox {
         }
         return super.handleKeyStroke(keyStroke);
     }
-/*
-    @Override
-    protected int getHotSpotPositionOnLine(int selectedIndex) {
-        return 1;
-    }
 
-    @Override
-    protected String getLabel(int index, Object item) {
-        String check = " ";
-        if(itemStatus.get(index))
-            check = "x";
+    public static class CheckBoxListItemRenderer extends ListItemRenderer {
+        @Override
+        protected int getHotSpotPositionOnLine(int selectedIndex) {
+            return 1;
+        }
 
-        String text = item.toString();
-        return "[" + check + "] " + text;
+        @Override
+        protected String getLabel(AbstractListBox listBox, int index, Object item) {
+            String check = " ";
+            if(((CheckBoxList)listBox).itemStatus.get(index))
+                check = "x";
+
+            String text = item.toString();
+            return "[" + check + "] " + text;
+        }
     }
-    */
 }
