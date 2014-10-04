@@ -53,7 +53,12 @@ public class InteractableLookupMap {
     //Avoid code duplication in above two methods
     private Interactable findNextUpOrDown(Interactable interactable, boolean isDown) {
         int directionTerm = isDown ? 1 : -1;
-        TerminalPosition startPosition = interactable.toRootContainer(interactable.getCursorLocation());
+        TerminalPosition cursorLocation = interactable.getCursorLocation();
+        if(cursorLocation == null) {
+            //If the currently active interactable component is not showing the cursor, use the top-left position instead
+            cursorLocation = TerminalPosition.TOP_LEFT_CORNER;
+        }
+        TerminalPosition startPosition = interactable.toRootContainer(cursorLocation);
         Set<Interactable> disqualified = getDisqualifiedInteractables(startPosition, true);
         TerminalSize size = getSize();
         int maxShift = Math.max(startPosition.getColumn(), size.getColumns() - startPosition.getColumn());
@@ -90,7 +95,12 @@ public class InteractableLookupMap {
     //Avoid code duplication in above two methods
     private Interactable findNextLeftOrRight(Interactable interactable, boolean isRight) {
         int directionTerm = isRight ? 1 : -1;
-        TerminalPosition startPosition = interactable.toRootContainer(interactable.getCursorLocation());
+        TerminalPosition cursorLocation = interactable.getCursorLocation();
+        if(cursorLocation == null) {
+            //If the currently active interactable component is not showing the cursor, use the top-left position instead
+            cursorLocation = TerminalPosition.TOP_LEFT_CORNER;
+        }
+        TerminalPosition startPosition = interactable.toRootContainer(cursorLocation);
         Set<Interactable> disqualified = getDisqualifiedInteractables(startPosition, false);
         TerminalSize size = getSize();
         int maxShift = Math.max(startPosition.getRow(), size.getRows() - startPosition.getRow());
