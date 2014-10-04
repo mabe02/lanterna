@@ -11,7 +11,7 @@ import com.googlecode.lanterna.input.KeyType;
  * keyboard.
  * @author Martin
  */
-public class Button extends AbstractInteractableComponent {
+public class Button extends AbstractInteractableComponent<Button.ButtonRenderer> {
     private final Runnable action;
     private String label;
 
@@ -26,17 +26,16 @@ public class Button extends AbstractInteractableComponent {
     public Button(String label, Runnable action) {
         this.action = action;
         setLabel(label);
-        setThemeRenderer(new DefaultButtonRenderer());
+    }
+
+    @Override
+    protected ButtonRenderer createDefaultRenderer() {
+        return new DefaultButtonRenderer();
     }
 
     @Override
     public TerminalPosition getCursorLocation() {
-        return getThemeRenderer().getCursorLocation(this);
-    }
-
-    @Override
-    public TerminalSize calculatePreferredSize() {
-        return getThemeRenderer().getPreferredSize(this);
+        return getRenderer().getCursorLocation(this);
     }
 
     @Override
@@ -46,17 +45,6 @@ public class Button extends AbstractInteractableComponent {
             return Result.HANDLED;
         }
         return super.handleKeyStroke(keyStroke);
-    }
-
-    @Override
-    public void drawComponent(TextGUIGraphics graphics) {
-        updateRenderer(getThemeDefinition(graphics).getRenderer());
-        getThemeRenderer().drawComponent(graphics, this);
-    }
-
-    @Override
-    protected ButtonRenderer getThemeRenderer() {
-        return (ButtonRenderer)super.getThemeRenderer();
     }
 
     public final void setLabel(String label) {
@@ -79,10 +67,10 @@ public class Button extends AbstractInteractableComponent {
         return "Button{" + label + "}";
     }
 
-    private static interface ButtonRenderer extends InteractableRenderer<Button> {
+    public static abstract class ButtonRenderer implements InteractableRenderer<Button> {
     }
 
-    public static class DefaultButtonRenderer implements ButtonRenderer {
+    public static class DefaultButtonRenderer extends ButtonRenderer {
         @Override
         public TerminalPosition getCursorLocation(Button button) {
             return new TerminalPosition(1 + getLabelShift(button, button.getSize()), 0);
@@ -90,7 +78,7 @@ public class Button extends AbstractInteractableComponent {
 
         @Override
         public TerminalSize getPreferredSize(Button button) {
-            return new TerminalSize(Math.max(8, button.getLabel().length() + 2), 1);
+            return new TerminalSize(Math.max(8, ((Button)button).getLabel().length() + 2), 1);
         }
 
         @Override

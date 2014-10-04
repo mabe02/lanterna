@@ -12,7 +12,7 @@ import java.util.EnumSet;
  * Label is a simple read-only text display component that can show multi-line text in multiple colors
  * @author Martin
  */
-public class Label extends AbstractComponent {
+public class Label extends AbstractRenderableComponent {
     private String[] lines;
     private TerminalSize preferredSize;
     private TextColor foregroundColor;
@@ -83,39 +83,44 @@ public class Label extends AbstractComponent {
     }
 
     @Override
-    public TerminalSize calculatePreferredSize() {
-        return preferredSize;
-    }
-
-    @Override
-    public void drawComponent(TextGUIGraphics graphics) {
-        ThemeDefinition themeDefinition = graphics.getThemeDefinition(Label.class);
-        graphics.applyThemeStyle(themeDefinition.getNormal());
-        if(foregroundColor != null) {
-            graphics.setForegroundColor(foregroundColor);
-        }
-        if(backgroundColor != null) {
-            graphics.setBackgroundColor(backgroundColor);
-        }
-        for(SGR sgr: additionalStyles) {
-            graphics.enableModifiers(sgr);
-        }
-        for(int row = 0; row < Math.min(graphics.getSize().getRows(), preferredSize.getColumns()); row++) {
-            String line = lines[row];
-            if(graphics.getSize().getColumns() >= preferredSize.getColumns()) {
-                graphics.putString(0, row, line);
+    protected ComponentRenderer createDefaultRenderer() {
+        return new ComponentRenderer() {
+            @Override
+            public TerminalSize getPreferredSize(Component component) {
+                return preferredSize;
             }
-            else {
-                int remainingColumns = graphics.getSize().getColumns();
-                for(int i = 0; i < line.length() && remainingColumns > 0; i++) {
-                    char c = line.charAt(i);
-                    int width = CJKUtils.isCharCJK(c) ? 2 : 1;
-                    if(remainingColumns >= width) {
-                        graphics.setCharacter(graphics.getSize().getColumns() - remainingColumns, row, c);
-                        remainingColumns -= width;
+
+            @Override
+            public void drawComponent(TextGUIGraphics graphics, Component component) {
+                ThemeDefinition themeDefinition = graphics.getThemeDefinition(Label.class);
+                graphics.applyThemeStyle(themeDefinition.getNormal());
+                if(foregroundColor != null) {
+                    graphics.setForegroundColor(foregroundColor);
+                }
+                if(backgroundColor != null) {
+                    graphics.setBackgroundColor(backgroundColor);
+                }
+                for(SGR sgr: additionalStyles) {
+                    graphics.enableModifiers(sgr);
+                }
+                for(int row = 0; row < Math.min(graphics.getSize().getRows(), preferredSize.getColumns()); row++) {
+                    String line = lines[row];
+                    if(graphics.getSize().getColumns() >= preferredSize.getColumns()) {
+                        graphics.putString(0, row, line);
+                    }
+                    else {
+                        int remainingColumns = graphics.getSize().getColumns();
+                        for(int i = 0; i < line.length() && remainingColumns > 0; i++) {
+                            char c = line.charAt(i);
+                            int width = CJKUtils.isCharCJK(c) ? 2 : 1;
+                            if(remainingColumns >= width) {
+                                graphics.setCharacter(graphics.getSize().getColumns() - remainingColumns, row, c);
+                                remainingColumns -= width;
+                            }
+                        }
                     }
                 }
             }
-        }
+        };
     }
 }

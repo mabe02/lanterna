@@ -8,7 +8,7 @@ import com.googlecode.lanterna.input.KeyStroke;
  * if you want to make your own interactable component.
  * @author Martin
  */
-public abstract class AbstractInteractableComponent extends AbstractComponent implements Interactable {
+public abstract class AbstractInteractableComponent<T extends InteractableRenderer> extends AbstractRenderableComponent<T> implements Interactable {
 
     private boolean inFocus;
 
@@ -59,16 +59,16 @@ public abstract class AbstractInteractableComponent extends AbstractComponent im
     }
 
     @Override
-    protected void setThemeRenderer(ComponentRenderer<? extends Component> renderer) {
+    protected void setRenderer(T renderer) {
         if(!(renderer instanceof InteractableRenderer)) {
             throw new IllegalArgumentException("Cannot assign " + renderer + " as renderer for " + toString() + ", " +
                     "need to implement InteractableRenderer");
         }
-        super.setThemeRenderer(renderer);
+        super.setRenderer(renderer);
     }
 
     @Override
-    protected InteractableRenderer<? extends Interactable> getThemeRenderer() {
-        return (InteractableRenderer<? extends Interactable>)super.getThemeRenderer();
+    public TerminalPosition getCursorLocation() {
+        return getRenderer().getCursorLocation(this);
     }
 }

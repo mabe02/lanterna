@@ -30,7 +30,7 @@ public class RadioBoxList extends AbstractListBox {
         super(preferredSize);
         this.checkedIndex = -1;
     }
-
+/*
     @Override
     protected String getLabel(int index, Object item) {
         String check = " ";
@@ -40,7 +40,7 @@ public class RadioBoxList extends AbstractListBox {
         String text = getItemAt(index).toString();
         return "<" + check + "> " + text;
     }
-
+*/
     @Override
     public Result handleKeyStroke(KeyStroke keyStroke) {
         if(keyStroke.getKeyType() == KeyType.Enter ||
@@ -51,12 +51,12 @@ public class RadioBoxList extends AbstractListBox {
         }
         return super.handleKeyStroke(keyStroke);
     }
-
+/*
     @Override
     protected int getHotSpotPositionOnLine(int selectedIndex) {
         return 1;
     }
-
+*/
     @Override
     public void clearItems() {
         checkedIndex = -1;

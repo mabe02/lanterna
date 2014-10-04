@@ -67,7 +67,7 @@ public class CheckBoxList extends AbstractListBox {
         }
         return super.handleKeyStroke(keyStroke);
     }
-
+/*
     @Override
     protected int getHotSpotPositionOnLine(int selectedIndex) {
         return 1;
@@ -82,4 +82,5 @@ public class CheckBoxList extends AbstractListBox {
         String text = item.toString();
         return "[" + check + "] " + text;
     }
+    */
 }

@@ -33,7 +33,6 @@ public abstract class AbstractComponent implements Component {
     private Object layoutData;
     private boolean invalid;
     private boolean disposed;
-    private ComponentRenderer<? extends Component> themeRenderer;
 
     public AbstractComponent() {
         size = TerminalSize.ZERO;
@@ -94,6 +93,12 @@ public abstract class AbstractComponent implements Component {
         return invalid;
     }
 
+    @Override
+    public final void draw(TextGUIGraphics graphics) {
+        drawComponent(graphics);
+        invalid = false;
+    }
+
     /**
      * Implement this method to define the logic to draw the component. The reason for this abstract method, instead of
      * overriding {@code Component.draw(..)} is because {@code AbstractComponent.draw(..)} calls this method and then
@@ -102,12 +107,6 @@ public abstract class AbstractComponent implements Component {
      * @param graphics TextGraphics to be used to draw the component
      */
     public abstract void drawComponent(TextGUIGraphics graphics);
-
-    @Override
-    public final void draw(TextGUIGraphics graphics) {
-        drawComponent(graphics);
-        invalid = false;
-    }
 
     @Override
     public AbstractComponent setLayoutData(Object data) {
@@ -196,32 +195,5 @@ public abstract class AbstractComponent implements Component {
         if(disposed) {
             throw new IllegalStateException("Component " + toString() + " is already disposed");
         }
-    }
-
-    protected void updateRenderer(String className) {
-        if(className == null) {
-            return;
-        }
-        if(themeRenderer != null && themeRenderer.getClass().getName().equals(className)) {
-            return;
-        }
-        try {
-            Object newRenderer = Class.forName(className).newInstance();
-            setThemeRenderer((ComponentRenderer<? extends Component>) newRenderer);
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    protected void setThemeRenderer(ComponentRenderer<? extends Component> themeRenderer) {
-        this.themeRenderer = themeRenderer;
-    }
-
-    protected ComponentRenderer<? extends Component> getThemeRenderer() {
-        return themeRenderer;
     }
 }
