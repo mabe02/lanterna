@@ -24,13 +24,21 @@ public class ListBoxTest extends TestBase {
         TerminalSize size = new TerminalSize(14, 10);
         CheckBoxList checkBoxList = new CheckBoxList(size);
         RadioBoxList radioBoxList = new RadioBoxList(size);
+        ActionListBox actionListBox = new ActionListBox(size);
         for(int i = 0; i < 30; i++) {
-            String itemText = "Item " + (i + 1);
+            final String itemText = "Item " + (i + 1);
             checkBoxList.addItem(itemText);
             radioBoxList.addItem(itemText);
+            actionListBox.addItem(itemText, new Runnable() {
+                @Override
+                public void run() {
+                    System.out.println("Selected " + itemText);
+                }
+            });
         }
         horizontalPanel.addComponent(checkBoxList.withBorder(Borders.singleLine("CheckBoxList")));
         horizontalPanel.addComponent(radioBoxList.withBorder(Borders.singleLine("RadioBoxList")));
+        horizontalPanel.addComponent(actionListBox.withBorder(Borders.singleLine("ActionListBox")));
 
         contentArea.addComponent(horizontalPanel);
         contentArea.addComponent(new Button("OK", new Runnable() {
