@@ -487,7 +487,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
         }
     }
 
-    private static final Set<Character> TYPED_KEYS_TO_IGNORE = new HashSet<Character>(Arrays.asList('\n', '\t', '\r', '\b', '\33'));
+    private static final Set<Character> TYPED_KEYS_TO_IGNORE = new HashSet<Character>(Arrays.asList('\n', '\t', '\r', '\b', '\33', (char)127));
     private class TerminalInputListener extends KeyAdapter {
         @Override
         public void keyTyped(KeyEvent e) {
