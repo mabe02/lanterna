@@ -188,6 +188,13 @@ public class AbstractWindow implements Window {
         if(position == null) {
             return null;
         }
+        //Don't allow the component to set the cursor outside of its own boundaries
+        if(position.getColumn() < 0 ||
+                position.getRow() < 0 ||
+                position.getColumn() >= focusedInteractable.getSize().getColumns() ||
+                position.getRow() >= focusedInteractable.getSize().getRows()) {
+            return null;
+        }
         return focusedInteractable.toRootContainer(position);
     }
 
