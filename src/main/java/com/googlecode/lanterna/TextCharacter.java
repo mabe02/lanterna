@@ -28,10 +28,12 @@ import java.util.EnumSet;
  */
 public class TextCharacter {
     private static EnumSet<SGR> toEnumSet(SGR... modifiers) {
-        EnumSet<SGR> set = EnumSet.noneOf(SGR.class);
-        //Now assign the modifiers; we can't pass them in using EnumSet.copyOf(..) since that throws is the list is empty
-        set.addAll(Arrays.asList(modifiers));
-        return set;
+        if(modifiers.length == 0) {
+            return EnumSet.noneOf(SGR.class);
+        }
+        else {
+            return EnumSet.copyOf(Arrays.asList(modifiers));
+        }
     }
 
     public static final TextCharacter DEFAULT_CHARACTER = new TextCharacter(' ', TextColor.ANSI.DEFAULT, TextColor.ANSI.DEFAULT);
@@ -39,7 +41,7 @@ public class TextCharacter {
     private final char character;
     private final TextColor foregroundColor;
     private final TextColor backgroundColor;
-    private final EnumSet<SGR> modifiers;  //This isn't immutable, but we should treat it as such!
+    private final EnumSet<SGR> modifiers;  //This isn't immutable, but we should treat it as such and not expose it!
 
     /**
      * Creates a {@code ScreenCharacter} based on a supplied character, with default colors and no extra modifiers.
@@ -79,7 +81,14 @@ public class TextCharacter {
                 backgroundColor, 
                 toEnumSet(styles));
     }
-        
+
+    /**
+     * Creates a new {@code ScreenCharacter} based on a physical character, color information and a set of modifiers.
+     * @param character Physical character to refer to
+     * @param foregroundColor Foreground color the character has
+     * @param backgroundColor Background color the character has
+     * @param styles Set of modifiers to apply when drawing the character
+     */
     public TextCharacter(
             char character,
             TextColor foregroundColor,
@@ -99,47 +108,91 @@ public class TextCharacter {
         this.modifiers = EnumSet.copyOf(modifiers);
     }
 
+    /**
+     * The actual character this TextCharacter represents
+     * @return character of the TextCharacter
+     */
     public char getCharacter() {
         return character;
     }
 
+    /**
+     * Foreground color specified for this TextCharacter
+     * @return Foreground color of this TextCharacter
+     */
     public TextColor getForegroundColor() {
         return foregroundColor;
     }
 
+    /**
+     * Background color specified for this TextCharacter
+     * @return Background color of this TextCharacter
+     */
     public TextColor getBackgroundColor() {
         return backgroundColor;
     }
 
+    /**
+     * Returns a set of all active modifiers on this TextCharacter
+     * @return Set of active SGR codes
+     */
     public EnumSet<SGR> getModifiers() {
         return EnumSet.copyOf(modifiers);
     }
 
+    /**
+     * Returns true if this TextCharacter has the bold modifier active
+     * @return {@code true} if this TextCharacter has the bold modifier active
+     */
     public boolean isBold() {
         return modifiers.contains(SGR.BOLD);
     }
 
+    /**
+     * Returns true if this TextCharacter has the reverse modifier active
+     * @return {@code true} if this TextCharacter has the reverse modifier active
+     */
     public boolean isReversed() {
         return modifiers.contains(SGR.REVERSE);
     }
 
+    /**
+     * Returns true if this TextCharacter has the underline modifier active
+     * @return {@code true} if this TextCharacter has the underline modifier active
+     */
     public boolean isUnderlined() {
         return modifiers.contains(SGR.UNDERLINE);
     }
 
+    /**
+     * Returns true if this TextCharacter has the blink modifier active
+     * @return {@code true} if this TextCharacter has the blink modifier active
+     */
     public boolean isBlinking() {
         return modifiers.contains(SGR.BLINK);
     }
 
+    /**
+     * Returns true if this TextCharacter has the bordered modifier active
+     * @return {@code true} if this TextCharacter has the bordered modifier active
+     */
     public boolean isBordered() {
         return modifiers.contains(SGR.BORDERED);
     }
 
+    /**
+     * Returns true if this TextCharacter has the crossed-out modifier active
+     * @return {@code true} if this TextCharacter has the crossed-out modifier active
+     */
     public boolean isCrossedOut() {
         return modifiers.contains(SGR.CROSSED_OUT);
     }
 
-
+    /**
+     * Returns a new TextCharacter with the same colors and modifiers but a different underlying character
+     * @param character Character the copy should have
+     * @return Copy of this TextCharacter with different underlying character
+     */
     @SuppressWarnings("SameParameterValue")
     public TextCharacter withCharacter(char character) {
         if(this.character == character) {

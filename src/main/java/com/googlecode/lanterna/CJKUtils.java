@@ -19,7 +19,11 @@
 package com.googlecode.lanterna;
 
 /**
- * Utilities class for analyzing and working with CJK (Chinese, Japanese, Korean) characters.
+ * Utilities class for analyzing and working with CJK (Chinese, Japanese, Korean) characters. The main purpose of this
+ * class is to assist in figuring out how many terminal columns a character (and in extension, a String) takes up. The
+ * main issue is that while most latin (and latin-related) character can be trusted to consume one column in the
+ * terminal, CJK characters tends to take two, partly due to the square nature of the characters but mostly due to the
+ * fact that they require most space to distinguish.
  * 
  * @author Martin
  */
@@ -27,8 +31,14 @@ public class CJKUtils {
     private CJKUtils() {
     }
 
-    //Shamelessly stolen from http://stackoverflow.com/questions/1499804/how-can-i-detect-japanese-text-in-a-java-string
-    //Contributed there by user Rakesh N
+    /**
+     * Given a character, is this character considered to be a CJK character?
+     * Shamelessly stolen from
+     * <a href="http://stackoverflow.com/questions/1499804/how-can-i-detect-japanese-text-in-a-java-string>StackOverflow</a>
+     * where it was contributed by user Rakesh N
+     * @param c Character to test
+     * @return {@code true} if the character is a CJK character
+     */
     public static boolean isCharCJK(final char c) {
         Character.UnicodeBlock unicodeBlock = Character.UnicodeBlock.of(c);
         return (unicodeBlock == Character.UnicodeBlock.HIRAGANA)

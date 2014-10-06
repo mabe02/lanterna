@@ -25,7 +25,10 @@ import java.io.IOException;
 /**
  * This is an abstract base class for terminal color definitions. Since there are different ways of specifying terminal
  * colors, all with a different range of adoptions, this makes it possible to program an API against an implementation-
- * agnostic color definition.
+ * agnostic color definition. Please remember when using colors that not all terminals and terminal emulators supports
+ * them. The 24-bit color mode is very unsupported, for example, and even the default Linux terminal doesn't support
+ * the 256-color indexed mode.
+ *
  * @author Martin
  */
 public interface TextColor {
@@ -365,6 +368,11 @@ public interface TextColor {
 
         private final int colorIndex;
 
+        /**
+         * Creates a new TextColor using the XTerm 256 color indexed mode, with the specified index value. You must
+         * choose a value between 0 and 255.
+         * @param colorIndex Index value to use for this color.
+         */
         public Indexed(int colorIndex) {
             if(colorIndex > 255 || colorIndex < 0) {
                 throw new IllegalArgumentException("Cannot create a Color.Indexed with a color index of " + colorIndex +

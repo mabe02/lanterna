@@ -2,48 +2,50 @@ package com.googlecode.lanterna;
 
 /**
  * SGR - Select Graphic Rendition, changes the state of the terminal as to what kind of text to print after this
- * command. When applying an ENTER SGR code, it normally applies until you send the corresponding EXIT code.
- * RESET_ALL will clear any code currently enabled.
+ * command. When working with the Terminal interface, its keeping a state of which SGR codes are active, so activating
+ * one of these codes will make it apply to all text until you explictly deactivate it. When you work with Screen and
+ * GUI systems, usually the SGR is a property of an independent character and won't affect others.
  */
 public enum SGR {
     /**
-     * Please note that on some terminal implementations, instead of making the text bold, it will draw the text in
-     * a slightly different color
+     * Bold text mode. Please note that on some terminal implementations, instead of (or in addition to) making the text
+     * bold, it will draw the text in a slightly different color
      */
     BOLD,
 
     /**
-     * Reverse mode will flip the foreground and background colors
+     * Reverse text mode, will flip the foreground and background colors while active
      */
     REVERSE,
 
     /**
-     * Not widely supported
+     * Draws a horizontal line under the text. Not widely supported.
      */
     UNDERLINE,
 
     /**
-     * Not widely supported
+     * Text will blink on the screen by alternating the foreground color between the real foreground color and the
+     * background color. Not widely supported.
      */
     BLINK,
 
     /**
-     * Rarely supported
+     * Draws a border around the text. Rarely supported.
      */
     BORDERED,
 
     /**
-     * Exotic extension, please send me a reference screen shots!
+     * I have no idea, exotic extension, please send me a reference screen shots!
      */
     FRAKTUR,
 
     /**
-     * Rarely supported
+     * Draws a horizontal line through the text. Rarely supported.
      */
     CROSSED_OUT,
 
     /**
-     * Rarely supported
+     * Draws a circle around the text. Rarely supported.
      */
     CIRCLED,
     ;
