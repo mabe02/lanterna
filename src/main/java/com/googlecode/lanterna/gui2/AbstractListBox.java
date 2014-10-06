@@ -1,6 +1,6 @@
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.ACS;
+import com.googlecode.lanterna.Symbols;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.input.KeyStroke;
@@ -259,14 +259,14 @@ public abstract class AbstractListBox extends AbstractInteractableComponent<Abst
 
             graphics.applyThemeStyle(graphics.getThemeDefinition(AbstractListBox.class).getNormal());
             if(items.size() > componentHeight) {
-                graphics.putString(componentWidth - 1, 0, ACS.ARROW_UP + "");
+                graphics.putString(componentWidth - 1, 0, Symbols.ARROW_UP + "");
 
                 graphics.applyThemeStyle(graphics.getThemeDefinition(AbstractListBox.class).getInsensitive());
                 for(int i = 1; i < componentHeight - 1; i++)
-                    graphics.putString(componentWidth - 1, i, ACS.BLOCK_MIDDLE + "");
+                    graphics.putString(componentWidth - 1, i, Symbols.BLOCK_MIDDLE + "");
 
                 graphics.applyThemeStyle(graphics.getThemeDefinition(AbstractListBox.class).getNormal());
-                graphics.putString(componentWidth - 1, componentHeight - 1, ACS.ARROW_DOWN + "");
+                graphics.putString(componentWidth - 1, componentHeight - 1, Symbols.ARROW_DOWN + "");
 
                 //Finally print the 'tick'
                 int scrollableSize = items.size() - componentHeight;

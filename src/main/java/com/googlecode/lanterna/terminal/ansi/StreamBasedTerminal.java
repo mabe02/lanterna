@@ -25,11 +25,11 @@ import java.io.OutputStream;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 
+import com.googlecode.lanterna.Symbols;
 import com.googlecode.lanterna.input.InputDecoder;
 import com.googlecode.lanterna.input.KeyDecodingProfile;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
-import com.googlecode.lanterna.ACS;
 import com.googlecode.lanterna.terminal.AbstractTerminal;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
@@ -217,69 +217,69 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
         }
         //Convert ACS to ordinary terminal codes
         switch(input) {
-            case ACS.ARROW_DOWN:
+            case Symbols.ARROW_DOWN:
                 return convertToVT100('v');
-            case ACS.ARROW_LEFT:
+            case Symbols.ARROW_LEFT:
                 return convertToVT100('<');
-            case ACS.ARROW_RIGHT:
+            case Symbols.ARROW_RIGHT:
                 return convertToVT100('>');
-            case ACS.ARROW_UP:
+            case Symbols.ARROW_UP:
                 return convertToVT100('^');
-            case ACS.BLOCK_DENSE:
-            case ACS.BLOCK_MIDDLE:
-            case ACS.BLOCK_SOLID:
-            case ACS.BLOCK_SPARSE:
+            case Symbols.BLOCK_DENSE:
+            case Symbols.BLOCK_MIDDLE:
+            case Symbols.BLOCK_SOLID:
+            case Symbols.BLOCK_SPARSE:
                 return convertToVT100((char) 97);
-            case ACS.HEART:
-            case ACS.CLUB:
-            case ACS.SPADES:
+            case Symbols.HEART:
+            case Symbols.CLUB:
+            case Symbols.SPADES:
                 return convertToVT100('?');
-            case ACS.FACE_BLACK:
-            case ACS.FACE_WHITE:
-            case ACS.DIAMOND:
+            case Symbols.FACE_BLACK:
+            case Symbols.FACE_WHITE:
+            case Symbols.DIAMOND:
                 return convertToVT100((char) 96);
-            case ACS.BULLET:
+            case Symbols.BULLET:
                 return convertToVT100((char) 102);
-            case ACS.DOUBLE_LINE_CROSS:
-            case ACS.SINGLE_LINE_CROSS:
+            case Symbols.DOUBLE_LINE_CROSS:
+            case Symbols.SINGLE_LINE_CROSS:
                 return convertToVT100((char) 110);
-            case ACS.DOUBLE_LINE_HORIZONTAL:
-            case ACS.SINGLE_LINE_HORIZONTAL:
+            case Symbols.DOUBLE_LINE_HORIZONTAL:
+            case Symbols.SINGLE_LINE_HORIZONTAL:
                 return convertToVT100((char) 113);
-            case ACS.DOUBLE_LINE_BOTTOM_LEFT_CORNER:
-            case ACS.SINGLE_LINE_BOTTOM_LEFT_CORNER:
+            case Symbols.DOUBLE_LINE_BOTTOM_LEFT_CORNER:
+            case Symbols.SINGLE_LINE_BOTTOM_LEFT_CORNER:
                 return convertToVT100((char) 109);
-            case ACS.DOUBLE_LINE_BOTTOM_RIGHT_CORNER:
-            case ACS.SINGLE_LINE_BOTTOM_RIGHT_CORNER:
+            case Symbols.DOUBLE_LINE_BOTTOM_RIGHT_CORNER:
+            case Symbols.SINGLE_LINE_BOTTOM_RIGHT_CORNER:
                 return convertToVT100((char) 106);
-            case ACS.DOUBLE_LINE_T_DOWN:
-            case ACS.SINGLE_LINE_T_DOWN:
-            case ACS.DOUBLE_LINE_T_SINGLE_DOWN:
-            case ACS.SINGLE_LINE_T_DOUBLE_DOWN:
+            case Symbols.DOUBLE_LINE_T_DOWN:
+            case Symbols.SINGLE_LINE_T_DOWN:
+            case Symbols.DOUBLE_LINE_T_SINGLE_DOWN:
+            case Symbols.SINGLE_LINE_T_DOUBLE_DOWN:
                 return convertToVT100((char) 119);
-            case ACS.DOUBLE_LINE_T_LEFT:
-            case ACS.SINGLE_LINE_T_LEFT:
-            case ACS.DOUBLE_LINE_T_SINGLE_LEFT:
-            case ACS.SINGLE_LINE_T_DOUBLE_LEFT:
+            case Symbols.DOUBLE_LINE_T_LEFT:
+            case Symbols.SINGLE_LINE_T_LEFT:
+            case Symbols.DOUBLE_LINE_T_SINGLE_LEFT:
+            case Symbols.SINGLE_LINE_T_DOUBLE_LEFT:
                 return convertToVT100((char) 117);
-            case ACS.DOUBLE_LINE_T_RIGHT:
-            case ACS.SINGLE_LINE_T_RIGHT:
-            case ACS.DOUBLE_LINE_T_SINGLE_RIGHT:
-            case ACS.SINGLE_LINE_T_DOUBLE_RIGHT:
+            case Symbols.DOUBLE_LINE_T_RIGHT:
+            case Symbols.SINGLE_LINE_T_RIGHT:
+            case Symbols.DOUBLE_LINE_T_SINGLE_RIGHT:
+            case Symbols.SINGLE_LINE_T_DOUBLE_RIGHT:
                 return convertToVT100((char) 116);
-            case ACS.DOUBLE_LINE_T_UP:
-            case ACS.SINGLE_LINE_T_UP:
-            case ACS.DOUBLE_LINE_T_SINGLE_UP:
-            case ACS.SINGLE_LINE_T_DOUBLE_UP:
+            case Symbols.DOUBLE_LINE_T_UP:
+            case Symbols.SINGLE_LINE_T_UP:
+            case Symbols.DOUBLE_LINE_T_SINGLE_UP:
+            case Symbols.SINGLE_LINE_T_DOUBLE_UP:
                 return convertToVT100((char) 118);
-            case ACS.DOUBLE_LINE_TOP_LEFT_CORNER:
-            case ACS.SINGLE_LINE_TOP_LEFT_CORNER:
+            case Symbols.DOUBLE_LINE_TOP_LEFT_CORNER:
+            case Symbols.SINGLE_LINE_TOP_LEFT_CORNER:
                 return convertToVT100((char) 108);
-            case ACS.DOUBLE_LINE_TOP_RIGHT_CORNER:
-            case ACS.SINGLE_LINE_TOP_RIGHT_CORNER:
+            case Symbols.DOUBLE_LINE_TOP_RIGHT_CORNER:
+            case Symbols.SINGLE_LINE_TOP_RIGHT_CORNER:
                 return convertToVT100((char) 107);
-            case ACS.DOUBLE_LINE_VERTICAL:
-            case ACS.SINGLE_LINE_VERTICAL:
+            case Symbols.DOUBLE_LINE_VERTICAL:
+            case Symbols.SINGLE_LINE_VERTICAL:
                 return convertToVT100((char) 120);
             default:
                 return convertToCharset(input);

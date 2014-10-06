@@ -19,7 +19,7 @@
 
 package com.googlecode.lanterna.gui;
 
-import com.googlecode.lanterna.ACS;
+import com.googlecode.lanterna.Symbols;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 
@@ -51,22 +51,22 @@ public abstract class Border
             final int rowsHeight = actualSize.getRows();
 
             // Top
-            graphics.drawString(0, 0, ACS.SINGLE_LINE_TOP_LEFT_CORNER + "");
+            graphics.drawString(0, 0, Symbols.SINGLE_LINE_TOP_LEFT_CORNER + "");
             for(int x = 1; x < columnsWidth - 1; x++)
-                graphics.drawString(x, 0, ACS.SINGLE_LINE_HORIZONTAL + "");
-            graphics.drawString(columnsWidth - 1, 0, ACS.SINGLE_LINE_TOP_RIGHT_CORNER + "");
+                graphics.drawString(x, 0, Symbols.SINGLE_LINE_HORIZONTAL + "");
+            graphics.drawString(columnsWidth - 1, 0, Symbols.SINGLE_LINE_TOP_RIGHT_CORNER + "");
 
             // Each row
             for(int i = 1; i < rowsHeight - 1; i++) {
-                graphics.drawString(0, i, ACS.SINGLE_LINE_VERTICAL + "");
-                graphics.drawString(columnsWidth - 1, i, ACS.SINGLE_LINE_VERTICAL + "");
+                graphics.drawString(0, i, Symbols.SINGLE_LINE_VERTICAL + "");
+                graphics.drawString(columnsWidth - 1, i, Symbols.SINGLE_LINE_VERTICAL + "");
             }
 
             // Bottom
-            graphics.drawString(0, rowsHeight - 1, ACS.SINGLE_LINE_BOTTOM_LEFT_CORNER + "");
+            graphics.drawString(0, rowsHeight - 1, Symbols.SINGLE_LINE_BOTTOM_LEFT_CORNER + "");
             for(int x = 1; x < columnsWidth - 1; x++)
-                graphics.drawString(x, rowsHeight - 1, ACS.SINGLE_LINE_HORIZONTAL + "");
-            graphics.drawString(columnsWidth - 1, rowsHeight - 1, ACS.SINGLE_LINE_BOTTOM_RIGHT_CORNER + "");
+                graphics.drawString(x, rowsHeight - 1, Symbols.SINGLE_LINE_HORIZONTAL + "");
+            graphics.drawString(columnsWidth - 1, rowsHeight - 1, Symbols.SINGLE_LINE_BOTTOM_RIGHT_CORNER + "");
 
             // Title
             graphics.applyTheme(graphics.getTheme().getDefinition(Theme.Category.DIALOG_AREA));
@@ -156,27 +156,27 @@ public abstract class Border
 
             // Top
             graphics.applyTheme(upperLeftTheme);
-            graphics.drawString(0, 0, ACS.SINGLE_LINE_TOP_LEFT_CORNER + "");
+            graphics.drawString(0, 0, Symbols.SINGLE_LINE_TOP_LEFT_CORNER + "");
             for(int i = 1; i < columnsWidth - 1; i++)
-                graphics.drawString(i, 0, ACS.SINGLE_LINE_HORIZONTAL + "");
+                graphics.drawString(i, 0, Symbols.SINGLE_LINE_HORIZONTAL + "");
             graphics.applyTheme(lowerRightTheme);
-            graphics.drawString(columnsWidth - 1, 0, ACS.SINGLE_LINE_TOP_RIGHT_CORNER + "");
+            graphics.drawString(columnsWidth - 1, 0, Symbols.SINGLE_LINE_TOP_RIGHT_CORNER + "");
 
             // Each row
             for(int i = 1; i < rowsHeight - 1; i++) {
                 graphics.applyTheme(upperLeftTheme);
-                graphics.drawString(0, i, ACS.SINGLE_LINE_VERTICAL + "");
+                graphics.drawString(0, i, Symbols.SINGLE_LINE_VERTICAL + "");
                 graphics.applyTheme(lowerRightTheme);
-                graphics.drawString(columnsWidth - 1, i, ACS.SINGLE_LINE_VERTICAL + "");
+                graphics.drawString(columnsWidth - 1, i, Symbols.SINGLE_LINE_VERTICAL + "");
             }
 
             // Bottom
             graphics.applyTheme(upperLeftTheme);
-            graphics.drawString(0, rowsHeight - 1, ACS.SINGLE_LINE_BOTTOM_LEFT_CORNER + "");
+            graphics.drawString(0, rowsHeight - 1, Symbols.SINGLE_LINE_BOTTOM_LEFT_CORNER + "");
             graphics.applyTheme(lowerRightTheme);
             for(int i = 1; i < columnsWidth - 1; i++)
-                graphics.drawString(i, rowsHeight - 1, ACS.SINGLE_LINE_HORIZONTAL + "");
-            graphics.drawString(columnsWidth - 1, rowsHeight - 1, ACS.SINGLE_LINE_BOTTOM_RIGHT_CORNER + "");
+                graphics.drawString(i, rowsHeight - 1, Symbols.SINGLE_LINE_HORIZONTAL + "");
+            graphics.drawString(columnsWidth - 1, rowsHeight - 1, Symbols.SINGLE_LINE_BOTTOM_RIGHT_CORNER + "");
 
             // Title
             graphics.applyTheme(dialogAreaTheme);

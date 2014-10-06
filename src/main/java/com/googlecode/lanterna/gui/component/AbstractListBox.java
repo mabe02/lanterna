@@ -19,12 +19,12 @@
 
 package com.googlecode.lanterna.gui.component;
 
+import com.googlecode.lanterna.Symbols;
 import com.googlecode.lanterna.gui.Interactable;
 import com.googlecode.lanterna.gui.TextGraphics;
 import com.googlecode.lanterna.gui.Theme;
 import com.googlecode.lanterna.gui.Theme.Category;
 import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.ACS;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import java.io.IOException;
@@ -159,14 +159,14 @@ public abstract class AbstractListBox extends AbstractInteractableComponent {
 
         if(items.size() > graphics.getHeight()) {
             graphics.applyTheme(Theme.Category.DIALOG_AREA);
-            graphics.drawString(graphics.getWidth() - 1, 0, ACS.ARROW_UP + "");
+            graphics.drawString(graphics.getWidth() - 1, 0, Symbols.ARROW_UP + "");
 
             graphics.applyTheme(Theme.Category.DIALOG_AREA);
             for(int i = 1; i < graphics.getHeight() - 1; i++)
-                graphics.drawString(graphics.getWidth() - 1, i, ACS.BLOCK_MIDDLE + "");
+                graphics.drawString(graphics.getWidth() - 1, i, Symbols.BLOCK_MIDDLE + "");
 
             graphics.applyTheme(Theme.Category.DIALOG_AREA);
-            graphics.drawString(graphics.getWidth() - 1, graphics.getHeight() - 1, ACS.ARROW_DOWN + "");
+            graphics.drawString(graphics.getWidth() - 1, graphics.getHeight() - 1, Symbols.ARROW_DOWN + "");
             
             //Finally print the 'tick'
             int scrollableSize = items.size() - graphics.getHeight();

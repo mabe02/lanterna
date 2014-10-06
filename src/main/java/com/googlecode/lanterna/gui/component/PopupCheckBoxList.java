@@ -18,10 +18,10 @@
  */
 package com.googlecode.lanterna.gui.component;
 
+import com.googlecode.lanterna.Symbols;
 import com.googlecode.lanterna.gui.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
-import com.googlecode.lanterna.ACS;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import java.io.IOException;
@@ -43,7 +43,7 @@ public class PopupCheckBoxList extends RadioCheckBoxList {
 			return super.createItemString(index);
 		}
 		if (getCheckedItemIndex() > -1) {
-			return ACS.ARROW_DOWN + this.getItemAt(index).toString();
+			return Symbols.ARROW_DOWN + this.getItemAt(index).toString();
 		} else {
 			return EMPTY_SELECT;
 		}

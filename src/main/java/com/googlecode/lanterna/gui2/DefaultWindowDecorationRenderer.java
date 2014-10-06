@@ -22,12 +22,12 @@ public class DefaultWindowDecorationRenderer implements WindowDecorationRenderer
         title = title.substring(0, Math.max(0, Math.min(title.length(), drawableArea.getColumns() - 3)));
         graphics.applyThemeStyle(themeDefinition.getPreLight());
 
-        char horizontalLine = themeDefinition.getCharacter("HORIZONTAL_LINE", ACS.SINGLE_LINE_HORIZONTAL);
-        char verticalLine = themeDefinition.getCharacter("VERTICAL_LINE", ACS.SINGLE_LINE_VERTICAL);
-        char bottomLeftCorner = themeDefinition.getCharacter("BOTTOM_LEFT_CORNER", ACS.SINGLE_LINE_BOTTOM_LEFT_CORNER);
-        char topLeftCorner = themeDefinition.getCharacter("TOP_LEFT_CORNER", ACS.SINGLE_LINE_TOP_LEFT_CORNER);
-        char bottomRightCorner = themeDefinition.getCharacter("BOTTOM_RIGHT_CORNER", ACS.SINGLE_LINE_BOTTOM_RIGHT_CORNER);
-        char topRightCorner = themeDefinition.getCharacter("TOP_RIGHT_CORNER", ACS.SINGLE_LINE_TOP_RIGHT_CORNER);
+        char horizontalLine = themeDefinition.getCharacter("HORIZONTAL_LINE", Symbols.SINGLE_LINE_HORIZONTAL);
+        char verticalLine = themeDefinition.getCharacter("VERTICAL_LINE", Symbols.SINGLE_LINE_VERTICAL);
+        char bottomLeftCorner = themeDefinition.getCharacter("BOTTOM_LEFT_CORNER", Symbols.SINGLE_LINE_BOTTOM_LEFT_CORNER);
+        char topLeftCorner = themeDefinition.getCharacter("TOP_LEFT_CORNER", Symbols.SINGLE_LINE_TOP_LEFT_CORNER);
+        char bottomRightCorner = themeDefinition.getCharacter("BOTTOM_RIGHT_CORNER", Symbols.SINGLE_LINE_BOTTOM_RIGHT_CORNER);
+        char topRightCorner = themeDefinition.getCharacter("TOP_RIGHT_CORNER", Symbols.SINGLE_LINE_TOP_RIGHT_CORNER);
 
         graphics.setCharacter(0, drawableArea.getRows() - 1, bottomLeftCorner);
         graphics.drawLine(new TerminalPosition(0, drawableArea.getRows() - 2), new TerminalPosition(0, 1), verticalLine);

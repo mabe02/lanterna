@@ -22,10 +22,11 @@ package com.googlecode.lanterna;
 /**
  * Some text graphics, taken from http://en.wikipedia.org/wiki/Codepage_437 but converted to its UTF-8 counterpart.
  * This class it mostly here to help out with building text GUIs when you don't have a handy Unicode chart available.
+ * Previously this class was known as ACS, which was taken from ncurses (meaning "Alternative Character Set").
  * @author martin
  */
-public class ACS {
-    private ACS() {}
+public class Symbols {
+    private Symbols() {}
 
     /**
      * ☺

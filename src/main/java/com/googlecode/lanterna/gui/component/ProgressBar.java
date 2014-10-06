@@ -19,9 +19,9 @@
 
 package com.googlecode.lanterna.gui.component;
 
+import com.googlecode.lanterna.Symbols;
 import com.googlecode.lanterna.gui.TextGraphics;
 import com.googlecode.lanterna.gui.Theme.Category;
-import com.googlecode.lanterna.ACS;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 
@@ -35,7 +35,7 @@ public class ProgressBar extends AbstractComponent
 {
     private final int preferredWidth;
     private double progress;
-    private char fill_complete_char = ACS.BLOCK_SOLID;
+    private char fill_complete_char = Symbols.BLOCK_SOLID;
     private char fill_remaining_char = ' ';
     private boolean show_percentage = true;
 

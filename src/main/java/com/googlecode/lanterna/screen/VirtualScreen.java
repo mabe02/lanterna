@@ -218,7 +218,7 @@ public class VirtualScreen extends AbstractScreen {
             graphics.drawLine(
                     new TerminalPosition(horizontalPosition, graphics.getSize().getRows() - 2),
                     new TerminalPosition(horizontalPosition + horizontalSize, graphics.getSize().getRows() - 2),
-                    ACS.BLOCK_MIDDLE);
+                    Symbols.BLOCK_MIDDLE);
 
             int verticalSize = (int)(((double)(viewportSize.getRows()) / (double)virtualSize.getRows()) * (viewportSize.getRows()));
             scrollable = viewportSize.getRows() - verticalSize - 1;
@@ -226,7 +226,7 @@ public class VirtualScreen extends AbstractScreen {
             graphics.drawLine(
                     new TerminalPosition(graphics.getSize().getColumns() - 1, verticalPosition),
                     new TerminalPosition(graphics.getSize().getColumns() - 1, verticalPosition + verticalSize),
-                    ACS.BLOCK_MIDDLE);
+                    Symbols.BLOCK_MIDDLE);
         }
     }
 }
