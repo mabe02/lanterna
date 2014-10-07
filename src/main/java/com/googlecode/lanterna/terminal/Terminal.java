@@ -27,9 +27,16 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 /**
- * This is the main terminal interface, at the lowest level supported by Lanterna. You can implement your own
+ * This is the main terminal interface, at the lowest level supported by Lanterna. You can write your own
  * implementation of this if you want to target an exotic text terminal specification or another graphical environment
- * (like SWT). If you want to write an application that has a very precise control of the terminal, this is the
+ * (like SWT), but you should probably extend {@code AbstractTerminal} instead of implementing this interface directly.
+ * <p/>
+ * The normal way you interact in Java with a terminal is through the standard output (System.out) and standard error
+ * (System.err) and it's usually through printing text only. This interface abstracts a terminal at a more fundamental
+ * level, expressing methods for not only printing text but also changing colors, moving the cursor new positions,
+ * enable special modifiers and get notified when the terminal's size has changed.
+ * <p/>
+ * If you want to write an application that has a very precise control of the terminal, this is the
  * interface you should be programming against.
  *
  * @author Martin
@@ -43,7 +50,7 @@ public interface Terminal extends InputProvider {
      * supports scrolling, going into private mode will disable the scrolling and leave you with a fixed screen, which
      * can be useful if you don't want to deal with what the terminal buffer will look like if the user scrolls up.
      *
-     * @throws java.io.IOException
+     * @throws java.io.IOException If there was an underlying I/O error
      * @throws IllegalStateException If you are already in private mode
      */
     public void enterPrivateMode() throws IOException;
@@ -62,7 +69,8 @@ public interface Terminal extends InputProvider {
     /**
      * Removes all the characters, colors and graphics from the screen and leaves you with a big empty space. Text
      * cursor position is undefined after this call (depends on platform and terminal) so you should always call
-     * {@code moveCursor} next.
+     * {@code moveCursor} next. Some terminal implementations doesn't reset color and modifier state so it's also good
+     * practise to call {@code resetColorAndSGR()} after this.
      * @throws java.io.IOException If there was an underlying I/O error
      */
     public void clearScreen() throws IOException;
@@ -161,6 +169,54 @@ public interface Terminal extends InputProvider {
      */
     public void setForegroundColor(TextColor color) throws IOException;
 
+
+    /**
+     * Changes the foreground color for all the following characters put to the terminal. The foreground color is what
+     * color to draw the text in, as opposed to the background color which is the color surrounding the characters. This
+     * way of setting the foreground color, compared with the other applyForegroundColor(..) overloads, is the most safe
+     * and compatible.
+     *
+     * @param color Color to use for foreground
+     * @throws java.io.IOException If there was an underlying I/O error
+     * @see com.googlecode.lanterna.TextColor.ANSI
+     */
+    public void setForegroundColor(TextColor.ANSI color) throws IOException;
+
+    /**
+     * Changes the foreground color for all the following characters put to the terminal. The foreground color is what
+     * color to draw the text in, as opposed to the background color which is the color surrounding the characters.<br>
+     * <b>Warning:</b> This method will use the XTerm 256 color extension, it may not be supported on all terminal
+     * emulators! The index values are resolved as this:<br>
+     * 0 .. 15 - System color, these are taken from the schema. 16 .. 231 - Forms a 6x6x6 RGB color cube.<br>
+     * 232 .. 255 - A gray scale ramp without black and white.<br>
+     *
+     * <p>
+     * For more details on this, please see <a
+     * href="https://github.com/robertknight/konsole/blob/master/user-doc/README.moreColors">
+     * this</a> commit message to Konsole.
+     *
+     * @param index Color index from the XTerm 256 color space
+     * @throws java.io.IOException If there was an underlying I/O error
+     * @see com.googlecode.lanterna.TextColor.Indexed
+     */
+    public void setForegroundColor(int index) throws IOException;
+
+    /**
+     * Changes the foreground color for all the following characters put to the terminal. The foreground color is what
+     * color to draw the text in, as opposed to the background color which is the color surrounding the characters.<br>
+     * <b>Warning:</b> Only a few terminal support 24-bit color control codes, please avoid using this unless you know
+     * all users will have compatible terminals. For details, please see
+     * <a href="https://github.com/robertknight/konsole/blob/master/user-doc/README.moreColors">
+     * this</a> commit log.
+     *
+     * @param r Red intensity, from 0 to 255
+     * @param g Green intensity, from 0 to 255
+     * @param b Blue intensity, from 0 to 255
+     * @throws java.io.IOException If there was an underlying I/O error
+     * @see com.googlecode.lanterna.TextColor.RGB
+     */
+    public void setForegroundColor(int r, int g, int b) throws IOException;
+
     /**
      * Changes the background color for all the following characters put to the terminal. The background color is the
      * color surrounding the text being printed.
@@ -175,6 +231,52 @@ public interface Terminal extends InputProvider {
      * @throws java.io.IOException If there was an underlying I/O error
      */
     public void setBackgroundColor(TextColor color) throws IOException;
+
+    /**
+     * Changes the background color for all the following characters put to the terminal. The background color is the
+     * color surrounding the text being printed. This way of setting the background color, compared with the other
+     * applyBackgroundColor(..) overloads, is the most safe and compatible.
+     *
+     * @param color Color to use for the background
+     * @throws java.io.IOException If there was an underlying I/O error
+     * @see com.googlecode.lanterna.TextColor.ANSI
+     */
+    public void setBackgroundColor(TextColor.ANSI color) throws IOException;
+
+    /**
+     * Changes the background color for all the following characters put to the terminal. The background color is the
+     * color surrounding the text being printed.<br>
+     * <b>Warning:</b> This method will use the XTerm 256 color extension, it may not be supported on all terminal
+     * emulators! The index values are resolved as this:<br>
+     * 0 .. 15 - System color, these are taken from the schema. 16 .. 231 - Forms a 6x6x6 RGB color cube.<br>
+     * 232 .. 255 - A gray scale ramp without black and white.<br>
+     *
+     * <p>
+     * For more details on this, please see <a
+     * href="https://github.com/robertknight/konsole/blob/master/user-doc/README.moreColors">
+     * this</a> commit message to Konsole.
+     *
+     * @param index Index of the color to use, from the XTerm 256 color extension
+     * @throws java.io.IOException If there was an underlying I/O error
+     * @see com.googlecode.lanterna.TextColor.Indexed
+     */
+    public void setBackgroundColor(int index) throws IOException;
+
+    /**
+     * Changes the background color for all the following characters put to the terminal. The background color is the
+     * color surrounding the text being printed.<br>
+     * <b>Warning:</b> Only a few terminal support 24-bit color control codes, please avoid using this unless you know
+     * all users will have compatible terminals. For details, please see
+     * <a href="https://github.com/robertknight/konsole/blob/master/user-doc/README.moreColors">
+     * this</a> commit log.
+     *
+     * @param r Red intensity, from 0 to 255
+     * @param g Green intensity, from 0 to 255
+     * @param b Blue intensity, from 0 to 255
+     * @throws java.io.IOException If there was an underlying I/O error
+     * @see com.googlecode.lanterna.TextColor.RGB
+     */
+    public void setBackgroundColor(int r, int g, int b) throws IOException;
 
     /**
      * Adds a {@code ResizeListener} to be called when the terminal has changed size. There is no guarantee that this
@@ -216,6 +318,7 @@ public interface Terminal extends InputProvider {
     /**
      * Retrieves optional information from the terminal by printing the ENQ ({@literal \}u005) character. Terminals and terminal
      * emulators may or may not respond to this command, sometimes it's configurable.
+     *
      * @param timeout How long to wait for the talk-back message, if there's nothing immediately available on the input
      * stream, you should probably set this to a somewhat small value to prevent unnecessary blockage on the input stream
      * but large enough to accommodate a round-trip to the user's terminal (~300 ms if you are connection across the globe).
