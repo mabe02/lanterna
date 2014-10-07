@@ -55,7 +55,19 @@ public interface IOSafeTerminal extends Terminal {
     @Override
     public void setForegroundColor(TextColor color);
     @Override
+    void setForegroundColor(TextColor.ANSI color);
+    @Override
+    void setForegroundColor(int index);
+    @Override
+    void setForegroundColor(int r, int g, int b);
+    @Override
     public void setBackgroundColor(TextColor color);
+    @Override
+    void setBackgroundColor(TextColor.ANSI color);
+    @Override
+    void setBackgroundColor(int index);
+    @Override
+    void setBackgroundColor(int r, int g, int b);
     @Override
     public TerminalSize getTerminalSize();
     @Override
