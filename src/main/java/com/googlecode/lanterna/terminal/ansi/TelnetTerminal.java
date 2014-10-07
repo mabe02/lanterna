@@ -30,6 +30,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * This class is used by the {@code TelnetTerminalServer} class when a client has connected in; this class will be the
+ * interaction point for that client. All operations are sent to the client over the network socket and some of the
+ * meta-operations (like echo mode) are communicated using Telnet's negotiation language.
+ * <p/>
  * A good resource on telnet communication is http://www.tcpipguide.com/free/t_TelnetProtocol.htm
  * Also here: http://support.microsoft.com/kb/231866
  * @author martin
@@ -82,6 +86,11 @@ public class TelnetTerminal extends ANSITerminal {
         flush();
     }
 
+    /**
+     * Retrieves the current negotiation state with the client, containing details on what options have been enabled
+     * and what the client has said it supports.
+     * @return The current negotiation state for this client
+     */
     public NegotiationState getNegotiationState() {
         return negotiationState;
     }
@@ -89,7 +98,11 @@ public class TelnetTerminal extends ANSITerminal {
     public void close() throws IOException {
         socket.close();
     }
-    
+
+    /**
+     * This class contains some of the various states that the Telnet negotiation protocol defines. Lanterna doesn't
+     * support all of them but the more common ones are repressented.
+     */
     public static class NegotiationState {
         private boolean clientEcho;
         private boolean clientLineMode0;
@@ -97,7 +110,7 @@ public class TelnetTerminal extends ANSITerminal {
         private boolean suppressGoAhead;
         private boolean extendedAscii;
 
-        public NegotiationState() {
+        NegotiationState() {
             this.clientEcho = true;
             this.clientLineMode0 = false;
             this.clientResizeNotification = false;
@@ -105,22 +118,44 @@ public class TelnetTerminal extends ANSITerminal {
             this.extendedAscii = true;  
         }
 
+        /**
+         * Is the telnet client echo mode turned on (client is echoing characters locally)
+         * @return {@code true} if client echo is enabled
+         */
         public boolean isClientEcho() {
             return clientEcho;
         }
 
+        /**
+         * Is the telnet client line mode 0 turned on (client sends character by character instead of line by line)
+         * @return {@code true} if client line mode 0 is enabled
+         */
         public boolean isClientLineMode0() {
             return clientLineMode0;
         }
 
+        /**
+         * Is the telnet client resize notification turned on (client notifies server when the terminal window has
+         * changed size)
+         * @return {@code true} if client resize notification is enabled
+         */
         public boolean isClientResizeNotification() {
             return clientResizeNotification;
         }
 
+
+        /**
+         * Is the telnet client suppress go-ahead turned on
+         * @return {@code true} if client suppress go-ahead is enabled
+         */
         public boolean isSuppressGoAhead() {
             return suppressGoAhead;
         }
 
+        /**
+         * Is the telnet client extended ascii turned on
+         * @return {@code true} if client extended ascii is enabled
+         */
         public boolean isExtendedAscii() {
             return extendedAscii;
         }

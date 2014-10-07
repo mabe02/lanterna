@@ -31,7 +31,8 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 
 /**
- * Class containing graphics code for ANSI compliant text terminals and terminal emulators.
+ * Class containing graphics code for ANSI compliant text terminals and terminal emulators. All the methods inside of
+ * this class uses ANSI escape codes written to the underlying output stream.
  *
  * @see <a href="http://en.wikipedia.org/wiki/ANSI_escape_code">Wikipedia</a>
  * @author Martin

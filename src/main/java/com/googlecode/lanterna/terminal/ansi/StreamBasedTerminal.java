@@ -39,7 +39,10 @@ import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 
 /**
- * An abstract terminal implementing functionality for terminals using OutputStream/InputStream
+ * An abstract terminal implementing functionality for terminals using OutputStream/InputStream. You can extend from
+ * this class if your terminal implementation is using standard input and standard output but not ANSI escape codes (in
+ * which case you should extend ANSITerminal). This class also contains some automatic UTF-8 to VT100 character
+ * conversion when the terminal is not set to read UTF-8.
  *
  * @author Martin
  */

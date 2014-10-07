@@ -24,8 +24,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
- * @author martin
+ * Contains the telnet protocol commands, although not a complete set.
+ * @author Martin
  */
 class TelnetProtocol {
     public static final byte COMMAND_SUBNEGOTIATION_END = (byte)0xf0;  //SE
@@ -93,6 +93,7 @@ class TelnetProtocol {
         }
         return Collections.unmodifiableMap(result);
     }
-    
+
+    /** Cannot instantiate. */
     private TelnetProtocol() {}
 }
