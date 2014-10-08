@@ -56,7 +56,9 @@ import javax.swing.event.AncestorListener;
 /**
  * This class provides a Swing implementation of the Terminal interface that is an embeddable component you can put into
  * a Swing container. The class has static helper methods for opening a new frame with a SwingTerminal as its content,
- * similar to how the SwingTerminal used to work in earlier versions of lanterna.
+ * similar to how the SwingTerminal used to work in earlier versions of lanterna. This version supports private mode and
+ * non-private mode with a scrollback history. You can customize many of the properties by supplying device
+ * configuration, font configuration and color configuration when you construct the object.
  * @author martin
  */
 public class SwingTerminal extends JComponent implements IOSafeTerminal {
@@ -76,10 +78,19 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
     private volatile boolean cursorIsVisible;
     private volatile boolean blinkOn;
 
+    /**
+     * Creates a new SwingTerminal with all the defaults set
+     */
     public SwingTerminal() {
         this(new TerminalScrollController.Null());
     }
 
+
+    /**
+     * Creates a new SwingTerminal with a particular scrolling controller that will be notified when the terminals
+     * history size grows and will be called when this class needs to figure out the current scrolling position.
+     * @param scrollController Controller for scrolling the terminal history
+     */
     @SuppressWarnings("WeakerAccess")
     public SwingTerminal(TerminalScrollController scrollController) {
         this(SwingTerminalDeviceConfiguration.DEFAULT,
@@ -89,7 +100,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
     }
 
     /**
-     * Creates a new SwingTerminal component.
+     * Creates a new SwingTerminal component using custom settings and no scroll controller.
      * @param deviceConfiguration Device configuration to use for this SwingTerminal
      * @param fontConfiguration Font configuration to use for this SwingTerminal
      * @param colorConfiguration Color configuration to use for this SwingTerminal
@@ -103,7 +114,9 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
     }
 
     /**
-     * Creates a new SwingTerminal component.
+     * Creates a new SwingTerminal component using custom settings and a custom scroll controller. The scrolling
+     * controller will be notified when the terminal's history size grows and will be called when this class needs to
+     * figure out the current scrolling position.
      * @param deviceConfiguration Device configuration to use for this SwingTerminal
      * @param fontConfiguration Font configuration to use for this SwingTerminal
      * @param colorConfiguration Color configuration to use for this SwingTerminal
@@ -318,14 +331,26 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
         }
     }
 
+    /**
+     * Returns the current device configuration. Note that it is immutable and cannot be changed.
+     * @return This SwingTerminal's current device configuration
+     */
     public SwingTerminalDeviceConfiguration getDeviceConfiguration() {
         return deviceConfiguration;
     }
 
+    /**
+     * Returns the current font configuration. Note that it is immutable and cannot be changed.
+     * @return This SwingTerminal's current font configuration
+     */
     public SwingTerminalFontConfiguration getFontConfiguration() {
         return fontConfiguration;
     }
 
+    /**
+     * Returns the current color configuration. Note that it is immutable and cannot be changed.
+     * @return This SwingTerminal's current color configuration
+     */
     public SwingTerminalColorConfiguration getColorConfiguration() {
         return colorConfiguration;
     }

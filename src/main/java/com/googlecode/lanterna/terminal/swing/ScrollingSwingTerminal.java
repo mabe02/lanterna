@@ -34,7 +34,9 @@ import javax.swing.JComponent;
 import javax.swing.JScrollBar;
 
 /**
- *
+ * This is a Swing JComponent that carries a SwingTerminal with a scrollbar, effectively implementing a psudo-terminal
+ * with scrollback history. You can choose the same parameters are for SwingTerminal, they are forwarded, this class
+ * mostly deals with linking the SwingTerminal with the scrollbar and having them update each other.
  * @author Martin
  */
 public class ScrollingSwingTerminal extends JComponent implements IOSafeTerminal {
@@ -42,12 +44,21 @@ public class ScrollingSwingTerminal extends JComponent implements IOSafeTerminal
     private final SwingTerminal swingTerminal;
     private final JScrollBar scrollBar;
 
+    /**
+     * Creates a new ScrollingSwingTerminal with all default options
+     */
     public ScrollingSwingTerminal() {
         this(SwingTerminalDeviceConfiguration.DEFAULT,
                 SwingTerminalFontConfiguration.DEFAULT,
                 SwingTerminalColorConfiguration.DEFAULT);
     }
 
+    /**
+     * Creates a new ScrollingSwingTerminal with customizable settings.
+     * @param deviceConfiguration How to configure the terminal virtual device
+     * @param fontConfiguration What kind of fonts to use
+     * @param colorConfiguration Which color schema to use for ANSI colors
+     */
     @SuppressWarnings({"SameParameterValue", "WeakerAccess"})
     public ScrollingSwingTerminal(
             SwingTerminalDeviceConfiguration deviceConfiguration,

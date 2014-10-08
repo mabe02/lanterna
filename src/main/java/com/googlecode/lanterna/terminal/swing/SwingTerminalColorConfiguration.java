@@ -24,14 +24,24 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- *
+ * Color configuration settings to be using with SwingTerminal. This class contains color-related settings that is used
+ * by SwingTerminal when it renders the component.
  * @author martin
  */
 public class SwingTerminalColorConfiguration {
 
+    /**
+     * This is the default settings that is used when you create a new SwingTerminal without specifying any color
+     * configuration. It will use classic VGA colors for the ANSI palette and bright colors on bold text.
+     */
     public static final SwingTerminalColorConfiguration DEFAULT = newInstance(SwingTerminalPalette.STANDARD_VGA);
     private static final Map<TextColor, Color> COLOR_STORAGE = new ConcurrentHashMap<TextColor, Color>();
 
+    /**
+     * Creates a new color configuration based on a particular palette and with using brighter colors on bold text.
+     * @param colorPalette Palette to use for this color configuration
+     * @return The resulting color configuration
+     */
     @SuppressWarnings("SameParameterValue")
     public static SwingTerminalColorConfiguration newInstance(SwingTerminalPalette colorPalette) {
         return new SwingTerminalColorConfiguration(colorPalette, true);
@@ -49,10 +59,24 @@ public class SwingTerminalColorConfiguration {
         return useBrightColorsOnBold;
     }
 
+    /**
+     * Returns a copy of this color configuration without the bright-colors-on-bold setting changed. With
+     * the setting turned off, bold text will be rendered with the same foreground color as non-bold text. Default is
+     * on, which renders bold text in a slightly brighter tone. This is commonly used by many terminal emulators.
+     * @return Copy of this color configuration but with the bright-on-bold setting as specified
+     */
     public SwingTerminalColorConfiguration withoutBrightColorsOnBold() {
         return new SwingTerminalColorConfiguration(colorPalette, false);
     }
 
+    /**
+     * Given a TextColor and a hint as to if the color is to be used as foreground or not and if we currently have
+     * bold text enabled or not, it returns the closest AWT color that matches this.
+     * @param color What text color to convert
+     * @param isForeground Is the color intended to be used as foreground color
+     * @param inBoldContext Is the color intended to be used for on a character this is bold
+     * @return The AWT color that represents this text color
+     */
     public Color toAWTColor(TextColor color, boolean isForeground, boolean inBoldContext) {
         if(COLOR_STORAGE.containsKey(color)) {
             return COLOR_STORAGE.get(color);
