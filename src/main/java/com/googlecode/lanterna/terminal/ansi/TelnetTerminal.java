@@ -95,13 +95,17 @@ public class TelnetTerminal extends ANSITerminal {
         return negotiationState;
     }
 
+    /**
+     * Closes the socket to the client, effectively ending the telnet session and the terminal.
+     * @throws IOException If there was an underlying I/O error
+     */
     public void close() throws IOException {
         socket.close();
     }
 
     /**
      * This class contains some of the various states that the Telnet negotiation protocol defines. Lanterna doesn't
-     * support all of them but the more common ones are repressented.
+     * support all of them but the more common ones are represented.
      */
     public static class NegotiationState {
         private boolean clientEcho;
@@ -195,7 +199,7 @@ public class TelnetTerminal extends ANSITerminal {
         private int bytesInBuffer;
         private TelnetClientEventListener eventListener;
 
-        public TelnetClientIACFilterer(InputStream inputStream) {
+        TelnetClientIACFilterer(InputStream inputStream) {
             this.negotiationState = new NegotiationState();
             this.inputStream = inputStream;
             this.buffer = new byte[64 * 1024];
@@ -204,7 +208,7 @@ public class TelnetTerminal extends ANSITerminal {
             this.eventListener = null;
         }
 
-        public void setEventListener(TelnetClientEventListener eventListener) {
+        private void setEventListener(TelnetClientEventListener eventListener) {
             this.eventListener = eventListener;
         }
 

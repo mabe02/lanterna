@@ -28,8 +28,12 @@ import java.lang.reflect.Proxy;
 import java.nio.charset.Charset;
 
 /**
- * A graphics ANSI terminal extension with support for Unix resize signals and the stty program to control cbreak and key
- * echo
+ * UnixTerminal extends from ANSITerminal and adds functionality for querying the terminal size, setting echo mode and
+ * cbreak. It will use Unix WINCH signal to detect when the user has resized the terminal, if supported by the JVM, and
+ * rely on being able to call /bin/sh and /bin/stty to set echo, cbreak and minimum characters for reading.
+ * <p/>
+ * If you need to have Lanterna to call the shell and/or stty at a different location, you'll need to subclass this and
+ * override {@code getShellCommand()} and {@code getSTTYCommand()}.
  *
  * @author Martin
  */
@@ -39,29 +43,35 @@ public class UnixTerminal extends ANSITerminal {
     private final UnixTerminalSizeQuerier terminalSizeQuerier;
 
     /**
-     * This enum lets you control some more low-level behaviors of this terminal object.
+     * This enum lets you control how Lanterna will handle a ctrl+c keystroke from the user.
      */
-    public static enum Behaviour {
-
+    public static enum CtrlCBehaviour {
         /**
-         * Pressing ctrl+c doesn't kill the application, it will be added to the input queue as usual
+         * Pressing ctrl+c doesn't kill the application, it will be added to the input queue as any other key stroke
          */
-        DEFAULT,
+        TRAP,
         /**
-         * Pressing ctrl+c will restore the terminal and kill the application
+         * Pressing ctrl+c will restore the terminal and kill the application as it normally does with terminal
+         * applications. Lanterna will restore the terminal and then call {@code System.exit(1)} for this.
          */
         CTRL_C_KILLS_APPLICATION,
     }
 
-    private final Behaviour terminalBehaviour;
+    private final CtrlCBehaviour terminalCtrlCBehaviour;
     private String sttyStatusToRestore;
 
+    /**
+     * Creates a UnixTerminal with default settings, using System.in and System.out for input/output, using the default
+     * character set on the system as the encoding and trap ctrl+c signal instead of killing the application.
+     * @throws IOException If there was an I/O error initializing the terminal
+     */
     public UnixTerminal() throws IOException {
         this(System.in, System.out, Charset.defaultCharset());
     }
 
     /**
-     * Creates a UnixTerminal using a specified input stream, output stream and character set.
+     * Creates a UnixTerminal using a specified input stream, output stream and character set. Ctrl+c signal will be
+     * trapped instead of killing the application.
      *
      * @param terminalInput Input stream to read terminal input from
      * @param terminalOutput Output stream to write terminal output to
@@ -76,7 +86,9 @@ public class UnixTerminal extends ANSITerminal {
     }
 
     /**
-     * Creates a UnixTerminal using a specified input stream, output stream and character set.
+     * Creates a UnixTerminal using a specified input stream, output stream and character set, with a custom size
+     * querier instead of using the default one. This way you can override size detection (if you want to force the
+     * terminal to a fixed size, for example). Ctrl+c signal will be trapped instead of killing the application.
      *
      * @param terminalInput Input stream to read terminal input from
      * @param terminalOutput Output stream to write terminal output to
@@ -91,18 +103,20 @@ public class UnixTerminal extends ANSITerminal {
             OutputStream terminalOutput,
             Charset terminalCharset,
             UnixTerminalSizeQuerier customSizeQuerier) throws IOException {
-        this(terminalInput, terminalOutput, terminalCharset, customSizeQuerier, Behaviour.DEFAULT);
+        this(terminalInput, terminalOutput, terminalCharset, customSizeQuerier, CtrlCBehaviour.TRAP);
     }
 
     /**
-     * Creates a UnixTerminal using a specified input stream, output stream and character set.
+     * Creates a UnixTerminal using a specified input stream, output stream and character set, with a custom size
+     * querier instead of using the default one. This way you can override size detection (if you want to force the
+     * terminal to a fixed size, for example). You also choose how you want ctrl+c key strokes to be handled.
      *
      * @param terminalInput Input stream to read terminal input from
      * @param terminalOutput Output stream to write terminal output to
      * @param terminalCharset Character set to use when converting characters to bytes
      * @param customSizeQuerier Object to use for looking up the size of the terminal, or null to use the built-in
      * method
-     * @param terminalBehaviour Special settings on how the terminal will behave, see {@code UnixTerminalMode} for more
+     * @param terminalCtrlCBehaviour Special settings on how the terminal will behave, see {@code UnixTerminalMode} for more
      * details
      * @throws java.io.IOException If there was an I/O error initializing the terminal
      */
@@ -112,10 +126,10 @@ public class UnixTerminal extends ANSITerminal {
             OutputStream terminalOutput,
             Charset terminalCharset,
             UnixTerminalSizeQuerier customSizeQuerier,
-            Behaviour terminalBehaviour) throws IOException {
+            CtrlCBehaviour terminalCtrlCBehaviour) throws IOException {
         super(terminalInput, terminalOutput, terminalCharset);
         this.terminalSizeQuerier = customSizeQuerier;
-        this.terminalBehaviour = terminalBehaviour;
+        this.terminalCtrlCBehaviour = terminalCtrlCBehaviour;
         this.sttyStatusToRestore = null;
 
         //Make sure to set an initial size
@@ -183,7 +197,7 @@ public class UnixTerminal extends ANSITerminal {
 
     private void isCtrlC(KeyStroke key) throws IOException {
         if(key != null
-                && terminalBehaviour == Behaviour.CTRL_C_KILLS_APPLICATION
+                && terminalCtrlCBehaviour == CtrlCBehaviour.CTRL_C_KILLS_APPLICATION
                 && key.getCharacter() != null
                 && key.getCharacter() == 'c'
                 && !key.isAltDown()
@@ -235,44 +249,44 @@ public class UnixTerminal extends ANSITerminal {
         sttyKeyEcho(echoOn);
     }
 
-    private static void sttyKeyEcho(final boolean enable) throws IOException {
-        exec("/bin/sh", "-c",
-                "/bin/stty " + (enable ? "echo" : "-echo") + " < /dev/tty");
+    private void sttyKeyEcho(final boolean enable) throws IOException {
+        exec(getShellCommand(), "-c",
+                getSTTYCommand() + " " + (enable ? "echo" : "-echo") + " < /dev/tty");
     }
 
-    private static void sttyMinimum1CharacterForRead() throws IOException {
-        exec("/bin/sh", "-c",
-                "/bin/stty min 1 < /dev/tty");
+    private void sttyMinimum1CharacterForRead() throws IOException {
+        exec(getShellCommand(), "-c",
+                getSTTYCommand() + " min 1 < /dev/tty");
     }
 
-    private static void sttyICanon(final boolean enable) throws IOException {
-        exec("/bin/sh", "-c",
-                "/bin/stty " + (enable ? "-icanon" : "icanon") + " < /dev/tty");
-    }
-
-    @SuppressWarnings("unused")
-    private static void restoreEOFCtrlD() throws IOException {
-        exec("/bin/sh", "-c", "/bin/stty eof ^d < /dev/tty");
-    }
-
-    private static void disableSpecialCharacters() throws IOException {
-        exec("/bin/sh", "-c", "/bin/stty intr undef < /dev/tty");
-        exec("/bin/sh", "-c", "/bin/stty start undef < /dev/tty");
-        exec("/bin/sh", "-c", "/bin/stty stop undef < /dev/tty");
-        exec("/bin/sh", "-c", "/bin/stty susp undef < /dev/tty");
+    private void sttyICanon(final boolean enable) throws IOException {
+        exec(getShellCommand(), "-c",
+                getSTTYCommand() + " " + (enable ? "-icanon" : "icanon") + " < /dev/tty");
     }
 
     @SuppressWarnings("unused")
-    private static void restoreSpecialCharacters() throws IOException {
-        exec("/bin/sh", "-c", "/bin/stty intr ^C < /dev/tty");
-        exec("/bin/sh", "-c", "/bin/stty start ^Q < /dev/tty");
-        exec("/bin/sh", "-c", "/bin/stty stop ^S < /dev/tty");
-        exec("/bin/sh", "-c", "/bin/stty susp ^Z < /dev/tty");
+    private void restoreEOFCtrlD() throws IOException {
+        exec(getShellCommand(), "-c", getSTTYCommand() + " eof ^d < /dev/tty");
+    }
+
+    private void disableSpecialCharacters() throws IOException {
+        exec(getShellCommand(), "-c", getSTTYCommand() + " intr undef < /dev/tty");
+        exec(getShellCommand(), "-c", getSTTYCommand() + " start undef < /dev/tty");
+        exec(getShellCommand(), "-c", getSTTYCommand() + " stop undef < /dev/tty");
+        exec(getShellCommand(), "-c", getSTTYCommand() + " susp undef < /dev/tty");
+    }
+
+    @SuppressWarnings("unused")
+    private void restoreSpecialCharacters() throws IOException {
+        exec(getShellCommand(), "-c", getSTTYCommand() + " intr ^C < /dev/tty");
+        exec(getShellCommand(), "-c", getSTTYCommand() + " start ^Q < /dev/tty");
+        exec(getShellCommand(), "-c", getSTTYCommand() + " stop ^S < /dev/tty");
+        exec(getShellCommand(), "-c", getSTTYCommand() + " susp ^Z < /dev/tty");
     }
 
     private void saveSTTY() throws IOException {
         if(sttyStatusToRestore == null) {
-            sttyStatusToRestore = exec("/bin/sh", "-c", "stty -g < /dev/tty").trim();
+            sttyStatusToRestore = exec(getShellCommand(), "-c", getSTTYCommand() + " -g < /dev/tty").trim();
         }
     }
 
@@ -282,8 +296,16 @@ public class UnixTerminal extends ANSITerminal {
             return;
         }
 
-        exec("/bin/sh", "-c", "stty " + sttyStatusToRestore + " < /dev/tty");
+        exec(getShellCommand(), "-c", getSTTYCommand() + " " + sttyStatusToRestore + " < /dev/tty");
         sttyStatusToRestore = null;
+    }
+
+    protected String getSTTYCommand() {
+        return "/bin/stty";
+    }
+
+    protected String getShellCommand() {
+        return "/bin/sh";
     }
 
     private static String exec(String... cmd) throws IOException {

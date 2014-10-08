@@ -41,8 +41,7 @@ public class ShortcutTest {
     {
         Terminal terminal = new TestTerminalFactory(args).createTerminal();
         if(terminal instanceof UnixTerminal) {
-            terminal = new UnixTerminal(System.in, System.out, Charset.forName("UTF-8"),
-                                            null, UnixTerminal.Behaviour.DEFAULT);
+            terminal = new UnixTerminal(System.in, System.out, Charset.forName("UTF-8"));
         }
         final GUIScreen guiScreen = new GUIScreen(new TerminalScreen(terminal));
         guiScreen.getScreen().startScreen();

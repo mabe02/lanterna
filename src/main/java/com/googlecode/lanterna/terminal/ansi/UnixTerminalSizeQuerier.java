@@ -28,5 +28,12 @@ import com.googlecode.lanterna.TerminalSize;
  */
 @SuppressWarnings("WeakerAccess")
 public interface UnixTerminalSizeQuerier {
+    /**
+     * Checks what the size of the terminal is, measured in number of rows and columns. The implementer of this
+     * interface is expected to know which terminal we are querying for and have all it needs to figure out the size.
+     * One way of implementing this could be to read of an external value or variable or calling IPCs or just return
+     * a static size at all times.
+     * @return
+     */
     TerminalSize queryTerminalSize();
 }
