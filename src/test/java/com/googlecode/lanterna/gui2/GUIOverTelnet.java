@@ -1,0 +1,153 @@
+package com.googlecode.lanterna.gui2;
+
+import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
+import com.googlecode.lanterna.screen.Screen;
+import com.googlecode.lanterna.screen.TerminalScreen;
+import com.googlecode.lanterna.terminal.ansi.TelnetTerminal;
+import com.googlecode.lanterna.terminal.ansi.TelnetTerminalServer;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Created by martin on 11/10/14.
+ */
+public class GUIOverTelnet {
+    public static void main(String[] args) throws IOException {
+        TelnetTerminalServer telnetTerminalServer = new TelnetTerminalServer(1024);
+        System.out.println("Listening");
+        while(true) {
+            final TelnetTerminal telnetTerminal = telnetTerminalServer.acceptConnection();
+            System.out.println("Accepted connection from " + telnetTerminal.getRemoteSocketAddress());
+            Thread thread = new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        runGUI(telnetTerminal);
+                    }
+                    catch(IOException e) {
+                        e.printStackTrace();
+                    }
+                    catch(InterruptedException ignore) {}
+                    try {
+                        telnetTerminal.close();
+                    }
+                    catch(IOException ignore) {}
+                }
+            };
+            thread.start();
+        }
+    }
+
+    private static final List<TextBox> ALL_TEXTBOXES = new ArrayList<TextBox>();
+
+    private static void runGUI(final TelnetTerminal telnetTerminal) throws IOException, InterruptedException {
+        Screen screen = new TerminalScreen(telnetTerminal);
+        screen.startScreen();
+        final DefaultWindowTextGUI textGUI = new DefaultWindowTextGUI(screen);
+        textGUI.setBlockingIO(false);
+        textGUI.setEOFWhenNoWindows(true);
+        try {
+            final BasicWindow window = new BasicWindow("Text GUI over Telnet");
+            Container contentArea = window.getContentArea();
+            contentArea.addComponent(new Button("Button", new Runnable() {
+                @Override
+                public void run() {
+                    final BasicWindow messageBox = new BasicWindow("Response");
+                    messageBox.getContentArea().addComponent(new Label("Hello!"));
+                    messageBox.getContentArea().addComponent(new Button("Close", new Runnable() {
+                        @Override
+                        public void run() {
+                            messageBox.close();
+                        }
+                    }));
+                    textGUI.getWindowManager().addWindow(messageBox);
+                }
+            }).withBorder(Borders.singleLine("This is a button")));
+
+
+            final TextBox textBox = new TextBox(new TerminalSize(20, 4)) {
+                @Override
+                public Result handleKeyStroke(KeyStroke keyStroke) {
+                    try {
+                        return super.handleKeyStroke(keyStroke);
+                    }
+                    finally {
+                        for(TextBox box: ALL_TEXTBOXES) {
+                            if(this != box) {
+                                box.setText(getText());
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public boolean isInvalid() {
+                    return super.isInvalid();
+                }
+            };
+            ALL_TEXTBOXES.add(textBox);
+            contentArea.addComponent(textBox.withBorder(Borders.singleLine("Text editor")));
+
+            contentArea.addComponent(new AbstractInteractableComponent() {
+                String text = "Press any key";
+                @Override
+                protected ComponentRenderer createDefaultRenderer() {
+                    return new ComponentRenderer() {
+                        @Override
+                        public TerminalSize getPreferredSize(Component component) {
+                            return new TerminalSize(30, 1);
+                        }
+
+                        @Override
+                        public void drawComponent(TextGUIGraphics graphics, Component component) {
+                            graphics.putString(0, 0, text);
+                        }
+                    };
+                }
+
+                @Override
+                public TerminalPosition getCursorLocation() {
+                    return TerminalPosition.TOP_LEFT_CORNER;
+                }
+
+                @Override
+                public Result handleKeyStroke(KeyStroke keyStroke) {
+                    if(keyStroke.getKeyType() == KeyType.Tab ||
+                            keyStroke.getKeyType() == KeyType.ReverseTab) {
+                        return super.handleKeyStroke(keyStroke);
+                    }
+                    if(keyStroke.getKeyType() == KeyType.Character) {
+                        text = "Character: " + keyStroke.getCharacter() + (keyStroke.isCtrlDown() ? " (ctrl)" : "") +
+                                (keyStroke.isAltDown() ? " (alt)" : "");
+                    }
+                    else {
+                        text = "Key: " + keyStroke.getKeyType() + (keyStroke.isCtrlDown() ? " (ctrl)" : "") +
+                                (keyStroke.isAltDown() ? " (alt)" : "");
+                    }
+                    return Result.HANDLED;
+                }
+            }.withBorder(Borders.singleLine("Custom component")));
+
+            contentArea.addComponent(new Button("Close", new Runnable() {
+                @Override
+                public void run() {
+                    window.close();
+                }
+            }));
+
+            textGUI.getWindowManager().addWindow(window);
+
+            TextGUIThread guiThread = textGUI.getGUIThread();
+            guiThread.start();
+            guiThread.waitForStop();
+        }
+        finally {
+            screen.stopScreen();
+        }
+    }
+}
