@@ -18,11 +18,9 @@
  */
 package com.googlecode.lanterna.screen;
 
-import com.googlecode.lanterna.SGR;
+import com.googlecode.lanterna.*;
 import com.googlecode.lanterna.graphics.TextGraphics;
-import com.googlecode.lanterna.TerminalPosition;
-import com.googlecode.lanterna.TextColor;
-import com.googlecode.lanterna.TestTerminalFactory;
+
 import java.io.IOException;
 
 /**
@@ -73,7 +71,12 @@ public class ScreenTabTest {
         writer.putString(10, 6, "TabBehaviour.ALIGN_TO_COLUMN_4:       |\t|\t|\t|\t|");
         writer.setTabBehaviour(TabBehaviour.ALIGN_TO_COLUMN_8);
         writer.putString(10, 7, "TabBehaviour.ALIGN_TO_COLUMN_8:       |\t|\t|\t|\t|");
-
+        writer.putString(10, 9, "Default behaviour is: " + screen.getTabBehaviour());
+        writer.putString(10, 10, "Testing Screen's tab replacement:");
+        writer.putString(10, 11, "XXXXXXXXXXXXXXXX");
+        screen.setCharacter(12, 11, new TextCharacter('\t'));
+        screen.setTabBehaviour(TabBehaviour.CONVERT_TO_ONE_SPACE);
+        screen.setCharacter(20, 11, new TextCharacter('\t'));
         screen.refresh();
     }
 }
