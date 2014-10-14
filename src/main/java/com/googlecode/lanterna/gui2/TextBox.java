@@ -77,6 +77,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox.TextBoxRender
         if(caretPosition.getColumn() > lines.get(caretPosition.getRow()).length()) {
             caretPosition = caretPosition.withColumn(lines.get(caretPosition.getRow()).length());
         }
+        invalidate();
     }
 
     public void addLine(String line) {
