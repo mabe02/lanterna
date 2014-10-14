@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.ArrayList;
@@ -46,7 +47,15 @@ public class TelnetTerminal extends ANSITerminal {
     TelnetTerminal(Socket socket, Charset terminalCharset) throws IOException {
         this(socket, new TelnetClientIACFilterer(socket.getInputStream()), socket.getOutputStream(), terminalCharset);
     }
-    
+
+    /**
+     * Returns the socket address for the remote endpoint of the telnet connection
+     * @return SocketAddress representing the remote client
+     */
+    public SocketAddress getRemoteSocketAddress() {
+        return socket.getRemoteSocketAddress();
+    }
+
     //This weird construction is just so that we can access the input filter without changing the visibility in StreamBasedTerminal
     private TelnetTerminal(Socket socket, TelnetClientIACFilterer inputStream, OutputStream outputStream, Charset terminalCharset) throws IOException {
         super(inputStream, outputStream, terminalCharset);
