@@ -67,7 +67,7 @@ public interface Screen extends InputProvider {
     /**
      * Erases all the characters on the screen, effectively giving you a blank area. The default background color will
      * be used. This is effectively the same as calling 
-     * "fill(TerminalPosition.TOP_LEFT_CORNER, getSize(), TextColor.ANSI.Default)".
+     * <pre>fill(TerminalPosition.TOP_LEFT_CORNER, getSize(), TextColor.ANSI.Default)</pre>.
      * <p/>
      * Please note that calling this method will only affect the back buffer, you need to call refresh to make the 
      * change visible.
@@ -111,6 +111,9 @@ public interface Screen extends InputProvider {
     void setTabBehaviour(TabBehaviour tabBehaviour);
 
     /**
+     * Returns the size of the screen. This call is not blocking but should return the size of the screen as it is
+     * represented by the buffer at the time this method is called.
+     *
      * @return Size of the screen, in columns and rows
      */
     TerminalSize getTerminalSize();
@@ -131,10 +134,21 @@ public interface Screen extends InputProvider {
     void setCharacter(TerminalPosition position, TextCharacter screenCharacter);
 
     /**
-     * Creates a new TextGraphics objects that is targeting this Screen for writing to.
+     * Creates a new TextGraphics objects that is targeting this Screen for writing to. Any operations done on this
+     * TextGraphics will be affecting this screen. Remember to call {@code refresh()} on the screen to see your changes.
+     *
      * @return New TextGraphic object targeting this Screen
      */
     TextGraphics newTextGraphics();
+
+    /**
+     * Reads a character and its associated meta-data from the front-buffer and returns it encapsulated as a
+     * ScreenCharacter.
+     * @param column Which column to get the character from
+     * @param row Which row to get the character from
+     * @return A {@code ScreenCharacter} representation of the character in the front-buffer at the specified location
+     */
+    TextCharacter getFrontCharacter(int column, int row);
     
     /**
      * Reads a character and its associated meta-data from the front-buffer and returns it encapsulated as a 
@@ -143,7 +157,16 @@ public interface Screen extends InputProvider {
      * @return A {@code ScreenCharacter} representation of the character in the front-buffer at the specified location
      */
     TextCharacter getFrontCharacter(TerminalPosition position);
-    
+
+    /**
+     * Reads a character and its associated meta-data from the back-buffer and returns it encapsulated as a
+     * ScreenCharacter.
+     * @param column Which column to get the character from
+     * @param row Which row to get the character from
+     * @return A {@code ScreenCharacter} representation of the character in the back-buffer at the specified location
+     */
+    TextCharacter getBackCharacter(int column, int row);
+
     /**
      * Reads a character and its associated meta-data from the back-buffer and returns it encapsulated as a 
      * ScreenCharacter.
@@ -191,7 +214,9 @@ public interface Screen extends InputProvider {
      * front-buffer that is being displayed.
      */
     public static enum RefreshType {
-        
+        /**
+         * Using automatic mode, the Screen will make a guess at which refresh type would be the fastest and use this one.
+         */
         AUTOMATIC,
         /**
          * In {@code RefreshType.DELTA} mode, the Screen will calculate a diff between the back-buffer and the 

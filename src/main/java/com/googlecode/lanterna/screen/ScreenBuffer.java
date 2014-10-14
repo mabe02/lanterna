@@ -74,10 +74,6 @@ class ScreenBuffer {
         
         buffer[row][column] = screenCharacter;
     }
-    
-    void setCharacterAt(TerminalPosition position, TextCharacter screenCharacter) {
-        setCharacterAt(position.getColumn(), position.getRow(), screenCharacter);
-    }
 
     TextCharacter getCharacterAt(TerminalPosition position) {
         return getCharacterAt(position.getColumn(), position.getRow());

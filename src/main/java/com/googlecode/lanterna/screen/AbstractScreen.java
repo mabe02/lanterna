@@ -164,12 +164,22 @@ public abstract class AbstractScreen implements Screen {
 
     @Override
     public synchronized TextCharacter getFrontCharacter(TerminalPosition position) {
-        return getCharacterFromBuffer(frontBuffer, position);
+        return getFrontCharacter(position.getColumn(), position.getRow());
+    }
+
+    @Override
+    public TextCharacter getFrontCharacter(int column, int row) {
+        return getCharacterFromBuffer(frontBuffer, column, row);
     }
 
     @Override
     public synchronized TextCharacter getBackCharacter(TerminalPosition position) {
-        return getCharacterFromBuffer(backBuffer, position);
+        return getBackCharacter(position.getColumn(), position.getRow());
+    }
+
+    @Override
+    public TextCharacter getBackCharacter(int column, int row) {
+        return getCharacterFromBuffer(backBuffer, column, row);
     }
 
     @Override
@@ -221,11 +231,11 @@ public abstract class AbstractScreen implements Screen {
         latestResizeRequest = newSize;
     }
 
-    private TextCharacter getCharacterFromBuffer(ScreenBuffer buffer, TerminalPosition position) {
+    private TextCharacter getCharacterFromBuffer(ScreenBuffer buffer, int column, int row) {
         //If we are picking the padding of a CJK character, pick the actual CJK character instead of the padding
-        if(position.getColumn() > 0 && CJKUtils.isCharCJK(buffer.getCharacterAt(position.withRelativeColumn(-1)).getCharacter())) {
-            return buffer.getCharacterAt(position.withRelativeColumn(-1));
+        if(column > 0 && CJKUtils.isCharCJK(buffer.getCharacterAt(column - 1, row).getCharacter())) {
+            return buffer.getCharacterAt(column - 1, row);
         }
-        return buffer.getCharacterAt(position);
+        return buffer.getCharacterAt(column, row);
     }
 }

@@ -78,5 +78,19 @@ public class ScreenTabTest {
         screen.setTabBehaviour(TabBehaviour.CONVERT_TO_ONE_SPACE);
         screen.setCharacter(20, 11, new TextCharacter('\t'));
         screen.refresh();
+
+        //Verify
+        if(' ' != screen.getBackCharacter(new TerminalPosition(20, 11)).getCharacter()) {
+            throw new IllegalStateException("Expected tab to be replaced with space");
+        }
+        if('X' != screen.getBackCharacter(new TerminalPosition(21, 11)).getCharacter()) {
+            throw new IllegalStateException("Expected X in back buffer");
+        }
+        if(' ' != screen.getFrontCharacter(new TerminalPosition(20, 11)).getCharacter()) {
+            throw new IllegalStateException("Expected tab to be replaced with space");
+        }
+        if('X' != screen.getFrontCharacter(new TerminalPosition(21, 11)).getCharacter()) {
+            throw new IllegalStateException("Expected X in front buffer");
+        }
     }
 }
