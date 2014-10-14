@@ -10,7 +10,10 @@ import java.io.IOException;
 /**
  * VirtualScreen wraps a normal screen and presents it as a screen that has a configurable minimum size; if the real
  * screen is smaller than this size, the presented screen will add scrolling to get around it. To anyone using this
- * class, it will appear and behave just as a normal screen.
+ * class, it will appear and behave just as a normal screen. Scrolling is done by using CTRL + arrow keys.
+ * <p/>
+ * The use case for this class is to allow you to set a minimum size that you can count on be honored, no matter how
+ * small the user makes the terminal. This should make programming GUIs easier.
  * @author Martin
  */
 public class VirtualScreen extends AbstractScreen {
@@ -20,6 +23,15 @@ public class VirtualScreen extends AbstractScreen {
     private TerminalPosition viewportTopLeft;
     private TerminalSize viewportSize;
 
+    /**
+     * Creates a new VirtualScreen that wraps a supplied Screen. The screen passed in here should be the real screen
+     * that is created on top of the real {@code Terminal}, it will have the correct size and content for what's
+     * actually displayed to the user, but this class will present everything as one view with a fixed minimum size,
+     * no matter what size the real terminal has.
+     * <p/>
+     * The initial minimum size will be the current size of the screen.
+     * @param screen Real screen that will be used when drawing the whole or partial virtual screen
+     */
     public VirtualScreen(Screen screen) {
         super(screen.getTerminalSize());
         this.frameRenderer = new DefaultFrameRenderer();
@@ -29,6 +41,11 @@ public class VirtualScreen extends AbstractScreen {
         this.viewportSize = minimumSize;
     }
 
+    /**
+     * Sets the minimum size we want the virtual screen to have. If the user resizes the real terminal to something
+     * smaller than this, the virtual screen will refuse to make it smaller and add scrollbars to the view.
+     * @param minimumSize Minimum size we want the screen to have
+     */
     public void setMinimumSize(TerminalSize minimumSize) {
         this.minimumSize = minimumSize;
         TerminalSize virtualSize = minimumSize.max(getTerminalSize());
@@ -39,6 +56,11 @@ public class VirtualScreen extends AbstractScreen {
         calculateViewport(realScreen.getTerminalSize());
     }
 
+    /**
+     * Returns the minimum size this virtual screen can have. If the real terminal is made smaller than this, the
+     * virtual screen will draw scrollbars and implement scrolling
+     * @return Minimum size configured for this virtual screen
+     */
     public TerminalSize getMinimumSize() {
         return minimumSize;
     }
@@ -113,7 +135,7 @@ public class VirtualScreen extends AbstractScreen {
     public void refresh(RefreshType refreshType) throws IOException {
         setCursorPosition(getCursorPosition()); //Make sure the cursor is at the correct position
         if(!viewportSize.equals(realScreen.getTerminalSize())) {
-            frameRenderer.drawFrame(realScreen.newTextGraphics(), viewportTopLeft, viewportSize, getTerminalSize());
+            frameRenderer.drawFrame(realScreen.newTextGraphics(), realScreen.getTerminalSize(), getTerminalSize());
         }
 
         //Copy the rows
@@ -184,13 +206,35 @@ public class VirtualScreen extends AbstractScreen {
         return keyStroke;
     }
 
+    /**
+     * Interface for rendering the virtual screen's frame when the real terminal is too small for the virtual screen
+     */
     public static interface FrameRenderer {
+        /**
+         * Given the size of the real terminal and the current size of the virtual screen, how large should the viewport
+         * where the screen content is drawn be?
+         * @param realSize Size of the real terminal
+         * @param virtualSize Size of the virtual screen
+         * @return Size of the viewport, according to this FrameRenderer
+         */
         TerminalSize getViewportSize(TerminalSize realSize, TerminalSize virtualSize);
+
+        /**
+         * Where in the virtual screen should the top-left position of the viewport be? To draw the viewport from the
+         * top-left position of the screen, return 0x0 (or TerminalPosition.TOP_LEFT_CORNER) here.
+         * @return Position of the top-left corner of the viewport inside the screen
+         */
         TerminalPosition getViewportOffset();
+
+        /**
+         * Drawn the 'frame', meaning anything that is outside the viewport (title, scrollbar, etc)
+         * @param graphics Graphics to use to text drawing operations
+         * @param realSize Size of the real terminal
+         * @param virtualSize Size of the virtual screen
+         */
         void drawFrame(
                 TextGraphics graphics,
-                TerminalPosition viewportTopLeft,
-                TerminalSize viewportSize,
+                TerminalSize realSize,
                 TerminalSize virtualSize);
     }
 
@@ -206,7 +250,10 @@ public class VirtualScreen extends AbstractScreen {
         }
 
         @Override
-        public void drawFrame(TextGraphics graphics, TerminalPosition viewportTopLeft, TerminalSize viewportSize, TerminalSize virtualSize) {
+        public void drawFrame(TextGraphics graphics, TerminalSize realSize, TerminalSize virtualSize) {
+            TerminalPosition viewportTopLeft = getViewportOffset();
+            TerminalSize viewportSize = getViewportSize(realSize, virtualSize);
+
             graphics.setForegroundColor(TextColor.ANSI.WHITE);
             graphics.setBackgroundColor(TextColor.ANSI.BLACK);
             graphics.fill(' ');
