@@ -147,6 +147,16 @@ public abstract class AbstractContainer extends AbstractComponent implements Con
     }
 
     @Override
+    public boolean isInvalid() {
+        for(Component component: components) {
+            if(component.isInvalid()) {
+                return true;
+            }
+        }
+        return super.isInvalid();
+    }
+
+    @Override
     public TerminalSize calculatePreferredSize() {
         if(preferredSize == null) {
             preferredSize = layoutManager.getPreferredSize(Collections.unmodifiableList(components));
