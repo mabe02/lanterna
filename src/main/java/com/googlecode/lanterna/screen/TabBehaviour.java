@@ -88,6 +88,11 @@ public enum TabBehaviour {
         return string;
     }
 
+    /**
+     * Returns the String that can replace a tab at the specified position, according to this TabBehaviour.
+     * @param columnIndex Column index of where the tab character is placed
+     * @return String consisting of 1 or more space character
+     */
     public String getTabReplacement(int columnIndex) {
         int replaceCount;
         StringBuilder replace = new StringBuilder();
