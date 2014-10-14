@@ -32,7 +32,8 @@ import java.util.TreeMap;
 
 /**
  * This is the default concrete implementation of the Screen interface, a buffered layer sitting on top of a Terminal.
- * If you want to get started with the Screen layer, this is probably the class you want to use.
+ * If you want to get started with the Screen layer, this is probably the class you want to use. Remember to start the
+ * screen before you can use it and stop it when you are done with it.
  * @author martin
  */
 public class TerminalScreen extends AbstractScreen {
