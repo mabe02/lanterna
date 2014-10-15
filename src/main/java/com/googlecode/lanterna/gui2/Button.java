@@ -78,7 +78,7 @@ public class Button extends AbstractInteractableComponent<Button.ButtonRenderer>
 
         @Override
         public TerminalSize getPreferredSize(Button button) {
-            return new TerminalSize(Math.max(8, ((Button)button).getLabel().length() + 2), 1);
+            return new TerminalSize(Math.max(8, button.getLabel().length() + 2), 1);
         }
 
         @Override

@@ -20,7 +20,7 @@ public class ActionListBox extends AbstractListBox {
 
     @Override
     public void addItem(Object object) {
-        if(object instanceof Runnable == false) {
+        if(!(object instanceof Runnable)) {
             throw new IllegalArgumentException("Can only add objects implementing Runnable to ActionListBox, got " + object);
         }
         super.addItem(object);
@@ -49,8 +49,8 @@ public class ActionListBox extends AbstractListBox {
     public Result handleKeyStroke(KeyStroke keyStroke) {
         Object selectedItem = getSelectedItem();
         if(selectedItem != null &&
-                keyStroke.getKeyType() == KeyType.Enter ||
-                (keyStroke.getKeyType() == KeyType.Character && keyStroke.getCharacter() == ' ')) {
+                (keyStroke.getKeyType() == KeyType.Enter ||
+                (keyStroke.getKeyType() == KeyType.Character && keyStroke.getCharacter() == ' '))) {
 
             ((Runnable)selectedItem).run();
             return Result.HANDLED;

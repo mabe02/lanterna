@@ -87,7 +87,7 @@ public class TextCharacter {
      * @param character Physical character to refer to
      * @param foregroundColor Foreground color the character has
      * @param backgroundColor Background color the character has
-     * @param styles Set of modifiers to apply when drawing the character
+     * @param modifiers Set of modifiers to apply when drawing the character
      */
     public TextCharacter(
             char character,
