@@ -29,10 +29,10 @@ import com.googlecode.lanterna.TerminalSize;
  * values in there directly.
  * @author Martin
  */
-public class VirtualTerminalTextGraphics extends AbstractTextGraphics {
+class VirtualTerminalTextGraphics extends AbstractTextGraphics {
     private final VirtualTerminal virtualTerminal;
 
-    public VirtualTerminalTextGraphics(VirtualTerminal virtualTerminal) {
+    VirtualTerminalTextGraphics(VirtualTerminal virtualTerminal) {
         this.virtualTerminal = virtualTerminal;
     }
 

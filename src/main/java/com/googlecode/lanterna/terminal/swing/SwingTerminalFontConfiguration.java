@@ -28,10 +28,14 @@ import java.util.Collections;
 import java.util.List;
 
 /**
+ * This class encapsulates the font information used by a SwingTerminal
  * @author martin
  */
 public class SwingTerminalFontConfiguration {
 
+    /**
+     * This is the default font settings that will be used if you don't specify anything
+     */
     public static final SwingTerminalFontConfiguration DEFAULT = newInstance(
             System.getProperty("os.name","").toLowerCase().contains("win") ?
                 new Font("Courier New", Font.PLAIN, 14) //Monospaced can look pretty bad on Windows, so let's override it
@@ -39,6 +43,14 @@ public class SwingTerminalFontConfiguration {
                 new Font("Monospaced", Font.PLAIN, 14)
     );
 
+    /**
+     * Creates a new font configuration from a list of fonts in order of priority. This works by having the terminal
+     * attempt to draw each character with the fonts in the order they are specified in and stop once we find a font
+     * that can actually draw the character. For ASCII characters, it's very likely that the first font will always be
+     * used.
+     * @param fontsInOrderOfPriority Fonts to use when drawing text, in order of priority
+     * @return Font configuration built from the font list
+     */
     @SuppressWarnings("WeakerAccess")
     public static SwingTerminalFontConfiguration newInstance(Font... fontsInOrderOfPriority) {
         return new SwingTerminalFontConfiguration(true, fontsInOrderOfPriority);
@@ -98,20 +110,12 @@ public class SwingTerminalFontConfiguration {
         return fontPriority.get(0);
     }
 
-    boolean isUsingAntiAliasing() {
-        return useAntiAliasing;
-    }
-
     int getFontWidth() {
         return fontWidth;
     }
 
     int getFontHeight() {
         return fontHeight;
-    }
-
-    public SwingTerminalFontConfiguration withoutAntiAliasing() {
-        return new SwingTerminalFontConfiguration(false, fontPriority.toArray(new Font[fontPriority.size()]));
     }
 
     private boolean isFontMonospaced(Font font) {

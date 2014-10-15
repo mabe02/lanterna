@@ -23,8 +23,9 @@ import com.googlecode.lanterna.TextColor;
 import java.awt.Color;
 
 /**
- * This class specifies the palette of colors the terminal will use for the
- * normally available 8 + 1.
+ * This class specifies the palette of colors the terminal will use for the normally available 8 + 1 ANSI colors but
+ * also their 'bright' versions with are normally enabled through bold mode. There are several palettes available, all
+ * based on popular terminal emulators. All colors are defined in the AWT format.
  * @author Martin
  */
 @SuppressWarnings("WeakerAccess")
@@ -209,6 +210,28 @@ public class SwingTerminalPalette {
     private final Color normalWhite;
     private final Color brightWhite;
 
+    /**
+     * Creates a new palette with all colors specified up-front
+     * @param defaultColor Default color which no specific color has been selected
+     * @param defaultBrightColor Default color which no specific color has been selected but bold is enabled
+     * @param defaultBackgroundColor Default color to use for the background when no specific color has been selected
+     * @param normalBlack Color for normal black
+     * @param brightBlack Color for bright black
+     * @param normalRed Color for normal red
+     * @param brightRed Color for bright red
+     * @param normalGreen Color for normal green
+     * @param brightGreen Color for bright green
+     * @param normalYellow Color for normal yellow
+     * @param brightYellow Color for bright yellow
+     * @param normalBlue Color for normal blue
+     * @param brightBlue Color for bright blue
+     * @param normalMagenta Color for normal magenta
+     * @param brightMagenta Color for bright magenta
+     * @param normalCyan Color for normal cyan
+     * @param brightCyan Color for bright cyan
+     * @param normalWhite Color for normal white
+     * @param brightWhite Color for bright white
+     */
     public SwingTerminalPalette(
             Color defaultColor,
             Color defaultBrightColor,
@@ -250,82 +273,14 @@ public class SwingTerminalPalette {
         this.brightWhite = brightWhite;
     }
 
-    public Color getBrightBlack() {
-        return brightBlack;
-    }
-
-    public Color getBrightBlue() {
-        return brightBlue;
-    }
-
-    public Color getBrightCyan() {
-        return brightCyan;
-    }
-
-    public Color getBrightGreen() {
-        return brightGreen;
-    }
-
-    public Color getBrightMagenta() {
-        return brightMagenta;
-    }
-
-    public Color getBrightRed() {
-        return brightRed;
-    }
-
-    public Color getBrightWhite() {
-        return brightWhite;
-    }
-
-    public Color getBrightYellow() {
-        return brightYellow;
-    }
-
-    public Color getDefaultBrightColor() {
-        return defaultBrightColor;
-    }
-
-    public Color getDefaultColor() {
-        return defaultColor;
-    }
-
-    public Color getDefaultBackgroundColor() {
-        return defaultBackgroundColor;
-    }
-
-    public Color getNormalBlack() {
-        return normalBlack;
-    }
-
-    public Color getNormalBlue() {
-        return normalBlue;
-    }
-
-    public Color getNormalCyan() {
-        return normalCyan;
-    }
-
-    public Color getNormalGreen() {
-        return normalGreen;
-    }
-
-    public Color getNormalMagenta() {
-        return normalMagenta;
-    }
-
-    public Color getNormalRed() {
-        return normalRed;
-    }
-
-    public Color getNormalWhite() {
-        return normalWhite;
-    }
-
-    public Color getNormalYellow() {
-        return normalYellow;
-    }
-
+    /**
+     * Returns the AWT color from this palette given an ANSI color and two hints for if we are looking for a background
+     * color and if we want to use the bright version.
+     * @param color Which ANSI color we want to extract
+     * @param isForeground Is this color we extract going to be used as a background color?
+     * @param useBrightTones If true, we should return the bright version of the color
+     * @return AWT color extracted from this palette for the input parameters
+     */
     public Color get(TextColor.ANSI color, boolean isForeground, boolean useBrightTones) {
         if(useBrightTones) {
             switch(color) {

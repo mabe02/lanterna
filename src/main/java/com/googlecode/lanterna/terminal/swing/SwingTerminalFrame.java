@@ -33,7 +33,10 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.*;
 
 /**
- *
+ * This class is similar to what SwingTerminal used to be before Lanterna 3.0; a JFrame that contains a terminal
+ * emulator. In Lanterna 3, this class is just a JFrame containing a SwingTerminal component, but it also implements
+ * the Terminal interface and delegates all calls to the internal SwingTerminal. You can tweak the class a bit to have
+ * special behaviours when exiting private mode or when the user presses ESC key.
  * @author martin
  */
 public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
@@ -62,31 +65,62 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
     private AutoCloseTrigger autoCloseTrigger;
     private boolean disposed;
 
+    /**
+     * Creates a new SwingTerminalFrame that doesn't automatically close.
+     */
     public SwingTerminalFrame() throws HeadlessException {
         this(AutoCloseTrigger.DoNotAutoClose);
     }
-    
+
+    /**
+     * Creates a new SwingTerminalFrame with a specified auto-close behaviour
+     * @param autoCloseTrigger What to trigger automatic disposal of the JFrame
+     */
     @SuppressWarnings({"SameParameterValue", "WeakerAccess"})
     public SwingTerminalFrame(AutoCloseTrigger autoCloseTrigger) {
         this("SwingTerminalFrame", autoCloseTrigger);
     }
 
+    /**
+     * Creates a new SwingTerminalFrame with a given title and no automatic closing.
+     * @param title Title to use for the window
+     */
     public SwingTerminalFrame(String title) throws HeadlessException {
         this(title, AutoCloseTrigger.DoNotAutoClose);
     }
-    
+
+    /**
+     * Creates a new SwingTerminalFrame with a specified auto-close behaviour and specific title
+     * @param title Title to use for the window
+     * @param autoCloseTrigger What to trigger automatic disposal of the JFrame
+     */
     @SuppressWarnings("WeakerAccess")
     public SwingTerminalFrame(String title, AutoCloseTrigger autoCloseTrigger) throws HeadlessException {
         this(title, new SwingTerminal(), autoCloseTrigger);
     }
 
+    /**
+     * Creates a new SwingTerminalFrame using a specified title and a series of swing terminal configuration objects
+     * @param title What title to use for the window
+     * @param deviceConfiguration Device configuration for the embedded SwingTerminal
+     * @param fontConfiguration Font configuration for the embedded SwingTerminal
+     * @param colorConfiguration Color configuration for the embedded SwingTerminal
+     */
     public SwingTerminalFrame(String title,
             SwingTerminalDeviceConfiguration deviceConfiguration,
             SwingTerminalFontConfiguration fontConfiguration,
             SwingTerminalColorConfiguration colorConfiguration) {
         this(title, deviceConfiguration, fontConfiguration, colorConfiguration, AutoCloseTrigger.DoNotAutoClose);
     }
-    
+
+    /**
+     * Creates a new SwingTerminalFrame using a specified title and a series of swing terminal configuration objects
+     * @param title What title to use for the window
+     * @param deviceConfiguration Device configuration for the embedded SwingTerminal
+     * @param fontConfiguration Font configuration for the embedded SwingTerminal
+     * @param colorConfiguration Color configuration for the embedded SwingTerminal
+     * @param autoCloseTrigger What to trigger automatic disposal of the JFrame
+     */
     public SwingTerminalFrame(String title,
             SwingTerminalDeviceConfiguration deviceConfiguration,
             SwingTerminalFontConfiguration fontConfiguration,
@@ -109,10 +143,18 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
         swingTerminal.requestFocusInWindow();
     }
 
+    /**
+     * Returns the auto-close trigger used by the SwingTerminalFrame
+     * @return Current auto-close trigger
+     */
     public AutoCloseTrigger getAutoCloseTrigger() {
         return autoCloseTrigger;
     }
 
+    /**
+     * Changes the current auto-close trigger used by this SwingTerminalFrame
+     * @param autoCloseTrigger New auto-close trigger to use
+     */
     public void setAutoCloseTrigger(AutoCloseTrigger autoCloseTrigger) {
         this.autoCloseTrigger = autoCloseTrigger;
     }
