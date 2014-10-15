@@ -55,20 +55,6 @@ public class SwingTerminalColorConfiguration {
         this.useBrightColorsOnBold = useBrightColorsOnBold;
     }
 
-    boolean isUsingBrightColorsOnBold() {
-        return useBrightColorsOnBold;
-    }
-
-    /**
-     * Returns a copy of this color configuration without the bright-colors-on-bold setting changed. With
-     * the setting turned off, bold text will be rendered with the same foreground color as non-bold text. Default is
-     * on, which renders bold text in a slightly brighter tone. This is commonly used by many terminal emulators.
-     * @return Copy of this color configuration but with the bright-on-bold setting as specified
-     */
-    public SwingTerminalColorConfiguration withoutBrightColorsOnBold() {
-        return new SwingTerminalColorConfiguration(colorPalette, false);
-    }
-
     /**
      * Given a TextColor and a hint as to if the color is to be used as foreground or not and if we currently have
      * bold text enabled or not, it returns the closest AWT color that matches this.
