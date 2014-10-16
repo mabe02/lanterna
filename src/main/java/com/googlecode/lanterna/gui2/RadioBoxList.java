@@ -76,6 +76,7 @@ public class RadioBoxList extends AbstractListBox {
      * @return {@code true} if the currently selected object is at the supplied index,
      * {@code false} otherwise. Returns false if the index is out of range.
      */
+    @SuppressWarnings("SimplifiableIfStatement")
     public boolean isChecked(int index) {
         if(index < 0 || index >= getItemCount()) {
             return false;
@@ -114,7 +115,7 @@ public class RadioBoxList extends AbstractListBox {
     }
 
     /**
-     * Unchecks the currently checked item (if any) and leaves the radio check box in a state where no item is checked.
+     * Un-checks the currently checked item (if any) and leaves the radio check box in a state where no item is checked.
      */
     public void clearSelection() {
         checkedIndex = -1;

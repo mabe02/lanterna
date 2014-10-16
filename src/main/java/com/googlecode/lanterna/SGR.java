@@ -3,7 +3,7 @@ package com.googlecode.lanterna;
 /**
  * SGR - Select Graphic Rendition, changes the state of the terminal as to what kind of text to print after this
  * command. When working with the Terminal interface, its keeping a state of which SGR codes are active, so activating
- * one of these codes will make it apply to all text until you explictly deactivate it. When you work with Screen and
+ * one of these codes will make it apply to all text until you explicitly deactivate it. When you work with Screen and
  * GUI systems, usually the SGR is a property of an independent character and won't affect others.
  */
 public enum SGR {

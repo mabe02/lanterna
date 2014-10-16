@@ -31,7 +31,7 @@ import java.util.Collection;
  */
 public interface KeyDecodingProfile {
     /**
-     * Static contant for the ESC key
+     * Static constant for the ESC key
      */
     public static final char ESC_CODE = (char) 0x1b;
 

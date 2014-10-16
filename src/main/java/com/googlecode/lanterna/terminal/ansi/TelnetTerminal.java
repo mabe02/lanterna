@@ -33,7 +33,7 @@ import java.util.List;
 /**
  * This class is used by the {@code TelnetTerminalServer} class when a client has connected in; this class will be the
  * interaction point for that client. All operations are sent to the client over the network socket and some of the
- * meta-operations (like echo mode) are communicated using Telnet's negotiation language.
+ * meta-operations (like echo mode) are communicated using Telnet negotiation language.
  * <p/>
  * A good resource on telnet communication is http://www.tcpipguide.com/free/t_TelnetProtocol.htm
  * Also here: http://support.microsoft.com/kb/231866

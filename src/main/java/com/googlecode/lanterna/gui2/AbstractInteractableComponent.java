@@ -59,15 +59,6 @@ public abstract class AbstractInteractableComponent<T extends InteractableRender
     }
 
     @Override
-    protected void setRenderer(T renderer) {
-        if(!(renderer instanceof InteractableRenderer)) {
-            throw new IllegalArgumentException("Cannot assign " + renderer + " as renderer for " + toString() + ", " +
-                    "need to implement InteractableRenderer");
-        }
-        super.setRenderer(renderer);
-    }
-
-    @Override
     public TerminalPosition getCursorLocation() {
         return getRenderer().getCursorLocation(this);
     }

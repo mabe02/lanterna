@@ -34,7 +34,7 @@ import javax.swing.JComponent;
 import javax.swing.JScrollBar;
 
 /**
- * This is a Swing JComponent that carries a SwingTerminal with a scrollbar, effectively implementing a psudo-terminal
+ * This is a Swing JComponent that carries a SwingTerminal with a scrollbar, effectively implementing a pseudo-terminal
  * with scrollback history. You can choose the same parameters are for SwingTerminal, they are forwarded, this class
  * mostly deals with linking the SwingTerminal with the scrollbar and having them update each other.
  * @author Martin

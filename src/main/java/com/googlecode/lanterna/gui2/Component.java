@@ -65,7 +65,7 @@ public interface Component extends TextGUIElement {
      * Overrides the components preferred size calculation and makes the {@code getPreferredSize()} always return the
      * value passed in here. If you call this will {@code null}, it will re-enable the preferred size calculation again.
      * Please note that using this method on components that are not designed to work with arbitrary sizes make have
-     * unexpected behviour.
+     * unexpected behaviour.
      * @param explicitPreferredSize Preferred size we want to use for this component
      */
     void setPreferredSize(TerminalSize explicitPreferredSize);

@@ -114,10 +114,8 @@ public class TextBox extends AbstractInteractableComponent<TextBox.TextBoxRender
 
     public String getText() {
         StringBuilder bob = new StringBuilder(lines.get(0));
-        for(String line: lines) {
-            if(line != lines.get(0)) {
-                bob.append("\n").append(line);
-            }
+        for(int i = 1; i < lines.size(); i++) {
+            bob.append("\n").append(lines.get(i));
         }
         return bob.toString();
     }

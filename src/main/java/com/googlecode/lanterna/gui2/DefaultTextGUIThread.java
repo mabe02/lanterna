@@ -122,7 +122,6 @@ class DefaultTextGUIThread implements TextGUIThread {
             catch(RuntimeException e) {
                 exceptionHandler.onRuntimeException(e);
             }
-            mainLoop:
             while(status == Status.STARTED) {
                 try {
                     textGUI.processInput();
