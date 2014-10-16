@@ -21,10 +21,10 @@ package com.googlecode.lanterna.input;
 import java.util.List;
 
 /**
- *
+ * Character pattern that matches characters pressed while ALT and CTRL keys are held down
  * @author Martin
  */
-public class CtrlAltAndCharacterPattern implements CharacterPattern {
+class CtrlAltAndCharacterPattern implements CharacterPattern {
 
     @Override
     public KeyStroke getResult(List<Character> matching) {

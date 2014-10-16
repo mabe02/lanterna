@@ -30,7 +30,14 @@ import java.util.Collection;
  * @author Martin
  */
 public interface KeyDecodingProfile {
+    /**
+     * Static contant for the ESC key
+     */
     public static final char ESC_CODE = (char) 0x1b;
 
+    /**
+     * Returns a collection of character patterns that makes up this profile
+     * @return Collection of patterns in this profile
+     */
     Collection<CharacterPattern> getPatterns();
 }

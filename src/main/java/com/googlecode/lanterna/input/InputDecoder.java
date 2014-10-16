@@ -37,6 +37,10 @@ public class InputDecoder {
     private TerminalPosition lastReportedTerminalPosition;
     private boolean seenEOF;
 
+    /**
+     * Creates a new input decoder using a specified Reader as the source to read characters from
+     * @param source Reader to read characters from, will be wrapped by a BufferedReader
+     */
     public InputDecoder(final Reader source) {
         this.source = new BufferedReader(source);
         this.bytePatterns = new HashSet<CharacterPattern>();
@@ -45,6 +49,11 @@ public class InputDecoder {
         this.seenEOF = false;
     }
 
+    /**
+     * Adds another key decoding profile to this InputDecoder, which means all patterns from the profile will be used
+     * when decoding input.
+     * @param profile Profile to add
+     */
     public void addProfile(KeyDecodingProfile profile) {
         for (CharacterPattern pattern : profile.getPatterns()) {
             bytePatterns.add(pattern);
@@ -118,6 +127,10 @@ public class InputDecoder {
         return bestMatch;
     }
 
+    /**
+     * Returns the last position the cursor was reported by the terminal to be at, after a user-triggered cursor report
+     * @return Position of the cursor, as declared by the last cursor report this InputDecoder has seen
+     */
     public TerminalPosition getLastReportedTerminalPosition() {
         return lastReportedTerminalPosition;
     }

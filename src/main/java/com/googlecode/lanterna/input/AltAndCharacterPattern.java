@@ -20,8 +20,10 @@ package com.googlecode.lanterna.input;
 
 import java.util.List;
 
-public class AltAndCharacterPattern implements CharacterPattern {
-
+/**
+ * Character pattern that matches characters pressed while ALT key is held down
+ */
+class AltAndCharacterPattern implements CharacterPattern {
     @Override
     public KeyStroke getResult(List<Character> matching) {
         return new KeyStroke(matching.get(1), false, true);

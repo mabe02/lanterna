@@ -20,8 +20,10 @@ package com.googlecode.lanterna.input;
 
 import java.util.List;
 
-public class NormalCharacterPattern implements CharacterPattern {
-
+/**
+ * Character pattern that matches one character as one KeyStroke with the character that was read
+ */
+class NormalCharacterPattern implements CharacterPattern {
     @Override
     public KeyStroke getResult(List<Character> matching) {
         return new KeyStroke(matching.get(0), false, false);

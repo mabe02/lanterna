@@ -30,13 +30,10 @@ import java.util.regex.Pattern;
  *
  * @author martin
  */
-public class ScreenInfoCharacterPattern implements CharacterPattern {
+class ScreenInfoCharacterPattern implements CharacterPattern {
 
     private static final Pattern REPORT_CURSOR_PATTERN
             = Pattern.compile("\\[([0-9]+);([0-9]+)R");
-
-    public ScreenInfoCharacterPattern() {
-    }
 
     @Override
     public KeyStroke getResult(List<Character> matching) {

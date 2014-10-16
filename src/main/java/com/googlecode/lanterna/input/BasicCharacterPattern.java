@@ -21,6 +21,9 @@ package com.googlecode.lanterna.input;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Matcher for a sequence of characters and turns them into a KeyStroke
+ */
 class BasicCharacterPattern implements CharacterPattern {
     private final KeyStroke result;
     private final char[] pattern;
