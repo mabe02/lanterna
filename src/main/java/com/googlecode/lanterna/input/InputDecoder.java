@@ -33,7 +33,7 @@ import java.util.*;
 public class InputDecoder
 {
     private final Reader source;
-    private final Queue<Character> inputBuffer;
+    private final LinkedList<Character> inputBuffer;
     private final Queue<Character> leftOverQueue;
     private final Set<CharacterPattern> bytePatterns;
     private final List<Character> currentMatching;
@@ -102,6 +102,34 @@ public class InputDecoder
                 return new Key(Key.Kind.EOF);
             }
             return null;
+        }
+
+        if(System.getProperty("com.googlecode.lanterna.input.function_key_hack", "false").equals("true")) {
+            if(inputBuffer.size() >= 3) {
+                if(inputBuffer.get(0) == KeyMappingProfile.ESC_CODE &&
+                        inputBuffer.get(1) == 'O') {
+                    Key key = null;
+                    Character thirdChar = inputBuffer.get(2);
+                    if(thirdChar == 'P') {
+                        key = new Key(Key.Kind.F1);
+                    }
+                    else if(thirdChar == 'Q') {
+                        key = new Key(Key.Kind.F2);
+                    }
+                    else if(thirdChar == 'R') {
+                        key = new Key(Key.Kind.F3);
+                    }
+                    else if(thirdChar == 'S') {
+                        key = new Key(Key.Kind.F4);
+                    }
+                    if(key != null) {
+                        inputBuffer.poll();
+                        inputBuffer.poll();
+                        inputBuffer.poll();
+                        return key;
+                    }
+                }
+            }
         }
 
         while(true) {
