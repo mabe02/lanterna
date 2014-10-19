@@ -26,6 +26,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox.TextBoxRender
     private int maxLineLength;
     private int longestRow;
     private char unusedSpaceCharacter;
+    private Character mask;
 
     public TextBox() {
         this(new TerminalSize(10, 1), "", Style.SINGLE_LINE);
@@ -58,6 +59,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox.TextBoxRender
         this.maxLineLength = -1;
         this.longestRow = 1;    //To fit the cursor
         this.unusedSpaceCharacter = ' ';
+        this.mask = null;
         setText(initialContent);
         if (preferredSize == null) {
             preferredSize = new TerminalSize(longestRow, lines.size());
@@ -65,7 +67,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox.TextBoxRender
         setPreferredSize(preferredSize);
     }
 
-    public void setText(String text) {
+    public TextBox setText(String text) {
         String[] split = text.split("\n");
         lines.clear();
         longestRow = 1;
@@ -79,6 +81,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox.TextBoxRender
             caretPosition = caretPosition.withColumn(lines.get(caretPosition.getRow()).length());
         }
         invalidate();
+        return this;
     }
 
     public void addLine(String line) {
@@ -119,6 +122,19 @@ public class TextBox extends AbstractInteractableComponent<TextBox.TextBoxRender
             bob.append("\n").append(lines.get(i));
         }
         return bob.toString();
+    }
+
+    public Character getMask() {
+        return mask;
+    }
+
+    public TextBox setMask(Character mask) {
+        if(mask != null && CJKUtils.isCharCJK(mask)) {
+            throw new IllegalArgumentException("Cannot use a CJK character as a mask");
+        }
+        this.mask = mask;
+        invalidate();
+        return this;
     }
 
     public String getLine(int index) {
@@ -301,7 +317,11 @@ public class TextBox extends AbstractInteractableComponent<TextBox.TextBoxRender
                 }
                 String line = component.lines.get(rowIndex);
                 if(line.length() > viewTopLeft.getColumn()) {
-                    graphics.putString(0, row, line.substring(viewTopLeft.getColumn()));
+                    String string = line.substring(viewTopLeft.getColumn());
+                    if(component.mask != null) {
+                        string = string.replaceAll(".", component.mask + "");
+                    }
+                    graphics.putString(0, row, string);
                 }
             }
         }
