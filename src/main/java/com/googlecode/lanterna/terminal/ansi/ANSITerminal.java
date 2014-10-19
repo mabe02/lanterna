@@ -56,6 +56,15 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
         writeToTerminal(completeSequence);
     }
 
+    private void writeSGRSequenceToTerminal(byte... sgrParameters) throws IOException {
+        byte[] completeSequence = new byte[sgrParameters.length + 3];
+        completeSequence[0] = (byte)0x1b;
+        completeSequence[1] = (byte)'[';
+        completeSequence[completeSequence.length - 1] = (byte)'m';
+        System.arraycopy(sgrParameters, 0, completeSequence, 2, sgrParameters.length);
+        writeToTerminal(completeSequence);
+    }
+
     private void writeOSCSequenceToTerminal(byte... tail) throws IOException {
         byte[] completeSequence = new byte[tail.length + 2];
         completeSequence[0] = (byte)0x1b;
@@ -90,58 +99,13 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
     }
 
     @Override
-    public void setBackgroundColor(TextColor.ANSI color) throws IOException {
-        writeCSISequenceToTerminal((byte) '4', (byte) ((color.getIndex() + "").charAt(0)), (byte) 'm');
+    public void setForegroundColor(TextColor color) throws IOException {
+        writeSGRSequenceToTerminal(color.getForegroundSGRSequence());
     }
 
     @Override
-    public void setBackgroundColor(int r, int g, int b) throws IOException {
-        if(r < 0 || r > 255) {
-            throw new IllegalArgumentException("applyForegroundColor: r is outside of valid range (0-255)");
-        }
-        if(g < 0 || g > 255) {
-            throw new IllegalArgumentException("applyForegroundColor: g is outside of valid range (0-255)");
-        }
-        if(b < 0 || b > 255) {
-            throw new IllegalArgumentException("applyForegroundColor: b is outside of valid range (0-255)");
-        }
-        writeCSISequenceToTerminal(("48;2;" + r + ";" + g + ";" + b + "m").getBytes());
-    }
-
-    @Override
-    public void setBackgroundColor(int index) throws IOException {
-        if(index < 0 || index > 255) {
-            throw new IllegalArgumentException("applyBackgroundColor: index is outside of valid range (0-255)");
-        }
-
-        writeCSISequenceToTerminal(("48;5;" + index + "m").getBytes());
-    }
-
-    @Override
-    public void setForegroundColor(TextColor.ANSI color) throws IOException {
-        writeCSISequenceToTerminal((byte) '3', (byte) ((color.getIndex() + "").charAt(0)), (byte) 'm');
-    }
-
-    @Override
-    public void setForegroundColor(int r, int g, int b) throws IOException {
-        if(r < 0 || r > 255) {
-            throw new IllegalArgumentException("applyForegroundColor: r is outside of valid range (0-255)");
-        }
-        if(g < 0 || g > 255) {
-            throw new IllegalArgumentException("applyForegroundColor: g is outside of valid range (0-255)");
-        }
-        if(b < 0 || b > 255) {
-            throw new IllegalArgumentException("applyForegroundColor: b is outside of valid range (0-255)");
-        }
-        writeCSISequenceToTerminal(("38;2;" + r + ";" + g + ";" + b + "m").getBytes());
-    }
-
-    @Override
-    public void setForegroundColor(int index) throws IOException {
-        if(index < 0 || index > 255) {
-            throw new IllegalArgumentException("applyForegroundColor: index is outside of valid range (0-255)");
-        }
-        writeCSISequenceToTerminal(("38;5;" + index + "m").getBytes());
+    public void setBackgroundColor(TextColor color) throws IOException {
+        writeSGRSequenceToTerminal(color.getBackgroundSGRSequence());
     }
 
     @Override

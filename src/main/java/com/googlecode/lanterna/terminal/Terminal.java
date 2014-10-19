@@ -169,54 +169,6 @@ public interface Terminal extends InputProvider {
      */
     public void setForegroundColor(TextColor color) throws IOException;
 
-
-    /**
-     * Changes the foreground color for all the following characters put to the terminal. The foreground color is what
-     * color to draw the text in, as opposed to the background color which is the color surrounding the characters. This
-     * way of setting the foreground color, compared with the other applyForegroundColor(..) overloads, is the most safe
-     * and compatible.
-     *
-     * @param color Color to use for foreground
-     * @throws java.io.IOException If there was an underlying I/O error
-     * @see com.googlecode.lanterna.TextColor.ANSI
-     */
-    public void setForegroundColor(TextColor.ANSI color) throws IOException;
-
-    /**
-     * Changes the foreground color for all the following characters put to the terminal. The foreground color is what
-     * color to draw the text in, as opposed to the background color which is the color surrounding the characters.<br>
-     * <b>Warning:</b> This method will use the XTerm 256 color extension, it may not be supported on all terminal
-     * emulators! The index values are resolved as this:<br>
-     * 0 .. 15 - System color, these are taken from the schema. 16 .. 231 - Forms a 6x6x6 RGB color cube.<br>
-     * 232 .. 255 - A gray scale ramp without black and white.<br>
-     *
-     * <p>
-     * For more details on this, please see <a
-     * href="https://github.com/robertknight/konsole/blob/master/user-doc/README.moreColors">
-     * this</a> commit message to Konsole.
-     *
-     * @param index Color index from the XTerm 256 color space
-     * @throws java.io.IOException If there was an underlying I/O error
-     * @see com.googlecode.lanterna.TextColor.Indexed
-     */
-    public void setForegroundColor(int index) throws IOException;
-
-    /**
-     * Changes the foreground color for all the following characters put to the terminal. The foreground color is what
-     * color to draw the text in, as opposed to the background color which is the color surrounding the characters.<br>
-     * <b>Warning:</b> Only a few terminal support 24-bit color control codes, please avoid using this unless you know
-     * all users will have compatible terminals. For details, please see
-     * <a href="https://github.com/robertknight/konsole/blob/master/user-doc/README.moreColors">
-     * this</a> commit log.
-     *
-     * @param r Red intensity, from 0 to 255
-     * @param g Green intensity, from 0 to 255
-     * @param b Blue intensity, from 0 to 255
-     * @throws java.io.IOException If there was an underlying I/O error
-     * @see com.googlecode.lanterna.TextColor.RGB
-     */
-    public void setForegroundColor(int r, int g, int b) throws IOException;
-
     /**
      * Changes the background color for all the following characters put to the terminal. The background color is the
      * color surrounding the text being printed.
@@ -231,52 +183,6 @@ public interface Terminal extends InputProvider {
      * @throws java.io.IOException If there was an underlying I/O error
      */
     public void setBackgroundColor(TextColor color) throws IOException;
-
-    /**
-     * Changes the background color for all the following characters put to the terminal. The background color is the
-     * color surrounding the text being printed. This way of setting the background color, compared with the other
-     * applyBackgroundColor(..) overloads, is the most safe and compatible.
-     *
-     * @param color Color to use for the background
-     * @throws java.io.IOException If there was an underlying I/O error
-     * @see com.googlecode.lanterna.TextColor.ANSI
-     */
-    public void setBackgroundColor(TextColor.ANSI color) throws IOException;
-
-    /**
-     * Changes the background color for all the following characters put to the terminal. The background color is the
-     * color surrounding the text being printed.<br>
-     * <b>Warning:</b> This method will use the XTerm 256 color extension, it may not be supported on all terminal
-     * emulators! The index values are resolved as this:<br>
-     * 0 .. 15 - System color, these are taken from the schema. 16 .. 231 - Forms a 6x6x6 RGB color cube.<br>
-     * 232 .. 255 - A gray scale ramp without black and white.<br>
-     *
-     * <p>
-     * For more details on this, please see <a
-     * href="https://github.com/robertknight/konsole/blob/master/user-doc/README.moreColors">
-     * this</a> commit message to Konsole.
-     *
-     * @param index Index of the color to use, from the XTerm 256 color extension
-     * @throws java.io.IOException If there was an underlying I/O error
-     * @see com.googlecode.lanterna.TextColor.Indexed
-     */
-    public void setBackgroundColor(int index) throws IOException;
-
-    /**
-     * Changes the background color for all the following characters put to the terminal. The background color is the
-     * color surrounding the text being printed.<br>
-     * <b>Warning:</b> Only a few terminal support 24-bit color control codes, please avoid using this unless you know
-     * all users will have compatible terminals. For details, please see
-     * <a href="https://github.com/robertknight/konsole/blob/master/user-doc/README.moreColors">
-     * this</a> commit log.
-     *
-     * @param r Red intensity, from 0 to 255
-     * @param g Green intensity, from 0 to 255
-     * @param b Blue intensity, from 0 to 255
-     * @throws java.io.IOException If there was an underlying I/O error
-     * @see com.googlecode.lanterna.TextColor.RGB
-     */
-    public void setBackgroundColor(int r, int g, int b) throws IOException;
 
     /**
      * Adds a {@code ResizeListener} to be called when the terminal has changed size. There is no guarantee that this

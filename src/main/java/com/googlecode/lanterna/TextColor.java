@@ -18,9 +18,8 @@
  */
 package com.googlecode.lanterna;
 
-import com.googlecode.lanterna.terminal.AbstractTerminal;
 
-import java.io.IOException;
+import java.awt.*;
 
 /**
  * This is an abstract base class for terminal color definitions. Since there are different ways of specifying terminal
@@ -32,18 +31,25 @@ import java.io.IOException;
  * @author Martin
  */
 public interface TextColor {
+    /**
+     * Returns the byte sequence in between CSI and character 'm' that is used to enable this color as the foreground
+     * color on an ANSI-compatible terminal.
+     * @return Byte array out data to output in between of CSI and 'm'
+     */
+    byte[] getForegroundSGRSequence();
 
     /**
-     * Apply this color representation as the foreground color on the specified terminal
-     * @param terminal Terminal to set the foreground color on
+     * Returns the byte sequence in between CSI and character 'm' that is used to enable this color as the background
+     * color on an ANSI-compatible terminal.
+     * @return Byte array out data to output in between of CSI and 'm'
      */
-    void applyAsForeground(AbstractTerminal terminal) throws IOException;
+    byte[] getBackgroundSGRSequence();
 
     /**
-     * Apply this color representation as the background color on the specified terminal
-     * @param terminal Terminal to set the background color on
+     * Converts this color to an AWT color object, assuming a standard VGA palette.
+     * @return TextColor as an AWT Color
      */
-    void applyAsBackground(AbstractTerminal terminal) throws IOException;
+    Color toColor();
 
     /**
      * This class represent classic ANSI colors that are likely to be very compatible with most terminal
@@ -53,34 +59,37 @@ public interface TextColor {
      * For more information, see http://en.wikipedia.org/wiki/File:Ansi.png
      */
     public static enum ANSI implements TextColor {
-        BLACK(0),
-        RED(1),
-        GREEN(2),
-        YELLOW(3),
-        BLUE(4),
-        MAGENTA(5),
-        CYAN(6),
-        WHITE(7),
-        DEFAULT(9);
+        BLACK((byte)0, 0, 0, 0),
+        RED((byte)1, 170, 0, 0),
+        GREEN((byte)2, 0, 170, 0),
+        YELLOW((byte)3, 170, 85, 0),
+        BLUE((byte)4, 0, 0, 170),
+        MAGENTA((byte)5, 170, 0, 170),
+        CYAN((byte)6, 0, 170, 170),
+        WHITE((byte)7, 170, 170, 170),
+        DEFAULT((byte)9, 0, 0, 0);
 
-        private final int index;
+        private final byte index;
+        private final Color color;
 
-        private ANSI(int index) {
+        private ANSI(byte index, int red, int green, int blue) {
             this.index = index;
-        }
-
-        public int getIndex() {
-            return index;
+            this.color = new Color(red, green, blue);
         }
 
         @Override
-        public void applyAsForeground(AbstractTerminal terminal) throws IOException {
-            terminal.setForegroundColor(this);
+        public byte[] getForegroundSGRSequence() {
+            return new byte[] { (byte)'3', (byte)(48 + index)}; //48 is ascii code for '0'
         }
 
         @Override
-        public void applyAsBackground(AbstractTerminal terminal) throws IOException {
-            terminal.setBackgroundColor(this);
+        public byte[] getBackgroundSGRSequence() {
+            return new byte[] { (byte)'4', (byte)(48 + index)}; //48 is ascii code for '0'
+        }
+
+        @Override
+        public Color toColor() {
+            return color;
         }
     }
 
@@ -367,6 +376,7 @@ public interface TextColor {
         };
 
         private final int colorIndex;
+        private final Color awtColor;
 
         /**
          * Creates a new TextColor using the XTerm 256 color indexed mode, with the specified index value. You must
@@ -379,46 +389,24 @@ public interface TextColor {
                         ", must be in the range of 0-255");
             }
             this.colorIndex = colorIndex;
-        }
-
-        /**
-         * Retrieves the exact index of this color. See the class documentation for more information of what this index
-         * represents.
-         * @return Color index
-         */
-        public int getColorIndex() {
-            return colorIndex;
+            this.awtColor = new Color(COLOR_TABLE[colorIndex][0] & 0x000000ff,
+                    COLOR_TABLE[colorIndex][1] & 0x000000ff,
+                    COLOR_TABLE[colorIndex][2] & 0x000000ff);
         }
 
         @Override
-        public void applyAsForeground(AbstractTerminal terminal) throws IOException {
-            terminal.setForegroundColor(colorIndex);
+        public byte[] getForegroundSGRSequence() {
+            return ("38;5;" + colorIndex).getBytes();
         }
 
         @Override
-        public void applyAsBackground(AbstractTerminal terminal) throws IOException {
-            terminal.setBackgroundColor(colorIndex);
+        public byte[] getBackgroundSGRSequence() {
+            return ("48;5;" + colorIndex).getBytes();
         }
 
-        /**
-         * @return Red intensity of this color, from 0 to 255
-         */
-        public int getRed() {
-            return COLOR_TABLE[colorIndex][0] & 0x000000ff;
-        }
-
-        /**
-         * @return Green intensity of this color, from 0 to 255
-         */
-        public int getGreen() {
-            return COLOR_TABLE[colorIndex][1] & 0x000000ff;
-        }
-
-        /**
-         * @return Blue intensity of this color, from 0 to 255
-         */
-        public int getBlue() {
-            return COLOR_TABLE[colorIndex][2] & 0x000000ff;
+        @Override
+        public Color toColor() {
+            return awtColor;
         }
 
         @Override
@@ -450,7 +438,7 @@ public interface TextColor {
          * @param red Red intensity, from 0 to 255
          * @param green Red intensity, from 0 to 255
          * @param blue Red intensity, from 0 to 255
-         * @return Nearest color from the 6x6x6 RGB color cube
+         * @return Nearest color from the 6x6x6 RGB color cube or from the 24 entries grey-scale ramp (whichever is closest)
          */
         public static Indexed fromRGB(int red, int green, int blue) {
             if(red < 0 || red > 255) {
@@ -468,7 +456,24 @@ public interface TextColor {
             int rescaledBlue = (int)(((double)blue / 255.0) * 6.0);
 
             int index = rescaledBlue + (6 * rescaledGreen) + (36 * rescaledRed) + 16;
-            return new Indexed(index);
+            Indexed fromColorCube = new Indexed(index);
+            Indexed fromGreyRamp = fromGreyRamp((red + green + blue) / 3);
+
+            //Now figure out which one is closest
+            Color colored = fromColorCube.toColor();
+            Color grey = fromGreyRamp.toColor();
+            int coloredDistance = ((red - colored.getRed()) * (red - colored.getRed())) +
+                    ((green - colored.getGreen()) * (green - colored.getGreen())) +
+                    ((blue - colored.getBlue()) * (blue - colored.getBlue()));
+            int greyDistance = ((red - grey.getRed()) * (red - grey.getRed())) +
+                    ((green - grey.getGreen()) * (green - grey.getGreen())) +
+                    ((blue - grey.getBlue()) * (blue - grey.getBlue()));
+            if(coloredDistance < greyDistance) {
+                return fromColorCube;
+            }
+            else {
+                return fromGreyRamp;
+            }
         }
 
         /**
@@ -476,7 +481,7 @@ public interface TextColor {
          * @param intensity Intensity, 0 - 255
          * @return Indexed color from the grey-scale ramp which is the best match for the supplied intensity
          */
-        public static Indexed fromGreyRamp(int intensity) {
+        private static Indexed fromGreyRamp(int intensity) {
             int rescaled = (int)(((double)intensity / 255.0) * 24.0) + 232;
             return new Indexed(rescaled);
         }
@@ -490,9 +495,7 @@ public interface TextColor {
      * this</a> commit log. Behavior on terminals that don't support these codes is undefined.
      */
     public static class RGB implements TextColor {
-        private final int r;
-        private final int g;
-        private final int b;
+        private final Color color;
 
         /**
          * This class can be used to specify a color in 24-bit color space (RGB with 8-bit resolution per color). Please be
@@ -515,53 +518,54 @@ public interface TextColor {
             if(b < 0 || b > 255) {
                 throw new IllegalArgumentException("RGB: b is outside of valid range (0-255)");
             }
-            this.r = r;
-            this.g = g;
-            this.b = b;
+            this.color = new Color(r, g, b);
+        }
+
+        @Override
+        public byte[] getForegroundSGRSequence() {
+            return ("38;2;" + getRed() + ";" + getGreen() + ";" + getBlue()).getBytes();
+        }
+
+        @Override
+        public byte[] getBackgroundSGRSequence() {
+            return ("48;2;" + getRed() + ";" + getGreen() + ";" + getBlue()).getBytes();
+        }
+
+        @Override
+        public Color toColor() {
+            return color;
         }
 
         /**
          * @return Red intensity of this color, from 0 to 255
          */
         public int getRed() {
-            return r;
+            return color.getRed();
         }
 
         /**
          * @return Green intensity of this color, from 0 to 255
          */
         public int getGreen() {
-            return g;
+            return color.getGreen();
         }
 
         /**
          * @return Blue intensity of this color, from 0 to 255
          */
         public int getBlue() {
-            return b;
-        }
-
-        @Override
-        public void applyAsForeground(AbstractTerminal terminal) throws IOException {
-            terminal.setForegroundColor(r, g, b);
-        }
-
-        @Override
-        public void applyAsBackground(AbstractTerminal terminal) throws IOException {
-            terminal.setBackgroundColor(r, g, b);
+            return color.getBlue();
         }
 
         @Override
         public String toString() {
-            return "{RGB:" + r + "," + g + "," + b + "}";
+            return "{RGB:" + getRed() + "," + getGreen() + "," + getBlue() + "}";
         }
 
         @Override
         public int hashCode() {
             int hash = 7;
-            hash = 29 * hash + this.r;
-            hash = 29 * hash + this.g;
-            hash = 29 * hash + this.b;
+            hash = 29 * hash + color.hashCode();
             return hash;
         }
 
@@ -575,13 +579,7 @@ public interface TextColor {
                 return false;
             }
             final RGB other = (RGB) obj;
-            if(this.r != other.r) {
-                return false;
-            }
-            if(this.g != other.g) {
-                return false;
-            }
-            return this.b == other.b;
+            return color.equals(other.color);
         }
     }
 }

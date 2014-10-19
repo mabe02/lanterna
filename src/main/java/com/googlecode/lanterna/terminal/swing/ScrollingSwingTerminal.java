@@ -184,37 +184,7 @@ public class ScrollingSwingTerminal extends JComponent implements IOSafeTerminal
     }
 
     @Override
-    public void setForegroundColor(TextColor.ANSI color) {
-        swingTerminal.setForegroundColor(color);
-    }
-
-    @Override
-    public void setForegroundColor(int index) {
-        swingTerminal.setForegroundColor(index);
-    }
-
-    @Override
-    public void setForegroundColor(int r, int g, int b) {
-        swingTerminal.setForegroundColor(r, g, b);
-    }
-
-    @Override
     public void setBackgroundColor(TextColor color) {
-        swingTerminal.setBackgroundColor(color);
-    }
-
-    @Override
-    public void setBackgroundColor(int r, int g, int b) {
-        swingTerminal.setBackgroundColor(r, g, b);
-    }
-
-    @Override
-    public void setBackgroundColor(int index) {
-        swingTerminal.setBackgroundColor(index);
-    }
-
-    @Override
-    public void setBackgroundColor(TextColor.ANSI color) {
         swingTerminal.setBackgroundColor(color);
     }
 

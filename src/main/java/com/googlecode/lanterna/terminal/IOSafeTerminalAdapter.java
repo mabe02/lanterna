@@ -184,67 +184,7 @@ public class IOSafeTerminalAdapter implements IOSafeTerminal {
     }
 
     @Override
-    public void setForegroundColor(int r, int g, int b) {
-        try {
-            backend.setForegroundColor(r, g, b);
-        }
-        catch(IOException e) {
-            exceptionHandler.onException(e);
-        }
-    }
-
-    @Override
-    public void setForegroundColor(int index) {
-        try {
-            backend.setForegroundColor(index);
-        }
-        catch(IOException e) {
-            exceptionHandler.onException(e);
-        }
-    }
-
-    @Override
-    public void setForegroundColor(TextColor.ANSI color) {
-        try {
-            backend.setForegroundColor(color);
-        }
-        catch(IOException e) {
-            exceptionHandler.onException(e);
-        }
-    }
-
-    @Override
     public void setBackgroundColor(TextColor color) {
-        try {
-            backend.setBackgroundColor(color);
-        }
-        catch(IOException e) {
-            exceptionHandler.onException(e);
-        }
-    }
-
-    @Override
-    public void setBackgroundColor(int r, int g, int b) {
-        try {
-            backend.setBackgroundColor(r, g, b);
-        }
-        catch(IOException e) {
-            exceptionHandler.onException(e);
-        }
-    }
-
-    @Override
-    public void setBackgroundColor(int index) {
-        try {
-            backend.setBackgroundColor(index);
-        }
-        catch(IOException e) {
-            exceptionHandler.onException(e);
-        }
-    }
-
-    @Override
-    public void setBackgroundColor(TextColor.ANSI color) {
         try {
             backend.setBackgroundColor(color);
         }

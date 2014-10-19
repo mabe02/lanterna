@@ -20,8 +20,6 @@ package com.googlecode.lanterna.terminal.swing;
 
 import com.googlecode.lanterna.TextColor;
 import java.awt.Color;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Color configuration settings to be using with SwingTerminal. This class contains color-related settings that is used
@@ -35,7 +33,6 @@ public class SwingTerminalColorConfiguration {
      * configuration. It will use classic VGA colors for the ANSI palette and bright colors on bold text.
      */
     public static final SwingTerminalColorConfiguration DEFAULT = newInstance(SwingTerminalPalette.STANDARD_VGA);
-    private static final Map<TextColor, Color> COLOR_STORAGE = new ConcurrentHashMap<TextColor, Color>();
 
     /**
      * Creates a new color configuration based on a particular palette and with using brighter colors on bold text.
@@ -64,22 +61,9 @@ public class SwingTerminalColorConfiguration {
      * @return The AWT color that represents this text color
      */
     public Color toAWTColor(TextColor color, boolean isForeground, boolean inBoldContext) {
-        if(COLOR_STORAGE.containsKey(color)) {
-            return COLOR_STORAGE.get(color);
-        }
-        else if(color instanceof TextColor.ANSI) {
+        if(color instanceof TextColor.ANSI) {
             return colorPalette.get((TextColor.ANSI)color, isForeground, inBoldContext && useBrightColorsOnBold);
         }
-        else if(color instanceof TextColor.Indexed) {
-            TextColor.Indexed indexedColor = (TextColor.Indexed)color;
-            Color awtColor = new Color(indexedColor.getRed(), indexedColor.getGreen(), indexedColor.getBlue());
-            COLOR_STORAGE.put(color, awtColor);
-            return awtColor;
-        }
-        else if(color instanceof TextColor.RGB) {
-            TextColor.RGB rgbColor = (TextColor.RGB)color;
-            return new Color(rgbColor.getRed(), rgbColor.getGreen(), rgbColor.getBlue());
-        }
-        throw new IllegalArgumentException("Unknown color " + color);
+        return color.toColor();
     }
 }

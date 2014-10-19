@@ -455,38 +455,8 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
     }
 
     @Override
-    public void setForegroundColor(TextColor.ANSI color) {
-        setForegroundColor((TextColor)color);
-    }
-
-    @Override
-    public void setForegroundColor(int index) {
-        setForegroundColor(new TextColor.Indexed(index));
-    }
-
-    @Override
-    public void setForegroundColor(int r, int g, int b) {
-        setForegroundColor(new TextColor.RGB(r, g, b));
-    }
-
-    @Override
     public void setBackgroundColor(final TextColor color) {
         backgroundColor = color;
-    }
-
-    @Override
-    public void setBackgroundColor(TextColor.ANSI color) {
-        setBackgroundColor((TextColor)color);
-    }
-
-    @Override
-    public void setBackgroundColor(int index) {
-        setBackgroundColor(new TextColor.Indexed(index));
-    }
-
-    @Override
-    public void setBackgroundColor(int r, int g, int b) {
-        setBackgroundColor(new TextColor.RGB(r, g, b));
     }
 
     @Override

@@ -77,14 +77,4 @@ public abstract class AbstractTerminal implements Terminal {
     public TextGraphics newTextGraphics() throws IOException {
         return new TerminalTextGraphics(this);
     }
-
-    @Override
-    public void setForegroundColor(TextColor color) throws IOException {
-        color.applyAsForeground(this);
-    }
-
-    @Override
-    public void setBackgroundColor(TextColor color) throws IOException {
-        color.applyAsBackground(this);
-    }
 }
