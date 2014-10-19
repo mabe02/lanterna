@@ -15,7 +15,8 @@ public class TextBox extends AbstractInteractableComponent<TextBox.TextBoxRender
 
     public static enum Style {
         SINGLE_LINE,
-        MULTILINE,;
+        MULTILINE,
+        ;
     }
 
     private final List<String> lines;
@@ -286,9 +287,19 @@ public class TextBox extends AbstractInteractableComponent<TextBox.TextBoxRender
             else if(component.caretPosition.getColumn() >= graphics.getSize().getColumns() + viewTopLeft.getColumn()) {
                 viewTopLeft = viewTopLeft.withColumn(component.caretPosition.getColumn() - graphics.getSize().getColumns() + 1);
             }
+            if(component.caretPosition.getRow() < viewTopLeft.getRow()) {
+                viewTopLeft = viewTopLeft.withRow(component.getCaretPosition().getRow());
+            }
+            else if(component.caretPosition.getRow() >= graphics.getSize().getRows() + viewTopLeft.getRow()) {
+                viewTopLeft = viewTopLeft.withRow(component.caretPosition.getRow() - graphics.getSize().getRows() + 1);
+            }
 
-            for (int row = viewTopLeft.getRow(); row < component.lines.size(); row++) {
-                String line = component.lines.get(row);
+            for (int row = 0; row < graphics.getSize().getRows(); row++) {
+                int rowIndex = row + viewTopLeft.getRow();
+                if(rowIndex >= component.lines.size()) {
+                    continue;
+                }
+                String line = component.lines.get(rowIndex);
                 if(line.length() > viewTopLeft.getColumn()) {
                     graphics.putString(0, row, line.substring(viewTopLeft.getColumn()));
                 }
