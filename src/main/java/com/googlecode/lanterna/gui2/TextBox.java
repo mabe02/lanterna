@@ -23,6 +23,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox.TextBoxRender
     private final Style style;
 
     private TerminalPosition caretPosition;
+    private boolean readOnly;
     private int maxLineLength;
     private int longestRow;
     private char unusedSpaceCharacter;
@@ -55,6 +56,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox.TextBoxRender
     public TextBox(TerminalSize preferredSize, String initialContent, Style style) {
         this.lines = new ArrayList<String>();
         this.style = style;
+        this.readOnly = false;
         this.caretPosition = TerminalPosition.TOP_LEFT_CORNER;
         this.maxLineLength = -1;
         this.longestRow = 1;    //To fit the cursor
@@ -137,6 +139,16 @@ public class TextBox extends AbstractInteractableComponent<TextBox.TextBoxRender
         return this;
     }
 
+    public boolean isReadOnly() {
+        return readOnly;
+    }
+
+    public TextBox setReadOnly(boolean readOnly) {
+        this.readOnly = readOnly;
+        invalidate();
+        return this;
+    }
+
     public String getLine(int index) {
         return lines.get(index);
     }
@@ -152,6 +164,9 @@ public class TextBox extends AbstractInteractableComponent<TextBox.TextBoxRender
 
     @Override
     public Result handleKeyStroke(KeyStroke keyStroke) {
+        if(readOnly) {
+            return handleKeyStrokeReadOnly(keyStroke);
+        }
         String line = lines.get(caretPosition.getRow());
         switch (keyStroke.getKeyType()) {
             case Character:
@@ -263,6 +278,26 @@ public class TextBox extends AbstractInteractableComponent<TextBox.TextBoxRender
         return super.handleKeyStroke(keyStroke);
     }
 
+    private Result handleKeyStrokeReadOnly(KeyStroke keyStroke) {
+        switch (keyStroke.getKeyType()) {
+            case ArrowLeft:
+                return Result.HANDLED;
+            case ArrowRight:
+                return Result.HANDLED;
+            case ArrowUp:
+                return Result.HANDLED;
+            case ArrowDown:
+                return Result.HANDLED;
+            case Home:
+                return Result.HANDLED;
+            case PageDown:
+                return Result.HANDLED;
+            case PageUp:
+                return Result.HANDLED;
+        }
+        return super.handleKeyStroke(keyStroke);
+    }
+
     public static abstract class TextBoxRenderer implements InteractableRenderer<TextBox> {
     }
 
@@ -275,6 +310,9 @@ public class TextBox extends AbstractInteractableComponent<TextBox.TextBoxRender
 
         @Override
         public TerminalPosition getCursorLocation(TextBox component) {
+            if(component.isReadOnly()) {
+                return null;
+            }
             return component
                     .getCaretPosition()
                     .withRelativeColumn(-viewTopLeft.getColumn())
@@ -288,7 +326,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox.TextBoxRender
 
         @Override
         public void drawComponent(TextGUIGraphics graphics, TextBox component) {
-            if (component.isFocused()) {
+            if (component.isFocused() || component.isReadOnly()) {
                 graphics.applyThemeStyle(graphics.getThemeDefinition(TextBox.class).getActive());
             }
             else {
