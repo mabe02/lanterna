@@ -76,9 +76,10 @@ public abstract class AbstractBorder extends AbstractRenderableComponent impleme
     }
 
     @Override
-    public void setSize(TerminalSize size) {
+    public AbstractBorder setSize(TerminalSize size) {
         super.setSize(size);
         component.setSize(getWrappedComponentSize(size));
+        return this;
     }
 
     @Override

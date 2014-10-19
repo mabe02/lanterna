@@ -50,9 +50,10 @@ public abstract class AbstractComponent implements Component {
     }
 
     @Override
-    public void setSize(TerminalSize size) {
+    public AbstractComponent setSize(TerminalSize size) {
         ensureNotDisposed();
         this.size = size;
+        return this;
     }
 
     @Override
@@ -71,16 +72,18 @@ public abstract class AbstractComponent implements Component {
     }
 
     @Override
-    public final void setPreferredSize(TerminalSize explicitPreferredSize) {
+    public final AbstractComponent setPreferredSize(TerminalSize explicitPreferredSize) {
         this.explicitPreferredSize = explicitPreferredSize;
+        return this;
     }
 
     public abstract TerminalSize calculatePreferredSize();
 
     @Override
-    public void setPosition(TerminalPosition position) {
+    public AbstractComponent setPosition(TerminalPosition position) {
         ensureNotDisposed();
         this.position = position;
+        return this;
     }
 
     @Override

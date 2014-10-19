@@ -36,8 +36,9 @@ public interface Component extends TextGUIElement {
      * This method will be called by the layout manager when it has decided where the component is to be located. If you
      * call this method yourself, prepare for unexpected results.
      * @param position Top-left position of the component, relative to its parent
+     * @return Itself
      */
-    void setPosition(TerminalPosition position);
+    Component setPosition(TerminalPosition position);
 
     /**
      * Returns how large this component is. If the layout manager has not yet laid this component out, it will return
@@ -50,8 +51,9 @@ public interface Component extends TextGUIElement {
      * This method will be called by the layout manager when it has decided how large the component will be. If you call
      * this method yourself, prepare for unexpected results.
      * @param size Current size of the component
+     * @return Itself
      */
-    void setSize(TerminalSize size);
+    Component setSize(TerminalSize size);
 
     /**
      * Returns the ideal size this component would like to have, in order to draw itself properly. There are no
@@ -67,8 +69,9 @@ public interface Component extends TextGUIElement {
      * Please note that using this method on components that are not designed to work with arbitrary sizes make have
      * unexpected behaviour.
      * @param explicitPreferredSize Preferred size we want to use for this component
+     * @return Itself
      */
-    void setPreferredSize(TerminalSize explicitPreferredSize);
+    Component setPreferredSize(TerminalSize explicitPreferredSize);
 
     /**
      * Sets optional layout data associated with this component. This meaning of this data is up to the layout manager
