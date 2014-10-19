@@ -29,6 +29,7 @@ public class MiscComponentTest extends TestBase {
         Container contentArea = window.getContentArea();
         contentArea.addComponent(checkBoxPanel.withBorder(Borders.singleLine("CheckBoxes")));
         contentArea.addComponent(textBoxPanel.withBorder(Borders.singleLine("TextBoxes")));
+        contentArea.addComponent(new Separator(Direction.HORIZONTAL).setPreferredSize(new TerminalSize(16, 1)));
         contentArea.addComponent(new Button("OK", new Runnable() {
             @Override
             public void run() {
