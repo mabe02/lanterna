@@ -18,7 +18,7 @@ public class TextBoxTest extends TestBase {
         Container contentArea = window.getContentArea();
 
         Panel mainPanel = new Panel();
-        mainPanel.setLayoutManager(new LinearLayout(LinearLayout.Direction.HORIZONTAL));
+        mainPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
         Panel leftPanel = new Panel();
         Panel rightPanel = new Panel();
 

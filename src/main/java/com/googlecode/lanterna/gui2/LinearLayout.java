@@ -9,11 +9,6 @@ import java.util.List;
  * Simple layout manager the puts all components on a single line
  */
 public class LinearLayout implements LayoutManager {
-    public static enum Direction {
-        HORIZONTAL, //See? I can spell it!
-        VERTICAL,
-        ;
-    }
 
     private final Direction direction;
 

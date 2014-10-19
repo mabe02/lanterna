@@ -19,7 +19,7 @@ public class ListBoxTest extends TestBase {
         Container contentArea = window.getContentArea();
 
         Panel horizontalPanel = new Panel();
-        horizontalPanel.setLayoutManager(new LinearLayout(LinearLayout.Direction.HORIZONTAL));
+        horizontalPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
 
         TerminalSize size = new TerminalSize(14, 10);
         CheckBoxList checkBoxList = new CheckBoxList(size);

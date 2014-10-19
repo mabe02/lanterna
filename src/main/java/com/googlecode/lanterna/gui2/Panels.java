@@ -8,7 +8,7 @@ public class Panels {
 
     public static Panel horizontal(Component... components) {
         Panel panel = new Panel();
-        panel.setLayoutManager(new LinearLayout(LinearLayout.Direction.HORIZONTAL));
+        panel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
         for(Component component: components) {
             panel.addComponent(component);
         }
@@ -17,7 +17,7 @@ public class Panels {
 
     public static Panel vertical(Component... components) {
         Panel panel = new Panel();
-        panel.setLayoutManager(new LinearLayout(LinearLayout.Direction.VERTICAL));
+        panel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
         for(Component component: components) {
             panel.addComponent(component);
         }
