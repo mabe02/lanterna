@@ -281,24 +281,36 @@ public class TextBox extends AbstractInteractableComponent<TextBox.TextBoxRender
     private Result handleKeyStrokeReadOnly(KeyStroke keyStroke) {
         switch (keyStroke.getKeyType()) {
             case ArrowLeft:
+                getRenderer().setViewTopLeft(getRenderer().getViewTopLeft().withRelativeColumn(-1));
                 return Result.HANDLED;
             case ArrowRight:
+                getRenderer().setViewTopLeft(getRenderer().getViewTopLeft().withRelativeColumn(1));
                 return Result.HANDLED;
             case ArrowUp:
+                getRenderer().setViewTopLeft(getRenderer().getViewTopLeft().withRelativeRow(-1));
                 return Result.HANDLED;
             case ArrowDown:
+                getRenderer().setViewTopLeft(getRenderer().getViewTopLeft().withRelativeRow(1));
                 return Result.HANDLED;
             case Home:
+                getRenderer().setViewTopLeft(TerminalPosition.TOP_LEFT_CORNER);
+                return Result.HANDLED;
+            case End:
+                getRenderer().setViewTopLeft(TerminalPosition.TOP_LEFT_CORNER.withRow(getLineCount() - getSize().getRows()));
                 return Result.HANDLED;
             case PageDown:
+                getRenderer().setViewTopLeft(getRenderer().getViewTopLeft().withRelativeRow(getSize().getRows()));
                 return Result.HANDLED;
             case PageUp:
+                getRenderer().setViewTopLeft(getRenderer().getViewTopLeft().withRelativeRow(-getSize().getRows()));
                 return Result.HANDLED;
         }
         return super.handleKeyStroke(keyStroke);
     }
 
     public static abstract class TextBoxRenderer implements InteractableRenderer<TextBox> {
+        protected abstract TerminalPosition getViewTopLeft();
+        protected abstract void setViewTopLeft(TerminalPosition position);
     }
 
     public static class DefaultTextBoxRenderer extends TextBoxRenderer {
@@ -306,6 +318,22 @@ public class TextBox extends AbstractInteractableComponent<TextBox.TextBoxRender
 
         public DefaultTextBoxRenderer() {
             viewTopLeft = TerminalPosition.TOP_LEFT_CORNER;
+        }
+
+        @Override
+        protected TerminalPosition getViewTopLeft() {
+            return viewTopLeft;
+        }
+
+        @Override
+        protected void setViewTopLeft(TerminalPosition position) {
+            if(position.getColumn() < 0) {
+                position = position.withColumn(0);
+            }
+            if(position.getRow() < 0) {
+                position = position.withRow(0);
+            }
+            viewTopLeft = position;
         }
 
         @Override
@@ -326,7 +354,19 @@ public class TextBox extends AbstractInteractableComponent<TextBox.TextBoxRender
 
         @Override
         public void drawComponent(TextGUIGraphics graphics, TextBox component) {
-            if (component.isFocused() || component.isReadOnly()) {
+            if(viewTopLeft.getColumn() + graphics.getSize().getColumns() > component.longestRow) {
+                viewTopLeft = viewTopLeft.withColumn(component.longestRow - graphics.getSize().getColumns());
+                if(viewTopLeft.getColumn() < 0) {
+                    viewTopLeft = viewTopLeft.withColumn(0);
+                }
+            }
+            if(viewTopLeft.getRow() + graphics.getSize().getRows() > component.getLineCount()) {
+                viewTopLeft = viewTopLeft.withRow(component.getLineCount() - graphics.getSize().getRows());
+                if(viewTopLeft.getRow() < 0) {
+                    viewTopLeft = viewTopLeft.withRow(0);
+                }
+            }
+            if (component.isFocused()) {
                 graphics.applyThemeStyle(graphics.getThemeDefinition(TextBox.class).getActive());
             }
             else {
@@ -334,18 +374,20 @@ public class TextBox extends AbstractInteractableComponent<TextBox.TextBoxRender
             }
             graphics.fill(component.unusedSpaceCharacter);
 
-            //Adjust the view if necessary
-            if(component.caretPosition.getColumn() < viewTopLeft.getColumn()) {
-                viewTopLeft = viewTopLeft.withColumn(component.caretPosition.getColumn());
-            }
-            else if(component.caretPosition.getColumn() >= graphics.getSize().getColumns() + viewTopLeft.getColumn()) {
-                viewTopLeft = viewTopLeft.withColumn(component.caretPosition.getColumn() - graphics.getSize().getColumns() + 1);
-            }
-            if(component.caretPosition.getRow() < viewTopLeft.getRow()) {
-                viewTopLeft = viewTopLeft.withRow(component.getCaretPosition().getRow());
-            }
-            else if(component.caretPosition.getRow() >= graphics.getSize().getRows() + viewTopLeft.getRow()) {
-                viewTopLeft = viewTopLeft.withRow(component.caretPosition.getRow() - graphics.getSize().getRows() + 1);
+            if(!component.isReadOnly()) {
+                //Adjust the view if necessary
+                if (component.caretPosition.getColumn() < viewTopLeft.getColumn()) {
+                    viewTopLeft = viewTopLeft.withColumn(component.caretPosition.getColumn());
+                }
+                else if (component.caretPosition.getColumn() >= graphics.getSize().getColumns() + viewTopLeft.getColumn()) {
+                    viewTopLeft = viewTopLeft.withColumn(component.caretPosition.getColumn() - graphics.getSize().getColumns() + 1);
+                }
+                if (component.caretPosition.getRow() < viewTopLeft.getRow()) {
+                    viewTopLeft = viewTopLeft.withRow(component.getCaretPosition().getRow());
+                }
+                else if (component.caretPosition.getRow() >= graphics.getSize().getRows() + viewTopLeft.getRow()) {
+                    viewTopLeft = viewTopLeft.withRow(component.caretPosition.getRow() - graphics.getSize().getRows() + 1);
+                }
             }
 
             for (int row = 0; row < graphics.getSize().getRows(); row++) {
