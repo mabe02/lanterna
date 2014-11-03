@@ -96,6 +96,15 @@ public interface Component extends TextGUIElement {
      */
     void setParent(Composite parent);
     
+    /**
+     * Takes a border object and moves this component inside it and then returns it again. This makes it easy to quickly
+     * wrap a component on creation, like this:
+     * <pre>
+     * container.addComponent(new Button("Test").withBorder(Borders.singleLine()));
+     * </pre>
+     * @param border
+     * @return 
+     */
     Border withBorder(Border border);
 
     /**
