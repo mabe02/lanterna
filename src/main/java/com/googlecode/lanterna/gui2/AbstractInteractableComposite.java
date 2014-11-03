@@ -1,6 +1,6 @@
 /*
  * This file is part of lanterna (http://code.google.com/p/lanterna/).
- * 
+ *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,162 +13,52 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Copyright (C) 2010-2014 Martin
  */
 package com.googlecode.lanterna.gui2;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 /**
- * Default implementation of InteractableContainer that extends from AbstractContainer. If you want to create a custom
- * container that can keep interactable components, you probably want to extend from this class.
- * @author Martin
+ *
+ * @author martin
  */
-public abstract class AbstractInteractableComposite extends AbstractContainer implements InteractableComposite {
-    private final List<Component> interactables;
-
-    protected AbstractInteractableComposite() {
-        //Make sure the user hasn't implemented Interactable too
-        if(this instanceof Interactable) {
-            throw new IllegalStateException("Class " + this.getClass().getName() + " is implementing Interactable and " +
-                    "extending InteractableContainer, which isn't allowed. Interactable should only be implemented by " +
-                    "components that receives input. If you need a component to both contain other components and at " +
-                    "the same time receive input, split it up into multiple classes");
-        }
-        this.interactables = new ArrayList<Component>();
-    }
-
-    @Override
-    public void addComponent(Component component) {
-        super.addComponent(component);
-        if (component instanceof Interactable || component instanceof InteractableComposite) {
-            synchronized (interactables) {
-                if (!interactables.contains(component)) {
-                    interactables.add(component);
-                }
-            }
-        }
-    }
-
-    @Override
-    public void removeComponent(Component component) {
-        if(getRootContainer() != null && getRootContainer().getFocusedInteractable() == component) {
-            getRootContainer().setFocusedInteractable(null);
-        }
-        super.removeComponent(component);
-        if (component instanceof Interactable) {
-            synchronized (interactables) {
-                interactables.remove(component);
-            }
-        }
-    }
-
+public abstract class AbstractInteractableComposite extends AbstractComposite implements InteractableContainer {
+    
     @Override
     public boolean hasInteractable(Interactable interactable) {
-        for (Component component : interactables) {
-            if (component instanceof InteractableComposite) {
-                if (((InteractableComposite) (component)).hasInteractable(interactable)) {
-                    return true;
-                }
-            }
-            if (component == interactable) {
-                return true;
-            }
-        }
-        return false;
+        return interactable != null && (interactable == getComponent() ||
+                (getComponent() instanceof InteractableContainer && ((InteractableContainer)getComponent()).hasInteractable(interactable)));
     }
 
     @Override
     public Interactable nextFocus(Interactable fromThis) {
-        boolean chooseNextAvailable = (fromThis == null);
-
-        for (Component component : interactables) {
-            if (chooseNextAvailable) {
-                if (component instanceof Interactable) {
-                    return (Interactable) component;
-                }
-                if (component instanceof InteractableComposite) {
-                    Interactable firstInteractable = ((InteractableComposite) (component)).nextFocus(null);
-                    if (firstInteractable != null) {
-                        return firstInteractable;
-                    }
-                }
-                continue;
-            }
-
-            if (component == fromThis) {
-                chooseNextAvailable = true;
-                continue;
-            }
-
-            if (component instanceof InteractableComposite) {
-                InteractableComposite ic = (InteractableComposite) component;
-                if (ic.hasInteractable(fromThis)) {
-                    Interactable next = ic.nextFocus(fromThis);
-                    if (next == null) {
-                        chooseNextAvailable = true;
-                    } else {
-                        return next;
-                    }
-                }
-            }
+        if(fromThis == null && getComponent() instanceof Interactable) {
+            return (Interactable)getComponent();
+        }
+        else if(getComponent() instanceof InteractableContainer) {
+            return ((InteractableContainer)getComponent()).nextFocus(fromThis);
         }
         return null;
     }
 
     @Override
     public Interactable previousFocus(Interactable fromThis) {
-        boolean chooseNextAvailable = (fromThis == null);
-
-        List<Component> revComponents = new ArrayList<Component>(interactables);
-        Collections.reverse(revComponents);
-
-        for (Component component : revComponents) {
-            if (chooseNextAvailable) {
-                if (component instanceof Interactable) {
-                    return (Interactable) component;
-                }
-                if (component instanceof InteractableComposite) {
-                    Interactable lastInteractable = ((InteractableComposite) (component)).previousFocus(null);
-                    if (lastInteractable != null) {
-                        return lastInteractable;
-                    }
-                }
-                continue;
-            }
-
-            if (component == fromThis) {
-                chooseNextAvailable = true;
-                continue;
-            }
-
-            if (component instanceof InteractableComposite) {
-                InteractableComposite ic = (InteractableComposite) component;
-                if (ic.hasInteractable(fromThis)) {
-                    Interactable next = ic.previousFocus(fromThis);
-                    if (next == null) {
-                        chooseNextAvailable = true;
-                    } else {
-                        return next;
-                    }
-                }
-            }
+        if(fromThis == null && getComponent() instanceof Interactable) {
+            return (Interactable)getComponent();
+        }
+        else if(getComponent() instanceof InteractableContainer) {
+            return ((InteractableContainer)getComponent()).previousFocus(fromThis);
         }
         return null;
     }
 
     @Override
     public void updateLookupMap(InteractableLookupMap interactableLookupMap) {
-        for(Component component: getComponents()) {
-            if(component instanceof InteractableComposite) {
-                ((InteractableComposite)component).updateLookupMap(interactableLookupMap);
-            }
-            else if(component instanceof Interactable) {
-                interactableLookupMap.add((Interactable)component);
-            }
+        if(getComponent() instanceof InteractableContainer) {
+            ((InteractableContainer)getComponent()).updateLookupMap(interactableLookupMap);
+        }
+        else if(getComponent() instanceof Interactable) {
+            interactableLookupMap.add((Interactable)getComponent());
         }
     }
 }

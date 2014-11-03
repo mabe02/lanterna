@@ -30,7 +30,7 @@ import java.util.Set;
  * so I don't think you should have any problems understanding what this means.
  * @author Martin
  */
-public interface Window extends RootContainer {
+public interface Window extends BasePane {
     /**
      * Window hints are meta-data stored along with the window that can be used to give the GUI system some ideas of how
      * this window wants to be treated. There are no guarantees that the hints will be honoured though. You can declare
@@ -162,7 +162,7 @@ public interface Window extends RootContainer {
      * @return Container that represents the main component area of the window
      */
     @Override
-    Container getContentArea();
+    Composite getContentArea();
 
     /**
      * Returns the component in the window that currently has input focus. There can only be one component at a time
@@ -187,6 +187,7 @@ public interface Window extends RootContainer {
      * corner of the window. You can use your TextGUI implementation to translate these to global coordinates.
      * @return Local position of where to place the cursor, or {@code null} if the cursor shouldn't be visible
      */
+    @Override
     TerminalPosition getCursorPosition();
 
     /**
@@ -194,5 +195,6 @@ public interface Window extends RootContainer {
      * @param localPosition The local position to translate
      * @return The local position translated to global coordinates
      */
+    @Override
     TerminalPosition toGlobal(TerminalPosition localPosition);
 }

@@ -24,6 +24,7 @@ import com.googlecode.lanterna.input.KeyStroke;
 /**
  * Default implementation of Interactable that extends from AbstractComponent. You will want to extend from this class
  * if you want to make your own interactable component.
+ * @param <T> Type of renderer you which to use for this class
  * @author Martin
  */
 public abstract class AbstractInteractableComponent<T extends InteractableRenderer> extends AbstractRenderableComponent<T> implements Interactable {

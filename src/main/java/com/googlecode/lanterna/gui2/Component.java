@@ -26,6 +26,8 @@ import com.googlecode.lanterna.TerminalSize;
  * @author Martin
  */
 public interface Component extends TextGUIElement {
+    
+    
     /**
      * Returns the top-left corner of this component, measured from its parent.
      * @return Position of this component
@@ -90,11 +92,20 @@ public interface Component extends TextGUIElement {
 
     /**
      * Assigns the component to a new container. If the component already belongs to a different container, it will be
-     * removed from there first. Calling {@code setParent(null)} is the same as removing the component from the
-     * container.
+     * removed from there first. Calling this method will automatically call the addComponent method on the parent. If
+     * you call addComponent(..) with this object instead, it will implicitly call this method so either one can be used
+     * to assign a component to a container.
+     * <p/>
+     * Calling {@code setParent(null)} is the same as removing the component from the container.
      * @param parent New parent container or {@code null} if you want to remove the component from its current parent
      */
-    void setParent(Composite parent);
+    void setParent(Container parent);
+    
+    /**
+     * Returns the container which is holding this container, or {@code null} if it's not assigned to anything.
+     * @return Parent container or null
+     */
+    Container getParent();
     
     /**
      * Takes a border object and moves this component inside it and then returns it again. This makes it easy to quickly
@@ -106,6 +117,19 @@ public interface Component extends TextGUIElement {
      * @return 
      */
     Border withBorder(Border border);
+    
+    /**
+     * Translates a position local to the container to the root container's coordinate space
+     * @param position Position to translate (relative to the container's top-left corner)
+     * @return Position in root container space
+     */
+    TerminalPosition toRootContainer(TerminalPosition position);
+
+    /**
+     * Returns the root container that this container belongs to. In a window-based GUI system, this will be a Window.
+     * @return The root container this component is placed on, or {@code null} if none
+     */
+    BasePane getRootContainer();
 
     /**
      * Removes the component from its parent and frees up any resources (threads, etc) associated with the component.

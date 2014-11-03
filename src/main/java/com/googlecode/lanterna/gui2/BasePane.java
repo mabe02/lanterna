@@ -26,7 +26,7 @@ import com.googlecode.lanterna.input.KeyStroke;
  * always independent. One example of this is a multi-window system where each window is a root container.
  * @author Martin
  */
-public interface RootContainer {
+public interface BasePane {
     /**
      * Called by the GUI system (or something imitating the GUI system) to draw the root container. The TextGUIGraphics
      * object should be used to perform the drawing operations.

@@ -26,7 +26,7 @@ import com.googlecode.lanterna.TerminalSize;
  * @author Martin
  */
 public abstract class AbstractComponent implements Component {
-    private Composite parent;
+    private Container parent;
     private TerminalSize size;
     private TerminalSize explicitPreferredSize;   //This is keeping the value set by the user (if setPreferredSize() is used)
     private TerminalPosition position;
@@ -127,12 +127,12 @@ public abstract class AbstractComponent implements Component {
     }
 
     @Override
-    public Composite getParent() {
+    public Container getParent() {
         return parent;
     }
 
     @Override
-    public RootContainer getRootContainer() {
+    public BasePane getRootContainer() {
         if(parent == null) {
             return null;
         }
@@ -145,12 +145,12 @@ public abstract class AbstractComponent implements Component {
     }
 
     @Override
-    public void setParent(Composite parent) {
+    public void setParent(Container parent) {
         ensureNotDisposed();
         if(this.parent == parent) {
             return;
         }
-        Composite oldParent = this.parent;
+        Container oldParent = this.parent;
         this.parent = null;
         if(oldParent != null && oldParent.containsComponent(this)) {
             oldParent.removeComponent(this);

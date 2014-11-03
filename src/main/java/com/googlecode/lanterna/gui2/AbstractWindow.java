@@ -31,7 +31,7 @@ import java.util.Set;
  * implementations.
  * @author Martin
  */
-public class AbstractWindow extends AbstractRootContainer implements Window {
+public class AbstractWindow extends AbstractBasePane implements Window {
 
     private String title;
     private WindowManager windowManager;
@@ -87,6 +87,7 @@ public class AbstractWindow extends AbstractRootContainer implements Window {
         return super.handleInput(key);
     }
 
+    @Override
     public TerminalPosition toGlobal(TerminalPosition localPosition) {
         if(localPosition == null) {
             return null;

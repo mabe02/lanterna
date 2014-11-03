@@ -25,13 +25,13 @@ import com.googlecode.lanterna.input.KeyStroke;
 /**
  * Created by martin on 27/10/14.
  */
-public abstract class AbstractRootContainer implements RootContainer {
+public abstract class AbstractBasePane implements BasePane {
     protected final ContentArea contentArea;
     protected InteractableLookupMap interactableLookupMap;
     private Interactable focusedInteractable;
     private boolean invalid;
 
-    protected AbstractRootContainer() {
+    protected AbstractBasePane() {
         this.contentArea = new ContentArea();
         this.interactableLookupMap = new InteractableLookupMap(new TerminalSize(80, 20));
         this.invalid = false;
@@ -111,7 +111,7 @@ public abstract class AbstractRootContainer implements RootContainer {
     }
 
     @Override
-    public Container getContentArea() {
+    public Composite getContentArea() {
         return contentArea;
     }
 
@@ -159,14 +159,32 @@ public abstract class AbstractRootContainer implements RootContainer {
 
     protected class ContentArea extends AbstractInteractableComposite {
         @Override
-        public void addComponent(Component component) {
+        public void setComponent(Component component) {
             super.addComponent(component);
             if(focusedInteractable == null && component instanceof Interactable) {
                 setFocusedInteractable((Interactable)component);
             }
-            else if(focusedInteractable == null && component instanceof InteractableComposite) {
-                setFocusedInteractable(((InteractableComposite)component).nextFocus(null));
+            else if(focusedInteractable == null && component instanceof InteractableContainer) {
+                setFocusedInteractable(((InteractableContainer)component).nextFocus(null));
             }
+        }
+
+        @Override
+        public TerminalSize calculatePreferredSize() {
+            Component component = getComponent();
+            if(component == null) {
+                return TerminalSize.ZERO;
+            }
+            return component.getPreferredSize();
+        }
+
+        @Override
+        public void drawComponent(TextGUIGraphics graphics) {
+            Component component = getComponent();
+            if(component == null) {
+                return;
+            }
+            component.draw(graphics);
         }
 
         @Override
@@ -177,11 +195,12 @@ public abstract class AbstractRootContainer implements RootContainer {
         @Override
         public void removeComponent(Component component) {
             super.removeComponent(component);
+            focusedInteractable = null;
         }
 
         @Override
-        public RootContainer getRootContainer() {
-            return AbstractRootContainer.this;
+        public BasePane getRootContainer() {
+            return AbstractBasePane.this;
         }
     }
 }

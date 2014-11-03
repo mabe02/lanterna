@@ -22,7 +22,7 @@ package com.googlecode.lanterna.gui2;
  * This interface adds the ability to a Container to keep Interactables and switch between them.
  * @author Martin
  */
-public interface InteractableComposite extends Composite {
+public interface InteractableContainer extends Container {
     /**
      * Returns true if this container contains the {@code interactable} passed in as the parameter
      *

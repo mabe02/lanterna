@@ -18,7 +18,6 @@
  */
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.TerminalSize;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -30,16 +29,9 @@ import java.util.List;
  */
 public abstract class AbstractContainer extends AbstractComponent implements Container {
     private final List<Component> components;
-
-    private LayoutManager layoutManager;
-    private boolean needsReLayout;
-    private TerminalSize preferredSize;
-
+    
     public AbstractContainer() {
-        layoutManager = new LinearLayout();
         components = new ArrayList<Component>();
-        needsReLayout = false;
-        preferredSize = null;
     }
 
     @Override
@@ -73,7 +65,6 @@ public abstract class AbstractContainer extends AbstractComponent implements Con
         onStructureChanged();
     }
 
-    @Override
     public void removeAllComponents() {
         synchronized(components) {
             for(Component component: new ArrayList<Component>(components)) {
@@ -127,19 +118,7 @@ public abstract class AbstractContainer extends AbstractComponent implements Con
     }
 
     @Override
-    public void setLayoutManager(LayoutManager layoutManager) {
-        if(layoutManager == null) {
-            throw new IllegalArgumentException("Cannot set a null layout manager");
-        }
-        this.layoutManager = layoutManager;
-        onStructureChanged();
-    }
-
-    @Override
     public void drawComponent(TextGUIGraphics graphics) {
-        if(needsReLayout) {
-            layout(graphics.getSize());
-        }
         for(Component component: components) {
             TextGUIGraphics componentGraphics = graphics.newTextGraphics(component.getPosition(), component.getSize());
             component.draw(componentGraphics);
@@ -157,28 +136,11 @@ public abstract class AbstractContainer extends AbstractComponent implements Con
     }
 
     @Override
-    public TerminalSize calculatePreferredSize() {
-        if(preferredSize == null) {
-            preferredSize = layoutManager.getPreferredSize(Collections.unmodifiableList(components));
-        }
-        return preferredSize;
-    }
-
-    @Override
     protected void onDisposed() {
         for(Component component: new ArrayList<Component>(components)) {
             component.dispose();
         }
     }
 
-    private void onStructureChanged() {
-        needsReLayout = true;
-        preferredSize = null;
-        invalidate();
-    }
-
-    private void layout(TerminalSize size) {
-        layoutManager.doLayout(size, Collections.unmodifiableList(components));
-        needsReLayout = false;
-    }
+    protected abstract void onStructureChanged();
 }

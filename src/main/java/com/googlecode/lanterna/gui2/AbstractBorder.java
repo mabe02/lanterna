@@ -37,7 +37,7 @@ public abstract class AbstractBorder extends AbstractRenderableComponent impleme
     @Override
     public boolean hasInteractable(Interactable interactable) {
         return interactable != null && (interactable == component ||
-                (component instanceof InteractableComposite && ((InteractableComposite)component).hasInteractable(interactable)));
+                (component instanceof InteractableContainer && ((InteractableContainer)component).hasInteractable(interactable)));
     }
 
     @Override
@@ -45,8 +45,8 @@ public abstract class AbstractBorder extends AbstractRenderableComponent impleme
         if(fromThis == null && component instanceof Interactable) {
             return (Interactable)component;
         }
-        else if(component instanceof InteractableComposite) {
-            return ((InteractableComposite)component).nextFocus(fromThis);
+        else if(component instanceof InteractableContainer) {
+            return ((InteractableContainer)component).nextFocus(fromThis);
         }
         return null;
     }
@@ -56,8 +56,8 @@ public abstract class AbstractBorder extends AbstractRenderableComponent impleme
         if(fromThis == null && component instanceof Interactable) {
             return (Interactable)component;
         }
-        else if(component instanceof InteractableComposite) {
-            return ((InteractableComposite)component).previousFocus(fromThis);
+        else if(component instanceof InteractableContainer) {
+            return ((InteractableContainer)component).previousFocus(fromThis);
         }
         return null;
     }
@@ -65,8 +65,15 @@ public abstract class AbstractBorder extends AbstractRenderableComponent impleme
     @Override
     public void addComponent(Component component) {
         if(this.component != null) {
-            throw new IllegalStateException("Cannot add component " + component.toString() + " to Border " + toString() + 
-                    " because border already has a component");
+            throw new IllegalStateException("Cannot add more than one component to a Border composite");
+        }
+        setComponent(component);
+    }
+
+    @Override
+    public void setComponent(Component component) {
+        if(this.component != null) {
+            removeComponent(this.component);
         }
         this.component = component;
         this.component.setParent(this);
@@ -89,6 +96,32 @@ public abstract class AbstractBorder extends AbstractRenderableComponent impleme
     }
 
     @Override
+    public int getNumberOfComponents() {
+        return component == null ? 0 : 1;
+    }
+
+    @Override
+    public int getComponentIndex(Component component) {
+        if(this.component != component) {
+            return -1;
+        }
+        return 0;
+    }
+
+    @Override
+    public Component getComponentAt(int index) {
+        if(index != 0) {
+            throw new IllegalArgumentException("Borders only have one component, cannot call getComponentAt with index " + index);
+        }
+        return component;
+    }
+
+    @Override
+    public Component getComponent() {
+        return component;
+    }
+
+    @Override
     public boolean isInvalid() {
         return component != null && component.isInvalid();
     }
@@ -102,8 +135,8 @@ public abstract class AbstractBorder extends AbstractRenderableComponent impleme
 
     @Override
     public void updateLookupMap(InteractableLookupMap interactableLookupMap) {
-        if(component instanceof InteractableComposite) {
-            ((InteractableComposite)component).updateLookupMap(interactableLookupMap);
+        if(component instanceof InteractableContainer) {
+            ((InteractableContainer)component).updateLookupMap(interactableLookupMap);
         }
         else if(component instanceof Interactable) {
             interactableLookupMap.add((Interactable)component);

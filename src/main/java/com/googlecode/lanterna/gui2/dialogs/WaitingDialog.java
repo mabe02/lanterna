@@ -16,24 +16,20 @@
  *
  * Copyright (C) 2010-2014 Martin
  */
-package com.googlecode.lanterna.gui2;
+package com.googlecode.lanterna.gui2.dialogs;
+
+import com.googlecode.lanterna.gui2.BasicWindow;
 
 /**
- * This interface is the base part in the Lanterna Text GUI component hierarchy
- * @author Martin
+ * Dialog that displays a text message, an optional spinning indicator and an optional progress bar
+ * @author martin
  */
-public interface TextGUIElement {
-    /**
-     * Draws the GUI element using the supplied TextGUIGraphics object. This is the main method to implement when you
-     * want to create your own GUI components.
-     * @param graphics Graphics object to use when drawing the component
-     */
-    void draw(TextGUIGraphics graphics);
-
-    /**
-     * Checks if this element (or any of its child components, if any) has signaled that what it's currently displaying
-     * is out of date and needs re-drawing.
-     * @return {@code true} if the component is invalid and needs redrawing, {@code false} otherwise
-     */
-    boolean isInvalid();
+public class WaitingDialog extends BasicWindow {
+    private WaitingDialog() {
+        
+    }
+    
+    public static WaitingDialog createDialog() {
+        return new WaitingDialog();
+    }
 }

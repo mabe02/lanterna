@@ -18,11 +18,54 @@
  */
 package com.googlecode.lanterna.gui2;
 
+import com.googlecode.lanterna.TerminalSize;
+import java.util.Collections;
+
 /**
  * Simple container for other components
  * @author Martin
  */
-public class Panel extends AbstractInteractableComposite {
+public class Panel extends AbstractInteractableContainer {
+    
+    private LayoutManager layoutManager;
+    private boolean needsReLayout;
 
+    public Panel() {
+        layoutManager = new LinearLayout();
+        needsReLayout = false;
+    }
+    
+    public void setLayoutManager(LayoutManager layoutManager) {
+        if(layoutManager == null) {
+            throw new IllegalArgumentException("Cannot set a null layout manager");
+        }
+        this.layoutManager = layoutManager;
+        onStructureChanged();
+    }
 
+    @Override
+    public void drawComponent(TextGUIGraphics graphics) {
+        if(needsReLayout) {
+            layout(graphics.getSize());
+        }
+        super.drawComponent(graphics);
+    }
+
+    @Override
+    public TerminalSize calculatePreferredSize() {
+        setPreferredSize(layoutManager.getPreferredSize(getComponents()));
+        return getPreferredSize();
+    }    
+    
+    @Override
+    protected void onStructureChanged() {
+        needsReLayout = true;
+        setPreferredSize(null);
+        invalidate();
+    }
+
+    private void layout(TerminalSize size) {
+        layoutManager.doLayout(size, getComponents());
+        needsReLayout = false;
+    }
 }

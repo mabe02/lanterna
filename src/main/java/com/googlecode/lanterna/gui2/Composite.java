@@ -19,15 +19,21 @@
 package com.googlecode.lanterna.gui2;
 
 /**
- *
+ * A Composite is a Container that contains only one (or zero) component. Normally it is a kind of decorator, like a
+ * border, that wraps a single component for visualization purposes.
  * @author Martin
  */
-public interface Composite extends TextGUIElement {
-
-    void addComponent(Component component);
-
-    boolean containsComponent(Component component);
-
-    void removeComponent(Component component);
+public interface Composite extends Container {
+    /**
+     * Returns the component that this Composite is wrapping
+     * @return 
+     */
+    Component getComponent();
     
+    /**
+     * Sets the component which is inside this Composite. If you call this method with null, it removes the component
+     * wrapped by this Composite.
+     * @param component Component to wrap
+     */
+    void setComponent(Component component);
 }

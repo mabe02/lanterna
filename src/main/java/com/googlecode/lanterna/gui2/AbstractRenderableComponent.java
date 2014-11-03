@@ -22,6 +22,7 @@ import com.googlecode.lanterna.TerminalSize;
 
 /**
  * Created by martin on 03/10/14.
+ * @param <T>
  */
 public abstract class AbstractRenderableComponent<T extends ComponentRenderer> extends AbstractComponent {
     private T renderer;
@@ -35,6 +36,7 @@ public abstract class AbstractRenderableComponent<T extends ComponentRenderer> e
 
     protected abstract T createDefaultRenderer();
 
+    @Override
     public TerminalSize calculatePreferredSize() {
         return renderer.getPreferredSize(this);
     }

@@ -28,9 +28,9 @@ import com.googlecode.lanterna.screen.Screen;
  * the whole TextGUI. This class doesn't support Windows directly, but you can open modal dialogs.
  * @author Martin
  */
-public class FullScreenTextGUI extends AbstractTextGUI {
+public class FullScreenTextGUI extends AbstractTextGUI implements BasePane {
 
-    private final ThisRootContainer rootContainer;
+    private final ThisBasePane basePane;
 
     /**
      * Creates a new FullScreenTextGUI targeting the supplied Screen
@@ -39,57 +39,69 @@ public class FullScreenTextGUI extends AbstractTextGUI {
      */
     public FullScreenTextGUI(Screen screen) {
         super(screen);
-        this.rootContainer = new ThisRootContainer();
+        this.basePane = new ThisBasePane();
     }
 
-    /**
-     * Sets which component (probably a Container) that is the given the full screen. Probably you will assign a panel
-     * or some other container that can be filled with other components. You cannot pass in {@code null} here.
-     * @param component Component to display in this TextGUI
-     */
     public void setComponent(Component component) {
-        if(component == null) {
-            throw new IllegalArgumentException("Cannot set FullScreenTextGUI component to null");
-        }
-        rootContainer.getContentArea().removeAllComponents();
-        rootContainer.getContentArea().addComponent(component);
+        basePane.getContentArea().setComponent(component);
     }
-
-    /**
-     * Returns the one component which this FullScreenTextGUI is drawing in full screen.
-     * @return Component this FullScreenTextGUI is using as the root
-     */
+    
     public Component getComponent() {
-        if(rootContainer.getContentArea().getNumberOfComponents() == 0) {
-            return null;
-        }
-        return rootContainer.getContentArea().getComponentAt(0);
+        return basePane.getContentArea().getComponent();
     }
-
+    
     @Override
     protected void drawGUI(TextGUIGraphics graphics) {
-        rootContainer.draw(graphics);
+        draw(graphics);
     }
-
-    @Override
-    protected TerminalPosition getCursorPosition() {
-        return rootContainer.getCursorPosition();
-    }
-
-    @Override
-    protected boolean handleInput(KeyStroke key) {
-        return rootContainer.handleInput(key);
-    }
-
-    private class ThisRootContainer extends AbstractRootContainer {
+    
+    private class ThisBasePane extends AbstractBasePane {
         @Override
         public TerminalPosition toGlobal(TerminalPosition localPosition) {
             return localPosition;
         }
+    }
+    
+    /////////////////////////////////////////////////////////////////////
+    // Delegate all BasePane method calls to the ThisBasePane instance //
+    /////////////////////////////////////////////////////////////////////
+    @Override
+    public boolean isInvalid() {
+        return basePane.isInvalid();
+    }
 
-        @Override
-        public void draw(TextGUIGraphics graphics) {
-            super.draw(graphics);
-        }
+    @Override
+    public void draw(TextGUIGraphics graphics) {
+        basePane.draw(graphics);
+    }
+
+    @Override
+    public boolean handleInput(KeyStroke key) {
+        return basePane.handleInput(key);
+    }
+
+    @Override
+    public Composite getContentArea() {
+        return basePane.getContentArea();
+    }
+
+    @Override
+    public Interactable getFocusedInteractable() {
+        return basePane.getFocusedInteractable();
+    }
+
+    @Override
+    public TerminalPosition getCursorPosition() {
+        return basePane.getCursorPosition();
+    }
+    
+    @Override
+    public void setFocusedInteractable(Interactable toFocus) {
+        basePane.setFocusedInteractable(toFocus);
+    }
+
+    @Override
+    public TerminalPosition toGlobal(TerminalPosition localPosition) {
+        return basePane.toGlobal(localPosition);
     }
 }

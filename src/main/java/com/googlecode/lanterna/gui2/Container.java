@@ -22,11 +22,15 @@ package com.googlecode.lanterna.gui2;
  *
  * @author Martin
  */
-public interface Container extends Composite {
+public interface Container extends Component {
+
     /**
-     * Removes all components from the container
+     * Returns the number of components inside this Container
+     * @return Number of components this Container keeps
      */
-    void removeAllComponents();
+    int getNumberOfComponents();
+    
+    boolean containsComponent(Component component);
 
     /**
      * Returns the index of the component, within this container
@@ -43,17 +47,8 @@ public interface Container extends Composite {
      * @return The component at the specified index, or {@code null} if there was no component
      */
     Component getComponentAt(int index);
-
-    /**
-     * Returns the number of components inside this Container
-     * @return Number of components this Container keeps
-     */
-    int getNumberOfComponents();
-
-    /**
-     * Sets the layout manager responsible to placing and sizing the components in the window
-     * @param layoutManager Layout manager this container should use
-     */
-    void setLayoutManager(LayoutManager layoutManager);
-
+    
+    void addComponent(Component component);
+    
+    void removeComponent(Component component);
 }
