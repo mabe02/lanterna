@@ -23,10 +23,31 @@ package com.googlecode.lanterna.gui2;
  * @author Martin
  */
 public interface Container extends Composite {
+    /**
+     * Removes all components from the container
+     */
     void removeAllComponents();
-    
+
+    /**
+     * Returns the index of the component, within this container
+     * @param component Component to look for
+     * @return Index of the component, if it was found, -1 otherwise
+     */
     int getComponentIndex(Component component);
+
+    /**
+     * Returns the component at the specified index, or {@code null} if index was one number larger than the number of
+     * components in this container. If the index is further out of bounds, or negative, this method throws
+     * ArrayIndexOutOfBounds.
+     * @param index Index to get the component at
+     * @return The component at the specified index, or {@code null} if there was no component
+     */
     Component getComponentAt(int index);
+
+    /**
+     * Returns the number of components inside this Container
+     * @return Number of components this Container keeps
+     */
     int getNumberOfComponents();
 
     /**

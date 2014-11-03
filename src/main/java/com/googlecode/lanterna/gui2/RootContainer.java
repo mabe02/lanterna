@@ -17,6 +17,13 @@ public interface RootContainer {
     void draw(TextGUIGraphics graphics);
 
     /**
+     * Checks if this root container (i.e. any of its child components) has signaled that what it's currently displaying
+     * is out of date and needs re-drawing.
+     * @return {@code true} if the container's content is invalid and needs redrawing, {@code false} otherwise
+     */
+    boolean isInvalid();
+
+    /**
      * Called by the GUI system to delegate a keyboard input event. The root container will decide what to do with this
      * input, usually sending it to one of its sub-components, but if it isn't able to find any handler for this input
      * it should return {@code false} so that the GUI system can take further decisions on what to do with it.
@@ -29,7 +36,7 @@ public interface RootContainer {
      * Returns a container that can be used as the parent for top-level components added to the root container
      * @return Container that represents the main component area of the root container
      */
-    Container getContentArea();
+    Composite getContentArea();
 
     /**
      * Returns the component in the root container that currently has input focus. There can only be one component at a
