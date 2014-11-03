@@ -56,6 +56,7 @@ public abstract class AbstractScreen implements Screen {
      * blank. You can specify which character you wish to be used to fill the screen initially; this will also be the
      * character used if the terminal is enlarged and you don't set anything on the new areas.
      *
+     * @param initialSize Size to initially create the Screen with (can be resized later)
      * @param defaultCharacter What character to use for the initial state of the screen and expanded areas
      */
     @SuppressWarnings({"SameParameterValue", "WeakerAccess"})
@@ -91,7 +92,6 @@ public abstract class AbstractScreen implements Screen {
             this.cursorPosition = null;
             return;
         }
-        TerminalSize terminalSize = getTerminalSize();
         if(position.getColumn() >= 0 && position.getColumn() < terminalSize.getColumns()
                 && position.getRow() >= 0 && position.getRow() < terminalSize.getRows()) {
             this.cursorPosition = position;
