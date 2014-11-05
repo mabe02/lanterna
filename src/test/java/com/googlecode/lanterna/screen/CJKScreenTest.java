@@ -24,7 +24,8 @@ import com.googlecode.lanterna.TestTerminalFactory;
 import java.io.IOException;
 
 /**
- *
+ * Tests the terminal capability of displaying Chinese (simplified and traditional), Japanese (katakana, hiragana,
+ * kanji) and Korean
  * @author Martin
  */
 public class CJKScreenTest {
@@ -35,17 +36,20 @@ public class CJKScreenTest {
         TextGraphics writer = new ScreenTextGraphics(screen);
         writer.setForegroundColor(TextColor.ANSI.DEFAULT);
         writer.setBackgroundColor(TextColor.ANSI.DEFAULT);
-        writer.putString(5, 5,  "Chinese (simplified):  斯瓦尔巴群岛是位于北极地区的群岛，为挪威最北界的国土范围。");
-        writer.putString(5, 7,  "Chinese (traditional): 斯瓦巴群島是位於北極地區的群島，為挪威最北界的國土範圍。");
-        writer.putString(5, 9,  "Japanese:              スヴァールバル諸島は、北極圏のバレンツ海にある群島。");
-        writer.putString(5, 11, "Korean:                스발바르 제도 는 유럽 본토의 북부, 대서양에 위치한 군도이다.");
+        writer.putString(4, 2,  "Chinese (simplified):  石室诗士施氏，嗜狮，誓食十狮。");
+        writer.putString(4, 3,  "                       氏时时适市视狮。");
+        writer.putString(4, 5,  "Chinese (traditional): 石室詩士施氏，嗜獅，誓食十獅。 ");
+        writer.putString(4, 6,  "                       氏時時適市視獅。");
+        writer.putString(4, 8,  "Japanese:              祇園精舎の鐘の声、諸行無常の響あり。");
+        writer.putString(4, 9,  "                       沙羅双樹の花の色、盛者必衰の理をあらはす");
+        writer.putString(4, 11, "  (katakana)           ランターナ バージョンアップ！");
+        writer.putString(4, 12, "  (half-width)         ﾗﾝﾀｰﾅ ﾊﾞｰｼﾞｮﾝｱｯﾌﾟ");
+        writer.putString(4, 14, "Korean:                내 벗이 몇인가하니 수석과 송죽이라");
+        writer.putString(4, 15, "                       동산에 달오르니 그 더욱 반갑도다");
+        writer.putString(4, 16, "                       두어라, 이 다섯 밖에 또 더해야 무엇하리");
         screen.refresh();
 
-        try {
-            Thread.sleep(5000);
-        }
-        catch (InterruptedException ignored) {
-        }
+        screen.readInput();
         screen.stopScreen();
     }
 }
