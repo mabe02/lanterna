@@ -180,20 +180,25 @@ public abstract class AbstractTextGraphics implements TextGraphics {
             string = string.substring(0, string.indexOf("\r"));
         }
         string = tabBehaviour.replaceTabs(string, column);
+        int offset = 0;
         for(int i = 0; i < string.length(); i++) {
             char character = string.charAt(i);
             setCharacter(
-                    column + i,
+                    column + offset,
                     row,
                     new TextCharacter(
                             character,
                             foregroundColor,
                             backgroundColor,
                             activeModifiers.clone()));
-
-            //CJK characters are twice the normal characters in width
+            
             if(CJKUtils.isCharCJK(character)) {
-                i++;
+                //CJK characters are twice the normal characters in width, so next character position is two columns forward
+                offset += 2;
+            }
+            else {
+                //For "normal" characters we advance to the next column
+                offset += 1;
             }
         }
         return this;
