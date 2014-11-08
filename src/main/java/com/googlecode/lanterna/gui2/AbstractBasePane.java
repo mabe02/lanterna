@@ -26,20 +26,20 @@ import com.googlecode.lanterna.input.KeyStroke;
  * Created by martin on 27/10/14.
  */
 public abstract class AbstractBasePane implements BasePane {
-    protected final ContentArea contentArea;
+    protected final ContentHolder contentHolder;
     protected InteractableLookupMap interactableLookupMap;
     private Interactable focusedInteractable;
     private boolean invalid;
 
     protected AbstractBasePane() {
-        this.contentArea = new ContentArea();
+        this.contentHolder = new ContentHolder();
         this.interactableLookupMap = new InteractableLookupMap(new TerminalSize(80, 20));
         this.invalid = false;
     }
 
     @Override
     public boolean isInvalid() {
-        return invalid || contentArea.isInvalid();
+        return invalid || contentHolder.isInvalid();
     }
 
     protected void invalidate() {
@@ -50,13 +50,13 @@ public abstract class AbstractBasePane implements BasePane {
     public void draw(TextGUIGraphics graphics) {
         graphics.applyThemeStyle(graphics.getThemeDefinition(Window.class).getNormal());
         graphics.fill(' ');
-        contentArea.draw(graphics);
+        contentHolder.draw(graphics);
 
         if(!interactableLookupMap.getSize().equals(graphics.getSize())) {
             interactableLookupMap = new InteractableLookupMap(graphics.getSize());
         }
         interactableLookupMap.reset();
-        contentArea.updateLookupMap(interactableLookupMap);
+        contentHolder.updateLookupMap(interactableLookupMap);
         //interactableLookupMap.debug();
         invalid = false;
     }
@@ -72,16 +72,16 @@ public abstract class AbstractBasePane implements BasePane {
                 case UNHANDLED:
                     break;
                 case MOVE_FOCUS_NEXT:
-                    next = contentArea.nextFocus(focusedInteractable);
+                    next = contentHolder.nextFocus(focusedInteractable);
                     if(next == null) {
-                        next = contentArea.nextFocus(null);
+                        next = contentHolder.nextFocus(null);
                     }
                     direction = Interactable.FocusChangeDirection.NEXT;
                     break;
                 case MOVE_FOCUS_PREVIOUS:
-                    next = contentArea.previousFocus(focusedInteractable);
+                    next = contentHolder.previousFocus(focusedInteractable);
                     if(next == null) {
-                        next = contentArea.previousFocus(null);
+                        next = contentHolder.previousFocus(null);
                     }
                     direction = Interactable.FocusChangeDirection.PREVIOUS;
                     break;
@@ -111,8 +111,13 @@ public abstract class AbstractBasePane implements BasePane {
     }
 
     @Override
-    public Composite getContentArea() {
-        return contentArea;
+    public Component getComponent() {
+        return contentHolder.getComponent();
+    }
+
+    @Override
+    public void setComponent(Component component) {
+        contentHolder.setComponent(component);
     }
 
     @Override
@@ -157,7 +162,7 @@ public abstract class AbstractBasePane implements BasePane {
         }
     }
 
-    protected class ContentArea extends AbstractInteractableComposite {
+    protected class ContentHolder extends AbstractInteractableComposite {
         @Override
         public void setComponent(Component component) {
             super.addComponent(component);

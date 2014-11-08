@@ -15,8 +15,6 @@ public class TextBoxTest extends TestBase {
     @Override
     public void init(WindowBasedTextGUI textGUI) {
         final BasicWindow window = new BasicWindow("TextBoxTest");
-        Container contentArea = window.getContentArea();
-
         Panel mainPanel = new Panel();
         mainPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
         Panel leftPanel = new Panel();
@@ -35,13 +33,15 @@ public class TextBoxTest extends TestBase {
         mainPanel.addComponent(leftPanel.withBorder(Borders.singleLine("Single line")));
         mainPanel.addComponent(rightPanel.withBorder(Borders.singleLine("Multiline")));
 
-        contentArea.addComponent(mainPanel.withBorder(Borders.singleLine("Main")));
-        contentArea.addComponent(new Button("OK", new Runnable() {
-            @Override
-            public void run() {
-                window.close();
-            }
-        }));
+        window.setComponent(
+                Panels.vertical(
+                    mainPanel.withBorder(Borders.singleLine("Main")),
+                    new Button("OK", new Runnable() {
+                        @Override
+                        public void run() {
+                            window.close();
+                        }
+                    })));
         textGUI.getWindowManager().addWindow(window);
     }
 }

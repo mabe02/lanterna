@@ -13,7 +13,6 @@ public class PanelTest extends TestBase {
     @Override
     public void init(WindowBasedTextGUI textGUI) {
         final BasicWindow window = new BasicWindow("Grid layout test");
-        Container contentArea = window.getContentArea();
 
         Panel mainPanel = new Panel();
         mainPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
@@ -52,13 +51,14 @@ public class PanelTest extends TestBase {
         panel.addComponent(new Button("Panel 4 Button"));
         rightPanel.addComponent(panel.withBorder(Borders.doubleLine("Title")));
 
-        contentArea.addComponent(mainPanel.withBorder(Borders.singleLine("Main")));
-        contentArea.addComponent(new Button("OK", new Runnable() {
-            @Override
-            public void run() {
-                window.close();
-            }
-        }));
+        window.setComponent(Panels.vertical(
+                mainPanel.withBorder(Borders.singleLine("Main")),
+                new Button("OK", new Runnable() {
+                    @Override
+                    public void run() {
+                        window.close();
+                    }
+                })));
         mainPanel.getPreferredSize();
         textGUI.getWindowManager().addWindow(window);
     }

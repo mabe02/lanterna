@@ -18,24 +18,27 @@ public class MultiLabelTest {
         WindowBasedTextGUI textGUI = new DefaultWindowTextGUI(screen);
         try {
             BasicWindow window = new BasicWindow("Label test");
-            window.getContentArea().addComponent(new Label("This is a single line label"));
-            window.getContentArea().addComponent(new Label("This is another label on the second line"));
-            window.getContentArea().addComponent(new EmptySpace(new TerminalSize(5, 1)));
-            window.getContentArea().addComponent(new Label("Here is a\nmulti-line\ntext segment that is using \\n"));
+            Panel contentArea = new Panel();
+            contentArea.setLayoutManager(new LinearLayout(Direction.VERTICAL));
+            contentArea.addComponent(new Label("This is a single line label"));
+            contentArea.addComponent(new Label("This is another label on the second line"));
+            contentArea.addComponent(new EmptySpace(new TerminalSize(5, 1)));
+            contentArea.addComponent(new Label("Here is a\nmulti-line\ntext segment that is using \\n"));
             Label label = new Label("We can change foreground color...");
             label.setForegroundColor(TextColor.ANSI.BLUE);
-            window.getContentArea().addComponent(label);
+            contentArea.addComponent(label);
             label = new Label("...and background color...");
             label.setBackgroundColor(TextColor.ANSI.MAGENTA);
-            window.getContentArea().addComponent(label);
+            contentArea.addComponent(label);
             label = new Label("...and add custom SGR styles!");
             label.addStyle(SGR.BOLD);
             label.addStyle(SGR.UNDERLINE);
-            window.getContentArea().addComponent(label);
-            window.getContentArea().addComponent(new EmptySpace(new TerminalSize(5, 1)));
-            window.getContentArea().addComponent(new Label("Here is an animated label:"));
-            window.getContentArea().addComponent(AnimatedLabel.createClassicSpinningLine());
+            contentArea.addComponent(label);
+            contentArea.addComponent(new EmptySpace(new TerminalSize(5, 1)));
+            contentArea.addComponent(new Label("Here is an animated label:"));
+            contentArea.addComponent(AnimatedLabel.createClassicSpinningLine());
 
+            window.setComponent(contentArea);
             textGUI.getWindowManager().addWindow(window);
             textGUI.updateScreen();
             while(!textGUI.getWindowManager().getWindows().isEmpty()) {

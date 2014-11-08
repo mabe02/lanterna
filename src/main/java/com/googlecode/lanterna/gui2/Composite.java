@@ -23,7 +23,7 @@ package com.googlecode.lanterna.gui2;
  * border, that wraps a single component for visualization purposes.
  * @author Martin
  */
-public interface Composite extends Container {
+public interface Composite {
     /**
      * Returns the component that this Composite is wrapping
      * @return 

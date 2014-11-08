@@ -22,7 +22,7 @@ package com.googlecode.lanterna.gui2;
  *
  * @author martin
  */
-public abstract class AbstractInteractableComposite extends AbstractComposite implements InteractableContainer {
+public abstract class AbstractInteractableComposite extends AbstractCompositeContainer implements InteractableContainer {
     
     @Override
     public boolean hasInteractable(Interactable interactable) {

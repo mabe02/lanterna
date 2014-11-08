@@ -78,6 +78,7 @@ public interface Window extends BasePane {
      * of its components has changed and we need a re-draw to make these changes visible.
      * @return {@code true} if the window would like to be re-drawn, {@code false} if the window doesn't need
      */
+    @Override
     boolean isInvalid();
 
     /**
@@ -135,7 +136,7 @@ public interface Window extends BasePane {
     void setDecoratedSize(TerminalSize decoratedSize);
 
     ///////////////////////////////////////////////////////////////
-    //// Below here are methods from RootContainer             ////
+    //// Below here are methods from BasePane                  ////
     //// We duplicate them here to make the JavaDoc more clear ////
     ///////////////////////////////////////////////////////////////
     /**
@@ -158,11 +159,19 @@ public interface Window extends BasePane {
     boolean handleInput(KeyStroke key);
 
     /**
-     * Returns a container that can be used as the parent for top-level components added to the window
-     * @return Container that represents the main component area of the window
+     * Sets the top-level component in the window, this will be the only component unless it's a container of some kind
+     * that you add child-components to.
+     * @param component Component to use as the top-level object in the Window
      */
     @Override
-    Composite getContentArea();
+    public void setComponent(Component component);
+
+    /**
+     * Returns the component which is the top-level in the component hierarchy inside this window.
+     * @return Top-level component in the window
+     */
+    @Override
+    public Component getComponent();
 
     /**
      * Returns the component in the window that currently has input focus. There can only be one component at a time

@@ -42,7 +42,8 @@ public class MiscComponentTest extends TestBase {
         textBoxPanel.addComponent(readOnlyTextArea);
         rightPanel.addComponent(textBoxPanel.withBorder(Borders.singleLine("Read-only")));
 
-        Container contentArea = window.getContentArea();
+        Panel contentArea = new Panel();
+        contentArea.setLayoutManager(new LinearLayout(Direction.VERTICAL));
         contentArea.addComponent(Panels.horizontal(leftPanel, rightPanel));
         contentArea.addComponent(new Separator(Direction.HORIZONTAL).setPreferredSize(new TerminalSize(16, 1)));
         contentArea.addComponent(new Button("OK", new Runnable() {
@@ -51,6 +52,7 @@ public class MiscComponentTest extends TestBase {
                 window.close();
             }
         }));
+        window.setComponent(contentArea);
         textGUI.getWindowManager().addWindow(window);
     }
 

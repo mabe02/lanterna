@@ -26,7 +26,7 @@ import com.googlecode.lanterna.input.KeyStroke;
  * always independent. One example of this is a multi-window system where each window is a root container.
  * @author Martin
  */
-public interface BasePane {
+public interface BasePane extends Composite {
     /**
      * Called by the GUI system (or something imitating the GUI system) to draw the root container. The TextGUIGraphics
      * object should be used to perform the drawing operations.
@@ -51,10 +51,21 @@ public interface BasePane {
     boolean handleInput(KeyStroke key);
 
     /**
-     * Returns a container that can be used as the parent for top-level components added to the root container
-     * @return Container that represents the main component area of the root container
+     * Returns the component that is the content of the BasePane. This is probably the root of a hierarchy of nested
+     * Panels but it could also be a single component.
+     * @return Component which is the content of this BasePane
      */
-    Composite getContentArea();
+    @Override
+    public Component getComponent();
+
+    /**
+     * Sets the top-level component inside this BasePane. If you want it to contain only one component, you can set it
+     * directly, but for more complicated GUIs you probably want to create a hierarchy of panels and set the first one
+     * here.
+     * @param component Component which this BasePane is using as it's content
+     */
+    @Override
+    public void setComponent(Component component);
 
     /**
      * Returns the component in the root container that currently has input focus. There can only be one component at a

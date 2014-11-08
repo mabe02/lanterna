@@ -97,7 +97,7 @@ public class AbstractWindow extends AbstractBasePane implements Window {
 
     @Override
     public TerminalSize getPreferredSize() {
-        return contentArea.getPreferredSize();
+        return contentHolder.getPreferredSize();
     }
 
     @Override
@@ -132,7 +132,7 @@ public class AbstractWindow extends AbstractBasePane implements Window {
 
     @Override
     public void close() {
-        contentArea.dispose();
+        contentHolder.dispose();
         if(windowManager == null) {
             throw new IllegalStateException("Cannot close " + toString() + " because it is not managed by any window manager");
         }

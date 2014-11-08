@@ -16,7 +16,6 @@ public class ListBoxTest extends TestBase {
     @Override
     public void init(WindowBasedTextGUI textGUI) {
         final BasicWindow window = new BasicWindow("ListBox test");
-        Container contentArea = window.getContentArea();
 
         Panel horizontalPanel = new Panel();
         horizontalPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
@@ -40,13 +39,15 @@ public class ListBoxTest extends TestBase {
         horizontalPanel.addComponent(radioBoxList.withBorder(Borders.singleLine("RadioBoxList")));
         horizontalPanel.addComponent(actionListBox.withBorder(Borders.singleLine("ActionListBox")));
 
-        contentArea.addComponent(horizontalPanel);
-        contentArea.addComponent(new Button("OK", new Runnable() {
-            @Override
-            public void run() {
-                window.close();
-            }
-        }));
+        window.setComponent(
+                Panels.vertical(
+                        horizontalPanel,
+                        new Button("OK", new Runnable() {
+                            @Override
+                            public void run() {
+                                window.close();
+                            }
+                        })));
         textGUI.getWindowManager().addWindow(window);
     }
 }

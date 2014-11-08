@@ -17,24 +17,27 @@ public class StackedModelWindowManagerTest extends TestBase {
     @Override
     public void init(final WindowBasedTextGUI textGUI) {
         final Window mainWindow = new BasicWindow("Choose test");
-        mainWindow.getContentArea().addComponent(new Button("Centered window", new Runnable() {
+        Panel contentArea = new Panel();
+        contentArea.setLayoutManager(new LinearLayout(Direction.VERTICAL));
+        contentArea.addComponent(new Button("Centered window", new Runnable() {
             @Override
             public void run() {
                 textGUI.getWindowManager().addWindow(new CenteredWindow());
             }
         }));
-        mainWindow.getContentArea().addComponent(new Button("Undecorated window", new Runnable() {
+        contentArea.addComponent(new Button("Undecorated window", new Runnable() {
             @Override
             public void run() {
                 textGUI.getWindowManager().addWindow(new UndecoratedWindow());
             }
         }));
-        mainWindow.getContentArea().addComponent(new Button("Close", new Runnable() {
+        contentArea.addComponent(new Button("Close", new Runnable() {
             @Override
             public void run() {
                 mainWindow.close();
             }
         }));
+        mainWindow.setComponent(contentArea);
         textGUI.getWindowManager().addWindow(mainWindow);
     }
 
@@ -69,7 +72,7 @@ public class StackedModelWindowManagerTest extends TestBase {
     private static class TestWindow extends BasicWindow {
         TestWindow(String title) {
             super(title);
-            getContentArea().addComponent(new Button("Close", new Runnable() {
+            setComponent(new Button("Close", new Runnable() {
                 @Override
                 public void run() {
                     close();

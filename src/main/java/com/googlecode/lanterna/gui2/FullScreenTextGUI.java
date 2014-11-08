@@ -41,14 +41,6 @@ public class FullScreenTextGUI extends AbstractTextGUI implements BasePane {
         super(screen);
         this.basePane = new ThisBasePane();
     }
-
-    public void setComponent(Component component) {
-        basePane.getContentArea().setComponent(component);
-    }
-    
-    public Component getComponent() {
-        return basePane.getContentArea().getComponent();
-    }
     
     @Override
     protected void drawGUI(TextGUIGraphics graphics) {
@@ -79,12 +71,17 @@ public class FullScreenTextGUI extends AbstractTextGUI implements BasePane {
     public boolean handleInput(KeyStroke key) {
         return basePane.handleInput(key);
     }
-
+    
     @Override
-    public Composite getContentArea() {
-        return basePane.getContentArea();
+    public void setComponent(Component component) {
+        basePane.setComponent(component);
     }
-
+    
+    @Override
+    public Component getComponent() {
+        return basePane.getComponent();
+    }
+    
     @Override
     public Interactable getFocusedInteractable() {
         return basePane.getFocusedInteractable();

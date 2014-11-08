@@ -53,18 +53,20 @@ public class GUIOverTelnet {
         textGUI.setEOFWhenNoWindows(true);
         try {
             final BasicWindow window = new BasicWindow("Text GUI over Telnet");
-            Container contentArea = window.getContentArea();
+            Panel contentArea = new Panel();
+            contentArea.setLayoutManager(new LinearLayout(Direction.VERTICAL));
             contentArea.addComponent(new Button("Button", new Runnable() {
                 @Override
                 public void run() {
                     final BasicWindow messageBox = new BasicWindow("Response");
-                    messageBox.getContentArea().addComponent(new Label("Hello!"));
-                    messageBox.getContentArea().addComponent(new Button("Close", new Runnable() {
-                        @Override
-                        public void run() {
-                            messageBox.close();
-                        }
-                    }));
+                    messageBox.setComponent(Panels.vertical(
+                            new Label("Hello!"),
+                            new Button("Close", new Runnable() {
+                                @Override
+                                public void run() {
+                                    messageBox.close();
+                                }
+                            })));
                     textGUI.getWindowManager().addWindow(messageBox);
                 }
             }).withBorder(Borders.singleLine("This is a button")));
@@ -139,6 +141,7 @@ public class GUIOverTelnet {
                     window.close();
                 }
             }));
+            window.setComponent(contentArea);
 
             textGUI.getWindowManager().addWindow(window);
 

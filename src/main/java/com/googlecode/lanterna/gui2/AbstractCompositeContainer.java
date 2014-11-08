@@ -22,10 +22,10 @@ package com.googlecode.lanterna.gui2;
  *
  * @author martin
  */
-public abstract class AbstractComposite extends AbstractComponent implements Composite {
+public abstract class AbstractCompositeContainer extends AbstractComponent implements Composite, Container {
     private Component component;
 
-    public AbstractComposite() {
+    public AbstractCompositeContainer() {
         this.component = null;
     }
     
