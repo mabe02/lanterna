@@ -20,14 +20,15 @@ public class InternationalCharactersTest {
         TextGraphics writer = new ScreenTextGraphics(screen);
         writer.setForegroundColor(TextColor.ANSI.DEFAULT);
         writer.setBackgroundColor(TextColor.ANSI.DEFAULT);
-        writer.putString(4, 2,  "Greek:      μὴ μου τοὺς κύκλους τάραττε");
-        writer.putString(4, 3,  "Icelandic:  þungur hnífur. þessi hnífur á að vera þungur!");
-        writer.putString(4, 4,  "Persian:    آنان که محیط فضل و آداب شدند  در جمع کمال شمع اصحاب شدند");
-        writer.putString(4, 5,  "Russian:    Запорізькі козаки турецькому султану!");
-        writer.putString(4, 6,  "Swedish:    Flygande bäckasiner söka hwila på mjuka tuvor");
-        writer.putString(4, 7,  "Thai:       เสียงฦๅเสียงเล่าอ้าง    อันใด พี่เอย");
+        writer.putString(4, 2,  "Armenian:   Ճանաչել զիմաստութիւն եւ զխրատ, իմանալ զբանս հանճարոյ");
+        writer.putString(4, 3,  "Greek:      μὴ μου τοὺς κύκλους τάραττε");
+        writer.putString(4, 4,  "Hebrew:     סְבָאלְבָּרְד הוא ארכיפלג הנמצא באוקיינוס הארקטי");
+        writer.putString(4, 5,  "Icelandic:  þungur hnífur   þessi hnífur á að vera þungur");
+        writer.putString(4, 6,  "Persian:    آنان که محیط فضل و آداب شدند  در جمع کمال شمع اصحاب شدند");
+        writer.putString(4, 7,  "Russian:    Запорізькі козаки турецькому султану!");
+        writer.putString(4, 8,  "Swedish:    Flygande bäckasiner söka hwila på mjuka tuvor");
+        writer.putString(4, 9,  "Thai:       เสียงฦๅเสียงเล่าอ้าง    อันใด พี่เอย");
         screen.refresh();
-
         screen.readInput();
         screen.stopScreen();
     }
