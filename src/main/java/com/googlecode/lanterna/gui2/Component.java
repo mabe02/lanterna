@@ -119,17 +119,18 @@ public interface Component extends TextGUIElement {
     Border withBorder(Border border);
     
     /**
-     * Translates a position local to the container to the root container's coordinate space
+     * Translates a position local to the container to the base pane's coordinate space. For a window-based GUI, this 
+     * be a coordinate in the window's coordinate space.
      * @param position Position to translate (relative to the container's top-left corner)
-     * @return Position in root container space
+     * @return Position in base pane space
      */
-    TerminalPosition toRootContainer(TerminalPosition position);
+    TerminalPosition toBasePane(TerminalPosition position);
 
     /**
-     * Returns the root container that this container belongs to. In a window-based GUI system, this will be a Window.
-     * @return The root container this component is placed on, or {@code null} if none
+     * Returns the BasePane that this container belongs to. In a window-based GUI system, this will be a Window.
+     * @return The base pane this component is placed on, or {@code null} if none
      */
-    BasePane getRootContainer();
+    BasePane getBasePane();
 
     /**
      * Removes the component from its parent and frees up any resources (threads, etc) associated with the component.

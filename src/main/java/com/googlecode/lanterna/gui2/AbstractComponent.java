@@ -132,16 +132,16 @@ public abstract class AbstractComponent implements Component {
     }
 
     @Override
-    public BasePane getRootContainer() {
+    public BasePane getBasePane() {
         if(parent == null) {
             return null;
         }
-        return parent.getRootContainer();
+        return parent.getBasePane();
     }
 
     @Override
-    public TerminalPosition toRootContainer(TerminalPosition position) {
-        return getParent().toRootContainer(getPosition().withRelative(position));
+    public TerminalPosition toBasePane(TerminalPosition position) {
+        return getParent().toBasePane(getPosition().withRelative(position));
     }
 
     @Override

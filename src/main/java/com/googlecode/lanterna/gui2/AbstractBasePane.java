@@ -141,7 +141,7 @@ public abstract class AbstractBasePane implements BasePane {
                 position.getRow() >= focusedInteractable.getSize().getRows()) {
             return null;
         }
-        return focusedInteractable.toRootContainer(position);
+        return focusedInteractable.toBasePane(position);
     }
 
     @Override
@@ -193,7 +193,7 @@ public abstract class AbstractBasePane implements BasePane {
         }
 
         @Override
-        public TerminalPosition toRootContainer(TerminalPosition position) {
+        public TerminalPosition toBasePane(TerminalPosition position) {
             return position;
         }
 
@@ -204,7 +204,7 @@ public abstract class AbstractBasePane implements BasePane {
         }
 
         @Override
-        public BasePane getRootContainer() {
+        public BasePane getBasePane() {
             return AbstractBasePane.this;
         }
     }

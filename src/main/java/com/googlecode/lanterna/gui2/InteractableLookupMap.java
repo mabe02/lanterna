@@ -49,7 +49,7 @@ public class InteractableLookupMap {
     }
 
     public void add(Interactable interactable) {
-        TerminalPosition topLeft = interactable.toRootContainer(TerminalPosition.TOP_LEFT_CORNER);
+        TerminalPosition topLeft = interactable.toBasePane(TerminalPosition.TOP_LEFT_CORNER);
         TerminalSize size = interactable.getSize();
         interactables.add(interactable);
         int index = interactables.size() - 1;
@@ -76,7 +76,7 @@ public class InteractableLookupMap {
             //If the currently active interactable component is not showing the cursor, use the top-left position instead
             cursorLocation = TerminalPosition.TOP_LEFT_CORNER;
         }
-        TerminalPosition startPosition = interactable.toRootContainer(cursorLocation);
+        TerminalPosition startPosition = interactable.toBasePane(cursorLocation);
         Set<Interactable> disqualified = getDisqualifiedInteractables(startPosition, true);
         TerminalSize size = getSize();
         int maxShift = Math.max(startPosition.getColumn(), size.getColumns() - startPosition.getColumn());
@@ -118,7 +118,7 @@ public class InteractableLookupMap {
             //If the currently active interactable component is not showing the cursor, use the top-left position instead
             cursorLocation = TerminalPosition.TOP_LEFT_CORNER;
         }
-        TerminalPosition startPosition = interactable.toRootContainer(cursorLocation);
+        TerminalPosition startPosition = interactable.toBasePane(cursorLocation);
         Set<Interactable> disqualified = getDisqualifiedInteractables(startPosition, false);
         TerminalSize size = getSize();
         int maxShift = Math.max(startPosition.getRow(), size.getRows() - startPosition.getRow());
