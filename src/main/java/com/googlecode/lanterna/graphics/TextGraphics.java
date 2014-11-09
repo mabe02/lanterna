@@ -175,7 +175,19 @@ public interface TextGraphics {
      * @return Itself
      */
     TextGraphics drawLine(TerminalPosition fromPoint, TerminalPosition toPoint, char character);
-
+    
+    /**
+     * Draws a line from a specified position to a specified position, using a supplied character. The current
+     * foreground color, background color and modifiers will be applied.
+     * @param fromX Column of the starting position to draw the line from (inclusive)
+     * @param fromY Row of the starting position to draw the line from (inclusive)
+     * @param toX Column of the end position to draw the line to (inclusive)
+     * @param toY Row of the end position to draw the line to (inclusive)
+     * @param character Character to use for the line
+     * @return Itself
+     */
+    TextGraphics drawLine(int fromX, int fromY, int toX, int toY, char character);
+    
     /**
      * Draws the outline of a triangle on the screen, using a supplied character. The triangle will begin at p1, go
      * through p2 and then p3 and then back to p1. The current foreground color, background color and modifiers will be

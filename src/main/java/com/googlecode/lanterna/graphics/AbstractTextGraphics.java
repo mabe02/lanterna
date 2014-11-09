@@ -148,6 +148,11 @@ public abstract class AbstractTextGraphics implements TextGraphics {
     }
 
     @Override
+    public TextGraphics drawLine(int fromX, int fromY, int toX, int toY, char character) {
+        return drawLine(new TerminalPosition(fromX, fromY), new TerminalPosition(toX, toY), character);
+    }
+
+    @Override
     public TextGraphics drawTriangle(TerminalPosition p1, TerminalPosition p2, TerminalPosition p3, char character) {
         shapeRenderer.drawTriangle(p1, p2, p3, character);
         return this;

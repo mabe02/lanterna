@@ -163,6 +163,11 @@ public final class TextGUIGraphics implements ThemedTextGraphics {
     }
 
     @Override
+    public TextGraphics drawLine(int fromX, int fromY, int toX, int toY, char character) {
+        return backend.drawLine(fromX, fromY, toX, toY, character);
+    }
+
+    @Override
     public TextGraphics setCharacter(TerminalPosition position, char character) {
         return backend.setCharacter(position, character);
     }
