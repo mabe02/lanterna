@@ -27,10 +27,10 @@ public class FullScreenTextGUITest {
     private static class BIOS extends AbstractInteractableComponent {
         @Override
         protected ComponentRenderer createDefaultRenderer() {
-            return new ComponentRenderer() {
+            return new InteractableRenderer() {
                 @Override
                 public TerminalSize getPreferredSize(Component component) {
-                    return null;
+                    return new TerminalSize(80, 24);
                 }
 
                 @Override
@@ -39,16 +39,34 @@ public class FullScreenTextGUITest {
                     graphics.setForegroundColor(TextColor.ANSI.WHITE);
                     graphics.setBackgroundColor(TextColor.ANSI.BLUE);
                     graphics.fill(' ');
+                    
+                    graphics.enableModifiers(SGR.BOLD);
 
                     graphics.putString(7, 0, "Reminds you of some BIOS, doesn't it?");
                     graphics.setCharacter(0, 1, Symbols.DOUBLE_LINE_TOP_LEFT_CORNER);
-                    graphics.drawLine(new TerminalPosition(1, 1), new TerminalPosition(size.getColumns() - 2, 1), Symbols.DOUBLE_LINE_HORIZONTAL);
-                    graphics.setCharacter(size.getColumns() - 1, 1, Symbols.DOUBLE_LINE_TOP_RIGHT_CORNER);
-                    graphics.drawLine(new TerminalPosition(size.getColumns() - 1, 2), new TerminalPosition(size.getColumns() - 1, size.getRows() - 2), Symbols.DOUBLE_LINE_VERTICAL);
-                    graphics.setCharacter(size.getColumns() - 1, size.getRows() - 1, Symbols.DOUBLE_LINE_BOTTOM_RIGHT_CORNER);
-                    graphics.drawLine(new TerminalPosition(1, size.getRows() - 1), new TerminalPosition(size.getColumns() - 2, size.getRows() - 1), Symbols.DOUBLE_LINE_HORIZONTAL);
-                    graphics.setCharacter(0, size.getRows() - 1, Symbols.DOUBLE_LINE_BOTTOM_LEFT_CORNER);
-                    graphics.drawLine(new TerminalPosition(0, size.getRows() - 2), new TerminalPosition(0, size.getRows() - 1), Symbols.DOUBLE_LINE_VERTICAL);
+                    graphics.drawLine(1, 1, 78, 1, Symbols.DOUBLE_LINE_HORIZONTAL);
+                    graphics.setCharacter(79, 1, Symbols.DOUBLE_LINE_TOP_RIGHT_CORNER);
+                    graphics.drawLine(79, 2, 79, 22, Symbols.DOUBLE_LINE_VERTICAL);
+                    graphics.setCharacter(79, 23, Symbols.DOUBLE_LINE_BOTTOM_RIGHT_CORNER);
+                    graphics.drawLine(1, 23, 78, 23, Symbols.DOUBLE_LINE_HORIZONTAL);
+                    graphics.setCharacter(0, 23, Symbols.DOUBLE_LINE_BOTTOM_LEFT_CORNER);
+                    graphics.drawLine(0, 2, 0, 22, Symbols.DOUBLE_LINE_VERTICAL);
+                    
+                    graphics.setCharacter(0, 17, Symbols.DOUBLE_LINE_T_SINGLE_RIGHT);
+                    graphics.drawLine(1, 17, 78, 17, Symbols.SINGLE_LINE_HORIZONTAL);
+                    graphics.setCharacter(79, 17, Symbols.DOUBLE_LINE_T_SINGLE_LEFT);
+                    graphics.setCharacter(40, 17, Symbols.SINGLE_LINE_T_UP);
+                    graphics.drawLine(40, 2, 40, 16, Symbols.SINGLE_LINE_VERTICAL);
+                    graphics.setCharacter(40, 1, Symbols.DOUBLE_LINE_T_SINGLE_DOWN);
+                    
+                    graphics.setCharacter(0, 20, Symbols.DOUBLE_LINE_T_SINGLE_RIGHT);
+                    graphics.drawLine(1, 20, 78, 20, Symbols.SINGLE_LINE_HORIZONTAL);
+                    graphics.setCharacter(79, 20, Symbols.DOUBLE_LINE_T_SINGLE_LEFT);
+                }
+
+                @Override
+                public TerminalPosition getCursorLocation(Component component) {
+                    return null;
                 }
             };
         }
