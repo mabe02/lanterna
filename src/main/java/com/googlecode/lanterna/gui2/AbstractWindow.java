@@ -32,7 +32,6 @@ import java.util.Set;
  * @author Martin
  */
 public class AbstractWindow extends AbstractBasePane implements Window {
-
     private String title;
     private WindowManager windowManager;
     private boolean visible;
@@ -132,10 +131,10 @@ public class AbstractWindow extends AbstractBasePane implements Window {
 
     @Override
     public void close() {
-        contentHolder.dispose();
         if(windowManager == null) {
             throw new IllegalStateException("Cannot close " + toString() + " because it is not managed by any window manager");
         }
         windowManager.removeWindow(this);
+        setComponent(null);
     }
 }

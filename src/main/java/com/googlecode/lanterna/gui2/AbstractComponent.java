@@ -22,17 +22,20 @@ import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 
 /**
- *
+ * AbstractComponent provides some good default behaviour for a Component, all components in Lanterna extends from this
+ * class in some way. If you want to write your own component that isn't interactable or theme:able, you probably want
+ * to extend from this class.
  * @author Martin
+ * @param <T> Type of Renderer this component will use
  */
-public abstract class AbstractComponent implements Component {
+public abstract class AbstractComponent<T extends ComponentRenderer> implements Component {
+    private T renderer;
     private Container parent;
     private TerminalSize size;
     private TerminalSize explicitPreferredSize;   //This is keeping the value set by the user (if setPreferredSize() is used)
     private TerminalPosition position;
     private Object layoutData;
     private boolean invalid;
-    private boolean disposed;
 
     public AbstractComponent() {
         size = TerminalSize.ZERO;
@@ -40,18 +43,61 @@ public abstract class AbstractComponent implements Component {
         explicitPreferredSize = null;
         layoutData = null;
         invalid = true;
-        disposed = false;
         parent = null;
+        renderer = createDefaultRenderer();
+        
+        if(renderer == null) {
+            throw new IllegalArgumentException(getClass() + " returns a null default renderer");
+        }
+    }
+    
+    /**
+     * When you create a custom component, you need to implement this method and return a Renderer which is responsible
+     * for taking care of sizing the component, rendering it and choosing where to place the cursor (if Interactable).
+     * This value is intended to be overridden by custom themes.
+     * @return Renderer to use when sizing and drawing this component
+     */
+    protected abstract T createDefaultRenderer();
+
+    protected void updateRenderer(String className) {
+        if(className == null) {
+            return;
+        }
+        if(renderer.getClass().getName().equals(className)) {
+            return;
+        }
+        try {
+            Object newRenderer = Class.forName(className).newInstance();
+            setRenderer((T)newRenderer);
+        } catch (InstantiationException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    protected void setRenderer(T renderer) {
+        if(renderer == null) {
+            renderer = createDefaultRenderer();
+            if(renderer == null) {
+                throw new IllegalStateException(getClass() + " returned a null default renderer");
+            }
+        }
+        this.renderer = renderer;
+    }
+
+    protected T getRenderer() {
+        return renderer;
     }
 
     protected void invalidate() {
-        ensureNotDisposed();
         invalid = true;
     }
 
     @Override
     public AbstractComponent setSize(TerminalSize size) {
-        ensureNotDisposed();
         this.size = size;
         return this;
     }
@@ -77,11 +123,12 @@ public abstract class AbstractComponent implements Component {
         return this;
     }
 
-    public abstract TerminalSize calculatePreferredSize();
+    public TerminalSize calculatePreferredSize() {
+        return renderer.getPreferredSize(this);
+    }
 
     @Override
     public AbstractComponent setPosition(TerminalPosition position) {
-        ensureNotDisposed();
         this.position = position;
         return this;
     }
@@ -109,11 +156,16 @@ public abstract class AbstractComponent implements Component {
      * probably won't notice that your code keeps refreshing the GUI even though nothing has changed.
      * @param graphics TextGraphics to be used to draw the component
      */
-    public abstract void drawComponent(TextGUIGraphics graphics);
+    public void drawComponent(TextGUIGraphics graphics) {
+        //This will override the default renderer with the one from the theme, if there was one
+        updateRenderer(graphics.getThemeDefinition(getClass()).getRenderer());
+
+        //Delegate drawing the component to the renderer
+        renderer.drawComponent(graphics, this);
+    }
 
     @Override
     public AbstractComponent setLayoutData(Object data) {
-        ensureNotDisposed();
         if(layoutData != data) {
             layoutData = data;
             invalidate();
@@ -132,6 +184,18 @@ public abstract class AbstractComponent implements Component {
     }
 
     @Override
+    public boolean isInside(Container container) {
+        Component test = this;
+        while(test.getParent() != null) {
+            if(test.getParent() == container) {
+                return true;
+            }
+            test = test.getParent();
+        }
+        return false;
+    }
+
+    @Override
     public BasePane getBasePane() {
         if(parent == null) {
             return null;
@@ -145,58 +209,18 @@ public abstract class AbstractComponent implements Component {
     }
 
     @Override
-    public void setParent(Container parent) {
-        ensureNotDisposed();
-        if(this.parent == parent) {
-            return;
-        }
-        Container oldParent = this.parent;
-        this.parent = null;
-        if(oldParent != null && oldParent.containsComponent(this)) {
-            oldParent.removeComponent(this);
-        }
-        this.parent = parent;
-        if(parent != null) {
-            if(!parent.containsComponent(this)) {
-                parent.addComponent(this);
-            }
-        }
-    }
-
-    @Override
     public Border withBorder(Border border) {
-        border.addComponent(this);
+        border.setComponent(this);
         return border;
     }
 
     @Override
-    protected void finalize() throws Throwable {
-        super.finalize();
-        if(!disposed) {
-            dispose();
-        }
+    public void onAdded(Container container) {
+        parent = container;
     }
 
     @Override
-    public final void dispose() {
-        if(disposed) {
-            //We could throw an error here but let's be nice
-            return;
-        }
-        if(parent != null) {
-            parent.removeComponent(this);
-        }
-        onDisposed();
-        disposed = true;
-    }
-
-    protected void onDisposed() {
-        //Available for custom implementation
-    }
-
-    protected void ensureNotDisposed() {
-        if(disposed) {
-            throw new IllegalStateException("Component " + toString() + " is already disposed");
-        }
+    public void onRemoved(Container container) {
+        parent = null;
     }
 }

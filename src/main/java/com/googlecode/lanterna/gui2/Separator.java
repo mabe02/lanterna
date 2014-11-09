@@ -29,7 +29,7 @@ import com.googlecode.lanterna.graphics.ThemeDefinition;
  * preferred size.
  * @author Martin
  */
-public class Separator extends AbstractRenderableComponent {
+public class Separator extends AbstractComponent {
 
     private final Direction direction;
 

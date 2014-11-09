@@ -18,25 +18,58 @@
  */
 package com.googlecode.lanterna.gui2;
 
+import com.googlecode.lanterna.TerminalPosition;
+import java.util.Arrays;
+import java.util.Collection;
+
 /**
  *
  * @author martin
+ * @param <T>
  */
-public abstract class AbstractInteractableComposite extends AbstractCompositeContainer implements InteractableContainer {
+public abstract class AbstractComposite<T extends ComponentRenderer> extends AbstractComponent<T> implements Composite, Container {
+    
+    private Component component;
+
+    public AbstractComposite() {
+        component = null;
+    }
     
     @Override
-    public boolean hasInteractable(Interactable interactable) {
-        return interactable != null && (interactable == getComponent() ||
-                (getComponent() instanceof InteractableContainer && ((InteractableContainer)getComponent()).hasInteractable(interactable)));
+    public void setComponent(Component component) {
+        Component oldComponent = this.component;
+        this.component = component;
+        if(oldComponent != null) {
+            oldComponent.onRemoved(this);
+        }
+        if(component != null) {
+            component.onAdded(this);
+            component.setPosition(TerminalPosition.TOP_LEFT_CORNER);
+        }
     }
 
+    @Override
+    public Component getComponent() {
+        return component;
+    }
+
+    @Override
+    public Collection<Component> getChildren() {
+        return Arrays.asList(component);
+    }
+    
+    @Override
+    public boolean isInvalid() {
+        return component != null && component.isInvalid();
+    }
+    
     @Override
     public Interactable nextFocus(Interactable fromThis) {
         if(fromThis == null && getComponent() instanceof Interactable) {
             return (Interactable)getComponent();
         }
-        else if(getComponent() instanceof InteractableContainer) {
-            return ((InteractableContainer)getComponent()).nextFocus(fromThis);
+        else if(getComponent() instanceof Container) {
+            return ((Container)getComponent()).nextFocus(fromThis);
         }
         return null;
     }
@@ -46,16 +79,16 @@ public abstract class AbstractInteractableComposite extends AbstractCompositeCon
         if(fromThis == null && getComponent() instanceof Interactable) {
             return (Interactable)getComponent();
         }
-        else if(getComponent() instanceof InteractableContainer) {
-            return ((InteractableContainer)getComponent()).previousFocus(fromThis);
+        else if(getComponent() instanceof Container) {
+            return ((Container)getComponent()).previousFocus(fromThis);
         }
         return null;
     }
 
     @Override
     public void updateLookupMap(InteractableLookupMap interactableLookupMap) {
-        if(getComponent() instanceof InteractableContainer) {
-            ((InteractableContainer)getComponent()).updateLookupMap(interactableLookupMap);
+        if(getComponent() instanceof Container) {
+            ((Container)getComponent()).updateLookupMap(interactableLookupMap);
         }
         else if(getComponent() instanceof Interactable) {
             interactableLookupMap.add((Interactable)getComponent());

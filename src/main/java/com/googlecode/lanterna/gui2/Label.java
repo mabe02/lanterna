@@ -30,7 +30,7 @@ import java.util.EnumSet;
  * Label is a simple read-only text display component that can show multi-line text in multiple colors
  * @author Martin
  */
-public class Label extends AbstractRenderableComponent {
+public class Label extends AbstractComponent {
     private String[] lines;
     private TerminalSize preferredSize;
     private TextColor foregroundColor;

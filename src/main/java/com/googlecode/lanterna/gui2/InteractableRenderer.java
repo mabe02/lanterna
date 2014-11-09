@@ -22,6 +22,7 @@ import com.googlecode.lanterna.TerminalPosition;
 
 /**
  * @author Martin
+ * @param <T>
  */
 public interface InteractableRenderer<T extends Component & Interactable> extends ComponentRenderer<T> {
     TerminalPosition getCursorLocation(T component);

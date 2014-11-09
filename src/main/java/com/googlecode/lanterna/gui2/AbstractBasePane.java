@@ -162,45 +162,44 @@ public abstract class AbstractBasePane implements BasePane {
         }
     }
 
-    protected class ContentHolder extends AbstractInteractableComposite {
+    protected class ContentHolder extends AbstractComposite {
         @Override
         public void setComponent(Component component) {
-            super.addComponent(component);
+            super.setComponent(component);
             if(focusedInteractable == null && component instanceof Interactable) {
                 setFocusedInteractable((Interactable)component);
             }
-            else if(focusedInteractable == null && component instanceof InteractableContainer) {
-                setFocusedInteractable(((InteractableContainer)component).nextFocus(null));
+            else if(focusedInteractable == null && component instanceof Container) {
+                setFocusedInteractable(((Container)component).nextFocus(null));
             }
         }
 
         @Override
-        public TerminalSize calculatePreferredSize() {
-            Component component = getComponent();
-            if(component == null) {
-                return TerminalSize.ZERO;
-            }
-            return component.getPreferredSize();
-        }
+        protected ComponentRenderer createDefaultRenderer() {
+            return new ComponentRenderer() {
+                @Override
+                public TerminalSize getPreferredSize(Component component) {
+                    Component subComponent = getComponent();
+                    if(subComponent == null) {
+                        return TerminalSize.ZERO;
+                    }
+                    return subComponent.getPreferredSize();
+                }
 
-        @Override
-        public void drawComponent(TextGUIGraphics graphics) {
-            Component component = getComponent();
-            if(component == null) {
-                return;
-            }
-            component.draw(graphics);
+                @Override
+                public void drawComponent(TextGUIGraphics graphics, Component component) {
+                    Component subComponent = getComponent();
+                    if(subComponent == null) {
+                        return;
+                    }
+                    subComponent.draw(graphics);
+                }
+            };
         }
 
         @Override
         public TerminalPosition toBasePane(TerminalPosition position) {
             return position;
-        }
-
-        @Override
-        public void removeComponent(Component component) {
-            super.removeComponent(component);
-            focusedInteractable = null;
         }
 
         @Override

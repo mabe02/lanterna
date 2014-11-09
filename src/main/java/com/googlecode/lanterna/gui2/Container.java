@@ -18,37 +18,47 @@
  */
 package com.googlecode.lanterna.gui2;
 
+import java.util.Collection;
+
 /**
- *
+ * Container is a component that contains a collection of child components. The basic example of an implementation of 
+ * this is the {@code Panel} class which uses a layout manager to size and position the children over its area.
  * @author Martin
  */
 public interface Container extends Component {
+    /**
+     * Returns collection that is to be considered a copy of the list of children contained inside of this object. 
+     * Modifying this list will not affect any internal state.
+     * @return Child-components inside of this Container
+     */
+    Collection<Component> getChildren();
+    
+    /**
+     * Given an interactable, find the next one in line to receive focus. If the interactable isn't inside this 
+     * container, this method should return {@code null}.
+     *
+     * @param fromThis Component from which to get the next interactable, or if
+     *                 null, pick the first available interactable
+     * @return The next interactable component, or null if there are no more
+     * interactables in the list
+     */
+    Interactable nextFocus(Interactable fromThis);
 
     /**
-     * Returns the number of components inside this Container
-     * @return Number of components this Container keeps
+     * Given an interactable, find the previous one in line to receive focus. If the interactable isn't inside this 
+     * container, this method should return {@code null}.
+     *
+     * @param fromThis Component from which to get the previous interactable,
+     *                 or if null, pick the last interactable in the list
+     * @return The previous interactable component, or null if there are no more
+     * interactables in the list
      */
-    int getNumberOfComponents();
+    Interactable previousFocus(Interactable fromThis);
     
-    boolean containsComponent(Component component);
-
     /**
-     * Returns the index of the component, within this container
-     * @param component Component to look for
-     * @return Index of the component, if it was found, -1 otherwise
+     * Takes a lookup map and updates it with information about where all the interactables inside of this container
+     * are located.
+     * @param interactableLookupMap Interactable map to update
      */
-    int getComponentIndex(Component component);
-
-    /**
-     * Returns the component at the specified index, or {@code null} if index was one number larger than the number of
-     * components in this container. If the index is further out of bounds, or negative, this method throws
-     * ArrayIndexOutOfBounds.
-     * @param index Index to get the component at
-     * @return The component at the specified index, or {@code null} if there was no component
-     */
-    Component getComponentAt(int index);
-    
-    void addComponent(Component component);
-    
-    void removeComponent(Component component);
+    void updateLookupMap(InteractableLookupMap interactableLookupMap);
 }

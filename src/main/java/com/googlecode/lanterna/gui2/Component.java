@@ -26,8 +26,6 @@ import com.googlecode.lanterna.TerminalSize;
  * @author Martin
  */
 public interface Component extends TextGUIElement {
-    
-    
     /**
      * Returns the top-left corner of this component, measured from its parent.
      * @return Position of this component
@@ -89,23 +87,21 @@ public interface Component extends TextGUIElement {
      * @return This component's layout data
      */
     Object getLayoutData();
-
-    /**
-     * Assigns the component to a new container. If the component already belongs to a different container, it will be
-     * removed from there first. Calling this method will automatically call the addComponent method on the parent. If
-     * you call addComponent(..) with this object instead, it will implicitly call this method so either one can be used
-     * to assign a component to a container.
-     * <p/>
-     * Calling {@code setParent(null)} is the same as removing the component from the container.
-     * @param parent New parent container or {@code null} if you want to remove the component from its current parent
-     */
-    void setParent(Container parent);
     
     /**
      * Returns the container which is holding this container, or {@code null} if it's not assigned to anything.
      * @return Parent container or null
      */
     Container getParent();
+    
+    /**
+     * Returns true if this component is inside of the specified Container. It might be a direct child or not, this 
+     * method makes no difference. If {@code getParent()} is not the same instance as {@code container}, but if this 
+     * method returns true, you can be sure that this component is not a direct child.
+     * @param container Container to test if this component is inside
+     * @return True if this component is contained in some way within the {@code container}
+     */
+    boolean isInside(Container container);
     
     /**
      * Takes a border object and moves this component inside it and then returns it again. This makes it easy to quickly
@@ -131,14 +127,16 @@ public interface Component extends TextGUIElement {
      * @return The base pane this component is placed on, or {@code null} if none
      */
     BasePane getBasePane();
-
+    
     /**
-     * Removes the component from its parent and frees up any resources (threads, etc) associated with the component.
-     * After this call, the component cannot be used anymore. It is not required to call dispose on components when you
-     * want to remove them or want to close the window they are part of, this is in general cared for automatically.
-     * Calling dispose() manually is only required for certain components (like AnimatedLabel) when you want to free up
-     * resources like background threads. When you close a window, Lanterna will call dispose on all child components of
-     * that window.
+     * Called by the GUI system when you add a component to a container; DO NOT CALL THIS YOURSELF! 
+     * @param container Container that this component was just added to
      */
-    void dispose();
+    void onAdded(Container container);
+    
+    /**
+     * Called by the GUI system when you remove a component from a container; DO NOT CALL THIS YOURSELF! 
+     * @param container Container that this component was just removed from
+     */
+    void onRemoved(Container container);
 }

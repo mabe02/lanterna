@@ -25,7 +25,7 @@ import com.googlecode.lanterna.TerminalSize;
  *
  * @author Martin
  */
-public interface Border extends InteractableContainer, Composite {
+public interface Border extends Container, Composite {
     public static interface BorderRenderer extends ComponentRenderer {
         /**
          * How large is the offset from the top left corner of the border to the top left corner of the wrapped component?

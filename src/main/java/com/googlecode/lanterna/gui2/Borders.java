@@ -69,7 +69,7 @@ public class Borders {
         @Override
         public TerminalSize getPreferredSize(Component component) {
             StandardBorder border = (StandardBorder)component;
-            Component wrappedComponent = border.getWrappedComponent();
+            Component wrappedComponent = border.getComponent();
             TerminalSize preferredSize;
             if (wrappedComponent == null) {
                 preferredSize = TerminalSize.ZERO;
@@ -94,7 +94,7 @@ public class Borders {
         @Override
         public void drawComponent(TextGUIGraphics graphics, Component component) {
             StandardBorder border = (StandardBorder)component;
-            Component wrappedComponent = border.getWrappedComponent();
+            Component wrappedComponent = border.getComponent();
             if(wrappedComponent == null) {
                 return;
             }
@@ -151,7 +151,7 @@ public class Borders {
         }
 
         @Override
-        protected ComponentRenderer createDefaultRenderer() {
+        protected BorderRenderer createDefaultRenderer() {
             return new SingleLineRenderer();
         }
     }
@@ -194,7 +194,7 @@ public class Borders {
         }
 
         @Override
-        protected ComponentRenderer createDefaultRenderer() {
+        protected BorderRenderer createDefaultRenderer() {
             return new DoubleLineRenderer();
         }
     }

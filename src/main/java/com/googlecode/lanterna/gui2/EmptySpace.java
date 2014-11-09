@@ -64,16 +64,22 @@ public class EmptySpace extends AbstractComponent {
     }
 
     @Override
-    public TerminalSize calculatePreferredSize() {
-        return size;
-    }
+    protected ComponentRenderer createDefaultRenderer() {
+        return new ComponentRenderer() {
 
-    @Override
-    public void drawComponent(TextGUIGraphics graphics) {
-        graphics.applyThemeStyle(graphics.getThemeDefinition(EmptySpace.class).getNormal());
-        if(color != null) {
-            graphics.setBackgroundColor(color);
-        }
-        graphics.fill(' ');
+            @Override
+            public TerminalSize getPreferredSize(Component component) {
+                return size;
+            }
+
+            @Override
+            public void drawComponent(TextGUIGraphics graphics, Component component) {
+                graphics.applyThemeStyle(graphics.getThemeDefinition(EmptySpace.class).getNormal());
+                if(color != null) {
+                    graphics.setBackgroundColor(color);
+                }
+                graphics.fill(' ');
+            }
+        };
     }
 }

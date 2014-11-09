@@ -78,7 +78,7 @@ public class AnimatedLabel extends Label {
     }
 
     @Override
-    protected void onDisposed() {
+    public void onRemoved(Container container) {
         stopAnimation();
     }
 
@@ -123,7 +123,12 @@ public class AnimatedLabel extends Label {
                 canCloseTimer();
             }
             else {
-                animatedLabel.nextFrame();
+                if(animatedLabel.getBasePane() == null) {
+                    animatedLabel.stopAnimation();
+                }
+                else {
+                    animatedLabel.nextFrame();
+                }
             }
         }
     }

@@ -79,7 +79,10 @@ public class DefaultWindowDecorationRenderer implements WindowDecorationRenderer
 
     @Override
     public TerminalSize getDecoratedSize(Window window, TerminalSize contentAreaSize) {
-        return contentAreaSize.withColumns(contentAreaSize.getColumns() + 2).withRows(contentAreaSize.getRows() + 2);
+        return contentAreaSize
+                .withRelativeColumns(2)
+                .withRelativeRows(2)
+                .max(new TerminalSize(window.getTitle().length() + 4, 1));  //Make sure the title fits!
     }
 
     private static final TerminalPosition OFFSET = new TerminalPosition(1, 1);
