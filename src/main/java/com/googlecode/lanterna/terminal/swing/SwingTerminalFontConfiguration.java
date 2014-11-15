@@ -18,14 +18,19 @@
  */
 package com.googlecode.lanterna.terminal.swing;
 
+import com.googlecode.lanterna.Symbols;
 import com.googlecode.lanterna.TextCharacter;
 
 import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * This class encapsulates the font information used by a SwingTerminal
@@ -33,6 +38,29 @@ import java.util.List;
  */
 public class SwingTerminalFontConfiguration {
 
+    /**
+     * Controls how the SGR bold will take effect when enabled on a character. Mainly this is controlling if the 
+     * character should be rendered with a bold font or not. The reason for this is that some characters, notably the
+     * lines and double-lines in defined in Symbol, usually doesn't look very good with bold font when you try to 
+     * construct a GUI. 
+     */
+    public static enum BoldMode {
+        /**
+         * All characters with SGR Bold enabled will be rendered using a bold font
+         */
+        EVERYTHING,
+        /**
+         * All characters with SGR Bold enabled, except for the characters defined as constants in Symbols class, will 
+         * be rendered using a bold font
+         */
+        EVERYTHING_BUT_SYMBOLS,
+        /**
+         * Bold font will not be used for characters with SGR bold enabled
+         */
+        NOTHING,
+        ;
+    }
+    
     /**
      * This is the default font settings that will be used if you don't specify anything
      */
@@ -53,20 +81,22 @@ public class SwingTerminalFontConfiguration {
      */
     @SuppressWarnings("WeakerAccess")
     public static SwingTerminalFontConfiguration newInstance(Font... fontsInOrderOfPriority) {
-        return new SwingTerminalFontConfiguration(true, fontsInOrderOfPriority);
+        return new SwingTerminalFontConfiguration(true, BoldMode.EVERYTHING_BUT_SYMBOLS, fontsInOrderOfPriority);
     }
 
     private final List<Font> fontPriority;
     private final int fontWidth;
     private final int fontHeight;
     private final boolean useAntiAliasing;
+    private final BoldMode boldMode;
 
     @SuppressWarnings("WeakerAccess")
-    protected SwingTerminalFontConfiguration(boolean useAntiAliasing, Font... fontsInOrderOfPriority) {
+    protected SwingTerminalFontConfiguration(boolean useAntiAliasing, BoldMode boldMode, Font... fontsInOrderOfPriority) {
         if(fontsInOrderOfPriority == null || fontsInOrderOfPriority.length == 0) {
             throw new IllegalArgumentException("Must pass in a valid list of fonts to SwingTerminalFontConfiguration");
         }
         this.useAntiAliasing = useAntiAliasing;
+        this.boldMode = boldMode;
         this.fontPriority = Collections.unmodifiableList(Arrays.asList(fontsInOrderOfPriority));
         this.fontWidth = getFontWidth(fontPriority.get(0));
         this.fontHeight = getFontHeight(fontPriority.get(0));
@@ -94,8 +124,10 @@ public class SwingTerminalFontConfiguration {
 
     Font getFontForCharacter(TextCharacter character) {
         Font normalFont = getFontForCharacter(character.getCharacter());
-        if(character.isBold()) {
-            normalFont = normalFont.deriveFont(Font.BOLD);
+        if(boldMode == BoldMode.EVERYTHING || (boldMode == BoldMode.EVERYTHING_BUT_SYMBOLS && isNotASymbol(character.getCharacter()))) {
+            if(character.isBold()) {
+                normalFont = normalFont.deriveFont(Font.BOLD);
+            }
         }
         return normalFont;
     }
@@ -139,5 +171,29 @@ public class SwingTerminalFontConfiguration {
                 useAntiAliasing ?
                         RenderingHints.VALUE_TEXT_ANTIALIAS_ON : RenderingHints.VALUE_TEXT_ANTIALIAS_OFF,
                 RenderingHints.VALUE_FRACTIONALMETRICS_DEFAULT);
+    }
+
+    
+    private static final Set<Character> SYMBOLS_CACHE = new HashSet<Character>();
+    static {
+        for(Field field: Symbols.class.getFields()) {
+            if(field.getType() == char.class &&
+                    (field.getModifiers() & Modifier.FINAL) != 0 &&
+                    (field.getModifiers() & Modifier.STATIC) != 0) {
+                try {
+                    SYMBOLS_CACHE.add(field.getChar(null));
+                }
+                catch(IllegalArgumentException ignore) {
+                    //Should never happen!
+                }
+                catch(IllegalAccessException ignore) {
+                    //Should never happen!
+                }
+            }
+        }
+    }
+    
+    private boolean isNotASymbol(char character) {
+        return !SYMBOLS_CACHE.contains(character);
     }
 }
