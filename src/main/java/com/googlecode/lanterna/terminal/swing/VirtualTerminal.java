@@ -72,7 +72,7 @@ class VirtualTerminal {
         return size;
     }
 
-    public void setCursorPosition(TerminalPosition cursorPosition) {
+    public synchronized void setCursorPosition(TerminalPosition cursorPosition) {
         currentBuffer.ensurePosition(size, cursorPosition);
         this.cursorPosition = cursorPosition;
         correctCursor();
@@ -93,7 +93,7 @@ class VirtualTerminal {
                         Math.max(cursorPosition.getRow(), 0));
     }
 
-    public void putCharacter(TextCharacter terminalCharacter) {
+    public synchronized void putCharacter(TextCharacter terminalCharacter) {
         if(terminalCharacter.getCharacter() == '\n') {
             moveCursorToNextLine();
         }
@@ -141,7 +141,7 @@ class VirtualTerminal {
         setCursorPosition(TerminalPosition.TOP_LEFT_CORNER);
     }
 
-    Iterable<List<TextCharacter>> getLines() {
+    synchronized Iterable<List<TextCharacter>> getLines() {
         int scrollingOffset = terminalScrollController.getScrollingOffset();
         int visibleRows = size.getRows();
         //Make sure scrolling isn't too far off (can be sometimes when the terminal is being resized and the scrollbar
