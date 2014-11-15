@@ -42,8 +42,7 @@ class VirtualTerminalTextGraphics extends AbstractTextGraphics {
                 rowIndex < 0 || rowIndex >= size.getRows()) {
             return;
         }
-        virtualTerminal.setCursorPosition(new TerminalPosition(columnIndex, rowIndex));
-        virtualTerminal.putCharacter(textCharacter);
+        virtualTerminal.setCursorAndPutCharacter(new TerminalPosition(columnIndex, rowIndex), textCharacter);
     }
 
     @Override

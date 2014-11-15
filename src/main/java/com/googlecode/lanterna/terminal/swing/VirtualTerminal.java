@@ -122,6 +122,17 @@ class VirtualTerminal {
             currentBuffer.ensurePosition(size, cursorPosition);
         }
     }
+    
+    /**
+     * Method that updates the cursor position and puts a character atomically. This method is here for thread safety.
+     * The cursor position after this call will be the following position after the one specified.
+     * @param cursorPosition Position to put the character at
+     * @param terminalCharacter Character to put
+     */
+    synchronized void setCursorAndPutCharacter(TerminalPosition cursorPosition, TextCharacter terminalCharacter) {
+        setCursorPosition(cursorPosition);
+        putCharacter(terminalCharacter);
+    }
 
     private void moveCursorToNextLine() {
         cursorPosition = cursorPosition.withColumn(0).withRelativeRow(1);
