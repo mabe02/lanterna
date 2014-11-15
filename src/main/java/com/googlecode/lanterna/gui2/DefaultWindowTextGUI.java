@@ -57,6 +57,13 @@ public class DefaultWindowTextGUI extends AbstractTextGUI implements WindowBased
 
     private DefaultWindowTextGUI(VirtualScreen screen, WindowManager windowManager, WindowPostRenderer postRenderer, TextGUIElement background) {
         super(screen);
+        if(windowManager == null) {
+            throw new IllegalArgumentException("Creating a window-based TextGUI requires a WindowManager");
+        }
+        if(background == null) {
+            //Use a sensible default instead of throwing
+            background = new EmptySpace(TextColor.ANSI.BLUE);
+        }
         this.virtualScreen = screen;
         this.windowManager = windowManager;
         this.background = background;

@@ -49,6 +49,9 @@ public abstract class AbstractTextGUI implements TextGUI {
     private Theme guiTheme;
 
     protected AbstractTextGUI(Screen screen) {
+        if(screen == null) {
+            throw new IllegalArgumentException("Creating a TextGUI requires an underlying Screen");
+        }
         this.screen = screen;
         this.listeners = new CopyOnWriteArrayList<Listener>();
         this.blockingIO = false;
