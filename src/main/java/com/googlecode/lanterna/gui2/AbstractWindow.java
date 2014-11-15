@@ -60,7 +60,9 @@ public class AbstractWindow extends AbstractBasePane implements Window {
         //This is kind of stupid check, but might cause it to blow up on people using the library incorrectly instead of
         //just causing weird behaviour
         if(this.textGUI != null && textGUI != null) {
-            throw new UnsupportedOperationException("Are you calling setTextGUI yourself? Please read the documentation.");
+            throw new UnsupportedOperationException("Are you calling setTextGUI yourself? Please read the documentation"
+                    + " in that case (this could also be a bug in Lanterna, please report it if you are sure you are "
+                    + "not calling Window.setTextGUI(..) from your code)");
         }
         this.textGUI = textGUI;
     }
