@@ -19,6 +19,7 @@
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.input.KeyStroke;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -222,6 +223,11 @@ public class Panel extends AbstractComponent implements Container {
         return null;
     }
 
+    @Override
+    public boolean handleInput(KeyStroke key) {
+        return false;
+    }
+    
     @Override
     public void updateLookupMap(InteractableLookupMap interactableLookupMap) {
         for(Component component: components) {

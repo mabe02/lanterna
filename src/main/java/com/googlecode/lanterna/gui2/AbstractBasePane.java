@@ -70,7 +70,16 @@ public abstract class AbstractBasePane implements BasePane {
                 case HANDLED:
                     return true;
                 case UNHANDLED:
-                    break;
+                    //Filter the event recursively through all parent containers until we hit null; give the containers
+                    //a chance to absorb the event
+                    Container parent = focusedInteractable.getParent();
+                    while(parent != null) {
+                        if(parent.handleInput(key)) {
+                            return true;
+                        }
+                        parent = parent.getParent();
+                    }
+                    return false;
                 case MOVE_FOCUS_NEXT:
                     next = contentHolder.nextFocus(focusedInteractable);
                     if(next == null) {

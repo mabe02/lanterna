@@ -18,6 +18,7 @@
  */
 package com.googlecode.lanterna.gui2;
 
+import com.googlecode.lanterna.input.KeyStroke;
 import java.util.Collection;
 
 /**
@@ -54,6 +55,18 @@ public interface Container extends Component {
      * interactables in the list
      */
     Interactable previousFocus(Interactable fromThis);
+    
+    /**
+     * If an interactable component inside this container received a keyboard event that wasn't handled, the GUI system
+     * will recursively send the event to each parent container to give each of them a chance to consume the event. 
+     * Return {@code false} if the implementer doesn't care about this particular keystroke and it will be automatically
+     * sent up the hierarchy the to next container. If you return {@code true}, the event will stop here and won't be 
+     * reported as unhandled.
+     * @param key Keystroke that was ignored by the interactable inside this container
+     * @return {@code true} if this event was handled by this container and shouldn't be processed anymore, 
+     * {@code false} if the container didn't take any action on the event and want to pass it on
+     */
+    boolean handleInput(KeyStroke key);
     
     /**
      * Takes a lookup map and updates it with information about where all the interactables inside of this container

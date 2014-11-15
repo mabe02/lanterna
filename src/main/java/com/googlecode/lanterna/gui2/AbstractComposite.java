@@ -19,6 +19,7 @@
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.input.KeyStroke;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -83,6 +84,11 @@ public abstract class AbstractComposite<T extends ComponentRenderer> extends Abs
             return ((Container)getComponent()).previousFocus(fromThis);
         }
         return null;
+    }
+
+    @Override
+    public boolean handleInput(KeyStroke key) {
+        return false;
     }
 
     @Override
