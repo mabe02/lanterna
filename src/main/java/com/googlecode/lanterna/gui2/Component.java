@@ -95,6 +95,13 @@ public interface Component extends TextGUIElement {
     Container getParent();
     
     /**
+     * Returns the TextGUI that this component is currently part of. If the component hasn't been added to any container
+     * or in any other way placed into a GUI system, this method will return null.
+     * @return The TextGUI that this component belongs to, or null if none
+     */
+    TextGUI getTextGUI();
+    
+    /**
      * Returns true if this component is inside of the specified Container. It might be a direct child or not, this 
      * method makes no difference. If {@code getParent()} is not the same instance as {@code container}, but if this 
      * method returns true, you can be sure that this component is not a direct child.

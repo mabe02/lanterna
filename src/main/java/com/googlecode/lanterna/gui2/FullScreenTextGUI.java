@@ -52,11 +52,21 @@ public class FullScreenTextGUI extends AbstractTextGUI implements BasePane {
         public TerminalPosition toGlobal(TerminalPosition localPosition) {
             return localPosition;
         }
+
+        @Override
+        public TextGUI getTextGUI() {
+            return FullScreenTextGUI.this;
+        }
     }
     
     /////////////////////////////////////////////////////////////////////
     // Delegate all BasePane method calls to the ThisBasePane instance //
     /////////////////////////////////////////////////////////////////////
+    @Override
+    public TextGUI getTextGUI() {
+        return basePane.getTextGUI();   //This is kind of stupid... But for consistency's sake...
+    }
+    
     @Override
     public boolean isInvalid() {
         return basePane.isInvalid();

@@ -184,6 +184,14 @@ public abstract class AbstractComponent<T extends ComponentRenderer> implements 
     }
 
     @Override
+    public TextGUI getTextGUI() {
+        if(parent == null) {
+            return null;
+        }
+        return parent.getTextGUI();
+    }
+    
+    @Override
     public boolean isInside(Container container) {
         Component test = this;
         while(test.getParent() != null) {

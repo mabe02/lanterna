@@ -19,6 +19,7 @@
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.graphics.Theme;
+import com.googlecode.lanterna.input.KeyStroke;
 
 import java.io.IOException;
 
@@ -68,4 +69,32 @@ public interface TextGUI {
      * @return A {@code TextGUIThread} implementation that can be used to asynchronously manage the GUI
      */
     TextGUIThread getGUIThread();
+    
+    /**
+     * Adds a listener to this TextGUI to fire events on.
+     * @param listener Listener to add
+     */
+    void addListener(Listener listener);
+    
+    /**
+     * Removes a listener from this TextGUI so that it will no longer receive events
+     * @param listener Listener to remove
+     */
+    void removeListener(Listener listener);
+    
+    /**
+     * Listener interface for TextGUI, firing on events related to the overall GUI
+     */
+    public static interface Listener {
+        /**
+         * Fired either when no component was in focus during a keystroke or if the focused component and all its parent
+         * containers chose not to handle the event. This event listener should also return {@code true} if the event
+         * was processed in any way that requires the TextGUI to update itself, otherwise {@code false}.
+         * @param textGUI TextGUI that had the event
+         * @param keyStroke Keystroke that was unhandled
+         * @return If the outcome of this KeyStroke processed by the implementer requires the TextGUI to re-draw, return
+         * {@code true} here, otherwise {@code false}
+         */
+        boolean onUnhandledKeyStroke(TextGUI textGUI, KeyStroke keyStroke);
+    }
 }

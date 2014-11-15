@@ -30,7 +30,9 @@ import java.io.FileInputStream;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * This abstract implementation of TextGUI contains some basic management of the underlying Screen and translates the
@@ -40,6 +42,7 @@ import java.util.Properties;
 public abstract class AbstractTextGUI implements TextGUI {
 
     private final Screen screen;
+    private final List<Listener> listeners;
     private boolean blockingIO;
     private boolean dirty;
     private TextGUIThread textGUIThread;
@@ -47,6 +50,7 @@ public abstract class AbstractTextGUI implements TextGUI {
 
     protected AbstractTextGUI(Screen screen) {
         this.screen = screen;
+        this.listeners = new CopyOnWriteArrayList<Listener>();
         this.blockingIO = false;
         this.dirty = false;
         this.textGUIThread = null;
@@ -88,7 +92,11 @@ public abstract class AbstractTextGUI implements TextGUI {
                 if (keyStroke.getKeyType() == KeyType.EOF) {
                     throw new EOFException();
                 }
-                dirty = handleInput(keyStroke) || dirty;
+                boolean handled = handleInput(keyStroke);
+                if(handled == false) {
+                    handled = fireUnhandledKeyStroke(keyStroke);
+                }
+                dirty = handled || dirty;
                 keyStroke = pollInput();
             } while(keyStroke != null);
         }
@@ -123,12 +131,30 @@ public abstract class AbstractTextGUI implements TextGUI {
         return textGUIThread;
     }
 
+    @Override
+    public void addListener(Listener listener) {
+        listeners.add(listener);
+    }
+
+    @Override
+    public void removeListener(Listener listener) {
+        listeners.remove(listener);
+    }
+
     public void setBlockingIO(boolean blockingIO) {
         this.blockingIO = blockingIO;
     }
 
     public boolean isBlockingIO() {
         return blockingIO;
+    }
+    
+    protected boolean fireUnhandledKeyStroke(KeyStroke keyStroke) {
+        boolean handled = false;
+        for(Listener listener: listeners) {
+            handled = listener.onUnhandledKeyStroke(this, keyStroke) || handled;
+        }
+        return handled;
     }
 
     protected abstract void drawGUI(TextGUIGraphics graphics);

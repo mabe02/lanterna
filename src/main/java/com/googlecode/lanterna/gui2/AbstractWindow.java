@@ -33,6 +33,7 @@ import java.util.Set;
  */
 public class AbstractWindow extends AbstractBasePane implements Window {
     private String title;
+    private TextGUI textGUI;
     private WindowManager windowManager;
     private boolean visible;
     private TerminalSize lastKnownSize;
@@ -46,10 +47,25 @@ public class AbstractWindow extends AbstractBasePane implements Window {
     public AbstractWindow(String title) {
         super();
         this.title = title;
+        this.textGUI = null;
+        this.windowManager = null;
         this.visible = true;
         this.lastKnownPosition = null;
         this.lastKnownSize = null;
         this.lastKnownDecoratedSize = null;
+    }
+
+    /**
+     * Don't call this method yourself, it's called by the GUI system when a window is displayed.
+     * @param textGUI TextGUI this window belongs to
+     */
+    public void setTextGUI(TextGUI textGUI) {
+        this.textGUI = textGUI;
+    }
+
+    @Override
+    public TextGUI getTextGUI() {
+        return textGUI;
     }
 
     public void setWindowManager(WindowManager windowManager) {

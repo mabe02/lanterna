@@ -27,6 +27,14 @@ import com.googlecode.lanterna.input.KeyStroke;
  * @author Martin
  */
 public interface BasePane extends Composite {
+    
+    /**
+     * Returns the TextGUI this BasePane belongs to or {@code null} if none. One example of when this method returns
+     * {@code null} is when calling it on a Window that hasn't been displayed yet.
+     * @return The TextGUI this BasePane belongs to
+     */
+    TextGUI getTextGUI();
+    
     /**
      * Called by the GUI system (or something imitating the GUI system) to draw the root container. The TextGUIGraphics
      * object should be used to perform the drawing operations.

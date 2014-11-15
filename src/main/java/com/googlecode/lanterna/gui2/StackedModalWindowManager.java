@@ -22,6 +22,7 @@ import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  *
@@ -32,11 +33,13 @@ public class StackedModalWindowManager implements WindowManager {
     private static final int CASCADE_SHIFT_DOWN = 1;
 
     private final SortedSet<ManagedWindow> windowStack;
+    private final List<Listener> listeners;
     private final WindowDecorationRenderer windowDecorationRenderer;
     private TerminalPosition nextTopLeftPosition;
 
     public StackedModalWindowManager() {
         this.windowStack = new TreeSet<ManagedWindow>();
+        this.listeners = new CopyOnWriteArrayList<Listener>();
         this.nextTopLeftPosition = new TerminalPosition(CASCADE_SHIFT_RIGHT, CASCADE_SHIFT_DOWN);
         this.windowDecorationRenderer = new DefaultWindowDecorationRenderer();
     }    
@@ -64,6 +67,7 @@ public class StackedModalWindowManager implements WindowManager {
         if(window instanceof AbstractWindow) {
             ((AbstractWindow)window).setWindowManager(this);
         }
+        fireWindowAdded(window);
     }
 
     @Override
@@ -77,6 +81,7 @@ public class StackedModalWindowManager implements WindowManager {
                     + " contain " + window);
         }
         windowStack.remove(managedWindow);
+        fireWindowRemoved(window);
     }
 
     @Override
@@ -139,6 +144,28 @@ public class StackedModalWindowManager implements WindowManager {
             return undecoratedSize;
         }
         return getWindowDecorationRenderer(window).getDecoratedSize(window, undecoratedSize);
+    }
+
+    @Override
+    public void addListener(Listener listener) {
+        listeners.add(listener);
+    }
+
+    @Override
+    public void removeListener(Listener listener) {
+        listeners.remove(listener);
+    }
+    
+    private void fireWindowAdded(Window window) {
+        for(Listener listener: listeners) {
+            listener.onWindowAdded(this, window);
+        }
+    }
+    
+    private void fireWindowRemoved(Window window) {
+        for(Listener listener: listeners) {
+            listener.onWindowRemoved(this, window);
+        }
     }
 
     private TerminalSize getUndecoratedSize(Window window, TerminalPosition topLeft, TerminalSize screenSize) throws IllegalArgumentException {
