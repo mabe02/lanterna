@@ -57,6 +57,11 @@ public class AbstractWindow extends AbstractBasePane implements Window {
 
     @Override
     public void setTextGUI(TextGUI textGUI) {
+        //This is kind of stupid check, but might cause it to blow up on people using the library incorrectly instead of
+        //just causing weird behaviour
+        if(this.textGUI != null && textGUI != null) {
+            throw new UnsupportedOperationException("Are you calling setTextGUI yourself? Please read the documentation.");
+        }
         this.textGUI = textGUI;
     }
 
