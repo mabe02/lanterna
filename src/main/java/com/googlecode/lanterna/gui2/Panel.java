@@ -97,7 +97,7 @@ public class Panel extends AbstractComponent implements Container {
     
     public void setLayoutManager(LayoutManager layoutManager) {
         if(layoutManager == null) {
-            throw new IllegalArgumentException("Cannot set a null layout manager");
+            layoutManager = new AbsoluteLayout();
         }
         this.layoutManager = layoutManager;
         onStructureChanged();
