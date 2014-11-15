@@ -61,6 +61,15 @@ public interface Window extends BasePane {
         protected Hint() {
         }
     }
+    
+    
+    /**
+     * DON'T CALL THIS METHOD YOURSELF, it is called automatically by the TextGUI system when you add a window. If you 
+     * call it with the intention of adding the window to the specified TextGUI, you need to read the documentation
+     * on how to use windows.
+     * @param textGUI TextGUI this window belongs to from now on
+     */
+    void setTextGUI(TextGUI textGUI);
 
     /**
      * @return title of the window

@@ -69,6 +69,18 @@ public class DefaultWindowTextGUI extends AbstractTextGUI implements WindowBased
         this.background = background;
         this.postRenderer = postRenderer;
         this.eofWhenNoWindows = true;
+        
+        this.windowManager.addListener(new WindowManager.Listener() {
+            @Override
+            public void onWindowAdded(WindowManager manager, Window window) {
+                window.setTextGUI(DefaultWindowTextGUI.this);
+            }
+
+            @Override
+            public void onWindowRemoved(WindowManager manager, Window window) {
+                window.setTextGUI(null);
+            }
+        });
     }
 
     @Override

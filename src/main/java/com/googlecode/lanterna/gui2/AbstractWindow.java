@@ -55,10 +55,7 @@ public class AbstractWindow extends AbstractBasePane implements Window {
         this.lastKnownDecoratedSize = null;
     }
 
-    /**
-     * Don't call this method yourself, it's called by the GUI system when a window is displayed.
-     * @param textGUI TextGUI this window belongs to
-     */
+    @Override
     public void setTextGUI(TextGUI textGUI) {
         this.textGUI = textGUI;
     }
