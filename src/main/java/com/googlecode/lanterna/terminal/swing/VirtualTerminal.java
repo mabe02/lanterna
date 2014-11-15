@@ -23,6 +23,7 @@ import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.screen.TabBehaviour;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -38,6 +39,11 @@ class VirtualTerminal {
     private TextBuffer currentBuffer;
     private TerminalSize size;
     private TerminalPosition cursorPosition;
+    
+    //To avoid adding more synchronization and locking, we'll store a copy of all visible lines in this list. This is 
+    //also the list we return (as an iterable) so it may not be reliable as each call to getLines will change it. This
+    //isn't 100% safe but hopefully a good trade-off
+    private final List<List<TextCharacter>> visibleLinesBuffer;
 
     public VirtualTerminal(
             int backlog,
@@ -51,6 +57,8 @@ class VirtualTerminal {
         this.currentBuffer = mainTextBuffer;
         this.size = initialSize;
         this.cursorPosition = TerminalPosition.TOP_LEFT_CORNER;
+        
+        this.visibleLinesBuffer = new ArrayList<List<TextCharacter>>(120);
     }
 
     public void resize(TerminalSize newSize) {
@@ -150,6 +158,11 @@ class VirtualTerminal {
                 scrollingOffset + visibleRows > currentBuffer.getNumberOfLines()) {
             scrollingOffset = currentBuffer.getNumberOfLines() - visibleRows;
         }
-        return currentBuffer.getVisibleLines(visibleRows, scrollingOffset);
+        
+        visibleLinesBuffer.clear();
+        for(List<TextCharacter> line: currentBuffer.getVisibleLines(visibleRows, scrollingOffset)) {
+            visibleLinesBuffer.add(line);
+        }
+        return visibleLinesBuffer;
     }
 }
