@@ -1,6 +1,8 @@
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.*;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
 
 import java.io.IOException;
@@ -13,6 +15,16 @@ public class FullScreenTextGUITest {
         Screen screen = new TestTerminalFactory(args).createScreen();
         screen.startScreen();
         FullScreenTextGUI textGUI = new FullScreenTextGUI(screen);
+        textGUI.addListener(new TextGUI.Listener() {
+            @Override
+            public boolean onUnhandledKeyStroke(TextGUI textGUI, KeyStroke key) {
+                if(key.getKeyType() == KeyType.Escape) {
+                    textGUI.getGUIThread().stop();
+                    return true;
+                }
+                return false;
+            }
+        });
         try {
             textGUI.setComponent(new BIOS());
             TextGUIThread guiThread = textGUI.getGUIThread();
@@ -24,9 +36,10 @@ public class FullScreenTextGUITest {
         }
     }
 
-    private static class BIOS extends AbstractInteractableComponent {
+    private static class BIOS extends Panel {
         @Override
         protected ComponentRenderer createDefaultRenderer() {
+            final ComponentRenderer panelRenderer = super.createDefaultRenderer();
             return new InteractableRenderer() {
                 @Override
                 public TerminalSize getPreferredSize(Component component) {
@@ -62,6 +75,9 @@ public class FullScreenTextGUITest {
                     graphics.setCharacter(0, 20, Symbols.DOUBLE_LINE_T_SINGLE_RIGHT);
                     graphics.drawLine(1, 20, 78, 20, Symbols.SINGLE_LINE_HORIZONTAL);
                     graphics.setCharacter(79, 20, Symbols.DOUBLE_LINE_T_SINGLE_LEFT);
+                    
+                    //Then draw all the child components
+                    panelRenderer.drawComponent(graphics, BIOS.this);
                 }
 
                 @Override
@@ -70,7 +86,5 @@ public class FullScreenTextGUITest {
                 }
             };
         }
-
-
     }
 }
