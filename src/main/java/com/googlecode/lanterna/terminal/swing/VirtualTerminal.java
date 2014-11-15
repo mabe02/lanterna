@@ -45,7 +45,7 @@ class VirtualTerminal {
     //isn't 100% safe but hopefully a good trade-off
     private final List<List<TextCharacter>> visibleLinesBuffer;
 
-    public VirtualTerminal(
+    VirtualTerminal(
             int backlog,
             TerminalSize initialSize,
             TerminalScrollController scrollController) {
@@ -61,7 +61,7 @@ class VirtualTerminal {
         this.visibleLinesBuffer = new ArrayList<List<TextCharacter>>(120);
     }
 
-    public void resize(TerminalSize newSize) {
+    void resize(TerminalSize newSize) {
         if(size.getRows() < newSize.getRows()) {
             cursorPosition = cursorPosition.withRelativeRow(newSize.getRows() - size.getRows());
         }
@@ -76,17 +76,17 @@ class VirtualTerminal {
         this.terminalScrollController.updateModel(totalSize, visibleSize);
     }
 
-    public TerminalSize getSize() {
+    TerminalSize getSize() {
         return size;
     }
 
-    public synchronized void setCursorPosition(TerminalPosition cursorPosition) {
+    synchronized void setCursorPosition(TerminalPosition cursorPosition) {
         currentBuffer.ensurePosition(size, cursorPosition);
         this.cursorPosition = cursorPosition;
         correctCursor();
     }
 
-    public TerminalPosition getTranslatedCursorPosition() {
+    TerminalPosition getTranslatedCursorPosition() {
         return cursorPosition.withRelativeRow(terminalScrollController.getScrollingOffset());
     }
 
@@ -101,7 +101,7 @@ class VirtualTerminal {
                         Math.max(cursorPosition.getRow(), 0));
     }
 
-    public synchronized void putCharacter(TextCharacter terminalCharacter) {
+    synchronized void putCharacter(TextCharacter terminalCharacter) {
         if(terminalCharacter.getCharacter() == '\n') {
             moveCursorToNextLine();
         }
@@ -147,11 +147,11 @@ class VirtualTerminal {
         currentBuffer.ensurePosition(size, cursorPosition);
     }
 
-    public void switchToPrivateMode() {
+    void switchToPrivateMode() {
         currentBuffer = privateModeTextBuffer;
     }
 
-    public void switchToNormalMode() {
+    void switchToNormalMode() {
         currentBuffer = mainTextBuffer;
     }
 
