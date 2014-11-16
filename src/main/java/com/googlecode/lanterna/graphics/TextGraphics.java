@@ -237,6 +237,15 @@ public interface TextGraphics {
      * @param character What character to use when filling the rectangle
      */
     TextGraphics fillRectangle(TerminalPosition topLeft, TerminalSize size, char character);
+    
+    /**
+     * Takes a TextImage and draws it on the surface this TextGraphics is targeting, given the coordinates on the target
+     * that is specifying where the top-left corner of the image should be drawn.
+     * @param topLeft Position of the top-left corner of the image on the target
+     * @param image Image to draw
+     * @return Itself
+     */
+    TextGraphics drawImage(TerminalPosition topLeft, TextImage image);
 
     /**
      * Puts a string on the screen at the specified position with the current colors and modifiers. If the string

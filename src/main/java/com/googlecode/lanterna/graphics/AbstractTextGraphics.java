@@ -177,6 +177,16 @@ public abstract class AbstractTextGraphics implements TextGraphics {
     }
 
     @Override
+    public TextGraphics drawImage(TerminalPosition topLeft, TextImage image) {
+        for(int row = 0; row < image.getSize().getRows(); row++) {
+            for(int column = 0; column < image.getSize().getColumns(); column++) {
+                setCharacter(column + topLeft.getColumn(), row + topLeft.getRow(), image.getCharacterAt(column, row));
+            }
+        }
+        return this;
+    }
+
+    @Override
     public TextGraphics putString(int column, int row, String string) {
         if(string.contains("\n")) {
             string = string.substring(0, string.indexOf("\n"));
