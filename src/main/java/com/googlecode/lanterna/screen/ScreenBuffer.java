@@ -47,7 +47,6 @@ public class ScreenBuffer implements TextImage {
         this.backend = backend;
     }
     
-
     @Override
     public ScreenBuffer resize(TerminalSize newSize, TextCharacter filler) {
         BasicTextImage resizedBackend = backend.resize(newSize, filler);
