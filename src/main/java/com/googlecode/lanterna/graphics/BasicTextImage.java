@@ -28,6 +28,7 @@ import com.googlecode.lanterna.TextCharacter;
  * @author martin
  */
 public class BasicTextImage implements TextImage {
+    private final TerminalSize size;
     private final TextCharacter[][] buffer;
     
     /**
@@ -51,6 +52,8 @@ public class BasicTextImage implements TextImage {
             throw new IllegalArgumentException("Cannot create BasicTextImage with null " +
                     (size == null ? "size" : (toCopy == null ? "toCopy" : "filler")));
         }
+        this.size = size;
+        
         int rows = size.getRows();
         int columns = size.getColumns();
         buffer = new TextCharacter[rows][];
@@ -65,6 +68,11 @@ public class BasicTextImage implements TextImage {
                 }
             }
         }
+    }
+
+    @Override
+    public TerminalSize getSize() {
+        return size;
     }
     
     @Override
@@ -160,5 +168,20 @@ public class BasicTextImage implements TextImage {
                 }
             }
         }
+    }
+
+    @Override
+    public TextGraphics newTextGraphics() {
+        return new AbstractTextGraphics() {
+            @Override
+            protected void setCharacter(int columnIndex, int rowIndex, TextCharacter textCharacter) {
+                BasicTextImage.this.setCharacterAt(columnIndex, rowIndex, textCharacter);
+            }
+
+            @Override
+            public TerminalSize getSize() {
+                return size;
+            }
+        };
     }
 }

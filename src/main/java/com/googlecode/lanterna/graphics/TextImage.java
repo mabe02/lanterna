@@ -29,6 +29,12 @@ import com.googlecode.lanterna.TextCharacter;
  */
 public interface TextImage {
     /**
+     * Returns the dimensions of this TextImage, in columns and rows
+     * @return Size of this TextImage
+     */
+    TerminalSize getSize();
+    
+    /**
      * Returns the character stored at a particular position in this image
      * @param position Coordinates of the character
      * @return TextCharacter stored at the specified position
@@ -65,6 +71,12 @@ public interface TextImage {
      * @param character The character to fill the image with
      */
     void setAll(TextCharacter character);
+    
+    /**
+     * Creates a TextGraphics object that targets this TextImage for all its drawing operations.
+     * @return TextGraphics object for this TextImage
+     */
+    TextGraphics newTextGraphics();
     
     /**
      * Returns a copy of this image resized to a new size and using a specified filler character if the new size is 
