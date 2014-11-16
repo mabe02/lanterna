@@ -21,6 +21,7 @@ package com.googlecode.lanterna.graphics;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextCharacter;
+import com.googlecode.lanterna.TextColor;
 
 /**
  * Simple implementation of TextImage that keeps the content as a two-dimensional TextCharacter array. If you copy 
@@ -30,6 +31,25 @@ import com.googlecode.lanterna.TextCharacter;
 public class BasicTextImage implements TextImage {
     private final TerminalSize size;
     private final TextCharacter[][] buffer;
+    
+    /**
+     * Creates a new BasicTextImage with the specified size and fills it initially with space characters using the 
+     * default foreground and background color
+     * @param columns Size of the image in number of columns
+     * @param rows Size of the image in number of rows
+     */
+    public BasicTextImage(int columns, int rows) {
+        this(new TerminalSize(columns, rows));
+    }
+    
+    /**
+     * Creates a new BasicTextImage with the specified size and fills it initially with space characters using the 
+     * default foreground and background color
+     * @param size Size to make the image
+     */
+    public BasicTextImage(TerminalSize size) {
+        this(size, new TextCharacter(' ', TextColor.ANSI.DEFAULT, TextColor.ANSI.DEFAULT));
+    }
     
     /**
      * Creates a new BasicTextImage with a given size and a TextCharacter to initially fill it with
