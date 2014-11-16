@@ -139,32 +139,38 @@ public final class TextGUIGraphics implements ThemedTextGraphics {
 
     @Override
     public TextGraphics fillRectangle(TerminalPosition topLeft, TerminalSize size, char character) {
-        return backend.fillRectangle(topLeft, size, character);
+        backend.fillRectangle(topLeft, size, character);
+        return this;
     }
 
     @Override
     public TextGraphics drawRectangle(TerminalPosition topLeft, TerminalSize size, char character) {
-        return backend.drawRectangle(topLeft, size, character);
+        backend.drawRectangle(topLeft, size, character);
+        return this;
     }
 
     @Override
     public TextGraphics fillTriangle(TerminalPosition p1, TerminalPosition p2, TerminalPosition p3, char character) {
-        return backend.fillTriangle(p1, p2, p3, character);
+        backend.fillTriangle(p1, p2, p3, character);
+        return this;
     }
 
     @Override
     public TextGraphics drawTriangle(TerminalPosition p1, TerminalPosition p2, TerminalPosition p3, char character) {
-        return backend.drawTriangle(p1, p2, p3, character);
+        backend.drawTriangle(p1, p2, p3, character);
+        return this;
     }
 
     @Override
     public TextGraphics drawLine(TerminalPosition fromPoint, TerminalPosition toPoint, char character) {
-        return backend.drawLine(fromPoint, toPoint, character);
+        backend.drawLine(fromPoint, toPoint, character);
+        return this;
     }
 
     @Override
     public TextGraphics drawLine(int fromX, int fromY, int toX, int toY, char character) {
-        return backend.drawLine(fromX, fromY, toX, toY, character);
+        backend.drawLine(fromX, fromY, toX, toY, character);
+        return this;
     }
 
     @Override
@@ -175,12 +181,14 @@ public final class TextGUIGraphics implements ThemedTextGraphics {
 
     @Override
     public TextGraphics setCharacter(TerminalPosition position, char character) {
-        return backend.setCharacter(position, character);
+        backend.setCharacter(position, character);
+        return this;
     }
 
     @Override
     public TextGraphics setCharacter(int column, int row, char character) {
-        return backend.setCharacter(column, row, character);
+        backend.setCharacter(column, row, character);
+        return this;
     }
 
     @Override
