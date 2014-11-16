@@ -111,11 +111,19 @@ public class ScreenBuffer implements TextImage {
 
     @Override
     public void copyTo(TextImage destination) {
+        if(destination instanceof ScreenBuffer) {
+            //This will allow the BasicTextImage's copy method to use System.arraycopy (micro-optimization?)
+            destination = ((ScreenBuffer)destination).backend;
+        }
         backend.copyTo(destination);
     }
 
     @Override
     public void copyTo(TextImage destination, int startRowIndex, int rows, int startColumnIndex, int columns, int destinationRowOffset, int destinationColumnOffset) {
+        if(destination instanceof ScreenBuffer) {
+            //This will allow the BasicTextImage's copy method to use System.arraycopy (micro-optimization?)
+            destination = ((ScreenBuffer)destination).backend;
+        }
         backend.copyTo(destination, startRowIndex, rows, startColumnIndex, columns, destinationRowOffset, destinationColumnOffset);
     }
 }
