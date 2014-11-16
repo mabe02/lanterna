@@ -243,12 +243,6 @@ public abstract class AbstractTextGraphics implements TextGraphics {
 
     @Override
     public TextGraphics newTextGraphics(TerminalPosition topLeftCorner, TerminalSize size) throws IllegalArgumentException {
-        TerminalSize writableArea = getSize();
-        if(topLeftCorner.getColumn() + size.getColumns() > writableArea.getColumns() ||
-                topLeftCorner.getRow() + size.getRows() > writableArea.getRows()) {
-            throw new IllegalArgumentException("Cannot create a sub-text graphics with topLeft = " + topLeftCorner +
-                    " and size = " + size + " when writable area of the current text graphics is " + writableArea);
-        }
         return new SubTextGraphics(this, topLeftCorner, size);
     }
 
