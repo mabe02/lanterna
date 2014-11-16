@@ -243,6 +243,13 @@ public abstract class AbstractTextGraphics implements TextGraphics {
 
     @Override
     public TextGraphics newTextGraphics(TerminalPosition topLeftCorner, TerminalSize size) throws IllegalArgumentException {
+        TerminalSize writableArea = getSize();
+        if(topLeftCorner.getColumn() + size.getColumns() > writableArea.getColumns() ||
+                topLeftCorner.getRow() + size.getRows() > writableArea.getRows()) {
+            //The area selected is completely outside of this TextGraphics, so we can return a "null" object that doesn't
+            //do anything because it is impossible to change anything anyway
+            return new NullTextGraphics(size);
+        }
         return new SubTextGraphics(this, topLeftCorner, size);
     }
 
