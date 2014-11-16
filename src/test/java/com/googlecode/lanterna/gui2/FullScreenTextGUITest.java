@@ -76,7 +76,7 @@ public class FullScreenTextGUITest {
         @Override
         protected ComponentRenderer createDefaultRenderer() {
             final ComponentRenderer panelRenderer = super.createDefaultRenderer();
-            return new InteractableRenderer() {
+            return new ComponentRenderer() {
                 @Override
                 public TerminalSize getPreferredSize(Component component) {
                     return new TerminalSize(80, 24);
@@ -92,11 +92,6 @@ public class FullScreenTextGUITest {
                     
                     //Then draw all the child components
                     panelRenderer.drawComponent(graphics, BIOS.this);
-                }
-
-                @Override
-                public TerminalPosition getCursorLocation(Component component) {
-                    return null;
                 }
             };
         }
