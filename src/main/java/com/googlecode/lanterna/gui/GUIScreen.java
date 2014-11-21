@@ -247,6 +247,11 @@ public class GUIScreen
                 }
             }                
 
+            //If any of the actions closed all windows, break the loop and exit the event loop
+            if(windowStack.isEmpty()) {
+                break;
+            }
+            
             //Make sure we have a component in focus if there is one available
             windowStack.getLast().window.checkFocus();
 
