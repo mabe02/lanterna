@@ -34,7 +34,7 @@ public abstract class AbstractComponent<T extends ComponentRenderer> implements 
     private TerminalSize size;
     private TerminalSize explicitPreferredSize;   //This is keeping the value set by the user (if setPreferredSize() is used)
     private TerminalPosition position;
-    private Object layoutData;
+    private LayoutData layoutData;
     private boolean invalid;
 
     public AbstractComponent() {
@@ -165,7 +165,7 @@ public abstract class AbstractComponent<T extends ComponentRenderer> implements 
     }
 
     @Override
-    public AbstractComponent setLayoutData(Object data) {
+    public AbstractComponent setLayoutData(LayoutData data) {
         if(layoutData != data) {
             layoutData = data;
             invalidate();
@@ -174,7 +174,7 @@ public abstract class AbstractComponent<T extends ComponentRenderer> implements 
     }
 
     @Override
-    public Object getLayoutData() {
+    public LayoutData getLayoutData() {
         return layoutData;
     }
 

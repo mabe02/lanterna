@@ -79,14 +79,14 @@ public interface Component extends TextGUIElement {
      * @param data Layout data associated with this component
      * @return Itself
      */
-    Component setLayoutData(Object data);
+    Component setLayoutData(LayoutData data);
 
     /**
      * Returns the layout data associated with this component. This data will optionally be used by the layout manager,
      * see the documentation for each layout manager for more details on valid values and their meaning.
      * @return This component's layout data
      */
-    Object getLayoutData();
+    LayoutData getLayoutData();
     
     /**
      * Returns the container which is holding this container, or {@code null} if it's not assigned to anything.
