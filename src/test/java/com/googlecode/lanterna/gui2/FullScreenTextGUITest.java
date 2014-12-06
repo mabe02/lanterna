@@ -58,15 +58,15 @@ public class FullScreenTextGUITest {
             BIOSButton button2 = new BIOSButton("Advanced Lanterna Features", "Well, what could this possibly be?");
             BIOSButton button3 = new BIOSButton("Advanced Terminal Features", "As you can see, I can change the description here");
             BIOSButton button4 = new BIOSButton("Unintegrated Peripherals", "Joystick, VirtualBoy, Coffee Machines, ...");
-            BIOSButton button5 = new BIOSButton("Power Management Setup", "Only for superheroes!");
+            BIOSButton button5 = new BIOSButton("Power Management Setup", "Terminal energy-saving mode?");
             BIOSButton button6 = new BIOSButton("Non-PnP/ISA Configurations", "Going back to the '80s");
-            BIOSButton button7 = new BIOSButton("Terminal Health Status", "For those who really *care*");
+            BIOSButton button7 = new BIOSButton("Terminal Health Status", "Monitor pixel consistency and feedback latency");
             BIOSButton button8 = new BIOSButton("Frequency/Current Control", "To overclock your terminal; NOT covered by warranty!");
-            BIOSButton button9 = new BIOSButton("Load Fail-Safe Defaults", "So you can't go wrong");
+            BIOSButton button9 = new BIOSButton("Load Fail-Safe Defaults", "Restore everything back");
             BIOSButton button10 = new BIOSButton("Load Optimized Defaults", "And still you play the sycophant and revel in my pain");
-            BIOSButton button11 = new BIOSButton("Set Supervisor Password", "To make sure no one else can touch your dear terminal");
+            BIOSButton button11 = new BIOSButton("Set Supervisor Password", "This is an outright fabrication");
             BIOSButton button12 = new BIOSButton("Set User Password", "What would you even need this for?");
-            BIOSButton button13 = new BIOSButton("Save & Exit Setup", "...and you can have some cake");
+            BIOSButton button13 = new BIOSButton("Save & Exit Setup", "...and then you can have some cake!");
             BIOSButton button14 = new BIOSButton("Exit Without Saving", "僕の事が思い出せなくても泣かないでね");
             
             button1.setSize(new TerminalSize(35, 1));
