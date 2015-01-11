@@ -26,11 +26,8 @@ import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
 
 /**
  * This class encapsulates the font information used by a SwingTerminal
@@ -60,16 +57,58 @@ public class SwingTerminalFontConfiguration {
         NOTHING,
         ;
     }
-    
+
+    private static final List<Font> DEFAULT_WINDOWS_FONTS = Collections.unmodifiableList(Arrays.asList(
+            new Font("Courier New", Font.PLAIN, 14), //Monospaced can look pretty bad on Windows, so let's override it
+            new Font("Monospaced", Font.PLAIN, 14)
+    ));
+
+    private static final List<Font> DEFAULT_LINUX_FONTS = Collections.unmodifiableList(Arrays.asList(
+            new Font("Monospaced", Font.PLAIN, 14),
+            new Font("Ubuntu Mono", Font.PLAIN, 14),
+            new Font("FreeMono", Font.PLAIN, 14),
+            new Font("DejaVu Sans Mono", Font.PLAIN, 14),
+            new Font("Liberation Mono", Font.PLAIN, 14)
+    ));
+
+    private static final List<Font> DEFAULT_FONTS = Collections.unmodifiableList(Arrays.asList(
+            new Font("Monospaced", Font.PLAIN, 14)
+    ));
+
+    private static Font[] selectDefaultFont() {
+        String osName = System.getProperty("os.name", "").toLowerCase();
+        if(osName.contains("win")) {
+            return DEFAULT_WINDOWS_FONTS.toArray(new Font[DEFAULT_WINDOWS_FONTS.size()]);
+        }
+        else if(osName.contains("linux")) {
+            return DEFAULT_LINUX_FONTS.toArray(new Font[DEFAULT_LINUX_FONTS.size()]);
+        }
+        else {
+            return DEFAULT_FONTS.toArray(new Font[DEFAULT_FONTS.size()]);
+        }
+    }
+
     /**
      * This is the default font settings that will be used if you don't specify anything
      */
-    public static final SwingTerminalFontConfiguration DEFAULT = newInstance(
-            System.getProperty("os.name","").toLowerCase().contains("win") ?
-                new Font("Courier New", Font.PLAIN, 14) //Monospaced can look pretty bad on Windows, so let's override it
-                :
-                new Font("Monospaced", Font.PLAIN, 14)
-    );
+    public static final SwingTerminalFontConfiguration DEFAULT = newInstance(filterMonospaced(selectDefaultFont()));
+
+    /**
+     * Given an array of fonts, returns another array with only the ones that are monospaced. The fonts in the result
+     * will have the same order as in which they came in. A font is considered monospaced if the width of 'i' and 'W' is
+     * the same.
+     * @param fonts Fonts to filter monospaced fonts from
+     * @return Array with the fonts from the input parameter that were monospaced
+     */
+    public static Font[] filterMonospaced(Font... fonts) {
+        List<Font> result = new ArrayList<Font>(fonts.length);
+        for(Font font: fonts) {
+            if (isFontMonospaced(font)) {
+                result.add(font);
+            }
+        }
+        return result.toArray(new Font[result.size()]);
+    }
 
     /**
      * Creates a new font configuration from a list of fonts in order of priority. This works by having the terminal
@@ -150,8 +189,11 @@ public class SwingTerminalFontConfiguration {
         return fontHeight;
     }
 
-    private boolean isFontMonospaced(Font font) {
-        FontRenderContext frc = getFontRenderContext();
+    private static boolean isFontMonospaced(Font font) {
+        FontRenderContext frc = new FontRenderContext(
+                null,
+                RenderingHints.VALUE_TEXT_ANTIALIAS_OFF,
+                RenderingHints.VALUE_FRACTIONALMETRICS_DEFAULT);
         Rectangle2D iBounds = font.getStringBounds("i", frc);
         Rectangle2D mBounds = font.getStringBounds("W", frc);
         return iBounds.getWidth() == mBounds.getWidth();
