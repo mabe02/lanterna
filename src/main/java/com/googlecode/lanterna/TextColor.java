@@ -451,9 +451,9 @@ public interface TextColor {
                 throw new IllegalArgumentException("fromRGB: blue is outside of valid range (0-255)");
             }
 
-            int rescaledRed = (int)(((double)red / 255.0) * 6.0);
-            int rescaledGreen = (int)(((double)green / 255.0) * 6.0);
-            int rescaledBlue = (int)(((double)blue / 255.0) * 6.0);
+            int rescaledRed = (int)(((double)red / 255.0) * 5.0);
+            int rescaledGreen = (int)(((double)green / 255.0) * 5.0);
+            int rescaledBlue = (int)(((double)blue / 255.0) * 5.0);
 
             int index = rescaledBlue + (6 * rescaledGreen) + (36 * rescaledRed) + 16;
             Indexed fromColorCube = new Indexed(index);
@@ -482,7 +482,7 @@ public interface TextColor {
          * @return Indexed color from the grey-scale ramp which is the best match for the supplied intensity
          */
         private static Indexed fromGreyRamp(int intensity) {
-            int rescaled = (int)(((double)intensity / 255.0) * 24.0) + 232;
+            int rescaled = (int)(((double)intensity / 255.0) * 23.0) + 232;
             return new Indexed(rescaled);
         }
     }
