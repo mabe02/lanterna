@@ -420,66 +420,67 @@ public class SwingTerminal extends AbstractTerminal implements InputProvider
         @Override
         public void keyPressed(KeyEvent e)
         {
+            boolean altDown = (e.getModifiersEx() & InputEvent.ALT_DOWN_MASK) != 0;
+            boolean ctrlDown = (e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0;
             if(e.getKeyCode() == KeyEvent.VK_ENTER)
-                keyQueue.add(new Key(Key.Kind.Enter));
+                keyQueue.add(new Key(Key.Kind.Enter, ctrlDown, altDown));
             else if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
-                keyQueue.add(new Key(Key.Kind.Escape));
+                keyQueue.add(new Key(Key.Kind.Escape, ctrlDown, altDown));
             else if(e.getKeyCode() == KeyEvent.VK_BACK_SPACE)
-                keyQueue.add(new Key(Key.Kind.Backspace));
+                keyQueue.add(new Key(Key.Kind.Backspace, ctrlDown, altDown));
             else if(e.getKeyCode() == KeyEvent.VK_LEFT)
-                keyQueue.add(new Key(Key.Kind.ArrowLeft));
+                keyQueue.add(new Key(Key.Kind.ArrowLeft, ctrlDown, altDown));
             else if(e.getKeyCode() == KeyEvent.VK_RIGHT)
-                keyQueue.add(new Key(Key.Kind.ArrowRight));
+                keyQueue.add(new Key(Key.Kind.ArrowRight, ctrlDown, altDown));
             else if(e.getKeyCode() == KeyEvent.VK_UP)
-                keyQueue.add(new Key(Key.Kind.ArrowUp));
+                keyQueue.add(new Key(Key.Kind.ArrowUp, ctrlDown, altDown));
             else if(e.getKeyCode() == KeyEvent.VK_DOWN)
-                keyQueue.add(new Key(Key.Kind.ArrowDown));
+                keyQueue.add(new Key(Key.Kind.ArrowDown, ctrlDown, altDown));
             else if(e.getKeyCode() == KeyEvent.VK_INSERT)
-                keyQueue.add(new Key(Key.Kind.Insert));
+                keyQueue.add(new Key(Key.Kind.Insert, ctrlDown, altDown));
             else if(e.getKeyCode() == KeyEvent.VK_DELETE)
-                keyQueue.add(new Key(Key.Kind.Delete));
+                keyQueue.add(new Key(Key.Kind.Delete, ctrlDown, altDown));
             else if(e.getKeyCode() == KeyEvent.VK_HOME)
-                keyQueue.add(new Key(Key.Kind.Home));
+                keyQueue.add(new Key(Key.Kind.Home, ctrlDown, altDown));
             else if(e.getKeyCode() == KeyEvent.VK_END)
-                keyQueue.add(new Key(Key.Kind.End));
+                keyQueue.add(new Key(Key.Kind.End, ctrlDown, altDown));
             else if(e.getKeyCode() == KeyEvent.VK_PAGE_UP)
-                keyQueue.add(new Key(Key.Kind.PageUp));
+                keyQueue.add(new Key(Key.Kind.PageUp, ctrlDown, altDown));
             else if(e.getKeyCode() == KeyEvent.VK_PAGE_DOWN)
-                keyQueue.add(new Key(Key.Kind.PageDown));
+                keyQueue.add(new Key(Key.Kind.PageDown, ctrlDown, altDown));
             else if(e.getKeyCode() == KeyEvent.VK_F1)
-                keyQueue.add(new Key(Key.Kind.F1));
+                keyQueue.add(new Key(Key.Kind.F1, ctrlDown, altDown));
             else if(e.getKeyCode() == KeyEvent.VK_F2)
-                keyQueue.add(new Key(Key.Kind.F2));
+                keyQueue.add(new Key(Key.Kind.F2, ctrlDown, altDown));
             else if(e.getKeyCode() == KeyEvent.VK_F3)
-                keyQueue.add(new Key(Key.Kind.F3));
+                keyQueue.add(new Key(Key.Kind.F3, ctrlDown, altDown));
             else if(e.getKeyCode() == KeyEvent.VK_F4)
-                keyQueue.add(new Key(Key.Kind.F4));
+                keyQueue.add(new Key(Key.Kind.F4, ctrlDown, altDown));
             else if(e.getKeyCode() == KeyEvent.VK_F5)
-                keyQueue.add(new Key(Key.Kind.F5));
+                keyQueue.add(new Key(Key.Kind.F5, ctrlDown, altDown));
             else if(e.getKeyCode() == KeyEvent.VK_F6)
-                keyQueue.add(new Key(Key.Kind.F6));
+                keyQueue.add(new Key(Key.Kind.F6, ctrlDown, altDown));
             else if(e.getKeyCode() == KeyEvent.VK_F7)
-                keyQueue.add(new Key(Key.Kind.F7));
+                keyQueue.add(new Key(Key.Kind.F7, ctrlDown, altDown));
             else if(e.getKeyCode() == KeyEvent.VK_F8)
-                keyQueue.add(new Key(Key.Kind.F8));
+                keyQueue.add(new Key(Key.Kind.F8, ctrlDown, altDown));
             else if(e.getKeyCode() == KeyEvent.VK_F9)
-                keyQueue.add(new Key(Key.Kind.F9));
+                keyQueue.add(new Key(Key.Kind.F9, ctrlDown, altDown));
             else if(e.getKeyCode() == KeyEvent.VK_F10)
-                keyQueue.add(new Key(Key.Kind.F10));
+                keyQueue.add(new Key(Key.Kind.F10, ctrlDown, altDown));
             else if(e.getKeyCode() == KeyEvent.VK_F11)
-                keyQueue.add(new Key(Key.Kind.F11));
+                keyQueue.add(new Key(Key.Kind.F11, ctrlDown, altDown));
             else if(e.getKeyCode() == KeyEvent.VK_F12)
-                keyQueue.add(new Key(Key.Kind.F12));
+                keyQueue.add(new Key(Key.Kind.F12, ctrlDown, altDown));
             else if(e.getKeyCode() == KeyEvent.VK_TAB) {
                 if(e.isShiftDown())
-                    keyQueue.add(new Key(Key.Kind.ReverseTab));
+                    keyQueue.add(new Key(Key.Kind.ReverseTab, ctrlDown, altDown));
                 else
-                    keyQueue.add(new Key(Key.Kind.Tab));
+                    keyQueue.add(new Key(Key.Kind.Tab, ctrlDown, altDown));
             }
             else {
                 //keyTyped doesn't catch this scenario (for whatever reason...) so we have to do it here
-                boolean altDown = (e.getModifiersEx() & InputEvent.ALT_DOWN_MASK) != 0;
-                boolean ctrlDown = (e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0;
+
                 if(altDown && ctrlDown && e.getKeyCode() >= 'A' && e.getKeyCode() <= 'Z') {
                     char asLowerCase = Character.toLowerCase((char)e.getKeyCode());
                     keyQueue.add(new Key(asLowerCase, true, true));
