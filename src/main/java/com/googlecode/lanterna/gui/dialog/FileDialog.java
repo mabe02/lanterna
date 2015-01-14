@@ -106,6 +106,9 @@ public class FileDialog extends Window {
     }
     
     private void reloadViews(File directory) {
+        if(directory == null)
+            return;
+        
         this.currentDirectory = directory.getAbsoluteFile();
         dirView.clearItems();
         fileView.clearItems();
