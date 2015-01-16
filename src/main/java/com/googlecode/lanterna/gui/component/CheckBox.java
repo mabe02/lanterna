@@ -45,6 +45,12 @@ public class CheckBox extends CommonCheckBox
         return selected;
     }
 
+    public void setSelected(boolean isSelected){
+        if(isSelected == selected)
+            return;
+        onActivated();
+    }
+        
     @Override
     protected void onActivated()
     {
