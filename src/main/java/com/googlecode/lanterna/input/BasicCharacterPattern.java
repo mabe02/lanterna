@@ -35,6 +35,9 @@ class BasicCharacterPattern implements CharacterPattern {
 
     @Override
     public boolean matches(List<Character> currentMatching) {
+        if(currentMatching.size() > pattern.length) {
+            return false;
+        }
         int minSize = Math.min(currentMatching.size(), pattern.length);
         for (int i = 0; i < minSize; i++) {
             if (pattern[i] != currentMatching.get(i)) {
