@@ -138,17 +138,12 @@ public class InputDecoder {
     private Matching getBestMatch(List<Character> characterSequence) {
         boolean partialMatch = false;
         KeyStroke bestMatch = null;
-        LinkedList<CharacterPattern> candidates = new LinkedList<CharacterPattern>(bytePatterns);
-        Iterator<CharacterPattern> iterator = candidates.iterator();
-        while (iterator.hasNext()) {
-            CharacterPattern pattern = iterator.next();
-            if (!pattern.matches(characterSequence)) {
-                iterator.remove();
-                continue;
-            }
-            partialMatch = true;
-            if (pattern.isCompleteMatch(characterSequence)) {
-                bestMatch = pattern.getResult(characterSequence);
+        for(CharacterPattern pattern : bytePatterns) {
+            if (pattern.matches(characterSequence)) {
+                partialMatch = true;
+                if (pattern.isCompleteMatch(characterSequence)) {
+                    bestMatch = pattern.getResult(characterSequence);
+                }
             }
         }
         return new Matching(partialMatch, bestMatch);
