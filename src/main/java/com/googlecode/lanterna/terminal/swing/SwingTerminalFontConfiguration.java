@@ -147,16 +147,16 @@ public class SwingTerminalFontConfiguration {
             }
         }
 
-        //Make sure all lower-priority fonts are less or equal in width and height
-        for(Font font: fontPriority) {
-            if(font == fontPriority.get(0)) {
-                continue;
-            }
-            if(getFontWidth(font) > fontWidth) {
-                throw new IllegalArgumentException("Font " + font + " is wider (" + getFontWidth(font) + " px) than the highest priority font (" + fontWidth + " px), must be smaller or equal in width");
-            }
-            if(getFontHeight(font) > fontHeight) {
-                throw new IllegalArgumentException("Font " + font + " is taller (" + getFontHeight(font) + " px) than the highest priority font (" + fontHeight + " px), must be smaller or equal in height");
+        //Make sure all lower-priority fonts are less or equal in width and height, shrink if necessary
+        for(int i = 1; i < fontPriority.size(); i++) {
+            Font font = fontPriority.get(i);
+            while(getFontWidth(font) > fontWidth || getFontHeight(font) > fontHeight) {
+                float newSize = font.getSize2D() - 0.5f;
+                if(newSize < 0.01) {
+                    throw new IllegalStateException("Unable to shrink font " + (i+1) + " to fit the size of highest priority font " + fontPriority.get(0));
+                }
+                font = font.deriveFont(newSize);
+                fontPriority.set(i, font);
             }
         }
     }
