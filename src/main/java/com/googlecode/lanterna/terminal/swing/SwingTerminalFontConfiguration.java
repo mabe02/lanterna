@@ -136,7 +136,7 @@ public class SwingTerminalFontConfiguration {
         }
         this.useAntiAliasing = useAntiAliasing;
         this.boldMode = boldMode;
-        this.fontPriority = Collections.unmodifiableList(Arrays.asList(fontsInOrderOfPriority));
+        this.fontPriority = new ArrayList<Font>(Arrays.asList(fontsInOrderOfPriority));
         this.fontWidth = getFontWidth(fontPriority.get(0));
         this.fontHeight = getFontHeight(fontPriority.get(0));
 
