@@ -46,7 +46,7 @@ public class CygwinTerminal extends UnixTerminal {
         super(terminalInput, terminalOutput, terminalCharset);
 
         //Make sure to set an initial size
-        onResized(80, 20);
+        onResized(80, 24);
         resizeCheckTimer = null;
     }
 
