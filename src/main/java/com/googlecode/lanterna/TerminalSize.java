@@ -121,6 +121,29 @@ public class TerminalSize {
     }
 
     /**
+     * Creates a new TerminalSize object representing a size based on this object's size but with a delta applied.
+     * This is the same as calling
+     * <code>withRelativeColumns(delta.getColumns()).withRelativeRows(delta.getRows())</code>
+     * @param delta Column and row offset
+     * @return New terminal size based off this one but with an applied resize
+     */
+    public TerminalSize withRelative(TerminalSize delta) {
+        return withRelative(delta.getColumns(), delta.getRows());
+    }
+
+    /**
+     * Creates a new TerminalSize object representing a size based on this object's size but with a delta applied.
+     * This is the same as calling
+     * <code>withRelativeColumns(deltaColumns).withRelativeRows(deltaRows)</code>
+     * @param deltaColumns How many extra columns the new TerminalSize will have (negative values are allowed)
+     * @param deltaRows How many extra rows the new TerminalSize will have (negative values are allowed)
+     * @return New terminal size based off this one but with an applied resize
+     */
+    public TerminalSize withRelative(int deltaColumns, int deltaRows) {
+        return withRelativeRows(deltaRows).withRelativeColumns(deltaColumns);
+    }
+
+    /**
      * Takes a different TerminalSize and returns a new TerminalSize that has the largest dimensions of the two,
      * measured separately. So calling 3x5 on a 5x3 will return 5x5.
      * @param other Other TerminalSize to compare with

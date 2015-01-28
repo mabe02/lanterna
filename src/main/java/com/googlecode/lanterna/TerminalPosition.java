@@ -112,7 +112,7 @@ public class TerminalPosition {
      * Creates a new TerminalPosition object representing a position on the same column, but with a row offset by a
      * supplied value. Calling this method with delta 0 will return this, calling it with a positive delta will return
      * a terminal position <i>delta</i> number of rows to the down and for negative numbers the same up.
-     * @param delta Column offset
+     * @param delta Row offset
      * @return New terminal position based off this one but with an applied offset
      */
     public TerminalPosition withRelativeRow(int delta) {
@@ -127,10 +127,22 @@ public class TerminalPosition {
      * TerminalPosition. Same as calling
      * <code>withRelativeRow(translate.getRow()).withRelativeColumn(translate.getColumn())</code>
      * @param translate How many columns and rows to translate
-     * @return New TerminalPosition that is the result of the original added translation
+     * @return New TerminalPosition that is the result of the original with added translation
      */
     public TerminalPosition withRelative(TerminalPosition translate) {
-        return withRelativeRow(translate.getRow()).withRelativeColumn(translate.getColumn());
+        return withRelative(translate.getColumn(), translate.getRow());
+    }
+
+    /**
+     * Creates a new TerminalPosition object that is 'translated' by an amount of rows and columns specified by the two
+     * parameters. Same as calling
+     * <code>withRelativeRow(deltaRow).withRelativeColumn(deltaColumn)</code>
+     * @param deltaColumn How many columns to move from the current position in the new TerminalPosition
+     * @param deltaRow How many rows to move from the current position in the new TerminalPosition
+     * @return New TerminalPosition that is the result of the original position with added translation
+     */
+    public TerminalPosition withRelative(int deltaColumn, int deltaRow) {
+        return withRelativeRow(deltaRow).withRelativeColumn(deltaColumn);
     }
 
     @Override
