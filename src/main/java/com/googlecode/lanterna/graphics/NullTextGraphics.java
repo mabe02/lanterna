@@ -169,6 +169,11 @@ class NullTextGraphics implements TextGraphics {
     }
 
     @Override
+    public TextGraphics drawImage(TerminalPosition topLeft, TextImage image, TerminalPosition sourceImageTopLeft, TerminalSize sourceImageSize) {
+        return this;
+    }
+
+    @Override
     public TextGraphics putString(int column, int row, String string) {
         return this;
     }

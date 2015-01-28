@@ -178,8 +178,27 @@ public abstract class AbstractTextGraphics implements TextGraphics {
 
     @Override
     public TextGraphics drawImage(TerminalPosition topLeft, TextImage image) {
-        for(int row = 0; row < image.getSize().getRows(); row++) {
-            for(int column = 0; column < image.getSize().getColumns(); column++) {
+        return drawImage(topLeft, image, TerminalPosition.TOP_LEFT_CORNER, image.getSize());
+    }
+
+    @Override
+    public TextGraphics drawImage(
+            TerminalPosition topLeft,
+            TextImage image,
+            TerminalPosition sourceImageTopLeft,
+            TerminalSize sourceImageSize) {
+
+        int fromRow = Math.max(sourceImageTopLeft.getRow(), 0);
+        int untilRow = Math.min(fromRow + sourceImageSize.getRows(), image.getSize().getRows());
+        int fromColumn = Math.max(sourceImageTopLeft.getColumn(), 0);
+        int untilColumn = Math.min(fromColumn + sourceImageSize.getColumns(), image.getSize().getColumns());
+
+        if(fromRow >= untilRow || fromColumn >= untilColumn) {
+            return this;
+        }
+
+        for(int row = fromRow; row < untilRow; row++) {
+            for(int column = fromColumn; column < untilColumn; column++) {
                 setCharacter(column + topLeft.getColumn(), row + topLeft.getRow(), image.getCharacterAt(column, row));
             }
         }

@@ -180,6 +180,12 @@ public final class TextGUIGraphics implements ThemedTextGraphics {
     }
 
     @Override
+    public TextGraphics drawImage(TerminalPosition topLeft, TextImage image, TerminalPosition sourceImageTopLeft, TerminalSize sourceImageSize) {
+        backend.drawImage(topLeft, image, sourceImageTopLeft, sourceImageSize);
+        return this;
+    }
+
+    @Override
     public TextGraphics setCharacter(TerminalPosition position, char character) {
         backend.setCharacter(position, character);
         return this;
