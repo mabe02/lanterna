@@ -257,11 +257,26 @@ public class TextArea  extends AbstractInteractableComponent
         lines.add("");
         invalidate();
     }
-    
+
     public String getLine(int index) {
         return lines.get(index);
     }
-    
+
+    public int getLineCount() {
+        return lines.size();
+    }
+
+    public void setScroll(int line) {
+        if (lastSize == null) {
+            return;
+        }
+        if (line < 0) {
+            line = 0;
+        }
+        scrollTopIndex = Math.max(0, line - lastSize.getRows());
+        invalidate();
+    }
+
     public void appendLine(String line) {
         lines.add(line);
         if(line.length() > longestLine)
