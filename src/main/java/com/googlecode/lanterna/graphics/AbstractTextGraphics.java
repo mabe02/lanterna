@@ -44,8 +44,8 @@ public abstract class AbstractTextGraphics implements TextGraphics {
         this.backgroundColor = TextColor.ANSI.DEFAULT;
         this.shapeRenderer = new DefaultShapeRenderer(new DefaultShapeRenderer.Callback() {
             @Override
-            public void onPoint(int column, int row, char character) {
-                setCharacter(column, row, newScreenCharacter(character));
+            public void onPoint(int column, int row, TextCharacter character) {
+                setCharacter(column, row, character);
             }
         });
     }
@@ -131,47 +131,77 @@ public abstract class AbstractTextGraphics implements TextGraphics {
 
     @Override
     public TextGraphics setCharacter(int column, int row, char character) {
-        setCharacter(column, row, newScreenCharacter(character));
+        setCharacter(column, row, newTextCharacter(character));
         return this;
     }
 
     @Override
     public TextGraphics setCharacter(TerminalPosition position, char character) {
-        setCharacter(position, newScreenCharacter(character));
+        setCharacter(position, newTextCharacter(character));
         return this;
     }
 
     @Override
     public TextGraphics drawLine(TerminalPosition fromPosition, TerminalPosition toPoint, char character) {
-        shapeRenderer.drawLine(fromPosition, toPoint, character);
+        return drawLine(fromPosition, toPoint, newTextCharacter(character));
+    }
+
+    @Override
+    public TextGraphics drawLine(TerminalPosition fromPoint, TerminalPosition toPoint, TextCharacter character) {
+        shapeRenderer.drawLine(fromPoint, toPoint, character);
         return this;
     }
 
     @Override
     public TextGraphics drawLine(int fromX, int fromY, int toX, int toY, char character) {
+        return drawLine(fromX, fromY, toX, toY, newTextCharacter(character));
+    }
+
+    @Override
+    public TextGraphics drawLine(int fromX, int fromY, int toX, int toY, TextCharacter character) {
         return drawLine(new TerminalPosition(fromX, fromY), new TerminalPosition(toX, toY), character);
     }
 
     @Override
     public TextGraphics drawTriangle(TerminalPosition p1, TerminalPosition p2, TerminalPosition p3, char character) {
+        return drawTriangle(p1, p2, p3, newTextCharacter(character));
+    }
+
+    @Override
+    public TextGraphics drawTriangle(TerminalPosition p1, TerminalPosition p2, TerminalPosition p3, TextCharacter character) {
         shapeRenderer.drawTriangle(p1, p2, p3, character);
         return this;
     }
 
     @Override
     public TextGraphics fillTriangle(TerminalPosition p1, TerminalPosition p2, TerminalPosition p3, char character) {
+        return fillTriangle(p1, p2, p3, newTextCharacter(character));
+    }
+
+    @Override
+    public TextGraphics fillTriangle(TerminalPosition p1, TerminalPosition p2, TerminalPosition p3, TextCharacter character) {
         shapeRenderer.fillTriangle(p1, p2, p3, character);
         return this;
     }
 
     @Override
     public TextGraphics drawRectangle(TerminalPosition topLeft, TerminalSize size, char character) {
+        return drawRectangle(topLeft, size, newTextCharacter(character));
+    }
+
+    @Override
+    public TextGraphics drawRectangle(TerminalPosition topLeft, TerminalSize size, TextCharacter character) {
         shapeRenderer.drawRectangle(topLeft, size, character);
         return this;
     }
 
     @Override
     public TextGraphics fillRectangle(TerminalPosition topLeft, TerminalSize size, char character) {
+        return fillRectangle(topLeft, size, newTextCharacter(character));
+    }
+
+    @Override
+    public TextGraphics fillRectangle(TerminalPosition topLeft, TerminalSize size, TextCharacter character) {
         shapeRenderer.fillRectangle(topLeft, size, character);
         return this;
     }
@@ -292,7 +322,7 @@ public abstract class AbstractTextGraphics implements TextGraphics {
 
     protected abstract void setCharacter(int columnIndex, int rowIndex, TextCharacter textCharacter);
 
-    private TextCharacter newScreenCharacter(char character) {
+    private TextCharacter newTextCharacter(char character) {
         return new TextCharacter(character, foregroundColor, backgroundColor, activeModifiers);
     }
 }

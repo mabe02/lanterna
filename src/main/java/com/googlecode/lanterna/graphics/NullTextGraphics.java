@@ -18,10 +18,7 @@
  */
 package com.googlecode.lanterna.graphics;
 
-import com.googlecode.lanterna.SGR;
-import com.googlecode.lanterna.TerminalPosition;
-import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.*;
 import com.googlecode.lanterna.screen.TabBehaviour;
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -139,7 +136,17 @@ class NullTextGraphics implements TextGraphics {
     }
 
     @Override
+    public TextGraphics drawLine(TerminalPosition fromPoint, TerminalPosition toPoint, TextCharacter character) {
+        return this;
+    }
+
+    @Override
     public TextGraphics drawLine(int fromX, int fromY, int toX, int toY, char character) {
+        return this;
+    }
+
+    @Override
+    public TextGraphics drawLine(int fromX, int fromY, int toX, int toY, TextCharacter character) {
         return this;
     }
 
@@ -149,7 +156,17 @@ class NullTextGraphics implements TextGraphics {
     }
 
     @Override
+    public TextGraphics drawTriangle(TerminalPosition p1, TerminalPosition p2, TerminalPosition p3, TextCharacter character) {
+        return this;
+    }
+
+    @Override
     public TextGraphics fillTriangle(TerminalPosition p1, TerminalPosition p2, TerminalPosition p3, char character) {
+        return this;
+    }
+
+    @Override
+    public TextGraphics fillTriangle(TerminalPosition p1, TerminalPosition p2, TerminalPosition p3, TextCharacter character) {
         return this;
     }
 
@@ -159,7 +176,17 @@ class NullTextGraphics implements TextGraphics {
     }
 
     @Override
+    public TextGraphics drawRectangle(TerminalPosition topLeft, TerminalSize size, TextCharacter character) {
+        return this;
+    }
+
+    @Override
     public TextGraphics fillRectangle(TerminalPosition topLeft, TerminalSize size, char character) {
+        return this;
+    }
+
+    @Override
+    public TextGraphics fillRectangle(TerminalPosition topLeft, TerminalSize size, TextCharacter character) {
         return this;
     }
 

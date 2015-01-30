@@ -18,11 +18,8 @@
  */
 package com.googlecode.lanterna.graphics;
 
-import com.googlecode.lanterna.SGR;
+import com.googlecode.lanterna.*;
 import com.googlecode.lanterna.screen.TabBehaviour;
-import com.googlecode.lanterna.TerminalPosition;
-import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.TextColor;
 
 import java.util.EnumSet;
 
@@ -175,6 +172,17 @@ public interface TextGraphics {
      * @return Itself
      */
     TextGraphics drawLine(TerminalPosition fromPoint, TerminalPosition toPoint, char character);
+
+    /**
+     * Draws a line from a specified position to a specified position, using a supplied TextCharacter. The current
+     * foreground color, background color and modifiers of this TextGraphics will not be used and will not be modified
+     * by this call.
+     * @param fromPoint From where to draw the line
+     * @param toPoint Where to draw the line
+     * @param character Character data to use for the line, including character, colors and modifiers
+     * @return Itself
+     */
+    TextGraphics drawLine(TerminalPosition fromPoint, TerminalPosition toPoint, TextCharacter character);
     
     /**
      * Draws a line from a specified position to a specified position, using a supplied character. The current
@@ -187,6 +195,19 @@ public interface TextGraphics {
      * @return Itself
      */
     TextGraphics drawLine(int fromX, int fromY, int toX, int toY, char character);
+
+    /**
+     * Draws a line from a specified position to a specified position, using a supplied character. The current
+     * foreground color, background color and modifiers of this TextGraphics will not be used and will not be modified
+     * by this call.
+     * @param fromX Column of the starting position to draw the line from (inclusive)
+     * @param fromY Row of the starting position to draw the line from (inclusive)
+     * @param toX Column of the end position to draw the line to (inclusive)
+     * @param toY Row of the end position to draw the line to (inclusive)
+     * @param character Character data to use for the line, including character, colors and modifiers
+     * @return Itself
+     */
+    TextGraphics drawLine(int fromX, int fromY, int toX, int toY, TextCharacter character);
     
     /**
      * Draws the outline of a triangle on the screen, using a supplied character. The triangle will begin at p1, go
@@ -200,15 +221,37 @@ public interface TextGraphics {
     TextGraphics drawTriangle(TerminalPosition p1, TerminalPosition p2, TerminalPosition p3, char character);
 
     /**
+     * Draws the outline of a triangle on the screen, using a supplied character. The triangle will begin at p1, go
+     * through p2 and then p3 and then back to p1. The current foreground color, background color and modifiers of this
+     * TextGraphics will not be used and will not be modified by this call.
+     * @param p1 First point on the screen of the triangle
+     * @param p2 Second point on the screen of the triangle
+     * @param p3 Third point on the screen of the triangle
+     * @param character What character data to use when drawing the lines of the triangle
+     */
+    TextGraphics drawTriangle(TerminalPosition p1, TerminalPosition p2, TerminalPosition p3, TextCharacter character);
+
+    /**
      * Draws a filled triangle, using a supplied character. The triangle will begin at p1, go
      * through p2 and then p3 and then back to p1. The current foreground color, background color and modifiers will be
      * applied.
      * @param p1 First point on the screen of the triangle
      * @param p2 Second point on the screen of the triangle
      * @param p3 Third point on the screen of the triangle
-     * @param character What character to use when drawing the lines of the triangle
+     * @param character What character to use when drawing the triangle
      */
     TextGraphics fillTriangle(TerminalPosition p1, TerminalPosition p2, TerminalPosition p3, char character);
+
+    /**
+     * Draws a filled triangle, using a supplied character. The triangle will begin at p1, go
+     * through p2 and then p3 and then back to p1. The current foreground color, background color and modifiers of this
+     * TextGraphics will not be used and will not be modified by this call.
+     * @param p1 First point on the screen of the triangle
+     * @param p2 Second point on the screen of the triangle
+     * @param p3 Third point on the screen of the triangle
+     * @param character What character data to use when drawing the triangle
+     */
+    TextGraphics fillTriangle(TerminalPosition p1, TerminalPosition p2, TerminalPosition p3, TextCharacter character);
 
     /**
      * Draws the outline of a rectangle with a particular character (and the currently active colors and
@@ -225,6 +268,20 @@ public interface TextGraphics {
     TextGraphics drawRectangle(TerminalPosition topLeft, TerminalSize size, char character);
 
     /**
+     * Draws the outline of a rectangle with a particular TextCharacter, ignoring the current colors and modifiers of
+     * this TextGraphics.
+     * <p/>
+     * For example, calling drawRectangle with size being the size of the terminal and top-left value being the terminal's
+     * top-left (0x0) corner will draw a border around the terminal.
+     * <p/>
+     * The current foreground color, background color and modifiers will not be modified by this call.
+     * @param topLeft Coordinates of the top-left position of the rectangle
+     * @param size Size (in columns and rows) of the area to draw
+     * @param character What character data to use when drawing the outline of the rectangle
+     */
+    TextGraphics drawRectangle(TerminalPosition topLeft, TerminalSize size, TextCharacter character);
+
+    /**
      * Takes a rectangle and fills it with a particular character (and the currently active colors and
      * modifiers). The topLeft coordinate is inclusive.
      * <p/>
@@ -237,6 +294,20 @@ public interface TextGraphics {
      * @param character What character to use when filling the rectangle
      */
     TextGraphics fillRectangle(TerminalPosition topLeft, TerminalSize size, char character);
+
+    /**
+     * Takes a rectangle and fills it using a particular TextCharacter, ignoring the current colors and modifiers of
+     * this TextGraphics. The topLeft coordinate is inclusive.
+     * <p/>
+     * For example, calling fillRectangle with size being the size of the terminal and top-left value being the terminal's
+     * top-left (0x0) corner will fill the entire terminal with this character.
+     * <p/>
+     * The current foreground color, background color and modifiers will not be modified by this call.
+     * @param topLeft Coordinates of the top-left position of the rectangle
+     * @param size Size (in columns and rows) of the area to draw
+     * @param character What character data to use when filling the rectangle
+     */
+    TextGraphics fillRectangle(TerminalPosition topLeft, TerminalSize size, TextCharacter character);
     
     /**
      * Takes a TextImage and draws it on the surface this TextGraphics is targeting, given the coordinates on the target

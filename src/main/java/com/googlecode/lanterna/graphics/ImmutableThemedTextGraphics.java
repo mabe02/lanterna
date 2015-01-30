@@ -1,9 +1,6 @@
 package com.googlecode.lanterna.graphics;
 
-import com.googlecode.lanterna.SGR;
-import com.googlecode.lanterna.TerminalPosition;
-import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.*;
 import com.googlecode.lanterna.screen.TabBehaviour;
 
 import java.util.EnumSet;
@@ -133,7 +130,19 @@ public class ImmutableThemedTextGraphics implements ThemedTextGraphics {
     }
 
     @Override
+    public TextGraphics fillRectangle(TerminalPosition topLeft, TerminalSize size, TextCharacter character) {
+        backend.fillRectangle(topLeft, size, character);
+        return this;
+    }
+
+    @Override
     public TextGraphics drawRectangle(TerminalPosition topLeft, TerminalSize size, char character) {
+        backend.drawRectangle(topLeft, size, character);
+        return this;
+    }
+
+    @Override
+    public TextGraphics drawRectangle(TerminalPosition topLeft, TerminalSize size, TextCharacter character) {
         backend.drawRectangle(topLeft, size, character);
         return this;
     }
@@ -145,7 +154,19 @@ public class ImmutableThemedTextGraphics implements ThemedTextGraphics {
     }
 
     @Override
+    public TextGraphics fillTriangle(TerminalPosition p1, TerminalPosition p2, TerminalPosition p3, TextCharacter character) {
+        backend.fillTriangle(p1, p2, p3, character);
+        return this;
+    }
+
+    @Override
     public TextGraphics drawTriangle(TerminalPosition p1, TerminalPosition p2, TerminalPosition p3, char character) {
+        backend.drawTriangle(p1, p2, p3, character);
+        return this;
+    }
+
+    @Override
+    public TextGraphics drawTriangle(TerminalPosition p1, TerminalPosition p2, TerminalPosition p3, TextCharacter character) {
         backend.drawTriangle(p1, p2, p3, character);
         return this;
     }
@@ -157,7 +178,19 @@ public class ImmutableThemedTextGraphics implements ThemedTextGraphics {
     }
 
     @Override
+    public TextGraphics drawLine(TerminalPosition fromPoint, TerminalPosition toPoint, TextCharacter character) {
+        backend.drawLine(fromPoint, toPoint, character);
+        return this;
+    }
+
+    @Override
     public TextGraphics drawLine(int fromX, int fromY, int toX, int toY, char character) {
+        backend.drawLine(fromX, fromY, toX, toY, character);
+        return this;
+    }
+
+    @Override
+    public TextGraphics drawLine(int fromX, int fromY, int toX, int toY, TextCharacter character) {
         backend.drawLine(fromX, fromY, toX, toY, character);
         return this;
     }

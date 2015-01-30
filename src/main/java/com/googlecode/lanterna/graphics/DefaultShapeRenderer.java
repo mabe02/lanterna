@@ -20,6 +20,7 @@ package com.googlecode.lanterna.graphics;
 
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TextCharacter;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -30,7 +31,7 @@ import java.util.Comparator;
  */
 class DefaultShapeRenderer implements ShapeRenderer {
     interface Callback {
-        void onPoint(int column, int row, char character);
+        void onPoint(int column, int row, TextCharacter character);
     }
 
     private final Callback callback;
@@ -40,7 +41,7 @@ class DefaultShapeRenderer implements ShapeRenderer {
     }
 
     @Override
-    public void drawLine(TerminalPosition p1, TerminalPosition p2, char character) {
+    public void drawLine(TerminalPosition p1, TerminalPosition p2, TextCharacter character) {
         //http://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
         //Implementation from Graphics Programming Black Book by Michael Abrash
         //Available at http://www.gamedev.net/page/resources/_/technical/graphics-programming-and-theory/graphics-programming-black-book-r1698
@@ -70,7 +71,7 @@ class DefaultShapeRenderer implements ShapeRenderer {
         }
     }
 
-    private void drawLine0(TerminalPosition start, int deltaX, int deltaY, boolean leftToRight, char character) {
+    private void drawLine0(TerminalPosition start, int deltaX, int deltaY, boolean leftToRight, TextCharacter character) {
         int x = start.getColumn();
         int y = start.getRow();
         int deltaYx2 = deltaY * 2;
@@ -90,7 +91,7 @@ class DefaultShapeRenderer implements ShapeRenderer {
         }
     }
 
-    private void drawLine1(TerminalPosition start, int deltaX, int deltaY, boolean leftToRight, char character) {
+    private void drawLine1(TerminalPosition start, int deltaX, int deltaY, boolean leftToRight, TextCharacter character) {
         int x = start.getColumn();
         int y = start.getRow();
         int deltaXx2 = deltaX * 2;
@@ -111,14 +112,14 @@ class DefaultShapeRenderer implements ShapeRenderer {
     }
 
     @Override
-    public void drawTriangle(TerminalPosition p1, TerminalPosition p2, TerminalPosition p3, char character) {
+    public void drawTriangle(TerminalPosition p1, TerminalPosition p2, TerminalPosition p3, TextCharacter character) {
         drawLine(p1, p2, character);
         drawLine(p2, p3, character);
         drawLine(p3, p1, character);
     }
 
     @Override
-    public void drawRectangle(TerminalPosition topLeft, TerminalSize size, char character) {
+    public void drawRectangle(TerminalPosition topLeft, TerminalSize size, TextCharacter character) {
         TerminalPosition topRight = topLeft.withRelativeColumn(size.getColumns() - 1);
         TerminalPosition bottomRight = topRight.withRelativeRow(size.getRows() - 1);
         TerminalPosition bottomLeft = topLeft.withRelativeRow(size.getRows() - 1);
@@ -129,7 +130,7 @@ class DefaultShapeRenderer implements ShapeRenderer {
     }
 
     @Override
-    public void fillTriangle(TerminalPosition p1, TerminalPosition p2, TerminalPosition p3, char character) {
+    public void fillTriangle(TerminalPosition p1, TerminalPosition p2, TerminalPosition p3, TextCharacter character) {
         //I've used the algorithm described here:
         //http://www-users.mat.uni.torun.pl/~wrona/3d_tutor/tri_fillers.html
         TerminalPosition[] points = new TerminalPosition[]{p1, p2, p3};
@@ -185,7 +186,7 @@ class DefaultShapeRenderer implements ShapeRenderer {
     }
 
     @Override
-    public void fillRectangle(TerminalPosition topLeft, TerminalSize size, char character) {
+    public void fillRectangle(TerminalPosition topLeft, TerminalSize size, TextCharacter character) {
         for(int y = 0; y < size.getRows(); y++) {
             for(int x = 0; x < size.getColumns(); x++) {
                 callback.onPoint(topLeft.getColumn() + x, topLeft.getRow() + y, character);
