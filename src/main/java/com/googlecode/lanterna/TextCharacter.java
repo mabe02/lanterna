@@ -201,6 +201,38 @@ public class TextCharacter {
         return new TextCharacter(character, foregroundColor, backgroundColor, modifiers);
     }
 
+    public TextCharacter withForegroundColor(TextColor foregroundColor) {
+        if(this.foregroundColor == foregroundColor || this.foregroundColor.equals(foregroundColor)) {
+            return this;
+        }
+        return new TextCharacter(character, foregroundColor, backgroundColor, modifiers);
+    }
+
+    public TextCharacter withBackgroundColor(TextColor backgroundColor) {
+        if(this.backgroundColor == backgroundColor || this.backgroundColor.equals(backgroundColor)) {
+            return this;
+        }
+        return new TextCharacter(character, foregroundColor, backgroundColor, modifiers);
+    }
+
+    public TextCharacter withModifier(SGR modifier) {
+        if(modifiers.contains(modifier)) {
+            return this;
+        }
+        EnumSet<SGR> newSet = EnumSet.copyOf(this.modifiers);
+        newSet.add(modifier);
+        return new TextCharacter(character, foregroundColor, backgroundColor, newSet);
+    }
+
+    public TextCharacter withoutModifier(SGR modifier) {
+        if(!modifiers.contains(modifier)) {
+            return this;
+        }
+        EnumSet<SGR> newSet = EnumSet.copyOf(this.modifiers);
+        newSet.remove(modifier);
+        return new TextCharacter(character, foregroundColor, backgroundColor, newSet);
+    }
+
     @SuppressWarnings("SimplifiableIfStatement")
     @Override
     public boolean equals(Object obj) {
