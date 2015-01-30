@@ -156,12 +156,31 @@ public interface TextGraphics {
     TextGraphics setCharacter(int column, int row, char character);
 
     /**
+     * Sets the character at the current position to the specified value, without using the current colors and modifiers
+     * of this TextGraphics.
+     * @param column column of the location to set the character
+     * @param row row of the location to set the character
+     * @param character Character data to set at the current position
+     * @return Itself
+     */
+    TextGraphics setCharacter(int column, int row, TextCharacter character);
+
+    /**
      * Sets the character at the current position to the specified value
      * @param position position of the location to set the character
      * @param character Character to set at the current position
      * @return Itself
      */
     TextGraphics setCharacter(TerminalPosition position, char character);
+
+    /**
+     * Sets the character at the current position to the specified value, without using the current colors and modifiers
+     * of this TextGraphics.
+     * @param position position of the location to set the character
+     * @param character Character data to set at the current position
+     * @return Itself
+     */
+    TextGraphics setCharacter(TerminalPosition position, TextCharacter character);
 
     /**
      * Draws a line from a specified position to a specified position, using a supplied character. The current

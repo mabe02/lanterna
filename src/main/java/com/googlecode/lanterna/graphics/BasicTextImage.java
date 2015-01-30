@@ -194,8 +194,9 @@ public class BasicTextImage implements TextImage {
     public TextGraphics newTextGraphics() {
         return new AbstractTextGraphics() {
             @Override
-            protected void setCharacter(int columnIndex, int rowIndex, TextCharacter textCharacter) {
+            public TextGraphics setCharacter(int columnIndex, int rowIndex, TextCharacter textCharacter) {
                 BasicTextImage.this.setCharacterAt(columnIndex, rowIndex, textCharacter);
+                return this;
             }
 
             @Override

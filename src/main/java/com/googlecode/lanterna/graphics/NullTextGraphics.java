@@ -126,7 +126,17 @@ class NullTextGraphics implements TextGraphics {
     }
 
     @Override
+    public TextGraphics setCharacter(int column, int row, TextCharacter character) {
+        return this;
+    }
+
+    @Override
     public TextGraphics setCharacter(TerminalPosition position, char character) {
+        return this;
+    }
+
+    @Override
+    public TextGraphics setCharacter(TerminalPosition position, TextCharacter character) {
         return this;
     }
 

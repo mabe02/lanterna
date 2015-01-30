@@ -131,14 +131,18 @@ public abstract class AbstractTextGraphics implements TextGraphics {
 
     @Override
     public TextGraphics setCharacter(int column, int row, char character) {
-        setCharacter(column, row, newTextCharacter(character));
+        return setCharacter(column, row, newTextCharacter(character));
+    }
+
+    @Override
+    public TextGraphics setCharacter(TerminalPosition position, TextCharacter textCharacter) {
+        setCharacter(position.getColumn(), position.getRow(), textCharacter);
         return this;
     }
 
     @Override
     public TextGraphics setCharacter(TerminalPosition position, char character) {
-        setCharacter(position, newTextCharacter(character));
-        return this;
+        return setCharacter(position.getColumn(), position.getRow(), character);
     }
 
     @Override
@@ -315,12 +319,6 @@ public abstract class AbstractTextGraphics implements TextGraphics {
         }
         return new SubTextGraphics(this, topLeftCorner, size);
     }
-
-    private void setCharacter(TerminalPosition position, TextCharacter textCharacter) {
-        setCharacter(position.getColumn(), position.getRow(), textCharacter);
-    }
-
-    protected abstract void setCharacter(int columnIndex, int rowIndex, TextCharacter textCharacter);
 
     private TextCharacter newTextCharacter(char character) {
         return new TextCharacter(character, foregroundColor, backgroundColor, activeModifiers);

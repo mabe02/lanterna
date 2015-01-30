@@ -56,7 +56,7 @@ class TerminalTextGraphics extends AbstractTextGraphics {
     }
 
     @Override
-    protected synchronized void setCharacter(int columnIndex, int rowIndex, TextCharacter textCharacter) {
+    public synchronized TextGraphics setCharacter(int columnIndex, int rowIndex, TextCharacter textCharacter) {
         try {
             if(manageCallStackSize.get() > 0) {
                 if(lastCharacter == null || !lastCharacter.equals(textCharacter)) {
@@ -80,6 +80,7 @@ class TerminalTextGraphics extends AbstractTextGraphics {
         catch(IOException e) {
             throw new RuntimeException(e);
         }
+        return this;
     }
 
     private void applyGraphicState(TextCharacter textCharacter) throws IOException {

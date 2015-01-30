@@ -39,13 +39,14 @@ class SubTextGraphics extends AbstractTextGraphics {
     }
 
     @Override
-    protected void setCharacter(int columnIndex, int rowIndex, TextCharacter textCharacter) {
+    public TextGraphics setCharacter(int columnIndex, int rowIndex, TextCharacter textCharacter) {
         TerminalSize writableArea = getSize();
         if(columnIndex < 0 || columnIndex >= writableArea.getColumns() ||
                 rowIndex < 0 || rowIndex >= writableArea.getRows()) {
-            return;
+            return this;
         }
         underlyingTextGraphics.setCharacter(columnIndex + topLeft.getColumn(), rowIndex + topLeft.getRow(), textCharacter);
+        return this;
     }
 
     @Override

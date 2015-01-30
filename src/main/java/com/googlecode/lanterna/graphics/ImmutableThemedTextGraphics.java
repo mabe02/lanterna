@@ -214,7 +214,19 @@ public class ImmutableThemedTextGraphics implements ThemedTextGraphics {
     }
 
     @Override
+    public TextGraphics setCharacter(TerminalPosition position, TextCharacter character) {
+        backend.setCharacter(position, character);
+        return this;
+    }
+
+    @Override
     public TextGraphics setCharacter(int column, int row, char character) {
+        backend.setCharacter(column, row, character);
+        return this;
+    }
+
+    @Override
+    public TextGraphics setCharacter(int column, int row, TextCharacter character) {
         backend.setCharacter(column, row, character);
         return this;
     }

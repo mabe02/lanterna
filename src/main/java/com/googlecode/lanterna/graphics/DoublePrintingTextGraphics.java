@@ -37,10 +37,11 @@ public class DoublePrintingTextGraphics extends AbstractTextGraphics {
     }
 
     @Override
-    protected void setCharacter(int columnIndex, int rowIndex, TextCharacter textCharacter) {
+    public TextGraphics setCharacter(int columnIndex, int rowIndex, TextCharacter textCharacter) {
         columnIndex = columnIndex * 2;
         underlyingTextGraphics.setCharacter(columnIndex, rowIndex, textCharacter);
         underlyingTextGraphics.setCharacter(columnIndex + 1, rowIndex, textCharacter);
+        return this;
     }
 
     @Override

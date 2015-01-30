@@ -22,6 +22,7 @@ import com.googlecode.lanterna.graphics.AbstractTextGraphics;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.graphics.TextGraphics;
 
 /**
  * Implementation of TextGraphics for the SwingTerminal, which is able to access directly into the TextBuffer and set
@@ -36,13 +37,14 @@ class VirtualTerminalTextGraphics extends AbstractTextGraphics {
     }
 
     @Override
-    protected void setCharacter(int columnIndex, int rowIndex, TextCharacter textCharacter) {
+    public TextGraphics setCharacter(int columnIndex, int rowIndex, TextCharacter textCharacter) {
         TerminalSize size = getSize();
         if(columnIndex < 0 || columnIndex >= size.getColumns() ||
                 rowIndex < 0 || rowIndex >= size.getRows()) {
-            return;
+            return this;
         }
         virtualTerminal.setCursorAndPutCharacter(new TerminalPosition(columnIndex, rowIndex), textCharacter);
+        return this;
     }
 
     @Override

@@ -19,6 +19,7 @@
 package com.googlecode.lanterna.screen;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.graphics.TextGraphics;
 
 /**
  * This is an implementation of TextGraphics that targets the output to a Screen. The ScreenTextGraphics object is valid
@@ -34,9 +35,10 @@ class ScreenTextGraphics extends com.googlecode.lanterna.graphics.AbstractTextGr
     }
 
     @Override
-    protected void setCharacter(int columnIndex, int rowIndex, TextCharacter textCharacter) {
+    public TextGraphics setCharacter(int columnIndex, int rowIndex, TextCharacter textCharacter) {
         //Let the screen do culling
         screen.setCharacter(columnIndex, rowIndex, textCharacter);
+        return this;
     }
 
     @Override
