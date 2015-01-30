@@ -188,18 +188,30 @@ public abstract class AbstractTextGraphics implements TextGraphics {
             TerminalPosition sourceImageTopLeft,
             TerminalSize sourceImageSize) {
 
+        // cropping specified image-subrectangle to the image itself:
         int fromRow = Math.max(sourceImageTopLeft.getRow(), 0);
-        int untilRow = Math.min(fromRow + sourceImageSize.getRows(), image.getSize().getRows());
+        int untilRow = Math.min(sourceImageTopLeft.getRow() + sourceImageSize.getRows(), image.getSize().getRows());
         int fromColumn = Math.max(sourceImageTopLeft.getColumn(), 0);
-        int untilColumn = Math.min(fromColumn + sourceImageSize.getColumns(), image.getSize().getColumns());
+        int untilColumn = Math.min(sourceImageTopLeft.getColumn() + sourceImageSize.getColumns(), image.getSize().getColumns());
 
-        if(fromRow >= untilRow || fromColumn >= untilColumn) {
+        // difference between position in image and position on target:
+        int diffRow = topLeft.getRow() - sourceImageTopLeft.getRow();
+        int diffColumn = topLeft.getColumn() - sourceImageTopLeft.getColumn();
+
+        // top/left-crop at target(TextGraphics) rectangle: (only matters, if topLeft has a negative coordinate)
+        fromRow = Math.max(fromRow, -diffRow);
+        fromColumn = Math.max(fromColumn, -diffColumn);
+
+        // bot/right-crop at target(TextGraphics) rectangle: (only matters, if topLeft has a negative coordinate)
+        untilRow = Math.min(untilRow, getSize().getRows() - diffRow);
+        untilColumn = Math.min(untilColumn, getSize().getColumns() - diffColumn);
+
+        if (fromRow >= untilRow || fromColumn >= untilColumn) {
             return this;
         }
-
-        for(int row = fromRow; row < untilRow; row++) {
-            for(int column = fromColumn; column < untilColumn; column++) {
-                setCharacter(column + topLeft.getColumn(), row + topLeft.getRow(), image.getCharacterAt(column, row));
+        for (int row = fromRow; row < untilRow; row++) {
+            for (int column = fromColumn; column < untilColumn; column++) {
+                setCharacter(column + diffColumn, row + diffRow, image.getCharacterAt(column, row));
             }
         }
         return this;
