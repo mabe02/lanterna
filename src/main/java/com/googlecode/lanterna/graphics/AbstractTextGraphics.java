@@ -222,6 +222,14 @@ public abstract class AbstractTextGraphics implements TextGraphics {
             TerminalPosition sourceImageTopLeft,
             TerminalSize sourceImageSize) {
 
+        if(sourceImageTopLeft.getRow() < 0 ||
+                sourceImageTopLeft.getColumn() < 0 ||
+                sourceImageTopLeft.getRow() >= image.getSize().getRows() ||
+                sourceImageTopLeft.getColumn() >= image.getSize().getColumns()) {
+            throw new IllegalArgumentException("Source image top-left coordinates (" + sourceImageTopLeft + ") are " +
+                    "out of bounds (image size is " + image.getSize() + ")");
+        }
+
         // cropping specified image-subrectangle to the image itself:
         int fromRow = Math.max(sourceImageTopLeft.getRow(), 0);
         int untilRow = Math.min(sourceImageTopLeft.getRow() + sourceImageSize.getRows(), image.getSize().getRows());

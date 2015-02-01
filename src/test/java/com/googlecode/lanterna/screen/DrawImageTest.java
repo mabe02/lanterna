@@ -49,6 +49,26 @@ public class DrawImageTest {
         screenGraphics.drawImage(new TerminalPosition(37, 1), image, new TerminalPosition(3, 0), image.getSize());
         screenGraphics.drawImage(new TerminalPosition(40, 1), image, new TerminalPosition(4, 0), image.getSize());
 
+        //Try to draw bigger than the image size, this should ignore the extra size
+        screenGraphics.drawImage(new TerminalPosition(1, 7), image, TerminalPosition.TOP_LEFT_CORNER, image.getSize().withRelativeColumns(10));
+
+        //0 size should draw nothing
+        screenGraphics.drawImage(new TerminalPosition(8, 7), image, TerminalPosition.TOP_LEFT_CORNER, TerminalSize.ZERO);
+
+        //Valid top-left position should throw an exception
+        try {
+            screenGraphics.drawImage(new TerminalPosition(8, 7), image, new TerminalPosition(0, -1), image.getSize());
+            throw new IllegalStateException("Shouldn't be able to draw image from a negative offset");
+        }
+        catch(IllegalArgumentException e) {
+        }
+        try {
+            screenGraphics.drawImage(new TerminalPosition(8, 7), image, new TerminalPosition(5, 5), image.getSize());
+            throw new IllegalStateException("Shouldn't be able to draw image from a offset >= size");
+        }
+        catch(IllegalArgumentException e) {
+        }
+
         screen.refresh();
         screen.readInput();
         screen.stopScreen();
