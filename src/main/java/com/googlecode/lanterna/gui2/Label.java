@@ -121,7 +121,7 @@ public class Label extends AbstractComponent {
                 for(SGR sgr: additionalStyles) {
                     graphics.enableModifiers(sgr);
                 }
-                for(int row = 0; row < Math.min(graphics.getSize().getRows(), preferredSize.getColumns()); row++) {
+                for(int row = 0; row < Math.min(graphics.getSize().getRows(), preferredSize.getRows()); row++) {
                     String line = lines[row];
                     if(graphics.getSize().getColumns() >= preferredSize.getColumns()) {
                         graphics.putString(0, row, line);
