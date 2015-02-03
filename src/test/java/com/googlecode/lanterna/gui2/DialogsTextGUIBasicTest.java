@@ -33,11 +33,9 @@ public class DialogsTextGUIBasicTest {
         WindowBasedTextGUI textGUI = new MultiWindowTextGUI(screen);
         try {
             BasicWindow window = new BasicWindow("Dialog test");
-
-
-            textGUI.getWindowManager().addWindow(window);
+            textGUI.addWindow(window);
             textGUI.updateScreen();
-            while(!textGUI.getWindowManager().getWindows().isEmpty()) {
+            while(!textGUI.getWindows().isEmpty()) {
                 textGUI.processInput();
                 if(textGUI.isPendingUpdate()) {
                     textGUI.updateScreen();
