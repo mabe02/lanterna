@@ -28,7 +28,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  *
  * @author Martin
  */
-public class StackedModalWindowManager implements WindowManager {
+public class SimpleWindowManager implements WindowManager {
     private static final int CASCADE_SHIFT_RIGHT = 2;
     private static final int CASCADE_SHIFT_DOWN = 1;
 
@@ -37,7 +37,7 @@ public class StackedModalWindowManager implements WindowManager {
     private final WindowDecorationRenderer windowDecorationRenderer;
     private TerminalPosition nextTopLeftPosition;
 
-    public StackedModalWindowManager() {
+    public SimpleWindowManager() {
         this.windowStack = new TreeSet<ManagedWindow>();
         this.listeners = new CopyOnWriteArrayList<Listener>();
         this.nextTopLeftPosition = new TerminalPosition(CASCADE_SHIFT_RIGHT, CASCADE_SHIFT_DOWN);

@@ -27,7 +27,6 @@ import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.screen.VirtualScreen;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -46,7 +45,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
     }
 
     public MultiWindowTextGUI(Screen screen, TextColor backgroundColor) {
-        this(screen, new StackedModalWindowManager(), new EmptySpace(backgroundColor));
+        this(screen, new SimpleWindowManager(), new EmptySpace(backgroundColor));
     }
 
     public MultiWindowTextGUI(Screen screen, WindowManager windowManager, Component background) {
