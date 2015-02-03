@@ -126,6 +126,13 @@ public class SimpleWindowManager implements WindowManager {
                     " as it's not managed by this window manager");
         }
         if(managedWindow.topLeftPosition != null) {
+            //If the window is outside of the screen, pull it back in
+            while(screenSize.getColumns() > 5 && screenSize.getColumns() <= managedWindow.topLeftPosition.getColumn()) {
+                managedWindow.topLeftPosition = managedWindow.topLeftPosition.withRelativeColumn(-screenSize.getColumns());
+            }
+            while(screenSize.getRows() > 3 && screenSize.getRows() <= managedWindow.topLeftPosition.getRow()) {
+                managedWindow.topLeftPosition = managedWindow.topLeftPosition.withRelativeRow(-screenSize.getRows());
+            }
             return managedWindow.topLeftPosition;
         }
 
@@ -203,8 +210,8 @@ public class SimpleWindowManager implements WindowManager {
 
     private static class ManagedWindow implements Comparable<ManagedWindow>{
         private final Window window;
-        private final TerminalPosition topLeftPosition;
-        private final int ordinal;
+        private TerminalPosition topLeftPosition;
+        private int ordinal;
 
         private ManagedWindow(Window window, TerminalPosition topLeftPosition, int ordinal) {
             this.window = window;

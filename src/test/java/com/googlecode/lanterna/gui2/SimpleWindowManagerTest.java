@@ -9,9 +9,9 @@ import java.util.Set;
  * Test/example class for various kinds of window manager behaviours
  * @author Martin
  */
-public class StackedModalWindowManagerTest extends TestBase {
+public class SimpleWindowManagerTest extends TestBase {
     public static void main(String[] args) throws IOException, InterruptedException {
-        new StackedModalWindowManagerTest().run(args);
+        new SimpleWindowManagerTest().run(args);
     }
 
     @Override
