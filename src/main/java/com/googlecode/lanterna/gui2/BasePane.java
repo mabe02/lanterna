@@ -22,8 +22,8 @@ import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.input.KeyStroke;
 
 /**
- * RootContainer is the base container in a Text GUI. A text gui may have several root containers, although they are
- * always independent. One example of this is a multi-window system where each window is a root container.
+ * BasePane is the base container in a Text GUI. A text gui may have several base panes, although they are
+ * always independent. One common example of this is a multi-window system where each window is a base pane.
  * @author Martin
  */
 public interface BasePane extends Composite {
