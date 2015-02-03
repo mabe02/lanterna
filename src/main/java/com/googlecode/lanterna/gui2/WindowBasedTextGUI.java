@@ -18,6 +18,8 @@
  */
 package com.googlecode.lanterna.gui2;
 
+import java.util.Collection;
+
 /**
  * Extension of the TextGUI interface, this is intended as the base interface for any TextGUI that intends to make use
  * of the Window class.
@@ -30,4 +32,12 @@ public interface WindowBasedTextGUI extends ComponentBasedTextGUI {
      * @return Window manager that is currently controlling the windows in the terminal
      */
     WindowManager getWindowManager();
+
+    WindowBasedTextGUI addWindow(Window window);
+
+    WindowBasedTextGUI removeWindow(Window window);
+
+    Collection<Window> getWindows();
+
+    Window getActiveWindow();
 }

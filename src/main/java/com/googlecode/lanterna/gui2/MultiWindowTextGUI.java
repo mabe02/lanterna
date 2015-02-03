@@ -27,35 +27,37 @@ import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.screen.VirtualScreen;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  *
  * @author Martin
  */
-public class DefaultWindowTextGUI extends AbstractTextGUI implements WindowBasedTextGUI {
+public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTextGUI {
     private final VirtualScreen virtualScreen;
     private final WindowManager windowManager;
-    private final TextGUIElement background;
+    private final BasePane backgroundPane;
     private final WindowPostRenderer postRenderer;
     private boolean eofWhenNoWindows;
 
-    public DefaultWindowTextGUI(Screen screen) {
+    public MultiWindowTextGUI(Screen screen) {
         this(screen, TextColor.ANSI.BLUE);
     }
 
-    public DefaultWindowTextGUI(Screen screen, TextColor backgroundColor) {
+    public MultiWindowTextGUI(Screen screen, TextColor backgroundColor) {
         this(screen, new StackedModalWindowManager(), new EmptySpace(backgroundColor));
     }
 
-    public DefaultWindowTextGUI(Screen screen, WindowManager windowManager, TextGUIElement background) {
+    public MultiWindowTextGUI(Screen screen, WindowManager windowManager, Component background) {
         this(screen, windowManager, new WindowShadowRenderer(), background);
     }
 
-    public DefaultWindowTextGUI(Screen screen, WindowManager windowManager, WindowPostRenderer postRenderer, TextGUIElement background) {
+    public MultiWindowTextGUI(Screen screen, WindowManager windowManager, WindowPostRenderer postRenderer, Component background) {
         this(new VirtualScreen(screen), windowManager, postRenderer, background);
     }
 
-    private DefaultWindowTextGUI(VirtualScreen screen, WindowManager windowManager, WindowPostRenderer postRenderer, TextGUIElement background) {
+    private MultiWindowTextGUI(VirtualScreen screen, WindowManager windowManager, WindowPostRenderer postRenderer, Component background) {
         super(screen);
         if(windowManager == null) {
             throw new IllegalArgumentException("Creating a window-based TextGUI requires a WindowManager");
@@ -66,14 +68,25 @@ public class DefaultWindowTextGUI extends AbstractTextGUI implements WindowBased
         }
         this.virtualScreen = screen;
         this.windowManager = windowManager;
-        this.background = background;
         this.postRenderer = postRenderer;
-        this.eofWhenNoWindows = true;
+        this.eofWhenNoWindows = false;
+        this.backgroundPane = new AbstractBasePane() {
+            @Override
+            public TextGUI getTextGUI() {
+                return MultiWindowTextGUI.this;
+            }
+
+            @Override
+            public TerminalPosition toGlobal(TerminalPosition localPosition) {
+                return localPosition;
+            }
+        };
+        this.backgroundPane.setComponent(background);
         
         this.windowManager.addListener(new WindowManager.Listener() {
             @Override
             public void onWindowAdded(WindowManager manager, Window window) {
-                window.setTextGUI(DefaultWindowTextGUI.this);
+                window.setTextGUI(MultiWindowTextGUI.this);
             }
 
             @Override
@@ -85,7 +98,7 @@ public class DefaultWindowTextGUI extends AbstractTextGUI implements WindowBased
 
     @Override
     public boolean isPendingUpdate() {
-        return super.isPendingUpdate() || background.isInvalid() || windowManager.isInvalid();
+        return super.isPendingUpdate() || backgroundPane.isInvalid() || windowManager.isInvalid();
     }
 
     @Override
@@ -114,7 +127,7 @@ public class DefaultWindowTextGUI extends AbstractTextGUI implements WindowBased
 
     @Override
     protected void drawGUI(TextGUIGraphics graphics) {
-        background.draw(graphics);
+        backgroundPane.draw(graphics);
         for(Window window: getWindowManager().getWindows()) {
             WindowDecorationRenderer decorationRenderer = getWindowManager().getWindowDecorationRenderer(window);
             TerminalPosition topLeft = getWindowManager().getTopLeftPosition(window, graphics.getSize());
@@ -133,12 +146,14 @@ public class DefaultWindowTextGUI extends AbstractTextGUI implements WindowBased
     }
 
     @Override
-    protected TerminalPosition getCursorPosition() {
+    public TerminalPosition getCursorPosition() {
         Window activeWindow = windowManager.getActiveWindow();
-        if(activeWindow == null) {
-            return null;
+        if(activeWindow != null) {
+            return activeWindow.toGlobal(activeWindow.getCursorPosition());
         }
-        return activeWindow.toGlobal(activeWindow.getCursorPosition());
+        else {
+            return backgroundPane.getCursorPosition();
+        }
     }
 
     /**
@@ -164,20 +179,53 @@ public class DefaultWindowTextGUI extends AbstractTextGUI implements WindowBased
     @Override
     public Interactable getFocusedInteractable() {
         Window activeWindow = windowManager.getActiveWindow();
-        if(activeWindow == null) {
-            return null;
+        if(activeWindow != null) {
+            return activeWindow.getFocusedInteractable();
         }
-        return activeWindow.getFocusedInteractable();
+        else {
+            return backgroundPane.getFocusedInteractable();
+        }
     }
 
     @Override
-    protected boolean handleInput(KeyStroke keyStroke) {
+    public boolean handleInput(KeyStroke keyStroke) {
         Window activeWindow = windowManager.getActiveWindow();
-        return activeWindow != null && activeWindow.handleInput(keyStroke);
+        if(activeWindow != null) {
+            return activeWindow.handleInput(keyStroke);
+        }
+        else {
+            return backgroundPane.handleInput(keyStroke);
+        }
     }
 
     @Override
     public WindowManager getWindowManager() {
         return windowManager;
+    }
+
+    @Override
+    public WindowBasedTextGUI addWindow(Window window) {
+        windowManager.addWindow(window);
+        return this;
+    }
+
+    @Override
+    public WindowBasedTextGUI removeWindow(Window window) {
+        windowManager.removeWindow(window);
+        return this;
+    }
+
+    @Override
+    public Collection<Window> getWindows() {
+        return windowManager.getWindows();
+    }
+
+    @Override
+    public Window getActiveWindow() {
+        return windowManager.getActiveWindow();
+    }
+
+    public BasePane getBackgroundPane() {
+        return backgroundPane;
     }
 }

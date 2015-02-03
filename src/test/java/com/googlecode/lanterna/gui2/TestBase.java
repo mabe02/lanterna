@@ -13,7 +13,7 @@ public abstract class TestBase {
     void run(String[] args) throws IOException, InterruptedException {
         Screen screen = new TestTerminalFactory(args).createScreen();
         screen.startScreen();
-        DefaultWindowTextGUI textGUI = new DefaultWindowTextGUI(screen);
+        MultiWindowTextGUI textGUI = new MultiWindowTextGUI(screen);
         textGUI.setBlockingIO(false);
         textGUI.setEOFWhenNoWindows(true);
         textGUI.isEOFWhenNoWindows();   //No meaning, just to silence IntelliJ:s "is never used" alert

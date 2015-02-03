@@ -19,7 +19,7 @@ public class FullScreenTextGUITest {
     public static void main(String[] args) throws IOException, InterruptedException {
         Screen screen = new TestTerminalFactory(args).createScreen();
         screen.startScreen();
-        FullScreenTextGUI textGUI = new FullScreenTextGUI(screen);
+        MultiWindowTextGUI textGUI = new MultiWindowTextGUI(screen);
         textGUI.addListener(new TextGUI.Listener() {
             @Override
             public boolean onUnhandledKeyStroke(TextGUI textGUI, KeyStroke key) {
@@ -31,7 +31,7 @@ public class FullScreenTextGUITest {
             }
         });
         try {
-            textGUI.setComponent(new BIOS());
+            textGUI.getBackgroundPane().setComponent(new BIOS());
             TextGUIThread guiThread = textGUI.getGUIThread();
             guiThread.start();
             guiThread.waitForStop();

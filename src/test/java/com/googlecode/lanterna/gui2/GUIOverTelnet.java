@@ -48,7 +48,7 @@ public class GUIOverTelnet {
     private static void runGUI(final TelnetTerminal telnetTerminal) throws IOException, InterruptedException {
         Screen screen = new TerminalScreen(telnetTerminal);
         screen.startScreen();
-        final DefaultWindowTextGUI textGUI = new DefaultWindowTextGUI(screen);
+        final MultiWindowTextGUI textGUI = new MultiWindowTextGUI(screen);
         textGUI.setBlockingIO(false);
         textGUI.setEOFWhenNoWindows(true);
         try {

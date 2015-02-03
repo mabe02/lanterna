@@ -15,7 +15,7 @@ public class MultiLabelTest {
     public static void main(String[] args) throws IOException, InterruptedException {
         Screen screen = new TestTerminalFactory(args).createScreen();
         screen.startScreen();
-        WindowBasedTextGUI textGUI = new DefaultWindowTextGUI(screen);
+        WindowBasedTextGUI textGUI = new MultiWindowTextGUI(screen);
         try {
             BasicWindow window = new BasicWindow("Label test");
             Panel contentArea = new Panel();
