@@ -1,6 +1,6 @@
 /*
  * This file is part of lanterna (http://code.google.com/p/lanterna/).
- * 
+ *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,33 +13,31 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Copyright (C) 2010-2014 Martin
  */
 package com.googlecode.lanterna.gui2;
 
-import java.util.Collection;
+import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.TerminalSize;
 
 /**
- * Extension of the TextGUI interface, this is intended as the base interface for any TextGUI that intends to make use
- * of the Window class.
+ * Implementation of WindowDecorationRenderer that is doesn't render any window decorations
  * @author Martin
  */
-public interface WindowBasedTextGUI extends ComponentBasedTextGUI {
-    /**
-     * Returns the window manager that is currently controlling this TextGUI. The window manager is in charge of placing
-     * the windows on the surface and also deciding how they behave and move around.
-     * @return Window manager that is currently controlling the windows in the terminal
-     */
-    WindowManager getWindowManager();
+public class EmptyWindowDecorationRenderer implements WindowDecorationRenderer {
+    @Override
+    public TextGUIGraphics draw(TextGUI textGUI, TextGUIGraphics graphics, Window window) {
+        return graphics;
+    }
 
-    WindowBasedTextGUI addWindow(Window window);
+    @Override
+    public TerminalSize getDecoratedSize(Window window, TerminalSize contentAreaSize) {
+        return TerminalSize.ZERO;
+    }
 
-    WindowBasedTextGUI removeWindow(Window window);
-
-    Collection<Window> getWindows();
-
-    Window getActiveWindow();
-
-    WindowBasedTextGUI moveToTop(Window window);
+    @Override
+    public TerminalPosition getOffset(Window window) {
+        return TerminalPosition.TOP_LEFT_CORNER;
+    }
 }

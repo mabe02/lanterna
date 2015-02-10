@@ -33,7 +33,7 @@ public class MultiButtonTest {
             }));
 
             window.setComponent(contentArea);
-            textGUI.getWindowManager().addWindow(window);
+            textGUI.addWindow(window);
             TextGUIThread guiThread = textGUI.getGUIThread();
             guiThread.start();
             guiThread.waitForStop();

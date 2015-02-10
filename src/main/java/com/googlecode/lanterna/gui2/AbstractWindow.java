@@ -33,8 +33,7 @@ import java.util.Set;
  */
 public class AbstractWindow extends AbstractBasePane implements Window {
     private String title;
-    private TextGUI textGUI;
-    private WindowManager windowManager;
+    private WindowBasedTextGUI textGUI;
     private boolean visible;
     private TerminalSize lastKnownSize;
     private TerminalSize lastKnownDecoratedSize;
@@ -48,7 +47,6 @@ public class AbstractWindow extends AbstractBasePane implements Window {
         super();
         this.title = title;
         this.textGUI = null;
-        this.windowManager = null;
         this.visible = true;
         this.lastKnownPosition = null;
         this.lastKnownSize = null;
@@ -56,7 +54,7 @@ public class AbstractWindow extends AbstractBasePane implements Window {
     }
 
     @Override
-    public void setTextGUI(TextGUI textGUI) {
+    public void setTextGUI(WindowBasedTextGUI textGUI) {
         //This is kind of stupid check, but might cause it to blow up on people using the library incorrectly instead of
         //just causing weird behaviour
         if(this.textGUI != null && textGUI != null) {
@@ -68,12 +66,8 @@ public class AbstractWindow extends AbstractBasePane implements Window {
     }
 
     @Override
-    public TextGUI getTextGUI() {
+    public WindowBasedTextGUI getTextGUI() {
         return textGUI;
-    }
-
-    public void setWindowManager(WindowManager windowManager) {
-        this.windowManager = windowManager;
     }
 
     public void setTitle(String title) {
@@ -151,10 +145,9 @@ public class AbstractWindow extends AbstractBasePane implements Window {
 
     @Override
     public void close() {
-        if(windowManager == null) {
-            throw new IllegalStateException("Cannot close " + toString() + " because it is not managed by any window manager");
+        if(textGUI != null) {
+            textGUI.removeWindow(this);
         }
-        windowManager.removeWindow(this);
         setComponent(null);
     }
 }

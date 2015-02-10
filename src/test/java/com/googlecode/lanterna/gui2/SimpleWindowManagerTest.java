@@ -22,13 +22,13 @@ public class SimpleWindowManagerTest extends TestBase {
         contentArea.addComponent(new Button("Centered window", new Runnable() {
             @Override
             public void run() {
-                textGUI.getWindowManager().addWindow(new CenteredWindow());
+                textGUI.addWindow(new CenteredWindow());
             }
         }));
         contentArea.addComponent(new Button("Undecorated window", new Runnable() {
             @Override
             public void run() {
-                textGUI.getWindowManager().addWindow(new UndecoratedWindow());
+                textGUI.addWindow(new UndecoratedWindow());
             }
         }));
         contentArea.addComponent(new Button("Close", new Runnable() {
@@ -38,7 +38,7 @@ public class SimpleWindowManagerTest extends TestBase {
             }
         }));
         mainWindow.setComponent(contentArea);
-        textGUI.getWindowManager().addWindow(mainWindow);
+        textGUI.addWindow(mainWindow);
     }
 
     private static class CenteredWindow extends TestWindow {

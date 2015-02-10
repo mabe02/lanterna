@@ -53,7 +53,7 @@ public class MiscComponentTest extends TestBase {
             }
         }));
         window.setComponent(contentArea);
-        textGUI.getWindowManager().addWindow(window);
+        textGUI.addWindow(window);
     }
 
     private String downloadGPL() {

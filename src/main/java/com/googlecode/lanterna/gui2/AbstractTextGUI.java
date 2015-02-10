@@ -160,6 +160,10 @@ public abstract class AbstractTextGUI implements TextGUI {
         return handled;
     }
 
+    protected void invalidate() {
+        dirty = true;
+    }
+
     protected abstract void drawGUI(TextGUIGraphics graphics);
     protected abstract TerminalPosition getCursorPosition();
     protected abstract boolean handleInput(KeyStroke key);

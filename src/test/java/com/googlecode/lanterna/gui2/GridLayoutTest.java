@@ -38,6 +38,6 @@ public class GridLayoutTest extends TestBase {
             }
         }));
         window.setComponent(contentArea);
-        textGUI.getWindowManager().addWindow(window);
+        textGUI.addWindow(window);
     }
 }

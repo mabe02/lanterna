@@ -34,13 +34,9 @@ public interface WindowPostRenderer {
      * @param textGraphics Graphics object you can use to draw with
      * @param textGUI TextGUI that we are in
      * @param window Window that was just rendered
-     * @param windowPosition The top-left position of the window, as decided earlier by the window manager
-     * @param windowSize The size of the window, as decided earlier by the window manager
      */
     void postRender(
             TextGraphics textGraphics,
             TextGUI textGUI,
-            Window window,
-            TerminalPosition windowPosition,
-            TerminalSize windowSize);
+            Window window);
 }

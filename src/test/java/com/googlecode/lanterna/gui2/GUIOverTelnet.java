@@ -67,7 +67,7 @@ public class GUIOverTelnet {
                                     messageBox.close();
                                 }
                             })));
-                    textGUI.getWindowManager().addWindow(messageBox);
+                    textGUI.addWindow(messageBox);
                 }
             }).withBorder(Borders.singleLine("This is a button")));
 
@@ -143,7 +143,7 @@ public class GUIOverTelnet {
             }));
             window.setComponent(contentArea);
 
-            textGUI.getWindowManager().addWindow(window);
+            textGUI.addWindow(window);
 
             TextGUIThread guiThread = textGUI.getGUIThread();
             guiThread.start();

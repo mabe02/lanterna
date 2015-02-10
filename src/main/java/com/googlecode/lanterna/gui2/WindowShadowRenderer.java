@@ -33,22 +33,22 @@ public class WindowShadowRenderer implements WindowPostRenderer {
     public void postRender(
             TextGraphics textGraphics,
             TextGUI textGUI,
-            Window window,
-            TerminalPosition windowPosition,
-            TerminalSize windowSize) {
+            Window window) {
 
+        TerminalPosition windowPosition = window.getPosition();
+        TerminalSize decoratedWindowSize = window.getDecoratedSize();
         textGraphics.setForegroundColor(TextColor.ANSI.BLACK);
         textGraphics.setBackgroundColor(TextColor.ANSI.BLACK);
         textGraphics.enableModifiers(SGR.BOLD);
-        TerminalPosition lowerLeft = windowPosition.withRelativeColumn(2).withRelativeRow(windowSize.getRows());
-        TerminalPosition lowerRight = lowerLeft.withRelativeColumn(windowSize.getColumns() - 1);
+        TerminalPosition lowerLeft = windowPosition.withRelativeColumn(2).withRelativeRow(decoratedWindowSize.getRows());
+        TerminalPosition lowerRight = lowerLeft.withRelativeColumn(decoratedWindowSize.getColumns() - 1);
         textGraphics.drawLine(lowerLeft, lowerRight, ' ');
-        TerminalPosition upperRight = lowerRight.withRelativeRow(-windowSize.getRows() + 1);
+        TerminalPosition upperRight = lowerRight.withRelativeRow(-decoratedWindowSize.getRows() + 1);
         textGraphics.drawLine(lowerRight, upperRight, ' ');
 
         //Fill the remaining hole
         upperRight = upperRight.withRelativeColumn(-1);
-        lowerRight = upperRight.withRelativeRow(windowSize.getRows() - 2);
+        lowerRight = upperRight.withRelativeRow(decoratedWindowSize.getRows() - 2);
         textGraphics.drawLine(upperRight, lowerRight, ' ');
 
     }

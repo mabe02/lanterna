@@ -27,7 +27,10 @@ import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.screen.VirtualScreen;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  *
@@ -37,6 +40,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
     private final VirtualScreen virtualScreen;
     private final WindowManager windowManager;
     private final BasePane backgroundPane;
+    private final List<Window> windows;
     private final WindowPostRenderer postRenderer;
     private boolean eofWhenNoWindows;
 
@@ -45,7 +49,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
     }
 
     public MultiWindowTextGUI(Screen screen, TextColor backgroundColor) {
-        this(screen, new SimpleWindowManager(), new EmptySpace(backgroundColor));
+        this(screen, new DefaultWindowManager(), new EmptySpace(backgroundColor));
     }
 
     public MultiWindowTextGUI(Screen screen, WindowManager windowManager, Component background) {
@@ -67,8 +71,6 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
         }
         this.virtualScreen = screen;
         this.windowManager = windowManager;
-        this.postRenderer = postRenderer;
-        this.eofWhenNoWindows = false;
         this.backgroundPane = new AbstractBasePane() {
             @Override
             public TextGUI getTextGUI() {
@@ -81,29 +83,25 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
             }
         };
         this.backgroundPane.setComponent(background);
-        
-        this.windowManager.addListener(new WindowManager.Listener() {
-            @Override
-            public void onWindowAdded(WindowManager manager, Window window) {
-                window.setTextGUI(MultiWindowTextGUI.this);
-            }
-
-            @Override
-            public void onWindowRemoved(WindowManager manager, Window window) {
-                window.setTextGUI(null);
-            }
-        });
+        this.windows = new ArrayList<Window>();
+        this.postRenderer = postRenderer;
+        this.eofWhenNoWindows = false;
     }
 
     @Override
-    public boolean isPendingUpdate() {
+    public synchronized boolean isPendingUpdate() {
+        for(Window window: windows) {
+            if(window.isInvalid()) {
+                return true;
+            }
+        }
         return super.isPendingUpdate() || backgroundPane.isInvalid() || windowManager.isInvalid();
     }
 
     @Override
-    public void updateScreen() throws IOException {
+    public synchronized void updateScreen() throws IOException {
         TerminalSize preferredSize = TerminalSize.ONE;
-        for(Window window: windowManager.getWindows()) {
+        for(Window window: windows) {
             preferredSize = preferredSize.max(window.getPreferredSize());
         }
         virtualScreen.setMinimumSize(preferredSize.withRelativeColumns(10).withRelativeRows(5));
@@ -111,9 +109,9 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
     }
 
     @Override
-    protected KeyStroke readKeyStroke() throws IOException {
+    protected synchronized KeyStroke readKeyStroke() throws IOException {
         KeyStroke keyStroke = super.pollInput();
-        if(eofWhenNoWindows && keyStroke == null && windowManager.getWindows().isEmpty()) {
+        if(eofWhenNoWindows && keyStroke == null && windows.isEmpty()) {
             return new KeyStroke(KeyType.EOF);
         }
         else if(keyStroke != null) {
@@ -125,28 +123,23 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
     }
 
     @Override
-    protected void drawGUI(TextGUIGraphics graphics) {
+    protected synchronized void drawGUI(TextGUIGraphics graphics) {
         backgroundPane.draw(graphics);
-        for(Window window: getWindowManager().getWindows()) {
+        getWindowManager().prepareWindows(this, Collections.unmodifiableList(windows), graphics.getSize());
+        for(Window window: windows) {
+            TextGUIGraphics windowGraphics = graphics.newTextGraphics(window.getPosition(), window.getDecoratedSize());
             WindowDecorationRenderer decorationRenderer = getWindowManager().getWindowDecorationRenderer(window);
-            TerminalPosition topLeft = getWindowManager().getTopLeftPosition(window, graphics.getSize());
-            TerminalSize windowSize = getWindowManager().getSize(window, topLeft, graphics.getSize());
-            window.setPosition(topLeft.withRelative(decorationRenderer.getOffset(window)));
-            window.setDecoratedSize(windowSize);
-            TextGUIGraphics windowGraphics = graphics.newTextGraphics(topLeft, windowSize);
-            if(!window.getHints().contains(Window.Hint.NO_DECORATIONS)) {
-                windowGraphics = decorationRenderer.draw(this, windowGraphics, window);
-            }
+            windowGraphics = decorationRenderer.draw(this, windowGraphics, window);
             window.draw(windowGraphics);
             if(postRenderer != null && !window.getHints().contains(Window.Hint.NO_POST_RENDERING)) {
-                postRenderer.postRender(graphics, this, window, topLeft, windowSize);
+                postRenderer.postRender(graphics, this, window);
             }
         }
     }
 
     @Override
-    public TerminalPosition getCursorPosition() {
-        Window activeWindow = windowManager.getActiveWindow();
+    public synchronized TerminalPosition getCursorPosition() {
+        Window activeWindow = getActiveWindow();
         if(activeWindow != null) {
             return activeWindow.toGlobal(activeWindow.getCursorPosition());
         }
@@ -176,8 +169,8 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
     }
 
     @Override
-    public Interactable getFocusedInteractable() {
-        Window activeWindow = windowManager.getActiveWindow();
+    public synchronized Interactable getFocusedInteractable() {
+        Window activeWindow = getActiveWindow();
         if(activeWindow != null) {
             return activeWindow.getFocusedInteractable();
         }
@@ -187,8 +180,8 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
     }
 
     @Override
-    public boolean handleInput(KeyStroke keyStroke) {
-        Window activeWindow = windowManager.getActiveWindow();
+    public synchronized boolean handleInput(KeyStroke keyStroke) {
+        Window activeWindow = getActiveWindow();
         if(activeWindow != null) {
             return activeWindow.handleInput(keyStroke);
         }
@@ -203,28 +196,46 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
     }
 
     @Override
-    public WindowBasedTextGUI addWindow(Window window) {
-        windowManager.addWindow(window);
+    public synchronized WindowBasedTextGUI addWindow(Window window) {
+        if(window.getTextGUI() != null) {
+            window.getTextGUI().removeWindow(window);
+        }
+        windows.add(window);
+        window.setTextGUI(this);
+        invalidate();
         return this;
     }
 
     @Override
-    public WindowBasedTextGUI removeWindow(Window window) {
-        windowManager.removeWindow(window);
+    public synchronized WindowBasedTextGUI removeWindow(Window window) {
+        windows.remove(window);
+        window.setTextGUI(null);
+        invalidate();
         return this;
     }
 
     @Override
-    public Collection<Window> getWindows() {
-        return windowManager.getWindows();
+    public synchronized Collection<Window> getWindows() {
+        return Collections.unmodifiableList(new ArrayList<Window>(windows));
     }
 
     @Override
-    public Window getActiveWindow() {
-        return windowManager.getActiveWindow();
+    public synchronized Window getActiveWindow() {
+        return windows.isEmpty() ? null : windows.get(windows.size() - 1);
     }
 
     public BasePane getBackgroundPane() {
         return backgroundPane;
+    }
+
+    @Override
+    public synchronized WindowBasedTextGUI moveToTop(Window window) {
+        if(!windows.contains(window)) {
+            throw new IllegalArgumentException("Window " + window + " isn't in MultiWindowTextGUI " + this);
+        }
+        windows.remove(window);
+        windows.add(window);
+        invalidate();
+        return this;
     }
 }

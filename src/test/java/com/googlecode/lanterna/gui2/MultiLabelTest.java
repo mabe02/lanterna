@@ -39,9 +39,9 @@ public class MultiLabelTest {
             contentArea.addComponent(AnimatedLabel.createClassicSpinningLine());
 
             window.setComponent(contentArea);
-            textGUI.getWindowManager().addWindow(window);
+            textGUI.addWindow(window);
             textGUI.updateScreen();
-            while(!textGUI.getWindowManager().getWindows().isEmpty()) {
+            while(!textGUI.getWindows().isEmpty()) {
                 textGUI.processInput();
                 if(textGUI.isPendingUpdate()) {
                     textGUI.updateScreen();

@@ -60,6 +60,6 @@ public class PanelTest extends TestBase {
                     }
                 })));
         mainPanel.getPreferredSize();
-        textGUI.getWindowManager().addWindow(window);
+        textGUI.addWindow(window);
     }
 }

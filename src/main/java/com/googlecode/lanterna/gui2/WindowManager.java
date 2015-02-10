@@ -18,57 +18,23 @@
  */
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 
-import java.util.Collection;
+import java.util.List;
 
 /**
  *
  * @author Martin
  */
 public interface WindowManager {
-    void addWindow(Window window);
-    void removeWindow(Window window);
-    
-    Collection<Window> getWindows();
-    Window getActiveWindow();
+
     boolean isInvalid();
 
     WindowDecorationRenderer getWindowDecorationRenderer(Window window);
 
-    TerminalPosition getTopLeftPosition(Window window, TerminalSize screenSize);
+    void onAdded(WindowBasedTextGUI textGUI, Window window, List<Window> allWindows);
 
-    TerminalSize getSize(Window window, TerminalPosition topLeftPosition, TerminalSize screenSize);
-    
-    /**
-     * Adds a listener to this WindowManager to fire events on.
-     * @param listener Listener to add
-     */
-    void addListener(Listener listener);
-    
-    /**
-     * Removes a listener from this WindowManager so that it will no longer receive events
-     * @param listener Listener to remove
-     */
-    void removeListener(Listener listener);
-    
-    /**
-     * Listener interface for WindowManager, firing on events related to window manager operations
-     */
-    public static interface Listener {
-        /**
-         * Fired when a window is added to this window manager
-         * @param manager Window manager that is firing the event
-         * @param window Window that was added
-         */
-        void onWindowAdded(WindowManager manager, Window window);
-        
-        /**
-         * Fired when a window is removed from this window manager
-         * @param manager Window manager that is firing the event
-         * @param window Window that was removed
-         */
-        void onWindowRemoved(WindowManager manager, Window window);
-    }
+    void onRemoved(WindowBasedTextGUI textGUI, Window window, List<Window> allWindows);
+
+    void prepareWindows(WindowBasedTextGUI textGUI, List<Window> allWindows, TerminalSize screenSize);
 }

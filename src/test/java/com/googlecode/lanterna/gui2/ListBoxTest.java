@@ -48,6 +48,6 @@ public class ListBoxTest extends TestBase {
                                 window.close();
                             }
                         })));
-        textGUI.getWindowManager().addWindow(window);
+        textGUI.addWindow(window);
     }
 }
