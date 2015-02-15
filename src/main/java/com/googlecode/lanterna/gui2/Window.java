@@ -146,6 +146,15 @@ public interface Window extends BasePane {
      */
     void setDecoratedSize(TerminalSize decoratedSize);
 
+    /**
+     * This method is called by the GUI system to update the window on, as of the last drawing operation, the distance
+     * from the top-left position of the window including decorations to the top-left position of the actual content
+     * area. If this window has no decorations, it will be always 0x0. Do not call this method yourself.
+     * @param offset Offset from the top-left corner of the window (including decorations) to the top-left corner of
+     *               the content area.
+     */
+    void setContentOffset(TerminalPosition offset);
+
     ///////////////////////////////////////////////////////////////
     //// Below here are methods from BasePane                  ////
     //// We duplicate them here to make the JavaDoc more clear ////

@@ -38,6 +38,7 @@ public class AbstractWindow extends AbstractBasePane implements Window {
     private TerminalSize lastKnownSize;
     private TerminalSize lastKnownDecoratedSize;
     private TerminalPosition lastKnownPosition;
+    private TerminalPosition contentOffset;
 
     public AbstractWindow() {
         this("");
@@ -105,7 +106,7 @@ public class AbstractWindow extends AbstractBasePane implements Window {
         if(localPosition == null) {
             return null;
         }
-        return lastKnownPosition.withRelative(localPosition);
+        return lastKnownPosition.withRelative(contentOffset.withRelative(localPosition));
     }
 
     @Override
@@ -141,6 +142,11 @@ public class AbstractWindow extends AbstractBasePane implements Window {
     @Override
     public final void setDecoratedSize(TerminalSize decoratedSize) {
         this.lastKnownDecoratedSize = decoratedSize;
+    }
+
+    @Override
+    public void setContentOffset(TerminalPosition offset) {
+        this.contentOffset = offset;
     }
 
     @Override
