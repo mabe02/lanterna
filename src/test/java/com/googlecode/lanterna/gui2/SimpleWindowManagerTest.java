@@ -31,6 +31,12 @@ public class SimpleWindowManagerTest extends TestBase {
                 textGUI.addWindow(new UndecoratedWindow());
             }
         }));
+        contentArea.addComponent(new Button("Undecorated + Centered window", new Runnable() {
+            @Override
+            public void run() {
+                textGUI.addWindow(new UndecoratedCenteredWindow());
+            }
+        }));
         contentArea.addComponent(new Button("Close", new Runnable() {
             @Override
             public void run() {
@@ -65,7 +71,23 @@ public class SimpleWindowManagerTest extends TestBase {
         @Override
         public void draw(TextGUIGraphics graphics) {
             super.draw(graphics);
-            System.out.println("Undecorated window size is " + getSize() + " and getDecoratedSize() returns " + getDecoratedSize());
+        }
+    }
+
+    private class UndecoratedCenteredWindow extends TestWindow {
+
+        UndecoratedCenteredWindow() {
+            super("UndecoratedCentered");
+        }
+
+        @Override
+        public Set<Hint> getHints() {
+            return new HashSet<Hint>(Arrays.asList(Hint.NO_DECORATIONS, Hint.CENTERED));
+        }
+
+        @Override
+        public void draw(TextGUIGraphics graphics) {
+            super.draw(graphics);
         }
     }
 
