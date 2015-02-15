@@ -161,6 +161,7 @@ public abstract class AbstractComponent<T extends ComponentRenderer> implements 
         updateRenderer(graphics.getThemeDefinition(getClass()).getRenderer());
 
         //Delegate drawing the component to the renderer
+        setSize(graphics.getSize());
         renderer.drawComponent(graphics, this);
     }
 
