@@ -48,7 +48,7 @@ public class WindowShadowRenderer implements WindowPostRenderer {
 
         //Fill the remaining hole
         upperRight = upperRight.withRelativeColumn(-1);
-        lowerRight = upperRight.withRelativeRow(decoratedWindowSize.getRows() - 2);
+        lowerRight = lowerRight.withRelativeColumn(-1);
         textGraphics.drawLine(upperRight, lowerRight, ' ');
 
     }
