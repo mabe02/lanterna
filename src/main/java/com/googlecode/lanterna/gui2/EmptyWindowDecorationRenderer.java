@@ -33,7 +33,7 @@ public class EmptyWindowDecorationRenderer implements WindowDecorationRenderer {
 
     @Override
     public TerminalSize getDecoratedSize(Window window, TerminalSize contentAreaSize) {
-        return TerminalSize.ZERO;
+        return contentAreaSize;
     }
 
     @Override
