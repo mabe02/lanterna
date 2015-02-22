@@ -187,6 +187,7 @@ public class TerminalScreen extends AbstractScreen {
         for(TerminalPosition position: updateMap.keySet()) {
             if(!position.equals(currentPosition)) {
                 getTerminal().setCursorPosition(position.getColumn(), position.getRow());
+                currentPosition = position;
             }
             TextCharacter newCharacter = updateMap.get(position);
             if(!currentForegroundColor.equals(newCharacter.getForegroundColor())) {
