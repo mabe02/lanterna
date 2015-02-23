@@ -267,9 +267,22 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
                     g.drawLine(lineStartX, lineStartY, lineEndX, lineStartY);
                 }
 
-                if(atCursorLocation && deviceConfiguration.getCursorStyle() == SwingTerminalDeviceConfiguration.CursorStyle.DOUBLE_UNDER_BAR) {
-                    g.setColor(colorConfiguration.toAWTColor(deviceConfiguration.getCursorColor(), false, false));
-                    g.fillRect(columnIndex * fontWidth, (rowIndex * fontHeight) + fontHeight - 2, characterWidth, 2);
+                //Here we are drawing the cursor if the style isn't solid color or reversed
+                if(atCursorLocation &&
+                        (!deviceConfiguration.isCursorBlinking() ||     //Always draw if the cursor isn't blinking
+                                (deviceConfiguration.isCursorBlinking() && blinkOn))) { //If the cursor is blinking, only draw when blinkOn is true
+                    if(deviceConfiguration.getCursorColor() == null) {
+                        g.setColor(foregroundColor);
+                    }
+                    else {
+                        g.setColor(colorConfiguration.toAWTColor(deviceConfiguration.getCursorColor(), false, false));
+                    }
+                    if(deviceConfiguration.getCursorStyle() == SwingTerminalDeviceConfiguration.CursorStyle.UNDER_BAR) {
+                        g.fillRect(columnIndex * fontWidth, (rowIndex * fontHeight) + fontHeight - 3, characterWidth, 2);
+                    }
+                    else if(deviceConfiguration.getCursorStyle() == SwingTerminalDeviceConfiguration.CursorStyle.VERTICAL_BAR) {
+                        g.fillRect(columnIndex * fontWidth, rowIndex * fontHeight + 1, 2, fontHeight - 2);
+                    }
                 }
                 if(CJKUtils.isCharCJK(character.getCharacter())) {
                     columnIndex++; //Skip the trailing space after a CJK character

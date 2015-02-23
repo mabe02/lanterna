@@ -44,7 +44,7 @@ public class SwingTerminalDeviceConfiguration {
      */
     @SuppressWarnings("WeakerAccess")
     public SwingTerminalDeviceConfiguration() {
-        this(2000, 500, CursorStyle.REVERSED, TextColor.ANSI.WHITE, false);
+        this(2000, 500, CursorStyle.REVERSED, new TextColor.RGB(255, 255, 255), false);
     }
 
     /**
@@ -141,7 +141,11 @@ public class SwingTerminalDeviceConfiguration {
         /**
          * The cursor is rendered as a thick horizontal line at the bottom of the character
          */
-        DOUBLE_UNDER_BAR,
+        UNDER_BAR,
+        /**
+         * The cursor is rendered as a left-side aligned vertical line
+         */
+        VERTICAL_BAR,
         ;
     }
 }
