@@ -315,7 +315,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
 
         if(cursorIsVisible && atCursorLocation) {
             if(deviceConfiguration.getCursorStyle() == SwingTerminalDeviceConfiguration.CursorStyle.REVERSED &&
-                    !deviceConfiguration.isCursorBlinking() || (!blinkOn)) {
+                    (!deviceConfiguration.isCursorBlinking() || !blinkOn)) {
                 reverse = true;
             }
             else if(deviceConfiguration.getCursorStyle() == SwingTerminalDeviceConfiguration.CursorStyle.FIXED_BACKGROUND) {
