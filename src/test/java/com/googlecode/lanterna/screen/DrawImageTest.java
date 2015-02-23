@@ -55,19 +55,8 @@ public class DrawImageTest {
         //0 size should draw nothing
         screenGraphics.drawImage(new TerminalPosition(8, 7), image, TerminalPosition.TOP_LEFT_CORNER, TerminalSize.ZERO);
 
-        //Valid top-left position should throw an exception
-        try {
-            screenGraphics.drawImage(new TerminalPosition(8, 7), image, new TerminalPosition(0, -1), image.getSize());
-            throw new IllegalStateException("Shouldn't be able to draw image from a negative offset");
-        }
-        catch(IllegalArgumentException e) {
-        }
-        try {
-            screenGraphics.drawImage(new TerminalPosition(8, 7), image, new TerminalPosition(5, 5), image.getSize());
-            throw new IllegalStateException("Shouldn't be able to draw image from a offset >= size");
-        }
-        catch(IllegalArgumentException e) {
-        }
+        //Drawing with a negative source image offset will move the target position
+        screenGraphics.drawImage(new TerminalPosition(8, 7), image, new TerminalPosition(-2, -2), image.getSize());
 
         screen.refresh();
         screen.readInput();

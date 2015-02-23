@@ -222,12 +222,16 @@ public abstract class AbstractTextGraphics implements TextGraphics {
             TerminalPosition sourceImageTopLeft,
             TerminalSize sourceImageSize) {
 
-        if(sourceImageTopLeft.getRow() < 0 ||
-                sourceImageTopLeft.getColumn() < 0 ||
-                sourceImageTopLeft.getRow() >= image.getSize().getRows() ||
-                sourceImageTopLeft.getColumn() >= image.getSize().getColumns()) {
-            throw new IllegalArgumentException("Source image top-left coordinates (" + sourceImageTopLeft + ") are " +
-                    "out of bounds (image size is " + image.getSize() + ")");
+        // If the source image position is negative, offset the whole image
+        if(sourceImageTopLeft.getColumn() < 0) {
+            topLeft = topLeft.withRelativeColumn(-sourceImageTopLeft.getColumn());
+            sourceImageSize = sourceImageSize.withRelativeColumns(sourceImageTopLeft.getColumn());
+            sourceImageTopLeft = sourceImageTopLeft.withColumn(0);
+        }
+        if(sourceImageTopLeft.getRow() < 0) {
+            topLeft = topLeft.withRelativeRow(-sourceImageTopLeft.getRow());
+            sourceImageSize = sourceImageSize.withRelativeRows(sourceImageTopLeft.getRow());
+            sourceImageTopLeft = sourceImageTopLeft.withRow(0);
         }
 
         // cropping specified image-subrectangle to the image itself:
