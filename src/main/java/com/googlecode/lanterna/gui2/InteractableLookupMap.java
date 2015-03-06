@@ -72,7 +72,7 @@ public class InteractableLookupMap {
     private Interactable findNextUpOrDown(Interactable interactable, boolean isDown) {
         int directionTerm = isDown ? 1 : -1;
         TerminalPosition cursorLocation = interactable.getCursorLocation();
-        if(cursorLocation == null) {
+        if (cursorLocation == null) {
             //If the currently active interactable component is not showing the cursor, use the top-left position instead
             cursorLocation = TerminalPosition.TOP_LEFT_CORNER;
         }
@@ -80,20 +80,22 @@ public class InteractableLookupMap {
         Set<Interactable> disqualified = getDisqualifiedInteractables(startPosition, true);
         TerminalSize size = getSize();
         int maxShift = Math.max(startPosition.getColumn(), size.getColumns() - startPosition.getColumn());
-        for(int xShift = 0; xShift < maxShift; xShift++) {
-            for(int modifier: new int[] { 1, -1 }) {
-                if(xShift == 0 && modifier == -1) {
-                    break;
-                }
-                int searchColumn = startPosition.getColumn() + (xShift * modifier);
-                if(searchColumn < 0 || searchColumn >= size.getColumns()) {
-                    continue;
-                }
-                for(int searchRow = startPosition.getRow() + directionTerm;
-                        searchRow >= 0 && searchRow < size.getRows();
-                        searchRow += directionTerm) {
+        for (int searchRow = startPosition.getRow() + directionTerm;
+             searchRow >= 0 && searchRow < size.getRows();
+             searchRow += directionTerm) {
+
+            for (int xShift = 0; xShift < maxShift; xShift++) {
+                for (int modifier : new int[]{1, -1}) {
+                    if (xShift == 0 && modifier == -1) {
+                        break;
+                    }
+                    int searchColumn = startPosition.getColumn() + (xShift * modifier);
+                    if (searchColumn < 0 || searchColumn >= size.getColumns()) {
+                        continue;
+                    }
+
                     int index = lookupMap[searchRow][searchColumn];
-                    if(index != -1 && !disqualified.contains(interactables.get(index))) {
+                    if (index != -1 && !disqualified.contains(interactables.get(index))) {
                         return interactables.get(index);
                     }
                 }
@@ -122,18 +124,19 @@ public class InteractableLookupMap {
         Set<Interactable> disqualified = getDisqualifiedInteractables(startPosition, false);
         TerminalSize size = getSize();
         int maxShift = Math.max(startPosition.getRow(), size.getRows() - startPosition.getRow());
-        for(int yShift = 0; yShift < maxShift; yShift++) {
-            for(int modifier: new int[] { 1, -1 }) {
-                if(yShift == 0 && modifier == -1) {
-                    break;
-                }
-                int searchRow = startPosition.getRow() + (yShift * modifier);
-                if(searchRow < 0 || searchRow >= size.getRows()) {
-                    continue;
-                }
-                for(int searchColumn = startPosition.getColumn() + directionTerm;
-                        searchColumn >= 0 && searchColumn < size.getColumns();
-                        searchColumn += directionTerm) {
+        for(int searchColumn = startPosition.getColumn() + directionTerm;
+            searchColumn >= 0 && searchColumn < size.getColumns();
+            searchColumn += directionTerm) {
+
+            for(int yShift = 0; yShift < maxShift; yShift++) {
+                for(int modifier: new int[] { 1, -1 }) {
+                    if(yShift == 0 && modifier == -1) {
+                        break;
+                    }
+                    int searchRow = startPosition.getRow() + (yShift * modifier);
+                    if(searchRow < 0 || searchRow >= size.getRows()) {
+                        continue;
+                    }
                     int index = lookupMap[searchRow][searchColumn];
                     if (index != -1 && !disqualified.contains(interactables.get(index))) {
                         return interactables.get(index);
