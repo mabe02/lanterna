@@ -71,12 +71,28 @@ public class InteractableLookupMap {
     //Avoid code duplication in above two methods
     private Interactable findNextUpOrDown(Interactable interactable, boolean isDown) {
         int directionTerm = isDown ? 1 : -1;
-        TerminalPosition cursorLocation = interactable.getCursorLocation();
-        if (cursorLocation == null) {
-            //If the currently active interactable component is not showing the cursor, use the top-left position instead
-            cursorLocation = TerminalPosition.TOP_LEFT_CORNER;
+        TerminalPosition startPosition = interactable.getCursorLocation();
+        if (startPosition == null) {
+            // If the currently active interactable component is not showing the cursor, use the top-left position
+            // instead if we're going up, or the bottom-left position if we're going down
+            if(isDown) {
+                startPosition = new TerminalPosition(0, interactable.getSize().getRows() - 1);
+            }
+            else {
+                startPosition = TerminalPosition.TOP_LEFT_CORNER;
+            }
         }
-        TerminalPosition startPosition = interactable.toBasePane(cursorLocation);
+        else {
+            //Adjust position so that it's at the bottom of the component if we're going down or at the top of the
+            //component if we're going right. Otherwise the lookup might product odd results in certain cases.
+            if(isDown) {
+                startPosition = startPosition.withRow(interactable.getSize().getRows() - 1);
+            }
+            else {
+                startPosition = startPosition.withRow(0);
+            }
+        }
+        startPosition = interactable.toBasePane(startPosition);
         Set<Interactable> disqualified = getDisqualifiedInteractables(startPosition, true);
         TerminalSize size = getSize();
         int maxShift = Math.max(startPosition.getColumn(), size.getColumns() - startPosition.getColumn());
@@ -115,12 +131,28 @@ public class InteractableLookupMap {
     //Avoid code duplication in above two methods
     private Interactable findNextLeftOrRight(Interactable interactable, boolean isRight) {
         int directionTerm = isRight ? 1 : -1;
-        TerminalPosition cursorLocation = interactable.getCursorLocation();
-        if(cursorLocation == null) {
-            //If the currently active interactable component is not showing the cursor, use the top-left position instead
-            cursorLocation = TerminalPosition.TOP_LEFT_CORNER;
+        TerminalPosition startPosition = interactable.getCursorLocation();
+        if(startPosition == null) {
+            // If the currently active interactable component is not showing the cursor, use the top-left position
+            // instead if we're going left, or the top-right position if we're going right
+            if(isRight) {
+                startPosition = new TerminalPosition(interactable.getSize().getColumns() - 1, 0);
+            }
+            else {
+                startPosition = TerminalPosition.TOP_LEFT_CORNER;
+            }
         }
-        TerminalPosition startPosition = interactable.toBasePane(cursorLocation);
+        else {
+            //Adjust position so that it's on the left-most side if we're going left or right-most side if we're going
+            //right. Otherwise the lookup might product odd results in certain cases
+            if(isRight) {
+                startPosition = startPosition.withColumn(interactable.getSize().getColumns() - 1);
+            }
+            else {
+                startPosition = startPosition.withColumn(0);
+            }
+        }
+        startPosition = interactable.toBasePane(startPosition);
         Set<Interactable> disqualified = getDisqualifiedInteractables(startPosition, false);
         TerminalSize size = getSize();
         int maxShift = Math.max(startPosition.getRow(), size.getRows() - startPosition.getRow());
