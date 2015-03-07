@@ -34,12 +34,6 @@ public class DefaultWindowDecorationRenderer implements WindowDecorationRenderer
         }
 
         ThemeDefinition themeDefinition = graphics.getThemeDefinition(DefaultWindowDecorationRenderer.class);
-
-        //Resize if necessary
-        TerminalSize drawableArea = graphics.getSize();
-        title = title.substring(0, Math.max(0, Math.min(title.length(), drawableArea.getColumns() - 3)));
-        graphics.applyThemeStyle(themeDefinition.getPreLight());
-
         char horizontalLine = themeDefinition.getCharacter("HORIZONTAL_LINE", Symbols.SINGLE_LINE_HORIZONTAL);
         char verticalLine = themeDefinition.getCharacter("VERTICAL_LINE", Symbols.SINGLE_LINE_VERTICAL);
         char bottomLeftCorner = themeDefinition.getCharacter("BOTTOM_LEFT_CORNER", Symbols.SINGLE_LINE_BOTTOM_LEFT_CORNER);
@@ -47,28 +41,29 @@ public class DefaultWindowDecorationRenderer implements WindowDecorationRenderer
         char bottomRightCorner = themeDefinition.getCharacter("BOTTOM_RIGHT_CORNER", Symbols.SINGLE_LINE_BOTTOM_RIGHT_CORNER);
         char topRightCorner = themeDefinition.getCharacter("TOP_RIGHT_CORNER", Symbols.SINGLE_LINE_TOP_RIGHT_CORNER);
 
-        graphics.setCharacter(0, drawableArea.getRows() - 1, bottomLeftCorner);
-        graphics.drawLine(new TerminalPosition(0, drawableArea.getRows() - 2), new TerminalPosition(0, 1), verticalLine);
-        graphics.setCharacter(0, 0, topLeftCorner);
-        graphics.drawLine(new TerminalPosition(1, 0), new TerminalPosition(drawableArea.getColumns() - 2, 0), horizontalLine);
+        //Resize if necessary
+        TerminalSize drawableArea = graphics.getSize();
+        title = title.substring(0, Math.max(0, Math.min(title.length(), drawableArea.getColumns() - 3)));
 
-        /*
-        graphics.setForegroundColor(TextColor.ANSI.BLACK)
-                .setBackgroundColor(TextColor.ANSI.WHITE)
-                .enableModifiers(SGR.BOLD);
-        */
+        graphics.applyThemeStyle(themeDefinition.getPreLight());
+        graphics.drawLine(new TerminalPosition(0, drawableArea.getRows() - 2), new TerminalPosition(0, 1), verticalLine);
+        graphics.drawLine(new TerminalPosition(1, 0), new TerminalPosition(drawableArea.getColumns() - 2, 0), horizontalLine);
+        graphics.setCharacter(0, 0, topLeftCorner);
+        graphics.setCharacter(0, drawableArea.getRows() - 1, bottomLeftCorner);
+
         graphics.applyThemeStyle(themeDefinition.getNormal());
 
-        graphics.setCharacter(drawableArea.getColumns() - 1, 0, topRightCorner);
         graphics.drawLine(
                 new TerminalPosition(drawableArea.getColumns() - 1, 1),
                 new TerminalPosition(drawableArea.getColumns() - 1, drawableArea.getRows() - 2),
                 verticalLine);
-        graphics.setCharacter(drawableArea.getColumns() - 1, drawableArea.getRows() - 1, bottomRightCorner);
         graphics.drawLine(
                 new TerminalPosition(1, drawableArea.getRows() - 1),
                 new TerminalPosition(drawableArea.getColumns() - 2, drawableArea.getRows() - 1),
                 horizontalLine);
+
+        graphics.setCharacter(drawableArea.getColumns() - 1, 0, topRightCorner);
+        graphics.setCharacter(drawableArea.getColumns() - 1, drawableArea.getRows() - 1, bottomRightCorner);
 
         if(title.length() > 0) {
             graphics.putString(2, 0, title);
