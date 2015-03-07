@@ -42,6 +42,8 @@ public class TextBox extends AbstractInteractableComponent<TextBox.TextBoxRender
 
     private TerminalPosition caretPosition;
     private boolean readOnly;
+    private boolean horizontalFocusSwitching;
+    private boolean verticalFocusSwitching;
     private int maxLineLength;
     private int longestRow;
     private char unusedSpaceCharacter;
@@ -75,6 +77,8 @@ public class TextBox extends AbstractInteractableComponent<TextBox.TextBoxRender
         this.lines = new ArrayList<String>();
         this.style = style;
         this.readOnly = false;
+        this.verticalFocusSwitching = true;
+        this.horizontalFocusSwitching = true;
         this.caretPosition = TerminalPosition.TOP_LEFT_CORNER;
         this.maxLineLength = -1;
         this.longestRow = 1;    //To fit the cursor
@@ -167,6 +171,52 @@ public class TextBox extends AbstractInteractableComponent<TextBox.TextBoxRender
         return this;
     }
 
+    /**
+     * If {@code true}, the component will switch to the next available component above if the cursor is at the top of
+     * the TextBox and the user presses the 'up' array key, or switch to the next available component below if the
+     * cursor is at the bottom of the TextBox and the user presses the 'down' array key. The means that for single-line
+     * TextBox:es, pressing up and down will always switch focus.
+     * @return {@code true} if vertical focus switching is enabled
+     */
+    public boolean isVerticalFocusSwitching() {
+        return verticalFocusSwitching;
+    }
+
+    /**
+     * If set to {@code true}, the component will switch to the next available component above if the cursor is at the
+     * top of the TextBox and the user presses the 'up' array key, or switch to the next available component below if
+     * the cursor is at the bottom of the TextBox and the user presses the 'down' array key. The means that for
+     * single-line TextBox:es, pressing up and down will always switch focus with this mode enabled.
+     * @param verticalFocusSwitching If called with true, vertical focus switching will be enabled
+     * @return Itself
+     */
+    public TextBox setVerticalFocusSwitching(boolean verticalFocusSwitching) {
+        this.verticalFocusSwitching = verticalFocusSwitching;
+        return this;
+    }
+
+    /**
+     * If {@code true}, the TextBox will switch focus to the next available component to the left if the cursor in the
+     * TextBox is at the left-most position (index 0) on the row and the user pressed the 'left' arrow key, or vice
+     * versa for pressing the 'right' arrow key when the cursor in at the right-most position of the current row.
+     * @return {@code true} if horizontal focus switching is enabled
+     */
+    public boolean isHorizontalFocusSwitching() {
+        return horizontalFocusSwitching;
+    }
+
+    /**
+     * If set to {@code true}, the TextBox will switch focus to the next available component to the left if the cursor
+     * in the TextBox is at the left-most position (index 0) on the row and the user pressed the 'left' arrow key, or
+     * vice versa for pressing the 'right' arrow key when the cursor in at the right-most position of the current row.
+     * @param horizontalFocusSwitching If called with true, horizontal focus switching will be enabled
+     * @return Itself
+     */
+    public TextBox setHorizontalFocusSwitching(boolean horizontalFocusSwitching) {
+        this.horizontalFocusSwitching = horizontalFocusSwitching;
+        return this;
+    }
+
     public String getLine(int index) {
         return lines.get(index);
     }
@@ -225,7 +275,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox.TextBoxRender
                     caretPosition = caretPosition.withRelativeRow(-1);
                     caretPosition = caretPosition.withColumn(lines.get(caretPosition.getRow()).length());
                 }
-                else {
+                else if(horizontalFocusSwitching) {
                     return Result.MOVE_FOCUS_LEFT;
                 }
                 return Result.HANDLED;
@@ -237,14 +287,11 @@ public class TextBox extends AbstractInteractableComponent<TextBox.TextBoxRender
                     caretPosition = caretPosition.withRelativeRow(1);
                     caretPosition = caretPosition.withColumn(0);
                 }
-                else {
+                else if(horizontalFocusSwitching) {
                     return Result.MOVE_FOCUS_RIGHT;
                 }
                 return Result.HANDLED;
             case ArrowUp:
-                if(style == Style.SINGLE_LINE) {
-                    return Result.MOVE_FOCUS_UP;
-                }
                 if(caretPosition.getRow() > 0) {
                     caretPosition = caretPosition.withRelativeRow(-1);
                     line = lines.get(caretPosition.getRow());
@@ -252,17 +299,20 @@ public class TextBox extends AbstractInteractableComponent<TextBox.TextBoxRender
                         caretPosition = caretPosition.withColumn(line.length());
                     }
                 }
+                else if(verticalFocusSwitching) {
+                    return Result.MOVE_FOCUS_UP;
+                }
                 return Result.HANDLED;
             case ArrowDown:
-                if(style == Style.SINGLE_LINE) {
-                    return Result.MOVE_FOCUS_DOWN;
-                }
                 if(caretPosition.getRow() < lines.size() - 1) {
                     caretPosition = caretPosition.withRelativeRow(1);
+                    line = lines.get(caretPosition.getRow());
+                    if(caretPosition.getColumn() > line.length()) {
+                        caretPosition = caretPosition.withColumn(line.length());
+                    }
                 }
-                line = lines.get(caretPosition.getRow());
-                if(caretPosition.getColumn() > line.length()) {
-                    caretPosition = caretPosition.withColumn(line.length());
+                else if(verticalFocusSwitching) {
+                    return Result.MOVE_FOCUS_DOWN;
                 }
                 return Result.HANDLED;
             case End:
@@ -299,15 +349,27 @@ public class TextBox extends AbstractInteractableComponent<TextBox.TextBoxRender
     private Result handleKeyStrokeReadOnly(KeyStroke keyStroke) {
         switch (keyStroke.getKeyType()) {
             case ArrowLeft:
+                if(getRenderer().getViewTopLeft().getColumn() == 0 && horizontalFocusSwitching) {
+                    return Result.MOVE_FOCUS_LEFT;
+                }
                 getRenderer().setViewTopLeft(getRenderer().getViewTopLeft().withRelativeColumn(-1));
                 return Result.HANDLED;
             case ArrowRight:
+                if(getRenderer().getViewTopLeft().getColumn() + getSize().getColumns() == longestRow && horizontalFocusSwitching) {
+                    return Result.MOVE_FOCUS_RIGHT;
+                }
                 getRenderer().setViewTopLeft(getRenderer().getViewTopLeft().withRelativeColumn(1));
                 return Result.HANDLED;
             case ArrowUp:
+                if(getRenderer().getViewTopLeft().getRow() == 0 && verticalFocusSwitching) {
+                    return Result.MOVE_FOCUS_UP;
+                }
                 getRenderer().setViewTopLeft(getRenderer().getViewTopLeft().withRelativeRow(-1));
                 return Result.HANDLED;
             case ArrowDown:
+                if(getRenderer().getViewTopLeft().getRow() + getSize().getRows() == lines.size() && verticalFocusSwitching) {
+                    return Result.MOVE_FOCUS_DOWN;
+                }
                 getRenderer().setViewTopLeft(getRenderer().getViewTopLeft().withRelativeRow(1));
                 return Result.HANDLED;
             case Home:
