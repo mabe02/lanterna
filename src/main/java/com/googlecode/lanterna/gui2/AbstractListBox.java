@@ -59,7 +59,7 @@ public abstract class AbstractListBox extends AbstractInteractableComponent<Abst
         return listItemRenderer;
     }
 
-    public void setListItemRenderer(ListItemRenderer listItemRenderer) {
+    public synchronized void setListItemRenderer(ListItemRenderer listItemRenderer) {
         if(listItemRenderer == null) {
             listItemRenderer = createDefaultListItemRenderer();
             if(listItemRenderer == null) {
@@ -70,7 +70,7 @@ public abstract class AbstractListBox extends AbstractInteractableComponent<Abst
     }
 
     @Override
-    public Result handleKeyStroke(KeyStroke keyStroke) {
+    public synchronized Result handleKeyStroke(KeyStroke keyStroke) {
         try {
             Result rendererResult = getRenderer().handleKeyStroke(this, keyStroke);
             if(rendererResult != Result.UNHANDLED) {
@@ -119,7 +119,7 @@ public abstract class AbstractListBox extends AbstractInteractableComponent<Abst
     }
 
     @Override
-    protected void afterEnterFocus(FocusChangeDirection direction, Interactable previouslyInFocus) {
+    protected synchronized void afterEnterFocus(FocusChangeDirection direction, Interactable previouslyInFocus) {
         if(items.isEmpty())
             return;
 
@@ -129,7 +129,7 @@ public abstract class AbstractListBox extends AbstractInteractableComponent<Abst
             selectedIndex = items.size() - 1;
     }
 
-    protected void addItem(Object item) {
+    public synchronized void addItem(Object item) {
         if (item == null) {
             return;
         }
@@ -141,21 +141,21 @@ public abstract class AbstractListBox extends AbstractInteractableComponent<Abst
         invalidate();
     }
 
-    public void clearItems() {
+    public synchronized void clearItems() {
         items.clear();
         selectedIndex = -1;
         invalidate();
     }
 
-    public int indexOf(Object item) {
+    public synchronized int indexOf(Object item) {
         return items.indexOf(item);
     }
 
-    public Object getItemAt(int index) {
+    public synchronized Object getItemAt(int index) {
         return items.get(index);
     }
 
-    public int getItemCount() {
+    public synchronized int getItemCount() {
         return items.size();
     }
 
@@ -163,7 +163,11 @@ public abstract class AbstractListBox extends AbstractInteractableComponent<Abst
         return items;
     }
 
-    public void setSelectedIndex(int index) {
+    public synchronized Iterable<Object> getItemsIterable() {
+        return new ArrayList<Object>(items);
+    }
+
+    public synchronized void setSelectedIndex(int index) {
         selectedIndex = index;
         if(selectedIndex < 0) {
             selectedIndex = 0;
@@ -178,7 +182,7 @@ public abstract class AbstractListBox extends AbstractInteractableComponent<Abst
         return selectedIndex;
     }
 
-    public Object getSelectedItem() {
+    public synchronized Object getSelectedItem() {
         if (selectedIndex == -1) {
             return null;
         } else {

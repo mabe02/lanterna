@@ -46,32 +46,32 @@ public class CheckBoxList extends AbstractListBox {
     }
 
     @Override
-    public void clearItems() {
+    public synchronized void clearItems() {
         itemStatus.clear();
         super.clearItems();
     }
 
     @Override
-    public void addItem(Object object) {
+    public synchronized void addItem(Object object) {
         itemStatus.add(Boolean.FALSE);
         super.addItem(object);
     }
 
-    public Boolean isChecked(Object object) {
+    public synchronized Boolean isChecked(Object object) {
         if(indexOf(object) == -1)
             return null;
 
         return itemStatus.get(indexOf(object));
     }
 
-    public Boolean isChecked(int index) {
+    public synchronized Boolean isChecked(int index) {
         if(index < 0 || index >= itemStatus.size())
             return null;
 
         return itemStatus.get(index);
     }
 
-    public void setChecked(Object object, boolean checked) {
+    public synchronized void setChecked(Object object, boolean checked) {
         if(indexOf(object) == -1)
             return;
 
@@ -79,7 +79,7 @@ public class CheckBoxList extends AbstractListBox {
     }
 
     @Override
-    public Result handleKeyStroke(KeyStroke keyStroke) {
+    public synchronized Result handleKeyStroke(KeyStroke keyStroke) {
         if(keyStroke.getKeyType() == KeyType.Enter ||
                 (keyStroke.getKeyType() == KeyType.Character && keyStroke.getCharacter() == ' ')) {
             if(itemStatus.get(getSelectedIndex()))

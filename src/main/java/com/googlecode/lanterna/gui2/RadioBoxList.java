@@ -55,7 +55,7 @@ public class RadioBoxList extends AbstractListBox {
     }
 
     @Override
-    public Result handleKeyStroke(KeyStroke keyStroke) {
+    public synchronized Result handleKeyStroke(KeyStroke keyStroke) {
         if(keyStroke.getKeyType() == KeyType.Enter ||
                 (keyStroke.getKeyType() == KeyType.Character && keyStroke.getCharacter() == ' ')) {
             checkedIndex = getSelectedIndex();
@@ -66,7 +66,7 @@ public class RadioBoxList extends AbstractListBox {
     }
 
     @Override
-    public void clearItems() {
+    public synchronized void clearItems() {
         checkedIndex = -1;
         super.clearItems();
     }
@@ -77,7 +77,7 @@ public class RadioBoxList extends AbstractListBox {
      * @return {@code true} if the supplied object is what's currently selected in the list box,
      * {@code false} otherwise. Returns null if the supplied object is not an item in the list box.
      */
-    public Boolean isChecked(Object object) {
+    public synchronized Boolean isChecked(Object object) {
         if(object == null)
             return null;
 
@@ -95,7 +95,7 @@ public class RadioBoxList extends AbstractListBox {
      * {@code false} otherwise. Returns false if the index is out of range.
      */
     @SuppressWarnings("SimplifiableIfStatement")
-    public boolean isChecked(int index) {
+    public synchronized boolean isChecked(int index) {
         if(index < 0 || index >= getItemCount()) {
             return false;
         }
@@ -107,7 +107,7 @@ public class RadioBoxList extends AbstractListBox {
      * Sets the currently selected item by index. If the index is out of range, it does nothing.
      * @param index Index of the item to be selected
      */
-    public void setCheckedItemIndex(int index) {
+    public synchronized void setCheckedItemIndex(int index) {
         if(index < -1 || index >= getItemCount())
             return;
 
@@ -125,7 +125,7 @@ public class RadioBoxList extends AbstractListBox {
     /**
      * @return The object currently selected, or null if there is no selection
      */
-    public Object getCheckedItem() {
+    public synchronized Object getCheckedItem() {
         if(checkedIndex == -1 || checkedIndex >= getItemCount())
             return null;
 
