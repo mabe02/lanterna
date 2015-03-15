@@ -125,4 +125,8 @@ public class ScreenBuffer implements TextImage {
         }
         backend.copyTo(destination, startRowIndex, rows, startColumnIndex, columns, destinationRowOffset, destinationColumnOffset);
     }
+    
+    public void copyFrom(TextImage source, int startRowIndex, int rows, int startColumnIndex, int columns, int destinationRowOffset, int destinationColumnOffset) {
+        source.copyTo(backend, startRowIndex, rows, startColumnIndex, columns, destinationRowOffset, destinationColumnOffset);
+    }
 }

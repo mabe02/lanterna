@@ -171,10 +171,12 @@ public class BasicTextImage implements TextImage {
             int columns,
             int destinationRowOffset,
             int destinationColumnOffset) {
-
+        
+        TerminalSize destinationSize = destination.getSize();
         if(destination instanceof BasicTextImage) {
-            for(int y = startRowIndex; y < startRowIndex + rows; y++) {
-                System.arraycopy(buffer[y], startColumnIndex, ((BasicTextImage)destination).buffer[y - startRowIndex + destinationRowOffset], destinationColumnOffset, columns);
+            int targetRow = destinationColumnOffset;
+            for(int y = startRowIndex; y < startRowIndex + rows && targetRow < destinationSize.getRows(); y++) {
+                System.arraycopy(buffer[y], startColumnIndex, ((BasicTextImage)destination).buffer[targetRow++], destinationColumnOffset, columns);
             }
         }
         else {

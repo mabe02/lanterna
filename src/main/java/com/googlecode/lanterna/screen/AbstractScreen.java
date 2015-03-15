@@ -23,6 +23,7 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.graphics.TextImage;
 
 import java.io.IOException;
 
@@ -129,7 +130,13 @@ public abstract class AbstractScreen implements Screen {
 
     @Override
     public TextGraphics newTextGraphics() {
-        return new ScreenTextGraphics(this);
+        return new ScreenTextGraphics(this) {
+            @Override
+            public TextGraphics drawImage(TerminalPosition topLeft, TextImage image, TerminalPosition sourceImageTopLeft, TerminalSize sourceImageSize) {
+                backBuffer.copyFrom(image, sourceImageTopLeft.getRow(), sourceImageSize.getRows(), sourceImageTopLeft.getColumn(), sourceImageSize.getColumns(), topLeft.getRow(), topLeft.getColumn());
+                return this;
+            }
+        };
     }
 
     @Override
