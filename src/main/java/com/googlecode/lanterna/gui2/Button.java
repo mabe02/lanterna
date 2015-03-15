@@ -29,7 +29,7 @@ import com.googlecode.lanterna.input.KeyType;
  * keyboard.
  * @author Martin
  */
-public class Button extends AbstractInteractableComponent<Button.ButtonRenderer> {
+public class Button extends AbstractInteractableComponent<Button> {
     private final Runnable action;
     private String label;
 

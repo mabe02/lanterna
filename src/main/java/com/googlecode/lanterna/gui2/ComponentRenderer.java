@@ -21,6 +21,7 @@ package com.googlecode.lanterna.gui2;
 import com.googlecode.lanterna.TerminalSize;
 
 /**
+ * @param <T>
  * @author Martin
  */
 public interface ComponentRenderer<T extends Component> {

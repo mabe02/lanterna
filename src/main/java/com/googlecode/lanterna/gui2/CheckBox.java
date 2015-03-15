@@ -27,7 +27,7 @@ import com.googlecode.lanterna.input.KeyType;
 /**
  * Created by martin on 19/10/14.
  */
-public class CheckBox extends AbstractInteractableComponent<CheckBox.CheckBoxRenderer> {
+public class CheckBox extends AbstractInteractableComponent<CheckBox> {
 
     private String label;
     private boolean checked;

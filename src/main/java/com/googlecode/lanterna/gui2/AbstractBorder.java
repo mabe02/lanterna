@@ -26,13 +26,18 @@ import com.googlecode.lanterna.TerminalSize;
  *
  * @author Martin
  */
-public abstract class AbstractBorder extends AbstractComposite<Border.BorderRenderer> implements Border {    
+public abstract class AbstractBorder extends AbstractComposite<AbstractBorder> implements Border {    
     @Override
     public void setComponent(Component component) {
         super.setComponent(component);
         if(component != null) {
             component.setPosition(getWrappedComponentTopLeftOffset());
         }
+    }
+
+    @Override
+    protected BorderRenderer getRenderer() {
+        return (BorderRenderer)super.getRenderer();
     }
 
     @Override

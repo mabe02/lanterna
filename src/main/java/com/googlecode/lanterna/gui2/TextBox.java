@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * Created by martin on 05/10/14.
  */
-public class TextBox extends AbstractInteractableComponent<TextBox.TextBoxRenderer> {
+public class TextBox extends AbstractInteractableComponent<TextBox> {
 
     public static enum Style {
         SINGLE_LINE,
@@ -106,6 +106,11 @@ public class TextBox extends AbstractInteractableComponent<TextBox.TextBoxRender
         }
         invalidate();
         return this;
+    }
+
+    @Override
+    protected TextBoxRenderer getRenderer() {
+        return (TextBoxRenderer)super.getRenderer(); //To change body of generated methods, choose Tools | Templates.
     }
 
     public void addLine(String line) {

@@ -28,8 +28,8 @@ import com.googlecode.lanterna.TerminalSize;
  * @author Martin
  * @param <T> Type of Renderer this component will use
  */
-public abstract class AbstractComponent<T extends ComponentRenderer> implements Component {
-    private T renderer;
+public abstract class AbstractComponent<T extends AbstractComponent> implements Component {
+    private ComponentRenderer<T> renderer;
     private Container parent;
     private TerminalSize size;
     private TerminalSize explicitPreferredSize;   //This is keeping the value set by the user (if setPreferredSize() is used)
@@ -57,7 +57,7 @@ public abstract class AbstractComponent<T extends ComponentRenderer> implements 
      * This value is intended to be overridden by custom themes.
      * @return Renderer to use when sizing and drawing this component
      */
-    protected abstract T createDefaultRenderer();
+    protected abstract ComponentRenderer<T> createDefaultRenderer();
 
     protected void updateRenderer(String className) {
         if(className == null) {
@@ -68,7 +68,7 @@ public abstract class AbstractComponent<T extends ComponentRenderer> implements 
         }
         try {
             Object newRenderer = Class.forName(className).newInstance();
-            setRenderer((T)newRenderer);
+            setRenderer((ComponentRenderer<T>)newRenderer);
         } catch (InstantiationException e) {
             throw new RuntimeException(e);
         } catch (IllegalAccessException e) {
@@ -78,7 +78,7 @@ public abstract class AbstractComponent<T extends ComponentRenderer> implements 
         }
     }
 
-    protected void setRenderer(T renderer) {
+    protected void setRenderer(ComponentRenderer<T> renderer) {
         if(renderer == null) {
             renderer = createDefaultRenderer();
             if(renderer == null) {
@@ -88,7 +88,7 @@ public abstract class AbstractComponent<T extends ComponentRenderer> implements 
         this.renderer = renderer;
     }
 
-    protected T getRenderer() {
+    protected ComponentRenderer<T> getRenderer() {
         return renderer;
     }
 
@@ -124,7 +124,7 @@ public abstract class AbstractComponent<T extends ComponentRenderer> implements 
     }
 
     public TerminalSize calculatePreferredSize() {
-        return renderer.getPreferredSize(this);
+        return renderer.getPreferredSize((T)this);
     }
 
     @Override
@@ -162,7 +162,7 @@ public abstract class AbstractComponent<T extends ComponentRenderer> implements 
 
         //Delegate drawing the component to the renderer
         setSize(graphics.getSize());
-        renderer.drawComponent(graphics, this);
+        renderer.drawComponent(graphics, (T)this);
     }
 
     @Override

@@ -28,9 +28,10 @@ import java.util.List;
 
 /**
  * Base class for several list box implementations, this will handle the list of items and the scrollbar for you
+ * @param <T>
  * @author Martin
  */
-public abstract class AbstractListBox extends AbstractInteractableComponent<AbstractListBox.ListBoxRenderer> {
+public abstract class AbstractListBox<T extends AbstractListBox> extends AbstractInteractableComponent<T> {
     private final List<Object> items;
     private int selectedIndex;
     private ListItemRenderer listItemRenderer;
@@ -50,11 +51,16 @@ public abstract class AbstractListBox extends AbstractInteractableComponent<Abst
     protected ListBoxRenderer createDefaultRenderer() {
         return new DefaultListBoxRenderer();
     }
-
+    
     protected ListItemRenderer createDefaultListItemRenderer() {
         return new ListItemRenderer();
     }
 
+    @Override
+    protected ListBoxRenderer getRenderer() {
+        return (ListBoxRenderer)super.getRenderer();
+    }
+    
     public ListItemRenderer getListItemRenderer() {
         return listItemRenderer;
     }
@@ -190,11 +196,11 @@ public abstract class AbstractListBox extends AbstractInteractableComponent<Abst
         }
     }
 
-    public static abstract class ListBoxRenderer implements InteractableRenderer<AbstractListBox> {
+    public static abstract class ListBoxRenderer<T extends AbstractListBox> implements InteractableRenderer<T> {
         public abstract Result handleKeyStroke(AbstractListBox listBox, KeyStroke keyStroke);
     }
 
-    public static class DefaultListBoxRenderer extends ListBoxRenderer {
+    public static class DefaultListBoxRenderer extends ListBoxRenderer<AbstractListBox> {
         private int scrollTopIndex;
         private int pageSize;
 
