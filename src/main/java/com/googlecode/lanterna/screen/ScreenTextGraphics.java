@@ -19,6 +19,7 @@
 package com.googlecode.lanterna.screen;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.graphics.AbstractTextGraphics;
 import com.googlecode.lanterna.graphics.TextGraphics;
 
 /**
@@ -26,7 +27,7 @@ import com.googlecode.lanterna.graphics.TextGraphics;
  * after screen resizing.
  * @author Martin
  */
-class ScreenTextGraphics extends com.googlecode.lanterna.graphics.AbstractTextGraphics {
+class ScreenTextGraphics extends AbstractTextGraphics {
     private final Screen screen;
 
     ScreenTextGraphics(Screen screen) {
