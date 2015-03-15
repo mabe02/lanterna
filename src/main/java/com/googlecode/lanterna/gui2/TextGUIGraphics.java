@@ -57,7 +57,7 @@ public final class TextGUIGraphics implements ThemedTextGraphics {
     }
 
     @Override
-    public ThemeDefinition getThemeDefinition(Class clazz) {
+    public ThemeDefinition getThemeDefinition(Class<?> clazz) {
         return backend.getThemeDefinition(clazz);
     }
 

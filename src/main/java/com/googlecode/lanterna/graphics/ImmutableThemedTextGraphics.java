@@ -33,7 +33,7 @@ public class ImmutableThemedTextGraphics implements ThemedTextGraphics {
     }
 
     @Override
-    public ThemeDefinition getThemeDefinition(Class clazz) {
+    public ThemeDefinition getThemeDefinition(Class<?> clazz) {
         return theme.getDefinition(clazz);
     }
 

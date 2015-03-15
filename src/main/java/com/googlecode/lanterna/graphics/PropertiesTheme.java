@@ -97,7 +97,7 @@ public final class PropertiesTheme implements Theme {
     }
 
     @Override
-    public ThemeDefinition getDefinition(Class clazz) {
+    public ThemeDefinition getDefinition(Class<?> clazz) {
         String name = clazz.getName();
         List<ThemeTreeNode> path = new ArrayList<ThemeTreeNode>();
         ThemeTreeNode currentNode = rootNode;

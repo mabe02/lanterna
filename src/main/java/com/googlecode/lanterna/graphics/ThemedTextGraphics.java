@@ -30,7 +30,7 @@ public interface ThemedTextGraphics extends TextGraphics {
      * @param clazz Class to search ThemeDefinition for
      * @return ThemeDefinition that was resolved for this class
      */
-    ThemeDefinition getThemeDefinition(Class clazz);
+    ThemeDefinition getThemeDefinition(Class<?> clazz);
 
     /**
      * Takes a ThemeStyle as applies it to this TextGraphics. This will effectively set the foreground color, the

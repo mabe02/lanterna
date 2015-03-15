@@ -36,5 +36,5 @@ public interface Theme {
      * @param clazz Class to get the theme definition for
      * @return The ThemeDefinition for the class passed in
      */
-    ThemeDefinition getDefinition(Class clazz);
+    ThemeDefinition getDefinition(Class<?> clazz);
 }

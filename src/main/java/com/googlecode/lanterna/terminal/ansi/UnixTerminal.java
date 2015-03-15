@@ -136,7 +136,7 @@ public class UnixTerminal extends ANSITerminal {
         onResized(80, 20);
         try {
             @SuppressWarnings("rawtypes")
-            Class signalClass = Class.forName("sun.misc.Signal");
+            Class<?> signalClass = Class.forName("sun.misc.Signal");
             for(Method m : signalClass.getDeclaredMethods()) {
                 if("handle".equals(m.getName())) {
                     Object windowResizeHandler = Proxy.newProxyInstance(getClass().getClassLoader(), new Class[]{Class.forName("sun.misc.SignalHandler")}, new InvocationHandler() {
