@@ -28,7 +28,7 @@ import com.googlecode.lanterna.TerminalSize;
  * @author Martin
  * @param <T> Type of Renderer this component will use
  */
-public abstract class AbstractComponent<T extends AbstractComponent> implements Component {
+public abstract class AbstractComponent<T extends Component> implements Component<T> {
     private ComponentRenderer<T> renderer;
     private Container parent;
     private TerminalSize size;
@@ -97,9 +97,9 @@ public abstract class AbstractComponent<T extends AbstractComponent> implements 
     }
 
     @Override
-    public AbstractComponent setSize(TerminalSize size) {
+    public T setSize(TerminalSize size) {
         this.size = size;
-        return this;
+        return self();
     }
 
     @Override
@@ -118,19 +118,19 @@ public abstract class AbstractComponent<T extends AbstractComponent> implements 
     }
 
     @Override
-    public final AbstractComponent setPreferredSize(TerminalSize explicitPreferredSize) {
+    public final T setPreferredSize(TerminalSize explicitPreferredSize) {
         this.explicitPreferredSize = explicitPreferredSize;
-        return this;
+        return self();
     }
 
     public TerminalSize calculatePreferredSize() {
-        return renderer.getPreferredSize((T)this);
+        return renderer.getPreferredSize(self());
     }
 
     @Override
-    public AbstractComponent setPosition(TerminalPosition position) {
+    public T setPosition(TerminalPosition position) {
         this.position = position;
-        return this;
+        return self();
     }
 
     @Override
@@ -162,16 +162,16 @@ public abstract class AbstractComponent<T extends AbstractComponent> implements 
 
         //Delegate drawing the component to the renderer
         setSize(graphics.getSize());
-        renderer.drawComponent(graphics, (T)this);
+        renderer.drawComponent(graphics, self());
     }
 
     @Override
-    public AbstractComponent setLayoutData(LayoutData data) {
+    public T setLayoutData(LayoutData data) {
         if(layoutData != data) {
             layoutData = data;
             invalidate();
         }
-        return this;
+        return self();
     }
 
     @Override
@@ -231,5 +231,9 @@ public abstract class AbstractComponent<T extends AbstractComponent> implements 
     @Override
     public void onRemoved(Container container) {
         parent = null;
+    }
+
+    protected T self() {
+        return (T)this;
     }
 }

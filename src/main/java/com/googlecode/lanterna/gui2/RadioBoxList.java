@@ -29,7 +29,7 @@ import com.googlecode.lanterna.input.KeyType;
  * deselected and the highlighted item will be the selected one instead.
  * @author Martin
  */
-public class RadioBoxList extends AbstractListBox {
+public class RadioBoxList extends AbstractListBox<RadioBoxList> {
     private int checkedIndex;
 
     /**

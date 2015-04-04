@@ -25,7 +25,7 @@ import com.googlecode.lanterna.TextColor;
  * Component which draws a solid color over its area. The preferred size is customizable.
  * @author Martin
  */
-public class EmptySpace extends AbstractComponent {
+public class EmptySpace extends AbstractComponent<EmptySpace> {
     private final TerminalSize size;
     private TextColor color;
 

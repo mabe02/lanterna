@@ -29,7 +29,7 @@ import java.util.List;
  * Simple container for other components
  * @author Martin
  */
-public class Panel extends AbstractComponent implements Container {
+public class Panel extends AbstractComponent<Panel> implements Container<Panel> {
     private final List<Component> components;
     private LayoutManager layoutManager;
     private boolean needsReLayout;

@@ -26,7 +26,7 @@ import com.googlecode.lanterna.TerminalSize;
  *
  * @author Martin
  */
-public abstract class AbstractBorder extends AbstractComposite<AbstractBorder> implements Border {    
+public abstract class AbstractBorder<T extends Border> extends AbstractComposite<T> implements Border<T> {
     @Override
     public void setComponent(Component component) {
         super.setComponent(component);
@@ -41,10 +41,10 @@ public abstract class AbstractBorder extends AbstractComposite<AbstractBorder> i
     }
 
     @Override
-    public AbstractBorder setSize(TerminalSize size) {
+    public T setSize(TerminalSize size) {
         super.setSize(size);
         getComponent().setSize(getWrappedComponentSize(size));
-        return this;
+        return self();
     }
 
     private TerminalPosition getWrappedComponentTopLeftOffset() {

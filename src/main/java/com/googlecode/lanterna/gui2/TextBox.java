@@ -110,7 +110,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
 
     @Override
     protected TextBoxRenderer getRenderer() {
-        return (TextBoxRenderer)super.getRenderer(); //To change body of generated methods, choose Tools | Templates.
+        return (TextBoxRenderer)super.getRenderer();
     }
 
     public void addLine(String line) {

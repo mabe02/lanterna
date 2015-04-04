@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * Created by martin on 29/09/14.
  */
-public class CheckBoxList extends AbstractListBox {
+public class CheckBoxList extends AbstractListBox<CheckBoxList> {
     private final List<Boolean> itemStatus;
 
     public CheckBoxList() {

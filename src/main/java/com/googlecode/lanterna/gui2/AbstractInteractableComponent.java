@@ -27,7 +27,7 @@ import com.googlecode.lanterna.input.KeyStroke;
  * @param <T> Type of renderer you which to use for this class
  * @author Martin
  */
-public abstract class AbstractInteractableComponent<T extends AbstractInteractableComponent> extends AbstractComponent<T> implements Interactable {
+public abstract class AbstractInteractableComponent<T extends AbstractInteractableComponent> extends AbstractComponent<T> implements Interactable<T> {
 
     private boolean inFocus;
 
@@ -52,6 +52,9 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
 
     protected void afterLeaveFocus(FocusChangeDirection direction, Interactable nextInFocus) {
     }
+
+    @Override
+    protected abstract InteractableRenderer<T> createDefaultRenderer();
 
     @Override
     protected InteractableRenderer<T> getRenderer() {
@@ -84,6 +87,6 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
 
     @Override
     public TerminalPosition getCursorLocation() {
-        return getRenderer().getCursorLocation((T)this);
+        return getRenderer().getCursorLocation(self());
     }
 }
