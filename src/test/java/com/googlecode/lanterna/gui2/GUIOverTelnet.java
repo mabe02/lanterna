@@ -94,12 +94,11 @@ public class GUIOverTelnet {
             };
             ALL_TEXTBOXES.add(textBox);
             contentArea.addComponent(textBox.withBorder(Borders.singleLine("Text editor")));
-
             contentArea.addComponent(new AbstractInteractableComponent() {
                 String text = "Press any key";
                 @Override
-                protected ComponentRenderer createDefaultRenderer() {
-                    return new ComponentRenderer() {
+                protected InteractableRenderer createDefaultRenderer() {
+                    return new InteractableRenderer() {
                         @Override
                         public TerminalSize getPreferredSize(Component component) {
                             return new TerminalSize(30, 1);
@@ -109,12 +108,12 @@ public class GUIOverTelnet {
                         public void drawComponent(TextGUIGraphics graphics, Component component) {
                             graphics.putString(0, 0, text);
                         }
-                    };
-                }
 
-                @Override
-                public TerminalPosition getCursorLocation() {
-                    return TerminalPosition.TOP_LEFT_CORNER;
+                        @Override
+                        public TerminalPosition getCursorLocation(Component component) {
+                            return TerminalPosition.TOP_LEFT_CORNER;
+                        }
+                    };
                 }
 
                 @Override
