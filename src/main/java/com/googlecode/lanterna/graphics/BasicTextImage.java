@@ -171,10 +171,26 @@ public class BasicTextImage implements TextImage {
             int columns,
             int destinationRowOffset,
             int destinationColumnOffset) {
-        
+
+        // If the source image position is negative, offset the whole image
+        if(startColumnIndex < 0) {
+            destinationColumnOffset += -startColumnIndex;
+            columns += startColumnIndex;
+            startColumnIndex = 0;
+        }
+        if(startRowIndex < 0) {
+            startRowIndex += -startRowIndex;
+            rows = startRowIndex;
+            startRowIndex = 0;
+        }
+        //Make sure we can't copy more than is available
+        columns = Math.min(buffer[0].length - startColumnIndex, columns);
+        rows = Math.min(buffer.length - startRowIndex, rows);
+
+
         TerminalSize destinationSize = destination.getSize();
         if(destination instanceof BasicTextImage) {
-            int targetRow = destinationColumnOffset;
+            int targetRow = destinationRowOffset;
             for(int y = startRowIndex; y < startRowIndex + rows && targetRow < destinationSize.getRows(); y++) {
                 System.arraycopy(buffer[y], startColumnIndex, ((BasicTextImage)destination).buffer[targetRow++], destinationColumnOffset, columns);
             }
