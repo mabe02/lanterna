@@ -81,6 +81,12 @@ class VirtualTerminal {
     }
 
     synchronized void setCursorPosition(TerminalPosition cursorPosition) {
+        //Make sure the cursor position is within the bounds
+        cursorPosition = cursorPosition.withColumn(
+                Math.min(Math.max(cursorPosition.getColumn(), 0), size.getColumns() - 1));
+        cursorPosition = cursorPosition.withRow(
+                Math.min(Math.max(cursorPosition.getRow(), 0), size.getRows() - 1));
+
         currentBuffer.ensurePosition(size, cursorPosition);
         this.cursorPosition = cursorPosition;
         correctCursor();
