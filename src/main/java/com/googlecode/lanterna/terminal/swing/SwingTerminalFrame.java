@@ -26,8 +26,8 @@ import com.googlecode.lanterna.terminal.IOSafeTerminal;
 import com.googlecode.lanterna.terminal.ResizeListener;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
-import java.awt.BorderLayout;
-import java.awt.HeadlessException;
+
+import java.awt.*;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import javax.swing.*;
@@ -137,8 +137,9 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
 
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(swingTerminal, BorderLayout.CENTER);
+        setBackground(Color.BLACK); //This will reduce white flicker when resizing the window
         pack();
-        
+
         //Put input focus on the terminal component by default
         swingTerminal.requestFocusInWindow();
     }
