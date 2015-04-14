@@ -171,6 +171,9 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
         //noinspection unchecked
         setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, Collections.EMPTY_SET);
 
+        //Make sure the component is double-buffered to prevent flickering
+        setDoubleBuffered(true);
+
         addKeyListener(new TerminalInputListener());
         addMouseListener(new MouseAdapter() {
             @Override
