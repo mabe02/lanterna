@@ -187,6 +187,9 @@ public class BasicTextImage implements TextImage {
         columns = Math.min(buffer[0].length - startColumnIndex, columns);
         rows = Math.min(buffer.length - startRowIndex, rows);
 
+        if(columns <= 0 || rows <= 0) {
+            return;
+        }
 
         TerminalSize destinationSize = destination.getSize();
         if(destination instanceof BasicTextImage) {
