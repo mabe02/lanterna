@@ -20,6 +20,8 @@ package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.TestTerminalFactory;
 import com.googlecode.lanterna.screen.Screen;
+
+import java.io.EOFException;
 import java.io.IOException;
 
 /**
@@ -44,6 +46,9 @@ public class DialogsTextGUIBasicTest {
                     Thread.sleep(1);
                 }
             }
+        }
+        catch (EOFException ignore) {
+            //Window was closed
         }
         finally {
             screen.stopScreen();
