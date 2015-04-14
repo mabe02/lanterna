@@ -214,6 +214,10 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
         int widthInNumberOfCharacters = getWidth() / fontWidth;
         int visibleRows = getHeight() / fontHeight;
 
+        //Don't let size be less than 1
+        widthInNumberOfCharacters = Math.max(1, widthInNumberOfCharacters);
+        visibleRows = Math.max(1, visibleRows);
+
         //scrollObserver.updateModel(currentBuffer.getNumberOfLines(), visibleRows);
         TerminalSize terminalSize = virtualTerminal.getSize().withColumns(widthInNumberOfCharacters).withRows(visibleRows);
         if(!terminalSize.equals(virtualTerminal.getSize())) {
