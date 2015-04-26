@@ -135,13 +135,17 @@ public class VirtualScreen extends AbstractScreen {
     public void refresh(RefreshType refreshType) throws IOException {
         setCursorPosition(getCursorPosition()); //Make sure the cursor is at the correct position
         if(!viewportSize.equals(realScreen.getTerminalSize())) {
-            frameRenderer.drawFrame(realScreen.newTextGraphics(), realScreen.getTerminalSize(), getTerminalSize());
+            frameRenderer.drawFrame(
+                    realScreen.newTextGraphics(),
+                    realScreen.getTerminalSize(),
+                    getTerminalSize(),
+                    viewportTopLeft);
         }
 
         //Copy the rows
+        TerminalPosition viewportOffset = frameRenderer.getViewportOffset();
         if(realScreen instanceof AbstractScreen) {
             AbstractScreen asAbstractScreen = (AbstractScreen)realScreen;
-            TerminalPosition viewportOffset = frameRenderer.getViewportOffset();
             getBackBuffer().copyTo(
                     asAbstractScreen.getBackBuffer(),
                     viewportTopLeft.getRow(),
@@ -154,7 +158,12 @@ public class VirtualScreen extends AbstractScreen {
         else {
             for(int y = 0; y < viewportSize.getRows(); y++) {
                 for(int x = 0; x < viewportSize.getColumns(); x++) {
-                    realScreen.setCharacter(x, y, getBackBuffer().getCharacterAt(x + viewportTopLeft.getColumn(), y + viewportTopLeft.getRow()));
+                    realScreen.setCharacter(
+                            x + viewportOffset.getColumn(),
+                            y + viewportOffset.getRow(),
+                            getBackBuffer().getCharacterAt(
+                                    x + viewportTopLeft.getColumn(),
+                                    y + viewportTopLeft.getRow()));
                 }
             }
         }
@@ -231,17 +240,25 @@ public class VirtualScreen extends AbstractScreen {
          * @param graphics Graphics to use to text drawing operations
          * @param realSize Size of the real terminal
          * @param virtualSize Size of the virtual screen
+         * @param virtualScrollPosition If the virtual screen is larger than the real terminal, this is the current
+         *                              scroll offset the VirtualScreen is using
          */
         void drawFrame(
                 TextGraphics graphics,
                 TerminalSize realSize,
-                TerminalSize virtualSize);
+                TerminalSize virtualSize,
+                TerminalPosition virtualScrollPosition);
     }
 
     private static class DefaultFrameRenderer implements FrameRenderer {
         @Override
         public TerminalSize getViewportSize(TerminalSize realSize, TerminalSize virtualSize) {
-            return realSize.withRelativeColumns(-1).withRelativeRows(-2);
+            if(realSize.getColumns() > 1 && realSize.getRows() > 2) {
+                return realSize.withRelativeColumns(-1).withRelativeRows(-2);
+            }
+            else {
+                return realSize;
+            }
         }
 
         @Override
@@ -250,8 +267,15 @@ public class VirtualScreen extends AbstractScreen {
         }
 
         @Override
-        public void drawFrame(TextGraphics graphics, TerminalSize realSize, TerminalSize virtualSize) {
-            TerminalPosition viewportTopLeft = getViewportOffset();
+        public void drawFrame(
+                TextGraphics graphics,
+                TerminalSize realSize,
+                TerminalSize virtualSize,
+                TerminalPosition virtualScrollPosition) {
+
+            if(realSize.getColumns() == 1 || realSize.getRows() <= 2) {
+                return;
+            }
             TerminalSize viewportSize = getViewportSize(realSize, virtualSize);
 
             graphics.setForegroundColor(TextColor.ANSI.WHITE);
@@ -261,7 +285,7 @@ public class VirtualScreen extends AbstractScreen {
 
             int horizontalSize = (int)(((double)(viewportSize.getColumns()) / (double)virtualSize.getColumns()) * (viewportSize.getColumns()));
             int scrollable = viewportSize.getColumns() - horizontalSize - 1;
-            int horizontalPosition = (int)((double)scrollable * ((double)viewportTopLeft.getColumn() / (double)(virtualSize.getColumns() - viewportSize.getColumns())));
+            int horizontalPosition = (int)((double)scrollable * ((double)virtualScrollPosition.getColumn() / (double)(virtualSize.getColumns() - viewportSize.getColumns())));
             graphics.drawLine(
                     new TerminalPosition(horizontalPosition, graphics.getSize().getRows() - 2),
                     new TerminalPosition(horizontalPosition + horizontalSize, graphics.getSize().getRows() - 2),
@@ -269,7 +293,7 @@ public class VirtualScreen extends AbstractScreen {
 
             int verticalSize = (int)(((double)(viewportSize.getRows()) / (double)virtualSize.getRows()) * (viewportSize.getRows()));
             scrollable = viewportSize.getRows() - verticalSize - 1;
-            int verticalPosition = (int)((double)scrollable * ((double)viewportTopLeft.getRow() / (double)(virtualSize.getRows() - viewportSize.getRows())));
+            int verticalPosition = (int)((double)scrollable * ((double)virtualScrollPosition.getRow() / (double)(virtualSize.getRows() - viewportSize.getRows())));
             graphics.drawLine(
                     new TerminalPosition(graphics.getSize().getColumns() - 1, verticalPosition),
                     new TerminalPosition(graphics.getSize().getColumns() - 1, verticalPosition + verticalSize),
