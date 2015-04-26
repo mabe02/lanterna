@@ -33,7 +33,7 @@ public abstract class AbstractBasePane implements BasePane {
 
     protected AbstractBasePane() {
         this.contentHolder = new ContentHolder();
-        this.interactableLookupMap = new InteractableLookupMap(new TerminalSize(80, 20));
+        this.interactableLookupMap = new InteractableLookupMap(new TerminalSize(80, 25));
         this.invalid = false;
     }
 

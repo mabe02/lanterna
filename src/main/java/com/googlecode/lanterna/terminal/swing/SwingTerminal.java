@@ -142,7 +142,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
 
         //This is kind of meaningless since we don't know how large the
         //component is at this point, but we should set it to something
-        TerminalSize terminalSize = new TerminalSize(80, 24);
+        TerminalSize terminalSize = new TerminalSize(80, 25);
         this.virtualTerminal = new VirtualTerminal(
                 deviceConfiguration.getLineBufferScrollbackSize(),
                 terminalSize,
