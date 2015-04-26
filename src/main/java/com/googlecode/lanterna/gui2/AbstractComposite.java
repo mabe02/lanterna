@@ -28,7 +28,7 @@ import java.util.Collection;
  * @author martin
  * @param <T>
  */
-public abstract class AbstractComposite<T extends Container> extends AbstractComponent<T> implements Composite, Container<T> {
+public abstract class AbstractComposite<T extends Container> extends AbstractComponent<T> implements Composite, Container {
     
     private Component component;
 

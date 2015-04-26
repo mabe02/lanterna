@@ -347,6 +347,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
                     caretPosition = caretPosition.withRow(0);
                 }
                 return Result.HANDLED;
+            default:
         }
         return super.handleKeyStroke(keyStroke);
     }
@@ -389,6 +390,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
             case PageUp:
                 getRenderer().setViewTopLeft(getRenderer().getViewTopLeft().withRelativeRow(-getSize().getRows()));
                 return Result.HANDLED;
+            default:
         }
         return super.handleKeyStroke(keyStroke);
     }

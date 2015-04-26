@@ -120,7 +120,7 @@ public class UnixTerminal extends ANSITerminal {
      * details
      * @throws java.io.IOException If there was an I/O error initializing the terminal
      */
-    @SuppressWarnings({"unchecked", "SameParameterValue", "WeakerAccess"})
+    @SuppressWarnings({"SameParameterValue", "WeakerAccess"})
     public UnixTerminal(
             InputStream terminalInput,
             OutputStream terminalOutput,
@@ -135,7 +135,6 @@ public class UnixTerminal extends ANSITerminal {
         //Make sure to set an initial size
         onResized(80, 20);
         try {
-            @SuppressWarnings("rawtypes")
             Class<?> signalClass = Class.forName("sun.misc.Signal");
             for(Method m : signalClass.getDeclaredMethods()) {
                 if("handle".equals(m.getName())) {
@@ -269,6 +268,7 @@ public class UnixTerminal extends ANSITerminal {
         exec(getShellCommand(), "-c", getSTTYCommand() + " eof ^d < /dev/tty");
     }
 
+    @SuppressWarnings("unused")
     private void disableSpecialCharacters() throws IOException {
         exec(getShellCommand(), "-c", getSTTYCommand() + " intr undef < /dev/tty");
         exec(getShellCommand(), "-c", getSTTYCommand() + " start undef < /dev/tty");

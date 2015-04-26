@@ -31,7 +31,7 @@ import java.util.List;
  * @param <T>
  * @author Martin
  */
-public abstract class AbstractListBox<T extends AbstractListBox> extends AbstractInteractableComponent<T> {
+public abstract class AbstractListBox<T extends AbstractListBox<T>> extends AbstractInteractableComponent<T> {
     private final List<Object> items;
     private int selectedIndex;
     private ListItemRenderer listItemRenderer;
@@ -48,8 +48,8 @@ public abstract class AbstractListBox<T extends AbstractListBox> extends Abstrac
     }
 
     @Override
-    protected ListBoxRenderer createDefaultRenderer() {
-        return new DefaultListBoxRenderer();
+    protected ListBoxRenderer<T> createDefaultRenderer() {
+        return new DefaultListBoxRenderer<T>();
     }
     
     protected ListItemRenderer createDefaultListItemRenderer() {
@@ -57,8 +57,8 @@ public abstract class AbstractListBox<T extends AbstractListBox> extends Abstrac
     }
 
     @Override
-    protected ListBoxRenderer getRenderer() {
-        return (ListBoxRenderer)super.getRenderer();
+    protected ListBoxRenderer<T> getRenderer() {
+        return (ListBoxRenderer<T>)super.getRenderer();
     }
     
     public ListItemRenderer getListItemRenderer() {
@@ -116,6 +116,8 @@ public abstract class AbstractListBox<T extends AbstractListBox> extends Abstrac
                 case End:
                     selectedIndex = items.size() - 1;
                     return Result.HANDLED;
+
+                default:
             }
             return Result.UNHANDLED;
         }
@@ -196,11 +198,11 @@ public abstract class AbstractListBox<T extends AbstractListBox> extends Abstrac
         }
     }
 
-    public static abstract class ListBoxRenderer<T extends AbstractListBox> implements InteractableRenderer<T> {
-        public abstract Result handleKeyStroke(AbstractListBox listBox, KeyStroke keyStroke);
+    public static abstract class ListBoxRenderer<T extends AbstractListBox<T>> implements InteractableRenderer<T> {
+        public abstract Result handleKeyStroke(AbstractListBox<T> listBox, KeyStroke keyStroke);
     }
 
-    public static class DefaultListBoxRenderer extends ListBoxRenderer<AbstractListBox> {
+    public static class DefaultListBoxRenderer<T extends AbstractListBox<T>> extends ListBoxRenderer<T> {
         private int scrollTopIndex;
         private int pageSize;
 
@@ -210,7 +212,7 @@ public abstract class AbstractListBox<T extends AbstractListBox> extends Abstrac
         }
 
         @Override
-        public Result handleKeyStroke(AbstractListBox listBox, KeyStroke keyStroke) {
+        public Result handleKeyStroke(AbstractListBox<T> listBox, KeyStroke keyStroke) {
             switch (keyStroke.getKeyType()) {
                 case PageUp:
                     listBox.setSelectedIndex(listBox.getSelectedIndex() - pageSize);
@@ -219,19 +221,21 @@ public abstract class AbstractListBox<T extends AbstractListBox> extends Abstrac
                 case PageDown:
                     listBox.setSelectedIndex(listBox.getSelectedIndex() + pageSize);
                     return Result.HANDLED;
+
+                default:
             }
             return Result.UNHANDLED;
         }
 
         @Override
-        public TerminalPosition getCursorLocation(AbstractListBox listBox) {
+        public TerminalPosition getCursorLocation(T listBox) {
             int selectedIndex = listBox.getSelectedIndex();
             int columnAccordingToRenderer = listBox.getListItemRenderer().getHotSpotPositionOnLine(selectedIndex);
             return new TerminalPosition(columnAccordingToRenderer, selectedIndex - scrollTopIndex);
         }
 
         @Override
-        public TerminalSize getPreferredSize(AbstractListBox listBox) {
+        public TerminalSize getPreferredSize(T listBox) {
             int maxWidth = 5;   //Set it to something...
             int index = 0;
             for (Object item : listBox.getItems()) {
@@ -244,7 +248,7 @@ public abstract class AbstractListBox<T extends AbstractListBox> extends Abstrac
         }
 
         @Override
-        public void drawComponent(TextGUIGraphics graphics, AbstractListBox listBox) {
+        public void drawComponent(TextGUIGraphics graphics, T listBox) {
             //update the page size, used for page up and page down keys
             int componentHeight = graphics.getSize().getRows();
             int componentWidth = graphics.getSize().getColumns();
@@ -311,11 +315,11 @@ public abstract class AbstractListBox<T extends AbstractListBox> extends Abstrac
             return 0;
         }
 
-        protected String getLabel(AbstractListBox listBox, int index, Object item) {
+        protected String getLabel(AbstractListBox<?> listBox, int index, Object item) {
             return item != null ? item.toString() : "<null>";
         }
 
-        protected void drawItem(TextGUIGraphics graphics, AbstractListBox listBox, int index, Object item, boolean selected, boolean focused) {
+        protected void drawItem(TextGUIGraphics graphics, AbstractListBox<?> listBox, int index, Object item, boolean selected, boolean focused) {
             if(selected && focused) {
                 graphics.applyThemeStyle(graphics.getThemeDefinition(AbstractListBox.class).getSelected());
             }

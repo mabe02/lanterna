@@ -147,7 +147,7 @@ public class RadioBoxList extends AbstractListBox<RadioBoxList> {
         }
 
         @Override
-        protected String getLabel(AbstractListBox listBox, int index, Object item) {
+        protected String getLabel(AbstractListBox<?> listBox, int index, Object item) {
             String check = " ";
             if(((RadioBoxList)listBox).checkedIndex == index)
                 check = "o";

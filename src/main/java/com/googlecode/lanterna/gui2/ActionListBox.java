@@ -26,7 +26,7 @@ import com.googlecode.lanterna.input.KeyType;
 /**
  * Created by martin on 04/10/14.
  */
-public class ActionListBox extends AbstractListBox {
+public class ActionListBox extends AbstractListBox<ActionListBox> {
 
     public ActionListBox() {
         this(null);

@@ -27,7 +27,7 @@ import com.googlecode.lanterna.input.KeyStroke;
  * @param <T> Type of renderer you which to use for this class
  * @author Martin
  */
-public abstract class AbstractInteractableComponent<T extends AbstractInteractableComponent> extends AbstractComponent<T> implements Interactable<T> {
+public abstract class AbstractInteractableComponent<T extends AbstractInteractableComponent<T>> extends AbstractComponent<T> implements Interactable {
 
     private boolean inFocus;
 
@@ -81,6 +81,7 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
                 return Result.MOVE_FOCUS_NEXT;
             case ReverseTab:
                 return Result.MOVE_FOCUS_PREVIOUS;
+            default:
         }
         return Result.UNHANDLED;
     }

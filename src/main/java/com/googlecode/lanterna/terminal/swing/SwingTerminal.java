@@ -25,6 +25,7 @@ import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.IOSafeTerminal;
 import com.googlecode.lanterna.terminal.ResizeListener;
 
+import java.awt.AWTKeyStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -61,6 +62,7 @@ import javax.swing.event.AncestorListener;
  * configuration, font configuration and color configuration when you construct the object.
  * @author martin
  */
+@SuppressWarnings("serial")
 public class SwingTerminal extends JComponent implements IOSafeTerminal {
     private final SwingTerminalDeviceConfiguration deviceConfiguration;
     private final SwingTerminalFontConfiguration fontConfiguration;
@@ -167,9 +169,9 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
         setMinimumSize(new Dimension(fontConfiguration.getFontWidth(), fontConfiguration.getFontHeight()));
 
         //noinspection unchecked
-        setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, Collections.EMPTY_SET);
+        setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, Collections.<AWTKeyStroke>emptySet());
         //noinspection unchecked
-        setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, Collections.EMPTY_SET);
+        setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, Collections.<AWTKeyStroke>emptySet());
 
         //Make sure the component is double-buffered to prevent flickering
         setDoubleBuffered(true);

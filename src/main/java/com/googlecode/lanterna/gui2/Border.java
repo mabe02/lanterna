@@ -25,8 +25,8 @@ import com.googlecode.lanterna.TerminalSize;
  *
  * @author Martin
  */
-public interface Border<T extends Border> extends Container<T>, Composite {
-    public static interface BorderRenderer<T extends Border> extends ComponentRenderer<T> {
+public interface Border extends Container, Composite {
+    public static interface BorderRenderer extends ComponentRenderer<Border> {
         /**
          * How large is the offset from the top left corner of the border to the top left corner of the wrapped component?
          * @return Position of the wrapped components top left position, relative to the top left corner of the border

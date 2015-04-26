@@ -45,7 +45,7 @@ public class Separator extends AbstractComponent<Separator> {
     }
 
     @Override
-    protected ComponentRenderer createDefaultRenderer() {
+    protected DefaultSeparatorRenderer createDefaultRenderer() {
         return new DefaultSeparatorRenderer();
     }
 
