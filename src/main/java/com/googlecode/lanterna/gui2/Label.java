@@ -101,15 +101,15 @@ public class Label extends AbstractComponent<Label> {
     }
 
     @Override
-    protected ComponentRenderer createDefaultRenderer() {
-        return new ComponentRenderer() {
+    protected ComponentRenderer<Label> createDefaultRenderer() {
+        return new ComponentRenderer<Label>() {
             @Override
-            public TerminalSize getPreferredSize(Component component) {
+            public TerminalSize getPreferredSize(Label Label) {
                 return preferredSize;
             }
 
             @Override
-            public void drawComponent(TextGUIGraphics graphics, Component component) {
+            public void drawComponent(TextGUIGraphics graphics, Label component) {
                 ThemeDefinition themeDefinition = graphics.getThemeDefinition(Label.class);
                 graphics.applyThemeStyle(themeDefinition.getNormal());
                 if(foregroundColor != null) {

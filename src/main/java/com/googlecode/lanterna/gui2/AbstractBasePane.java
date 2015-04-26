@@ -171,7 +171,7 @@ public abstract class AbstractBasePane implements BasePane {
         }
     }
 
-    protected class ContentHolder extends AbstractComposite {
+    protected class ContentHolder extends AbstractComposite<Container> {
         @Override
         public void setComponent(Component component) {
             super.setComponent(component);
@@ -184,10 +184,10 @@ public abstract class AbstractBasePane implements BasePane {
         }
 
         @Override
-        protected ComponentRenderer createDefaultRenderer() {
-            return new ComponentRenderer() {
+        protected ComponentRenderer<Container> createDefaultRenderer() {
+            return new ComponentRenderer<Container>() {
                 @Override
-                public TerminalSize getPreferredSize(Component component) {
+                public TerminalSize getPreferredSize(Container component) {
                     Component subComponent = getComponent();
                     if(subComponent == null) {
                         return TerminalSize.ZERO;
@@ -196,7 +196,7 @@ public abstract class AbstractBasePane implements BasePane {
                 }
 
                 @Override
-                public void drawComponent(TextGUIGraphics graphics, Component component) {
+                public void drawComponent(TextGUIGraphics graphics, Container component) {
                     Component subComponent = getComponent();
                     if(subComponent == null) {
                         return;

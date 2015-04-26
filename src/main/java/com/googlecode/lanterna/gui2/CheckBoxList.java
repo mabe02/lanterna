@@ -98,7 +98,7 @@ public class CheckBoxList extends AbstractListBox<CheckBoxList> {
         }
 
         @Override
-        protected String getLabel(AbstractListBox listBox, int index, Object item) {
+        protected String getLabel(AbstractListBox<?> listBox, int index, Object item) {
             String check = " ";
             if(((CheckBoxList)listBox).itemStatus.get(index))
                 check = "x";

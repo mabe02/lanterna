@@ -67,7 +67,7 @@ public class Borders {
 
     private static abstract class AbstractBorderRenderer implements Border.BorderRenderer {
         @Override
-        public TerminalSize getPreferredSize(Component component) {
+        public TerminalSize getPreferredSize(Border component) {
             StandardBorder border = (StandardBorder)component;
             Component wrappedComponent = border.getComponent();
             TerminalSize preferredSize;
@@ -92,7 +92,7 @@ public class Borders {
         }
 
         @Override
-        public void drawComponent(TextGUIGraphics graphics, Component component) {
+        public void drawComponent(TextGUIGraphics graphics, Border component) {
             StandardBorder border = (StandardBorder)component;
             Component wrappedComponent = border.getComponent();
             if(wrappedComponent == null) {

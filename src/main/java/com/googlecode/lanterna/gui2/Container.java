@@ -26,7 +26,7 @@ import java.util.Collection;
  * this is the {@code Panel} class which uses a layout manager to size and position the children over its area.
  * @author Martin
  */
-public interface Container<T extends Container> extends Component<T> {
+public interface Container extends Component {
     /**
      * Returns collection that is to be considered a copy of the list of children contained inside of this object. 
      * Modifying this list will not affect any internal state.

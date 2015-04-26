@@ -39,6 +39,7 @@ import javax.swing.*;
  * special behaviours when exiting private mode or when the user presses ESC key.
  * @author martin
  */
+@SuppressWarnings("serial")
 public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
     
     /**

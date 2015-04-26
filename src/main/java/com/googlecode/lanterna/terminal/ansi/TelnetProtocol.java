@@ -65,26 +65,18 @@ class TelnetProtocol {
     public static final byte OPTION_LINEMODE = (byte)0x22;
     public static final byte OPTION_AUTHENTICATION = (byte)0x25;
 
-    @SuppressWarnings("unchecked")
-    public static final Map<String, Byte> NAME_TO_CODE = createCodeMap(false);
-    @SuppressWarnings("unchecked")
-    public static final Map<Byte, String> CODE_TO_NAME = createCodeMap(true);
+    public static final Map<String, Byte> NAME_TO_CODE = createName2CodeMap();
+    public static final Map<Byte, String> CODE_TO_NAME = reverseMap(NAME_TO_CODE);
     
-    @SuppressWarnings("unchecked")
-    private static Map createCodeMap(boolean invertKeyValueAssignments) {
-        Map result = new HashMap();
+    private static Map<String, Byte> createName2CodeMap() {
+        Map<String, Byte> result = new HashMap<>();
         for(Field field: TelnetProtocol.class.getDeclaredFields()) {
             if(field.getType() != byte.class || (!field.getName().startsWith("COMMAND_") && !field.getName().startsWith("OPTION_"))) {
                 continue;
             }
             try {
                 String namePart = field.getName().substring(field.getName().indexOf("_") + 1);
-                if(invertKeyValueAssignments) {
-                    result.put(field.get(null), namePart);
-                }
-                else {
-                    result.put(namePart, field.get(null));
-                }
+                result.put(namePart, (Byte)field.get(null));
             }
             catch(IllegalAccessException ignored) {
             }
@@ -93,7 +85,13 @@ class TelnetProtocol {
         }
         return Collections.unmodifiableMap(result);
     }
-
+    private static <V,K> Map<V,K> reverseMap(Map<K,V> n2c) {
+        Map<V, K> result = new HashMap();
+        for (Map.Entry<K, V> e : n2c.entrySet()) {
+            result.put(e.getValue(), e.getKey());
+        }
+        return Collections.unmodifiableMap(result);
+    }
     /** Cannot instantiate. */
     private TelnetProtocol() {}
 }

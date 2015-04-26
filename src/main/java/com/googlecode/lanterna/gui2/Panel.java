@@ -29,7 +29,7 @@ import java.util.List;
  * Simple container for other components
  * @author Martin
  */
-public class Panel extends AbstractComponent<Panel> implements Container<Panel> {
+public class Panel extends AbstractComponent<Panel> implements Container {
     private final List<Component> components;
     private LayoutManager layoutManager;
     private boolean needsReLayout;
@@ -112,17 +112,17 @@ public class Panel extends AbstractComponent<Panel> implements Container<Panel> 
     }
 
     @Override
-    protected ComponentRenderer createDefaultRenderer() {
-        return new ComponentRenderer() {
+    protected ComponentRenderer<Panel> createDefaultRenderer() {
+        return new ComponentRenderer<Panel>() {
 
             @Override
-            public TerminalSize getPreferredSize(Component component) {
+            public TerminalSize getPreferredSize(Panel component) {
                 setPreferredSize(layoutManager.getPreferredSize(components));
                 return Panel.this.getPreferredSize();
             }
 
             @Override
-            public void drawComponent(TextGUIGraphics graphics, Component component) {
+            public void drawComponent(TextGUIGraphics graphics, Panel component) {
                 if(needsReLayout) {
                     layout(graphics.getSize());
                 }

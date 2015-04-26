@@ -39,6 +39,7 @@ import javax.swing.JScrollBar;
  * mostly deals with linking the SwingTerminal with the scrollbar and having them update each other.
  * @author Martin
  */
+@SuppressWarnings("serial")
 public class ScrollingSwingTerminal extends JComponent implements IOSafeTerminal {
 
     private final SwingTerminal swingTerminal;

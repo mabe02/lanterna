@@ -25,7 +25,7 @@ import com.googlecode.lanterna.input.KeyStroke;
  * This interface marks a component as able to receive keyboard input from the user.
  * @author Martin
  */
-public interface Interactable<T extends Interactable> extends Component<T> {
+public interface Interactable extends Component {
     /**
      * Returns, in local coordinates, where to put the cursor on the screen when this component has focus. If null, the
      * cursor should be hidden. If you component is 5x1 and you want to have the cursor in the middle (when in focus),

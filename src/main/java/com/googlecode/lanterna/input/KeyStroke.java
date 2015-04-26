@@ -89,6 +89,7 @@ public class KeyStroke {
             case Tab:
                 character = '\t';
                 break;
+            default:
         }
         this.keyType = keyType;
         this.character = character;

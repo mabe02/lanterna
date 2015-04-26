@@ -161,25 +161,24 @@ class DefaultShapeRenderer implements ShapeRenderer {
             dx3 = 0;
         }
 
-        float startX, startY, endX, endY;
+        float startX, startY, endX;
         startX = endX = points[0].getColumn();
-        startY = endY = points[0].getRow();
+        startY =        points[0].getRow();
         if (dx1 > dx2) {
-            for (; startY <= points[1].getRow(); startY++, endY++, startX += dx2, endX += dx1) {
+            for (; startY <= points[1].getRow(); startY++, startX += dx2, endX += dx1) {
                 drawLine(new TerminalPosition((int)startX, (int)startY), new TerminalPosition((int)endX, (int)startY), character);
             }
             endX = points[1].getColumn();
-            endY = points[1].getRow();
-            for (; startY <= points[2].getRow(); startY++, endY++, startX += dx2, endX += dx3) {
+            for (; startY <= points[2].getRow(); startY++, startX += dx2, endX += dx3) {
                 drawLine(new TerminalPosition((int)startX, (int)startY), new TerminalPosition((int)endX, (int)startY), character);
             }
         } else {
-            for (; startY <= points[1].getRow(); startY++, endY++, startX += dx1, endX += dx2) {
+            for (; startY <= points[1].getRow(); startY++, startX += dx1, endX += dx2) {
                 drawLine(new TerminalPosition((int)startX, (int)startY), new TerminalPosition((int)endX, (int)startY), character);
             }
             startX = points[1].getColumn();
             startY = points[1].getRow();
-            for (; startY <= points[2].getRow(); startY++, endY++, startX += dx3, endX += dx2) {
+            for (; startY <= points[2].getRow(); startY++, startX += dx3, endX += dx2) {
                 drawLine(new TerminalPosition((int)startX, (int)startY), new TerminalPosition((int)endX, (int)startY), character);
             }
         }

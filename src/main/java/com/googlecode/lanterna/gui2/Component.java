@@ -25,7 +25,7 @@ import com.googlecode.lanterna.TerminalSize;
  *
  * @author Martin
  */
-public interface Component<T extends Component> extends TextGUIElement {
+public interface Component extends TextGUIElement {
     /**
      * Returns the top-left corner of this component, measured from its parent.
      * @return Position of this component
@@ -38,7 +38,7 @@ public interface Component<T extends Component> extends TextGUIElement {
      * @param position Top-left position of the component, relative to its parent
      * @return Itself
      */
-    T setPosition(TerminalPosition position);
+    Component setPosition(TerminalPosition position);
 
     /**
      * Returns how large this component is. If the layout manager has not yet laid this component out, it will return
@@ -53,7 +53,7 @@ public interface Component<T extends Component> extends TextGUIElement {
      * @param size Current size of the component
      * @return Itself
      */
-    T setSize(TerminalSize size);
+    Component setSize(TerminalSize size);
 
     /**
      * Returns the ideal size this component would like to have, in order to draw itself properly. There are no
@@ -71,7 +71,7 @@ public interface Component<T extends Component> extends TextGUIElement {
      * @param explicitPreferredSize Preferred size we want to use for this component
      * @return Itself
      */
-    T setPreferredSize(TerminalSize explicitPreferredSize);
+    Component setPreferredSize(TerminalSize explicitPreferredSize);
 
     /**
      * Sets optional layout data associated with this component. This meaning of this data is up to the layout manager
@@ -79,7 +79,7 @@ public interface Component<T extends Component> extends TextGUIElement {
      * @param data Layout data associated with this component
      * @return Itself
      */
-    T setLayoutData(LayoutData data);
+    Component setLayoutData(LayoutData data);
 
     /**
      * Returns the layout data associated with this component. This data will optionally be used by the layout manager,

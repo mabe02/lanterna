@@ -28,7 +28,7 @@ import com.googlecode.lanterna.TerminalSize;
  * @author Martin
  * @param <T> Type of Renderer this component will use
  */
-public abstract class AbstractComponent<T extends Component> implements Component<T> {
+public abstract class AbstractComponent<T extends Component> implements Component {
     private ComponentRenderer<T> renderer;
     private Container parent;
     private TerminalSize size;
@@ -59,6 +59,7 @@ public abstract class AbstractComponent<T extends Component> implements Componen
      */
     protected abstract ComponentRenderer<T> createDefaultRenderer();
 
+    @SuppressWarnings("unchecked")
     protected void updateRenderer(String className) {
         if(className == null) {
             return;
@@ -233,6 +234,7 @@ public abstract class AbstractComponent<T extends Component> implements Componen
         parent = null;
     }
 
+    @SuppressWarnings("unchecked")
     protected T self() {
         return (T)this;
     }
