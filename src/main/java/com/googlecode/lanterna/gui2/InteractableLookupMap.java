@@ -55,7 +55,11 @@ public class InteractableLookupMap {
         int index = interactables.size() - 1;
         for(int y = topLeft.getRow(); y < topLeft.getRow() + size.getRows(); y++) {
             for(int x = topLeft.getColumn(); x < topLeft.getColumn() + size.getColumns(); x++) {
-                lookupMap[y][x] = index;
+                //Make sure it's not outside the map
+                if(y >= 0 && y < lookupMap.length &&
+                        x >= 0 && x < lookupMap[y].length) {
+                    lookupMap[y][x] = index;
+                }
             }
         }
     }
@@ -182,6 +186,21 @@ public class InteractableLookupMap {
     private Set<Interactable> getDisqualifiedInteractables(TerminalPosition startPosition, boolean scanHorizontally) {
         Set<Interactable> disqualified = new HashSet<Interactable>();
         TerminalSize size = getSize();
+
+        //Adjust start position if necessary
+        if(startPosition.getRow() < 0) {
+            startPosition = startPosition.withRow(0);
+        }
+        else if(startPosition.getRow() >= lookupMap.length) {
+            startPosition = startPosition.withRow(lookupMap.length - 1);
+        }
+        if(startPosition.getColumn() < 0) {
+            startPosition = startPosition.withColumn(0);
+        }
+        else if(startPosition.getColumn() >= lookupMap[startPosition.getRow()].length) {
+            startPosition = startPosition.withColumn(lookupMap[startPosition.getRow()].length - 1);
+        }
+
         if(scanHorizontally) {
             for(int column = 0; column < size.getColumns(); column++) {
                 int index = lookupMap[startPosition.getRow()][column];
