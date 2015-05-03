@@ -69,7 +69,7 @@ class TelnetProtocol {
     public static final Map<Byte, String> CODE_TO_NAME = reverseMap(NAME_TO_CODE);
     
     private static Map<String, Byte> createName2CodeMap() {
-        Map<String, Byte> result = new HashMap<>();
+        Map<String, Byte> result = new HashMap<String, Byte>();
         for(Field field: TelnetProtocol.class.getDeclaredFields()) {
             if(field.getType() != byte.class || (!field.getName().startsWith("COMMAND_") && !field.getName().startsWith("OPTION_"))) {
                 continue;
