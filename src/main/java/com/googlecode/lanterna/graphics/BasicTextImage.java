@@ -188,8 +188,8 @@ public class BasicTextImage implements TextImage {
         rows = Math.min(buffer.length - startRowIndex, rows);
 
         //Adjust target lengths as well
-        columns = Math.min(destination.getSize().getColumns() - startColumnIndex, columns);
-        rows = Math.min(destination.getSize().getRows() - startRowIndex, rows);
+        columns = Math.min(destination.getSize().getColumns() - destinationColumnOffset, columns);
+        rows = Math.min(destination.getSize().getRows() - destinationRowOffset, rows);
 
         if(columns <= 0 || rows <= 0) {
             return;
