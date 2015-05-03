@@ -17,7 +17,7 @@ public class GridLayoutTest extends TestBase {
     public void init(WindowBasedTextGUI textGUI) {
         final BasicWindow window = new BasicWindow("Grid layout test");
         Panel contentArea = new Panel();
-/*        contentArea.setLayoutManager(new GridLayout(4, false));
+        contentArea.setLayoutManager(new GridLayout(4));
         contentArea.addComponent(new EmptySpace(TextColor.ANSI.BLACK, new TerminalSize(4, 2)));
         contentArea.addComponent(new EmptySpace(TextColor.ANSI.BLUE, new TerminalSize(4, 2)));
         contentArea.addComponent(new EmptySpace(TextColor.ANSI.CYAN, new TerminalSize(4, 2)));
@@ -29,7 +29,7 @@ public class GridLayoutTest extends TestBase {
         contentArea.addComponent(new EmptySpace(TextColor.ANSI.YELLOW, new TerminalSize(4, 2))
                 .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.END, GridLayout.Alignment.CENTER, true, false, 4, 1)));
         contentArea.addComponent(new EmptySpace(TextColor.ANSI.BLACK, new TerminalSize(4, 2))
-                .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.CENTER, true, false, 4, 1)));*/
+                .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.CENTER, true, false, 4, 1)));
 
         contentArea.addComponent(new Button("OK", new Runnable() {
             @Override
