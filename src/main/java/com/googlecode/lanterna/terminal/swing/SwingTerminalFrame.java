@@ -127,7 +127,27 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
             SwingTerminalFontConfiguration fontConfiguration,
             SwingTerminalColorConfiguration colorConfiguration,
             AutoCloseTrigger autoCloseTrigger) {
-        this(title, new SwingTerminal(deviceConfiguration, fontConfiguration, colorConfiguration), autoCloseTrigger);
+        this(title, null, deviceConfiguration, fontConfiguration, colorConfiguration, autoCloseTrigger);
+    }
+
+    /**
+     * Creates a new SwingTerminalFrame using a specified title and a series of swing terminal configuration objects
+     * @param title What title to use for the window
+     * @param terminalSize Initial size of the terminal, in rows and columns. If null, it will default to 80x25.
+     * @param deviceConfiguration Device configuration for the embedded SwingTerminal
+     * @param fontConfiguration Font configuration for the embedded SwingTerminal
+     * @param colorConfiguration Color configuration for the embedded SwingTerminal
+     * @param autoCloseTrigger What to trigger automatic disposal of the JFrame
+     */
+    public SwingTerminalFrame(String title,
+                              TerminalSize terminalSize,
+                              SwingTerminalDeviceConfiguration deviceConfiguration,
+                              SwingTerminalFontConfiguration fontConfiguration,
+                              SwingTerminalColorConfiguration colorConfiguration,
+                              AutoCloseTrigger autoCloseTrigger) {
+        this(title,
+                new SwingTerminal(terminalSize, deviceConfiguration, fontConfiguration, colorConfiguration),
+                autoCloseTrigger);
     }
     
     private SwingTerminalFrame(String title, SwingTerminal swingTerminal, AutoCloseTrigger autoCloseTrigger) {

@@ -112,7 +112,29 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
             SwingTerminalFontConfiguration fontConfiguration,
             SwingTerminalColorConfiguration colorConfiguration) {
 
-        this(deviceConfiguration, fontConfiguration, colorConfiguration, new TerminalScrollController.Null());
+        this(null, deviceConfiguration, fontConfiguration, colorConfiguration);
+    }
+
+    /**
+     * Creates a new SwingTerminal component using custom settings and no scroll controller.
+     * @param initialTerminalSize Initial size of the terminal, which will be used when calculating the preferred size
+     *                            of the component. If null, it will default to 80x25. If the AWT layout manager forces
+     *                            the component to a different size, the value of this parameter won't have any meaning
+     * @param deviceConfiguration Device configuration to use for this SwingTerminal
+     * @param fontConfiguration Font configuration to use for this SwingTerminal
+     * @param colorConfiguration Color configuration to use for this SwingTerminal
+     */
+    public SwingTerminal(
+            TerminalSize initialTerminalSize,
+            SwingTerminalDeviceConfiguration deviceConfiguration,
+            SwingTerminalFontConfiguration fontConfiguration,
+            SwingTerminalColorConfiguration colorConfiguration) {
+
+        this(initialTerminalSize,
+                deviceConfiguration,
+                fontConfiguration,
+                colorConfiguration,
+                new TerminalScrollController.Null());
     }
 
     /**
@@ -131,6 +153,31 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
             SwingTerminalColorConfiguration colorConfiguration,
             TerminalScrollController scrollController) {
 
+        this(null, deviceConfiguration, fontConfiguration, colorConfiguration, scrollController);
+    }
+
+
+
+    /**
+     * Creates a new SwingTerminal component using custom settings and a custom scroll controller. The scrolling
+     * controller will be notified when the terminal's history size grows and will be called when this class needs to
+     * figure out the current scrolling position.
+     * @param initialTerminalSize Initial size of the terminal, which will be used when calculating the preferred size
+     *                            of the component. If null, it will default to 80x25. If the AWT layout manager forces
+     *                            the component to a different size, the value of this parameter won't have any meaning
+     * @param deviceConfiguration Device configuration to use for this SwingTerminal
+     * @param fontConfiguration Font configuration to use for this SwingTerminal
+     * @param colorConfiguration Color configuration to use for this SwingTerminal
+     * @param scrollController Controller to use for scrolling, the object passed in will be notified whenever the
+     *                         scrollable area has changed
+     */
+    public SwingTerminal(
+            TerminalSize initialTerminalSize,
+            SwingTerminalDeviceConfiguration deviceConfiguration,
+            SwingTerminalFontConfiguration fontConfiguration,
+            SwingTerminalColorConfiguration colorConfiguration,
+            TerminalScrollController scrollController) {
+
         //Enforce valid values on the input parameters
         if(deviceConfiguration == null) {
             deviceConfiguration = SwingTerminalDeviceConfiguration.DEFAULT;
@@ -144,10 +191,12 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
 
         //This is kind of meaningless since we don't know how large the
         //component is at this point, but we should set it to something
-        TerminalSize terminalSize = new TerminalSize(80, 25);
+        if(initialTerminalSize == null) {
+            initialTerminalSize = new TerminalSize(80, 25);
+        }
         this.virtualTerminal = new VirtualTerminal(
                 deviceConfiguration.getLineBufferScrollbackSize(),
-                terminalSize,
+                initialTerminalSize,
                 scrollController);
         this.keyQueue = new LinkedBlockingQueue<KeyStroke>();
         this.resizeListeners = new CopyOnWriteArrayList<ResizeListener>();

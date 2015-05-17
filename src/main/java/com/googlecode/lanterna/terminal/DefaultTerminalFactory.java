@@ -18,6 +18,7 @@
  */
 package com.googlecode.lanterna.terminal;
 
+import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.terminal.ansi.CygwinTerminal;
 import com.googlecode.lanterna.terminal.ansi.UnixTerminal;
 import com.googlecode.lanterna.terminal.swing.SwingTerminalColorConfiguration;
@@ -46,7 +47,8 @@ public final class DefaultTerminalFactory implements TerminalFactory {
     private final OutputStream outputStream;
     private final InputStream inputStream;
     private final Charset charset;
-    
+
+    private TerminalSize initialTerminalSize;
     private boolean suppressSwingTerminalFrame;
     private String title;
     private boolean autoOpenSwingTerminalFrame;
@@ -94,12 +96,30 @@ public final class DefaultTerminalFactory implements TerminalFactory {
             }
         }
         else {
-            SwingTerminalFrame swingTerminalFrame = new SwingTerminalFrame(title, deviceConfiguration, fontConfiguration, colorConfiguration, autoCloseTrigger);
+            SwingTerminalFrame swingTerminalFrame = new SwingTerminalFrame(
+                    title,
+                    initialTerminalSize,
+                    deviceConfiguration,
+                    fontConfiguration,
+                    colorConfiguration,
+                    autoCloseTrigger);
+
             if(autoOpenSwingTerminalFrame) {
                 swingTerminalFrame.setVisible(true);
             }
             return swingTerminalFrame;
         }
+    }
+
+    /**
+     * Sets a hint to the TerminalFactory of what size to use when creating the terminal. Most terminals are not created
+     * on request but for example the SwingTerminal and SwingTerminalFrame are and this value will be passed down on
+     * creation.
+     *
+     * @param initialTerminalSize Size (in rows and columns) of the newly created terminal
+     */
+    public void setInitialTerminalSize(TerminalSize initialTerminalSize) {
+        this.initialTerminalSize = initialTerminalSize;
     }
 
     /**
