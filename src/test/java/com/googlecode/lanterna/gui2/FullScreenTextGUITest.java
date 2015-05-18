@@ -17,7 +17,7 @@ import java.util.EnumSet;
  */
 public class FullScreenTextGUITest {
     public static void main(String[] args) throws IOException, InterruptedException {
-        Screen screen = new TestTerminalFactory(args).createScreen();
+        Screen screen = new TestTerminalFactory(args).withInitialTerminalSize(new TerminalSize(80, 25)).createScreen();
         screen.startScreen();
         MultiWindowTextGUI textGUI = new MultiWindowTextGUI(screen);
         textGUI.addListener(new TextGUI.Listener() {

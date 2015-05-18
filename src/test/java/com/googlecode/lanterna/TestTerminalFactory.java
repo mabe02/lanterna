@@ -46,7 +46,12 @@ public class TestTerminalFactory {
         factory.setSwingTerminalFrameAutoCloseTrigger(autoCloseTrigger);
         factory.setSuppressSwingTerminalFrame(args.length > 0 && "--no-swing".equals(args[0]));
     }
-    
+
+    public TestTerminalFactory withInitialTerminalSize(TerminalSize initialTerminalSize) {
+        factory.setInitialTerminalSize(initialTerminalSize);
+        return this;
+    }
+
     public SwingTerminalFrame createSwingTerminal() {
         try {
             return (SwingTerminalFrame)createTerminal();
