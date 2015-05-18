@@ -102,12 +102,89 @@ public class GridLayout implements LayoutManager {
     }
 
     private final int numberOfColumns;
+    private int horizontalSpacing;
+    private int verticalSpacing;
+    private int topMarginSize;
+    private int bottomMarginSize;
+    private int leftMarginSize;
+    private int rightMarginSize;
 
     public GridLayout(int numberOfColumns) {
         this.numberOfColumns = numberOfColumns;
-
+        this.horizontalSpacing = 1;
+        this.verticalSpacing = 0;
+        this.topMarginSize = 0;
+        this.bottomMarginSize = 0;
+        this.leftMarginSize = 0;
+        this.rightMarginSize = 0;
     }
-    
+
+    public int getHorizontalSpacing() {
+        return horizontalSpacing;
+    }
+
+    public void setHorizontalSpacing(int horizontalSpacing) {
+        if(horizontalSpacing < 0) {
+            throw new IllegalArgumentException("Horizontal spacing cannot be less than 0");
+        }
+        this.horizontalSpacing = horizontalSpacing;
+    }
+
+    public int getVerticalSpacing() {
+        return verticalSpacing;
+    }
+
+    public void setVerticalSpacing(int verticalSpacing) {
+        if(horizontalSpacing < 0) {
+            throw new IllegalArgumentException("Vertical spacing cannot be less than 0");
+        }
+        this.verticalSpacing = verticalSpacing;
+    }
+
+    public int getTopMarginSize() {
+        return topMarginSize;
+    }
+
+    public void setTopMarginSize(int topMarginSize) {
+        if(horizontalSpacing < 0) {
+            throw new IllegalArgumentException("Top margin size cannot be less than 0");
+        }
+        this.topMarginSize = topMarginSize;
+    }
+
+    public int getBottomMarginSize() {
+        return bottomMarginSize;
+    }
+
+    public void setBottomMarginSize(int bottomMarginSize) {
+        if(horizontalSpacing < 0) {
+            throw new IllegalArgumentException("Bottom margin size cannot be less than 0");
+        }
+        this.bottomMarginSize = bottomMarginSize;
+    }
+
+    public int getLeftMarginSize() {
+        return leftMarginSize;
+    }
+
+    public void setLeftMarginSize(int leftMarginSize) {
+        if(horizontalSpacing < 0) {
+            throw new IllegalArgumentException("Left margin size cannot be less than 0");
+        }
+        this.leftMarginSize = leftMarginSize;
+    }
+
+    public int getRightMarginSize() {
+        return rightMarginSize;
+    }
+
+    public void setRightMarginSize(int rightMarginSize) {
+        if(horizontalSpacing < 0) {
+            throw new IllegalArgumentException("Right margin size cannot be less than 0");
+        }
+        this.rightMarginSize = rightMarginSize;
+    }
+
     @Override
     public TerminalSize getPreferredSize(List<Component> components) {
         TerminalSize preferredSize = TerminalSize.ZERO;
@@ -135,6 +212,8 @@ public class GridLayout implements LayoutManager {
             preferredSize = preferredSize.withColumns(Math.max(preferredSize.getColumns(), rowPreferredWidth));
             preferredSize = preferredSize.withRelativeRows(rowPreferredHeight);
         }
+        preferredSize = preferredSize.withRelativeColumns(leftMarginSize + rightMarginSize + (numberOfColumns - 1) * horizontalSpacing);
+        preferredSize = preferredSize.withRelativeRows(topMarginSize + bottomMarginSize + (table.length - 1) * verticalSpacing);
         return preferredSize;
     }
 
@@ -143,7 +222,6 @@ public class GridLayout implements LayoutManager {
         Component[][] table = buildTable(components);
         Map<Component, TerminalSize> sizeMap = new IdentityHashMap<Component, TerminalSize>();
         Map<Component, TerminalPosition> positionMap = new IdentityHashMap<Component, TerminalPosition>();
-
 
         //Figure out each column first, this can be done independently of the row heights
         int[] columnWidths = getPreferredColumnWidths(table);
