@@ -22,6 +22,7 @@ import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.input.DefaultKeyDecodingProfile;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.input.KeyDecodingProfile;
 import com.googlecode.lanterna.terminal.ExtendedTerminal;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -45,7 +46,15 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
     protected ANSITerminal(InputStream terminalInput, OutputStream terminalOutput, Charset terminalCharset) {
         super(terminalInput, terminalOutput, terminalCharset);
         this.inPrivateMode = false;
-        addKeyDecodingProfile(new DefaultKeyDecodingProfile());
+        addKeyDecodingProfile(getDefaultKeyDecodingProfile());
+    }
+
+    /**
+     * This method can be overridden in a custom terminal implementation to change the default key decoders.
+     * @return The KeyDecodingProfile used by the terminal when translating character sequences to keystrokes
+     */
+    protected KeyDecodingProfile getDefaultKeyDecodingProfile() {
+        return new DefaultKeyDecodingProfile();
     }
 
     private void writeCSISequenceToTerminal(byte... tail) throws IOException {
