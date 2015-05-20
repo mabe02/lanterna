@@ -24,7 +24,7 @@ import java.util.List;
  * Character pattern that matches characters pressed while ALT and CTRL keys are held down
  * @author Martin
  */
-class CtrlAltAndCharacterPattern implements CharacterPattern {
+public class CtrlAltAndCharacterPattern implements CharacterPattern {
 
     @Override
     public KeyStroke getResult(List<Character> matching) {

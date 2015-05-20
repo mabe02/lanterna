@@ -24,7 +24,7 @@ import java.util.List;
  * Character pattern that matches characters pressed while CTRL key is held down
  * @author Martin
  */
-class CtrlAndCharacterPattern implements CharacterPattern {
+public class CtrlAndCharacterPattern implements CharacterPattern {
     @Override
     public KeyStroke getResult(List<Character> matching) {
         int firstCode = 'a' - 1;

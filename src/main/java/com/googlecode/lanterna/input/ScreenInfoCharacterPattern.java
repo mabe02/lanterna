@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
  *
  * @author martin
  */
-class ScreenInfoCharacterPattern implements CharacterPattern {
+public class ScreenInfoCharacterPattern implements CharacterPattern {
 
     private static final Pattern REPORT_CURSOR_PATTERN
             = Pattern.compile("\\[([0-9]+);([0-9]+)R");
