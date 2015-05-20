@@ -24,6 +24,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Used to read the input stream character by character and generate {@code Key} objects to be put in the input queue.
@@ -32,7 +33,7 @@ import java.util.*;
  */
 public class InputDecoder {
     private final Reader source;
-    private final Set<CharacterPattern> bytePatterns;
+    private final List<CharacterPattern> bytePatterns;
     private final List<Character> currentMatching;
     private TerminalPosition lastReportedTerminalPosition;
     private boolean seenEOF;
@@ -43,7 +44,7 @@ public class InputDecoder {
      */
     public InputDecoder(final Reader source) {
         this.source = new BufferedReader(source);
-        this.bytePatterns = new HashSet<CharacterPattern>();
+        this.bytePatterns = new ArrayList<CharacterPattern>();
         this.currentMatching = new ArrayList<Character>();
         this.lastReportedTerminalPosition = null;
         this.seenEOF = false;
@@ -54,10 +55,29 @@ public class InputDecoder {
      * when decoding input.
      * @param profile Profile to add
      */
-    public void addProfile(KeyDecodingProfile profile) {
+    public synchronized void addProfile(KeyDecodingProfile profile) {
         for (CharacterPattern pattern : profile.getPatterns()) {
+            //If an equivivalent pattern already exists, remove it first
+            bytePatterns.remove(pattern);
             bytePatterns.add(pattern);
         }
+    }
+
+    /**
+     * Returns a collection of all patterns registered in this InputDecoder.
+     * @return Collection of patterns in the InputDecoder
+     */
+    public synchronized Collection<CharacterPattern> getPatterns() {
+        return new ArrayList<CharacterPattern>(bytePatterns);
+    }
+
+    /**
+     * Removes one pattern from the list of patterns in this InputDecoder
+     * @param pattern Pattern to remove
+     * @return {@code true} if the supplied pattern was found and was removed, otherwise {@code false}
+     */
+    public synchronized boolean removePattern(CharacterPattern pattern) {
+        return bytePatterns.remove(pattern);
     }
 
     /**
@@ -65,7 +85,7 @@ public class InputDecoder {
      * @return Key stroke read from the input stream, or {@code null} if none
      * @throws IOException If there was an I/O error when reading from the input stream
      */
-    public KeyStroke getNextCharacter(boolean blockingIO) throws IOException {
+    public synchronized KeyStroke getNextCharacter(boolean blockingIO) throws IOException {
         while ((blockingIO && currentMatching.isEmpty()) || source.ready()) {
             int readChar = source.read();
             if (readChar == -1) {
@@ -135,7 +155,7 @@ public class InputDecoder {
         return lastReportedTerminalPosition;
     }
 
-    private Matching getBestMatch(List<Character> characterSequence) {
+    private synchronized Matching getBestMatch(List<Character> characterSequence) {
         boolean partialMatch = false;
         KeyStroke bestMatch = null;
         for(CharacterPattern pattern : bytePatterns) {
