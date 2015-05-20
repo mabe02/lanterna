@@ -22,15 +22,32 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Matcher for a sequence of characters and turns them into a KeyStroke
+ * Very simple pattern that matches the input stream against a pre-defined list of characters. For the pattern to match,
+ * the list of characters must match exactly what's coming in on the input stream.
  */
-class BasicCharacterPattern implements CharacterPattern {
+public class BasicCharacterPattern implements CharacterPattern {
     private final KeyStroke result;
     private final char[] pattern;
 
     BasicCharacterPattern(KeyStroke result, char... pattern) {
         this.result = result;
         this.pattern = pattern;
+    }
+
+    /**
+     * Returns the characters that makes up this pattern, as an array that is a copy of the array used internally
+     * @return Array of characters that defines this pattern
+     */
+    public char[] getPattern() {
+        return Arrays.copyOf(pattern, pattern.length);
+    }
+
+    /**
+     * Returns the keystroke that this pattern results in
+     * @return The keystoke this pattern will return if it matches
+     */
+    public KeyStroke getResult() {
+        return result;
     }
 
     @Override
