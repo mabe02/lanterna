@@ -86,7 +86,10 @@ public interface Window extends BasePane {
     String getTitle();
 
     /**
-     * Is the window visible or not; note that window managers may choose to ignore this
+     * This values is optionally used by the window manager to decide if the windows should be drawn or not. In an
+     * invisible state, the window is still considered active in the TextGUI but just not drawn and not receiving any
+     * input events. Please note that window managers may choose not to implement this.
+     *
      * @return Whether the window wants to be visible or not
      */
     boolean isVisible();
