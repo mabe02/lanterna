@@ -23,6 +23,7 @@ import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.input.KeyType;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Set;
 
@@ -48,7 +49,7 @@ public class AbstractWindow extends AbstractBasePane implements Window {
         super();
         this.title = title;
         this.textGUI = null;
-        this.visible = true;
+        this.visible = false;
         this.lastKnownPosition = null;
         this.lastKnownSize = null;
         this.lastKnownDecoratedSize = null;
@@ -155,5 +156,31 @@ public class AbstractWindow extends AbstractBasePane implements Window {
             textGUI.removeWindow(this);
         }
         setComponent(null);
+    }
+
+    /**
+     * Waits for the window to close. Please note that this can cause deadlocks if care is not taken. Also, this method
+     * will swallow any interrupts, if you need a wait method that throws InterruptedException, you'll have to implement
+     * this yourself.
+     */
+    public void awaitClose() {
+        while(getTextGUI() != null) {
+            if(getTextGUI().getLastEventProcessingThread() == Thread.currentThread()) {
+                try {
+                    if(getTextGUI().processInputAndUpdateScreen()) {
+                        continue;
+                    }
+                }
+                catch (IOException e) {
+                    throw new RuntimeException("Unexpected IOException", e);
+                }
+            }
+
+            try {
+                Thread.sleep(1);
+            }
+            catch(InterruptedException ignore) {
+            }
+        }
     }
 }
