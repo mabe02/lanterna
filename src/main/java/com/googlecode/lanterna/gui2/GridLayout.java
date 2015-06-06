@@ -26,7 +26,7 @@ import java.util.*;
 /**
  * This emulates the behaviour of the GridLayout in SWT (as opposed to the one in AWT/Swing). I originally ported the
  * SWT class itself but due to licensing concerns (the eclipse license is not compatible with LGPL) I was advised not to
- * do that. This is a partial implementation and some of the symantics have changed, but in general it works the same 
+ * do that. This is a partial implementation and some of the semantics have changed, but in general it works the same
  * way.
  */
 public class GridLayout implements LayoutManager {
