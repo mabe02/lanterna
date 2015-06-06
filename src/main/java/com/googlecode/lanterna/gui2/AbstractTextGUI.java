@@ -45,6 +45,7 @@ public abstract class AbstractTextGUI implements TextGUI {
     private final List<Listener> listeners;
     private boolean blockingIO;
     private boolean dirty;
+    private Thread lastUsedEventProcessingThread;
     private TextGUIThread textGUIThread;
     private Theme guiTheme;
 
@@ -56,6 +57,7 @@ public abstract class AbstractTextGUI implements TextGUI {
         this.listeners = new CopyOnWriteArrayList<Listener>();
         this.blockingIO = false;
         this.dirty = false;
+        this.lastUsedEventProcessingThread = null;
         this.textGUIThread = null;
         this.guiTheme = new PropertiesTheme(loadDefaultThemeProperties());
     }
@@ -86,8 +88,9 @@ public abstract class AbstractTextGUI implements TextGUI {
     }
 
     @Override
-    public boolean processInput() throws IOException {
+    public synchronized boolean processInput() throws IOException {
         boolean gotInput = false;
+        lastUsedEventProcessingThread = Thread.currentThread();
         KeyStroke keyStroke = readKeyStroke();
         if(keyStroke != null) {
             gotInput = true;
@@ -121,6 +124,16 @@ public abstract class AbstractTextGUI implements TextGUI {
     }
 
     @Override
+    public boolean processInputAndUpdateScreen() throws IOException {
+        processInput();
+        if(isPendingUpdate()) {
+            updateScreen();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public boolean isPendingUpdate() {
         return screen.doResizeIfNecessary() != null || dirty;
     }
@@ -132,6 +145,11 @@ public abstract class AbstractTextGUI implements TextGUI {
         }
         textGUIThread = new DefaultTextGUIThread(this);
         return textGUIThread;
+    }
+
+    @Override
+    public Thread getLastEventProcessingThread() {
+        return lastUsedEventProcessingThread;
     }
 
     @Override

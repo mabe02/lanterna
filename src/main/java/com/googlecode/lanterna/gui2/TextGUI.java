@@ -56,6 +56,17 @@ public interface TextGUI {
     void updateScreen() throws IOException;
 
     /**
+     * A combination of processInput() and updateScreen(), this method will process any pending input events and update
+     * the screen if there was anything to process. This method can be used if you are on the same thread as the one
+     * rendering the GUI and you need to wait for a certain event before you can continue. If you keep sleeping, the
+     * GUI won't update as the thread is blocked, but you can call this method to allow processing to continue.
+     * @return {@code true} if the screen was updated due to an input event
+     * @throws java.io.IOException In case there was an underlying I/O error
+     * @throws java.io.EOFException In the input stream received an EOF marker
+     */
+    boolean processInputAndUpdateScreen() throws IOException;
+
+    /**
      * This method can be used to determine if any component has requested a redraw. If this method returns
      * {@code true}, you may want to call {@code updateScreen()}.
      * @return {@code true} if this TextGUI has a change and is waiting for someone to call {@code updateScreen()}
@@ -69,6 +80,14 @@ public interface TextGUI {
      * @return A {@code TextGUIThread} implementation that can be used to asynchronously manage the GUI
      */
     TextGUIThread getGUIThread();
+
+    /**
+     * Returns the last thread that called the event processing method on this TextGUI. This can be used to find out if
+     * you are the same thread that was last used to process events, which means you may be causing deadlocks if you
+     * block the thread.
+     * @return The Thread that called the event process method last time
+     */
+    Thread getLastEventProcessingThread();
     
     /**
      * Adds a listener to this TextGUI to fire events on.
