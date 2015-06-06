@@ -62,7 +62,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
     }
 
     public TextBox(TerminalSize preferredSize) {
-        this(preferredSize, preferredSize.getRows() == 1 ? Style.SINGLE_LINE : Style.MULTILINE);
+        this(preferredSize, (preferredSize != null && preferredSize.getRows() >= 1) ? Style.MULTILINE : Style.SINGLE_LINE);
     }
 
     public TextBox(TerminalSize preferredSize, Style style) {
@@ -70,7 +70,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
     }
 
     public TextBox(TerminalSize preferredSize, String initialContent) {
-        this(preferredSize, initialContent, (preferredSize.getRows() == 1 && !initialContent.contains("\n")) ? Style.SINGLE_LINE : Style.MULTILINE);
+        this(preferredSize, initialContent, (preferredSize != null && preferredSize.getRows() > 1) || initialContent.contains("\n") ? Style.MULTILINE : Style.SINGLE_LINE);
     }
 
     public TextBox(TerminalSize preferredSize, String initialContent, Style style) {
