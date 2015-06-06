@@ -31,9 +31,9 @@ import java.util.List;
  */
 public class TextBox extends AbstractInteractableComponent<TextBox> {
 
-    public static enum Style {
+    public enum Style {
         SINGLE_LINE,
-        MULTILINE,
+        MULTI_LINE,
         ;
     }
 
@@ -54,7 +54,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
     }
 
     public TextBox(String initialContent) {
-        this(null, initialContent, initialContent.contains("\n") ? Style.MULTILINE : Style.SINGLE_LINE);
+        this(null, initialContent, initialContent.contains("\n") ? Style.MULTI_LINE : Style.SINGLE_LINE);
     }
 
     public TextBox(String initialContent, Style style) {
@@ -62,7 +62,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
     }
 
     public TextBox(TerminalSize preferredSize) {
-        this(preferredSize, (preferredSize != null && preferredSize.getRows() >= 1) ? Style.MULTILINE : Style.SINGLE_LINE);
+        this(preferredSize, (preferredSize != null && preferredSize.getRows() >= 1) ? Style.MULTI_LINE : Style.SINGLE_LINE);
     }
 
     public TextBox(TerminalSize preferredSize, Style style) {
@@ -70,7 +70,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
     }
 
     public TextBox(TerminalSize preferredSize, String initialContent) {
-        this(preferredSize, initialContent, (preferredSize != null && preferredSize.getRows() > 1) || initialContent.contains("\n") ? Style.MULTILINE : Style.SINGLE_LINE);
+        this(preferredSize, initialContent, (preferredSize != null && preferredSize.getRows() > 1) || initialContent.contains("\n") ? Style.MULTI_LINE : Style.SINGLE_LINE);
     }
 
     public TextBox(TerminalSize preferredSize, String initialContent, Style style) {
@@ -117,7 +117,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
         StringBuilder bob = new StringBuilder();
         for (int i = 0; i < line.length(); i++) {
             char c = line.charAt(i);
-            if (c == '\n' && style == Style.MULTILINE) {
+            if (c == '\n' && style == Style.MULTI_LINE) {
                 String string = bob.toString();
                 int lineWidth = CJKUtils.getTrueWidth(string);
                 lines.add(string);
@@ -255,7 +255,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
                     lines.set(caretPosition.getRow(), line);
                     caretPosition = caretPosition.withRelativeColumn(-1);
                 }
-                else if(style == Style.MULTILINE && caretPosition.getRow() > 0) {
+                else if(style == Style.MULTI_LINE && caretPosition.getRow() > 0) {
                     lines.remove(caretPosition.getRow());
                     caretPosition = caretPosition.withRelativeRow(-1);
                     caretPosition = caretPosition.withColumn(lines.get(caretPosition.getRow()).length());
@@ -267,7 +267,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
                     line = line.substring(0, caretPosition.getColumn()) + line.substring(caretPosition.getColumn() + 1);
                     lines.set(caretPosition.getRow(), line);
                 }
-                else if(style == Style.MULTILINE && caretPosition.getRow() < lines.size() - 1) {
+                else if(style == Style.MULTI_LINE && caretPosition.getRow() < lines.size() - 1) {
                     lines.set(caretPosition.getRow(), line + lines.get(caretPosition.getRow() + 1));
                     lines.remove(caretPosition.getRow() + 1);
                 }
@@ -276,7 +276,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
                 if(caretPosition.getColumn() > 0) {
                     caretPosition = caretPosition.withRelativeColumn(-1);
                 }
-                else if(style == Style.MULTILINE && caretPosition.getRow() > 0) {
+                else if(style == Style.MULTI_LINE && caretPosition.getRow() > 0) {
                     caretPosition = caretPosition.withRelativeRow(-1);
                     caretPosition = caretPosition.withColumn(lines.get(caretPosition.getRow()).length());
                 }
@@ -288,7 +288,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
                 if(caretPosition.getColumn() < lines.get(caretPosition.getRow()).length()) {
                     caretPosition = caretPosition.withRelativeColumn(1);
                 }
-                else if(style == Style.MULTILINE && caretPosition.getRow() < lines.size() - 1) {
+                else if(style == Style.MULTI_LINE && caretPosition.getRow() < lines.size() - 1) {
                     caretPosition = caretPosition.withRelativeRow(1);
                     caretPosition = caretPosition.withColumn(0);
                 }
