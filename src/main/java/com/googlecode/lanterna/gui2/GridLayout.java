@@ -123,66 +123,72 @@ public class GridLayout implements LayoutManager {
         return horizontalSpacing;
     }
 
-    public void setHorizontalSpacing(int horizontalSpacing) {
+    public GridLayout setHorizontalSpacing(int horizontalSpacing) {
         if(horizontalSpacing < 0) {
             throw new IllegalArgumentException("Horizontal spacing cannot be less than 0");
         }
         this.horizontalSpacing = horizontalSpacing;
+        return this;
     }
 
     public int getVerticalSpacing() {
         return verticalSpacing;
     }
 
-    public void setVerticalSpacing(int verticalSpacing) {
+    public GridLayout setVerticalSpacing(int verticalSpacing) {
         if(horizontalSpacing < 0) {
             throw new IllegalArgumentException("Vertical spacing cannot be less than 0");
         }
         this.verticalSpacing = verticalSpacing;
+        return this;
     }
 
     public int getTopMarginSize() {
         return topMarginSize;
     }
 
-    public void setTopMarginSize(int topMarginSize) {
+    public GridLayout setTopMarginSize(int topMarginSize) {
         if(horizontalSpacing < 0) {
             throw new IllegalArgumentException("Top margin size cannot be less than 0");
         }
         this.topMarginSize = topMarginSize;
+        return this;
     }
 
     public int getBottomMarginSize() {
         return bottomMarginSize;
     }
 
-    public void setBottomMarginSize(int bottomMarginSize) {
+    public GridLayout setBottomMarginSize(int bottomMarginSize) {
         if(horizontalSpacing < 0) {
             throw new IllegalArgumentException("Bottom margin size cannot be less than 0");
         }
         this.bottomMarginSize = bottomMarginSize;
+        return this;
     }
 
     public int getLeftMarginSize() {
         return leftMarginSize;
     }
 
-    public void setLeftMarginSize(int leftMarginSize) {
+    public GridLayout setLeftMarginSize(int leftMarginSize) {
         if(horizontalSpacing < 0) {
             throw new IllegalArgumentException("Left margin size cannot be less than 0");
         }
         this.leftMarginSize = leftMarginSize;
+        return this;
     }
 
     public int getRightMarginSize() {
         return rightMarginSize;
     }
 
-    public void setRightMarginSize(int rightMarginSize) {
+    public GridLayout setRightMarginSize(int rightMarginSize) {
         if(horizontalSpacing < 0) {
             throw new IllegalArgumentException("Right margin size cannot be less than 0");
         }
         this.rightMarginSize = rightMarginSize;
+        return this;
     }
 
     @Override
