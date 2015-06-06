@@ -36,7 +36,7 @@ public interface Window extends BasePane {
      * this window wants to be treated. There are no guarantees that the hints will be honoured though. You can declare
      * your own window hints by sub-classing this class.
      */
-    public static class Hint {
+    class Hint {
         /**
          * With this hint, the TextGUI system should not draw any decorations around the window. Decorated size will be
          * the same as the window size.
