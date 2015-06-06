@@ -57,6 +57,13 @@ public interface Window extends BasePane {
          * size than they prefer.
          */
         public static final Hint FIT_TERMINAL_WINDOW = new Hint();
+        /**
+         * This hint tells the window manager that this window should have exclusive access to the keyboard input until
+         * it is closed. For window managers that allows the user to switch between open windows, putting a window on
+         * the screen with this hint should make the window manager temporarily disable that function until the window
+         * is closed.
+         */
+        public static final Hint MODAL = new Hint();
 
         protected Hint() {
         }
