@@ -194,13 +194,11 @@ public class GridLayout implements LayoutManager {
             int rowPreferredWidth = 0;
             for(int column = 0; column < table[row].length; column++) {
                 Component component = table[row][column];
-                if(component == null) {
-                    continue;
-                }
-                else if(row > 0 && table[row - 1][column] == component) {
-                    continue;
-                }
-                else if(column > 0 && table[row][column - 1] == component) {
+                if(component == null ||
+                        (row > 0 && table[row - 1][column] == component) ||
+                        (column > 0 && table[row][column - 1] == component)) {
+                    //We skip these cases, where component is null, or it's a spanned component from an earlier iteration
+                    //noinspection UnnecessaryContinue
                     continue;
                 }
                 else {
@@ -468,8 +466,8 @@ public class GridLayout implements LayoutManager {
 
     private int shrinkHeightToFitArea(TerminalSize area, int[] rowHeights) {
         int totalHeight = 0;
-        for(int width: rowHeights) {
-            totalHeight += width;
+        for(int height: rowHeights) {
+            totalHeight += height;
         }
         if(totalHeight > area.getRows()) {
             int rowOffset = 0;
@@ -560,7 +558,7 @@ public class GridLayout implements LayoutManager {
 
     private GridLayoutData getLayoutData(Component component) {
         LayoutData layoutData = component.getLayoutData();
-        if(layoutData == null || layoutData instanceof GridLayoutData == false) {
+        if(layoutData == null || !(layoutData instanceof GridLayoutData)) {
             return DEFAULT;
         }
         else {
