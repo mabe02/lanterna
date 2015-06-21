@@ -134,6 +134,13 @@ public interface Component extends TextGUIElement {
      * @return The base pane this component is placed on, or {@code null} if none
      */
     BasePane getBasePane();
+
+    /**
+     * Same as calling {@code panel.addComponent(thisComponent)}
+     * @param panel Panel to add this component to
+     * @return Itself
+     */
+    Component addTo(Panel panel);
     
     /**
      * Called by the GUI system when you add a component to a container; DO NOT CALL THIS YOURSELF! 
