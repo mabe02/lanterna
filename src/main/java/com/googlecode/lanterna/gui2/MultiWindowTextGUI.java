@@ -269,9 +269,10 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
     public void waitForWindowToClose(Window window) {
         while(window.getTextGUI() != null) {
             boolean sleep = true;
-            if(Thread.currentThread() == getGUIThread().getThread()) {
+            TextGUIThread guiThread = getGUIThread();
+            if(Thread.currentThread() == guiThread.getThread()) {
                 try {
-                    sleep = !getGUIThread().processEventsAndUpdate();
+                    sleep = !guiThread.processEventsAndUpdate();
                 }
                 catch(IOException e) {
                     throw new RuntimeException("Unexpected IOException while waiting for window to close", e);
