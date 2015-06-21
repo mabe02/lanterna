@@ -21,10 +21,12 @@ package com.googlecode.lanterna.gui2;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TestTerminalFactory;
 import com.googlecode.lanterna.gui2.dialogs.TextInputDialog;
+import com.googlecode.lanterna.gui2.dialogs.TextInputDialogBuilder;
 import com.googlecode.lanterna.screen.Screen;
 
 import java.io.EOFException;
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -40,10 +42,41 @@ public class DialogsTextGUIBasicTest {
 
             Panel mainPanel = new Panel();
             ActionListBox dialogsListBox = new ActionListBox();
-            dialogsListBox.addItem("TextInputDialog", new Runnable() {
+            dialogsListBox.addItem("Simple TextInputDialog", new Runnable() {
                 @Override
                 public void run() {
                     String result = TextInputDialog.showDialog(textGUI, "TextInputDialog sample", "This is the description", "initialContent");
+                    System.out.println("Result was: " + result);
+                }
+            });
+            dialogsListBox.addItem("Password input", new Runnable() {
+                @Override
+                public void run() {
+                    String result = TextInputDialog.showPasswordDialog(textGUI, "Test password input", "This is a password input dialog", "");
+                    System.out.println("Result was: " + result);
+                }
+            });
+            dialogsListBox.addItem("Multi-line input", new Runnable() {
+                @Override
+                public void run() {
+                    String result = new TextInputDialogBuilder()
+                            .setTitle("Multi-line editor")
+                            .setTextBoxSize(new TerminalSize(35, 5))
+                            .build()
+                            .showDialog(textGUI);
+                    System.out.println("Result was: " + result);
+                }
+            });
+            dialogsListBox.addItem("Numeric input", new Runnable() {
+                @Override
+                public void run() {
+                    String result = new TextInputDialogBuilder()
+                            .setTitle("Numeric input")
+                            .setDescription("Enter a number")
+                            .setValidationPattern(Pattern.compile("[0-9]+"))
+                            .setPatternMissmatchErrorMessage("Please enter a valid number")
+                            .build()
+                            .showDialog(textGUI);
                     System.out.println("Result was: " + result);
                 }
             });
