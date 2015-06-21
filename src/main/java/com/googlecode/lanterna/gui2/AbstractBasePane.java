@@ -30,11 +30,13 @@ public abstract class AbstractBasePane implements BasePane {
     protected InteractableLookupMap interactableLookupMap;
     private Interactable focusedInteractable;
     private boolean invalid;
+    private boolean strictFocusChange;
 
     protected AbstractBasePane() {
         this.contentHolder = new ContentHolder();
         this.interactableLookupMap = new InteractableLookupMap(new TerminalSize(80, 25));
         this.invalid = false;
+        this.strictFocusChange = false;
     }
 
     @Override
@@ -97,6 +99,10 @@ public abstract class AbstractBasePane implements BasePane {
                 case MOVE_FOCUS_DOWN:
                     next = interactableLookupMap.findNextDown(focusedInteractable);
                     direction = Interactable.FocusChangeDirection.DOWN;
+                    if(next == null && !strictFocusChange) {
+                        next = contentHolder.nextFocus(focusedInteractable);
+                        direction = Interactable.FocusChangeDirection.NEXT;
+                    }
                     break;
                 case MOVE_FOCUS_LEFT:
                     next = interactableLookupMap.findNextLeft(focusedInteractable);
@@ -109,6 +115,10 @@ public abstract class AbstractBasePane implements BasePane {
                 case MOVE_FOCUS_UP:
                     next = interactableLookupMap.findNextUp(focusedInteractable);
                     direction = Interactable.FocusChangeDirection.UP;
+                    if(next == null && !strictFocusChange) {
+                        next = contentHolder.previousFocus(focusedInteractable);
+                        direction = Interactable.FocusChangeDirection.PREVIOUS;
+                    }
                     break;
             }
             if(next != null) {
@@ -169,6 +179,15 @@ public abstract class AbstractBasePane implements BasePane {
         if(toFocus != null) {
             toFocus.onEnterFocus(direction, previous);
         }
+    }
+
+    /**
+     * If set to true, up/down array keys will not translate to next/previous if there are no more components
+     * above/below.
+     * @param strictFocusChange Will not allow relaxed navigation if set to {@code true}
+     */
+    public void setStrictFocusChange(boolean strictFocusChange) {
+        this.strictFocusChange = strictFocusChange;
     }
 
     protected class ContentHolder extends AbstractComposite<Container> {
