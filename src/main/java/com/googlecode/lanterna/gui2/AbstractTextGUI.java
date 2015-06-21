@@ -121,16 +121,6 @@ public abstract class AbstractTextGUI implements TextGUI {
     }
 
     @Override
-    public boolean processInputAndUpdateScreen() throws IOException {
-        processInput();
-        if(isPendingUpdate()) {
-            updateScreen();
-            return true;
-        }
-        return false;
-    }
-
-    @Override
     public boolean isPendingUpdate() {
         return screen.doResizeIfNecessary() != null || dirty;
     }

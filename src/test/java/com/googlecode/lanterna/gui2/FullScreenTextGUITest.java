@@ -36,7 +36,7 @@ public class FullScreenTextGUITest {
         try {
             textGUI.getBackgroundPane().setComponent(new BIOS());
             while(!stop.get()) {
-                if(!textGUI.processInputAndUpdateScreen()) {
+                if(!textGUI.getGUIThread().processEventsAndUpdate()) {
                     Thread.sleep(1);
                 }
             }

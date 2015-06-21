@@ -58,16 +58,7 @@ public class DialogsTextGUIBasicTest {
             }));
             window.setComponent(mainPanel);
 
-            textGUI.addWindow(window);
-            textGUI.updateScreen();
-            while(!textGUI.getWindows().isEmpty()) {
-                if(!textGUI.processInputAndUpdateScreen()) {
-                    Thread.sleep(1);
-                }
-            }
-        }
-        catch (EOFException ignore) {
-            //Window was closed
+            textGUI.addWindowAndWait(window);
         }
         finally {
             screen.stopScreen();
