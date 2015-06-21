@@ -11,6 +11,7 @@ import com.googlecode.lanterna.screen.Screen;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Created by martin on 27/10/14.
@@ -19,12 +20,14 @@ public class FullScreenTextGUITest {
     public static void main(String[] args) throws IOException, InterruptedException {
         Screen screen = new TestTerminalFactory(args).withInitialTerminalSize(new TerminalSize(80, 25)).createScreen();
         screen.startScreen();
+
+        final AtomicBoolean stop = new AtomicBoolean(false);
         MultiWindowTextGUI textGUI = new MultiWindowTextGUI(screen);
         textGUI.addListener(new TextGUI.Listener() {
             @Override
             public boolean onUnhandledKeyStroke(TextGUI textGUI, KeyStroke key) {
                 if(key.getKeyType() == KeyType.Escape) {
-                    textGUI.getGUIThread().stop();
+                    stop.set(true);
                     return true;
                 }
                 return false;
@@ -32,9 +35,11 @@ public class FullScreenTextGUITest {
         });
         try {
             textGUI.getBackgroundPane().setComponent(new BIOS());
-            TextGUIThread guiThread = textGUI.getGUIThread();
-            guiThread.start();
-            guiThread.waitForStop();
+            while(!stop.get()) {
+                if(!textGUI.processInputAndUpdateScreen()) {
+                    Thread.sleep(1);
+                }
+            }
         }
         finally {
             screen.stopScreen();

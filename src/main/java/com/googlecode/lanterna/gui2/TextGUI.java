@@ -82,14 +82,6 @@ public interface TextGUI {
     TextGUIThread getGUIThread();
 
     /**
-     * Returns the last thread that called the event processing method on this TextGUI. This can be used to find out if
-     * you are the same thread that was last used to process events, which means you may be causing deadlocks if you
-     * block the thread.
-     * @return The Thread that called the event process method last time
-     */
-    Thread getLastEventProcessingThread();
-    
-    /**
      * Adds a listener to this TextGUI to fire events on.
      * @param listener Listener to add
      */
@@ -104,7 +96,7 @@ public interface TextGUI {
     /**
      * Listener interface for TextGUI, firing on events related to the overall GUI
      */
-    public static interface Listener {
+    interface Listener {
         /**
          * Fired either when no component was in focus during a keystroke or if the focused component and all its parent
          * containers chose not to handle the event. This event listener should also return {@code true} if the event

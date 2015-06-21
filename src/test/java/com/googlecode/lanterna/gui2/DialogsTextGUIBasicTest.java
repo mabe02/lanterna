@@ -18,7 +18,9 @@
  */
 package com.googlecode.lanterna.gui2;
 
+import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TestTerminalFactory;
+import com.googlecode.lanterna.gui2.dialogs.TextInputDialog;
 import com.googlecode.lanterna.screen.Screen;
 
 import java.io.EOFException;
@@ -32,17 +34,34 @@ public class DialogsTextGUIBasicTest {
     public static void main(String[] args) throws IOException, InterruptedException {
         Screen screen = new TestTerminalFactory(args).createScreen();
         screen.startScreen();
-        WindowBasedTextGUI textGUI = new MultiWindowTextGUI(screen);
+        final WindowBasedTextGUI textGUI = new MultiWindowTextGUI(screen);
         try {
-            BasicWindow window = new BasicWindow("Dialog test");
+            final BasicWindow window = new BasicWindow("Dialog test");
+
+            Panel mainPanel = new Panel();
+            ActionListBox dialogsListBox = new ActionListBox();
+            dialogsListBox.addItem("TextInputDialog", new Runnable() {
+                @Override
+                public void run() {
+                    String result = TextInputDialog.showDialog(textGUI, "TextInputDialog sample", "This is the description", "initialContent");
+                    System.out.println("Result was: " + result);
+                }
+            });
+
+            mainPanel.addComponent(dialogsListBox);
+            mainPanel.addComponent(new EmptySpace(TerminalSize.ONE));
+            mainPanel.addComponent(new Button("Exit", new Runnable() {
+                @Override
+                public void run() {
+                    window.close();
+                }
+            }));
+            window.setComponent(mainPanel);
+
             textGUI.addWindow(window);
             textGUI.updateScreen();
             while(!textGUI.getWindows().isEmpty()) {
-                textGUI.processInput();
-                if(textGUI.isPendingUpdate()) {
-                    textGUI.updateScreen();
-                }
-                else {
+                if(!textGUI.processInputAndUpdateScreen()) {
                     Thread.sleep(1);
                 }
             }

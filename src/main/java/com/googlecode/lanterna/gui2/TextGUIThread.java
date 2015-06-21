@@ -26,35 +26,18 @@ import java.io.IOException;
  */
 public interface TextGUIThread {
     /**
-     * This will start the thread responsible for processing the input queue and update the screen.
-     * @throws java.lang.IllegalStateException If the thread is already started
-     */
-    void start() throws IllegalStateException;
-
-    /**
-     * Calling this will mark the GUI thread to be stopped after all pending events have been processed. It will exit
-     * immediately however, call {@code waitForStop()} to block the current thread until the GUI thread has exited.
-     */
-    void stop();
-
-    /**
-     * Awaits the GUI thread to reach stopped state
-     * @throws InterruptedException In case this thread was interrupted while waiting for the GUI thread to exit
-     */
-    void waitForStop() throws InterruptedException;
-
-    /**
-     * Returns the current status of the GUI thread
-     * @return Current status of the GUI thread
-     */
-    Status getStatus();
-
-    /**
      * Invokes custom code on the GUI thread. If the caller is already on the GUI thread, the code is executed immediately
      * @param runnable Code to run
      * @throws java.lang.IllegalStateException If the GUI thread is not running
      */
     void invokeLater(Runnable runnable) throws IllegalStateException;
+
+    /**
+     *
+     * @return
+     * @throws IOException
+     */
+    boolean processEventsAndUpdate() throws IOException;
 
     /**
      * Schedules custom code to be executed on the GUI thread and waits until the code has been executed before
@@ -74,11 +57,17 @@ public interface TextGUIThread {
     void setExceptionHandler(ExceptionHandler exceptionHandler);
 
     /**
+     * Returns the Java thread which is processing GUI events and updating the screen
+     * @return Thread which is processing events and updating the screen
+     */
+    Thread getThread();
+
+    /**
      * This interface defines an exception handler, that is used for looking at exceptions that occurs during the main
      * event loop of the TextGUIThread. You can for example use this for logging, but also decide if you want the
      * exception to kill the thread.
      */
-    public static interface ExceptionHandler {
+    interface ExceptionHandler {
         /**
          * Will be called when an IOException has occurred in the main event thread
          * @param e IOException that occurred
@@ -92,13 +81,5 @@ public interface TextGUIThread {
          * @return If you return {@code true}, the event thread will be terminated
          */
         boolean onRuntimeException(RuntimeException e);
-    }
-
-    public static enum Status {
-        CREATED,
-        STARTED,
-        STOPPING,
-        STOPPED,
-        ;
     }
 }

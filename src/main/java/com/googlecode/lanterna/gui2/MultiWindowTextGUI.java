@@ -48,20 +48,56 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
         this(screen, TextColor.ANSI.BLUE);
     }
 
-    public MultiWindowTextGUI(Screen screen, TextColor backgroundColor) {
+    public MultiWindowTextGUI(TextGUIThreadFactory guiThreadFactory, Screen screen) {
+        this(guiThreadFactory,
+                screen,
+                new DefaultWindowManager(),
+                new WindowShadowRenderer(),
+                new EmptySpace(TextColor.ANSI.BLUE));
+    }
+
+    public MultiWindowTextGUI(
+            Screen screen,
+            TextColor backgroundColor) {
+
         this(screen, new DefaultWindowManager(), new EmptySpace(backgroundColor));
     }
 
-    public MultiWindowTextGUI(Screen screen, WindowManager windowManager, Component background) {
+    public MultiWindowTextGUI(
+            Screen screen,
+            WindowManager windowManager,
+            Component background) {
+
         this(screen, windowManager, new WindowShadowRenderer(), background);
     }
 
-    public MultiWindowTextGUI(Screen screen, WindowManager windowManager, WindowPostRenderer postRenderer, Component background) {
-        this(new VirtualScreen(screen), windowManager, postRenderer, background);
+    public MultiWindowTextGUI(
+            Screen screen,
+            WindowManager windowManager,
+            WindowPostRenderer postRenderer,
+            Component background) {
+
+        this(new SameTextGUIThread.Factory(), screen, windowManager, postRenderer, background);
     }
 
-    private MultiWindowTextGUI(VirtualScreen screen, WindowManager windowManager, WindowPostRenderer postRenderer, Component background) {
-        super(screen);
+    public MultiWindowTextGUI(
+            TextGUIThreadFactory guiThreadFactory,
+            Screen screen,
+            WindowManager windowManager,
+            WindowPostRenderer postRenderer,
+            Component background) {
+
+        this(guiThreadFactory, new VirtualScreen(screen), windowManager, postRenderer, background);
+    }
+
+    private MultiWindowTextGUI(
+            TextGUIThreadFactory guiThreadFactory,
+            VirtualScreen screen,
+            WindowManager windowManager,
+            WindowPostRenderer postRenderer,
+            Component background) {
+
+        super(guiThreadFactory, screen);
         if(windowManager == null) {
             throw new IllegalArgumentException("Creating a window-based TextGUI requires a WindowManager");
         }
@@ -211,12 +247,43 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
     }
 
     @Override
+    public WindowBasedTextGUI addWindowAndWait(Window window) {
+        addWindow(window);
+        window.waitUntilClosed();
+        return this;
+    }
+
+    @Override
     public synchronized WindowBasedTextGUI removeWindow(Window window) {
-        windows.remove(window);
+        if(!windows.remove(window)) {
+            //Didn't contain this window
+            return this;
+        }
         window.setTextGUI(null);
         windowManager.onRemoved(this, window, windows);
         invalidate();
         return this;
+    }
+
+    @Override
+    public void waitForWindowToClose(Window window) {
+        while(window.getTextGUI() != null) {
+            boolean sleep = true;
+            if(Thread.currentThread() == getGUIThread().getThread()) {
+                try {
+                    sleep = !getGUIThread().processEventsAndUpdate();
+                }
+                catch(IOException e) {
+                    throw new RuntimeException("Unexpected IOException while waiting for window to close", e);
+                }
+            }
+            if(sleep) {
+                try {
+                    Thread.sleep(1);
+                }
+                catch(InterruptedException ignore) {}
+            }
+        }
     }
 
     @Override

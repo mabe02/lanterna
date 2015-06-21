@@ -165,6 +165,13 @@ public interface Window extends BasePane {
      */
     void setContentOffset(TerminalPosition offset);
 
+    /**
+     * Waits for the window to close. Please note that this can cause deadlocks if care is not taken. Also, this method
+     * will swallow any interrupts, if you need a wait method that throws InterruptedException, you'll have to implement
+     * this yourself.
+     */
+    void waitUntilClosed();
+
     ///////////////////////////////////////////////////////////////
     //// Below here are methods from BasePane                  ////
     //// We duplicate them here to make the JavaDoc more clear ////

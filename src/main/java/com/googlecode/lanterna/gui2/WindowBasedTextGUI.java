@@ -33,13 +33,75 @@ public interface WindowBasedTextGUI extends ComponentBasedTextGUI {
      */
     WindowManager getWindowManager();
 
+    /**
+     * Adds a window to the TextGUI system, depending on the window manager this window may or may not be immediately
+     * visible. By adding a window to the GUI, it will be associated with this GUI and can receive focus and events from
+     * it. This method call will return immediately, if you want the call to block until the window is closed, please
+     * use {@code addWindowAndWait(..)}.
+     *
+     * Windows are internally stored as a stack and newer windows are added at the top of the stack. The GUI system will
+     * render windows in a predictable order from bottom to top. You can modify the stack by using
+     * {@code moveToTop(..)} to move a Window from its current position in the stack to the top.
+     *
+     * @param window Window to add to the GUI
+     * @return The WindowBasedTextGUI Itself
+     */
     WindowBasedTextGUI addWindow(Window window);
 
+    /**
+     * Adds a window to the TextGUI system, depending on the window manager this window may or may not be immediately
+     * visible. By adding a window to the GUI, it will be associated with this GUI and can receive focus and events from
+     * it. This method block until the added window is removed or closed, if you want the call to return immediately,
+     * please use {@code addWindow(..)}. This method call is useful for modal dialogs that requires a certain user input
+     * before the application can continue.
+     *
+     * Windows are internally stored as a stack and newer windows are added at the top of the stack. The GUI system will
+     * render windows in a predictable order from bottom to top. You can modify the stack by using
+     * {@code moveToTop(..)} to move a Window from its current position in the stack to the top.
+     *
+     * @param window Window to add to the GUI
+     * @return The WindowBasedTextGUI Itself
+     */
+    WindowBasedTextGUI addWindowAndWait(Window window);
+
+    /**
+     * Removes a window from the TextGUI. This is effectively the same as closing the window. The window will be
+     * unassociated from this TextGUI and will no longer receive any events for it. Any threads waiting on the window
+     * to close will be resumed.
+     *
+     * @param window Window to close
+     * @return The WindowBasedTextGUI Itself
+     */
     WindowBasedTextGUI removeWindow(Window window);
 
+    /**
+     * Returns a list of all windows currently in the TextGUI. The list is unmodifiable and just a snapshot of what the
+     * state was when the method was invoked. If windows are added/removed after the method call, the list will not
+     * reflect this.
+     * @return Unmodifiable list of all windows in the TextGUI at the time of the call
+     */
     Collection<Window> getWindows();
 
+    /**
+     * Returns the window which the TextGUI considers the active one at the time of the method call. The active window
+     * is generally the one which relieves all keyboard input.
+     * @return Active window in the TextGUI or {@code null}
+     */
     Window getActiveWindow();
 
+    /**
+     * Windows are internally stored as a stack and newer windows are added at the top of the stack. The GUI system will
+     * render windows in a predictable order from bottom to top. This method allows you to move a Window from its
+     * current position in the stack to the top, meaning it will be rendered last. This mean it will overlap all other
+     * windows and because of this visually appear on top.
+     * @param window Window in the stack to move to the top position
+     * @return The WindowBasedTextGUI Itself
+     */
     WindowBasedTextGUI moveToTop(Window window);
+
+    /**
+     * Waits for the specified window to be closed
+     * @param abstractWindow Window to wait for
+     */
+    void waitForWindowToClose(Window abstractWindow);
 }

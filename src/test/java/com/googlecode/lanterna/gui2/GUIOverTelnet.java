@@ -142,11 +142,7 @@ public class GUIOverTelnet {
             }));
             window.setComponent(contentArea);
 
-            textGUI.addWindow(window);
-
-            TextGUIThread guiThread = textGUI.getGUIThread();
-            guiThread.start();
-            guiThread.waitForStop();
+            textGUI.addWindowAndWait(window);
         }
         finally {
             screen.stopScreen();

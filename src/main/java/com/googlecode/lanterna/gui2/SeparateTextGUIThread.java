@@ -20,44 +20,28 @@ package com.googlecode.lanterna.gui2;
 
 import java.io.EOFException;
 import java.io.IOException;
-import java.util.Queue;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Default implementation of TextGUIThread
  * @author Martin
  */
-class DefaultTextGUIThread implements TextGUIThread {
-    private final TextGUI textGUI;
-    private final Queue<Runnable> customTasks;
+class SeparateTextGUIThread extends AbstractTextGUIThread {
     private Status status;
     private Thread textGUIThread;
     private CountDownLatch waitLatch;
-    private ExceptionHandler exceptionHandler;
 
-    DefaultTextGUIThread(TextGUI textGUI) {
-        this.textGUI = textGUI;
-        this.customTasks = new LinkedBlockingQueue<Runnable>();
+    SeparateTextGUIThread(TextGUI textGUI) {
+        super(textGUI);
         this.status = Status.CREATED;
         this.waitLatch = new CountDownLatch(0);
         this.textGUIThread = null;
-        this.exceptionHandler = new ExceptionHandler() {
-            @Override
-            public boolean onIOException(IOException e) {
-                e.printStackTrace();
-                return true;
-            }
-
-            @Override
-            public boolean onRuntimeException(RuntimeException e) {
-                e.printStackTrace();
-                return true;
-            }
-        };
     }
 
-    @Override
+    /**
+     * This will start the thread responsible for processing the input queue and update the screen.
+     * @throws java.lang.IllegalStateException If the thread is already started
+     */
     public void start() throws IllegalStateException {
         if(status == Status.STARTED) {
             throw new IllegalStateException("TextGUIThread is already started");
@@ -74,7 +58,10 @@ class DefaultTextGUIThread implements TextGUIThread {
         this.waitLatch = new CountDownLatch(1);
     }
 
-    @Override
+    /**
+     * Calling this will mark the GUI thread to be stopped after all pending events have been processed. It will exit
+     * immediately however, call {@code waitForStop()} to block the current thread until the GUI thread has exited.
+     */
     public void stop() {
         if(status != Status.STARTED) {
             return;
@@ -83,14 +70,25 @@ class DefaultTextGUIThread implements TextGUIThread {
         status = Status.STOPPING;
     }
 
-    @Override
+    /**
+     * Awaits the GUI thread to reach stopped state
+     * @throws InterruptedException In case this thread was interrupted while waiting for the GUI thread to exit
+     */
     public void waitForStop() throws InterruptedException {
         waitLatch.await();
     }
 
-    @Override
+    /**
+     * Returns the current status of the GUI thread
+     * @return Current status of the GUI thread
+     */
     public Status getStatus() {
         return status;
+    }
+
+    @Override
+    public Thread getThread() {
+        return textGUIThread;
     }
 
     @Override
@@ -99,33 +97,7 @@ class DefaultTextGUIThread implements TextGUIThread {
             throw new IllegalStateException("Cannot schedule " + runnable + " for execution on the TextGUIThread " +
                     "because the thread is in " + status + " state");
         }
-        if(Thread.currentThread() == textGUIThread) {
-            runnable.run();
-        }
-        else {
-            customTasks.add(runnable);
-        }
-    }
-
-    @Override
-    public void invokeAndWait(final Runnable runnable) throws IllegalStateException, InterruptedException {
-        final CountDownLatch countDownLatch = new CountDownLatch(1);
-        invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                runnable.run();
-                countDownLatch.countDown();
-            }
-        });
-        countDownLatch.await();
-    }
-
-    @Override
-    public void setExceptionHandler(ExceptionHandler exceptionHandler) {
-        if(exceptionHandler == null) {
-            throw new IllegalArgumentException("Cannot call setExceptionHandler(null)");
-        }
-        this.exceptionHandler = exceptionHandler;
+        super.invokeLater(runnable);
     }
 
     private void mainGUILoop() {
@@ -142,7 +114,12 @@ class DefaultTextGUIThread implements TextGUIThread {
             }
             while(status == Status.STARTED) {
                 try {
-                    textGUI.processInput();
+                    if (!processEventsAndUpdate()) {
+                        try {
+                            Thread.sleep(1);
+                        }
+                        catch(InterruptedException ignored) {}
+                    }
                 }
                 catch(EOFException e) {
                     stop();
@@ -160,40 +137,27 @@ class DefaultTextGUIThread implements TextGUIThread {
                         break;
                     }
                 }
-                while(!customTasks.isEmpty()) {
-                    Runnable r = customTasks.poll();
-                    if(r != null) {
-                        r.run();
-                    }
-                }
-                if(textGUI.isPendingUpdate()) {
-                    try {
-                        textGUI.updateScreen();
-                    }
-                    catch(IOException e) {
-                        if(exceptionHandler.onIOException(e)) {
-                            stop();
-                            break;
-                        }
-                    }
-                    catch(RuntimeException e) {
-                        if(exceptionHandler.onRuntimeException(e)) {
-                            stop();
-                            break;
-                        }
-                    }
-                }
-                else {
-                    try {
-                        Thread.sleep(1);
-                    }
-                    catch(InterruptedException ignored) {}
-                }
             }
         }
         finally {
             status = Status.STOPPED;
             waitLatch.countDown();
+        }
+    }
+
+
+    enum Status {
+        CREATED,
+        STARTED,
+        STOPPING,
+        STOPPED,
+        ;
+    }
+
+    public static class Factory implements TextGUIThreadFactory {
+        @Override
+        public TextGUIThread createTextGUIThread(TextGUI textGUI) {
+            return new SeparateTextGUIThread(textGUI);
         }
     }
 }

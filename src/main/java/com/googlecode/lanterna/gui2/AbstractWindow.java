@@ -158,29 +158,11 @@ public class AbstractWindow extends AbstractBasePane implements Window {
         setComponent(null);
     }
 
-    /**
-     * Waits for the window to close. Please note that this can cause deadlocks if care is not taken. Also, this method
-     * will swallow any interrupts, if you need a wait method that throws InterruptedException, you'll have to implement
-     * this yourself.
-     */
-    public void awaitClose() {
-        while(getTextGUI() != null) {
-            if(getTextGUI().getLastEventProcessingThread() == Thread.currentThread()) {
-                try {
-                    if(getTextGUI().processInputAndUpdateScreen()) {
-                        continue;
-                    }
-                }
-                catch (IOException e) {
-                    throw new RuntimeException("Unexpected IOException", e);
-                }
-            }
-
-            try {
-                Thread.sleep(1);
-            }
-            catch(InterruptedException ignore) {
-            }
+    @Override
+    public void waitUntilClosed() {
+        WindowBasedTextGUI textGUI = getTextGUI();
+        if(textGUI != null) {
+            textGUI.waitForWindowToClose(this);
         }
     }
 }
