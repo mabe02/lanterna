@@ -45,4 +45,9 @@ public class AbsoluteLayout implements LayoutManager {
     public void doLayout(TerminalSize area, List<Component> components) {
         //Do nothing
     }
+
+    @Override
+    public boolean hasChanged() {
+        return false;
+    }
 }

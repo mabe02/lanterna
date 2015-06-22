@@ -42,4 +42,11 @@ public interface LayoutManager {
      * @param components List of components to lay out
      */
     void doLayout(TerminalSize area, List<Component> components);
+
+    /**
+     * Returns true if the internal state of this LayoutManager has changed since the last call to doLayout. This will
+     * tell the container that it needs to call doLayout again.
+     * @return {@code true} if this layout manager's internal state has changed since the last call to {@code doLayout}
+     */
+    boolean hasChanged();
 }

@@ -131,4 +131,10 @@ public class BorderLayout implements LayoutManager {
         }
         return map;
     }
+
+    @Override
+    public boolean hasChanged() {
+        //No internal state
+        return false;
+    }
 }

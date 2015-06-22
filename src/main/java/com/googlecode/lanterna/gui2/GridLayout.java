@@ -109,6 +109,8 @@ public class GridLayout implements LayoutManager {
     private int leftMarginSize;
     private int rightMarginSize;
 
+    private boolean changed;
+
     public GridLayout(int numberOfColumns) {
         this.numberOfColumns = numberOfColumns;
         this.horizontalSpacing = 1;
@@ -117,6 +119,7 @@ public class GridLayout implements LayoutManager {
         this.bottomMarginSize = 0;
         this.leftMarginSize = 0;
         this.rightMarginSize = 0;
+        this.changed = true;
     }
 
     public int getHorizontalSpacing() {
@@ -128,6 +131,7 @@ public class GridLayout implements LayoutManager {
             throw new IllegalArgumentException("Horizontal spacing cannot be less than 0");
         }
         this.horizontalSpacing = horizontalSpacing;
+        this.changed = true;
         return this;
     }
 
@@ -140,6 +144,7 @@ public class GridLayout implements LayoutManager {
             throw new IllegalArgumentException("Vertical spacing cannot be less than 0");
         }
         this.verticalSpacing = verticalSpacing;
+        this.changed = true;
         return this;
     }
 
@@ -152,6 +157,7 @@ public class GridLayout implements LayoutManager {
             throw new IllegalArgumentException("Top margin size cannot be less than 0");
         }
         this.topMarginSize = topMarginSize;
+        this.changed = true;
         return this;
     }
 
@@ -164,6 +170,7 @@ public class GridLayout implements LayoutManager {
             throw new IllegalArgumentException("Bottom margin size cannot be less than 0");
         }
         this.bottomMarginSize = bottomMarginSize;
+        this.changed = true;
         return this;
     }
 
@@ -176,6 +183,7 @@ public class GridLayout implements LayoutManager {
             throw new IllegalArgumentException("Left margin size cannot be less than 0");
         }
         this.leftMarginSize = leftMarginSize;
+        this.changed = true;
         return this;
     }
 
@@ -188,7 +196,13 @@ public class GridLayout implements LayoutManager {
             throw new IllegalArgumentException("Right margin size cannot be less than 0");
         }
         this.rightMarginSize = rightMarginSize;
+        this.changed = true;
         return this;
+    }
+
+    @Override
+    public boolean hasChanged() {
+        return this.changed;
     }
 
     @Override
@@ -309,6 +323,7 @@ public class GridLayout implements LayoutManager {
             component.setPosition(positionMap.get(component));
             component.setSize(sizeMap.get(component));
         }
+        this.changed = false;
     }
 
     private int[] getPreferredColumnWidths(Component[][] table) {
