@@ -88,7 +88,9 @@ public class Borders {
 
         @Override
         public TerminalSize getWrappedComponentSize(TerminalSize borderSize) {
-            return borderSize.withRelativeColumns(-2).withRelativeRows(-2);
+            return borderSize
+                    .withRelativeColumns(-Math.min(2, borderSize.getColumns()))
+                    .withRelativeRows(-Math.min(2, borderSize.getRows()));
         }
 
         @Override
