@@ -74,4 +74,10 @@ public interface Container extends Component {
      * @param interactableLookupMap Interactable map to update
      */
     void updateLookupMap(InteractableLookupMap interactableLookupMap);
+
+    /**
+     * Returns true if this container (or a sub-container) contains changes that requires a re-layout
+     * @return true if the TextGUI should re-layout this container and all sub-elements on the next update
+     */
+    boolean isStructureInvalid();
 }

@@ -32,11 +32,13 @@ import java.util.List;
 public class Panel extends AbstractComponent<Panel> implements Container {
     private final List<Component> components;
     private LayoutManager layoutManager;
+    private TerminalSize cachedPreferredSize;
     private boolean needsReLayout;
 
     public Panel() {
         components = new ArrayList<Component>();
         layoutManager = new LinearLayout();
+        cachedPreferredSize = null;
         needsReLayout = false;
     }
     
@@ -51,16 +53,7 @@ public class Panel extends AbstractComponent<Panel> implements Container {
             components.add(component);
             component.onAdded(this);
         }
-        onStructureChanged();
-        /*
-        if (component instanceof Interactable || component instanceof InteractableContainer) {
-            synchronized (interactables) {
-                if (!interactables.contains(component)) {
-                    interactables.add(component);
-                }
-            }
-        }
-        */
+        invalidateStructure();
     }
 
     public void removeComponent(Component component) {
@@ -78,14 +71,7 @@ public class Panel extends AbstractComponent<Panel> implements Container {
             components.remove(index);
             component.onRemoved(this);
         }
-        onStructureChanged();
-        /*
-        if (component instanceof Interactable) {
-            synchronized (interactables) {
-                interactables.remove(component);
-            }
-        }
-        */
+        invalidateStructure();
     }
 
     public void removeAllComponents() {
@@ -101,7 +87,11 @@ public class Panel extends AbstractComponent<Panel> implements Container {
             layoutManager = new AbsoluteLayout();
         }
         this.layoutManager = layoutManager;
-        onStructureChanged();
+        invalidateStructure();
+    }
+
+    public LayoutManager getLayoutManager() {
+        return layoutManager;
     }
 
     @Override
@@ -117,13 +107,13 @@ public class Panel extends AbstractComponent<Panel> implements Container {
 
             @Override
             public TerminalSize getPreferredSize(Panel component) {
-                setPreferredSize(layoutManager.getPreferredSize(components));
-                return Panel.this.getPreferredSize();
+                cachedPreferredSize = layoutManager.getPreferredSize(components);
+                return cachedPreferredSize;
             }
 
             @Override
             public void drawComponent(TextGUIGraphics graphics, Panel component) {
-                if(needsReLayout) {
+                if(isStructureInvalid()) {
                     layout(graphics.getSize());
                 }
                 for(Component child: components) {
@@ -135,13 +125,21 @@ public class Panel extends AbstractComponent<Panel> implements Container {
     }
 
     @Override
+    public TerminalSize calculatePreferredSize() {
+        if(cachedPreferredSize != null && !isInvalid()) {
+            return cachedPreferredSize;
+        }
+        return super.calculatePreferredSize();
+    }
+
+    @Override
     public boolean isInvalid() {
         for(Component component: components) {
             if(component.isInvalid()) {
                 return true;
             }
         }
-        return super.isInvalid();
+        return super.isInvalid() || layoutManager.hasChanged() || needsReLayout;
     }    
 
     @Override
@@ -239,10 +237,24 @@ public class Panel extends AbstractComponent<Panel> implements Container {
             }
         }
     }
-    
-    private void onStructureChanged() {
+
+    @Override
+    public boolean isStructureInvalid() {
+        if(needsReLayout || layoutManager.hasChanged()) {
+            return true;
+        }
+        for(Component component: components) {
+            if(component instanceof Container) {
+                if(((Container)component).isStructureInvalid()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private void invalidateStructure() {
         needsReLayout = true;
-        setPreferredSize(null);
         invalidate();
     }
 
