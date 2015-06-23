@@ -73,8 +73,7 @@ public class DialogsTextGUIBasicTest {
                     String result = new TextInputDialogBuilder()
                             .setTitle("Numeric input")
                             .setDescription("Enter a number")
-                            .setValidationPattern(Pattern.compile("[0-9]+"))
-                            .setPatternMissmatchErrorMessage("Please enter a valid number")
+                            .setValidationPattern(Pattern.compile("[0-9]+"), "Please enter a valid number")
                             .build()
                             .showDialog(textGUI);
                     System.out.println("Result was: " + result);

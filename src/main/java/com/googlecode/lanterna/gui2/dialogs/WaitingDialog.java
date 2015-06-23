@@ -18,18 +18,39 @@
  */
 package com.googlecode.lanterna.gui2.dialogs;
 
-import com.googlecode.lanterna.gui2.BasicWindow;
+import com.googlecode.lanterna.gui2.*;
 
 /**
  * Dialog that displays a text message, an optional spinning indicator and an optional progress bar
  * @author martin
  */
-public class WaitingDialog extends BasicWindow {
-    private WaitingDialog() {
-        
+public class WaitingDialog extends DialogWindow {
+    private WaitingDialog(String title, String text) {
+        super(title);
+
+        Panel mainPanel = Panels.horizontal(
+                new Label(text),
+                AnimatedLabel.createClassicSpinningLine());
+        setComponent(mainPanel);
     }
-    
-    public static WaitingDialog createDialog() {
-        return new WaitingDialog();
+
+    public void showDialog(WindowBasedTextGUI textGUI, boolean blockUntilClosed) {
+        textGUI.addWindow(this);
+
+        if(blockUntilClosed) {
+            //Wait for the window to close, in case the window manager doesn't honor the MODAL hint
+            waitUntilClosed();
+        }
+    }
+
+    public static WaitingDialog createDialog(String title, String text) {
+        WaitingDialog waitingDialog = new WaitingDialog(title, text);
+        return waitingDialog;
+    }
+
+    public static WaitingDialog showDialog(WindowBasedTextGUI textGUI, String title, String text) {
+        WaitingDialog waitingDialog = createDialog(title, text);
+        waitingDialog.showDialog(textGUI, false);
+        return waitingDialog;
     }
 }
