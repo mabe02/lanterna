@@ -2,28 +2,29 @@ package com.googlecode.lanterna.gui2.dialogs;
 
 import com.googlecode.lanterna.TerminalSize;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * Created by martin on 21/06/15.
  */
-public class TextInputDialogBuilder {
-    private String title;
-    private String description;
+public class TextInputDialogBuilder extends AbstractDialogBuilder<TextInputDialogBuilder, TextInputDialog> {
     private String initialContent;
     private TerminalSize textBoxSize;
-    private Pattern validationPattern;
-    private String patternMissmatchErrorMessage;
+    private TextInputDialogResultValidator validator;
     private boolean passwordInput;
 
     public TextInputDialogBuilder() {
-        this.title = "TextInputDialog";
-        this.description = null;
+        super("TextInputDialog");
         this.initialContent = "";
         this.textBoxSize = null;
-        this.validationPattern = null;
-        this.patternMissmatchErrorMessage = "";
+        this.validator = null;
         this.passwordInput = false;
+    }
+
+    @Override
+    protected TextInputDialogBuilder self() {
+        return this;
     }
 
     public TextInputDialog build() {
@@ -36,22 +37,8 @@ public class TextInputDialogBuilder {
                 description,
                 size,
                 initialContent,
-                validationPattern,
-                patternMissmatchErrorMessage,
+                validator,
                 passwordInput);
-    }
-
-    public TextInputDialogBuilder setTitle(String title) {
-        if(title == null) {
-            title = "";
-        }
-        this.title = title;
-        return this;
-    }
-
-    public TextInputDialogBuilder setDescription(String description) {
-        this.description = description;
-        return this;
     }
 
     public TextInputDialogBuilder setInitialContent(String initialContent) {
@@ -64,14 +51,25 @@ public class TextInputDialogBuilder {
         return this;
     }
 
-    public TextInputDialogBuilder setValidationPattern(Pattern validationPattern) {
-        this.validationPattern = validationPattern;
+    public TextInputDialogBuilder setValidator(TextInputDialogResultValidator validator) {
+        this.validator = validator;
         return this;
     }
 
-    public TextInputDialogBuilder setPatternMissmatchErrorMessage(String patternMissmatchErrorMessage) {
-        this.patternMissmatchErrorMessage = patternMissmatchErrorMessage;
-        return this;
+    public TextInputDialogBuilder setValidationPattern(final Pattern pattern, final String errorMessage) {
+        return setValidator(new TextInputDialogResultValidator() {
+            @Override
+            public String validate(String content) {
+                Matcher matcher = pattern.matcher(content);
+                if(!matcher.matches()) {
+                    if(errorMessage == null) {
+                        return "Invalid input";
+                    }
+                    return errorMessage;
+                }
+                return null;
+            }
+        });
     }
 
     public TextInputDialogBuilder setPasswordInput(boolean passwordInput) {

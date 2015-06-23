@@ -13,8 +13,7 @@ import java.util.regex.Pattern;
 public class TextInputDialog extends DialogWindow {
 
     private final TextBox textBox;
-    private final Pattern validationPattern;
-    private final String patternMismatchErrorMessage;
+    private final TextInputDialogResultValidator validator;
     private String result;
 
     TextInputDialog(
@@ -22,15 +21,13 @@ public class TextInputDialog extends DialogWindow {
                 String description,
                 TerminalSize textBoxPreferredSize,
                 String initialContent,
-                Pattern validationPattern,
-                String patternMismatchErrorMessage,
+                TextInputDialogResultValidator validator,
                 boolean password) {
 
         super(title);
         this.result = null;
         this.textBox = new TextBox(textBoxPreferredSize, initialContent);
-        this.validationPattern = validationPattern;
-        this.patternMismatchErrorMessage = patternMismatchErrorMessage;
+        this.validator = validator;
 
         if(password) {
             textBox.setMask('*');
@@ -80,13 +77,9 @@ public class TextInputDialog extends DialogWindow {
 
     private void onOK() {
         String text = textBox.getText();
-        if(validationPattern != null) {
-            Matcher matcher = validationPattern.matcher(text);
-            if(!matcher.matches()) {
-                String errorMessage = patternMismatchErrorMessage;
-                if(errorMessage == null) {
-                    errorMessage = "Invalid input";
-                }
+        if(validator != null) {
+            String errorMessage = validator.validate(text);
+            if(errorMessage != null) {
                 MessageDialog.showMessageDialog(getTextGUI(), getTitle(), errorMessage, MessageDialogButton.OK);
                 return;
             }
