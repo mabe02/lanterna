@@ -31,12 +31,14 @@ public abstract class AbstractBasePane implements BasePane {
     private Interactable focusedInteractable;
     private boolean invalid;
     private boolean strictFocusChange;
+    private boolean enableDirectionBasedMovements;
 
     protected AbstractBasePane() {
         this.contentHolder = new ContentHolder();
         this.interactableLookupMap = new InteractableLookupMap(new TerminalSize(80, 25));
         this.invalid = false;
         this.strictFocusChange = false;
+        this.enableDirectionBasedMovements = true;
     }
 
     @Override
@@ -68,7 +70,16 @@ public abstract class AbstractBasePane implements BasePane {
         if(focusedInteractable != null) {
             Interactable next = null;
             Interactable.FocusChangeDirection direction = Interactable.FocusChangeDirection.TELEPORT; //Default
-            switch (focusedInteractable.handleKeyStroke(key)) {
+            Interactable.Result result = focusedInteractable.handleKeyStroke(key);
+            if(!enableDirectionBasedMovements) {
+                if(result == Interactable.Result.MOVE_FOCUS_DOWN || result == Interactable.Result.MOVE_FOCUS_RIGHT) {
+                    result = Interactable.Result.MOVE_FOCUS_NEXT;
+                }
+                else if(result == Interactable.Result.MOVE_FOCUS_UP || result == Interactable.Result.MOVE_FOCUS_LEFT) {
+                    result = Interactable.Result.MOVE_FOCUS_PREVIOUS;
+                }
+            }
+            switch (result) {
                 case HANDLED:
                     return true;
                 case UNHANDLED:
@@ -188,6 +199,19 @@ public abstract class AbstractBasePane implements BasePane {
      */
     public void setStrictFocusChange(boolean strictFocusChange) {
         this.strictFocusChange = strictFocusChange;
+    }
+
+    /**
+     * If set to false, using the keyboard arrows keys will have the same effect as using the tab and reverse tab.
+     * Lanterna will map arrow down and arrow right to tab, going to the next component, and array up and array left to
+     * reverse tab, going to the previous component. If set to true, Lanterna will search for the next component
+     * starting at the cursor position in the general direction of the arrow. By default this is enabled.
+     * <p/>
+     * In Lanterna 2, direction based movements were not available.
+     * @param enableDirectionBasedMovements Should direction based focus movements be enabled?
+     */
+    public void setEnableDirectionBasedMovements(boolean enableDirectionBasedMovements) {
+        this.enableDirectionBasedMovements = enableDirectionBasedMovements;
     }
 
     protected class ContentHolder extends AbstractComposite<Container> {
