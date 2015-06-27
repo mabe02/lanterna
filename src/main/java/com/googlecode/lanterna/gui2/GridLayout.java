@@ -75,6 +75,10 @@ public class GridLayout implements LayoutManager {
             1,
             1);
 
+    public static LayoutData createLayoutData(Alignment horizontalAlignment, Alignment verticalAlignment) {
+        return createLayoutData(horizontalAlignment, verticalAlignment, false, false);
+    }
+
     public static LayoutData createLayoutData(
             Alignment horizontalAlignment,
             Alignment verticalAlignment,
@@ -117,8 +121,8 @@ public class GridLayout implements LayoutManager {
         this.verticalSpacing = 0;
         this.topMarginSize = 0;
         this.bottomMarginSize = 0;
-        this.leftMarginSize = 0;
-        this.rightMarginSize = 0;
+        this.leftMarginSize = 1;
+        this.rightMarginSize = 1;
         this.changed = true;
     }
 
@@ -208,7 +212,15 @@ public class GridLayout implements LayoutManager {
     @Override
     public TerminalSize getPreferredSize(List<Component> components) {
         TerminalSize preferredSize = TerminalSize.ZERO;
+        if(components.isEmpty()) {
+            return preferredSize.withRelative(
+                    leftMarginSize + rightMarginSize,
+                    topMarginSize + bottomMarginSize);
+        }
+
         Component[][] table = buildTable(components);
+        table = eliminateUnusedRowsAndColumns(table);
+
         for(int row = 0; row < table.length; row++) {
             int rowPreferredHeight = 0;
             int rowPreferredWidth = 0;
@@ -230,14 +242,27 @@ public class GridLayout implements LayoutManager {
             preferredSize = preferredSize.withColumns(Math.max(preferredSize.getColumns(), rowPreferredWidth));
             preferredSize = preferredSize.withRelativeRows(rowPreferredHeight);
         }
-        preferredSize = preferredSize.withRelativeColumns(leftMarginSize + rightMarginSize + (numberOfColumns - 1) * horizontalSpacing);
+        preferredSize = preferredSize.withRelativeColumns(leftMarginSize + rightMarginSize + (table[0].length - 1) * horizontalSpacing);
         preferredSize = preferredSize.withRelativeRows(topMarginSize + bottomMarginSize + (table.length - 1) * verticalSpacing);
         return preferredSize;
     }
 
     @Override
     public void doLayout(TerminalSize area, List<Component> components) {
+        //Sanity check, if the area is way too small, just return
         Component[][] table = buildTable(components);
+        table = eliminateUnusedRowsAndColumns(table);
+
+        if(area.equals(TerminalSize.ZERO) ||
+                table.length == 0 ||
+                area.getColumns() <= leftMarginSize + rightMarginSize + ((table[0].length - 1) * horizontalSpacing) ||
+                area.getRows() <= bottomMarginSize + topMarginSize + ((table.length - 1) * verticalSpacing)) {
+            return;
+        }
+
+        //Adjust area to the margins
+        area = area.withRelative(-leftMarginSize - rightMarginSize, -topMarginSize - bottomMarginSize);
+
         Map<Component, TerminalSize> sizeMap = new IdentityHashMap<Component, TerminalSize>();
         Map<Component, TerminalPosition> positionMap = new IdentityHashMap<Component, TerminalPosition>();
 
@@ -247,20 +272,23 @@ public class GridLayout implements LayoutManager {
         //Take notes of which columns we can expand if the usable area is larger than what the components want
         Set<Integer> expandableColumns = getExpandableColumns(table);
 
-        //Next, start shrinking to make sure it fits the size of the area we are trying to lay out on
-        int totalWidth = shrinkWidthToFitArea(area, columnWidths);
+        //Next, start shrinking to make sure it fits the size of the area we are trying to lay out on.
+        //Notice we subtract the horizontalSpacing to take the space between components into account
+        TerminalSize areaWithoutHorizontalSpacing = area.withRelativeColumns(-horizontalSpacing * (table[0].length - 1));
+        int totalWidth = shrinkWidthToFitArea(areaWithoutHorizontalSpacing, columnWidths);
 
         //Finally, if there is extra space, make the expandable columns larger
-        while(area.getColumns() > totalWidth && !expandableColumns.isEmpty()) {
-            totalWidth = grabExtraHorizontalSpace(area, columnWidths, expandableColumns, totalWidth);
+        while(areaWithoutHorizontalSpacing.getColumns() > totalWidth && !expandableColumns.isEmpty()) {
+            totalWidth = grabExtraHorizontalSpace(areaWithoutHorizontalSpacing, columnWidths, expandableColumns, totalWidth);
         }
 
         //Now repeat for rows
         int[] rowHeights = getPreferredRowHeights(table);
         Set<Integer> expandableRows = getExpandableRows(table);
-        int totalHeight = shrinkHeightToFitArea(area, rowHeights);
-        while(area.getRows() > totalHeight && !expandableRows.isEmpty()) {
-            totalHeight = grabExtraVerticalSpace(area, rowHeights, expandableRows, totalHeight);
+        TerminalSize areaWithoutVerticalSpacing = area.withRelativeRows(-verticalSpacing * (table.length - 1));
+        int totalHeight = shrinkHeightToFitArea(areaWithoutVerticalSpacing, rowHeights);
+        while(areaWithoutVerticalSpacing.getRows() > totalHeight && !expandableRows.isEmpty()) {
+            totalHeight = grabExtraVerticalSpace(areaWithoutVerticalSpacing, rowHeights, expandableRows, totalHeight);
         }
 
         //Ok, all constraints are in place, we can start placing out components. To simplify, do it horizontally first
@@ -310,28 +338,35 @@ public class GridLayout implements LayoutManager {
                             size = size.withRows(availableVerticalSpace);
                             break;
                     }
+
+                    //For spanning components, adjust size
+                    size = size.withRelativeColumns((layoutData.horizontalSpan - 1) * horizontalSpacing);
+                    size = size.withRelativeRows((layoutData.verticalSpan - 1) * verticalSpacing);
+
                     sizeMap.put(component, size);
                     positionMap.put(component, position);
                 }
-
-                tableCellTopLeft = tableCellTopLeft.withRelativeColumn(columnWidths[x]);
+                tableCellTopLeft = tableCellTopLeft.withRelativeColumn(columnWidths[x] + horizontalSpacing);
             }
-            tableCellTopLeft = tableCellTopLeft.withRelativeRow(rowHeights[y]);
+            tableCellTopLeft = tableCellTopLeft.withRelativeRow(rowHeights[y] + verticalSpacing);
         }
 
+        //Apply the margins here
         for(Component component: components) {
-            component.setPosition(positionMap.get(component));
+            component.setPosition(positionMap.get(component).withRelative(leftMarginSize, topMarginSize));
             component.setSize(sizeMap.get(component));
         }
         this.changed = false;
     }
 
     private int[] getPreferredColumnWidths(Component[][] table) {
-        int columnWidths[] = new int[numberOfColumns];
+        //actualNumberOfColumns may be different from this.numberOfColumns since some columns may have been eliminated
+        int actualNumberOfColumns = table[0].length;
+        int columnWidths[] = new int[actualNumberOfColumns];
 
         //Start by letting all span = 1 columns take what they need
         for(Component[] row: table) {
-            for(int i = 0; i < numberOfColumns; i++) {
+            for(int i = 0; i < actualNumberOfColumns; i++) {
                 Component component = row[i];
                 if(component == null) {
                     columnWidths[i] = 0;
@@ -346,7 +381,7 @@ public class GridLayout implements LayoutManager {
 
         //Next, do span > 1 and enlarge if necessary
         for(Component[] row: table) {
-            for(int i = 0; i < numberOfColumns; ) {
+            for(int i = 0; i < actualNumberOfColumns; ) {
                 Component component = row[i];
                 if(component == null) {
                     i++;
@@ -408,22 +443,22 @@ public class GridLayout implements LayoutManager {
                 }
                 GridLayoutData layoutData = getLayoutData(component);
                 if(layoutData.verticalSpan > 1) {
-                    int accumHeight = 0;
+                    int accumulatedHeight = 0;
                     for(int i = y; i < y + layoutData.verticalSpan; i++) {
-                        accumHeight += rowHeights[i];
+                        accumulatedHeight += rowHeights[i];
                     }
 
                     int preferredHeight = component.getPreferredSize().getRows();
-                    if(preferredHeight > accumHeight) {
+                    if(preferredHeight > accumulatedHeight) {
                         int rowOffset = 0;
                         do {
                             rowHeights[y + rowOffset++]++;
-                            accumHeight++;
+                            accumulatedHeight++;
                             if(rowOffset == layoutData.verticalSpan) {
                                 rowOffset = 0;
                             }
                         }
-                        while(preferredHeight > accumHeight);
+                        while(preferredHeight > accumulatedHeight);
                     }
                 }
                 y += layoutData.verticalSpan;
@@ -575,6 +610,62 @@ public class GridLayout implements LayoutManager {
             rowCount++;
         }
         return rows.toArray(new Component[rows.size()][]);
+    }
+
+    private Component[][] eliminateUnusedRowsAndColumns(Component[][] table) {
+        if(table.length == 0) {
+            return table;
+        }
+        //Could make this into a Set, but I doubt there will be any real gain in performance as these are probably going
+        //to be very small.
+        List<Integer> rowsToRemove = new ArrayList<Integer>();
+        List<Integer> columnsToRemove = new ArrayList<Integer>();
+
+        final int tableRows = table.length;
+        final int tableColumns = table[0].length;
+
+        //Scan for unnecessary columns
+        columnLoop:
+        for(int column = tableColumns - 1; column > 0; column--) {
+            for(int row = 0; row < tableRows; row++) {
+                if(table[row][column] != table[row][column - 1]) {
+                   continue columnLoop;
+                }
+            }
+            columnsToRemove.add(column);
+        }
+
+        //Scan for unnecessary rows
+        rowLoop:
+        for(int row = tableRows - 1; row > 0; row--) {
+            for(int column = 0; column < tableColumns; column++) {
+                if(table[row][column] != table[row - 1][column]) {
+                    continue rowLoop;
+                }
+            }
+            rowsToRemove.add(row);
+        }
+
+        //If there's nothing to remove, just return the same
+        if(rowsToRemove.isEmpty() && columnsToRemove.isEmpty()) {
+            return table;
+        }
+
+        //Build a new table with rows & columns eliminated
+        Component[][] newTable = new Component[tableRows - rowsToRemove.size()][];
+        int insertedRowCounter = 0;
+        for(int row = 0; row < tableRows; row++) {
+            Component[] newColumn = new Component[tableColumns - columnsToRemove.size()];
+            int insertedColumnCounter = 0;
+            for(int column = 0; column < tableColumns; column++) {
+                if(columnsToRemove.contains(column)) {
+                    continue;
+                }
+                newColumn[insertedColumnCounter++] = table[row][column];
+            }
+            newTable[insertedRowCounter++] = newColumn;
+        }
+        return newTable;
     }
 
     private GridLayoutData getLayoutData(Component component) {
