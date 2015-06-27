@@ -20,11 +20,13 @@ package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TestTerminalFactory;
+import com.googlecode.lanterna.gui2.dialogs.FileDialogBuilder;
 import com.googlecode.lanterna.gui2.dialogs.TextInputDialog;
 import com.googlecode.lanterna.gui2.dialogs.TextInputDialogBuilder;
 import com.googlecode.lanterna.screen.Screen;
 
 import java.io.EOFException;
+import java.io.File;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
@@ -74,6 +76,18 @@ public class DialogsTextGUIBasicTest {
                             .setTitle("Numeric input")
                             .setDescription("Enter a number")
                             .setValidationPattern(Pattern.compile("[0-9]+"), "Please enter a valid number")
+                            .build()
+                            .showDialog(textGUI);
+                    System.out.println("Result was: " + result);
+                }
+            });
+            dialogsListBox.addItem("File dialog (open)", new Runnable() {
+                @Override
+                public void run() {
+                    File result = new FileDialogBuilder()
+                            .setTitle("Open File")
+                            .setDescription("Choose a file:")
+                            .setActionLabel("Open")
                             .build()
                             .showDialog(textGUI);
                     System.out.println("Result was: " + result);
