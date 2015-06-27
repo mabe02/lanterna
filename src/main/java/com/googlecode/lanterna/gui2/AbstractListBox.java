@@ -163,6 +163,10 @@ public abstract class AbstractListBox<T extends AbstractListBox<T>> extends Abst
         return items.get(index);
     }
 
+    public boolean isEmpty() {
+        return getItemCount() == 0;
+    }
+
     public synchronized int getItemCount() {
         return items.size();
     }
