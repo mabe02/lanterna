@@ -225,9 +225,9 @@ public abstract class AbstractComponent<T extends Component> implements Componen
     }
 
     @Override
-    public Component addTo(Panel panel) {
+    public T addTo(Panel panel) {
         panel.addComponent(this);
-        return this;
+        return self();
     }
 
     @Override
