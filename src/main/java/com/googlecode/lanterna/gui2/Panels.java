@@ -42,6 +42,15 @@ public class Panels {
         return panel;
     }
 
+    public static Panel grid(int columns, Component... components) {
+        Panel panel = new Panel();
+        panel.setLayoutManager(new GridLayout(columns));
+        for(Component component: components) {
+            panel.addComponent(component);
+        }
+        return panel;
+    }
+
     //Cannot instantiate
     private Panels() {}
 }
