@@ -99,12 +99,14 @@ public class InteractableLookupMap {
         startPosition = interactable.toBasePane(startPosition);
         Set<Interactable> disqualified = getDisqualifiedInteractables(startPosition, true);
         TerminalSize size = getSize();
-        int maxShift = Math.max(startPosition.getColumn(), size.getColumns() - startPosition.getColumn());
+        int maxShiftLeft = interactable.toBasePane(TerminalPosition.TOP_LEFT_CORNER).getColumn();
+        int maxShiftRight = interactable.toBasePane(new TerminalPosition(interactable.getSize().getColumns() - 1, 0)).getColumn();
+        int maxShift = Math.max(startPosition.getColumn() - maxShiftLeft, maxShiftRight - startPosition.getRow());
         for (int searchRow = startPosition.getRow() + directionTerm;
              searchRow >= 0 && searchRow < size.getRows();
              searchRow += directionTerm) {
 
-            for (int xShift = 0; xShift < maxShift; xShift++) {
+            for (int xShift = 0; xShift <= maxShift; xShift++) {
                 for (int modifier : new int[]{1, -1}) {
                     if (xShift == 0 && modifier == -1) {
                         break;
@@ -159,12 +161,14 @@ public class InteractableLookupMap {
         startPosition = interactable.toBasePane(startPosition);
         Set<Interactable> disqualified = getDisqualifiedInteractables(startPosition, false);
         TerminalSize size = getSize();
-        int maxShift = Math.max(startPosition.getRow(), size.getRows() - startPosition.getRow());
+        int maxShiftUp = interactable.toBasePane(TerminalPosition.TOP_LEFT_CORNER).getRow();
+        int maxShiftDown = interactable.toBasePane(new TerminalPosition(0, interactable.getSize().getRows() - 1)).getRow();
+        int maxShift = Math.max(startPosition.getRow() - maxShiftUp, maxShiftDown - startPosition.getRow());
         for(int searchColumn = startPosition.getColumn() + directionTerm;
             searchColumn >= 0 && searchColumn < size.getColumns();
             searchColumn += directionTerm) {
 
-            for(int yShift = 0; yShift < maxShift; yShift++) {
+            for(int yShift = 0; yShift <= maxShift; yShift++) {
                 for(int modifier: new int[] { 1, -1 }) {
                     if(yShift == 0 && modifier == -1) {
                         break;
