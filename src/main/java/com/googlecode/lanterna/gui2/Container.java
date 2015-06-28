@@ -27,6 +27,13 @@ import java.util.Collection;
  * @author Martin
  */
 public interface Container extends Component {
+
+    /**
+     * Returns the number of children this container currently has
+     * @return Number of children currently in this container
+     */
+    int getChildCount();
+
     /**
      * Returns collection that is to be considered a copy of the list of children contained inside of this object. 
      * Modifying this list will not affect any internal state.

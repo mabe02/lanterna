@@ -56,8 +56,18 @@ public abstract class AbstractComposite<T extends Container> extends AbstractCom
     }
 
     @Override
+    public int getChildCount() {
+        return component != null ? 1 : 0;
+    }
+
+    @Override
     public Collection<Component> getChildren() {
-        return Collections.singletonList(component);
+        if(component != null) {
+            return Collections.singletonList(component);
+        }
+        else {
+            return Collections.emptyList();
+        }
     }
     
     @Override
