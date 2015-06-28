@@ -83,13 +83,11 @@ public class TelnetTerminalServer {
     }
 
     /**
-     * Sets the socket timeout on the server socket, to control how long {@code acceptConnection()} will block. To block
-     * indefinitely, call this method with 0.
-     * @param timeout Milliseconds {@code acceptConnection()} will wait for giving up and throwing SocketTimeoutException
-     * @throws SocketException If there was an underlying socket exception
+     * Returns the actual server socket used by this object. Can be used to tweak settings but be careful!
+     * @return Underlying ServerSocket
      */
-    public void setSocketTimeout(int timeout) throws SocketException {
-        serverSocket.setSoTimeout(timeout);
+    public ServerSocket getServerSocket() {
+        return serverSocket;
     }
 
     /**
