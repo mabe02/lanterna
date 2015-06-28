@@ -100,7 +100,9 @@ public class InteractableLookupMap {
         Set<Interactable> disqualified = getDisqualifiedInteractables(startPosition, true);
         TerminalSize size = getSize();
         int maxShiftLeft = interactable.toBasePane(TerminalPosition.TOP_LEFT_CORNER).getColumn();
+        maxShiftLeft = Math.max(maxShiftLeft, 0);
         int maxShiftRight = interactable.toBasePane(new TerminalPosition(interactable.getSize().getColumns() - 1, 0)).getColumn();
+        maxShiftRight = Math.min(maxShiftRight, size.getColumns() - 1);
         int maxShift = Math.max(startPosition.getColumn() - maxShiftLeft, maxShiftRight - startPosition.getRow());
         for (int searchRow = startPosition.getRow() + directionTerm;
              searchRow >= 0 && searchRow < size.getRows();
@@ -112,7 +114,7 @@ public class InteractableLookupMap {
                         break;
                     }
                     int searchColumn = startPosition.getColumn() + (xShift * modifier);
-                    if (searchColumn < 0 || searchColumn >= size.getColumns()) {
+                    if (searchColumn < maxShiftLeft || searchColumn > maxShiftRight) {
                         continue;
                     }
 
@@ -162,7 +164,9 @@ public class InteractableLookupMap {
         Set<Interactable> disqualified = getDisqualifiedInteractables(startPosition, false);
         TerminalSize size = getSize();
         int maxShiftUp = interactable.toBasePane(TerminalPosition.TOP_LEFT_CORNER).getRow();
+        maxShiftUp = Math.max(maxShiftUp, 0);
         int maxShiftDown = interactable.toBasePane(new TerminalPosition(0, interactable.getSize().getRows() - 1)).getRow();
+        maxShiftDown = Math.min(maxShiftDown, size.getRows() - 1);
         int maxShift = Math.max(startPosition.getRow() - maxShiftUp, maxShiftDown - startPosition.getRow());
         for(int searchColumn = startPosition.getColumn() + directionTerm;
             searchColumn >= 0 && searchColumn < size.getColumns();
@@ -174,7 +178,7 @@ public class InteractableLookupMap {
                         break;
                     }
                     int searchRow = startPosition.getRow() + (yShift * modifier);
-                    if(searchRow < 0 || searchRow >= size.getRows()) {
+                    if(searchRow < maxShiftUp || searchRow > maxShiftDown) {
                         continue;
                     }
                     int index = lookupMap[searchRow][searchColumn];
