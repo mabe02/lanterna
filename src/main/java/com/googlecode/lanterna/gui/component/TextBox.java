@@ -143,8 +143,12 @@ public class TextBox extends AbstractInteractableComponent
         
         graphics.fillArea(fillCharacter);
         String displayString = prerenderTransformation(backend).substring(visibleLeftPosition);
-        if(displayString.length() > graphics.getWidth())
+        if(graphics.getWidth() == 0) {
+            displayString = "";
+        }
+        else if(displayString.length() > graphics.getWidth()) {
             displayString = displayString.substring(0, graphics.getWidth()-1);
+        }
         graphics.drawString(0, 0, displayString);
         setHotspot(graphics.translateToGlobalCoordinates(new TerminalPosition(editPosition - visibleLeftPosition, 0)));
         lastKnownWidth = graphics.getWidth();
