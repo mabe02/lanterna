@@ -2,8 +2,6 @@ package com.googlecode.lanterna.terminal.swing;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
 public class SwingTerminalDeviceConfigurationTest {
 
     @Test

@@ -45,7 +45,7 @@ public class UnixTerminal extends ANSITerminal {
     /**
      * This enum lets you control how Lanterna will handle a ctrl+c keystroke from the user.
      */
-    public static enum CtrlCBehaviour {
+    public enum CtrlCBehaviour {
         /**
          * Pressing ctrl+c doesn't kill the application, it will be added to the input queue as any other key stroke
          */

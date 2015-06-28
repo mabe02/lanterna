@@ -151,16 +151,16 @@ public class FullScreenTextGUITest {
         }
         
         @Override
-        protected ComponentRenderer createDefaultRenderer() {
-            final ComponentRenderer panelRenderer = super.createDefaultRenderer();
-            return new ComponentRenderer() {
+        protected ComponentRenderer<Panel> createDefaultRenderer() {
+            final ComponentRenderer<Panel> panelRenderer = super.createDefaultRenderer();
+            return new ComponentRenderer<Panel>() {
                 @Override
-                public TerminalSize getPreferredSize(Component component) {
+                public TerminalSize getPreferredSize(Panel component) {
                     return new TerminalSize(80, 24);
                 }
 
                 @Override
-                public void drawComponent(TextGUIGraphics graphics, Component component) {
+                public void drawComponent(TextGUIGraphics graphics, Panel component) {
                     //Clear all data
                     graphics.setBackgroundColor(TextColor.ANSI.BLACK).fill(' ');
                     

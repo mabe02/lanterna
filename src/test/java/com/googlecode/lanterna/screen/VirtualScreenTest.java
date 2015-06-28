@@ -19,10 +19,8 @@ public class VirtualScreenTest {
         new VirtualScreenTest(args);
     }
 
-    private Screen screen;
-
     public VirtualScreenTest(String[] args) throws InterruptedException, IOException {
-        screen = new TestTerminalFactory(args).createScreen();
+        Screen screen = new TestTerminalFactory(args).createScreen();
         screen = new VirtualScreen(screen);
         screen.startScreen();
 

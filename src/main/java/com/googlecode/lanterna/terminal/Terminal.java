@@ -53,7 +53,7 @@ public interface Terminal extends InputProvider {
      * @throws java.io.IOException If there was an underlying I/O error
      * @throws IllegalStateException If you are already in private mode
      */
-    public void enterPrivateMode() throws IOException;
+    void enterPrivateMode() throws IOException;
 
     /**
      * If you have previously entered private mode, this method will exit this and, depending on implementation, maybe
@@ -64,7 +64,7 @@ public interface Terminal extends InputProvider {
      * @throws java.io.IOException If there was an underlying I/O error
      * @throws IllegalStateException If you are not in private mode
      */
-    public void exitPrivateMode() throws IOException;
+    void exitPrivateMode() throws IOException;
 
     /**
      * Removes all the characters, colors and graphics from the screen and leaves you with a big empty space. Text
@@ -73,7 +73,7 @@ public interface Terminal extends InputProvider {
      * practise to call {@code resetColorAndSGR()} after this.
      * @throws java.io.IOException If there was an underlying I/O error
      */
-    public void clearScreen() throws IOException;
+    void clearScreen() throws IOException;
 
     /**
      * Moves the text cursor to a new location on the terminal. The top-left corner has coordinates 0 x 0 and the bottom-
@@ -84,7 +84,7 @@ public interface Terminal extends InputProvider {
      * @param y The 0-indexed row to place the cursor at
      * @throws java.io.IOException If there was an underlying I/O error
      */
-    public void setCursorPosition(int x, int y) throws IOException;
+    void setCursorPosition(int x, int y) throws IOException;
 
     /**
      * Hides or shows the text cursor, but not all terminal (-emulators) supports this. The text cursor is normally a
@@ -94,7 +94,7 @@ public interface Terminal extends InputProvider {
      * @param visible Hides the text cursor if {@code false} and shows it if {@code true}
      * @throws java.io.IOException If there was an underlying I/O error
      */
-    public void setCursorVisible(boolean visible) throws IOException;
+    void setCursorVisible(boolean visible) throws IOException;
 
     /**
      * Prints one character to the terminal at the current cursor location. Please note that the cursor will then move
@@ -113,7 +113,7 @@ public interface Terminal extends InputProvider {
      * @param c Character to place on the terminal
      * @throws java.io.IOException If there was an underlying I/O error
      */
-    public void putCharacter(char c) throws IOException;
+    void putCharacter(char c) throws IOException;
 
     /**
      * Creates a new TextGraphics object that uses this Terminal directly when outputting. Keep in mind that you are
@@ -121,7 +121,7 @@ public interface Terminal extends InputProvider {
      * implementation will not call {@code .flush()} after any operation, so you'll need to do that on your own.
      * @return TextGraphics implementation that draws directly using this Terminal interface
      */
-    public TextGraphics newTextGraphics() throws IOException;
+    TextGraphics newTextGraphics() throws IOException;
 
     /**
      * Activates an {@code SGR} (Selected Graphic Rendition) code. This code modifies a state inside the terminal
@@ -132,7 +132,7 @@ public interface Terminal extends InputProvider {
      * @see SGR
      * @see <a href="http://www.vt100.net/docs/vt510-rm/SGR">http://www.vt100.net/docs/vt510-rm/SGR</a>
      */
-    public void enableSGR(SGR sgr) throws IOException;
+    void enableSGR(SGR sgr) throws IOException;
 
     /**
      * Deactivates an {@code SGR} (Selected Graphic Rendition) code which has previously been activated through {@code
@@ -143,7 +143,7 @@ public interface Terminal extends InputProvider {
      * @see SGR
      * @see <a href="http://www.vt100.net/docs/vt510-rm/SGR">http://www.vt100.net/docs/vt510-rm/SGR</a>
      */
-    public void disableSGR(SGR sgr) throws IOException;
+    void disableSGR(SGR sgr) throws IOException;
 
     /**
      * Removes all currently active SGR codes and sets foreground and background colors back to default.
@@ -152,7 +152,7 @@ public interface Terminal extends InputProvider {
      * @see SGR
      * @see <a href="http://www.vt100.net/docs/vt510-rm/SGR">http://www.vt100.net/docs/vt510-rm/SGR</a>
      */
-    public void resetColorAndSGR() throws IOException;
+    void resetColorAndSGR() throws IOException;
 
     /**
      * Changes the foreground color for all the following characters put to the terminal. The foreground color is what
@@ -167,7 +167,7 @@ public interface Terminal extends InputProvider {
      * @param color Color to use for foreground
      * @throws java.io.IOException If there was an underlying I/O error
      */
-    public void setForegroundColor(TextColor color) throws IOException;
+    void setForegroundColor(TextColor color) throws IOException;
 
     /**
      * Changes the background color for all the following characters put to the terminal. The background color is the
@@ -182,7 +182,7 @@ public interface Terminal extends InputProvider {
      * @param color Color to use for the background
      * @throws java.io.IOException If there was an underlying I/O error
      */
-    public void setBackgroundColor(TextColor color) throws IOException;
+    void setBackgroundColor(TextColor color) throws IOException;
 
     /**
      * Adds a {@code ResizeListener} to be called when the terminal has changed size. There is no guarantee that this
@@ -196,7 +196,7 @@ public interface Terminal extends InputProvider {
      * @see ResizeListener
      * @param listener Listener object to be called when the terminal has been changed
      */
-    public void addResizeListener(ResizeListener listener);
+    void addResizeListener(ResizeListener listener);
 
     /**
      * Removes a {@code ResizeListener} from the list of listeners to be notified when the terminal has changed size
@@ -204,7 +204,7 @@ public interface Terminal extends InputProvider {
      * @see ResizeListener
      * @param listener Listener object to remove
      */
-    public void removeResizeListener(ResizeListener listener);
+    void removeResizeListener(ResizeListener listener);
 
     /**
      * Returns the size of the terminal, expressed as a {@code TerminalSize} object. Please bear in mind that depending
@@ -219,7 +219,7 @@ public interface Terminal extends InputProvider {
      * @return Size of the terminal
      * @throws java.io.IOException if there was an I/O error trying to retrieve the size of the terminal
      */
-    public TerminalSize getTerminalSize() throws IOException;
+    TerminalSize getTerminalSize() throws IOException;
 
     /**
      * Retrieves optional information from the terminal by printing the ENQ ({@literal \}u005) character. Terminals and terminal
@@ -232,7 +232,7 @@ public interface Terminal extends InputProvider {
      * @return Answer-back message from the terminal or empty if there was nothing
      * @throws java.io.IOException If there was an I/O error while trying to read the enquiry reply
      */
-    public byte[] enquireTerminal(int timeout, TimeUnit timeoutUnit) throws IOException;
+    byte[] enquireTerminal(int timeout, TimeUnit timeoutUnit) throws IOException;
 
     /**
      * Calls {@code flush()} on the underlying {@code OutputStream} object, or whatever other implementation this
@@ -240,5 +240,5 @@ public interface Terminal extends InputProvider {
      * as it doesn't really apply to them.
      * @throws java.io.IOException If there was an underlying I/O error
      */
-    public void flush() throws IOException;
+    void flush() throws IOException;
 }

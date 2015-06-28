@@ -25,7 +25,6 @@ import com.googlecode.lanterna.gui2.dialogs.TextInputDialog;
 import com.googlecode.lanterna.gui2.dialogs.TextInputDialogBuilder;
 import com.googlecode.lanterna.screen.Screen;
 
-import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
 import java.util.regex.Pattern;

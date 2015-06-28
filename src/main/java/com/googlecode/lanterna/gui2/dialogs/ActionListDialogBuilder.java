@@ -1,7 +1,6 @@
 package com.googlecode.lanterna.gui2.dialogs;
 
 import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.gui2.ActionListBox;
 
 import java.util.ArrayList;
 import java.util.Arrays;

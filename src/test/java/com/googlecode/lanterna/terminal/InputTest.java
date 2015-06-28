@@ -25,6 +25,7 @@ import java.io.IOException;
  */
 public class InputTest {
     public static void main(String[] args) throws IOException {
+        //noinspection InfiniteLoopStatement
         while(true) {
             int inByte = System.in.read();
             System.out.println(inByte);

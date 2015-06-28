@@ -50,6 +50,7 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
         afterLeaveFocus(direction, nextInFocus);
     }
 
+    @SuppressWarnings("EmptyMethod")
     protected void afterLeaveFocus(FocusChangeDirection direction, Interactable nextInFocus) {
     }
 

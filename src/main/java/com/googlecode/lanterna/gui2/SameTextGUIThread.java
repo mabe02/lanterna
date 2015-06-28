@@ -1,7 +1,5 @@
 package com.googlecode.lanterna.gui2;
 
-import java.io.IOException;
-
 /**
  * Created by martin on 20/06/15.
  */

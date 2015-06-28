@@ -29,10 +29,8 @@ import java.io.IOException;
  */
 public class TerminalResizeTest implements ResizeListener {
 
-    private static Terminal terminal;
-
-    public static void main(String[] args) throws InterruptedException, IOException, IOException {
-        terminal = new TestTerminalFactory(args).createTerminal();
+    public static void main(String[] args) throws InterruptedException, IOException {
+        Terminal terminal = new TestTerminalFactory(args).createTerminal();
         terminal.enterPrivateMode();
         terminal.clearScreen();
         terminal.setCursorPosition(10, 5);

@@ -37,6 +37,7 @@ public interface TextGUIThread {
      * @return
      * @throws IOException
      */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     boolean processEventsAndUpdate() throws IOException;
 
     /**

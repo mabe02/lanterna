@@ -2,6 +2,7 @@ package com.googlecode.lanterna.gui2;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -54,7 +55,7 @@ public class SimpleWindowManagerTest extends TestBase {
 
         @Override
         public Set<Hint> getHints() {
-            return new HashSet<Hint>(Arrays.asList(Hint.CENTERED));
+            return new HashSet<Hint>(Collections.singletonList(Hint.CENTERED));
         }
     }
 
@@ -65,12 +66,7 @@ public class SimpleWindowManagerTest extends TestBase {
 
         @Override
         public Set<Hint> getHints() {
-            return new HashSet<Hint>(Arrays.asList(Hint.NO_DECORATIONS));
-        }
-
-        @Override
-        public void draw(TextGUIGraphics graphics) {
-            super.draw(graphics);
+            return new HashSet<Hint>(Collections.singletonList(Hint.NO_DECORATIONS));
         }
     }
 
@@ -83,11 +79,6 @@ public class SimpleWindowManagerTest extends TestBase {
         @Override
         public Set<Hint> getHints() {
             return new HashSet<Hint>(Arrays.asList(Hint.NO_DECORATIONS, Hint.CENTERED));
-        }
-
-        @Override
-        public void draw(TextGUIGraphics graphics) {
-            super.draw(graphics);
         }
     }
 

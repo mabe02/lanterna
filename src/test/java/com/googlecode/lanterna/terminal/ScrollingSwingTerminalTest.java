@@ -31,6 +31,7 @@ import javax.swing.UIManager;
  *
  * @author Martin
  */
+@SuppressWarnings("FieldCanBeLocal")
 public class ScrollingSwingTerminalTest extends javax.swing.JFrame {
 
     private final ScrollingSwingTerminal scrollingSwingTerminal;

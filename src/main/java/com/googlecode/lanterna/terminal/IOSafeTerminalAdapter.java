@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit;
  * @author Martin
  */
 public class IOSafeTerminalAdapter implements IOSafeTerminal {
-    private static interface ExceptionHandler {
+    private interface ExceptionHandler {
         void onException(IOException e);
     }
     

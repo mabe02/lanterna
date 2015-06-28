@@ -37,6 +37,7 @@ public class ExtendedTerminalTests {
         extendedTerminal.flush();
 
         //Drain the input queue (could hold the size reply)
+        //noinspection StatementWithEmptyBody
         while(extendedTerminal.pollInput() != null);
     }
 }

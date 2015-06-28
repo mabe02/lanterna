@@ -195,7 +195,7 @@ public class TelnetTerminal extends ANSITerminal {
         }
     }
     
-    private static interface TelnetClientEventListener {
+    private interface TelnetClientEventListener {
         void onResize(int columns, int rows);
         void requestReply(boolean will, byte option) throws IOException;
     }

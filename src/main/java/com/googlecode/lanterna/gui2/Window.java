@@ -201,14 +201,14 @@ public interface Window extends BasePane {
      * @param component Component to use as the top-level object in the Window
      */
     @Override
-    public void setComponent(Component component);
+    void setComponent(Component component);
 
     /**
      * Returns the component which is the top-level in the component hierarchy inside this window.
      * @return Top-level component in the window
      */
     @Override
-    public Component getComponent();
+    Component getComponent();
 
     /**
      * Returns the component in the window that currently has input focus. There can only be one component at a time

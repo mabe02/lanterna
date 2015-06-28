@@ -93,7 +93,7 @@ public final class PropertiesTheme implements Theme {
 
     @Override
     public ThemeDefinition getDefaultDefinition() {
-        return new DefinitionImpl(Arrays.asList(rootNode));
+        return new DefinitionImpl(Collections.singletonList(rootNode));
     }
 
     @Override

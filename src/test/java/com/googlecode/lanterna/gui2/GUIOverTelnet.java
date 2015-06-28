@@ -20,6 +20,7 @@ public class GUIOverTelnet {
     public static void main(String[] args) throws IOException {
         TelnetTerminalServer telnetTerminalServer = new TelnetTerminalServer(1024);
         System.out.println("Listening on port 1024, please connect to it with a separate telnet process");
+        //noinspection InfiniteLoopStatement
         while(true) {
             final TelnetTerminal telnetTerminal = telnetTerminalServer.acceptConnection();
             System.out.println("Accepted connection from " + telnetTerminal.getRemoteSocketAddress());
@@ -32,7 +33,6 @@ public class GUIOverTelnet {
                     catch(IOException e) {
                         e.printStackTrace();
                     }
-                    catch(InterruptedException ignore) {}
                     try {
                         telnetTerminal.close();
                     }
@@ -45,7 +45,7 @@ public class GUIOverTelnet {
 
     private static final List<TextBox> ALL_TEXTBOXES = new ArrayList<TextBox>();
 
-    private static void runGUI(final TelnetTerminal telnetTerminal) throws IOException, InterruptedException {
+    private static void runGUI(final TelnetTerminal telnetTerminal) throws IOException {
         Screen screen = new TerminalScreen(telnetTerminal);
         screen.startScreen();
         final MultiWindowTextGUI textGUI = new MultiWindowTextGUI(screen);
@@ -85,11 +85,6 @@ public class GUIOverTelnet {
                             }
                         }
                     }
-                }
-
-                @Override
-                public boolean isInvalid() {
-                    return super.isInvalid();
                 }
             };
             ALL_TEXTBOXES.add(textBox);

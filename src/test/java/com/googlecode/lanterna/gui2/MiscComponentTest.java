@@ -4,9 +4,6 @@ import com.googlecode.lanterna.TerminalSize;
 
 import java.io.*;
 import java.net.URL;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
-import java.nio.file.Files;
 
 /**
  * Created by martin on 19/10/14.

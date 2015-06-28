@@ -34,6 +34,7 @@ public interface WindowManager {
 
     void onAdded(WindowBasedTextGUI textGUI, Window window, List<Window> allWindows);
 
+    @SuppressWarnings("EmptyMethod")
     void onRemoved(WindowBasedTextGUI textGUI, Window window, List<Window> allWindows);
 
     void prepareWindows(WindowBasedTextGUI textGUI, List<Window> allWindows, TerminalSize screenSize);

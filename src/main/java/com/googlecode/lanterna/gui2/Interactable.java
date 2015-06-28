@@ -52,25 +52,25 @@ public interface Interactable extends Component {
      * @param direction What direction did the focus come from
      * @param previouslyInFocus Which component had focus previously ({@code null} if none)
      */
-    public void onEnterFocus(FocusChangeDirection direction, Interactable previouslyInFocus);
+    void onEnterFocus(FocusChangeDirection direction, Interactable previouslyInFocus);
 
     /**
      * Method called when keyboard focus moves away from this component
      * @param direction What direction is focus going in
      * @param nextInFocus Which component is receiving focus next (or {@code null} if none)
      */
-    public void onLeaveFocus(FocusChangeDirection direction, Interactable nextInFocus);
+    void onLeaveFocus(FocusChangeDirection direction, Interactable nextInFocus);
 
     /**
      * Returns {@code true} if this component currently has input focus in its root container.
      * @return {@code true} if the interactable has input focus, {@code false} otherwise
      */
-    public boolean isFocused();
+    boolean isFocused();
 
     /**
      * Enum to represent the various results coming out of the handleKeyStroke method
      */
-    public static enum Result {
+    enum Result {
         /**
          * This component didn't handle the key-stroke, either because it was not recognized or because it chose to
          * ignore it.
@@ -121,7 +121,7 @@ public interface Interactable extends Component {
     /**
      * When focus has changed, which direction.
      */
-    public enum FocusChangeDirection {
+    enum FocusChangeDirection {
         /**
          * The next interactable component, going down. This direction usually comes from the user pressing down array.
          */

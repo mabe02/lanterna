@@ -35,33 +35,33 @@ import java.util.concurrent.TimeUnit;
  */
 public interface IOSafeTerminal extends Terminal {
     @Override
-    public void enterPrivateMode();
+    void enterPrivateMode();
     @Override
-    public void exitPrivateMode();
+    void exitPrivateMode();
     @Override
-    public void clearScreen();
+    void clearScreen();
     @Override
-    public void setCursorPosition(int x, int y);
+    void setCursorPosition(int x, int y);
     @Override
-    public void setCursorVisible(boolean visible);
+    void setCursorVisible(boolean visible);
     @Override
-    public void putCharacter(char c);
+    void putCharacter(char c);
     @Override
-    public void enableSGR(SGR sgr);
+    void enableSGR(SGR sgr);
     @Override
-    public void disableSGR(SGR sgr);
+    void disableSGR(SGR sgr);
     @Override
-    public void resetColorAndSGR();
+    void resetColorAndSGR();
     @Override
-    public void setForegroundColor(TextColor color);
+    void setForegroundColor(TextColor color);
     @Override
-    public void setBackgroundColor(TextColor color);
+    void setBackgroundColor(TextColor color);
     @Override
-    public TerminalSize getTerminalSize();
+    TerminalSize getTerminalSize();
     @Override
-    public byte[] enquireTerminal(int timeout, TimeUnit timeoutUnit);
+    byte[] enquireTerminal(int timeout, TimeUnit timeoutUnit);
     @Override
-    public void flush();
+    void flush();
     @Override
     KeyStroke pollInput();
     @Override

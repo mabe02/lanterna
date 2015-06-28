@@ -44,8 +44,7 @@ public class WaitingDialog extends DialogWindow {
     }
 
     public static WaitingDialog createDialog(String title, String text) {
-        WaitingDialog waitingDialog = new WaitingDialog(title, text);
-        return waitingDialog;
+        return new WaitingDialog(title, text);
     }
 
     public static WaitingDialog showDialog(WindowBasedTextGUI textGUI, String title, String text) {

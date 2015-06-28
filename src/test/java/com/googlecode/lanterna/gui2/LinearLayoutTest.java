@@ -1,6 +1,5 @@
 package com.googlecode.lanterna.gui2;
 
-import javax.sound.sampled.Line;
 import java.io.IOException;
 
 /**

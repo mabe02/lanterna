@@ -30,7 +30,7 @@ import java.util.List;
  * @author martin
  */
 public class BorderLayout implements LayoutManager {
-    public static enum Location implements LayoutData {
+    public enum Location implements LayoutData {
         CENTER,
         LEFT,
         RIGHT,

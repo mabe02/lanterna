@@ -96,7 +96,7 @@ public abstract class AbstractTextGUI implements TextGUI {
                     throw new EOFException();
                 }
                 boolean handled = handleInput(keyStroke);
-                if(handled == false) {
+                if(!handled) {
                     handled = fireUnhandledKeyStroke(keyStroke);
                 }
                 dirty = handled || dirty;

@@ -2,7 +2,6 @@ package com.googlecode.lanterna.gui2.dialogs;
 
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
-import com.sun.deploy.uitoolkit.ui.AbstractDialog;
 
 import java.util.List;
 
@@ -10,7 +9,6 @@ import java.util.List;
  * Created by martin on 23/06/15.
  */
 public class ActionListDialog extends DialogWindow {
-    private final ActionListBox listBox;
 
     ActionListDialog(
             String title,
@@ -20,11 +18,11 @@ public class ActionListDialog extends DialogWindow {
             List<Runnable> actions) {
 
         super(title);
-        this.listBox = new ActionListBox(actionListPreferredSize);
         if(actions.isEmpty()) {
             throw new IllegalStateException("ActionListDialog needs at least one item");
         }
 
+        ActionListBox listBox = new ActionListBox(actionListPreferredSize);
         for(final Runnable action: actions) {
             listBox.addItem(action.toString(), new Runnable() {
                 @Override

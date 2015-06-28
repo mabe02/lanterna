@@ -129,7 +129,7 @@ public class SwingTerminalDeviceConfiguration {
     /**
      * Different cursor styles supported by SwingTerminal
      */
-    public static enum CursorStyle {
+    public enum CursorStyle {
         /**
          * The cursor is drawn by inverting the front- and background colors of the cursor position
          */

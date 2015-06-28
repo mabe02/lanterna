@@ -33,7 +33,7 @@ public interface KeyDecodingProfile {
     /**
      * Static constant for the ESC key
      */
-    public static final char ESC_CODE = (char) 0x1b;
+    char ESC_CODE = (char) 0x1b;
 
     /**
      * Returns a collection of character patterns that makes up this profile

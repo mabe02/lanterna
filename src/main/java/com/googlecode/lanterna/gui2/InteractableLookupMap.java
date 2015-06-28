@@ -48,6 +48,7 @@ public class InteractableLookupMap {
         return new TerminalSize(lookupMap[0].length, lookupMap.length);
     }
 
+    @SuppressWarnings("ConstantConditions")
     public void add(Interactable interactable) {
         TerminalPosition topLeft = interactable.toBasePane(TerminalPosition.TOP_LEFT_CORNER);
         TerminalSize size = interactable.getSize();

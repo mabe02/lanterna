@@ -9,7 +9,6 @@ import java.util.List;
  * Created by martin on 23/06/15.
  */
 public class ListSelectDialog<T> extends DialogWindow {
-    private final ActionListBox listBox;
     private T result;
 
     ListSelectDialog(
@@ -21,11 +20,11 @@ public class ListSelectDialog<T> extends DialogWindow {
 
         super(title);
         this.result = null;
-        this.listBox = new ActionListBox(listBoxPreferredSize);
         if(content.isEmpty()) {
             throw new IllegalStateException("ListSelectDialog needs at least one item");
         }
 
+        ActionListBox listBox = new ActionListBox(listBoxPreferredSize);
         for(final T item: content) {
             listBox.addItem(item.toString(), new Runnable() {
                 @Override

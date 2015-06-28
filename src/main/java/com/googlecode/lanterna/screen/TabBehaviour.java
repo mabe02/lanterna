@@ -65,7 +65,7 @@ public enum TabBehaviour {
     private final Integer replaceFactor;
     private final Integer alignFactor;
 
-    private TabBehaviour(Integer replaceFactor, Integer alignFactor) {
+    TabBehaviour(Integer replaceFactor, Integer alignFactor) {
         this.replaceFactor = replaceFactor;
         this.alignFactor = alignFactor;
     }

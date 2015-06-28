@@ -2,10 +2,6 @@ package com.googlecode.lanterna.gui2.dialogs;
 
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
-import sun.plugin2.message.Message;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by martin on 05/06/15.

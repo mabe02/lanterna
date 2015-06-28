@@ -41,7 +41,7 @@ public class SwingTerminalFontConfiguration {
      * lines and double-lines in defined in Symbol, usually doesn't look very good with bold font when you try to 
      * construct a GUI. 
      */
-    public static enum BoldMode {
+    public enum BoldMode {
         /**
          * All characters with SGR Bold enabled will be rendered using a bold font
          */
@@ -71,7 +71,7 @@ public class SwingTerminalFontConfiguration {
             new Font("Liberation Mono", Font.PLAIN, 14)
     ));
 
-    private static final List<Font> DEFAULT_FONTS = Collections.unmodifiableList(Arrays.asList(
+    private static final List<Font> DEFAULT_FONTS = Collections.unmodifiableList(Collections.singletonList(
             new Font("Monospaced", Font.PLAIN, 14)
     ));
 

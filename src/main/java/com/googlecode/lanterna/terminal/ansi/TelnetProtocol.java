@@ -85,8 +85,9 @@ class TelnetProtocol {
         }
         return Collections.unmodifiableMap(result);
     }
+
     private static <V,K> Map<V,K> reverseMap(Map<K,V> n2c) {
-        Map<V, K> result = new HashMap();
+        Map<V, K> result = new HashMap<V,K>();
         for (Map.Entry<K, V> e : n2c.entrySet()) {
             result.put(e.getValue(), e.getKey());
         }

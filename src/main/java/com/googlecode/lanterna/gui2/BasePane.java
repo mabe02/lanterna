@@ -64,7 +64,7 @@ public interface BasePane extends Composite {
      * @return Component which is the content of this BasePane
      */
     @Override
-    public Component getComponent();
+    Component getComponent();
 
     /**
      * Sets the top-level component inside this BasePane. If you want it to contain only one component, you can set it
@@ -73,7 +73,7 @@ public interface BasePane extends Composite {
      * @param component Component which this BasePane is using as it's content
      */
     @Override
-    public void setComponent(Component component);
+    void setComponent(Component component);
 
     /**
      * Returns the component in the root container that currently has input focus. There can only be one component at a

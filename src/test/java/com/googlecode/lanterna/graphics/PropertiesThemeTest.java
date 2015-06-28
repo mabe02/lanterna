@@ -26,7 +26,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Properties;
 import static org.junit.Assert.*;
 
@@ -64,7 +64,7 @@ public class PropertiesThemeTest {
         assertEquals(0, defaultDefinition.getNormal().getSGRs().size());
         assertEquals(TextColor.ANSI.YELLOW, defaultDefinition.getSelected().getForeground());
         assertEquals(TextColor.ANSI.BLUE, defaultDefinition.getSelected().getBackground());
-        assertEquals(Arrays.asList(SGR.BOLD), new ArrayList<SGR>(defaultDefinition.getSelected().getSGRs()));
+        assertEquals(Collections.singletonList(SGR.BOLD), new ArrayList<SGR>(defaultDefinition.getSelected().getSGRs()));
     }
 
     @Test

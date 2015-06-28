@@ -24,7 +24,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Used to read the input stream character by character and generate {@code Key} objects to be put in the input queue.
@@ -134,7 +133,7 @@ public class InputDecoder {
 
         if (bestMatch.getKeyType() == KeyType.CursorLocation) {
             TerminalPosition cursorPosition = ScreenInfoCharacterPattern.getCursorPosition(currentMatching.subList(0, nrOfCharactersMatched));
-            if(cursorPosition.getColumn() == 5 && cursorPosition.getRow() == 1) {
+            if(cursorPosition != null && cursorPosition.getColumn() == 5 && cursorPosition.getRow() == 1) {
                 //Special case for CTRL + F3
                 bestMatch = new KeyStroke(KeyType.F3, true, false);
             }

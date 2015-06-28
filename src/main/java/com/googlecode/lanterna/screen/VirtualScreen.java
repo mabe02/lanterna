@@ -218,7 +218,7 @@ public class VirtualScreen extends AbstractScreen {
     /**
      * Interface for rendering the virtual screen's frame when the real terminal is too small for the virtual screen
      */
-    public static interface FrameRenderer {
+    public interface FrameRenderer {
         /**
          * Given the size of the real terminal and the current size of the virtual screen, how large should the viewport
          * where the screen content is drawn be?

@@ -42,7 +42,7 @@ public interface Screen extends InputProvider {
      * This is the character Screen implementations should use as a filler is there are areas not set to any particular
      * character.
      */
-    public static final TextCharacter DEFAULT_CHARACTER = new TextCharacter(' ');
+    TextCharacter DEFAULT_CHARACTER = new TextCharacter(' ');
 
     /**
      * Before you can use a Screen, you need to start it. By starting the screen, Lanterna will make sure the terminal
@@ -213,7 +213,7 @@ public interface Screen extends InputProvider {
      * This enum represents the different ways a Screen can refresh the screen, moving the back-buffer data into the
      * front-buffer that is being displayed.
      */
-    public static enum RefreshType {
+    enum RefreshType {
         /**
          * Using automatic mode, the Screen will make a guess at which refresh type would be the fastest and use this one.
          */

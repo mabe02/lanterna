@@ -58,7 +58,7 @@ public interface TextColor {
      * </p>
      * For more information, see http://en.wikipedia.org/wiki/File:Ansi.png
      */
-    public static enum ANSI implements TextColor {
+    enum ANSI implements TextColor {
         BLACK((byte)0, 0, 0, 0),
         RED((byte)1, 170, 0, 0),
         GREEN((byte)2, 0, 170, 0),
@@ -72,7 +72,7 @@ public interface TextColor {
         private final byte index;
         private final Color color;
 
-        private ANSI(byte index, int red, int green, int blue) {
+        ANSI(byte index, int red, int green, int blue) {
             this.index = index;
             this.color = new Color(red, green, blue);
         }
@@ -110,7 +110,7 @@ public interface TextColor {
      * href="https://github.com/robertknight/konsole/blob/master/user-doc/README.moreColors">
      * this</a> commit message to Konsole.
      */
-    public static class Indexed implements TextColor {
+    class Indexed implements TextColor {
         private static final byte[][] COLOR_TABLE = new byte[][] {
             //These are the standard 16-color VGA palette entries
             {(byte)0,(byte)0,(byte)0 },
@@ -494,7 +494,7 @@ public interface TextColor {
      * <a href="https://github.com/robertknight/konsole/blob/master/user-doc/README.moreColors">
      * this</a> commit log. Behavior on terminals that don't support these codes is undefined.
      */
-    public static class RGB implements TextColor {
+    class RGB implements TextColor {
         private final Color color;
 
         /**

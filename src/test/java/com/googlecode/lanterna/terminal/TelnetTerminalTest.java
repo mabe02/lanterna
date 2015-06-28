@@ -35,6 +35,7 @@ import java.util.Random;
 public class TelnetTerminalTest {
     public static void main(String[] args) throws IOException {
         TelnetTerminalServer server = new TelnetTerminalServer(1024, Charset.forName("utf-8"));
+        //noinspection InfiniteLoopStatement
         while(true) {
             TelnetTerminal telnetTerminal = server.acceptConnection();
             if(telnetTerminal != null) {
