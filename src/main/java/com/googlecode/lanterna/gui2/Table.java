@@ -61,6 +61,9 @@ public class Table extends AbstractComponent<Table> implements Container {
             throw new IllegalArgumentException("Table has " + columns.size() + " columns, row to add has " + components.size());
         }
         rows.add(index, new ArrayList<Component>(components));
+        for(Component component: components) {
+            if(takeOwnership(component)) continue;
+        }
         invalidate();
         return this;
     }
@@ -74,14 +77,36 @@ public class Table extends AbstractComponent<Table> implements Container {
         return this;
     }
 
-    public Table setCellComponent(int row, int column) {
+    public Table setCellComponent(int row, int column, Component component) {
         if(row < 0 || row >= getRowCount() ||
                 column < 0 || column >= columns.size()) {
             throw new IndexOutOfBoundsException("Table has " + columns.size() + " columns and " + getRowCount() +
                     " rows, cannot set component at column " + column + ", row " + row);
         }
-        rows.get(row).get(column).
+        Component existingComponent = rows.get(row).get(column);
+        if(existingComponent == component) {
+            return this;
+        }
+        removeComponent(existingComponent);
+        rows.get(row).set(column, component);
+        takeOwnership(component);
         return this;
+    }
+
+    @Override
+    public boolean removeComponent(Component component) {
+        return false;
+    }
+
+    private boolean takeOwnership(Component component) {
+        if(component.getParent() == this) {
+            return true;
+        }
+        else if(component.getParent() != null) {
+            component.getParent().removeComponent(component);
+        }
+        component.onAdded(this);
+        return false;
     }
 
     @Override
