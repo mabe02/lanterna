@@ -24,7 +24,6 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.input.KeyDecodingProfile;
 import com.googlecode.lanterna.terminal.ExtendedTerminal;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -219,42 +218,42 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
 
     @Override
     public void pushTitle() throws IOException {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @Override
     public void popTitle() throws IOException {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @Override
     public void iconify() throws IOException {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @Override
     public void deiconify() throws IOException {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @Override
     public void maximize() throws IOException {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @Override
     public void unmaximize() throws IOException {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @Override
     public void setMouseMovementCapturingEnabled(boolean enabled) throws IOException {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @Override
     public void setMouseClicksCapturingEnabled(boolean enable) throws IOException {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     /**
