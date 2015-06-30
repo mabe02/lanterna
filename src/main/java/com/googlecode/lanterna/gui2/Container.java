@@ -42,6 +42,14 @@ public interface Container extends Component {
     Collection<Component> getChildren();
     
     /**
+     * Removes the component from the container. This should remove the component from the Container's internal data 
+     * structure as well as call the onRemoved(..) method on the component itself if it was found inside the container.
+     * @param component Component to remove from the Container
+     * @return {@code true} if the component existed inside the container and was removed, {@code false} otherwise
+     */
+    boolean removeComponent(Component component);
+    
+    /**
      * Given an interactable, find the next one in line to receive focus. If the interactable isn't inside this 
      * container, this method should return {@code null}.
      *

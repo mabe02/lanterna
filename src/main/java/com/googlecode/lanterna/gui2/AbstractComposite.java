@@ -40,13 +40,17 @@ public abstract class AbstractComposite<T extends Container> extends AbstractCom
     @Override
     public void setComponent(Component component) {
         Component oldComponent = this.component;
-        this.component = component;
+        if(oldComponent == component) {
+            return;
+        }
         if(oldComponent != null) {
-            oldComponent.onRemoved(this);
+            removeComponent(oldComponent);
         }
         if(component != null) {
+            this.component = component;
             component.onAdded(this);
             component.setPosition(TerminalPosition.TOP_LEFT_CORNER);
+            invalidate();
         }
     }
 
@@ -68,6 +72,17 @@ public abstract class AbstractComposite<T extends Container> extends AbstractCom
         else {
             return Collections.emptyList();
         }
+    }
+
+    @Override
+    public boolean removeComponent(Component component) {
+        if(this.component == component) {
+            this.component = null;
+            component.onRemoved(this);
+            invalidate();
+            return true;
+        }
+        return false;
     }
     
     @Override

@@ -56,14 +56,15 @@ public class Panel extends AbstractComponent<Panel> implements Container {
         invalidateStructure();
     }
 
-    public void removeComponent(Component component) {
+    @Override
+    public boolean removeComponent(Component component) {
         if(component == null) {
             throw new IllegalArgumentException("Cannot remove null component");
         }
         synchronized(components) {
             int index = components.indexOf(component);
             if(index == -1) {
-                return;
+                return false;
             }
             if(getBasePane() != null && getBasePane().getFocusedInteractable() == component) {
                 getBasePane().setFocusedInteractable(null);
@@ -72,6 +73,7 @@ public class Panel extends AbstractComponent<Panel> implements Container {
             component.onRemoved(this);
         }
         invalidateStructure();
+        return true;
     }
 
     public void removeAllComponents() {
