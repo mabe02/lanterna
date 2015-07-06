@@ -4,7 +4,8 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 
 /**
- * Created by martin on 05/06/15.
+ * TextInputDialog is a modal text input dialog that prompts the user to enter a text string. The class supports
+ * validation and password masking. The builder class to help setup TextInputDialogs is TextInputDialogBuilder.
  */
 public class TextInputDialog extends DialogWindow {
 
@@ -51,8 +52,8 @@ public class TextInputDialog extends DialogWindow {
                         .setRightMarginSize(1));
         if(description != null) {
             mainPanel.addComponent(new Label(description));
-            mainPanel.addComponent(new EmptySpace(TerminalSize.ONE));
         }
+        mainPanel.addComponent(new EmptySpace(TerminalSize.ONE));
         textBox.setLayoutData(
                 GridLayout.createLayoutData(
                         GridLayout.Alignment.FILL,
