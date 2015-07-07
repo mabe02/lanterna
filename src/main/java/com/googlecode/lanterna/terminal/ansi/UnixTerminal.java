@@ -18,14 +18,11 @@
  */
 package com.googlecode.lanterna.terminal.ansi;
 
-import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.TerminalSize;
 
 import java.io.*;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.nio.charset.Charset;
+
+import com.googlecode.lanterna.TerminalSize;
 
 /**
  * UnixTerminal extends from ANSITerminal and adds functionality for querying the terminal size, setting echo mode and
@@ -38,27 +35,9 @@ import java.nio.charset.Charset;
  * @author Martin
  */
 @SuppressWarnings("WeakerAccess")
-public class UnixTerminal extends ANSITerminal {
+public class UnixTerminal extends UnixishTerminal {
 
-    private final UnixTerminalSizeQuerier terminalSizeQuerier;
-
-    /**
-     * This enum lets you control how Lanterna will handle a ctrl+c keystroke from the user.
-     */
-    public enum CtrlCBehaviour {
-        /**
-         * Pressing ctrl+c doesn't kill the application, it will be added to the input queue as any other key stroke
-         */
-        TRAP,
-        /**
-         * Pressing ctrl+c will restore the terminal and kill the application as it normally does with terminal
-         * applications. Lanterna will restore the terminal and then call {@code System.exit(1)} for this.
-         */
-        CTRL_C_KILLS_APPLICATION,
-    }
-
-    private final CtrlCBehaviour terminalCtrlCBehaviour;
-    private String sttyStatusToRestore;
+    protected final UnixTerminalSizeQuerier terminalSizeQuerier;
 
     /**
      * Creates a UnixTerminal with default settings, using System.in and System.out for input/output, using the default
@@ -127,46 +106,18 @@ public class UnixTerminal extends ANSITerminal {
             Charset terminalCharset,
             UnixTerminalSizeQuerier customSizeQuerier,
             CtrlCBehaviour terminalCtrlCBehaviour) throws IOException {
-        super(terminalInput, terminalOutput, terminalCharset);
+        super(terminalInput, terminalOutput, terminalCharset, terminalCtrlCBehaviour);
         this.terminalSizeQuerier = customSizeQuerier;
-        this.terminalCtrlCBehaviour = terminalCtrlCBehaviour;
-        this.sttyStatusToRestore = null;
 
         //Make sure to set an initial size
-        onResized(80, 20);
-        try {
-            Class<?> signalClass = Class.forName("sun.misc.Signal");
-            for(Method m : signalClass.getDeclaredMethods()) {
-                if("handle".equals(m.getName())) {
-                    Object windowResizeHandler = Proxy.newProxyInstance(getClass().getClassLoader(), new Class[]{Class.forName("sun.misc.SignalHandler")}, new InvocationHandler() {
-                        @Override
-                        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                            if("handle".equals(method.getName())) {
-                                getTerminalSize();
-                            }
-                            return null;
-                        }
-                    });
-                    m.invoke(null, signalClass.getConstructor(String.class).newInstance("WINCH"), windowResizeHandler);
-                }
-            }
-        } catch(Throwable e) {
-            System.err.println(e.getMessage());
-        }
+        onResized(80, 24);
         
+        setupWinResizeHandler();
         saveSTTY();
-        sttyMinimum1CharacterForRead();
         setCBreak(true);
         setEcho(false);
-        Runtime.getRuntime().addShutdownHook(new Thread("Lanterna STTY restore") {
-            @Override
-            public void run() {
-                try {
-                    restoreSTTY();
-                }
-                catch(IOException ignored) {}
-            }
-        });
+        sttyMinimum1CharacterForRead();
+        setupShutdownHook();
     }
 
     @Override
@@ -179,125 +130,31 @@ public class UnixTerminal extends ANSITerminal {
     }
 
     @Override
-    public KeyStroke pollInput() throws IOException {
-        //Check if we have ctrl+c coming
-        KeyStroke key = super.pollInput();
-        isCtrlC(key);
-        return key;
+    protected void sttyKeyEcho(final boolean enable) throws IOException {
+        exec(getShellCommand(), "-c",
+               getSTTYCommand() + " " + (enable ? "echo" : "-echo") + " < /dev/tty");
     }
 
     @Override
-    public KeyStroke readInput() throws IOException {
-        //Check if we have ctrl+c coming
-        KeyStroke key = super.readInput();
-        isCtrlC(key);
-        return key;
-    }
-
-    private void isCtrlC(KeyStroke key) throws IOException {
-        if(key != null
-                && terminalCtrlCBehaviour == CtrlCBehaviour.CTRL_C_KILLS_APPLICATION
-                && key.getCharacter() != null
-                && key.getCharacter() == 'c'
-                && !key.isAltDown()
-                && key.isCtrlDown()) {
-
-            exitPrivateMode();
-            System.exit(1);
-        }
+    protected void sttyMinimum1CharacterForRead() throws IOException {
+        exec(getShellCommand(), "-c",
+               getSTTYCommand() + " min 1 < /dev/tty");
     }
 
     @Override
-    public void enterPrivateMode() throws IOException {
-        if(isInPrivateMode()) {
-            super.enterPrivateMode();   //This will throw IllegalStateException
-        }
-        super.enterPrivateMode();
+    protected void sttyICanon(final boolean enable) throws IOException {
+        exec(getShellCommand(), "-c",
+               getSTTYCommand() + " " + (enable ? "icanon" : "-icanon") + " < /dev/tty");
     }
 
     @Override
-    public void exitPrivateMode() throws IOException {
-        if(!isInPrivateMode()) {
-            super.exitPrivateMode();   //This will throw IllegalStateException
-        }
-        super.exitPrivateMode();
+    protected String sttySave() throws IOException {
+        return exec(getShellCommand(), "-c", getSTTYCommand() + " -g < /dev/tty").trim();
     }
 
-    /**
-     * Enabling cbreak mode will allow you to read user input immediately as the user enters the characters, as opposed
-     * to reading the data in lines as the user presses enter. If you want your program to respond to user input by the
-     * keyboard, you probably want to enable cbreak mode.
-     *
-     * @see <a href="http://en.wikipedia.org/wiki/POSIX_terminal_interface">POSIX terminal interface</a>
-     * @param cbreakOn Should cbreak be turned on or not
-     * @throws IOException
-     */
-    public void setCBreak(boolean cbreakOn) throws IOException {
-        sttyICanon(cbreakOn);
-    }
-
-    /**
-     * Enables or disables keyboard echo, meaning the immediate output of the characters you type on your keyboard. If
-     * your users are going to interact with this application through the keyboard, you probably want to disable echo
-     * mode.
-     *
-     * @param echoOn true if keyboard input will immediately echo, false if it's hidden
-     * @throws IOException
-     */
-    public void setEcho(boolean echoOn) throws IOException {
-        sttyKeyEcho(echoOn);
-    }
-
-    private void sttyKeyEcho(final boolean enable) throws IOException {
-        exec(getShellCommand(), "-c",
-                getSTTYCommand() + " " + (enable ? "echo" : "-echo") + " < /dev/tty");
-    }
-
-    private void sttyMinimum1CharacterForRead() throws IOException {
-        exec(getShellCommand(), "-c",
-                getSTTYCommand() + " min 1 < /dev/tty");
-    }
-
-    private void sttyICanon(final boolean enable) throws IOException {
-        exec(getShellCommand(), "-c",
-                getSTTYCommand() + " " + (enable ? "-icanon" : "icanon") + " < /dev/tty");
-    }
-
-    @SuppressWarnings("unused")
-    private void restoreEOFCtrlD() throws IOException {
-        exec(getShellCommand(), "-c", getSTTYCommand() + " eof ^d < /dev/tty");
-    }
-
-    @SuppressWarnings("unused")
-    private void disableSpecialCharacters() throws IOException {
-        exec(getShellCommand(), "-c", getSTTYCommand() + " intr undef < /dev/tty");
-        exec(getShellCommand(), "-c", getSTTYCommand() + " start undef < /dev/tty");
-        exec(getShellCommand(), "-c", getSTTYCommand() + " stop undef < /dev/tty");
-        exec(getShellCommand(), "-c", getSTTYCommand() + " susp undef < /dev/tty");
-    }
-
-    @SuppressWarnings("unused")
-    private void restoreSpecialCharacters() throws IOException {
-        exec(getShellCommand(), "-c", getSTTYCommand() + " intr ^C < /dev/tty");
-        exec(getShellCommand(), "-c", getSTTYCommand() + " start ^Q < /dev/tty");
-        exec(getShellCommand(), "-c", getSTTYCommand() + " stop ^S < /dev/tty");
-        exec(getShellCommand(), "-c", getSTTYCommand() + " susp ^Z < /dev/tty");
-    }
-
-    private void saveSTTY() throws IOException {
-        if(sttyStatusToRestore == null) {
-            sttyStatusToRestore = exec(getShellCommand(), "-c", getSTTYCommand() + " -g < /dev/tty").trim();
-        }
-    }
-
-    private synchronized void restoreSTTY() throws IOException {
-        if(sttyStatusToRestore == null) {
-            //Nothing to restore
-            return;
-        }
-
-        exec(getShellCommand(), "-c", getSTTYCommand() + " " + sttyStatusToRestore + " < /dev/tty");
-        sttyStatusToRestore = null;
+    @Override
+    protected void sttyRestore(String tok) throws IOException {
+        exec(getShellCommand(), "-c", getSTTYCommand() + " " + tok + " < /dev/tty");
     }
 
     protected String getSTTYCommand() {
@@ -308,23 +165,4 @@ public class UnixTerminal extends ANSITerminal {
         return "/bin/sh";
     }
 
-    private static String exec(String... cmd) throws IOException {
-        ProcessBuilder pb = new ProcessBuilder(cmd);
-        Process process = pb.start();
-        ByteArrayOutputStream stdoutBuffer = new ByteArrayOutputStream();
-        InputStream stdout = process.getInputStream();
-        int readByte = stdout.read();
-        while(readByte >= 0) {
-            stdoutBuffer.write(readByte);
-            readByte = stdout.read();
-        }
-        ByteArrayInputStream stdoutBufferInputStream = new ByteArrayInputStream(stdoutBuffer.toByteArray());
-        BufferedReader reader = new BufferedReader(new InputStreamReader(stdoutBufferInputStream));
-        StringBuilder builder = new StringBuilder();
-        while(reader.ready()) {
-            builder.append(reader.readLine());
-        }
-        reader.close();
-        return builder.toString();
-    }
 }
