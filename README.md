@@ -22,7 +22,7 @@ Lanterna is structured into three layers, each built on top of the other and you
 
 3. The third level is a full GUI toolkit with windows, buttons, labels and some other components.
    It's using a very simple window management system (basically all windows are modal) that is quick and easy to use.
-   You will find these classes in package com.googlecode.lanterna.gui.
+   You will find these classes in package com.googlecode.lanterna.gui2.
 
 
 Maven
