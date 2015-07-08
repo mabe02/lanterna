@@ -46,7 +46,9 @@ public class TextArea  extends AbstractInteractableComponent
     private int longestLine;
     private int scrollTopIndex;
     private int scrollLeftIndex;
-
+    boolean hasHorizontalScroll;
+    boolean hasVerticalScroll;
+    
     public TextArea() {       
         this("");
     }
@@ -93,80 +95,92 @@ public class TextArea  extends AbstractInteractableComponent
     public void repaint(TextGraphics graphics)
     {
         lastSize = new TerminalSize(graphics.getWidth(), graphics.getHeight());
-        
+
+        hasVerticalScroll = lines.size() >= graphics.getHeight();
+        hasHorizontalScroll = longestLine > graphics.getWidth();
+
         //Do we need to recalculate the scroll position? 
         //This code would be triggered by resizing the window when the scroll
         //position is at the bottom
-        if(lines.size() > graphics.getHeight() &&
-                lines.size() - scrollTopIndex < graphics.getHeight()) {
+        if (hasVerticalScroll
+                && lines.size() - scrollTopIndex < graphics.getHeight()) {
             scrollTopIndex = lines.size() - graphics.getHeight();
         }
-        if(longestLine > graphics.getWidth() &&
-                longestLine - scrollLeftIndex < graphics.getWidth()) {
+        if (hasHorizontalScroll
+                && longestLine - scrollLeftIndex < graphics.getWidth()) {
             scrollLeftIndex = longestLine - graphics.getWidth();
         }
         
-        if(hasFocus())
+        if(hasVerticalScroll && hasHorizontalScroll)
+            scrollTopIndex++;
+
+        if (hasFocus()) {
             graphics.applyTheme(Theme.Category.TEXTBOX_FOCUSED);
-        else
+        } else {
             graphics.applyTheme(Theme.Category.TEXTBOX);
+        }
         graphics.fillArea(' ');
 
-        for(int i = scrollTopIndex; i < lines.size(); i++) {
-            if(i - scrollTopIndex >= graphics.getHeight())
+        for (int i = scrollTopIndex; i < lines.size(); i++) {
+            if (i - scrollTopIndex >= graphics.getHeight()) {
                 break;
+            }
 
             printItem(graphics, 0, 0 + i - scrollTopIndex, lines.get(i));
         }
-        
+
         boolean hasSetHotSpot = false;
 
-        if(lines.size() > graphics.getHeight()) {
+        if (hasVerticalScroll) {
             graphics.applyTheme(Theme.Category.DIALOG_AREA);
             graphics.drawString(graphics.getWidth() - 1, 0, ACS.ARROW_UP + "");
 
             graphics.applyTheme(Theme.Category.DIALOG_AREA);
-            for(int i = 1; i < graphics.getHeight() - 1; i++)
+            for (int i = 1; i < graphics.getHeight() - 1; i++) {
                 graphics.drawString(graphics.getWidth() - 1, i, ACS.BLOCK_MIDDLE + "");
+            }
 
             graphics.applyTheme(Theme.Category.DIALOG_AREA);
             graphics.drawString(graphics.getWidth() - 1, graphics.getHeight() - 1, ACS.ARROW_DOWN + "");
-            
+
             //Finally print the 'tick'
             int scrollableSize = lines.size() - graphics.getHeight();
-            double position = (double)scrollTopIndex / ((double)scrollableSize);
-            int tickPosition = (int)(((double)graphics.getHeight() - 3.0) * position);
+            double position = (double) scrollTopIndex / ((double) scrollableSize);
+            int tickPosition = (int) (((double) graphics.getHeight() - 3.0) * position);
 
             graphics.applyTheme(Theme.Category.SHADOW);
             graphics.drawString(graphics.getWidth() - 1, 1 + tickPosition, " ");
-            
-            if(hasFocus()) {
+
+            if (hasFocus()) {
                 setHotspot(graphics.translateToGlobalCoordinates(new TerminalPosition(graphics.getWidth() - 1, 1 + tickPosition)));
                 hasSetHotSpot = true;
             }
         }
-        if(longestLine > graphics.getWidth()) {
+        if (hasHorizontalScroll) {
+
             graphics.applyTheme(Theme.Category.DIALOG_AREA);
             graphics.drawString(0, graphics.getHeight() - 1, ACS.ARROW_LEFT + "");
 
             graphics.applyTheme(Theme.Category.DIALOG_AREA);
-            for(int i = 1; i < graphics.getWidth() - 2; i++)
+            for (int i = 1; i < graphics.getWidth() - 2; i++) {
                 graphics.drawString(i, graphics.getHeight() - 1, ACS.BLOCK_MIDDLE + "");
+            }
 
             graphics.applyTheme(Theme.Category.DIALOG_AREA);
             graphics.drawString(graphics.getWidth() - 2, graphics.getHeight() - 1, ACS.ARROW_RIGHT + "");
-            
+
             //Finally print the 'tick'
             int scrollableSize = longestLine - graphics.getWidth();
-            double position = (double)scrollLeftIndex / ((double)scrollableSize);
-            int tickPosition = (int)(((double)graphics.getWidth() - 4.0) * position);
+            double position = (double) scrollLeftIndex / ((double) scrollableSize);
+            int tickPosition = (int) (((double) graphics.getWidth() - 4.0) * position);
 
             graphics.applyTheme(Theme.Category.SHADOW);
             graphics.drawString(1 + tickPosition, graphics.getHeight() - 1, " ");
         }
-            
-        if(!hasSetHotSpot)
+
+        if (!hasSetHotSpot) {
             setHotspot(graphics.translateToGlobalCoordinates(new TerminalPosition(0, 0)));
+        }
     }
 
     @Override
@@ -253,8 +267,8 @@ public class TextArea  extends AbstractInteractableComponent
     }
     
     public void clear() {
+        longestLine = 0;
         lines.clear();
-        lines.add("");
         invalidate();
     }
 
