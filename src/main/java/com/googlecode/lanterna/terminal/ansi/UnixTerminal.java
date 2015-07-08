@@ -33,7 +33,7 @@ import com.googlecode.lanterna.TerminalSize;
  * @author Martin
  */
 @SuppressWarnings("WeakerAccess")
-public class UnixTerminal extends UnixishTerminal {
+public class UnixTerminal extends UnixLikeTerminal {
 
     protected final UnixTerminalSizeQuerier terminalSizeQuerier;
 

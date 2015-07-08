@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
  *
  * @author Martin
  */
-public class CygwinTerminal extends UnixishTerminal {
+public class CygwinTerminal extends UnixLikeTerminal {
 
     private static final Pattern STTY_SIZE_PATTERN = Pattern.compile(".*rows ([0-9]+);.*columns ([0-9]+);.*");
 

@@ -17,7 +17,7 @@ import java.nio.charset.Charset;
 import com.googlecode.lanterna.input.KeyStroke;
 
 /**
- * UnixishTerminal extends from ANSITerminal and defines functionality that is common to
+ * UnixLikeTerminal extends from ANSITerminal and defines functionality that is common to
  *  {@code UnixTerminal} and {@code CygwinTerminal}, like setting tty modes; echo, cbreak
  *  and minimum characters for reading as well as a shutdown hook to set the tty back to
  *  original state at the end.
@@ -26,7 +26,7 @@ import com.googlecode.lanterna.input.KeyStroke;
  *  into Unix WINCH signal to detect when the user has resized the terminal,
  *  if supported by the JVM.
  */
-public abstract class UnixishTerminal extends ANSITerminal {
+public abstract class UnixLikeTerminal extends ANSITerminal {
 
     /**
      * This enum lets you control how Lanterna will handle a ctrl+c keystroke from the user.
@@ -61,7 +61,7 @@ public abstract class UnixishTerminal extends ANSITerminal {
      * @throws java.io.IOException If there was an I/O error initializing the terminal
      */
     @SuppressWarnings({"SameParameterValue", "WeakerAccess"})
-    public UnixishTerminal(
+    public UnixLikeTerminal(
             InputStream terminalInput,
             OutputStream terminalOutput,
             Charset terminalCharset,
