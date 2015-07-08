@@ -25,12 +25,10 @@ import java.nio.charset.Charset;
 import com.googlecode.lanterna.TerminalSize;
 
 /**
- * UnixTerminal extends from ANSITerminal and adds functionality for querying the terminal size, setting echo mode and
- * cbreak. It will use Unix WINCH signal to detect when the user has resized the terminal, if supported by the JVM, and
- * rely on being able to call /bin/sh and /bin/stty to set echo, cbreak and minimum characters for reading.
+ * This class extends UnixishTerminal and implements the Unix-specific parts.
  * <p/>
- * If you need to have Lanterna to call the shell and/or stty at a different location, you'll need to subclass this and
- * override {@code getShellCommand()} and {@code getSTTYCommand()}.
+ * If you need to have Lanterna to call stty at a different location, you'll need to
+ * subclass this and override {@code getSTTYCommand()}.
  *
  * @author Martin
  */
@@ -106,7 +104,8 @@ public class UnixTerminal extends UnixishTerminal {
             Charset terminalCharset,
             UnixTerminalSizeQuerier customSizeQuerier,
             CtrlCBehaviour terminalCtrlCBehaviour) throws IOException {
-        super(terminalInput, terminalOutput, terminalCharset, terminalCtrlCBehaviour);
+        super(terminalInput, terminalOutput, terminalCharset,
+                terminalCtrlCBehaviour, new File("/dev/tty"));
         this.terminalSizeQuerier = customSizeQuerier;
 
         //Make sure to set an initial size
@@ -131,38 +130,31 @@ public class UnixTerminal extends UnixishTerminal {
 
     @Override
     protected void sttyKeyEcho(final boolean enable) throws IOException {
-        exec(getShellCommand(), "-c",
-               getSTTYCommand() + " " + (enable ? "echo" : "-echo") + " < /dev/tty");
+        exec(getSTTYCommand(), enable ? "echo" : "-echo");
     }
 
     @Override
     protected void sttyMinimum1CharacterForRead() throws IOException {
-        exec(getShellCommand(), "-c",
-               getSTTYCommand() + " min 1 < /dev/tty");
+        exec(getSTTYCommand(), "min", "1");
     }
 
     @Override
     protected void sttyICanon(final boolean enable) throws IOException {
-        exec(getShellCommand(), "-c",
-               getSTTYCommand() + " " + (enable ? "icanon" : "-icanon") + " < /dev/tty");
+        exec(getSTTYCommand(), enable ? "icanon" : "-icanon");
     }
 
     @Override
     protected String sttySave() throws IOException {
-        return exec(getShellCommand(), "-c", getSTTYCommand() + " -g < /dev/tty").trim();
+        return exec(getSTTYCommand(), "-g").trim();
     }
 
     @Override
     protected void sttyRestore(String tok) throws IOException {
-        exec(getShellCommand(), "-c", getSTTYCommand() + " " + tok + " < /dev/tty");
+        exec(getSTTYCommand(), tok);
     }
 
     protected String getSTTYCommand() {
         return "/bin/stty";
-    }
-
-    protected String getShellCommand() {
-        return "/bin/sh";
     }
 
 }

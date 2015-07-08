@@ -3,10 +3,12 @@ package com.googlecode.lanterna.terminal.ansi;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.lang.ProcessBuilder.Redirect;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -14,6 +16,16 @@ import java.nio.charset.Charset;
 
 import com.googlecode.lanterna.input.KeyStroke;
 
+/**
+ * UnixishTerminal extends from ANSITerminal and defines functionality that is common to
+ *  {@code UnixTerminal} and {@code CygwinTerminal}, like setting tty modes; echo, cbreak
+ *  and minimum characters for reading as well as a shutdown hook to set the tty back to
+ *  original state at the end.
+ * <p/>
+ *  If requested, it handles Control-C input to terminate the program, and hooks
+ *  into Unix WINCH signal to detect when the user has resized the terminal,
+ *  if supported by the JVM.
+ */
 public abstract class UnixishTerminal extends ANSITerminal {
 
     /**
@@ -32,6 +44,7 @@ public abstract class UnixishTerminal extends ANSITerminal {
     }
 
     protected final CtrlCBehaviour terminalCtrlCBehaviour;
+    protected final File ttyDev;
     private String sttyStatusToRestore;
 
     /**
@@ -42,10 +55,9 @@ public abstract class UnixishTerminal extends ANSITerminal {
      * @param terminalInput Input stream to read terminal input from
      * @param terminalOutput Output stream to write terminal output to
      * @param terminalCharset Character set to use when converting characters to bytes
-     * @param customSizeQuerier Object to use for looking up the size of the terminal, or null to use the built-in
-     * method
      * @param terminalCtrlCBehaviour Special settings on how the terminal will behave, see {@code UnixTerminalMode} for more
      * details
+     * @param ttyDev File to redirect standard input from in exec(), if not null.
      * @throws java.io.IOException If there was an I/O error initializing the terminal
      */
     @SuppressWarnings({"SameParameterValue", "WeakerAccess"})
@@ -53,14 +65,17 @@ public abstract class UnixishTerminal extends ANSITerminal {
             InputStream terminalInput,
             OutputStream terminalOutput,
             Charset terminalCharset,
-            CtrlCBehaviour terminalCtrlCBehaviour) throws IOException {
+            CtrlCBehaviour terminalCtrlCBehaviour,
+            File ttyDev) throws IOException {
         super(terminalInput, terminalOutput, terminalCharset);
         this.terminalCtrlCBehaviour = terminalCtrlCBehaviour;
         this.sttyStatusToRestore = null;
+        this.ttyDev = ttyDev;
     }
 
-    protected static String exec(String... cmd) throws IOException {
+    protected String exec(String... cmd) throws IOException {
         ProcessBuilder pb = new ProcessBuilder(cmd);
+        if (ttyDev != null) { pb.redirectInput(Redirect.from(ttyDev)); }
         Process process = pb.start();
         ByteArrayOutputStream stdoutBuffer = new ByteArrayOutputStream();
         InputStream stdout = process.getInputStream();

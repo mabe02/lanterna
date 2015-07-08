@@ -26,8 +26,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * This class is trying to provide some special workarounds in order to function in Cygwin terminal environments.
- * <b>This is work in progress and is not functional at the moment</b>
+ * This class extends UnixishTerminal and implements the cygwin-specific parts.
  *
  * @author Martin
  */
@@ -41,7 +40,8 @@ public class CygwinTerminal extends UnixishTerminal {
             InputStream terminalInput,
             OutputStream terminalOutput,
             Charset terminalCharset) throws IOException {
-        super(terminalInput, terminalOutput, terminalCharset, CtrlCBehaviour.TRAP);
+        super(terminalInput, terminalOutput, terminalCharset,
+              CtrlCBehaviour.TRAP, null);
 
         //Make sure to set an initial size
         onResized(80, 24);
