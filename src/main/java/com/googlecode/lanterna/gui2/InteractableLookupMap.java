@@ -45,6 +45,7 @@ public class InteractableLookupMap {
     }
 
     public TerminalSize getSize() {
+        if (lookupMap.length==0) { return TerminalSize.ZERO; }
         return new TerminalSize(lookupMap[0].length, lookupMap.length);
     }
 
@@ -194,6 +195,8 @@ public class InteractableLookupMap {
 
     private Set<Interactable> getDisqualifiedInteractables(TerminalPosition startPosition, boolean scanHorizontally) {
         Set<Interactable> disqualified = new HashSet<Interactable>();
+        if (lookupMap.length == 0) { return disqualified; } // safeguard
+
         TerminalSize size = getSize();
 
         //Adjust start position if necessary
