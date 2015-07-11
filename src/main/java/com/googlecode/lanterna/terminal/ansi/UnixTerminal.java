@@ -25,7 +25,7 @@ import java.nio.charset.Charset;
 import com.googlecode.lanterna.TerminalSize;
 
 /**
- * This class extends UnixishTerminal and implements the Unix-specific parts.
+ * This class extends UnixLikeTerminal and implements the Unix-specific parts.
  * <p/>
  * If you need to have Lanterna to call stty at a different location, you'll need to
  * subclass this and override {@code getSTTYCommand()}.

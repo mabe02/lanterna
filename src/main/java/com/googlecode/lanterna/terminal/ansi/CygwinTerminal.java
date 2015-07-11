@@ -26,7 +26,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * This class extends UnixishTerminal and implements the cygwin-specific parts.
+ * This class extends UnixLikeTerminal and implements the cygwin-specific parts.
  *
  * @author Martin
  */
