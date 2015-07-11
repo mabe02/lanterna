@@ -25,6 +25,9 @@ import com.googlecode.lanterna.input.KeyStroke;
  *  If requested, it handles Control-C input to terminate the program, and hooks
  *  into Unix WINCH signal to detect when the user has resized the terminal,
  *  if supported by the JVM.
+ *
+ * @author Andreas
+ * @author Martin
  */
 public abstract class UnixLikeTerminal extends ANSITerminal {
 
@@ -75,7 +78,9 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
 
     protected String exec(String... cmd) throws IOException {
         ProcessBuilder pb = new ProcessBuilder(cmd);
-        if (ttyDev != null) { pb.redirectInput(Redirect.from(ttyDev)); }
+        if (ttyDev != null) {
+            pb.redirectInput(Redirect.from(ttyDev));
+        }
         Process process = pb.start();
         ByteArrayOutputStream stdoutBuffer = new ByteArrayOutputStream();
         InputStream stdout = process.getInputStream();

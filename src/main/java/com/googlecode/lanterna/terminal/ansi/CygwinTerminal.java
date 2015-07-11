@@ -22,19 +22,24 @@ import com.googlecode.lanterna.TerminalSize;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * This class extends UnixLikeTerminal and implements the cygwin-specific parts.
+ * This class extends UnixLikeTerminal and implements the Cygwin-specific implementations. This means, running a Java
+ * application using Lanterna inside the Cygwin Terminal application. The standard Windows command prompt (cmd.exe) is
+ * not supported by this class.
  *
  * @author Martin
+ * @author Andreas
  */
 public class CygwinTerminal extends UnixLikeTerminal {
 
     private static final Pattern STTY_SIZE_PATTERN = Pattern.compile(".*rows ([0-9]+);.*columns ([0-9]+);.*");
-
-    private static String sttyLocation = findProgram("stty.exe");
+    private static final String STTY_LOCATION = findProgram("stty.exe");
 
     public CygwinTerminal(
             InputStream terminalInput,
@@ -56,7 +61,7 @@ public class CygwinTerminal extends UnixLikeTerminal {
     @Override
     public TerminalSize getTerminalSize() {
         try {
-            String stty = exec(findSTTY(), "-F", "/dev/pty0", "-a");
+            String stty = exec(findSTTY(), "-F", getPseudoTerminalDevice(), "-a");
             Matcher matcher = STTY_SIZE_PATTERN.matcher(stty);
             if(matcher.matches()) {
                 return new TerminalSize(Integer.parseInt(matcher.group(2)), Integer.parseInt(matcher.group(1)));
@@ -72,31 +77,46 @@ public class CygwinTerminal extends UnixLikeTerminal {
 
     @Override
     protected void sttyKeyEcho(final boolean enable) throws IOException {
-        exec(findSTTY(), "-F", "/dev/pty0", (enable ? "echo" : "-echo"));
+        runSTTYCommand(enable ? "echo" : "-echo");
     }
 
     @Override
     protected void sttyMinimum1CharacterForRead() throws IOException {
-        exec(findSTTY(), "-F", "/dev/pty0", "min", "1");
+        runSTTYCommand("min", "1");
     }
 
     @Override
     protected void sttyICanon(final boolean enable) throws IOException {
-        exec(findSTTY(), "-F", "/dev/pty0", (enable ? "icanon" : "cbreak"));
+        runSTTYCommand(enable ? "icanon" : "cbreak");
     }
 
     @Override
     protected String sttySave() throws IOException {
-        return exec(findSTTY(), "-F", "/dev/pty0", "-g").trim();
+        return runSTTYCommand("-g").trim();
     }
 
     @Override
     protected void sttyRestore(String tok) throws IOException {
-        exec(findSTTY(), "-F", "/dev/pty0", tok);
+        runSTTYCommand(tok);
     }
 
     protected String findSTTY() {
-        return sttyLocation;
+        return STTY_LOCATION;
+    }
+
+    private String runSTTYCommand(String... parameters) throws IOException {
+        List<String> commandLine = new ArrayList<String>(Arrays.asList(
+                findSTTY(),
+                "-F",
+                getPseudoTerminalDevice()));
+        commandLine.addAll(Arrays.asList(parameters));
+        return exec(commandLine.toArray(new String[commandLine.size()]));
+    }
+
+    private String getPseudoTerminalDevice() {
+        //This will only work if you only have one terminal window open, otherwise we'll need to figure out somehow
+        //which pty to use, which could be very tricky...
+        return "/dev/pty0";
     }
 
     private static String findProgram(String programName) {

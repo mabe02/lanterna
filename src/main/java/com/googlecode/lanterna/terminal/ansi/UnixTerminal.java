@@ -104,8 +104,12 @@ public class UnixTerminal extends UnixLikeTerminal {
             Charset terminalCharset,
             UnixTerminalSizeQuerier customSizeQuerier,
             CtrlCBehaviour terminalCtrlCBehaviour) throws IOException {
-        super(terminalInput, terminalOutput, terminalCharset,
-                terminalCtrlCBehaviour, new File("/dev/tty"));
+        super(terminalInput,
+                terminalOutput,
+                terminalCharset,
+                terminalCtrlCBehaviour,
+                new File("/dev/tty"));
+
         this.terminalSizeQuerier = customSizeQuerier;
 
         //Make sure to set an initial size
