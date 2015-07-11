@@ -296,7 +296,7 @@ public class GridLayout implements LayoutManager {
         TerminalPosition tableCellTopLeft = TerminalPosition.TOP_LEFT_CORNER;
         for(int y = 0; y < table.length; y++) {
             tableCellTopLeft = tableCellTopLeft.withColumn(0);
-            for(int x = 0; x < numberOfColumns; x++) {
+            for(int x = 0; x < table[y].length; x++) {
                 Component component = table[y][x];
                 if(component != null && !positionMap.containsKey(component)) {
                     GridLayoutData layoutData = getLayoutData(component);
@@ -416,7 +416,7 @@ public class GridLayout implements LayoutManager {
         //Start by letting all span = 1 rows take what they need
         int rowIndex = 0;
         for(Component[] row: table) {
-            for(int i = 0; i < numberOfColumns; i++) {
+            for(int i = 0; i < row.length; i++) {
                 Component component = row[i];
                 if(component == null) {
                     continue;
@@ -431,7 +431,11 @@ public class GridLayout implements LayoutManager {
 
         //Next, do span > 1 and enlarge if necessary
         for(int x = 0; x < numberOfColumns; x++) {
-            for(int y = 0; y < numberOfRows; ) {
+            for(int y = 0; y < numberOfRows && y < table.length; ) {
+                if(x >= table[y].length) {
+                    y++;
+                    continue;
+                }
                 Component component = table[y][x];
                 if(component == null) {
                     y++;
@@ -466,7 +470,7 @@ public class GridLayout implements LayoutManager {
     private Set<Integer> getExpandableColumns(Component[][] table) {
         Set<Integer> expandableColumns = new TreeSet<Integer>();
         for(Component[] row: table) {
-            for (int i = 0; i < numberOfColumns; i++) {
+            for (int i = 0; i < row.length; i++) {
                 if(row[i] == null) {
                     continue;
                 }
@@ -482,7 +486,7 @@ public class GridLayout implements LayoutManager {
     private Set<Integer> getExpandableRows(Component[][] table) {
         Set<Integer> expandableRows = new TreeSet<Integer>();
         for(Component[] row: table) {
-            for (int i = 0; i < numberOfColumns; i++) {
+            for (int i = 0; i < row.length; i++) {
                 if(row[i] == null) {
                     continue;
                 }
