@@ -115,4 +115,19 @@ public interface TextImage {
             int columns,
             int destinationRowOffset,
             int destinationColumnOffset);
+    
+    /**
+     * Scroll a range of lines of this TextImage according to given distance.
+     * 
+     * Lines that are scrolled away from are filled with TextCharacter.DEFAULT_CHARACTER.
+     * 
+     * If scroll-range is empty (firstLine > lastLine) or distance == 0 then this is a no-op.
+     * If absolute value of distance is equal or larger than number of lines in range,
+     * then the lines will be filled with TextCharacter.DEFAULT_CHARACTER.
+     *  
+     * @param firstLine first line of the range to be scrolled
+     * @param lastLine last (inclusive) line of the range to be scrolled
+     * @param distance if > 0 then scroll down distance lines, else if < 0 then scroll up else no-op.
+     */
+    void scrollLines(int firstLine, int lastLine, int distance);
 }
