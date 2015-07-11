@@ -365,7 +365,7 @@ public class GridLayout implements LayoutManager {
             for(int i = 0; i < actualNumberOfColumns; i++) {
                 Component component = row[i];
                 if(component == null) {
-                    columnWidths[i] = 0;
+                    //columnWidths[i] = 0;
                     continue;
                 }
                 GridLayoutData layoutData = getLayoutData(component);
