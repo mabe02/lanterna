@@ -228,32 +228,42 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
 
     @Override
     public void iconify() throws IOException {
-        throw new UnsupportedOperationException("Not implemented yet");
+        writeCSISequenceToTerminal((byte)'2', (byte)'t');
     }
 
     @Override
     public void deiconify() throws IOException {
-        throw new UnsupportedOperationException("Not implemented yet");
+        writeCSISequenceToTerminal((byte)'1', (byte)'t');
     }
 
     @Override
     public void maximize() throws IOException {
-        throw new UnsupportedOperationException("Not implemented yet");
+        writeCSISequenceToTerminal((byte)'9', (byte)';', (byte)'1', (byte)'t');
     }
 
     @Override
     public void unmaximize() throws IOException {
-        throw new UnsupportedOperationException("Not implemented yet");
+        writeCSISequenceToTerminal((byte)'9', (byte)';', (byte)'0', (byte)'t');
     }
 
     @Override
     public void setMouseMovementCapturingEnabled(boolean enabled) throws IOException {
-        throw new UnsupportedOperationException("Not implemented yet");
+        if(enabled) {
+            writeCSISequenceToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'0', (byte)'3', (byte)'h');
+        }
+        else {
+            writeCSISequenceToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'0', (byte)'3', (byte)'l');
+        }
     }
 
     @Override
-    public void setMouseClicksCapturingEnabled(boolean enable) throws IOException {
-        throw new UnsupportedOperationException("Not implemented yet");
+    public void setMouseClicksCapturingEnabled(boolean enabled) throws IOException {
+        if(enabled) {
+            writeCSISequenceToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'0', (byte)'0', (byte)'h');
+        }
+        else {
+            writeCSISequenceToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'0', (byte)'0', (byte)'l');
+        }
     }
 
     /**
