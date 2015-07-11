@@ -306,10 +306,10 @@ public class GridLayout implements LayoutManager {
                     int availableHorizontalSpace = 0;
                     int availableVerticalSpace = 0;
                     for (int i = 0; i < layoutData.horizontalSpan; i++) {
-                        availableHorizontalSpace += columnWidths[x + i];
+                        availableHorizontalSpace += columnWidths[x + i] + (i > 0 ? horizontalSpacing : 0);
                     }
                     for (int i = 0; i < layoutData.verticalSpan; i++) {
-                        availableVerticalSpace += rowHeights[y + i];
+                        availableVerticalSpace += rowHeights[y + i]  + (i > 0 ? verticalSpacing : 0);
                     }
 
                     //Make sure to obey the size restrictions
@@ -338,10 +338,6 @@ public class GridLayout implements LayoutManager {
                             size = size.withRows(availableVerticalSpace);
                             break;
                     }
-
-                    //For spanning components, adjust size
-                    size = size.withRelativeColumns((layoutData.horizontalSpan - 1) * horizontalSpacing);
-                    size = size.withRelativeRows((layoutData.verticalSpan - 1) * verticalSpacing);
 
                     sizeMap.put(component, size);
                     positionMap.put(component, position);
