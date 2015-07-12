@@ -38,7 +38,7 @@ public class GridLayout implements LayoutManager {
         ;
     }
 
-    private static class GridLayoutData implements LayoutData {
+    static class GridLayoutData implements LayoutData {
         final Alignment horizontalAlignment;
         final Alignment verticalAlignment;
         final boolean grabExtraHorizontalSpace;
@@ -46,7 +46,7 @@ public class GridLayout implements LayoutManager {
         final int horizontalSpan;
         final int verticalSpan;
 
-        public GridLayoutData(
+        private GridLayoutData(
                 Alignment horizontalAlignment,
                 Alignment verticalAlignment,
                 boolean grabExtraHorizontalSpace,
@@ -103,6 +103,26 @@ public class GridLayout implements LayoutManager {
                 grabExtraVerticalSpace,
                 horizontalSpan,
                 verticalSpan);
+    }
+
+    public static LayoutData createHorizontallyFilledLayoutData(int horizontalSpan) {
+        return createLayoutData(
+                Alignment.FILL,
+                Alignment.CENTER,
+                true,
+                false,
+                horizontalSpan,
+                1);
+    }
+
+    public static LayoutData createHorizontallyEndAlignedLayoutData(int horizontalSpan) {
+        return createLayoutData(
+                Alignment.END,
+                Alignment.CENTER,
+                true,
+                false,
+                horizontalSpan,
+                1);
     }
 
     private final int numberOfColumns;
