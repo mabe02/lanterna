@@ -106,7 +106,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
     public void setValidationPattern(Pattern validationPattern) {
         if(validationPattern != null) {
             for(String line: lines) {
-                if(!validationPattern.matcher(line).matches()) {
+                if(!validated(line)) {
                     throw new IllegalStateException("TextBox validation pattern " + validationPattern + " does not match existing content");
                 }
             }
@@ -177,6 +177,14 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
             bob.append("\n").append(lines.get(i));
         }
         return bob.toString();
+    }
+
+    public String getTextOrDefault(String defaultValueIfEmpty) {
+        String text = getText();
+        if(text.isEmpty()) {
+            return defaultValueIfEmpty;
+        }
+        return text;
     }
 
     public Character getMask() {
