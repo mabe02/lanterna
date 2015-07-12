@@ -98,9 +98,9 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
     /**
      * Sets a pattern on which the content of the text box is to be validated. For multi-line TextBox:s, the pattern is
      * checked against each line individually, not the content as a whole. Partial matchings will not be allowed, the
-     * whole pattern must match. When the user tried to modify the content of the TextBox in a way that does not match
-     * the pattern, the operation will be silently ignored. If you set this pattern to {@code null}, all validation is
-     * turned off.
+     * whole pattern must match, however, empty lines will always be allowed. When the user tried to modify the content
+     * of the TextBox in a way that does not match the pattern, the operation will be silently ignored. If you set this
+     * pattern to {@code null}, all validation is turned off.
      * @param validationPattern Pattern to validate the lines in this TextBox against, or {@code null} to disable
      */
     public void setValidationPattern(Pattern validationPattern) {
@@ -157,7 +157,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
             bob.append(c);
         }
         String string = bob.toString();
-        if(validationPattern != null && !validationPattern.matcher(string).matches()) {
+        if(!validated(string)) {
             throw new IllegalStateException("TextBox validation pattern " + validationPattern + " does not match the supplied text");
         }
         int lineWidth = CJKUtils.getTrueWidth(string);
@@ -394,7 +394,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
     }
 
     private boolean validated(String line) {
-        return validationPattern == null || validationPattern.matcher(line).matches();
+        return validationPattern == null || line.isEmpty() || validationPattern.matcher(line).matches();
     }
 
     private Result handleKeyStrokeReadOnly(KeyStroke keyStroke) {
