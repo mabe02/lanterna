@@ -25,6 +25,7 @@ import com.googlecode.lanterna.input.KeyStroke;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * This component keeps a text content that is editable by the user. A TextBox can be single line or multiline and lets
@@ -49,6 +50,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
     private int longestRow;
     private char unusedSpaceCharacter;
     private Character mask;
+    private Pattern validationPattern;
 
     public TextBox() {
         this(new TerminalSize(10, 1), "", Style.SINGLE_LINE);
@@ -85,11 +87,31 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
         this.longestRow = 1;    //To fit the cursor
         this.unusedSpaceCharacter = ' ';
         this.mask = null;
+        this.validationPattern = null;
         setText(initialContent);
         if (preferredSize == null) {
             preferredSize = new TerminalSize(longestRow, lines.size());
         }
         setPreferredSize(preferredSize);
+    }
+
+    /**
+     * Sets a pattern on which the content of the text box is to be validated. For multi-line TextBox:s, the pattern is
+     * checked against each line individually, not the content as a whole. Partial matchings will not be allowed, the
+     * whole pattern must match. When the user tried to modify the content of the TextBox in a way that does not match
+     * the pattern, the operation will be silently ignored. If you set this pattern to {@code null}, all validation is
+     * turned off.
+     * @param validationPattern Pattern to validate the lines in this TextBox against, or {@code null} to disable
+     */
+    public void setValidationPattern(Pattern validationPattern) {
+        if(validationPattern != null) {
+            for(String line: lines) {
+                if(!validationPattern.matcher(line).matches()) {
+                    throw new IllegalStateException("TextBox validation pattern " + validationPattern + " does not match existing content");
+                }
+            }
+        }
+        this.validationPattern = validationPattern;
     }
 
     public TextBox setText(String text) {
@@ -135,6 +157,9 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
             bob.append(c);
         }
         String string = bob.toString();
+        if(validationPattern != null && !validationPattern.matcher(string).matches()) {
+            throw new IllegalStateException("TextBox validation pattern " + validationPattern + " does not match the supplied text");
+        }
         int lineWidth = CJKUtils.getTrueWidth(string);
         lines.add(string);
         if (longestRow < lineWidth + 1) {
@@ -246,31 +271,43 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
             case Character:
                 if(maxLineLength == -1 || maxLineLength > line.length() + 1) {
                     line = line.substring(0, caretPosition.getColumn()) + keyStroke.getCharacter() + line.substring(caretPosition.getColumn());
-                    lines.set(caretPosition.getRow(), line);
-                    caretPosition = caretPosition.withRelativeColumn(1);
+                    if(validated(line)) {
+                        lines.set(caretPosition.getRow(), line);
+                        caretPosition = caretPosition.withRelativeColumn(1);
+                    }
                 }
                 return Result.HANDLED;
             case Backspace:
                 if(caretPosition.getColumn() > 0) {
                     line = line.substring(0, caretPosition.getColumn() - 1) + line.substring(caretPosition.getColumn());
-                    lines.set(caretPosition.getRow(), line);
-                    caretPosition = caretPosition.withRelativeColumn(-1);
+                    if(validated(line)) {
+                        lines.set(caretPosition.getRow(), line);
+                        caretPosition = caretPosition.withRelativeColumn(-1);
+                    }
                 }
                 else if(style == Style.MULTI_LINE && caretPosition.getRow() > 0) {
-                    lines.remove(caretPosition.getRow());
-                    caretPosition = caretPosition.withRelativeRow(-1);
-                    caretPosition = caretPosition.withColumn(lines.get(caretPosition.getRow()).length());
-                    lines.set(caretPosition.getRow(), lines.get(caretPosition.getRow()) + line);
+                    String concatenatedLines = lines.get(caretPosition.getRow() - 1) + line;
+                    if(validated(concatenatedLines)) {
+                        lines.remove(caretPosition.getRow());
+                        caretPosition = caretPosition.withRelativeRow(-1);
+                        caretPosition = caretPosition.withColumn(lines.get(caretPosition.getRow()).length());
+                        lines.set(caretPosition.getRow(), concatenatedLines);
+                    }
                 }
                 return Result.HANDLED;
             case Delete:
                 if(caretPosition.getColumn() < line.length()) {
                     line = line.substring(0, caretPosition.getColumn()) + line.substring(caretPosition.getColumn() + 1);
-                    lines.set(caretPosition.getRow(), line);
+                    if(validated(line)) {
+                        lines.set(caretPosition.getRow(), line);
+                    }
                 }
                 else if(style == Style.MULTI_LINE && caretPosition.getRow() < lines.size() - 1) {
-                    lines.set(caretPosition.getRow(), line + lines.get(caretPosition.getRow() + 1));
-                    lines.remove(caretPosition.getRow() + 1);
+                    String concatenatedLines = line + lines.get(caretPosition.getRow() + 1);
+                    if(validated(concatenatedLines)) {
+                        lines.set(caretPosition.getRow(), concatenatedLines);
+                        lines.remove(caretPosition.getRow() + 1);
+                    }
                 }
                 return Result.HANDLED;
             case ArrowLeft:
@@ -329,9 +366,12 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
                     return Result.MOVE_FOCUS_NEXT;
                 }
                 String newLine = line.substring(caretPosition.getColumn());
-                lines.set(caretPosition.getRow(), line.substring(0, caretPosition.getColumn()));
-                lines.add(caretPosition.getRow() + 1, newLine);
-                caretPosition = caretPosition.withColumn(0).withRelativeRow(1);
+                String oldLine = line.substring(0, caretPosition.getColumn());
+                if(validated(newLine) && validated(oldLine)) {
+                    lines.set(caretPosition.getRow(), oldLine);
+                    lines.add(caretPosition.getRow() + 1, newLine);
+                    caretPosition = caretPosition.withColumn(0).withRelativeRow(1);
+                }
                 return Result.HANDLED;
             case Home:
                 caretPosition = caretPosition.withColumn(0);
@@ -351,6 +391,10 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
             default:
         }
         return super.handleKeyStroke(keyStroke);
+    }
+
+    private boolean validated(String line) {
+        return validationPattern == null || validationPattern.matcher(line).matches();
     }
 
     private Result handleKeyStrokeReadOnly(KeyStroke keyStroke) {
