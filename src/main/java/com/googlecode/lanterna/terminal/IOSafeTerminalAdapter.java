@@ -56,7 +56,21 @@ public class IOSafeTerminalAdapter implements IOSafeTerminal {
      * @return IOSafeTerminal wrapping the supplied terminal
      */
     public static IOSafeTerminal createRuntimeExceptionConvertingAdapter(Terminal terminal) {
-        return new IOSafeTerminalAdapter(terminal, new ConvertToRuntimeException());
+        if (terminal instanceof ExtendedTerminal) { // also handle Runtime-type:
+            return createRuntimeExceptionConvertingAdapter((ExtendedTerminal)terminal);
+        } else {
+            return new IOSafeTerminalAdapter(terminal, new ConvertToRuntimeException());
+        }
+    }
+    
+    /**
+     * Creates a wrapper around an ExtendedTerminal that exposes it as a IOSafeExtendedTerminal.
+     * If any IOExceptions occur, they will be wrapped by a RuntimeException and re-thrown.
+     * @param terminal Terminal to wrap
+     * @return IOSafeTerminal wrapping the supplied terminal
+     */
+    public static IOSafeExtendedTerminal createRuntimeExceptionConvertingAdapter(ExtendedTerminal terminal) {
+        return new IOSafeTerminalAdapter.Extended(terminal, new ConvertToRuntimeException());
     }
     
     /**
@@ -66,11 +80,26 @@ public class IOSafeTerminalAdapter implements IOSafeTerminal {
      * @return IOSafeTerminal wrapping the supplied terminal
      */
     public static IOSafeTerminal createDoNothingOnExceptionAdapter(Terminal terminal) {
-        return new IOSafeTerminalAdapter(terminal, new DoNothingAndOrReturnNull());
+        if (terminal instanceof ExtendedTerminal) { // also handle Runtime-type:
+            return createDoNothingOnExceptionAdapter((ExtendedTerminal)terminal);
+        } else {
+            return new IOSafeTerminalAdapter(terminal, new DoNothingAndOrReturnNull());
+        }
     }
-        
+
+    /**
+     * Creates a wrapper around an ExtendedTerminal that exposes it as a IOSafeExtendedTerminal.
+     * If any IOExceptions occur, they will be silently ignored and for those method with a 
+     * non-void return type, null will be returned.
+     * @param terminal Terminal to wrap
+     * @return IOSafeTerminal wrapping the supplied terminal
+     */
+    public static IOSafeExtendedTerminal createDoNothingOnExceptionAdapter(ExtendedTerminal terminal) {
+        return new IOSafeTerminalAdapter.Extended(terminal, new DoNothingAndOrReturnNull());
+    }
+
     private final Terminal backend;
-    private final ExceptionHandler exceptionHandler;
+    final ExceptionHandler exceptionHandler;
 
     @SuppressWarnings("WeakerAccess")
     public IOSafeTerminalAdapter(Terminal backend, ExceptionHandler exceptionHandler) {
@@ -255,5 +284,118 @@ public class IOSafeTerminalAdapter implements IOSafeTerminal {
             exceptionHandler.onException(e);
         }
         return null;
+    }
+
+    /**
+     * This class exposes methods for converting an extended terminal into an IOSafeExtendedTerminal.
+     */
+    public static class Extended extends IOSafeTerminalAdapter implements IOSafeExtendedTerminal {
+        private final ExtendedTerminal backend;
+        
+        public Extended(ExtendedTerminal backend, ExceptionHandler exceptionHandler) {
+            super(backend, exceptionHandler);
+            this.backend = backend;
+        }
+
+        @Override
+        public void setTerminalSize(int columns, int rows) {
+            try {
+                backend.setTerminalSize(columns, rows);
+            }
+            catch(IOException e) {
+                exceptionHandler.onException(e);
+            }
+        }
+
+        @Override
+        public void setTitle(String title) {
+            try {
+                backend.setTitle(title);
+            }
+            catch(IOException e) {
+                exceptionHandler.onException(e);
+            }
+        }
+
+        @Override
+        public void pushTitle() {
+            try {
+                backend.pushTitle();
+            }
+            catch(IOException e) {
+                exceptionHandler.onException(e);
+            }
+        }
+
+        @Override
+        public void popTitle() {
+            try {
+                backend.popTitle();
+            }
+            catch(IOException e) {
+                exceptionHandler.onException(e);
+            }
+        }
+
+        @Override
+        public void iconify() {
+            try {
+                backend.iconify();
+            }
+            catch(IOException e) {
+                exceptionHandler.onException(e);
+            }
+        }
+
+        @Override
+        public void deiconify() {
+            try {
+                backend.deiconify();
+            }
+            catch(IOException e) {
+                exceptionHandler.onException(e);
+            }
+        }
+
+        @Override
+        public void maximize() {
+            try {
+                backend.maximize();
+            }
+            catch(IOException e) {
+                exceptionHandler.onException(e);
+            }
+        }
+
+        @Override
+        public void unmaximize() {
+            try {
+                backend.unmaximize();
+            }
+            catch(IOException e) {
+                exceptionHandler.onException(e);
+            }
+        }
+
+        @Override
+        public void setMouseMovementCapturingEnabled(boolean enable) {
+            try {
+                backend.setMouseMovementCapturingEnabled(enable);
+            }
+            catch(IOException e) {
+                exceptionHandler.onException(e);
+            }
+        }
+
+        @Override
+        public void setMouseClicksCapturingEnabled(boolean enable) {
+            try {
+                backend.setMouseClicksCapturingEnabled(enable);
+            }
+            catch(IOException e) {
+                exceptionHandler.onException(e);
+            }
+        }
+
     }
 }
