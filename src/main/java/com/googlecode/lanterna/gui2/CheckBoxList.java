@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * Created by martin on 29/09/14.
  */
-public class CheckBoxList extends AbstractListBox<CheckBoxList> {
+public class CheckBoxList<V> extends AbstractListBox<V, CheckBoxList<V>> {
     private final List<Boolean> itemStatus;
 
     public CheckBoxList() {
@@ -52,12 +52,12 @@ public class CheckBoxList extends AbstractListBox<CheckBoxList> {
     }
 
     @Override
-    public synchronized void addItem(Object object) {
+    public synchronized void addItem(V object) {
         itemStatus.add(Boolean.FALSE);
         super.addItem(object);
     }
 
-    public synchronized Boolean isChecked(Object object) {
+    public synchronized Boolean isChecked(V object) {
         if(indexOf(object) == -1)
             return null;
 
@@ -71,7 +71,7 @@ public class CheckBoxList extends AbstractListBox<CheckBoxList> {
         return itemStatus.get(index);
     }
 
-    public synchronized void setChecked(Object object, boolean checked) {
+    public synchronized void setChecked(V object, boolean checked) {
         if(indexOf(object) == -1)
             return;
 
@@ -98,9 +98,10 @@ public class CheckBoxList extends AbstractListBox<CheckBoxList> {
         }
 
         @Override
-        protected String getLabel(AbstractListBox<?> listBox, int index, Object item) {
+        protected String getLabel(AbstractListBox<?, ?> listBox, int index, Object item) {
             String check = " ";
-            if(((CheckBoxList)listBox).itemStatus.get(index))
+            List<Boolean> itemStatus = ((CheckBoxList) listBox).itemStatus;
+            if(itemStatus.get(index))
                 check = "x";
 
             String text = item.toString();

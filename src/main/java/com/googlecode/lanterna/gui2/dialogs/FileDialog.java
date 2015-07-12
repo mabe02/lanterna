@@ -118,13 +118,10 @@ public class FileDialog extends DialogWindow {
         setComponent(contentPane);
     }
 
+    @Override
     public File showDialog(WindowBasedTextGUI textGUI) {
         selectedFile = null;
-        textGUI.addWindow(this);
-
-        //Wait for the window to close, in case the window manager doesn't honor the MODAL hint
-        waitUntilClosed();
-
+        super.showDialog(textGUI);
         return selectedFile;
     }
 

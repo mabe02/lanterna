@@ -34,6 +34,12 @@ public class WaitingDialog extends DialogWindow {
         setComponent(mainPanel);
     }
 
+    @Override
+    public Object showDialog(WindowBasedTextGUI textGUI) {
+        showDialog(textGUI, true);
+        return null;
+    }
+
     public void showDialog(WindowBasedTextGUI textGUI, boolean blockUntilClosed) {
         textGUI.addWindow(this);
 

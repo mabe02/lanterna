@@ -38,7 +38,7 @@ public class GridLayout implements LayoutManager {
         ;
     }
 
-    private static class GridLayoutData implements LayoutData {
+    static class GridLayoutData implements LayoutData {
         final Alignment horizontalAlignment;
         final Alignment verticalAlignment;
         final boolean grabExtraHorizontalSpace;
@@ -46,7 +46,7 @@ public class GridLayout implements LayoutManager {
         final int horizontalSpan;
         final int verticalSpan;
 
-        public GridLayoutData(
+        private GridLayoutData(
                 Alignment horizontalAlignment,
                 Alignment verticalAlignment,
                 boolean grabExtraHorizontalSpace,
@@ -103,6 +103,26 @@ public class GridLayout implements LayoutManager {
                 grabExtraVerticalSpace,
                 horizontalSpan,
                 verticalSpan);
+    }
+
+    public static LayoutData createHorizontallyFilledLayoutData(int horizontalSpan) {
+        return createLayoutData(
+                Alignment.FILL,
+                Alignment.CENTER,
+                true,
+                false,
+                horizontalSpan,
+                1);
+    }
+
+    public static LayoutData createHorizontallyEndAlignedLayoutData(int horizontalSpan) {
+        return createLayoutData(
+                Alignment.END,
+                Alignment.CENTER,
+                true,
+                false,
+                horizontalSpan,
+                1);
     }
 
     private final int numberOfColumns;
@@ -221,27 +241,16 @@ public class GridLayout implements LayoutManager {
         Component[][] table = buildTable(components);
         table = eliminateUnusedRowsAndColumns(table);
 
-        for(int row = 0; row < table.length; row++) {
-            int rowPreferredHeight = 0;
-            int rowPreferredWidth = 0;
-            for(int column = 0; column < table[row].length; column++) {
-                Component component = table[row][column];
-                if(component == null ||
-                        (row > 0 && table[row - 1][column] == component) ||
-                        (column > 0 && table[row][column - 1] == component)) {
-                    //We skip these cases, where component is null, or it's a spanned component from an earlier iteration
-                    //noinspection UnnecessaryContinue
-                    continue;
-                }
-                else {
-                    TerminalSize componentPreferredSize = component.getPreferredSize();
-                    rowPreferredHeight = Math.max(rowPreferredHeight, componentPreferredSize.getRows());
-                    rowPreferredWidth += componentPreferredSize.getColumns();
-                }
-            }
-            preferredSize = preferredSize.withColumns(Math.max(preferredSize.getColumns(), rowPreferredWidth));
-            preferredSize = preferredSize.withRelativeRows(rowPreferredHeight);
+        //Figure out each column first, this can be done independently of the row heights
+        int preferredWidth = 0;
+        int preferredHeight = 0;
+        for(int width: getPreferredColumnWidths(table)) {
+            preferredWidth += width;
         }
+        for(int height: getPreferredRowHeights(table)) {
+            preferredHeight += height;
+        }
+        preferredSize = preferredSize.withRelative(preferredWidth, preferredHeight);
         preferredSize = preferredSize.withRelativeColumns(leftMarginSize + rightMarginSize + (table[0].length - 1) * horizontalSpacing);
         preferredSize = preferredSize.withRelativeRows(topMarginSize + bottomMarginSize + (table.length - 1) * verticalSpacing);
         return preferredSize;
@@ -296,7 +305,7 @@ public class GridLayout implements LayoutManager {
         TerminalPosition tableCellTopLeft = TerminalPosition.TOP_LEFT_CORNER;
         for(int y = 0; y < table.length; y++) {
             tableCellTopLeft = tableCellTopLeft.withColumn(0);
-            for(int x = 0; x < numberOfColumns; x++) {
+            for(int x = 0; x < table[y].length; x++) {
                 Component component = table[y][x];
                 if(component != null && !positionMap.containsKey(component)) {
                     GridLayoutData layoutData = getLayoutData(component);
@@ -306,10 +315,10 @@ public class GridLayout implements LayoutManager {
                     int availableHorizontalSpace = 0;
                     int availableVerticalSpace = 0;
                     for (int i = 0; i < layoutData.horizontalSpan; i++) {
-                        availableHorizontalSpace += columnWidths[x + i];
+                        availableHorizontalSpace += columnWidths[x + i] + (i > 0 ? horizontalSpacing : 0);
                     }
                     for (int i = 0; i < layoutData.verticalSpan; i++) {
-                        availableVerticalSpace += rowHeights[y + i];
+                        availableVerticalSpace += rowHeights[y + i]  + (i > 0 ? verticalSpacing : 0);
                     }
 
                     //Make sure to obey the size restrictions
@@ -339,10 +348,6 @@ public class GridLayout implements LayoutManager {
                             break;
                     }
 
-                    //For spanning components, adjust size
-                    size = size.withRelativeColumns((layoutData.horizontalSpan - 1) * horizontalSpacing);
-                    size = size.withRelativeRows((layoutData.verticalSpan - 1) * verticalSpacing);
-
                     sizeMap.put(component, size);
                     positionMap.put(component, position);
                 }
@@ -369,7 +374,6 @@ public class GridLayout implements LayoutManager {
             for(int i = 0; i < actualNumberOfColumns; i++) {
                 Component component = row[i];
                 if(component == null) {
-                    columnWidths[i] = 0;
                     continue;
                 }
                 GridLayoutData layoutData = getLayoutData(component);
@@ -420,7 +424,7 @@ public class GridLayout implements LayoutManager {
         //Start by letting all span = 1 rows take what they need
         int rowIndex = 0;
         for(Component[] row: table) {
-            for(int i = 0; i < numberOfColumns; i++) {
+            for(int i = 0; i < row.length; i++) {
                 Component component = row[i];
                 if(component == null) {
                     continue;
@@ -435,7 +439,11 @@ public class GridLayout implements LayoutManager {
 
         //Next, do span > 1 and enlarge if necessary
         for(int x = 0; x < numberOfColumns; x++) {
-            for(int y = 0; y < numberOfRows; ) {
+            for(int y = 0; y < numberOfRows && y < table.length; ) {
+                if(x >= table[y].length) {
+                    y++;
+                    continue;
+                }
                 Component component = table[y][x];
                 if(component == null) {
                     y++;
@@ -470,7 +478,7 @@ public class GridLayout implements LayoutManager {
     private Set<Integer> getExpandableColumns(Component[][] table) {
         Set<Integer> expandableColumns = new TreeSet<Integer>();
         for(Component[] row: table) {
-            for (int i = 0; i < numberOfColumns; i++) {
+            for (int i = 0; i < row.length; i++) {
                 if(row[i] == null) {
                     continue;
                 }
@@ -486,7 +494,7 @@ public class GridLayout implements LayoutManager {
     private Set<Integer> getExpandableRows(Component[][] table) {
         Set<Integer> expandableRows = new TreeSet<Integer>();
         for(Component[] row: table) {
-            for (int i = 0; i < numberOfColumns; i++) {
+            for (int i = 0; i < row.length; i++) {
                 if(row[i] == null) {
                     continue;
                 }

@@ -29,7 +29,7 @@ import com.googlecode.lanterna.input.KeyType;
  * deselected and the highlighted item will be the selected one instead.
  * @author Martin
  */
-public class RadioBoxList extends AbstractListBox<RadioBoxList> {
+public class RadioBoxList<V> extends AbstractListBox<V, RadioBoxList<V>> {
     private int checkedIndex;
 
     /**
@@ -77,7 +77,7 @@ public class RadioBoxList extends AbstractListBox<RadioBoxList> {
      * @return {@code true} if the supplied object is what's currently selected in the list box,
      * {@code false} otherwise. Returns null if the supplied object is not an item in the list box.
      */
-    public synchronized Boolean isChecked(Object object) {
+    public synchronized Boolean isChecked(V object) {
         if(object == null)
             return null;
 
@@ -104,6 +104,20 @@ public class RadioBoxList extends AbstractListBox<RadioBoxList> {
     }
 
     /**
+     * Sets the currently checked item by the value itself. If null, the selection is cleared. When changing selection,
+     * any previously selected item is deselected.
+     * @param item Item to be checked
+     */
+    public void setCheckedItem(V item) {
+        if(item == null) {
+            checkedIndex = -1;
+        }
+        else {
+            setCheckedItemIndex(indexOf(item));
+        }
+    }
+
+    /**
      * Sets the currently selected item by index. If the index is out of range, it does nothing.
      * @param index Index of the item to be selected
      */
@@ -125,7 +139,7 @@ public class RadioBoxList extends AbstractListBox<RadioBoxList> {
     /**
      * @return The object currently selected, or null if there is no selection
      */
-    public synchronized Object getCheckedItem() {
+    public synchronized V getCheckedItem() {
         if(checkedIndex == -1 || checkedIndex >= getItemCount())
             return null;
 
@@ -147,7 +161,7 @@ public class RadioBoxList extends AbstractListBox<RadioBoxList> {
         }
 
         @Override
-        protected String getLabel(AbstractListBox<?> listBox, int index, Object item) {
+        protected String getLabel(AbstractListBox<?, ?> listBox, int index, Object item) {
             String check = " ";
             if(((RadioBoxList)listBox).checkedIndex == index)
                 check = "o";

@@ -32,6 +32,10 @@ public class CheckBox extends AbstractInteractableComponent<CheckBox> {
     private String label;
     private boolean checked;
 
+    public CheckBox() {
+        this("");
+    }
+
     public CheckBox(String label) {
         if(label == null) {
             throw new IllegalArgumentException("Cannot create a CheckBox with null label");

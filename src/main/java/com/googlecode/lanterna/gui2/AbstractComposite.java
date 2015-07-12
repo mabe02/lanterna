@@ -91,14 +91,6 @@ public abstract class AbstractComposite<T extends Container> extends AbstractCom
     }
 
     @Override
-    public boolean isStructureInvalid() {
-        if(component instanceof Container) {
-            return ((Container)component).isStructureInvalid();
-        }
-        return false;
-    }
-
-    @Override
     public Interactable nextFocus(Interactable fromThis) {
         if(fromThis == null && getComponent() instanceof Interactable) {
             return (Interactable)getComponent();
