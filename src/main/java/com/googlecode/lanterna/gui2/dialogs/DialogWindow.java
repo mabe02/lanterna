@@ -7,7 +7,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Created by martin on 05/06/15.
+ * Thin layer on top of the BasicWindow class that automatically sets properties and hints to the window to make it
+ * act more like a modal dialog window
  */
 public abstract class DialogWindow extends BasicWindow {
 
