@@ -1,6 +1,6 @@
 package com.googlecode.lanterna.gui2.dialogs;
 
-import com.googlecode.lanterna.gui2.BasicWindow;
+import com.googlecode.lanterna.gui2.*;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -12,15 +12,23 @@ import java.util.Set;
  */
 public abstract class DialogWindow extends BasicWindow {
 
-    private static final Set<Hint> GLOBAL_DiALOG_HINTS =
+    private static final Set<Hint> GLOBAL_DIALOG_HINTS =
             Collections.unmodifiableSet(new HashSet<Hint>(Collections.singletonList(Hint.MODAL)));
 
     protected DialogWindow(String title) {
         super(title);
     }
 
+    public Object showDialog(WindowBasedTextGUI textGUI) {
+        textGUI.addWindow(this);
+
+        //Wait for the window to close, in case the window manager doesn't honor the MODAL hint
+        waitUntilClosed();
+        return null;
+    }
+
     @Override
     public Set<Hint> getHints() {
-        return GLOBAL_DiALOG_HINTS;
+        return GLOBAL_DIALOG_HINTS;
     }
 }

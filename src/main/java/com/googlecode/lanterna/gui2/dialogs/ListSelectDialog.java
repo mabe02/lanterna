@@ -1,5 +1,6 @@
 package com.googlecode.lanterna.gui2.dialogs;
 
+import com.googlecode.lanterna.CJKUtils;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 
@@ -81,20 +82,31 @@ public class ListSelectDialog<T> extends DialogWindow {
         close();
     }
 
+    @Override
     public T showDialog(WindowBasedTextGUI textGUI) {
         result = null;
-        textGUI.addWindow(this);
-
-        //Wait for the window to close, in case the window manager doesn't honor the MODAL hint
-        waitUntilClosed();
-
+        super.showDialog(textGUI);
         return result;
     }
 
     public static <T> T showDialog(WindowBasedTextGUI textGUI, String title, String description, T... items) {
+        return showDialog(textGUI, title, description, null, items);
+    }
+
+    public static <T> T showDialog(WindowBasedTextGUI textGUI, String title, String description, int listBoxHeight, T... items) {
+        int width = 0;
+        for(T item: items) {
+            width = Math.max(width, CJKUtils.getTrueWidth(item.toString()));
+        }
+        width += 2;
+        return showDialog(textGUI, title, description, new TerminalSize(width, listBoxHeight), items);
+    }
+
+    public static <T> T showDialog(WindowBasedTextGUI textGUI, String title, String description, TerminalSize listBoxSize, T... items) {
         ListSelectDialog<T> listSelectDialog = new ListSelectDialogBuilder<T>()
                 .setTitle(title)
                 .setDescription(description)
+                .setListBoxSize(listBoxSize)
                 .addListItems(items)
                 .build();
         return listSelectDialog.showDialog(textGUI);

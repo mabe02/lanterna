@@ -75,13 +75,6 @@ public class ActionListDialog extends DialogWindow {
         close();
     }
 
-    public void showDialog(WindowBasedTextGUI textGUI) {
-        textGUI.addWindow(this);
-
-        //Wait for the window to close, in case the window manager doesn't honor the MODAL hint
-        waitUntilClosed();
-    }
-
     public static void showDialog(WindowBasedTextGUI textGUI, String title, String description, Runnable... items) {
         ActionListDialog actionListDialog = new ActionListDialogBuilder()
                 .setTitle(title)
