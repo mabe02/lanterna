@@ -19,8 +19,6 @@ public class Table extends AbstractComponent<Table> implements Container {
     }
 
     private final TableModel tableModel;
-    private boolean structureInvalid;
-
     private TableCellBorderStyle cellBorderStyle;
     private TextColor columnHeaderForegroundColor;
     private TextColor columnHeaderBackgroundColor;
@@ -31,7 +29,6 @@ public class Table extends AbstractComponent<Table> implements Container {
             throw new IllegalArgumentException("Table needs at least one column");
         }
         this.tableModel = new TableModel(columnLabels);
-        this.structureInvalid = true;
 
         this.cellBorderStyle = TableCellBorderStyle.EmptySpace;
         this.columnHeaderForegroundColor = null;
@@ -197,12 +194,6 @@ public class Table extends AbstractComponent<Table> implements Container {
     }
 
     @Override
-    protected void invalidate() {
-        super.invalidate();
-        structureInvalid = true;
-    }
-
-    @Override
     public Interactable nextFocus(Interactable fromThis) {
         boolean chooseNextAvailable = (fromThis == null);
 
@@ -297,11 +288,6 @@ public class Table extends AbstractComponent<Table> implements Container {
                 interactableLookupMap.add((Interactable)component);
             }
         }
-    }
-
-    @Override
-    public boolean isStructureInvalid() {
-        return structureInvalid;
     }
 
     public interface TableRenderer extends ComponentRenderer<Table> {

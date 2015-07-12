@@ -122,7 +122,7 @@ public class Panel extends AbstractComponent<Panel> implements Container {
 
             @Override
             public void drawComponent(TextGUIGraphics graphics, Panel component) {
-                if(isStructureInvalid()) {
+                if(isInvalid()) {
                     layout(graphics.getSize());
                 }
                 for(Component child: components) {
@@ -245,21 +245,6 @@ public class Panel extends AbstractComponent<Panel> implements Container {
                 interactableLookupMap.add((Interactable)component);
             }
         }
-    }
-
-    @Override
-    public boolean isStructureInvalid() {
-        if(needsReLayout || layoutManager.hasChanged()) {
-            return true;
-        }
-        for(Component component: components) {
-            if(component instanceof Container) {
-                if(((Container)component).isStructureInvalid()) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     private void invalidateStructure() {
