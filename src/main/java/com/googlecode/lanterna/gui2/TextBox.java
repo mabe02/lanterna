@@ -27,7 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by martin on 05/10/14.
+ * This component keeps a text content that is editable by the user. A TextBox can be single line or multiline and lets
+ * the user navigate the cursor in the text area by using the arrow keys.
  */
 public class TextBox extends AbstractInteractableComponent<TextBox> {
 
@@ -62,7 +63,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
     }
 
     public TextBox(TerminalSize preferredSize) {
-        this(preferredSize, (preferredSize != null && preferredSize.getRows() >= 1) ? Style.MULTI_LINE : Style.SINGLE_LINE);
+        this(preferredSize, (preferredSize != null && preferredSize.getRows() > 1) ? Style.MULTI_LINE : Style.SINGLE_LINE);
     }
 
     public TextBox(TerminalSize preferredSize, Style style) {
@@ -486,7 +487,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
                 if(line.length() > viewTopLeft.getColumn()) {
                     String string = line.substring(viewTopLeft.getColumn());
                     if(component.mask != null) {
-                        string = string.replaceAll(".", component.mask + "");
+                        string = new String(new char[string.length()]).replace('\0', component.mask);
                     }
                     graphics.putString(0, row, string);
                 }
