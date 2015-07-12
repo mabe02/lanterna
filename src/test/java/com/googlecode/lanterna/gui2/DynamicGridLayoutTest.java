@@ -2,13 +2,12 @@ package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.gui2.dialogs.ListSelectDialog;
 import com.googlecode.lanterna.gui2.dialogs.TextInputDialog;
 import com.googlecode.lanterna.gui2.dialogs.TextInputDialogBuilder;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.math.BigInteger;
 import java.util.Random;
 import java.util.regex.Pattern;
 
@@ -43,31 +42,16 @@ public class DynamicGridLayoutTest extends TestBase {
 
         Panel controlPanel = new Panel();
         controlPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
+        controlPanel.addComponent(new Button("Add Component", new Runnable() {
+            @Override
+            public void run() {
+                onAddComponent(textGUI, gridPanel);
+            }
+        }));
         controlPanel.addComponent(new Button("Reset Grid", new Runnable() {
             @Override
             public void run() {
-                String columns = new TextInputDialogBuilder()
-                        .setTitle("Reset Grid")
-                        .setDescription("Reset grid to how many columns?")
-                        .setInitialContent("4")
-                        .setValidationPattern(Pattern.compile("[0-9]+"), "Not a number")
-                        .build()
-                        .showDialog(textGUI);
-                if(columns == null) {
-                    return;
-                }
-                String prepopulate = new TextInputDialogBuilder()
-                        .setTitle("Reset Grid")
-                        .setDescription("Pre-populate grid with how many dummy components?")
-                        .setInitialContent(columns)
-                        .setValidationPattern(Pattern.compile("[0-9]+"), "Not a number")
-                        .build()
-                        .showDialog(textGUI);
-                gridPanel.removeAllComponents();
-                gridPanel.setLayoutManager(newGridLayout(Integer.parseInt(columns)));
-                for(int i = 0; i < Integer.parseInt(prepopulate); i++) {
-                    gridPanel.addComponent(new EmptySpace(getRandomColor(), new TerminalSize(4, 1)));
-                }
+                onResetGrid(textGUI, gridPanel);
             }
         }));
         controlPanel.addComponent(new Button("Exit", new Runnable() {
@@ -88,6 +72,60 @@ public class DynamicGridLayoutTest extends TestBase {
         textGUI.addWindow(window);
     }
 
+    private void onAddComponent(WindowBasedTextGUI textGUI, Panel gridPanel) {
+        SelectableComponentType componentType = ListSelectDialog.showDialog(
+                textGUI,
+                "Add Component",
+                "Select component to add",
+                SelectableComponentType.values());
+        if(componentType == null) {
+            return;
+        }
+        Component component = null;
+        switch(componentType) {
+            case Block:
+            case TextBox:
+                String sizeString = new TextInputDialogBuilder()
+                        .setInitialContent(componentType == SelectableComponentType.Block ? "4x1" : "16x1")
+                        .setTitle("Add " + componentType)
+                        .setDescription("Enter size of " + componentType + " (<columns>x<rows>)")
+                        .setValidationPattern(Pattern.compile("[0-9]+x[0-9]+"), "Invalid format, please use <columns>x<rows>")
+                        .build()
+                        .showDialog(textGUI);
+                if(sizeString == null) {
+                    return;
+                }
+                TerminalSize size = new TerminalSize(Integer.parseInt(sizeString.split("x")[0]), Integer.parseInt(sizeString.split("x")[1]));
+                component = componentType == SelectableComponentType.Block ? new EmptySpace(getRandomColor(), size) : new TextBox(size);
+                break;
+
+            case Label:
+                String text = TextInputDialog.showDialog(textGUI, "Add " + componentType, "Enter the text of the new Label", "Label");
+                component = new Label(text);
+                break;
+        }
+        if(component != null) {
+            gridPanel.addComponent(component);
+        }
+    }
+
+    private void onResetGrid(WindowBasedTextGUI textGUI, Panel gridPanel) {
+        BigInteger columns = TextInputDialog.showNumberDialog(textGUI, "Reset Grid", "Reset grid to how many columns?", "4");
+        if(columns == null) {
+            return;
+        }
+        BigInteger prepopulate = TextInputDialog.showNumberDialog(
+                textGUI,
+                "Reset Grid",
+                "Pre-populate grid with how many dummy components?",
+                columns.toString());
+        gridPanel.removeAllComponents();
+        gridPanel.setLayoutManager(newGridLayout(columns.intValue()));
+        for(int i = 0; i < prepopulate.intValue(); i++) {
+            gridPanel.addComponent(new EmptySpace(getRandomColor(), new TerminalSize(4, 1)));
+        }
+    }
+
     private TextColor getRandomColor() {
         return GOOD_COLORS[RANDOM.nextInt(GOOD_COLORS.length)];
     }
@@ -98,5 +136,11 @@ public class DynamicGridLayoutTest extends TestBase {
         gridLayout.setVerticalSpacing(1);
         gridLayout.setHorizontalSpacing(1);
         return gridLayout;
+    }
+
+    private enum SelectableComponentType {
+        Block,
+        Label,
+        TextBox,
     }
 }
