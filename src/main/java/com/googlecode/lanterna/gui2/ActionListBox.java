@@ -26,7 +26,7 @@ import com.googlecode.lanterna.input.KeyType;
 /**
  * Created by martin on 04/10/14.
  */
-public class ActionListBox extends AbstractListBox<ActionListBox> {
+public class ActionListBox extends AbstractListBox<Runnable, ActionListBox> {
 
     public ActionListBox() {
         this(null);
@@ -37,10 +37,7 @@ public class ActionListBox extends AbstractListBox<ActionListBox> {
     }
 
     @Override
-    public void addItem(Object object) {
-        if(!(object instanceof Runnable)) {
-            throw new IllegalArgumentException("Can only add objects implementing Runnable to ActionListBox, got " + object);
-        }
+    public void addItem(Runnable object) {
         super.addItem(object);
     }
 
