@@ -221,27 +221,16 @@ public class GridLayout implements LayoutManager {
         Component[][] table = buildTable(components);
         table = eliminateUnusedRowsAndColumns(table);
 
-        for(int row = 0; row < table.length; row++) {
-            int rowPreferredHeight = 0;
-            int rowPreferredWidth = 0;
-            for(int column = 0; column < table[row].length; column++) {
-                Component component = table[row][column];
-                if(component == null ||
-                        (row > 0 && table[row - 1][column] == component) ||
-                        (column > 0 && table[row][column - 1] == component)) {
-                    //We skip these cases, where component is null, or it's a spanned component from an earlier iteration
-                    //noinspection UnnecessaryContinue
-                    continue;
-                }
-                else {
-                    TerminalSize componentPreferredSize = component.getPreferredSize();
-                    rowPreferredHeight = Math.max(rowPreferredHeight, componentPreferredSize.getRows());
-                    rowPreferredWidth += componentPreferredSize.getColumns();
-                }
-            }
-            preferredSize = preferredSize.withColumns(Math.max(preferredSize.getColumns(), rowPreferredWidth));
-            preferredSize = preferredSize.withRelativeRows(rowPreferredHeight);
+        //Figure out each column first, this can be done independently of the row heights
+        int preferredWidth = 0;
+        int preferredHeight = 0;
+        for(int width: getPreferredColumnWidths(table)) {
+            preferredWidth += width;
         }
+        for(int height: getPreferredRowHeights(table)) {
+            preferredHeight += height;
+        }
+        preferredSize = preferredSize.withRelative(preferredWidth, preferredHeight);
         preferredSize = preferredSize.withRelativeColumns(leftMarginSize + rightMarginSize + (table[0].length - 1) * horizontalSpacing);
         preferredSize = preferredSize.withRelativeRows(topMarginSize + bottomMarginSize + (table.length - 1) * verticalSpacing);
         return preferredSize;
