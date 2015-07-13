@@ -34,7 +34,7 @@ import java.util.List;
 public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extends AbstractInteractableComponent<T> {
     private final List<V> items;
     private int selectedIndex;
-    private ListItemRenderer listItemRenderer;
+    private ListItemRenderer<V,T> listItemRenderer;
 
     protected AbstractListBox() {
         this(null);
@@ -52,20 +52,21 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
         return new DefaultListBoxRenderer<V, T>();
     }
     
-    protected ListItemRenderer createDefaultListItemRenderer() {
-        return new ListItemRenderer();
+    protected ListItemRenderer<V,T> createDefaultListItemRenderer() {
+        return new ListItemRenderer<V,T>();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected ListBoxRenderer<V, T> getRenderer() {
         return (ListBoxRenderer<V, T>)super.getRenderer();
     }
     
-    public ListItemRenderer getListItemRenderer() {
+    public ListItemRenderer<V,T> getListItemRenderer() {
         return listItemRenderer;
     }
 
-    public synchronized void setListItemRenderer(ListItemRenderer listItemRenderer) {
+    public synchronized void setListItemRenderer(ListItemRenderer<V,T> listItemRenderer) {
         if(listItemRenderer == null) {
             listItemRenderer = createDefaultListItemRenderer();
             if(listItemRenderer == null) {
@@ -242,7 +243,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
         public TerminalSize getPreferredSize(T listBox) {
             int maxWidth = 5;   //Set it to something...
             int index = 0;
-            for (Object item : listBox.getItems()) {
+            for (V item : listBox.getItems()) {
                 String itemString = listBox.getListItemRenderer().getLabel(listBox, index++, item);
                 if (itemString.length() > maxWidth) {
                     maxWidth = itemString.length();
@@ -258,7 +259,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
             int componentWidth = graphics.getSize().getColumns();
             int selectedIndex = listBox.getSelectedIndex();
             List<V> items = listBox.getItems();
-            ListItemRenderer listItemRenderer = listBox.getListItemRenderer();
+            ListItemRenderer<V,T> listItemRenderer = listBox.getListItemRenderer();
             pageSize = componentHeight;
 
             if(selectedIndex != -1) {
@@ -314,16 +315,16 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
         }
     }
 
-    public static class ListItemRenderer {
+    public static class ListItemRenderer<V, T extends AbstractListBox<V, T>> {
         protected int getHotSpotPositionOnLine(int selectedIndex) {
             return 0;
         }
 
-        protected String getLabel(AbstractListBox<?, ?> listBox, int index, Object item) {
+        protected String getLabel(T listBox, int index, V item) {
             return item != null ? item.toString() : "<null>";
         }
 
-        protected void drawItem(TextGUIGraphics graphics, AbstractListBox<?, ?> listBox, int index, Object item, boolean selected, boolean focused) {
+        protected void drawItem(TextGUIGraphics graphics, T listBox, int index, V item, boolean selected, boolean focused) {
             if(selected && focused) {
                 graphics.applyThemeStyle(graphics.getThemeDefinition(AbstractListBox.class).getSelected());
             }

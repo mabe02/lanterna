@@ -41,8 +41,8 @@ public class CheckBoxList<V> extends AbstractListBox<V, CheckBoxList<V>> {
     }
 
     @Override
-    protected ListItemRenderer createDefaultListItemRenderer() {
-        return new CheckBoxListItemRenderer();
+    protected ListItemRenderer<V,CheckBoxList<V>> createDefaultListItemRenderer() {
+        return new CheckBoxListItemRenderer<V>();
     }
 
     @Override
@@ -91,16 +91,16 @@ public class CheckBoxList<V> extends AbstractListBox<V, CheckBoxList<V>> {
         return super.handleKeyStroke(keyStroke);
     }
 
-    public static class CheckBoxListItemRenderer extends ListItemRenderer {
+    public static class CheckBoxListItemRenderer<V> extends ListItemRenderer<V,CheckBoxList<V>> {
         @Override
         protected int getHotSpotPositionOnLine(int selectedIndex) {
             return 1;
         }
 
         @Override
-        protected String getLabel(AbstractListBox<?, ?> listBox, int index, Object item) {
+        protected String getLabel(CheckBoxList<V> listBox, int index, V item) {
             String check = " ";
-            List<Boolean> itemStatus = ((CheckBoxList) listBox).itemStatus;
+            List<Boolean> itemStatus = listBox.itemStatus;
             if(itemStatus.get(index))
                 check = "x";
 

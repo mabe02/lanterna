@@ -134,4 +134,9 @@ public class ScreenBuffer implements TextImage {
     public void scrollLines(int firstLine, int lastLine, int distance) {
         backend.scrollLines(firstLine, lastLine, distance);
     }
+    
+    @Override
+    public String toString() {
+        return backend.toString();
+    }
 }
