@@ -230,4 +230,17 @@ public class BasicTextImage implements TextImage {
             }
         };
     }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(size.getRows()*(size.getColumns()+1)+50);
+        sb.append('{').append(size.getColumns()).append('x').append(size.getRows()).append('}').append('\n');
+        for (TextCharacter[] line : buffer) {
+            for (TextCharacter tc : line) {
+                sb.append(tc.getCharacter());
+            }
+            sb.append('\n');
+        }
+        return sb.toString();
+    }
 }

@@ -335,6 +335,8 @@ public class GridLayout implements LayoutManager {
                         case FILL:
                             size = size.withColumns(availableHorizontalSpace);
                             break;
+                        default:
+                            break;
                     }
                     switch (layoutData.verticalAlignment) {
                         case CENTER:
@@ -345,6 +347,8 @@ public class GridLayout implements LayoutManager {
                             break;
                         case FILL:
                             size = size.withRows(availableVerticalSpace);
+                            break;
+                        default:
                             break;
                     }
 

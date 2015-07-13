@@ -245,4 +245,9 @@ public abstract class AbstractScreen implements Screen {
         }
         return buffer.getCharacterAt(column, row);
     }
+    
+    @Override
+    public String toString() {
+        return getBackBuffer().toString();
+    }
 }

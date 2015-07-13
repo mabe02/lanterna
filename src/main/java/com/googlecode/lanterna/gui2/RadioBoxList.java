@@ -50,8 +50,8 @@ public class RadioBoxList<V> extends AbstractListBox<V, RadioBoxList<V>> {
     }
 
     @Override
-    protected ListItemRenderer createDefaultListItemRenderer() {
-        return new RadioBoxListItemRenderer();
+    protected ListItemRenderer<V,RadioBoxList<V>> createDefaultListItemRenderer() {
+        return new RadioBoxListItemRenderer<V>();
     }
 
     @Override
@@ -154,16 +154,16 @@ public class RadioBoxList<V> extends AbstractListBox<V, RadioBoxList<V>> {
         invalidate();
     }
 
-    public static class RadioBoxListItemRenderer extends ListItemRenderer {
+    public static class RadioBoxListItemRenderer<V> extends ListItemRenderer<V,RadioBoxList<V>> {
         @Override
         protected int getHotSpotPositionOnLine(int selectedIndex) {
             return 1;
         }
 
         @Override
-        protected String getLabel(AbstractListBox<?, ?> listBox, int index, Object item) {
+        protected String getLabel(RadioBoxList<V> listBox, int index, V item) {
             String check = " ";
-            if(((RadioBoxList)listBox).checkedIndex == index)
+            if(listBox.checkedIndex == index)
                 check = "o";
 
             String text = (item != null ? item : "<null>").toString();
