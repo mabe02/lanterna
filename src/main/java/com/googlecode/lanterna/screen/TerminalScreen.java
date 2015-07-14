@@ -157,9 +157,9 @@ public class TerminalScreen extends AbstractScreen {
 
     private void useScrollHint() throws IOException {
         if (scrollHint == null) { return; }
-        if (scrollHint == ScrollHint.INVALID) { return; }
 
         try {
+            if (scrollHint == ScrollHint.INVALID) { return; }
             Terminal term = getTerminal();
             if (term instanceof Scrollable) {
                 // just try and see if it cares:
