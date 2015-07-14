@@ -37,4 +37,7 @@ public interface IOSafeExtendedTerminal extends IOSafeTerminal,ExtendedTerminal 
 
     @Override
     void setMouseClicksCapturingEnabled(boolean enable);
+
+    @Override
+    void scrollLines(int firstLine, int lastLine, int distance);
 }

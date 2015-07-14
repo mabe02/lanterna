@@ -295,4 +295,33 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
     void saveCursorPosition() throws IOException {
         writeCSISequenceToTerminal("s".getBytes());
     }
+
+    @Override
+    public void scrollLines(int firstLine, int lastLine, int distance) throws IOException {
+        final String CSI = "\033[";
+
+        // some sanity checks:
+        if (distance == 0) { return; }
+        if (firstLine < 0) { firstLine = 0; }
+        if (lastLine < firstLine) { return; }
+        StringBuilder sb = new StringBuilder();
+
+        // define range:
+        sb.append(CSI).append(firstLine+1)
+          .append(';').append(lastLine+1).append('r');
+
+        // do scroll:
+        sb.append(CSI);
+        if (distance > 0) {
+            sb.append(distance).append('S');
+        } else if (distance < 0) {
+            sb.append(-distance).append('T');
+        }
+
+        // reset range:
+        sb.append(CSI).append('r');
+
+        // off we go!
+        writeToTerminal(sb.toString().getBytes());
+    }
 }
