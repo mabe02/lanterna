@@ -20,9 +20,7 @@ package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TestTerminalFactory;
-import com.googlecode.lanterna.gui2.dialogs.FileDialogBuilder;
-import com.googlecode.lanterna.gui2.dialogs.TextInputDialog;
-import com.googlecode.lanterna.gui2.dialogs.TextInputDialogBuilder;
+import com.googlecode.lanterna.gui2.dialogs.*;
 import com.googlecode.lanterna.screen.Screen;
 
 import java.io.File;
@@ -90,6 +88,34 @@ public class DialogsTextGUIBasicTest {
                             .build()
                             .showDialog(textGUI);
                     System.out.println("Result was: " + result);
+                }
+            });
+            dialogsListBox.addItem("Action list dialog", new Runnable() {
+                @Override
+                public void run() {
+                    new ActionListDialogBuilder()
+                            .setTitle("Action List Dialog")
+                            .setDescription("Choose an item")
+                            .addAction("First Item", new Runnable() {
+                                @Override
+                                public void run() {
+                                    MessageDialog.showMessageDialog(textGUI, "ACtion List Dialog", "You chose First Item", MessageDialogButton.OK);
+                                }
+                            })
+                            .addAction("Second Item", new Runnable() {
+                                @Override
+                                public void run() {
+                                    MessageDialog.showMessageDialog(textGUI, "ACtion List Dialog", "You chose Second Item", MessageDialogButton.OK);
+                                }
+                            })
+                            .addAction("Third Item", new Runnable() {
+                                @Override
+                                public void run() {
+                                    MessageDialog.showMessageDialog(textGUI, "ACtion List Dialog", "You chose Third Item", MessageDialogButton.OK);
+                                }
+                            })
+                            .build()
+                            .showDialog(textGUI);
                 }
             });
 
