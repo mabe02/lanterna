@@ -27,7 +27,7 @@ import java.util.List;
  * Simple layout manager the puts all components on a single line
  */
 public class LinearLayout implements LayoutManager {
-    enum Alignment {
+    public enum Alignment {
         Beginning,
         Center,
         End,
