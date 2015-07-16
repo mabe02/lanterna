@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.lang.ProcessBuilder.Redirect;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -79,7 +78,7 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
     protected String exec(String... cmd) throws IOException {
         ProcessBuilder pb = new ProcessBuilder(cmd);
         if (ttyDev != null) {
-            pb.redirectInput(Redirect.from(ttyDev));
+            tryRedirectInput(pb);
         }
         Process process = pb.start();
         ByteArrayOutputStream stdoutBuffer = new ByteArrayOutputStream();
@@ -98,6 +97,22 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
         }
         reader.close();
         return builder.toString();
+    }
+
+    //This will only work if running Java 7 och higher
+    private void tryRedirectInput(ProcessBuilder processBuilder) {
+        //Here's what we try to do:
+        //processBuilder.redirectInput(ProcessBuilder.Redirect.from(ttyDev));
+        try {
+            Class redirectClass = Class.forName("java.lang.ProcessBuilder$Redirect");
+            Method fromMethod = redirectClass.getMethod("from", File.class);
+            Object source = fromMethod.invoke(null, ttyDev);
+            Method redirectInputMethod = ProcessBuilder.class.getMethod("redirectInput", source.getClass());
+            redirectInputMethod.invoke(processBuilder, source);
+        }
+        catch(Throwable ignore) {
+            //Didn't work
+        }
     }
 
     @Override
