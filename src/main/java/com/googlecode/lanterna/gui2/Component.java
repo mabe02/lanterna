@@ -123,9 +123,10 @@ public interface Component extends TextGUIElement {
     
     /**
      * Translates a position local to the container to the base pane's coordinate space. For a window-based GUI, this 
-     * be a coordinate in the window's coordinate space.
+     * be a coordinate in the window's coordinate space. If the component belongs to no base pane, it will return
+     * {@code null}.
      * @param position Position to translate (relative to the container's top-left corner)
-     * @return Position in base pane space
+     * @return Position in base pane space, or {@code null} if the component is an orphan
      */
     TerminalPosition toBasePane(TerminalPosition position);
 

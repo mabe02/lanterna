@@ -215,7 +215,11 @@ public abstract class AbstractComponent<T extends Component> implements Componen
 
     @Override
     public TerminalPosition toBasePane(TerminalPosition position) {
-        return getParent().toBasePane(getPosition().withRelative(position));
+        Container parent = getParent();
+        if(parent == null) {
+            return null;
+        }
+        return parent.toBasePane(getPosition().withRelative(position));
     }
 
     @Override
