@@ -227,6 +227,11 @@ public abstract class AbstractBasePane implements BasePane {
         }
 
         @Override
+        public TextGUI getTextGUI() {
+            return AbstractBasePane.this.getTextGUI();
+        }
+
+        @Override
         protected ComponentRenderer<Container> createDefaultRenderer() {
             return new ComponentRenderer<Container>() {
                 @Override
