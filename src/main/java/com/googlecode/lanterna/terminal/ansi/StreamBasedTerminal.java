@@ -146,9 +146,7 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
                 if(key == null) {
                     if(System.currentTimeMillis() - startTime > 1000) {  //Wait 1 second for the terminal size report to come, is this reasonable?
                         throw new IOException(
-                                "Timeout while waiting for terminal size report! "
-                                + "Maybe your terminal doesn't support cursor position report, please "
-                                + "consider using a custom size querier");
+                                "Timeout while waiting for terminal size report! Your terminal may have refused to go into cbreak mode.");
                     }
                     try {
                         Thread.sleep(1);
