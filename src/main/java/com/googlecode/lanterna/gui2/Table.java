@@ -146,6 +146,11 @@ public class Table extends AbstractComponent<Table> implements Container {
     }
 
     @Override
+    public boolean containsComponent(Component component) {
+        return component != null && component.hasParent(this);
+    }
+
+    @Override
     public boolean removeComponent(Component component) {
         synchronized (tableModel) {
             Integer[] location = tableModel.lookupMap.get(component);

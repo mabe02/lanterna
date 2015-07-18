@@ -217,6 +217,10 @@ public abstract class AbstractBasePane implements BasePane {
     protected class ContentHolder extends AbstractComposite<Container> {
         @Override
         public void setComponent(Component component) {
+            if(getComponent() == component) {
+                return;
+            }
+            setFocusedInteractable(null);
             super.setComponent(component);
             if(focusedInteractable == null && component instanceof Interactable) {
                 setFocusedInteractable((Interactable)component);

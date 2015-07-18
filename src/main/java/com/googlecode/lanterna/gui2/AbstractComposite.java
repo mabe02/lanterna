@@ -75,6 +75,11 @@ public abstract class AbstractComposite<T extends Container> extends AbstractCom
     }
 
     @Override
+    public boolean containsComponent(Component component) {
+        return component != null && component.hasParent(this);
+    }
+
+    @Override
     public boolean removeComponent(Component component) {
         if(this.component == component) {
             this.component = null;

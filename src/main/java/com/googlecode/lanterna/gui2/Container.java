@@ -40,6 +40,14 @@ public interface Container extends Component {
      * @return Child-components inside of this Container
      */
     Collection<Component> getChildren();
+
+    /**
+     * Returns {@code true} if this container contains the supplied component either directly or indirectly through
+     * intermediate containers.
+     * @param component Component to check if it's part of this container
+     * @return {@code true} if the component is inside this Container, otherwise {@code false}
+     */
+    boolean containsComponent(Component component);
     
     /**
      * Removes the component from the container. This should remove the component from the Container's internal data 

@@ -186,6 +186,21 @@ public abstract class AbstractComponent<T extends Component> implements Componen
     }
 
     @Override
+    public boolean hasParent(Container parent) {
+        if(this.parent == null) {
+            return false;
+        }
+        Container recursiveParent = this.parent;
+        while(recursiveParent != null) {
+            if(recursiveParent == parent) {
+                return true;
+            }
+            recursiveParent = recursiveParent.getParent();
+        }
+        return false;
+    }
+
+    @Override
     public TextGUI getTextGUI() {
         if(parent == null) {
             return null;

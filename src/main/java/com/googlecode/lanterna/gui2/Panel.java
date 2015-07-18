@@ -57,6 +57,11 @@ public class Panel extends AbstractComponent<Panel> implements Container {
     }
 
     @Override
+    public boolean containsComponent(Component component) {
+        return component != null && component.hasParent(this);
+    }
+
+    @Override
     public boolean removeComponent(Component component) {
         if(component == null) {
             throw new IllegalArgumentException("Cannot remove null component");

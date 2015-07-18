@@ -93,6 +93,13 @@ public interface Component extends TextGUIElement {
      * @return Parent container or null
      */
     Container getParent();
+
+    /**
+     * Returns {@code true} if the supplied Container is either the direct or indirect Parent of this component.
+     * @param parent Container to test if it's the parent or grand-parent of this component
+     * @return {@code true} if the container is either the direct or indirect parent of this component, otherwise {@code false}
+     */
+    boolean hasParent(Container parent);
     
     /**
      * Returns the TextGUI that this component is currently part of. If the component hasn't been added to any container
