@@ -26,10 +26,10 @@ import java.util.concurrent.CountDownLatch;
  * Default implementation of TextGUIThread
  * @author Martin
  */
-class SeparateTextGUIThread extends AbstractTextGUIThread {
-    private Status status;
+public class SeparateTextGUIThread extends AbstractTextGUIThread {
+    private volatile Status status;
     private Thread textGUIThread;
-    private CountDownLatch waitLatch;
+    private volatile CountDownLatch waitLatch;
 
     SeparateTextGUIThread(TextGUI textGUI) {
         super(textGUI);
