@@ -230,6 +230,14 @@ public abstract class AbstractBasePane implements BasePane {
             }
         }
 
+        public boolean removeComponent(Component component) {
+            boolean removed = super.removeComponent(component);
+            if (removed) {
+                focusedInteractable = null;
+            }
+            return removed;
+        }
+
         @Override
         public TextGUI getTextGUI() {
             return AbstractBasePane.this.getTextGUI();
