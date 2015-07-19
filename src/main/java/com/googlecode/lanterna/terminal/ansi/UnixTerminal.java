@@ -142,27 +142,27 @@ public class UnixTerminal extends UnixLikeTerminal {
 
     @Override
     protected void sttyKeyEcho(final boolean enable) throws IOException {
-        execSTTY(enable ? "echo" : "-echo");
+        exec(getSTTYCommand(), enable ? "echo" : "-echo");
     }
 
     @Override
     protected void sttyMinimum1CharacterForRead() throws IOException {
-        execSTTY("min", "1");
+        exec(getSTTYCommand(), "min", "1");
     }
 
     @Override
     protected void sttyICanon(final boolean enable) throws IOException {
-        execSTTY(enable ? "icanon" : "-icanon");
+        exec(getSTTYCommand(), enable ? "icanon" : "-icanon");
     }
 
     @Override
     protected String sttySave() throws IOException {
-        return execSTTY("-g").trim();
+        return exec(getSTTYCommand(), "-g").trim();
     }
 
     @Override
     protected void sttyRestore(String tok) throws IOException {
-        execSTTY(tok);
+        exec(getSTTYCommand(), tok);
     }
 
     /*
@@ -187,11 +187,11 @@ public class UnixTerminal extends UnixLikeTerminal {
     */
 
     public void disableSpecialCharacters() throws IOException {
-        execSTTY("intr", "undef");
+        exec(getSTTYCommand(), "intr", "undef");
     }
 
     public void restoreSpecialCharacters() throws IOException {
-        execSTTY("intr", "^C");
+        exec(getSTTYCommand(), "intr", "^C");
     }
 
     @Override
@@ -206,12 +206,4 @@ public class UnixTerminal extends UnixLikeTerminal {
         return "/bin/stty";
     }
 
-    private String execSTTY(String... command) throws IOException {
-        String sttyCommand = getSTTYCommand();
-        for(String part: command) {
-            sttyCommand = sttyCommand + " " + part;
-        }
-        sttyCommand = sttyCommand + " < " + ttyDev.toString();
-        return exec(new String[] { "sh", "-c", sttyCommand});
-    }
 }
