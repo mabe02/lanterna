@@ -87,7 +87,7 @@ public final class DefaultTerminalFactory implements TerminalFactory {
     
     @Override
     public Terminal createTerminal() throws IOException {
-        if (GraphicsEnvironment.isHeadless() || suppressSwingTerminalFrame) {
+        if (GraphicsEnvironment.isHeadless() || suppressSwingTerminalFrame || System.console() != null) {
             if(isOperatingSystemWindows()) {
                 return createCygwinTerminal(outputStream, inputStream, charset);
             }
