@@ -120,6 +120,7 @@ public class UnixTerminal extends UnixLikeTerminal {
         setCBreak(true);
         setEcho(false);
         sttyMinimum1CharacterForRead();
+        disableSpecialCharacters();
         setupShutdownHook();
     }
 
@@ -158,7 +159,7 @@ public class UnixTerminal extends UnixLikeTerminal {
     }
 
     /*
-    //Why did we take these out??
+    //What was the problem with this one? I don't remember... Restoring ctrl+c for now (see below)
     private void restoreEOFCtrlD() throws IOException {
         exec(getShellCommand(), "-c", getSTTYCommand() + " eof ^d < /dev/tty");
     }
@@ -177,6 +178,20 @@ public class UnixTerminal extends UnixLikeTerminal {
         exec(getShellCommand(), "-c", getSTTYCommand() + " susp ^Z < /dev/tty");
     }
     */
+
+    public void disableSpecialCharacters() throws IOException {
+        execSTTY("intr", "undef");
+    }
+
+    public void restoreSpecialCharacters() throws IOException {
+        execSTTY("intr", "^C");
+    }
+
+    @Override
+    protected synchronized void restoreSTTY() throws IOException {
+        super.restoreSTTY();
+        restoreSpecialCharacters();
+    }
 
     protected String getSTTYCommand() {
         return "/bin/stty";
