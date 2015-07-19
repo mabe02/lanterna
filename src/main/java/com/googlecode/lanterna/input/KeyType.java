@@ -66,7 +66,12 @@ public enum KeyType {
     F18,
     F19,
     Unknown,
+
+    //"Virtual" KeyStroke types
     CursorLocation,
+    MouseClickPressed,
+    MouseClickRelease,
+    MouseMove,
     EOF,
     ;
 }

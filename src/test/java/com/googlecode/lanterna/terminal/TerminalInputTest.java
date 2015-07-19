@@ -33,6 +33,15 @@ public class TerminalInputTest {
         final Terminal rawTerminal = new TestTerminalFactory(args).createTerminal();
         rawTerminal.enterPrivateMode();
 
+        for(String arg: args) {
+            if("--mouse-click".equals(arg)) {
+                ((ExtendedTerminal)rawTerminal).setMouseClicksCapturingEnabled(true);
+            }
+            else if("--mouse-move".equals(arg)) {
+                ((ExtendedTerminal)rawTerminal).setMouseMovementCapturingEnabled(true);
+            }
+        }
+
         int currentRow = 0;
         rawTerminal.setCursorPosition(0, 0);
         while(true) {
@@ -58,6 +67,8 @@ public class TerminalInputTest {
             }
         }
 
+        ((ExtendedTerminal)rawTerminal).setMouseMovementCapturingEnabled(false);
+        ((ExtendedTerminal)rawTerminal).setMouseClicksCapturingEnabled(false);
         rawTerminal.exitPrivateMode();
     }
 
