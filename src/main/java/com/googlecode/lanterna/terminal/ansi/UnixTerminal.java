@@ -36,6 +36,7 @@ import com.googlecode.lanterna.TerminalSize;
 public class UnixTerminal extends UnixLikeTerminal {
 
     protected final UnixTerminalSizeQuerier terminalSizeQuerier;
+    private final boolean catchSpecialCharacters;
 
     /**
      * Creates a UnixTerminal with default settings, using System.in and System.out for input/output, using the default
@@ -80,7 +81,7 @@ public class UnixTerminal extends UnixLikeTerminal {
             OutputStream terminalOutput,
             Charset terminalCharset,
             UnixTerminalSizeQuerier customSizeQuerier) throws IOException {
-        this(terminalInput, terminalOutput, terminalCharset, customSizeQuerier, CtrlCBehaviour.TRAP);
+        this(terminalInput, terminalOutput, terminalCharset, customSizeQuerier, CtrlCBehaviour.CTRL_C_KILLS_APPLICATION);
     }
 
     /**
@@ -120,7 +121,13 @@ public class UnixTerminal extends UnixLikeTerminal {
         setCBreak(true);
         setEcho(false);
         sttyMinimum1CharacterForRead();
-        disableSpecialCharacters();
+        if("false".equals(System.getProperty("com.googlecode.lanterna.terminal.UnixTerminal.catchSpecialCharacters", "").trim().toLowerCase())) {
+            catchSpecialCharacters = false;
+        }
+        else {
+            catchSpecialCharacters = true;
+            disableSpecialCharacters();
+        }
         setupShutdownHook();
     }
 
@@ -190,7 +197,9 @@ public class UnixTerminal extends UnixLikeTerminal {
     @Override
     protected synchronized void restoreSTTY() throws IOException {
         super.restoreSTTY();
-        restoreSpecialCharacters();
+        if(catchSpecialCharacters) {
+            restoreSpecialCharacters();
+        }
     }
 
     protected String getSTTYCommand() {
