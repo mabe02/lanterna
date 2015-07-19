@@ -26,6 +26,7 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.screen.VirtualScreen;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -273,6 +274,10 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
             if(Thread.currentThread() == guiThread.getThread()) {
                 try {
                     sleep = !guiThread.processEventsAndUpdate();
+                }
+                catch(EOFException ignore) {
+                    //The GUI has closed so allow exit
+                    break;
                 }
                 catch(IOException e) {
                     throw new RuntimeException("Unexpected IOException while waiting for window to close", e);
