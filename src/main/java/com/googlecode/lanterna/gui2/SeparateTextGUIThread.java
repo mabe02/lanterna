@@ -23,67 +23,52 @@ import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 
 /**
- * Default implementation of TextGUIThread
+ * Default implementation of TextGUIThread, this class runs the GUI event processing on a dedicated thread. The GUI
+ * needs to be explicitly started in order for the event processing loop to begin, so you must call {@code start()}
+ * for this. The GUI thread will stop if {@code stop()} is called, the input stream returns EOF or an exception is
+ * thrown from inside the event handling loop.
  * @author Martin
  */
-public class SeparateTextGUIThread extends AbstractTextGUIThread {
-    private volatile Status status;
-    private Thread textGUIThread;
-    private volatile CountDownLatch waitLatch;
+public class SeparateTextGUIThread extends AbstractTextGUIThread implements AsynchronousTextGUIThread {
+    private volatile State state;
+    private final Thread textGUIThread;
+    private final CountDownLatch waitLatch;
 
     SeparateTextGUIThread(TextGUI textGUI) {
         super(textGUI);
-        this.status = Status.CREATED;
-        this.waitLatch = new CountDownLatch(0);
-        this.textGUIThread = null;
-    }
-
-    /**
-     * This will start the thread responsible for processing the input queue and update the screen.
-     * @throws java.lang.IllegalStateException If the thread is already started
-     */
-    public void start() throws IllegalStateException {
-        if(status == Status.STARTED) {
-            throw new IllegalStateException("TextGUIThread is already started");
-        }
-
-        textGUIThread = new Thread("LanternaGUI") {
+        this.waitLatch = new CountDownLatch(1);
+        this.textGUIThread = new Thread("LanternaGUI") {
             @Override
             public void run() {
                 mainGUILoop();
             }
         };
-        textGUIThread.start();
-        status = Status.STARTED;
-        this.waitLatch = new CountDownLatch(1);
+        state = State.CREATED;
     }
 
-    /**
-     * Calling this will mark the GUI thread to be stopped after all pending events have been processed. It will exit
-     * immediately however, call {@code waitForStop()} to block the current thread until the GUI thread has exited.
-     */
+    @Override
+    public void start() {
+        textGUIThread.start();
+        state = State.STARTED;
+    }
+
+    @Override
     public void stop() {
-        if(status != Status.STARTED) {
+        if(state != State.STARTED) {
             return;
         }
 
-        status = Status.STOPPING;
+        state = State.STOPPING;
     }
 
-    /**
-     * Awaits the GUI thread to reach stopped state
-     * @throws InterruptedException In case this thread was interrupted while waiting for the GUI thread to exit
-     */
+    @Override
     public void waitForStop() throws InterruptedException {
         waitLatch.await();
     }
 
-    /**
-     * Returns the current status of the GUI thread
-     * @return Current status of the GUI thread
-     */
-    public Status getStatus() {
-        return status;
+    @Override
+    public State getState() {
+        return state;
     }
 
     @Override
@@ -93,9 +78,9 @@ public class SeparateTextGUIThread extends AbstractTextGUIThread {
 
     @Override
     public void invokeLater(Runnable runnable) throws IllegalStateException {
-        if(status != Status.STARTED) {
+        if(state != State.STARTED) {
             throw new IllegalStateException("Cannot schedule " + runnable + " for execution on the TextGUIThread " +
-                    "because the thread is in " + status + " state");
+                    "because the thread is in " + state + " state");
         }
         super.invokeLater(runnable);
     }
@@ -112,7 +97,7 @@ public class SeparateTextGUIThread extends AbstractTextGUIThread {
             catch(RuntimeException e) {
                 exceptionHandler.onRuntimeException(e);
             }
-            while(status == Status.STARTED) {
+            while(state == State.STARTED) {
                 try {
                     if (!processEventsAndUpdate()) {
                         try {
@@ -140,20 +125,15 @@ public class SeparateTextGUIThread extends AbstractTextGUIThread {
             }
         }
         finally {
-            status = Status.STOPPED;
+            state = State.STOPPED;
             waitLatch.countDown();
         }
     }
 
 
-    enum Status {
-        CREATED,
-        STARTED,
-        STOPPING,
-        STOPPED,
-        ;
-    }
-
+    /**
+     * Factory class for creating SeparateTextGUIThread objects
+     */
     public static class Factory implements TextGUIThreadFactory {
         @Override
         public TextGUIThread createTextGUIThread(TextGUI textGUI) {

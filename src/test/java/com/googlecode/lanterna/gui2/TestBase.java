@@ -20,7 +20,7 @@ public abstract class TestBase {
 
         try {
             init(textGUI);
-            SeparateTextGUIThread guiThread = (SeparateTextGUIThread)textGUI.getGUIThread();
+            AsynchronousTextGUIThread guiThread = (AsynchronousTextGUIThread)textGUI.getGUIThread();
             guiThread.start();
             guiThread.waitForStop();
         }

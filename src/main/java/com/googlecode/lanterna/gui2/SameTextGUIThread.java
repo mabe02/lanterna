@@ -7,7 +7,7 @@ public class SameTextGUIThread extends AbstractTextGUIThread {
 
     private final Thread guiThread;
 
-    public SameTextGUIThread(TextGUI textGUI) {
+    SameTextGUIThread(TextGUI textGUI) {
         super(textGUI);
         guiThread = Thread.currentThread();
     }
