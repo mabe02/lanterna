@@ -134,31 +134,60 @@ public class UnixTerminal extends UnixLikeTerminal {
 
     @Override
     protected void sttyKeyEcho(final boolean enable) throws IOException {
-        exec(getSTTYCommand(), enable ? "echo" : "-echo");
+        execSTTY(enable ? "echo" : "-echo");
     }
 
     @Override
     protected void sttyMinimum1CharacterForRead() throws IOException {
-        exec(getSTTYCommand(), "min", "1");
+        execSTTY("min", "1");
     }
 
     @Override
     protected void sttyICanon(final boolean enable) throws IOException {
-        exec(getSTTYCommand(), enable ? "icanon" : "-icanon");
+        execSTTY(enable ? "icanon" : "-icanon");
     }
 
     @Override
     protected String sttySave() throws IOException {
-        return exec(getSTTYCommand(), "-g").trim();
+        return execSTTY("-g").trim();
     }
 
     @Override
     protected void sttyRestore(String tok) throws IOException {
-        exec(getSTTYCommand(), tok);
+        execSTTY(tok);
     }
+
+    /*
+    //Why did we take these out??
+    private void restoreEOFCtrlD() throws IOException {
+        exec(getShellCommand(), "-c", getSTTYCommand() + " eof ^d < /dev/tty");
+    }
+
+    private void disableSpecialCharacters() throws IOException {
+        exec(getShellCommand(), "-c", getSTTYCommand() + " intr undef < /dev/tty");
+        exec(getShellCommand(), "-c", getSTTYCommand() + " start undef < /dev/tty");
+        exec(getShellCommand(), "-c", getSTTYCommand() + " stop undef < /dev/tty");
+        exec(getShellCommand(), "-c", getSTTYCommand() + " susp undef < /dev/tty");
+    }
+
+    private void restoreSpecialCharacters() throws IOException {
+        exec(getShellCommand(), "-c", getSTTYCommand() + " intr ^C < /dev/tty");
+        exec(getShellCommand(), "-c", getSTTYCommand() + " start ^Q < /dev/tty");
+        exec(getShellCommand(), "-c", getSTTYCommand() + " stop ^S < /dev/tty");
+        exec(getShellCommand(), "-c", getSTTYCommand() + " susp ^Z < /dev/tty");
+    }
+    */
 
     protected String getSTTYCommand() {
         return "/bin/stty";
     }
 
+    private String execSTTY(String... command) throws IOException {
+        String sttyCommand = getSTTYCommand();
+        for(String part: command) {
+            sttyCommand = sttyCommand + " " + part;
+        }
+        sttyCommand = sttyCommand + " < " + ttyDev.toString();
+        return exec(new String[] { "sh", "-c", sttyCommand});
+    }
 }
