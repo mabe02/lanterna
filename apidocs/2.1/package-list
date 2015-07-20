@@ -1,0 +1,12 @@
+com.googlecode.lanterna
+com.googlecode.lanterna.gui
+com.googlecode.lanterna.gui.component
+com.googlecode.lanterna.gui.dialog
+com.googlecode.lanterna.gui.layout
+com.googlecode.lanterna.gui.listener
+com.googlecode.lanterna.gui.util
+com.googlecode.lanterna.input
+com.googlecode.lanterna.screen
+com.googlecode.lanterna.terminal
+com.googlecode.lanterna.terminal.swing
+com.googlecode.lanterna.terminal.text
