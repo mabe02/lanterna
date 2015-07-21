@@ -36,7 +36,7 @@ import javax.net.ServerSocketFactory;
  * @see <a href="http://en.wikipedia.org/wiki/Telnet">Wikipedia</a>
  */
 @SuppressWarnings("WeakerAccess")
-public class TelnetTerminalServer {
+public class TelnetTerminalServer implements AutoCloseable{
     private final Charset charset;
     private final ServerSocket serverSocket;
 

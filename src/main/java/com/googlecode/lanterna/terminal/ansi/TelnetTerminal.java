@@ -39,7 +39,7 @@ import java.util.List;
  * Also here: http://support.microsoft.com/kb/231866
  * @author martin
  */
-public class TelnetTerminal extends ANSITerminal {
+public class TelnetTerminal extends ANSITerminal implements AutoCloseable {
     
     private final Socket socket;
     private final NegotiationState negotiationState;
