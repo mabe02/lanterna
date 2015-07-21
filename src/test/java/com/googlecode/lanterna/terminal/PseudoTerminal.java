@@ -155,6 +155,8 @@ public class PseudoTerminal {
                                     case Tab:
                                         writeCharacter('\t');
                                         break;
+                                    default:
+                                        break;
                                 }
                                 flush();
                             }
