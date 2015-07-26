@@ -191,7 +191,7 @@ public abstract class AbstractScreen implements Screen {
 
     @Override
     public void refresh() throws IOException {
-        refresh(RefreshType.DELTA);
+        refresh(RefreshType.AUTOMATIC);
     }
 
 

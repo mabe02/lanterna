@@ -127,7 +127,7 @@ public class TerminalScreen extends AbstractScreen {
             fullRedrawHint = false;
         }
         else if(refreshType == RefreshType.AUTOMATIC) {
-            double threshold = getTerminalSize().getRows() * getTerminalSize().getColumns() * 0.25;
+            double threshold = getTerminalSize().getRows() * getTerminalSize().getColumns() * 0.75;
             if(getBackBuffer().isVeryDifferent(getFrontBuffer(), (int) threshold)) {
                 refreshFull();
             }
