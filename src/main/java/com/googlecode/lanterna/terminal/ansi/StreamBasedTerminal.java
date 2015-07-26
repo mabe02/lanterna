@@ -62,16 +62,16 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
     public StreamBasedTerminal(InputStream terminalInput, OutputStream terminalOutput, Charset terminalCharset) {
         this.terminalInput = terminalInput;
         this.terminalOutput = terminalOutput;
-        this.inputDecoder = new InputDecoder(new InputStreamReader(terminalInput, terminalCharset));
-        this.keyQueue = new LinkedList<KeyStroke>();
-        this.readMutex = new Object();
-        //noinspection ConstantConditions
         if(terminalCharset == null) {
             this.terminalCharset = Charset.defaultCharset();
         }
         else {
             this.terminalCharset = terminalCharset;
         }
+        this.inputDecoder = new InputDecoder(new InputStreamReader(this.terminalInput, this.terminalCharset));
+        this.keyQueue = new LinkedList<KeyStroke>();
+        this.readMutex = new Object();
+        //noinspection ConstantConditions
     }
 
     /**
@@ -209,6 +209,10 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
         synchronized(terminalOutput) {
             terminalOutput.flush();
         }
+    }
+
+    protected Charset getCharset() {
+        return terminalCharset;
     }
 
     @SuppressWarnings("WeakerAccess")
