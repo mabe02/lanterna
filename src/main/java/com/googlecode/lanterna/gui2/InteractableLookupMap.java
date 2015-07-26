@@ -35,6 +35,9 @@ public class InteractableLookupMap {
     public InteractableLookupMap(TerminalSize size) {
         lookupMap = new int[size.getRows()][size.getColumns()];
         interactables = new ArrayList<Interactable>();
+        for (int[] aLookupMap : lookupMap) {
+            Arrays.fill(aLookupMap, -1);
+        }
     }
 
     public void reset() {

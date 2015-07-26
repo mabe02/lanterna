@@ -162,6 +162,14 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
             @Override
             public void run() {
                 try {
+                    if (isInPrivateMode()) {
+                        exitPrivateMode();
+                    }
+                }
+                catch(IOException ignored) {}
+                catch(IllegalStateException ignored) {} // still possible!
+
+                try {
                     restoreSTTY();
                 }
                 catch(IOException ignored) {}

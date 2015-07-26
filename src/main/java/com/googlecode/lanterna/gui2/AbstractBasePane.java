@@ -58,8 +58,9 @@ public abstract class AbstractBasePane implements BasePane {
 
         if(!interactableLookupMap.getSize().equals(graphics.getSize())) {
             interactableLookupMap = new InteractableLookupMap(graphics.getSize());
+        } else {
+            interactableLookupMap.reset();
         }
-        interactableLookupMap.reset();
         contentHolder.updateLookupMap(interactableLookupMap);
         //interactableLookupMap.debug();
         invalid = false;
