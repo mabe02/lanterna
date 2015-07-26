@@ -1,5 +1,7 @@
 package com.googlecode.lanterna.input;
 
+import com.googlecode.lanterna.TerminalPosition;
+
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -13,7 +15,33 @@ public class MouseCharacterPattern implements CharacterPattern {
 
     @Override
     public KeyStroke getResult(List<Character> matching) {
-        return new KeyStroke(KeyType.MouseClickPressed);
+        MouseActionType actionType = null;
+        int button = 0;
+        int lowerTwoBitsAndMouseWheel = matching.get(3).charValue() & 0x43;
+        switch(lowerTwoBitsAndMouseWheel) {
+            case(0):
+            case(1):
+            case(2):
+                actionType = MouseActionType.CLICK_DOWN;
+                button = lowerTwoBitsAndMouseWheel + 1;
+                break;
+            case(3):
+                actionType = MouseActionType.CLICK_RELEASE;
+                button = 0;
+                break;
+            case(64):
+                actionType = MouseActionType.SCROLL_UP;
+                button = 4;
+                break;
+            case(65):
+                actionType = MouseActionType.SCROLL_DOWN;
+                button = 5;
+                break;
+        }
+        int x = matching.get(4).charValue() - 33;
+        int y = matching.get(5).charValue() - 33;
+
+        return new MouseAction(actionType, button, new TerminalPosition(x, y));
     }
 
     @Override

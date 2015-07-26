@@ -35,10 +35,13 @@ public class TerminalInputTest {
 
         for(String arg: args) {
             if("--mouse-click".equals(arg)) {
-                ((ExtendedTerminal)rawTerminal).setMouseClicksCapturingEnabled(true);
+                ((ExtendedTerminal)rawTerminal).setMouseCaptureMode(MouseCaptureMode.CLICK_RELEASE);
+            }
+            else if("--mouse-drag".equals(arg)) {
+                ((ExtendedTerminal)rawTerminal).setMouseCaptureMode(MouseCaptureMode.CLICK_RELEASE_DRAG);
             }
             else if("--mouse-move".equals(arg)) {
-                ((ExtendedTerminal)rawTerminal).setMouseMovementCapturingEnabled(true);
+                ((ExtendedTerminal)rawTerminal).setMouseCaptureMode(MouseCaptureMode.CLICK_RELEASE_DRAG_MOVE);
             }
         }
 
@@ -67,8 +70,7 @@ public class TerminalInputTest {
             }
         }
 
-        ((ExtendedTerminal)rawTerminal).setMouseMovementCapturingEnabled(false);
-        ((ExtendedTerminal)rawTerminal).setMouseClicksCapturingEnabled(false);
+        ((ExtendedTerminal)rawTerminal).setMouseCaptureMode(null);
         rawTerminal.exitPrivateMode();
     }
 

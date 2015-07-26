@@ -69,9 +69,7 @@ public enum KeyType {
 
     //"Virtual" KeyStroke types
     CursorLocation,
-    MouseClickPressed,
-    MouseClickRelease,
-    MouseMove,
+    MouseEvent,
     EOF,
     ;
 }

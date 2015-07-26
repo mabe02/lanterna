@@ -378,19 +378,9 @@ public class IOSafeTerminalAdapter implements IOSafeTerminal {
         }
 
         @Override
-        public void setMouseMovementCapturingEnabled(boolean enable) {
+        public void setMouseCaptureMode(MouseCaptureMode mouseCaptureMode) {
             try {
-                backend.setMouseMovementCapturingEnabled(enable);
-            }
-            catch(IOException e) {
-                exceptionHandler.onException(e);
-            }
-        }
-
-        @Override
-        public void setMouseClicksCapturingEnabled(boolean enable) {
-            try {
-                backend.setMouseClicksCapturingEnabled(enable);
+                backend.setMouseCaptureMode(mouseCaptureMode);
             }
             catch(IOException e) {
                 exceptionHandler.onException(e);

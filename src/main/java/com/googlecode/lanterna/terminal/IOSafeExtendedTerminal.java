@@ -1,5 +1,7 @@
 package com.googlecode.lanterna.terminal;
 
+import java.io.IOException;
+
 /**
  * Interface extending ExtendedTerminal that removes the IOException throw clause.
  * 
@@ -33,10 +35,7 @@ public interface IOSafeExtendedTerminal extends IOSafeTerminal,ExtendedTerminal 
     void unmaximize();
 
     @Override
-    void setMouseMovementCapturingEnabled(boolean enabled);
-
-    @Override
-    void setMouseClicksCapturingEnabled(boolean enable);
+    void setMouseCaptureMode(MouseCaptureMode mouseCaptureMode);
 
     @Override
     void scrollLines(int firstLine, int lastLine, int distance);

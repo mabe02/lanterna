@@ -8,6 +8,9 @@ import com.googlecode.lanterna.graphics.Scrollable;
  * This class extends the normal Terminal interface and adds a few more methods that are considered rare and shouldn't
  * be encouraged to be used. Some of these may move into Terminal if it turns out that they are indeed well-supported.
  * Most of these extensions are picked up from here: http://invisible-island.net/xterm/ctlseqs/ctlseqs.html
+ *
+ * This class is <b>not</b> considered stable and may change within releases. Do not depend on methods in this interface
+ * unless you are ok with occasionally having to fix broken code after minor library upgrades.
  * @author Martin
  */
 public interface ExtendedTerminal extends Terminal, Scrollable {
@@ -65,16 +68,13 @@ public interface ExtendedTerminal extends Terminal, Scrollable {
     void unmaximize() throws IOException;
 
     /**
-     * If set to true, will listen for mouse motions and add them to the input queue
-     * @param enabled Whether to enable mouse motion capturing or not
+     * Enabled or disables capturing of mouse event. This is not recommended to use as most users are not familiar with
+     * the fact that terminal emulators allow capturing mouse input. You can decide which events you want to capture but
+     * be careful since different terminal emulators will support these modes differently. Mouse capture mode will be
+     * automatically disabled when the application exits through a shutdown hook.
+     *
+     * @param mouseCaptureMode Which mouse events to capture, pass in {@code null} to disable mouse input capturing
      * @throws IOException If the was an underlying I/O error
      */
-    void setMouseMovementCapturingEnabled(boolean enabled) throws IOException;
-
-    /**
-     * If set to true, will listen for mouse clicks and add those to the input queue
-     * @param enable Whether to enable mouse click capturing or not
-     * @throws IOException If the was an underlying I/O error
-     */
-    void setMouseClicksCapturingEnabled(boolean enable) throws IOException;
+    void setMouseCaptureMode(MouseCaptureMode mouseCaptureMode) throws IOException;
 }

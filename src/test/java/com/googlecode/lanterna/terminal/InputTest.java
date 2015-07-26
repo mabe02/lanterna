@@ -18,17 +18,132 @@
  */
 package com.googlecode.lanterna.terminal;
 
-import java.io.IOException;
+import java.io.*;
 
 /**
  * Use this program to see what the terminal emulator is sending through stdin; byte for byte
  */
 public class InputTest {
     public static void main(String[] args) throws IOException {
-        //noinspection InfiniteLoopStatement
-        while(true) {
-            int inByte = System.in.read();
-            System.out.println(inByte);
+        boolean useReader = false;
+        for(String parameter: args) {
+            if("--mouse-click".equals(parameter)) {
+                //writeCSISequenceToTerminal((byte) '?', (byte) '1', (byte) '0', (byte) '0', (byte) '0', (byte) 'h');
+                //writeCSISequenceToTerminal((byte) '?', (byte) '1', (byte) '0', (byte) '0', (byte) '5', (byte) 'h');
+                writeCSISequenceToTerminal((byte) '?', (byte) '9', (byte) 'h');
+                Runtime.getRuntime().addShutdownHook(new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            //writeCSISequenceToTerminal((byte) '?', (byte) '1', (byte) '0', (byte) '0', (byte) '0', (byte) 'l');
+                            writeCSISequenceToTerminal((byte) '?', (byte) '9', (byte) 'l');
+                        }
+                        catch(IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+            else if("--mouse-move".equals(parameter)) {
+                writeCSISequenceToTerminal((byte) '?', (byte) '1', (byte) '0', (byte) '0', (byte) '0', (byte) 'h');
+                //writeCSISequenceToTerminal((byte) '?', (byte) '1', (byte) '0', (byte) '0', (byte) '5', (byte) 'h');
+                Runtime.getRuntime().addShutdownHook(new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            writeCSISequenceToTerminal((byte) '?', (byte) '1', (byte) '0', (byte) '0', (byte) '0', (byte) 'l');
+                        }
+                        catch(IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+            else if("--reader".equals(parameter)) {
+                useReader = true;
+            }
+            else if("--cbreak".equals(parameter)) {
+                exec("sh", "-c", "stty -icanon < /dev/tty");
+                Runtime.getRuntime().addShutdownHook(new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            exec("sh", "-c", "stty icanon < /dev/tty");
+                        }
+                        catch(IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+            else if("--no-echo".equals(parameter)) {
+                exec("sh", "-c", "stty -echo < /dev/tty");
+                Runtime.getRuntime().addShutdownHook(new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            exec("sh", "-c", "stty echo < /dev/tty");
+                        }
+                        catch(IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+            else {
+                System.err.println("Unknown parameter " + parameter);
+                return;
+            }
         }
+        if(useReader) {
+            InputStreamReader reader = new InputStreamReader(System.in);
+            while(true) {
+                int inChar = reader.read();
+                if(inChar == -1) {
+                    break;
+                }
+                System.out.println(formatData(inChar));
+            }
+        }
+        else {
+            while(true) {
+                int inByte = System.in.read();
+                if(inByte == -1) {
+                    break;
+                }
+                System.out.println(formatData(inByte));
+            }
+        }
+    }
+
+    private static String formatData(int inByte) {
+        return inByte + " (0x" + Integer.toString(inByte, 16) + ", b" + Integer.toString(inByte, 2) + ", '" + (char) inByte + "')";
+    }
+
+    private static void writeCSISequenceToTerminal(byte... bytes) throws IOException {
+        System.out.write(new byte[] { (byte)0x1b, (byte)'['});
+        System.out.write(bytes);
+        System.out.flush();
+    }
+
+    private static String exec(String... cmd) throws IOException {
+        ProcessBuilder pb = new ProcessBuilder(cmd);
+        Process process = pb.start();
+        ByteArrayOutputStream stdoutBuffer = new ByteArrayOutputStream();
+        InputStream stdout = process.getInputStream();
+        int readByte = stdout.read();
+        while(readByte >= 0) {
+            stdoutBuffer.write(readByte);
+            readByte = stdout.read();
+        }
+        ByteArrayInputStream stdoutBufferInputStream = new ByteArrayInputStream(stdoutBuffer.toByteArray());
+        BufferedReader reader = new BufferedReader(new InputStreamReader(stdoutBufferInputStream));
+        StringBuilder builder = new StringBuilder();
+        String line;
+        while((line = reader.readLine()) != null) {
+            builder.append(line);
+        }
+        reader.close();
+        return builder.toString();
     }
 }

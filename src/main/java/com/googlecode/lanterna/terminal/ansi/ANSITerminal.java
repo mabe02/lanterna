@@ -19,11 +19,11 @@
 package com.googlecode.lanterna.terminal.ansi;
 
 import com.googlecode.lanterna.SGR;
-import com.googlecode.lanterna.input.DefaultKeyDecodingProfile;
+import com.googlecode.lanterna.input.*;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
-import com.googlecode.lanterna.input.KeyDecodingProfile;
 import com.googlecode.lanterna.terminal.ExtendedTerminal;
+import com.googlecode.lanterna.terminal.MouseCaptureMode;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,12 +39,14 @@ import java.nio.charset.Charset;
  */
 public abstract class ANSITerminal extends StreamBasedTerminal implements ExtendedTerminal {
 
+    private MouseCaptureMode mouseCaptureMode;
     private boolean inPrivateMode;
 
     @SuppressWarnings("WeakerAccess")
     protected ANSITerminal(InputStream terminalInput, OutputStream terminalOutput, Charset terminalCharset) {
         super(terminalInput, terminalOutput, terminalCharset);
         this.inPrivateMode = false;
+        this.mouseCaptureMode = null;
         addKeyDecodingProfile(getDefaultKeyDecodingProfile());
     }
 
@@ -217,6 +219,50 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
     }
 
     @Override
+    public KeyStroke readInput() throws IOException {
+        KeyStroke keyStroke;
+        do {
+            keyStroke = filterMouseEvents(super.readInput());
+        } while(keyStroke == null);
+        return keyStroke;
+    }
+
+    @Override
+    public KeyStroke pollInput() throws IOException {
+        return filterMouseEvents(super.pollInput());
+    }
+
+    private KeyStroke filterMouseEvents(KeyStroke keyStroke) {
+        //Remove bad input events from terminals that are not following the xterm protocol properly
+        if(keyStroke == null || keyStroke.getKeyType() != KeyType.MouseEvent) {
+            return keyStroke;
+        }
+
+        MouseAction mouseAction = (MouseAction)keyStroke;
+        switch(mouseAction.getActionType()) {
+            case CLICK_RELEASE:
+                if(mouseCaptureMode == MouseCaptureMode.CLICK) {
+                    return null;
+                }
+                break;
+            case DRAG:
+                if(mouseCaptureMode == MouseCaptureMode.CLICK ||
+                        mouseCaptureMode == MouseCaptureMode.CLICK_RELEASE) {
+                    return null;
+                }
+                break;
+            case MOVE:
+                if(mouseCaptureMode == MouseCaptureMode.CLICK ||
+                        mouseCaptureMode == MouseCaptureMode.CLICK_RELEASE ||
+                        mouseCaptureMode == MouseCaptureMode.CLICK_RELEASE_DRAG) {
+                    return null;
+                }
+                break;
+        }
+        return mouseAction;
+    }
+
+    @Override
     public void pushTitle() throws IOException {
         throw new UnsupportedOperationException("Not implemented yet");
     }
@@ -247,22 +293,45 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
     }
 
     @Override
-    public void setMouseMovementCapturingEnabled(boolean enabled) throws IOException {
-        if(enabled) {
-            writeCSISequenceToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'0', (byte)'3', (byte)'h');
+    public void setMouseCaptureMode(MouseCaptureMode mouseCaptureMode) throws IOException {
+        if(this.mouseCaptureMode != null) {
+            switch(this.mouseCaptureMode) {
+                case CLICK:
+                    writeCSISequenceToTerminal((byte)'?', (byte)'9', (byte)'l');
+                    break;
+                case CLICK_RELEASE:
+                    writeCSISequenceToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'0', (byte)'0', (byte)'l');
+                    break;
+                case CLICK_RELEASE_DRAG:
+                    writeCSISequenceToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'0', (byte)'2', (byte)'l');
+                    break;
+                case CLICK_RELEASE_DRAG_MOVE:
+                    writeCSISequenceToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'0', (byte)'3', (byte)'l');
+                    break;
+            }
+            if(getCharset().equals(Charset.forName("UTF-8"))) {
+                writeCSISequenceToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'0', (byte)'5', (byte)'l');
+            }
         }
-        else {
-            writeCSISequenceToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'0', (byte)'3', (byte)'l');
-        }
-    }
-
-    @Override
-    public void setMouseClicksCapturingEnabled(boolean enabled) throws IOException {
-        if(enabled) {
-            writeCSISequenceToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'0', (byte)'0', (byte)'h');
-        }
-        else {
-            writeCSISequenceToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'0', (byte)'0', (byte)'l');
+        this.mouseCaptureMode = mouseCaptureMode;
+        if(this.mouseCaptureMode != null) {
+            switch(this.mouseCaptureMode) {
+                case CLICK:
+                    writeCSISequenceToTerminal((byte)'?', (byte)'9', (byte)'h');
+                    break;
+                case CLICK_RELEASE:
+                    writeCSISequenceToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'0', (byte)'0', (byte)'h');
+                    break;
+                case CLICK_RELEASE_DRAG:
+                    writeCSISequenceToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'0', (byte)'2', (byte)'h');
+                    break;
+                case CLICK_RELEASE_DRAG_MOVE:
+                    writeCSISequenceToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'0', (byte)'3', (byte)'h');
+                    break;
+            }
+            if(getCharset().equals(Charset.forName("UTF-8"))) {
+                writeCSISequenceToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'0', (byte)'5', (byte)'h');
+            }
         }
     }
 
