@@ -201,6 +201,7 @@ public class VirtualScreen extends AbstractScreen {
         else if(keyStroke.isCtrlDown() && keyStroke.getKeyType() == KeyType.ArrowUp) {
             if(viewportTopLeft.getRow() > 0) {
                 viewportTopLeft = viewportTopLeft.withRelativeRow(-1);
+                realScreen.scrollLines(0,viewportSize.getRows()-1,-1);
                 refresh();
             }
             return null;
@@ -208,11 +209,28 @@ public class VirtualScreen extends AbstractScreen {
         else if(keyStroke.isCtrlDown() && keyStroke.getKeyType() == KeyType.ArrowDown) {
             if(viewportTopLeft.getRow() + viewportSize.getRows() < getTerminalSize().getRows()) {
                 viewportTopLeft = viewportTopLeft.withRelativeRow(1);
+                realScreen.scrollLines(0,viewportSize.getRows()-1,1);
                 refresh();
             }
             return null;
         }
         return keyStroke;
+    }
+
+    @Override
+    public void scrollLines(int firstLine, int lastLine, int distance) {
+        // do base class stuff (scroll own back buffer)
+        super.scrollLines(firstLine, lastLine, distance);
+        // vertical range visible in realScreen:
+        int vpFirst = viewportTopLeft.getRow(),
+            vpRows = viewportSize.getRows();
+        // adapt to realScreen range:
+        firstLine = Math.max(0, firstLine - vpFirst);
+        lastLine = Math.min(vpRows - 1, lastLine - vpFirst);
+        // if resulting range non-empty: scroll that range in realScreen:
+        if (firstLine <= lastLine) {
+            realScreen.scrollLines(firstLine, lastLine, distance);
+        }
     }
 
     /**

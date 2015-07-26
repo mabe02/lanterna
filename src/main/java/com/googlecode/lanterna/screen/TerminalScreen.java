@@ -19,6 +19,7 @@
 package com.googlecode.lanterna.screen;
 
 import com.googlecode.lanterna.*;
+import com.googlecode.lanterna.graphics.Scrollable;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.ResizeListener;
@@ -40,6 +41,7 @@ public class TerminalScreen extends AbstractScreen {
     private final Terminal terminal;
     private boolean isStarted;
     private boolean fullRedrawHint;
+    private ScrollHint scrollHint;
 
     /**
      * Creates a new Screen on top of a supplied terminal, will query the terminal for its size. The screen is initially
@@ -153,9 +155,29 @@ public class TerminalScreen extends AbstractScreen {
         getBackBuffer().copyTo(getFrontBuffer());
     }
 
+    private void useScrollHint() throws IOException {
+        if (scrollHint == null) { return; }
+
+        try {
+            if (scrollHint == ScrollHint.INVALID) { return; }
+            Terminal term = getTerminal();
+            if (term instanceof Scrollable) {
+                // just try and see if it cares:
+                scrollHint.applyTo( (Scrollable)term );
+                // if that didn't throw, then update front buffer:
+                scrollHint.applyTo( getFrontBuffer() );
+            }
+        }
+        catch (UnsupportedOperationException uoe) { /* ignore */ }
+        finally { scrollHint = null; }
+    }
+
     private void refreshByDelta() throws IOException {
         Map<TerminalPosition, TextCharacter> updateMap = new TreeMap<TerminalPosition, TextCharacter>(new ScreenPointComparator());
         TerminalSize terminalSize = getTerminalSize();
+
+        useScrollHint();
+
         for(int y = 0; y < terminalSize.getRows(); y++) {
             for(int x = 0; x < terminalSize.getColumns(); x++) {
                 TextCharacter backBufferCharacter = getBackBuffer().getCharacterAt(x, y);
@@ -225,6 +247,7 @@ public class TerminalScreen extends AbstractScreen {
         getTerminal().setBackgroundColor(TextColor.ANSI.DEFAULT);
         getTerminal().clearScreen();
         getTerminal().resetColorAndSGR();
+        scrollHint = null; // discard any scroll hint for full refresh
 
         EnumSet<SGR> currentSGR = EnumSet.noneOf(SGR.class);
         TextColor currentForegroundColor = TextColor.ANSI.DEFAULT;
@@ -313,6 +336,34 @@ public class TerminalScreen extends AbstractScreen {
         return newSize;
     }
     
+    /**
+     * Perform the scrolling and save scroll-range and distance in order
+     * to be able to optimize Terminal-update later.
+     */
+    @Override
+    public void scrollLines(int firstLine, int lastLine, int distance) {
+        // just ignore certain kinds of garbage:
+        if (distance == 0 || firstLine > lastLine) { return; }
+
+        super.scrollLines(firstLine, lastLine, distance);
+
+        // Save scroll hint for next refresh:
+        ScrollHint newHint = new ScrollHint(firstLine,lastLine,distance);
+        if (scrollHint == null) {
+            // no scroll hint yet: use the new one:
+            scrollHint = newHint;
+        } else if (scrollHint == ScrollHint.INVALID) {
+            // scroll ranges already inconsistent since latest refresh!
+            // leave at INVALID
+        } else if (scrollHint.matches(newHint)) {
+            // same range: just accumulate distance:
+            scrollHint.distance += newHint.distance;
+        } else {
+            // different scroll range: no scroll-optimization for next refresh
+            this.scrollHint = ScrollHint.INVALID;
+        }
+    }
+
     private class TerminalResizeListener implements ResizeListener {
         @Override
         public void onResized(Terminal terminal, TerminalSize newSize) {
@@ -334,4 +385,25 @@ public class TerminalScreen extends AbstractScreen {
             }
         }
     }
+
+    private static class ScrollHint {
+        public static final ScrollHint INVALID = new ScrollHint(-1,-1,0);
+        public int firstLine, lastLine, distance;
+
+        public ScrollHint(int firstLine, int lastLine, int distance) {
+            this.firstLine = firstLine;
+            this.lastLine = lastLine;
+            this.distance = distance;
+        }
+
+        public boolean matches(ScrollHint other) {
+            return this.firstLine == other.firstLine
+                && this.lastLine == other.lastLine;
+        }
+
+        public void applyTo( Scrollable scr ) throws IOException {
+            scr.scrollLines(firstLine, lastLine, distance);
+        }
+    }
+
 }

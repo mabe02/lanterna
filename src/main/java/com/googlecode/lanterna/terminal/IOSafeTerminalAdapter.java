@@ -397,5 +397,15 @@ public class IOSafeTerminalAdapter implements IOSafeTerminal {
             }
         }
 
+        @Override
+        public void scrollLines(int firstLine, int lastLine, int distance) {
+            try {
+                backend.scrollLines(firstLine, lastLine, distance);
+            }
+            catch(IOException e) {
+                exceptionHandler.onException(e);
+            }
+        }
+
     }
 }

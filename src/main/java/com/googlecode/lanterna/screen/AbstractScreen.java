@@ -191,7 +191,7 @@ public abstract class AbstractScreen implements Screen {
 
     @Override
     public void refresh() throws IOException {
-        refresh(RefreshType.AUTOMATIC);
+        refresh(RefreshType.DELTA);
     }
 
 
@@ -249,5 +249,13 @@ public abstract class AbstractScreen implements Screen {
     @Override
     public String toString() {
         return getBackBuffer().toString();
+    }
+
+    /**
+     * Performs the scrolling on its back-buffer.
+     */
+    @Override
+    public void scrollLines(int firstLine, int lastLine, int distance) {
+        getBackBuffer().scrollLines(firstLine, lastLine, distance);
     }
 }

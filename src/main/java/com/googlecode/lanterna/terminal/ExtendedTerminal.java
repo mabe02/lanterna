@@ -2,13 +2,15 @@ package com.googlecode.lanterna.terminal;
 
 import java.io.IOException;
 
+import com.googlecode.lanterna.graphics.Scrollable;
+
 /**
  * This class extends the normal Terminal interface and adds a few more methods that are considered rare and shouldn't
  * be encouraged to be used. Some of these may move into Terminal if it turns out that they are indeed well-supported.
  * Most of these extensions are picked up from here: http://invisible-island.net/xterm/ctlseqs/ctlseqs.html
  * @author Martin
  */
-public interface ExtendedTerminal extends Terminal {
+public interface ExtendedTerminal extends Terminal, Scrollable {
 
     /**
      * Attempts to resize the terminal through dtterm extensions "CSI 8 ; rows ; columns ; t". This isn't widely

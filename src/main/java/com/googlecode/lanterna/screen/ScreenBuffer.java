@@ -129,6 +129,11 @@ public class ScreenBuffer implements TextImage {
     public void copyFrom(TextImage source, int startRowIndex, int rows, int startColumnIndex, int columns, int destinationRowOffset, int destinationColumnOffset) {
         source.copyTo(backend, startRowIndex, rows, startColumnIndex, columns, destinationRowOffset, destinationColumnOffset);
     }
+
+    @Override
+    public void scrollLines(int firstLine, int lastLine, int distance) {
+        backend.scrollLines(firstLine, lastLine, distance);
+    }
     
     @Override
     public String toString() {

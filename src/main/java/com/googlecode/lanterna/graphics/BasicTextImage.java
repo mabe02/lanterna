@@ -18,6 +18,8 @@
  */
 package com.googlecode.lanterna.graphics;
 
+import java.util.Arrays;
+
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextCharacter;
@@ -101,9 +103,7 @@ public class BasicTextImage implements TextImage {
             throw new IllegalArgumentException("Cannot call BasicTextImage.setAll(..) with null character");
         }
         for(TextCharacter[] line : buffer) {
-            for(int x = 0; x < line.length; x++) {
-                line[x] = character;
-            }
+            Arrays.fill(line, character);
         }
     }
 
@@ -229,6 +229,44 @@ public class BasicTextImage implements TextImage {
                 return size;
             }
         };
+    }
+
+    private TextCharacter[] newBlankLine() {
+        TextCharacter[] line = new TextCharacter[size.getColumns()];
+        Arrays.fill(line, TextCharacter.DEFAULT_CHARACTER);
+        return line;
+    }
+
+    @Override
+    public void scrollLines(int firstLine, int lastLine, int distance) {
+        if (firstLine < 0) { firstLine = 0; }
+        if (lastLine >= size.getRows()) { lastLine = size.getRows() - 1; }
+        if (firstLine < lastLine) {
+            if (distance > 0) {
+                // scrolling up: start with first line as target:
+                int curLine = firstLine;
+                // copy lines from further "below":
+                for (; curLine <= lastLine - distance; curLine++) {
+                    buffer[curLine] = buffer[curLine+distance];
+                }
+                // blank out the remaining lines:
+                for (; curLine <= lastLine; curLine++) {
+                    buffer[curLine] = newBlankLine();
+                }
+            }
+            else if (distance < 0) {
+               // scrolling down: start with last line as target:
+               int curLine = lastLine; distance = -distance;
+               // copy lines from further "above":
+               for (; curLine >= firstLine + distance; curLine--) {
+                   buffer[curLine] = buffer[curLine-distance];
+               }
+               // blank out the remaining lines:
+               for (; curLine >= firstLine; curLine--) {
+                   buffer[curLine] = newBlankLine();
+               }
+           } /* else: distance == 0 => no-op */
+        }
     }
     
     @Override

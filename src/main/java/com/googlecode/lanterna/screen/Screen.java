@@ -19,6 +19,7 @@
 package com.googlecode.lanterna.screen;
 
 import com.googlecode.lanterna.TextCharacter;
+import com.googlecode.lanterna.graphics.Scrollable;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.InputProvider;
 import com.googlecode.lanterna.TerminalPosition;
@@ -37,7 +38,7 @@ import java.io.IOException;
  *
  * @author Martin
  */
-public interface Screen extends InputProvider {
+public interface Screen extends InputProvider, Scrollable {
     /**
      * This is the character Screen implementations should use as a filler is there are areas not set to any particular
      * character.
@@ -208,7 +209,15 @@ public interface Screen extends InputProvider {
      * terminal. If not, it will return null.
      */
     TerminalSize doResizeIfNecessary();
-    
+
+    /**
+     * Scroll a range of lines of this Screen according to given distance.
+     *
+     * Screen implementations of this method do <b>not</b> throw IOException.
+     */
+    @Override
+    void scrollLines(int firstLine, int lastLine, int distance);
+
     /**
      * This enum represents the different ways a Screen can refresh the screen, moving the back-buffer data into the
      * front-buffer that is being displayed.
