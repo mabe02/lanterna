@@ -326,6 +326,7 @@ public class TerminalScreen extends AbstractScreen {
     public synchronized void clear() {
         super.clear();
         fullRedrawHint = true;
+        scrollHint = ScrollHint.INVALID;
     }
 
     @Override
