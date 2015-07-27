@@ -16,26 +16,38 @@ public class MouseCharacterPattern implements CharacterPattern {
     @Override
     public KeyStroke getResult(List<Character> matching) {
         MouseActionType actionType = null;
-        int button = 0;
-        int lowerTwoBitsAndMouseWheel = matching.get(3).charValue() & 0x43;
-        switch(lowerTwoBitsAndMouseWheel) {
-            case(0):
+        int button = (matching.get(3).charValue() & 0x3) + 1;
+        if(button == 4) {
+            //If last two bits are both set, it means button click release
+            button = 0;
+        }
+        int actionCode = (matching.get(3).charValue() & 0x60) >> 5;
+        switch(actionCode) {
             case(1):
+                if(button > 0) {
+                    actionType = MouseActionType.CLICK_DOWN;
+                }
+                else {
+                    actionType = MouseActionType.CLICK_RELEASE;
+                }
+                break;
             case(2):
-                actionType = MouseActionType.CLICK_DOWN;
-                button = lowerTwoBitsAndMouseWheel + 1;
+                if(button == 0) {
+                    actionType = MouseActionType.MOVE;
+                }
+                else {
+                    actionType = MouseActionType.DRAG;
+                }
                 break;
             case(3):
-                actionType = MouseActionType.CLICK_RELEASE;
-                button = 0;
-                break;
-            case(64):
-                actionType = MouseActionType.SCROLL_UP;
-                button = 4;
-                break;
-            case(65):
-                actionType = MouseActionType.SCROLL_DOWN;
-                button = 5;
+                if(button == 1) {
+                    actionType = MouseActionType.SCROLL_UP;
+                    button = 4;
+                }
+                else {
+                    actionType = MouseActionType.SCROLL_DOWN;
+                    button = 5;
+                }
                 break;
         }
         int x = matching.get(4).charValue() - 33;
