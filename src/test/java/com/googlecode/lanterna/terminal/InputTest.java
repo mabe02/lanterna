@@ -28,15 +28,28 @@ public class InputTest {
         boolean useReader = false;
         for(String parameter: args) {
             if("--mouse-click".equals(parameter)) {
-                //writeCSISequenceToTerminal((byte) '?', (byte) '1', (byte) '0', (byte) '0', (byte) '0', (byte) 'h');
-                //writeCSISequenceToTerminal((byte) '?', (byte) '1', (byte) '0', (byte) '0', (byte) '5', (byte) 'h');
-                writeCSISequenceToTerminal((byte) '?', (byte) '9', (byte) 'h');
+                writeCSISequenceToTerminal((byte) '?', (byte) '1', (byte) '0', (byte) '0', (byte) '0', (byte) 'h');
+                writeCSISequenceToTerminal((byte) '?', (byte) '1', (byte) '0', (byte) '0', (byte) '5', (byte) 'h');
                 Runtime.getRuntime().addShutdownHook(new Thread() {
                     @Override
                     public void run() {
                         try {
-                            //writeCSISequenceToTerminal((byte) '?', (byte) '1', (byte) '0', (byte) '0', (byte) '0', (byte) 'l');
-                            writeCSISequenceToTerminal((byte) '?', (byte) '9', (byte) 'l');
+                            writeCSISequenceToTerminal((byte) '?', (byte) '1', (byte) '0', (byte) '0', (byte) '0', (byte) 'l');
+                        }
+                        catch(IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+            else if("--mouse-drag".equals(parameter)) {
+                writeCSISequenceToTerminal((byte) '?', (byte) '1', (byte) '0', (byte) '0', (byte) '2', (byte) 'h');
+                writeCSISequenceToTerminal((byte) '?', (byte) '1', (byte) '0', (byte) '0', (byte) '5', (byte) 'h');
+                Runtime.getRuntime().addShutdownHook(new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            writeCSISequenceToTerminal((byte) '?', (byte) '1', (byte) '0', (byte) '0', (byte) '2', (byte) 'l');
                         }
                         catch(IOException e) {
                             e.printStackTrace();
@@ -45,13 +58,13 @@ public class InputTest {
                 });
             }
             else if("--mouse-move".equals(parameter)) {
-                writeCSISequenceToTerminal((byte) '?', (byte) '1', (byte) '0', (byte) '0', (byte) '0', (byte) 'h');
-                //writeCSISequenceToTerminal((byte) '?', (byte) '1', (byte) '0', (byte) '0', (byte) '5', (byte) 'h');
+                writeCSISequenceToTerminal((byte) '?', (byte) '1', (byte) '0', (byte) '0', (byte) '3', (byte) 'h');
+                writeCSISequenceToTerminal((byte) '?', (byte) '1', (byte) '0', (byte) '0', (byte) '5', (byte) 'h');
                 Runtime.getRuntime().addShutdownHook(new Thread() {
                     @Override
                     public void run() {
                         try {
-                            writeCSISequenceToTerminal((byte) '?', (byte) '1', (byte) '0', (byte) '0', (byte) '0', (byte) 'l');
+                            writeCSISequenceToTerminal((byte) '?', (byte) '1', (byte) '0', (byte) '0', (byte) '3', (byte) 'l');
                         }
                         catch(IOException e) {
                             e.printStackTrace();
