@@ -56,6 +56,7 @@ public final class DefaultTerminalFactory implements TerminalFactory {
     private SwingTerminalColorConfiguration colorConfiguration;
     private SwingTerminalDeviceConfiguration deviceConfiguration;
     private SwingTerminalFontConfiguration fontConfiguration;
+    private MouseCaptureMode mouseCaptureMode;
     
     /**
      * Creates a new DefaultTerminalFactory with all properties set to their defaults
@@ -83,6 +84,7 @@ public final class DefaultTerminalFactory implements TerminalFactory {
         this.colorConfiguration = SwingTerminalColorConfiguration.DEFAULT;
         this.deviceConfiguration = SwingTerminalDeviceConfiguration.DEFAULT;
         this.fontConfiguration = SwingTerminalFontConfiguration.DEFAULT;
+        this.mouseCaptureMode = null;
     }
     
     @Override
@@ -191,13 +193,22 @@ public final class DefaultTerminalFactory implements TerminalFactory {
         this.fontConfiguration = fontConfiguration;
         return this;
     }
+
+    public DefaultTerminalFactory setMouseCaptureMode(MouseCaptureMode mouseCaptureMode) {
+        this.mouseCaptureMode = mouseCaptureMode;
+        return this;
+    }
     
     private Terminal createCygwinTerminal(OutputStream outputStream, InputStream inputStream, Charset charset) throws IOException {
         return new CygwinTerminal(inputStream, outputStream, charset);
     }
 
     private Terminal createUnixTerminal(OutputStream outputStream, InputStream inputStream, Charset charset) throws IOException {
-        return new UnixTerminal(inputStream, outputStream, charset);
+        UnixTerminal unixTerminal = new UnixTerminal(inputStream, outputStream, charset);
+        if(mouseCaptureMode != null) {
+            unixTerminal.setMouseCaptureMode(mouseCaptureMode);
+        }
+        return unixTerminal;
     }
 
     /**

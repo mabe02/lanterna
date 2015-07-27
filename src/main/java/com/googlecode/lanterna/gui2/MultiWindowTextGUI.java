@@ -118,6 +118,10 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
             public TerminalPosition toGlobal(TerminalPosition localPosition) {
                 return localPosition;
             }
+
+            public TerminalPosition fromGlobal(TerminalPosition globalPosition) {
+                return globalPosition;
+            }
         };
         this.backgroundPane.setComponent(background);
         this.windows = new ArrayList<Window>();

@@ -243,4 +243,13 @@ public interface Window extends BasePane {
      */
     @Override
     TerminalPosition toGlobal(TerminalPosition localPosition);
+
+    /**
+     * Returns a position expressed in global coordinates, i.e. row and column offset from the top-left corner of the
+     * terminal into a position relative to the top-left corner of the window. Calling
+     * {@code fromGlobal(toGlobal(..))} should return the exact same position.
+     * @param position Position expressed in global coordinates to translate to local coordinates of this Window
+     * @return The global coordinates expressed as local coordinates
+     */
+    TerminalPosition fromGlobal(TerminalPosition position);
 }

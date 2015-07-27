@@ -110,6 +110,16 @@ public class AbstractWindow extends AbstractBasePane implements Window {
     }
 
     @Override
+    public TerminalPosition fromGlobal(TerminalPosition globalPosition) {
+        if(globalPosition == null) {
+            return null;
+        }
+        return globalPosition.withRelative(
+                -lastKnownPosition.getColumn() - contentOffset.getColumn(),
+                -lastKnownPosition.getRow() - contentOffset.getRow());
+    }
+
+    @Override
     public TerminalSize getPreferredSize() {
         return contentHolder.getPreferredSize();
     }

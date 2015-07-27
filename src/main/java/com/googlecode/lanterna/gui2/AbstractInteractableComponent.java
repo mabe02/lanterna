@@ -82,6 +82,9 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
                 return Result.MOVE_FOCUS_NEXT;
             case ReverseTab:
                 return Result.MOVE_FOCUS_PREVIOUS;
+            case MouseEvent:
+                getBasePane().setFocusedInteractable(this);
+                return Result.HANDLED;
             default:
         }
         return Result.UNHANDLED;

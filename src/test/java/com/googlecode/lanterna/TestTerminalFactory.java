@@ -22,6 +22,7 @@ package com.googlecode.lanterna;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
+import com.googlecode.lanterna.terminal.MouseCaptureMode;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.swing.SwingTerminalFrame;
 import java.io.IOException;
@@ -43,7 +44,21 @@ public class TestTerminalFactory {
     public TestTerminalFactory(String[] args, SwingTerminalFrame.AutoCloseTrigger autoCloseTrigger) {
         factory = new DefaultTerminalFactory();
         factory.setSwingTerminalFrameAutoCloseTrigger(autoCloseTrigger);
-        factory.setSuppressSwingTerminalFrame(args.length > 0 && "--no-swing".equals(args[0]));
+        for(String arg: args) {
+            if("--no-swing".equals(arg)) {
+                factory.setSuppressSwingTerminalFrame(true);
+            }
+            else if("--mouse-click".equals(arg)) {
+                factory.setMouseCaptureMode(MouseCaptureMode.CLICK_RELEASE);
+            }
+            else if("--mouse-drag".equals(arg)) {
+                factory.setMouseCaptureMode(MouseCaptureMode.CLICK_RELEASE_DRAG);
+            }
+            else if("--mouse-move".equals(arg)) {
+                factory.setMouseCaptureMode(MouseCaptureMode.CLICK_RELEASE_DRAG_MOVE);
+            }
+        }
+
     }
 
     public TestTerminalFactory withInitialTerminalSize(TerminalSize initialTerminalSize) {

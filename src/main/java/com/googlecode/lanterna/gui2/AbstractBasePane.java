@@ -21,6 +21,8 @@ package com.googlecode.lanterna.gui2;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
+import com.googlecode.lanterna.input.MouseAction;
 
 /**
  * Created by martin on 27/10/14.
@@ -68,7 +70,13 @@ public abstract class AbstractBasePane implements BasePane {
 
     @Override
     public boolean handleInput(KeyStroke key) {
-        if(focusedInteractable != null) {
+        if(key.getKeyType() == KeyType.MouseEvent) {
+            MouseAction mouseAction = (MouseAction)key;
+            TerminalPosition localCoordinates = fromGlobal(mouseAction.getPosition());
+            Interactable interactable = interactableLookupMap.getInteractableAt(localCoordinates);
+            interactable.handleKeyStroke(key);
+        }
+        else if(focusedInteractable != null) {
             Interactable next = null;
             Interactable.FocusChangeDirection direction = Interactable.FocusChangeDirection.TELEPORT; //Default
             Interactable.Result result = focusedInteractable.handleKeyStroke(key);
@@ -183,6 +191,9 @@ public abstract class AbstractBasePane implements BasePane {
     }
 
     protected void setFocusedInteractable(Interactable toFocus, Interactable.FocusChangeDirection direction) {
+        if(focusedInteractable == toFocus) {
+            return;
+        }
         if(focusedInteractable != null) {
             focusedInteractable.onLeaveFocus(direction, focusedInteractable);
         }
@@ -191,6 +202,7 @@ public abstract class AbstractBasePane implements BasePane {
         if(toFocus != null) {
             toFocus.onEnterFocus(direction, previous);
         }
+        invalidate();
     }
 
     /**

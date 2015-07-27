@@ -69,6 +69,19 @@ public class InteractableLookupMap {
         }
     }
 
+    public synchronized Interactable getInteractableAt(TerminalPosition position) {
+        if(position.getRow() >= lookupMap.length) {
+            return null;
+        }
+        else if(position.getColumn() >= lookupMap[0].length) {
+            return null;
+        }
+        else if(lookupMap[position.getRow()][position.getColumn()] == -1) {
+            return null;
+        }
+        return interactables.get(lookupMap[position.getRow()][position.getColumn()]);
+    }
+
     public Interactable findNextUp(Interactable interactable) {
         return findNextUpOrDown(interactable, false);
     }
