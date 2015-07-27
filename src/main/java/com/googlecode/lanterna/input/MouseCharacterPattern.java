@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 /**
+ * Pattern used to detect Xterm-protocol mouse events coming in on the standard input channel
  * Created by martin on 19/07/15.
  */
 public class MouseCharacterPattern implements CharacterPattern {
@@ -16,12 +17,12 @@ public class MouseCharacterPattern implements CharacterPattern {
     @Override
     public KeyStroke getResult(List<Character> matching) {
         MouseActionType actionType = null;
-        int button = (matching.get(3).charValue() & 0x3) + 1;
+        int button = (matching.get(3) & 0x3) + 1;
         if(button == 4) {
             //If last two bits are both set, it means button click release
             button = 0;
         }
-        int actionCode = (matching.get(3).charValue() & 0x60) >> 5;
+        int actionCode = (matching.get(3) & 0x60) >> 5;
         switch(actionCode) {
             case(1):
                 if(button > 0) {
@@ -50,8 +51,8 @@ public class MouseCharacterPattern implements CharacterPattern {
                 }
                 break;
         }
-        int x = matching.get(4).charValue() - 33;
-        int y = matching.get(5).charValue() - 33;
+        int x = matching.get(4) - 33;
+        int y = matching.get(5) - 33;
 
         return new MouseAction(actionType, button, new TerminalPosition(x, y));
     }
@@ -59,8 +60,8 @@ public class MouseCharacterPattern implements CharacterPattern {
     @Override
     public boolean isCompleteMatch(List<Character> currentMatching) {
         String asString = "";
-        for (int i = 0; i < currentMatching.size(); i++) {
-            asString += currentMatching.get(i);
+        for(Character aCurrentMatching : currentMatching) {
+            asString += aCurrentMatching;
         }
         return MOUSE_PATTERN.matcher(asString).matches();
     }
