@@ -141,11 +141,19 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
 
     @Override
     public synchronized void updateScreen() throws IOException {
-        TerminalSize preferredSize = TerminalSize.ONE;
+        TerminalSize minimumTerminalSize = TerminalSize.ZERO;
         for(Window window: windows) {
-            preferredSize = preferredSize.max(window.getPreferredSize());
+            if(window.getHints().contains(Window.Hint.FULL_SCREEN) ||
+                    window.getHints().contains(Window.Hint.FIT_TERMINAL_WINDOW)) {
+                //Don't take full screen windows or auto-sized windows into account
+                continue;
+            }
+            TerminalPosition lastPosition = window.getPosition();
+            minimumTerminalSize = minimumTerminalSize.max(
+                    //Add position to size to get the bottom-right corner of the window
+                    window.getPreferredSize().withRelative(lastPosition.getColumn(), lastPosition.getRow()));
         }
-        virtualScreen.setMinimumSize(preferredSize.withRelativeColumns(10).withRelativeRows(5));
+        virtualScreen.setMinimumSize(minimumTerminalSize);
         super.updateScreen();
     }
 
