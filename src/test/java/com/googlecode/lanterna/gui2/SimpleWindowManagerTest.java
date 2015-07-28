@@ -1,6 +1,9 @@
 package com.googlecode.lanterna.gui2;
 
-import java.io.IOException;
+import com.googlecode.lanterna.TestUtils;
+
+import java.io.*;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -36,6 +39,18 @@ public class SimpleWindowManagerTest extends TestBase {
             @Override
             public void run() {
                 textGUI.addWindow(new UndecoratedCenteredWindow());
+            }
+        }));
+        contentArea.addComponent(new Button("Full-screen window", new Runnable() {
+            @Override
+            public void run() {
+                textGUI.addWindow(new FullScreenWindow(true));
+            }
+        }));
+        contentArea.addComponent(new Button("Undecorated + Full-screen window", new Runnable() {
+            @Override
+            public void run() {
+                textGUI.addWindow(new FullScreenWindow(false));
             }
         }));
         contentArea.addComponent(new Button("Close", new Runnable() {
@@ -79,6 +94,29 @@ public class SimpleWindowManagerTest extends TestBase {
         @Override
         public Set<Hint> getHints() {
             return new HashSet<Hint>(Arrays.asList(Hint.NO_DECORATIONS, Hint.CENTERED));
+        }
+    }
+
+    private class FullScreenWindow extends TestWindow {
+        private final boolean decorations;
+
+        public FullScreenWindow(boolean decorations) {
+            super("FullScreenWindow");
+            this.decorations = decorations;
+
+            Panel content = new Panel();
+            content.setLayoutManager(new BorderLayout());
+            TextBox textBox = new TextBox(TestUtils.downloadGPL(), TextBox.Style.MULTI_LINE);
+            textBox.setLayoutData(BorderLayout.Location.CENTER);
+            textBox.setReadOnly(true);
+            content.addComponent(textBox);
+
+            setComponent(content);
+        }
+
+        @Override
+        public Set<Hint> getHints() {
+            return new HashSet<Hint>(decorations ? Arrays.asList(Hint.FULL_SCREEN) : Arrays.asList(Hint.FULL_SCREEN, Hint.NO_DECORATIONS));
         }
     }
 

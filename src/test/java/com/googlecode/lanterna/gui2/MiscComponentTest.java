@@ -1,6 +1,7 @@
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TestUtils;
 
 import java.io.*;
 import java.net.URL;
@@ -46,7 +47,7 @@ public class MiscComponentTest extends TestBase {
         textBoxPanel = new Panel();
         TextBox readOnlyTextArea = new TextBox(new TerminalSize(16, 8));
         readOnlyTextArea.setReadOnly(true);
-        readOnlyTextArea.setText(downloadGPL());
+        readOnlyTextArea.setText(TestUtils.downloadGPL());
         textBoxPanel.addComponent(readOnlyTextArea);
         rightPanel.addComponent(textBoxPanel.withBorder(Borders.singleLine("Read-only")));
         rightPanel.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Fill));
@@ -67,33 +68,5 @@ public class MiscComponentTest extends TestBase {
                         LinearLayout.createLayoutData(LinearLayout.Alignment.Center)));
         window.setComponent(contentArea);
         textGUI.addWindow(window);
-    }
-
-    private String downloadGPL() {
-        try {
-            URL url = new URL("http://www.gnu.org/licenses/gpl.txt");
-            InputStream inputStream = url.openStream();
-            try {
-                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                byte[] buffer = new byte[32 * 1024];
-                int readBytes = 0;
-                while(readBytes != -1) {
-                    readBytes = inputStream.read(buffer);
-                    if(readBytes > 0) {
-                        byteArrayOutputStream.write(buffer, 0, readBytes);
-                    }
-                }
-                return new String(byteArrayOutputStream.toByteArray());
-            }
-            finally {
-                inputStream.close();
-            }
-        }
-        catch(Exception e) {
-            StringWriter stringWriter = new StringWriter();
-            PrintWriter printWriter = new PrintWriter(stringWriter);
-            e.printStackTrace(printWriter);
-            return stringWriter.toString();
-        }
     }
 }
