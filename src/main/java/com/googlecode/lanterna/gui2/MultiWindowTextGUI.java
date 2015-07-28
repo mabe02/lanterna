@@ -177,10 +177,16 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
         getWindowManager().prepareWindows(this, Collections.unmodifiableList(windows), graphics.getSize());
         for(Window window: windows) {
             TextGUIGraphics windowGraphics = graphics.newTextGraphics(window.getPosition(), window.getDecoratedSize());
-            WindowDecorationRenderer decorationRenderer = getWindowManager().getWindowDecorationRenderer(window);
-            windowGraphics = decorationRenderer.draw(this, windowGraphics, window);
-            window.draw(windowGraphics);
-            window.setContentOffset(decorationRenderer.getOffset(window));
+            if(window.getHints().contains(Window.Hint.NO_DECORATIONS)) {
+                window.draw(windowGraphics);
+                window.setContentOffset(TerminalPosition.TOP_LEFT_CORNER);
+            }
+            else {
+                WindowDecorationRenderer decorationRenderer = getWindowManager().getWindowDecorationRenderer(window);
+                windowGraphics = decorationRenderer.draw(this, windowGraphics, window);
+                window.draw(windowGraphics);
+                window.setContentOffset(decorationRenderer.getOffset(window));
+            }
             if(postRenderer != null && !window.getHints().contains(Window.Hint.NO_POST_RENDERING)) {
                 postRenderer.postRender(graphics, this, window);
             }

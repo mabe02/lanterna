@@ -84,10 +84,15 @@ public class DefaultWindowManager implements WindowManager {
         this.lastKnownScreenSize = screenSize;
         for(Window window: allWindows) {
             WindowDecorationRenderer decorationRenderer = getWindowDecorationRenderer(window);
-            TerminalSize size = decorationRenderer.getDecoratedSize(window, window.getPreferredSize());
+            TerminalSize contentAreaSize = window.getPreferredSize();
+            TerminalSize size = decorationRenderer.getDecoratedSize(window, contentAreaSize);
             TerminalPosition position = window.getPosition();
 
-            if(window.getHints().contains(Window.Hint.FIT_TERMINAL_WINDOW) ||
+            if(window.getHints().contains(Window.Hint.FULL_SCREEN)) {
+                position = TerminalPosition.TOP_LEFT_CORNER;
+                size = screenSize;
+            }
+            else if(window.getHints().contains(Window.Hint.FIT_TERMINAL_WINDOW) ||
                     window.getHints().contains(Window.Hint.CENTERED)) {
                 //If the window is too big for the terminal, move it up towards 0x0 and if that's not enough then shrink
                 //it instead
@@ -103,11 +108,11 @@ public class DefaultWindowManager implements WindowManager {
                 if(position.getColumn() + size.getColumns() > screenSize.getColumns()) {
                     size = size.withColumns(screenSize.getColumns() - position.getColumn());
                 }
-            }
-            if(window.getHints().contains(Window.Hint.CENTERED)) {
-                int left = (lastKnownScreenSize.getColumns() - size.getColumns()) / 2;
-                int top = (lastKnownScreenSize.getRows() - size.getRows()) / 2;
-                position = new TerminalPosition(left, top);
+                if(window.getHints().contains(Window.Hint.CENTERED)) {
+                    int left = (lastKnownScreenSize.getColumns() - size.getColumns()) / 2;
+                    int top = (lastKnownScreenSize.getRows() - size.getRows()) / 2;
+                    position = new TerminalPosition(left, top);
+                }
             }
 
             window.setPosition(position);

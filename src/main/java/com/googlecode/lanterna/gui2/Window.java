@@ -65,6 +65,12 @@ public interface Window extends BasePane {
          */
         public static final Hint MODAL = new Hint();
 
+        /**
+         * A window with this hint would like to be placed covering the entire screen. Use this in combination with
+         * NO_DECORATIONS if you want the content area to take up the entire terminal.
+         */
+        public static final Hint FULL_SCREEN = new Hint();
+
         protected Hint() {
         }
     }
