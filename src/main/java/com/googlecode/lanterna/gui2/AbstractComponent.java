@@ -93,7 +93,8 @@ public abstract class AbstractComponent<T extends Component> implements Componen
         return renderer;
     }
 
-    protected void invalidate() {
+    @Override
+    public void invalidate() {
         invalid = true;
     }
 

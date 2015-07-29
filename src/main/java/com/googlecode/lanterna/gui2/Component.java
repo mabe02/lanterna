@@ -116,6 +116,12 @@ public interface Component extends TextGUIElement {
      * @return True if this component is contained in some way within the {@code container}
      */
     boolean isInside(Container container);
+
+    /**
+     * Marks the component as invalid and requiring to be re-drawn at next opportunity. Container components should take
+     * this as a hint to layout the child components again.
+     */
+    void invalidate();
     
     /**
      * Takes a border object and moves this component inside it and then returns it again. This makes it easy to quickly
