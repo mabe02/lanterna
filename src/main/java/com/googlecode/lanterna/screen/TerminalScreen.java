@@ -126,7 +126,8 @@ public class TerminalScreen extends AbstractScreen {
             refreshFull();
             fullRedrawHint = false;
         }
-        else if(refreshType == RefreshType.AUTOMATIC) {
+        else if(refreshType == RefreshType.AUTOMATIC &&
+                (scrollHint == null || scrollHint == ScrollHint.INVALID)) {
             double threshold = getTerminalSize().getRows() * getTerminalSize().getColumns() * 0.75;
             if(getBackBuffer().isVeryDifferent(getFrontBuffer(), (int) threshold)) {
                 refreshFull();
@@ -325,6 +326,7 @@ public class TerminalScreen extends AbstractScreen {
     public synchronized void clear() {
         super.clear();
         fullRedrawHint = true;
+        scrollHint = ScrollHint.INVALID;
     }
 
     @Override

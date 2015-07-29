@@ -379,12 +379,17 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
         sb.append(CSI).append(firstLine+1)
           .append(';').append(lastLine+1).append('r');
 
+        // place cursor on line to scroll away from:
+        int target = distance > 0 ? lastLine : firstLine;
+        sb.append(CSI).append(target+1).append(";1H");
+
         // do scroll:
-        sb.append(CSI);
         if (distance > 0) {
-            sb.append(distance).append('S');
-        } else if (distance < 0) {
-            sb.append(-distance).append('T');
+            int num = Math.min( distance, lastLine - firstLine + 1);
+            for (int i = 0; i < num; i++) { sb.append('\n'); }
+        } else { // distance < 0
+            int num = Math.min( -distance, lastLine - firstLine + 1);
+            for (int i = 0; i < num; i++) { sb.append("\033M"); }
         }
 
         // reset range:
