@@ -88,6 +88,9 @@ public class AbstractWindow extends AbstractBasePane implements Window {
 
     @Override
     public void draw(TextGUIGraphics graphics) {
+        if(!graphics.getSize().equals(lastKnownSize)) {
+            getComponent().invalidate();
+        }
         lastKnownSize = graphics.getSize();
         super.draw(graphics);
     }
