@@ -20,8 +20,8 @@ package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
-import java.util.EnumMap;
-import java.util.List;
+
+import java.util.*;
 
 /**
  * BorderLayout imitates the BorderLayout class from AWT, allowing you to add a center component with optional 
@@ -38,7 +38,15 @@ public class BorderLayout implements LayoutManager {
         BOTTOM,
         ;
     }
-    
+
+    //When components don't have a location, we'll assign an available location based on this order
+    private static final List<Location> AUTO_ASSIGN_ORDER = Collections.unmodifiableList(Arrays.asList(
+            Location.CENTER,
+            Location.TOP,
+            Location.BOTTOM,
+            Location.LEFT,
+            Location.RIGHT));
+
     @Override
     public TerminalSize getPreferredSize(List<Component> components) {
         EnumMap<Location, Component> layout = makeLookupMap(components);
@@ -124,9 +132,22 @@ public class BorderLayout implements LayoutManager {
     
     private EnumMap<Location, Component> makeLookupMap(List<Component> components) {
         EnumMap<Location, Component> map = new EnumMap<BorderLayout.Location, Component>(Location.class);
+        List<Component> unassignedComponents = new ArrayList<Component>();
         for(Component component: components) {
             if(component.getLayoutData() instanceof Location) {
                 map.put((Location)component.getLayoutData(), component);
+            }
+            else {
+                unassignedComponents.add(component);
+            }
+        }
+        //Try to assign components to available locations
+        for(Component component: unassignedComponents) {
+            for(Location location: AUTO_ASSIGN_ORDER) {
+                if(!map.containsKey(location)) {
+                    map.put(location, component);
+                    break;
+                }
             }
         }
         return map;
