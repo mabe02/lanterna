@@ -47,6 +47,17 @@ public abstract class AbstractBorder extends AbstractComposite<Border> implement
         return self();
     }
 
+    @Override
+    public LayoutData getLayoutData() {
+        return getComponent().getLayoutData();
+    }
+
+    @Override
+    public Border setLayoutData(LayoutData ld) {
+        getComponent().setLayoutData(ld);
+        return this;
+    }
+
     private TerminalPosition getWrappedComponentTopLeftOffset() {
         return getRenderer().getWrappedComponentTopLeftOffset();
     }
