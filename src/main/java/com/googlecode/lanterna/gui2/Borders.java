@@ -86,11 +86,13 @@ public class Borders {
 
     private static abstract class StandardBorder extends AbstractBorder {
         private final String title;
+        protected final BorderStyle borderStyle;
 
-        protected StandardBorder(String title) {
+        protected StandardBorder(String title, BorderStyle borderStyle) {
             if (title == null) {
                 throw new IllegalArgumentException("Cannot create a border with null title");
             }
+            this.borderStyle = borderStyle;
             this.title = title;
         }
 
@@ -204,11 +206,8 @@ public class Borders {
     }
 
     private static class SingleLine extends StandardBorder {
-        private final BorderStyle borderStyle;
-
         private SingleLine(String title, BorderStyle borderStyle) {
-            super(title);
-            this.borderStyle = borderStyle;
+            super(title, borderStyle);
         }
 
         @Override
@@ -254,11 +253,8 @@ public class Borders {
     }
 
     private static class DoubleLine extends StandardBorder {
-        private final BorderStyle borderStyle;
-
         private DoubleLine(String title, BorderStyle borderStyle) {
-            super(title);
-            this.borderStyle = borderStyle;
+            super(title, borderStyle);
         }
 
         @Override
