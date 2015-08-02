@@ -11,15 +11,7 @@ import java.util.*;
  * cell.
  */
 public class Table extends AbstractComponent<Table> implements Container {
-    public enum TableCellBorderStyle {
-        None,
-        SingleLine,
-        DoubleLine,
-        EmptySpace,
-    }
-
     private final TableModel tableModel;
-    private TableCellBorderStyle cellBorderStyle;
     private TextColor columnHeaderForegroundColor;
     private TextColor columnHeaderBackgroundColor;
     private EnumSet<SGR> columnHeaderModifiers;  //This isn't immutable, but we should treat it as such and not expose it!
@@ -29,8 +21,6 @@ public class Table extends AbstractComponent<Table> implements Container {
             throw new IllegalArgumentException("Table needs at least one column");
         }
         this.tableModel = new TableModel(columnLabels);
-
-        this.cellBorderStyle = TableCellBorderStyle.EmptySpace;
         this.columnHeaderForegroundColor = null;
         this.columnHeaderBackgroundColor = null;
         this.columnHeaderModifiers = EnumSet.of(SGR.UNDERLINE, SGR.BOLD);
@@ -305,13 +295,73 @@ public class Table extends AbstractComponent<Table> implements Container {
         void labelsUpdated(Table table);
     }
 
+    /**
+     * Describing how table cells are separated
+     */
+    public enum TableCellBorderStyle {
+        None,
+        SingleLine,
+        DoubleLine,
+        EmptySpace,
+    }
+
     public static class DefaultTableRenderer implements TableRenderer {
         private final List<Integer> columnWidths;
         private final List<Integer> rowHeights;
 
+        private TableCellBorderStyle headerVerticalBorderStyle;
+        private TableCellBorderStyle headerHorizontalBorderStyle;
+        private TableCellBorderStyle cellVerticalBorderStyle;
+        private TableCellBorderStyle cellHorizontalBorderStyle;
+
         public DefaultTableRenderer() {
             columnWidths = new ArrayList<Integer>();
             rowHeights = new ArrayList<Integer>();
+            headerVerticalBorderStyle = TableCellBorderStyle.None;
+            headerHorizontalBorderStyle = TableCellBorderStyle.EmptySpace;
+            cellVerticalBorderStyle = TableCellBorderStyle.None;
+            cellHorizontalBorderStyle = TableCellBorderStyle.EmptySpace;
+        }
+
+        /**
+         * Sets the style to be used when separating the table header row from the actual "data" cells below. This will
+         * cause a new line to be added under the header labels, unless set to {@code TableCellBorderStyle.None}.
+         * @param headerVerticalBorderStyle Style to use to separate Table header from body
+         */
+        public void setHeaderVerticalBorderStyle(TableCellBorderStyle headerVerticalBorderStyle) {
+            this.headerVerticalBorderStyle = headerVerticalBorderStyle;
+        }
+
+        /**
+         * Sets the style to be used when separating the table header labels from each other. This will cause a new
+         * column to be added in between each label, unless set to {@code TableCellBorderStyle.None}.
+         * @param headerHorizontalBorderStyle Style to use when separating header columns horizontally
+         */
+        public void setHeaderHorizontalBorderStyle(TableCellBorderStyle headerHorizontalBorderStyle) {
+            this.headerHorizontalBorderStyle = headerHorizontalBorderStyle;
+        }
+
+        /**
+         * Sets the style to be used when vertically separating table cells from each other. This will cause a new line
+         * to be added between every row, unless set to {@code TableCellBorderStyle.None}.
+         * @param cellVerticalBorderStyle Style to use to separate table cells vertically
+         */
+        public void setCellVerticalBorderStyle(TableCellBorderStyle cellVerticalBorderStyle) {
+            this.cellVerticalBorderStyle = cellVerticalBorderStyle;
+        }
+
+        /**
+         * Sets the style to be used when horizontally separating table cells from each other. This will cause a new
+         * column to be added between every row, unless set to {@code TableCellBorderStyle.None}.
+         * @param cellHorizontalBorderStyle Style to use to separate table cells horizontally
+         */
+        public void setCellHorizontalBorderStyle(TableCellBorderStyle cellHorizontalBorderStyle) {
+            this.cellHorizontalBorderStyle = cellHorizontalBorderStyle;
+        }
+
+        private boolean isHorizontallySpaced() {
+            return headerHorizontalBorderStyle != TableCellBorderStyle.None ||
+                    cellHorizontalBorderStyle != TableCellBorderStyle.None;
         }
 
         @Override
@@ -387,7 +437,6 @@ public class Table extends AbstractComponent<Table> implements Container {
             for(Integer columnWidth: columnWidths) {
                 preferredColumns += columnWidth;
             }
-            preferredColumns += columnWidths.size() - 1;
 
             int preferredRows = 0;
             for(Integer rowHeight: rowHeights) {
@@ -395,6 +444,19 @@ public class Table extends AbstractComponent<Table> implements Container {
             }
             preferredRows++;    //Header
 
+            if(headerVerticalBorderStyle != TableCellBorderStyle.None) {
+                preferredRows++;    //Spacing between header and body
+            }
+            if(cellVerticalBorderStyle != TableCellBorderStyle.None) {
+                if(!rowHeights.isEmpty()) {
+                    preferredRows += rowHeights.size() - 1; //Vertical space between cells
+                }
+            }
+            if(isHorizontallySpaced()) {
+                if(!columnWidths.isEmpty()) {
+                    preferredColumns += columnWidths.size() - 1;    //Spacing between the columns
+                }
+            }
             return new TerminalSize(preferredColumns, preferredRows);
         }
 
@@ -414,33 +476,180 @@ public class Table extends AbstractComponent<Table> implements Container {
             if(table.columnHeaderBackgroundColor != null) {
                 graphics.setBackgroundColor(table.columnHeaderBackgroundColor);
             }
-            graphics.enableModifiers(table.columnHeaderModifiers.toArray(new SGR[table.columnHeaderModifiers.size()]));
+            int topPosition = 0;
             int leftPosition = 0;
             for(int index = 0; index < columnWidths.size(); index++) {
                 String label = table.tableModel.columns.get(index);
-                graphics.putString(leftPosition, 0, label);
-                leftPosition += columnWidths.get(index) + 1;
+                graphics.putString(leftPosition, 0, label, table.columnHeaderModifiers);
+                leftPosition += columnWidths.get(index);
+                if(headerHorizontalBorderStyle != TableCellBorderStyle.None) {
+                    graphics.setCharacter(leftPosition, 0, getVerticalCharacter(headerHorizontalBorderStyle));
+                    leftPosition++;
+                }
+            }
+            topPosition++;
+
+            if(headerVerticalBorderStyle != TableCellBorderStyle.None) {
+                leftPosition = 0;
+                for(int i = 0; i < columnWidths.size(); i++) {
+                    if(i > 0) {
+                        graphics.setCharacter(
+                                leftPosition,
+                                topPosition,
+                                getJunctionCharacter(
+                                        headerVerticalBorderStyle,
+                                        headerHorizontalBorderStyle,
+                                        cellHorizontalBorderStyle));
+                        leftPosition++;
+                    }
+                    int columnWidth = columnWidths.get(i);
+                    graphics.drawLine(leftPosition, topPosition, leftPosition + columnWidth - 1, topPosition, getHorizontalCharacter(headerVerticalBorderStyle));
+                    leftPosition += columnWidth;
+                }
+                topPosition++;
             }
 
-            int topPosition = 1;
             for(int rowIndex = 0; rowIndex < table.getRowCount(); rowIndex++) {
                 leftPosition = 0;
                 List<Component> rowComponents = table.tableModel.getRow(rowIndex);
                 for(int columnIndex = 0; columnIndex < rowComponents.size(); columnIndex++) {
+                    if(columnIndex > 0) {
+                        graphics.setCharacter(leftPosition, topPosition, getVerticalCharacter(cellHorizontalBorderStyle));
+                        leftPosition++;
+                    }
                     Component component = rowComponents.get(columnIndex);
                     if(component != null) {
                         TerminalSize componentArea = new TerminalSize(columnWidths.get(columnIndex), rowHeights.get(rowIndex));
                         component.draw(graphics.newTextGraphics(new TerminalPosition(leftPosition, topPosition), componentArea));
                     }
-                    leftPosition += columnWidths.get(columnIndex) + 1;
+                    leftPosition += columnWidths.get(columnIndex);
                     if(leftPosition > area.getColumns()) {
                         break;
                     }
                 }
                 topPosition += rowHeights.get(rowIndex);
+                if(cellVerticalBorderStyle != TableCellBorderStyle.None) {
+                    leftPosition = 0;
+                    for(int i = 0; i < columnWidths.size(); i++) {
+                        if(i > 0) {
+                            graphics.setCharacter(
+                                    leftPosition,
+                                    topPosition,
+                                    getJunctionCharacter(
+                                            cellVerticalBorderStyle,
+                                            cellHorizontalBorderStyle,
+                                            cellHorizontalBorderStyle));
+                            leftPosition++;
+                        }
+                        int columnWidth = columnWidths.get(i);
+                        graphics.drawLine(leftPosition, topPosition, leftPosition + columnWidth - 1, topPosition, getHorizontalCharacter(cellVerticalBorderStyle));
+                        leftPosition += columnWidth;
+                    }
+                    topPosition += 1;
+                }
                 if(topPosition > area.getRows()) {
                     break;
                 }
+            }
+        }
+
+        private char getHorizontalCharacter(TableCellBorderStyle style) {
+            switch(style) {
+                case SingleLine:
+                    return Symbols.SINGLE_LINE_HORIZONTAL;
+                case DoubleLine:
+                    return Symbols.DOUBLE_LINE_HORIZONTAL;
+            }
+            return ' ';
+        }
+
+        private char getVerticalCharacter(TableCellBorderStyle style) {
+            switch(style) {
+                case SingleLine:
+                    return Symbols.SINGLE_LINE_VERTICAL;
+                case DoubleLine:
+                    return Symbols.DOUBLE_LINE_VERTICAL;
+            }
+            return ' ';
+        }
+
+        private char getJunctionCharacter(TableCellBorderStyle mainStyle, TableCellBorderStyle styleAbove, TableCellBorderStyle styleBelow) {
+            if(mainStyle == TableCellBorderStyle.SingleLine) {
+                if(styleAbove == TableCellBorderStyle.SingleLine) {
+                    if(styleBelow == TableCellBorderStyle.SingleLine) {
+                        return Symbols.SINGLE_LINE_CROSS;
+                    }
+                    else if(styleBelow == TableCellBorderStyle.DoubleLine) {
+                        //There isn't any character for this, give upper side priority
+                        return Symbols.SINGLE_LINE_T_UP;
+                    }
+                    else {
+                        return Symbols.SINGLE_LINE_T_UP;
+                    }
+                }
+                else if(styleAbove == TableCellBorderStyle.DoubleLine) {
+                    if(styleBelow == TableCellBorderStyle.SingleLine) {
+                        //There isn't any character for this, give upper side priority
+                        return Symbols.SINGLE_LINE_T_DOUBLE_UP;
+                    }
+                    else if(styleBelow == TableCellBorderStyle.DoubleLine) {
+                        return Symbols.DOUBLE_LINE_VERTICAL_SINGLE_LINE_CROSS;
+                    }
+                    else {
+                        return Symbols.SINGLE_LINE_T_DOUBLE_UP;
+                    }
+                }
+                else {
+                    if(styleBelow == TableCellBorderStyle.SingleLine) {
+                        return Symbols.SINGLE_LINE_T_DOWN;
+                    }
+                    else if(styleBelow == TableCellBorderStyle.DoubleLine) {
+                        return Symbols.SINGLE_LINE_T_DOUBLE_DOWN;
+                    }
+                    else {
+                        return Symbols.SINGLE_LINE_HORIZONTAL;
+                    }
+                }
+            }
+            else if(mainStyle == TableCellBorderStyle.DoubleLine) {
+                if(styleAbove == TableCellBorderStyle.SingleLine) {
+                    if(styleBelow == TableCellBorderStyle.SingleLine) {
+                        return Symbols.DOUBLE_LINE_HORIZONTAL_SINGLE_LINE_CROSS;
+                    }
+                    else if(styleBelow == TableCellBorderStyle.DoubleLine) {
+                        //There isn't any character for this, give upper side priority
+                        return Symbols.DOUBLE_LINE_T_SINGLE_UP;
+                    }
+                    else {
+                        return Symbols.DOUBLE_LINE_T_SINGLE_UP;
+                    }
+                }
+                else if(styleAbove == TableCellBorderStyle.DoubleLine) {
+                    if(styleBelow == TableCellBorderStyle.SingleLine) {
+                        //There isn't any character for this, give upper side priority
+                        return Symbols.DOUBLE_LINE_T_UP;
+                    }
+                    else if(styleBelow == TableCellBorderStyle.DoubleLine) {
+                        return Symbols.DOUBLE_LINE_CROSS;
+                    }
+                    else {
+                        return Symbols.DOUBLE_LINE_T_UP;
+                    }
+                }
+                else {
+                    if(styleBelow == TableCellBorderStyle.SingleLine) {
+                        return Symbols.DOUBLE_LINE_T_SINGLE_DOWN;
+                    }
+                    else if(styleBelow == TableCellBorderStyle.DoubleLine) {
+                        return Symbols.DOUBLE_LINE_T_DOWN;
+                    }
+                    else {
+                        return Symbols.DOUBLE_LINE_HORIZONTAL;
+                    }
+                }
+            }
+            else {
+                return ' ';
             }
         }
     }

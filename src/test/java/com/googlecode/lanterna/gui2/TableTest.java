@@ -1,6 +1,7 @@
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
+import com.googlecode.lanterna.gui2.dialogs.ListSelectDialogBuilder;
 import com.googlecode.lanterna.gui2.dialogs.TextInputDialogBuilder;
 
 import java.io.IOException;
@@ -60,18 +61,7 @@ public class TableTest extends TestBase {
         buttonPanel.addComponent(new Button("Modify...", new Runnable() {
             @Override
             public void run() {
-                String columnIndexAsText = askForANumber(textGUI, "Enter column # to modify (0-" + (table.getColumnCount()-1) + ")");
-                if(columnIndexAsText == null) {
-                    return;
-                }
-                String rowIndexAsText = askForANumber(textGUI, "Enter row # to modify (0-" + (table.getRowCount()-1) + ")");
-                if(rowIndexAsText == null) {
-                    return;
-                }
-                String newLabel = askForAString(textGUI, "Enter new label for the table cell at row " + rowIndexAsText + " column " + columnIndexAsText);
-                if(newLabel != null) {
-                    table.setCellComponent(Integer.parseInt(rowIndexAsText), Integer.parseInt(columnIndexAsText), new Label(newLabel));
-                }
+                onModify(textGUI, table);
             }
         }));
         buttonPanel.addComponent(new Button("Remove...", new Runnable() {
@@ -112,6 +102,82 @@ public class TableTest extends TestBase {
                 table.withBorder(Borders.singleLineBevel("Table")),
                 buttonPanel));
         textGUI.addWindow(window);
+    }
+
+    private void onModify(WindowBasedTextGUI textGUI, Table table) {
+        String[] dialogChoices = new String[] {
+                "Change table content",
+                "Change table style"
+        };
+        String choice = chooseAString(textGUI, "Modify what?", dialogChoices);
+        if(choice == null) {
+            return;
+        }
+        else if(choice == dialogChoices[0]) {
+            onModifyContent(textGUI, table);
+        }
+        else if(choice == dialogChoices[1]) {
+            onModifyStyle(textGUI, table);
+        }
+    }
+
+    private void onModifyContent(WindowBasedTextGUI textGUI, Table table) {
+        String columnIndexAsText = askForANumber(textGUI, "Enter column # to modify (0-" + (table.getColumnCount() - 1) + ")");
+        if(columnIndexAsText == null) {
+            return;
+        }
+        String rowIndexAsText = askForANumber(textGUI, "Enter row # to modify (0-" + (table.getRowCount() - 1) + ")");
+        if(rowIndexAsText == null) {
+            return;
+        }
+        String newLabel = askForAString(textGUI, "Enter new label for the table cell at row " + rowIndexAsText + " column " + columnIndexAsText);
+        if(newLabel != null) {
+            table.setCellComponent(Integer.parseInt(rowIndexAsText), Integer.parseInt(columnIndexAsText), new Label(newLabel));
+        }
+    }
+
+    private void onModifyStyle(WindowBasedTextGUI textGUI, Table table) {
+        String[] dialogChoices = new String[] {
+                "Header border style (vertical)",
+                "Header border style (horizontal)",
+                "Cell border style (vertical)",
+                "Cell border style (horizontal)",
+        };
+        String choice = chooseAString(textGUI, "Which style do you want to change?", dialogChoices);
+        if(choice == null) {
+            return;
+        }
+        else {
+            Table.TableCellBorderStyle newStyle = new ListSelectDialogBuilder<Table.TableCellBorderStyle>()
+                    .setTitle("Choose a new style")
+                    .addListItems(Table.TableCellBorderStyle.values())
+                    .build()
+                    .showDialog(textGUI);
+            if(newStyle != null) {
+                Table.DefaultTableRenderer renderer = (Table.DefaultTableRenderer) table.getRenderer();
+                if(choice == dialogChoices[0]) {
+                    renderer.setHeaderVerticalBorderStyle(newStyle);
+                }
+                else if(choice == dialogChoices[1]) {
+                    renderer.setHeaderHorizontalBorderStyle(newStyle);
+                }
+                else if(choice == dialogChoices[2]) {
+                    renderer.setCellVerticalBorderStyle(newStyle);
+                }
+                else if(choice == dialogChoices[3]) {
+                    renderer.setCellHorizontalBorderStyle(newStyle);
+                }
+                table.invalidate();
+            }
+        }
+    }
+
+    private String chooseAString(WindowBasedTextGUI textGUI, String title, String... items) {
+        return new ListSelectDialogBuilder<String>()
+                .setTitle(title)
+                .addListItems(items)
+                .build()
+                .showDialog(textGUI);
     }
 
     private String askForAString(WindowBasedTextGUI textGUI, String title) {
