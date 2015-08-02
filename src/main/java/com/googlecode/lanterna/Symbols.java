@@ -170,6 +170,14 @@ public class Symbols {
      * ╬
      */
     public static final char DOUBLE_LINE_CROSS = 0x256C;
+    /**
+     * ╪
+     */
+    public static final char DOUBLE_LINE_HORIZONTAL_SINGLE_LINE_CROSS = 0x256A;
+    /**
+     * ╫
+     */
+    public static final char DOUBLE_LINE_VERTICAL_SINGLE_LINE_CROSS = 0x256B;
 
     /**
      * ┴
