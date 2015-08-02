@@ -304,7 +304,11 @@ public abstract class AbstractTextGraphics implements TextGraphics {
 
     @Override
     public TextGraphics putString(int column, int row, String string, SGR extraModifier, SGR... optionalExtraModifiers) {clearModifiers();
-        EnumSet<SGR> extraModifiers = EnumSet.of(extraModifier, optionalExtraModifiers);
+        return putString(column, row, string, EnumSet.of(extraModifier, optionalExtraModifiers));
+    }
+
+    @Override
+    public TextGraphics putString(int column, int row, String string, Collection<SGR> extraModifiers) {
         extraModifiers.removeAll(activeModifiers);
         enableModifiers(extraModifiers);
         putString(column, row, string);

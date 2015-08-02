@@ -21,6 +21,7 @@ package com.googlecode.lanterna.graphics;
 import com.googlecode.lanterna.*;
 import com.googlecode.lanterna.screen.TabBehaviour;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.EnumSet;
 
 /**
@@ -227,6 +228,11 @@ class NullTextGraphics implements TextGraphics {
 
     @Override
     public TextGraphics putString(TerminalPosition position, String string, SGR extraModifier, SGR... optionalExtraModifiers) {
+        return this;
+    }
+
+    @Override
+    public TextGraphics putString(int column, int row, String string, Collection<SGR> extraModifiers) {
         return this;
     }
 }

@@ -3,6 +3,7 @@ package com.googlecode.lanterna.graphics;
 import com.googlecode.lanterna.*;
 import com.googlecode.lanterna.screen.TabBehaviour;
 
+import java.util.Collection;
 import java.util.EnumSet;
 
 /**
@@ -252,6 +253,12 @@ public class ImmutableThemedTextGraphics implements ThemedTextGraphics {
     @Override
     public ImmutableThemedTextGraphics putString(TerminalPosition position, String string, SGR extraModifier, SGR... optionalExtraModifiers) {
         backend.putString(position, string, extraModifier, optionalExtraModifiers);
+        return this;
+    }
+
+    @Override
+    public TextGraphics putString(int column, int row, String string, Collection<SGR> extraModifiers) {
+        backend.putString(column, row, string, extraModifiers);
         return this;
     }
 }

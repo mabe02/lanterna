@@ -21,6 +21,7 @@ package com.googlecode.lanterna.graphics;
 import com.googlecode.lanterna.*;
 import com.googlecode.lanterna.screen.TabBehaviour;
 
+import java.util.Collection;
 import java.util.EnumSet;
 
 /**
@@ -378,7 +379,7 @@ public interface TextGraphics {
      * Puts a string on the screen at the specified position with the current colors and modifiers. If the string
      * contains newlines (\r and/or \n), the method will stop at the character before that; you have to manage
      * multi-line strings yourself! If you supplied any extra modifiers, they will be applied when writing the string
-     * as well.
+     * as well but not recorded into the state of the TextGraphics object.
      * @param column What column to put the string at
      * @param row What row to put the string at
      * @param string String to put on the screen
@@ -400,4 +401,17 @@ public interface TextGraphics {
      * @return Itself
      */
     TextGraphics putString(TerminalPosition position, String string, SGR extraModifier, SGR... optionalExtraModifiers);
+
+    /**
+     * Puts a string on the screen at the specified position with the current colors and modifiers. If the string
+     * contains newlines (\r and/or \n), the method will stop at the character before that; you have to manage
+     * multi-line strings yourself! If you supplied any extra modifiers, they will be applied when writing the string
+     * as well but not recorded into the state of the TextGraphics object.
+     * @param column What column to put the string at
+     * @param row What row to put the string at
+     * @param string String to put on the screen
+     * @param extraModifiers Modifier to apply to the string
+     * @return Itself
+     */
+    TextGraphics putString(int column, int row, String string, Collection<SGR> extraModifiers);
 }
