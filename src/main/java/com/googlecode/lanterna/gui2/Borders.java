@@ -29,20 +29,59 @@ public class Borders {
     private Borders() {
     }
 
+    //Different ways to draw the border
+    private enum BorderStyle {
+        Solid,
+        Bevel,
+        ReverseBevel,
+    }
+
     public static Border singleLine() {
-        return new SingleLine("");
+        return singleLine("");
     }
 
     public static Border singleLine(String title) {
-        return new SingleLine(title);
+        return new SingleLine(title, BorderStyle.Solid);
+    }
+
+    public static Border singleLineBevel() {
+        return singleLineBevel("");
+    }
+
+    public static Border singleLineBevel(String title) {
+        return new SingleLine(title, BorderStyle.Bevel);
+    }
+
+    public static Border singleLineReverseBevel() {
+        return singleLineReverseBevel("");
+    }
+
+    public static Border singleLineReverseBevel(String title) {
+        return new SingleLine(title, BorderStyle.ReverseBevel);
     }
 
     public static Border doubleLine() {
-        return new DoubleLine("");
+        return doubleLine("");
     }
 
     public static Border doubleLine(String title) {
-        return new DoubleLine(title);
+        return new DoubleLine(title, BorderStyle.Solid);
+    }
+
+    public static Border doubleLineBevel() {
+        return doubleLineBevel("");
+    }
+
+    public static Border doubleLineBevel(String title) {
+        return new DoubleLine(title, BorderStyle.Bevel);
+    }
+
+    public static Border doubleLineReverseBevel() {
+        return doubleLineReverseBevel("");
+    }
+
+    public static Border doubleLineReverseBevel(String title) {
+        return new DoubleLine(title, BorderStyle.ReverseBevel);
     }
 
     private static abstract class StandardBorder extends AbstractBorder {
@@ -66,6 +105,12 @@ public class Borders {
     }
 
     private static abstract class AbstractBorderRenderer implements Border.BorderRenderer {
+        private final BorderStyle borderStyle;
+
+        protected AbstractBorderRenderer(BorderStyle borderStyle) {
+            this.borderStyle = borderStyle;
+        }
+
         @Override
         public TerminalSize getPreferredSize(Border component) {
             StandardBorder border = (StandardBorder)component;
@@ -101,7 +146,6 @@ public class Borders {
                 return;
             }
             TerminalSize drawableArea = graphics.getSize();
-            graphics.applyThemeStyle(graphics.getThemeDefinition(StandardBorder.class).getNormal());
 
             char horizontalLine = getHorizontalLine(graphics);
             char verticalLine = getVerticalLine(graphics);
@@ -110,6 +154,12 @@ public class Borders {
             char bottomRightCorner = getBottomRightCorner(graphics);
             char topRightCorner = getTopRightCorner(graphics);
 
+            if(borderStyle == BorderStyle.Bevel) {
+                graphics.applyThemeStyle(graphics.getThemeDefinition(StandardBorder.class).getPreLight());
+            }
+            else {
+                graphics.applyThemeStyle(graphics.getThemeDefinition(StandardBorder.class).getNormal());
+            }
             graphics.setCharacter(0, drawableArea.getRows() - 1, bottomLeftCorner);
             if(drawableArea.getRows() > 2) {
                 graphics.drawLine(new TerminalPosition(0, drawableArea.getRows() - 2), new TerminalPosition(0, 1), verticalLine);
@@ -119,6 +169,12 @@ public class Borders {
                 graphics.drawLine(new TerminalPosition(1, 0), new TerminalPosition(drawableArea.getColumns() - 2, 0), horizontalLine);
             }
 
+            if(borderStyle == BorderStyle.ReverseBevel) {
+                graphics.applyThemeStyle(graphics.getThemeDefinition(StandardBorder.class).getPreLight());
+            }
+            else {
+                graphics.applyThemeStyle(graphics.getThemeDefinition(StandardBorder.class).getNormal());
+            }
             graphics.setCharacter(drawableArea.getColumns() - 1, 0, topRightCorner);
             if(drawableArea.getRows() > 2) {
                 graphics.drawLine(new TerminalPosition(drawableArea.getColumns() - 1, 1),
@@ -148,17 +204,24 @@ public class Borders {
     }
 
     private static class SingleLine extends StandardBorder {
-        private SingleLine(String title) {
+        private final BorderStyle borderStyle;
+
+        private SingleLine(String title, BorderStyle borderStyle) {
             super(title);
+            this.borderStyle = borderStyle;
         }
 
         @Override
         protected BorderRenderer createDefaultRenderer() {
-            return new SingleLineRenderer();
+            return new SingleLineRenderer(borderStyle);
         }
     }
 
     private static class SingleLineRenderer extends AbstractBorderRenderer {
+        public SingleLineRenderer(BorderStyle borderStyle) {
+            super(borderStyle);
+        }
+
         @Override
         protected char getTopRightCorner(TextGUIGraphics graphics) {
             return graphics.getThemeDefinition(SingleLineRenderer.class).getCharacter("TOP_RIGHT_CORNER", Symbols.SINGLE_LINE_TOP_RIGHT_CORNER);
@@ -191,17 +254,24 @@ public class Borders {
     }
 
     private static class DoubleLine extends StandardBorder {
-        private DoubleLine(String title) {
+        private final BorderStyle borderStyle;
+
+        private DoubleLine(String title, BorderStyle borderStyle) {
             super(title);
+            this.borderStyle = borderStyle;
         }
 
         @Override
         protected BorderRenderer createDefaultRenderer() {
-            return new DoubleLineRenderer();
+            return new DoubleLineRenderer(borderStyle);
         }
     }
 
     private static class DoubleLineRenderer extends AbstractBorderRenderer {
+        public DoubleLineRenderer(BorderStyle borderStyle) {
+            super(borderStyle);
+        }
+
         @Override
         protected char getTopRightCorner(TextGUIGraphics graphics) {
             return graphics.getThemeDefinition(DoubleLine.class).getCharacter("TOP_RIGHT_CORNER", Symbols.DOUBLE_LINE_TOP_RIGHT_CORNER);
