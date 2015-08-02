@@ -44,11 +44,7 @@ public abstract class AbstractComponent<T extends Component> implements Componen
         layoutData = null;
         invalid = true;
         parent = null;
-        renderer = createDefaultRenderer();
-        
-        if(renderer == null) {
-            throw new IllegalArgumentException(getClass() + " returns a null default renderer");
-        }
+        renderer = null; //Will be set on the first call to getRenderer()
     }
     
     /**
@@ -64,7 +60,7 @@ public abstract class AbstractComponent<T extends Component> implements Componen
         if(className == null) {
             return;
         }
-        if(renderer.getClass().getName().equals(className)) {
+        if(getRenderer().getClass().getName().equals(className)) {
             return;
         }
         try {
@@ -90,6 +86,12 @@ public abstract class AbstractComponent<T extends Component> implements Componen
     }
 
     protected ComponentRenderer<T> getRenderer() {
+        if(renderer == null) {
+            renderer = createDefaultRenderer();
+            if(renderer == null) {
+                throw new IllegalStateException(getClass() + " returns a null default renderer");
+            }
+        }
         return renderer;
     }
 
@@ -126,7 +128,7 @@ public abstract class AbstractComponent<T extends Component> implements Componen
     }
 
     public TerminalSize calculatePreferredSize() {
-        return renderer.getPreferredSize(self());
+        return getRenderer().getPreferredSize(self());
     }
 
     @Override
@@ -164,7 +166,7 @@ public abstract class AbstractComponent<T extends Component> implements Componen
 
         //Delegate drawing the component to the renderer
         setSize(graphics.getSize());
-        renderer.drawComponent(graphics, self());
+        getRenderer().drawComponent(graphics, self());
     }
 
     @Override
