@@ -199,7 +199,7 @@ public class Symbols {
     /**
      * ╨
      */
-    public static final char SINGLE_LINE_T_DOUBLE_UP = 0x256B;
+    public static final char SINGLE_LINE_T_DOUBLE_UP = 0x2568;
     /**
      * ╥
      */
