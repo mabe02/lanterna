@@ -19,6 +19,7 @@
 package com.googlecode.lanterna;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.EnumSet;
 
 /**
@@ -201,6 +202,11 @@ public class TextCharacter {
         return new TextCharacter(character, foregroundColor, backgroundColor, modifiers);
     }
 
+    /**
+     * Returns a copy of this TextCharacter with a specified foreground color
+     * @param foregroundColor Foreground color the copy should have
+     * @return Copy of the TextCharacter with a different foreground color
+     */
     public TextCharacter withForegroundColor(TextColor foregroundColor) {
         if(this.foregroundColor == foregroundColor || this.foregroundColor.equals(foregroundColor)) {
             return this;
@@ -208,6 +214,11 @@ public class TextCharacter {
         return new TextCharacter(character, foregroundColor, backgroundColor, modifiers);
     }
 
+    /**
+     * Returns a copy of this TextCharacter with a specified background color
+     * @param backgroundColor Background color the copy should have
+     * @return Copy of the TextCharacter with a different background color
+     */
     public TextCharacter withBackgroundColor(TextColor backgroundColor) {
         if(this.backgroundColor == backgroundColor || this.backgroundColor.equals(backgroundColor)) {
             return this;
@@ -215,6 +226,26 @@ public class TextCharacter {
         return new TextCharacter(character, foregroundColor, backgroundColor, modifiers);
     }
 
+    /**
+     * Returns a copy of this TextCharacter with specified list of SGR modifiers. None of the currently active SGR codes
+     * will be carried over to the copy, only those in the passed in value.
+     * @param modifiers SGR modifiers the copy should have
+     * @return Copy of the TextCharacter with a different set of SGR modifiers
+     */
+    public TextCharacter withModifiers(Collection<SGR> modifiers) {
+        EnumSet<SGR> newSet = EnumSet.copyOf(modifiers);
+        if(modifiers.equals(newSet)) {
+            return this;
+        }
+        return new TextCharacter(character, foregroundColor, backgroundColor, newSet);
+    }
+
+    /**
+     * Returns a copy of this TextCharacter with an additional SGR modifier. All of the currently active SGR codes
+     * will be carried over to the copy, in addition to the one specified.
+     * @param modifier SGR modifiers the copy should have in additional to all currently present
+     * @return Copy of the TextCharacter with a new SGR modifier
+     */
     public TextCharacter withModifier(SGR modifier) {
         if(modifiers.contains(modifier)) {
             return this;
@@ -224,6 +255,13 @@ public class TextCharacter {
         return new TextCharacter(character, foregroundColor, backgroundColor, newSet);
     }
 
+    /**
+     * Returns a copy of this TextCharacter with an SGR modifier removed. All of the currently active SGR codes
+     * will be carried over to the copy, except for the one specified. If the current TextCharacter doesn't have the
+     * SGR specified, it will return itself.
+     * @param modifier SGR modifiers the copy should not have
+     * @return Copy of the TextCharacter without the SGR modifier
+     */
     public TextCharacter withoutModifier(SGR modifier) {
         if(!modifiers.contains(modifier)) {
             return this;
