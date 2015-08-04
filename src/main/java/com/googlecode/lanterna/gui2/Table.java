@@ -285,6 +285,10 @@ public class Table extends AbstractComponent<Table> implements Container {
         }
     }
 
+    public int getFocusedRow() {
+        return tableModel.getComponentRow(getBasePane().getFocusedInteractable());
+    }
+
     public interface TableRenderer extends ComponentRenderer<Table> {
         void componentAdded(Table table, Component component, int column, int row);
         void componentRemoved(Table table, int column, int row);
@@ -314,6 +318,10 @@ public class Table extends AbstractComponent<Table> implements Container {
         private TableCellBorderStyle cellVerticalBorderStyle;
         private TableCellBorderStyle cellHorizontalBorderStyle;
 
+        private TextColor selectionOverlayBackground;
+        private TextColor selectionOverlayForeground;
+        private EnumSet<SGR> selectionOverlaySGR;
+
         public DefaultTableRenderer() {
             columnWidths = new ArrayList<Integer>();
             rowHeights = new ArrayList<Integer>();
@@ -321,6 +329,10 @@ public class Table extends AbstractComponent<Table> implements Container {
             headerHorizontalBorderStyle = TableCellBorderStyle.EmptySpace;
             cellVerticalBorderStyle = TableCellBorderStyle.None;
             cellHorizontalBorderStyle = TableCellBorderStyle.EmptySpace;
+
+            selectionOverlayBackground = null;
+            selectionOverlayForeground = null;
+            selectionOverlaySGR = null;
         }
 
         /**
@@ -357,6 +369,13 @@ public class Table extends AbstractComponent<Table> implements Container {
          */
         public void setCellHorizontalBorderStyle(TableCellBorderStyle cellHorizontalBorderStyle) {
             this.cellHorizontalBorderStyle = cellHorizontalBorderStyle;
+        }
+
+        public DefaultTableRenderer setSelectionOverlay(TextColor foreground, TextColor background, Collection<SGR> styles) {
+            selectionOverlayForeground = foreground;
+            selectionOverlayBackground = background;
+            selectionOverlaySGR = styles != null ? EnumSet.copyOf(styles) : null;
+            return this;
         }
 
         private boolean isHorizontallySpaced() {
@@ -550,6 +569,32 @@ public class Table extends AbstractComponent<Table> implements Container {
                 if(topPosition > area.getRows()) {
                     break;
                 }
+            }
+
+            //"Post-process", apply row selection highlight if enabled
+            int focusedRow = table.getFocusedRow();
+            if((selectionOverlayBackground != null || selectionOverlayForeground != null || selectionOverlaySGR != null)
+                    && focusedRow != -1) {
+
+                //Go back and adjust all characters on the selected row
+                for(int column = 0; column < graphics.getSize().getColumns(); column++) {
+                    int row = focusedRow + 1;
+                    TextCharacter character = graphics.getCharacter(column, row);
+                    if(character == null) {
+                        continue;
+                    }
+                    if(selectionOverlayForeground != null) {
+                        character = character.withForegroundColor(selectionOverlayForeground);
+                    }
+                    if(selectionOverlayBackground != null) {
+                        character = character.withBackgroundColor(selectionOverlayBackground);
+                    }
+                    if(selectionOverlaySGR != null) {
+                        character = character.withModifiers(selectionOverlaySGR);
+                    }
+                    graphics.setCharacter(column, row, character);
+                }
+
             }
         }
 
@@ -753,6 +798,14 @@ public class Table extends AbstractComponent<Table> implements Container {
             rows.get(row).set(column, null);
             component.onRemoved(Table.this);
             return true;
+        }
+
+        int getComponentRow(Component component) {
+            Integer[] coordinates = lookupMap.get(component);
+            if(coordinates == null) {
+                return -1;
+            }
+            return coordinates[0];
         }
 
         int getColumnCount() {

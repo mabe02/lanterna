@@ -1,11 +1,12 @@
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
-import com.googlecode.lanterna.gui2.dialogs.ListSelectDialogBuilder;
-import com.googlecode.lanterna.gui2.dialogs.TextInputDialogBuilder;
+import com.googlecode.lanterna.SGR;
+import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.gui2.dialogs.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -25,6 +26,9 @@ public class TableTest extends TestBase {
         table.addRow("Row1", "Row1", "Row1");
         table.addRow("Row2", "Row2", "Row2");
         table.addRow("Row3", "Row3", "Row3");
+        table.setCellComponent(0, 0, new Button("Row1").setRenderer(new Button.FlatButtonRenderer()));
+        table.setCellComponent(1, 0, new Button("Row2").setRenderer(new Button.FlatButtonRenderer()));
+        table.setCellComponent(2, 0, new Button("Row3").setRenderer(new Button.FlatButtonRenderer()));
 
         Panel buttonPanel = new Panel();
         buttonPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
@@ -130,9 +134,34 @@ public class TableTest extends TestBase {
         if(rowIndexAsText == null) {
             return;
         }
-        String newLabel = askForAString(textGUI, "Enter new label for the table cell at row " + rowIndexAsText + " column " + columnIndexAsText);
-        if(newLabel != null) {
-            table.setCellComponent(Integer.parseInt(rowIndexAsText), Integer.parseInt(columnIndexAsText), new Label(newLabel));
+        String[] componentTypes = new String[] {
+                "Label",
+                "Button",
+                "Flat Button"
+        };
+        String choice = chooseAString(textGUI, "Which component to create at " + columnIndexAsText + "x" + rowIndexAsText + "?", componentTypes);
+        if(choice == null) {
+            return;
+        }
+        if(choice == componentTypes[0]) {
+            String newLabel = askForAString(textGUI, "Enter new label for the table cell at row " + rowIndexAsText + " column " + columnIndexAsText);
+            if(newLabel != null) {
+                table.setCellComponent(Integer.parseInt(rowIndexAsText), Integer.parseInt(columnIndexAsText), new Label(newLabel));
+            }
+        }
+        else if(choice == componentTypes[1]) {
+            String newLabel = askForAString(textGUI, "Enter a label for the button at table cell row " + rowIndexAsText + " column " + columnIndexAsText);
+            if(newLabel != null) {
+                table.setCellComponent(Integer.parseInt(rowIndexAsText), Integer.parseInt(columnIndexAsText), new Button(newLabel));
+            }
+        }
+        else if(choice == componentTypes[2]) {
+            String newLabel = askForAString(textGUI, "Enter a label for the flat button at table cell row " + rowIndexAsText + " column " + columnIndexAsText);
+            if(newLabel != null) {
+                Button button = new Button(newLabel);
+                button.setRenderer(new Button.FlatButtonRenderer());
+                table.setCellComponent(Integer.parseInt(rowIndexAsText), Integer.parseInt(columnIndexAsText), button);
+            }
         }
     }
 
@@ -142,10 +171,45 @@ public class TableTest extends TestBase {
                 "Header border style (horizontal)",
                 "Cell border style (vertical)",
                 "Cell border style (horizontal)",
+                "Row Highlighting"
         };
         String choice = chooseAString(textGUI, "Which style do you want to change?", dialogChoices);
+        Table.DefaultTableRenderer renderer = (Table.DefaultTableRenderer) table.getRenderer();
         if(choice == null) {
             return;
+        }
+        else if(choice == dialogChoices[4]) {
+            MessageDialogButton resetAction = MessageDialog.showMessageDialog(
+                    textGUI,
+                    "Reset?",
+                    "Do you want to reset current row highlighting setting?",
+                    MessageDialogButton.Yes,
+                    MessageDialogButton.No);
+            if(resetAction == null) {
+                return;
+            }
+            else if(resetAction == MessageDialogButton.Yes) {
+                renderer.setSelectionOverlay(null, null, null);
+            }
+            else {
+                TextColor.ANSI foreground = new ListSelectDialogBuilder<TextColor.ANSI>()
+                        .setTitle("Choose highlight foreground color")
+                        .addListItems(TextColor.ANSI.values())
+                        .build()
+                        .showDialog(textGUI);
+                if(foreground == null) {
+                    return;
+                }
+                TextColor.ANSI background = new ListSelectDialogBuilder<TextColor.ANSI>()
+                        .setTitle("Choose highlight background color")
+                        .addListItems(TextColor.ANSI.values())
+                        .build()
+                        .showDialog(textGUI);
+                if(background == null) {
+                    return;
+                }
+                renderer.setSelectionOverlay(foreground, background, EnumSet.noneOf(SGR.class));
+            }
         }
         else {
             Table.TableCellBorderStyle newStyle = new ListSelectDialogBuilder<Table.TableCellBorderStyle>()
@@ -154,7 +218,6 @@ public class TableTest extends TestBase {
                     .build()
                     .showDialog(textGUI);
             if(newStyle != null) {
-                Table.DefaultTableRenderer renderer = (Table.DefaultTableRenderer) table.getRenderer();
                 if(choice == dialogChoices[0]) {
                     renderer.setHeaderVerticalBorderStyle(newStyle);
                 }
@@ -167,9 +230,9 @@ public class TableTest extends TestBase {
                 else if(choice == dialogChoices[3]) {
                     renderer.setCellHorizontalBorderStyle(newStyle);
                 }
-                table.invalidate();
             }
         }
+        table.invalidate();
     }
 
     private String chooseAString(WindowBasedTextGUI textGUI, String title, String... items) {
