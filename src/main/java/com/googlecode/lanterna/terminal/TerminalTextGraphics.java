@@ -26,6 +26,8 @@ import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.graphics.TextGraphics;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -43,6 +45,8 @@ class TerminalTextGraphics extends AbstractTextGraphics {
     private final Terminal terminal;
     private final TerminalSize terminalSize;
 
+    private final Map<TerminalPosition, TextCharacter> writeHistory;
+
     private AtomicInteger manageCallStackSize;
     private TextCharacter lastCharacter;
     private TerminalPosition lastPosition;
@@ -51,36 +55,53 @@ class TerminalTextGraphics extends AbstractTextGraphics {
         this.terminal = terminal;
         this.terminalSize = terminal.getTerminalSize();
         this.manageCallStackSize = new AtomicInteger(0);
+        this.writeHistory = new HashMap<TerminalPosition, TextCharacter>();
         this.lastCharacter = null;
         this.lastPosition = null;
     }
 
     @Override
-    public synchronized TextGraphics setCharacter(int columnIndex, int rowIndex, TextCharacter textCharacter) {
+    public TextGraphics setCharacter(int columnIndex, int rowIndex, TextCharacter textCharacter) {
+        return setCharacter(new TerminalPosition(columnIndex, rowIndex), textCharacter);
+    }
+
+    @Override
+    public synchronized TextGraphics setCharacter(TerminalPosition position, TextCharacter textCharacter) {
         try {
             if(manageCallStackSize.get() > 0) {
                 if(lastCharacter == null || !lastCharacter.equals(textCharacter)) {
                     applyGraphicState(textCharacter);
                     lastCharacter = textCharacter;
                 }
-                if(lastPosition == null || !lastPosition.equals(columnIndex, rowIndex)) {
-                    terminal.setCursorPosition(columnIndex, rowIndex);
-                    lastPosition = new TerminalPosition(columnIndex, rowIndex);
+                if(lastPosition == null || !lastPosition.equals(position)) {
+                    terminal.setCursorPosition(position.getColumn(), position.getRow());
+                    lastPosition = position;
                 }
             }
             else {
-                terminal.setCursorPosition(columnIndex, rowIndex);
+                terminal.setCursorPosition(position.getColumn(), position.getRow());
                 applyGraphicState(textCharacter);
             }
             terminal.putCharacter(textCharacter.getCharacter());
             if(manageCallStackSize.get() > 0) {
-                lastPosition = new TerminalPosition(columnIndex + 1, rowIndex);
+                lastPosition = position.withRelativeColumn(1);
             }
+            writeHistory.put(position, textCharacter);
         }
         catch(IOException e) {
             throw new RuntimeException(e);
         }
         return this;
+    }
+
+    @Override
+    public TextCharacter getCharacter(int column, int row) {
+        return getCharacter(new TerminalPosition(column, row));
+    }
+
+    @Override
+    public synchronized TextCharacter getCharacter(TerminalPosition position) {
+        return writeHistory.get(position);
     }
 
     private void applyGraphicState(TextCharacter textCharacter) throws IOException {

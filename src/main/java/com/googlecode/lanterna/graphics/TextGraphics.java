@@ -414,4 +414,21 @@ public interface TextGraphics {
      * @return Itself
      */
     TextGraphics putString(int column, int row, String string, Collection<SGR> extraModifiers);
+
+    /**
+     * Returns the character at the specific position in the terminal. May return {@code null} if the TextGraphics
+     * implementation doesn't support it or doesn't know what the character is.
+     * @param position Position to return the character for
+     * @return The text character at the specified position or {@code null} if not available
+     */
+    TextCharacter getCharacter(TerminalPosition position);
+
+    /**
+     * Returns the character at the specific position in the terminal. May return {@code null} if the TextGraphics
+     * implementation doesn't support it or doesn't know what the character is.
+     * @param column Column to return the character for
+     * @param row Row to return the character for
+     * @return The text character at the specified position or {@code null} if not available
+     */
+    TextCharacter getCharacter(int column, int row);
 }

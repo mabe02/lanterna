@@ -90,6 +90,9 @@ class TextBuffer {
         getLine(terminalSize, position);
     }
 
+    public TextCharacter getCharacter(TerminalSize terminalSize, TerminalPosition position) {
+        return getLine(terminalSize, position).get(position.getColumn());
+    }
 
     void setCharacter(TerminalSize terminalSize, TerminalPosition currentPosition, TextCharacter terminalCharacter) {
         List<TextCharacter> line = getLine(terminalSize, currentPosition);

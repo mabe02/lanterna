@@ -29,7 +29,7 @@ import java.util.EnumSet;
  * TextGraphics implementation used by TextGUI when doing any drawing operation.
  * @author Martin
  */
-public final class TextGUIGraphics implements ThemedTextGraphics {
+public final class TextGUIGraphics implements ThemedTextGraphics, TextGraphics {
     private final TextGUI textGUI;
     private final ImmutableThemedTextGraphics backend;
 
@@ -271,5 +271,15 @@ public final class TextGUIGraphics implements ThemedTextGraphics {
     public TextGraphics putString(int column, int row, String string, Collection<SGR> extraModifiers) {
         backend.putString(column, row, string, extraModifiers);
         return this;
+    }
+
+    @Override
+    public TextCharacter getCharacter(int column, int row) {
+        return backend.getCharacter(column, row);
+    }
+
+    @Override
+    public TextCharacter getCharacter(TerminalPosition position) {
+        return backend.getCharacter(position);
     }
 }

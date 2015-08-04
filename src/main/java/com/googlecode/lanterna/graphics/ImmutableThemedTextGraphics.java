@@ -261,4 +261,14 @@ public class ImmutableThemedTextGraphics implements ThemedTextGraphics {
         backend.putString(column, row, string, extraModifiers);
         return this;
     }
+
+    @Override
+    public TextCharacter getCharacter(TerminalPosition position) {
+        return backend.getCharacter(position);
+    }
+
+    @Override
+    public TextCharacter getCharacter(int column, int row) {
+        return backend.getCharacter(column, row);
+    }
 }

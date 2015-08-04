@@ -107,6 +107,10 @@ class VirtualTerminal {
                         Math.max(cursorPosition.getRow(), 0));
     }
 
+    synchronized TextCharacter getCharacter(TerminalPosition position) {
+        return currentBuffer.getCharacter(size, position);
+    }
+
     synchronized void putCharacter(TextCharacter terminalCharacter) {
         if(terminalCharacter.getCharacter() == '\n') {
             moveCursorToNextLine();

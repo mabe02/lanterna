@@ -28,14 +28,18 @@ import com.googlecode.lanterna.TerminalSize;
  * @author Martin
  */
 class SubTextGraphics extends AbstractTextGraphics {
-    private final AbstractTextGraphics underlyingTextGraphics;
+    private final TextGraphics underlyingTextGraphics;
     private final TerminalPosition topLeft;
     private final TerminalSize writableAreaSize;
 
-    SubTextGraphics(AbstractTextGraphics underlyingTextGraphics, TerminalPosition topLeft, TerminalSize writableAreaSize) {
+    SubTextGraphics(TextGraphics underlyingTextGraphics, TerminalPosition topLeft, TerminalSize writableAreaSize) {
         this.underlyingTextGraphics = underlyingTextGraphics;
         this.topLeft = topLeft;
         this.writableAreaSize = writableAreaSize;
+    }
+
+    private TerminalPosition project(int column, int row) {
+        return topLeft.withRelative(column, row);
     }
 
     @Override
@@ -45,12 +49,19 @@ class SubTextGraphics extends AbstractTextGraphics {
                 rowIndex < 0 || rowIndex >= writableArea.getRows()) {
             return this;
         }
-        underlyingTextGraphics.setCharacter(columnIndex + topLeft.getColumn(), rowIndex + topLeft.getRow(), textCharacter);
+        TerminalPosition projectedPosition = project(columnIndex, rowIndex);
+        underlyingTextGraphics.setCharacter(projectedPosition, textCharacter);
         return this;
     }
 
     @Override
     public TerminalSize getSize() {
         return writableAreaSize;
+    }
+
+    @Override
+    public TextCharacter getCharacter(int column, int row) {
+        TerminalPosition projectedPosition = project(column, row);
+        return underlyingTextGraphics.getCharacter(projectedPosition.getColumn(), projectedPosition.getRow());
     }
 }

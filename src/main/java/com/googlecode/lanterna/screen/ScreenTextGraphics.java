@@ -43,6 +43,11 @@ class ScreenTextGraphics extends AbstractTextGraphics {
     }
 
     @Override
+    public TextCharacter getCharacter(int column, int row) {
+        return screen.getBackCharacter(column, row);
+    }
+
+    @Override
     public TerminalSize getSize() {
         return screen.getTerminalSize();
     }

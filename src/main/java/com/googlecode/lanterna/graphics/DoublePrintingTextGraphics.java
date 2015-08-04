@@ -45,6 +45,13 @@ public class DoublePrintingTextGraphics extends AbstractTextGraphics {
     }
 
     @Override
+    public TextCharacter getCharacter(int columnIndex, int rowIndex) {
+        columnIndex = columnIndex * 2;
+        return underlyingTextGraphics.getCharacter(columnIndex, rowIndex);
+
+    }
+
+    @Override
     public TerminalSize getSize() {
         TerminalSize size = underlyingTextGraphics.getSize();
         return size.withColumns(size.getColumns() / 2);

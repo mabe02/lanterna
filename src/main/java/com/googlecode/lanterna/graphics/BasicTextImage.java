@@ -225,6 +225,11 @@ public class BasicTextImage implements TextImage {
             }
 
             @Override
+            public TextCharacter getCharacter(int column, int row) {
+                return BasicTextImage.this.getCharacterAt(column, row);
+            }
+
+            @Override
             public TerminalSize getSize() {
                 return size;
             }

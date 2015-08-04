@@ -323,6 +323,11 @@ public abstract class AbstractTextGraphics implements TextGraphics {
     }
 
     @Override
+    public TextCharacter getCharacter(TerminalPosition position) {
+        return getCharacter(position.getColumn(), position.getRow());
+    }
+
+    @Override
     public TextGraphics newTextGraphics(TerminalPosition topLeftCorner, TerminalSize size) throws IllegalArgumentException {
         TerminalSize writableArea = getSize();
         if(topLeftCorner.getColumn() + size.getColumns() <= 0 ||

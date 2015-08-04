@@ -235,4 +235,14 @@ class NullTextGraphics implements TextGraphics {
     public TextGraphics putString(int column, int row, String string, Collection<SGR> extraModifiers) {
         return this;
     }
+
+    @Override
+    public TextCharacter getCharacter(int column, int row) {
+        return null;
+    }
+
+    @Override
+    public TextCharacter getCharacter(TerminalPosition position) {
+        return null;
+    }
 }

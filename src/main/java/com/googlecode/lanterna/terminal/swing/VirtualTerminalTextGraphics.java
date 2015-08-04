@@ -48,6 +48,16 @@ class VirtualTerminalTextGraphics extends AbstractTextGraphics {
     }
 
     @Override
+    public TextCharacter getCharacter(TerminalPosition position) {
+        return virtualTerminal.getCharacter(position);
+    }
+
+    @Override
+    public TextCharacter getCharacter(int column, int row) {
+        return getCharacter(new TerminalPosition(column, row));
+    }
+
+    @Override
     public TerminalSize getSize() {
         return virtualTerminal.getSize();
     }
