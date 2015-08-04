@@ -18,6 +18,7 @@
  */
 package com.googlecode.lanterna.gui2;
 
+import com.googlecode.lanterna.CJKUtils;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.graphics.ThemeDefinition;
@@ -142,6 +143,36 @@ public class Button extends AbstractInteractableComponent<Button> {
                 labelShift = (size.getColumns() - 2 - button.getLabel().length()) / 2;
             }
             return labelShift;
+        }
+    }
+
+    public static class FlatButtonRenderer extends ButtonRenderer {
+        @Override
+        public TerminalPosition getCursorLocation(Button component) {
+            return null;
+        }
+
+        @Override
+        public TerminalSize getPreferredSize(Button component) {
+            return new TerminalSize(CJKUtils.getTrueWidth(component.getLabel()), 1);
+        }
+
+        @Override
+        public void drawComponent(TextGUIGraphics graphics, Button button) {
+            if(button.isFocused()) {
+                graphics.applyThemeStyle(getThemeDefinition(graphics).getActive());
+            }
+            else {
+                graphics.applyThemeStyle(getThemeDefinition(graphics).getInsensitive());
+            }
+            graphics.fill(' ');
+            if(button.isFocused()) {
+                graphics.applyThemeStyle(getThemeDefinition(graphics).getSelected());
+            }
+            else {
+                graphics.applyThemeStyle(getThemeDefinition(graphics).getNormal());
+            }
+            graphics.putString(0, 0, button.getLabel());
         }
     }
 
