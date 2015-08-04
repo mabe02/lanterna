@@ -56,16 +56,12 @@ public abstract class AbstractComponent<T extends Component> implements Componen
     protected abstract ComponentRenderer<T> createDefaultRenderer();
 
     @SuppressWarnings("unchecked")
-    protected void updateRenderer(String className) {
+    protected ComponentRenderer<T> getRendererFromTheme(String className) {
         if(className == null) {
-            return;
-        }
-        if(getRenderer().getClass().getName().equals(className)) {
-            return;
+            return null;
         }
         try {
-            Object newRenderer = Class.forName(className).newInstance();
-            setRenderer((ComponentRenderer<T>)newRenderer);
+            return (ComponentRenderer<T>)Class.forName(className).newInstance();
         } catch (InstantiationException e) {
             throw new RuntimeException(e);
         } catch (IllegalAccessException e) {
@@ -75,14 +71,9 @@ public abstract class AbstractComponent<T extends Component> implements Componen
         }
     }
 
-    protected void setRenderer(ComponentRenderer<T> renderer) {
-        if(renderer == null) {
-            renderer = createDefaultRenderer();
-            if(renderer == null) {
-                throw new IllegalStateException(getClass() + " returned a null default renderer");
-            }
-        }
+    protected T setRenderer(ComponentRenderer<T> renderer) {
         this.renderer = renderer;
+        return self();
     }
 
     protected ComponentRenderer<T> getRenderer() {
@@ -161,9 +152,16 @@ public abstract class AbstractComponent<T extends Component> implements Componen
      * @param graphics TextGraphics to be used to draw the component
      */
     public void drawComponent(TextGUIGraphics graphics) {
-        //This will override the default renderer with the one from the theme, if there was one
-        updateRenderer(graphics.getThemeDefinition(getClass()).getRenderer());
-
+        if(getRenderer() == null) {
+            ComponentRenderer<T> renderer = getRendererFromTheme(graphics.getThemeDefinition(getClass()).getRenderer());
+            if(renderer == null) {
+                renderer = createDefaultRenderer();
+                if(renderer == null) {
+                    throw new IllegalStateException(getClass() + " returned a null default renderer");
+                }
+            }
+            setRenderer(renderer);
+        }
         //Delegate drawing the component to the renderer
         setSize(graphics.getSize());
         getRenderer().drawComponent(graphics, self());
