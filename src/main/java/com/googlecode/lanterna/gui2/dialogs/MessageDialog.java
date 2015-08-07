@@ -65,6 +65,9 @@ public class MessageDialog extends DialogWindow {
         MessageDialogBuilder builder = new MessageDialogBuilder()
                 .setTitle(title)
                 .setText(text);
+        if(buttons.length == 0) {
+            builder.addButton(MessageDialogButton.OK);
+        }
         for(MessageDialogButton button: buttons) {
             builder.addButton(button);
         }
