@@ -42,18 +42,19 @@ public class Panel extends AbstractComponent<Panel> implements Container {
         needsReLayout = false;
     }
     
-    public void addComponent(Component component) {
+    public Panel addComponent(Component component) {
         if(component == null) {
             throw new IllegalArgumentException("Cannot add null component");
         }
         synchronized(components) {
             if(components.contains(component)) {
-                return;
+                return this;
             }
             components.add(component);
             component.onAdded(this);
         }
         invalidateStructure();
+        return this;
     }
 
     @Override
@@ -81,20 +82,22 @@ public class Panel extends AbstractComponent<Panel> implements Container {
         return true;
     }
 
-    public void removeAllComponents() {
+    public Panel removeAllComponents() {
         synchronized(components) {
             for(Component component: new ArrayList<Component>(components)) {
                 removeComponent(component);
             }
         }
+        return this;
     }
     
-    public void setLayoutManager(LayoutManager layoutManager) {
+    public Panel setLayoutManager(LayoutManager layoutManager) {
         if(layoutManager == null) {
             layoutManager = new AbsoluteLayout();
         }
         this.layoutManager = layoutManager;
         invalidateStructure();
+        return this;
     }
 
     public LayoutManager getLayoutManager() {
