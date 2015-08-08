@@ -25,13 +25,7 @@ import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.IOSafeTerminal;
 import com.googlecode.lanterna.terminal.ResizeListener;
 
-import java.awt.AWTKeyStroke;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.KeyboardFocusManager;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -262,6 +256,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
         //First, resize the buffer width/height if necessary
         int fontWidth = fontConfiguration.getFontWidth();
         int fontHeight = fontConfiguration.getFontHeight();
+        boolean antiAliasing = fontConfiguration.isAntiAliased();
         int widthInNumberOfCharacters = getWidth() / fontWidth;
         int visibleRows = getHeight() / fontHeight;
 
@@ -279,6 +274,12 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
         }
         //Retrieve the position of the cursor, relative to the scrolling state
         TerminalPosition translatedCursorPosition = virtualTerminal.getTranslatedCursorPosition();
+
+        //Setup the graphics object
+        if(antiAliasing) {
+            ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        }
 
         //Fill with black to remove any previous content
         g.setColor(Color.BLACK);

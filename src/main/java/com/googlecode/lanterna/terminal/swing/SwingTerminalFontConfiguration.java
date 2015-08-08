@@ -189,6 +189,10 @@ public class SwingTerminalFontConfiguration {
         return fontHeight;
     }
 
+    boolean isAntiAliased() {
+        return useAntiAliasing;
+    }
+
     private static boolean isFontMonospaced(Font font) {
         FontRenderContext frc = new FontRenderContext(
                 null,
