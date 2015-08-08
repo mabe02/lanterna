@@ -97,7 +97,11 @@ public class CheckBox extends AbstractInteractableComponent<CheckBox> {
 
         @Override
         public TerminalSize getPreferredSize(CheckBox component) {
-            return new TerminalSize(4 + component.label.length(), 1);
+            int width = 3;
+            if(!component.label.isEmpty()) {
+                width += 1 + component.label.length();
+            }
+            return new TerminalSize(width, 1);
         }
 
         @Override
