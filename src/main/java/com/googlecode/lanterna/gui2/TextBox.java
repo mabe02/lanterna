@@ -90,7 +90,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
         this.validationPattern = null;
         setText(initialContent);
         if (preferredSize == null) {
-            preferredSize = new TerminalSize(longestRow, lines.size());
+            preferredSize = new TerminalSize(Math.max(10, longestRow), lines.size());
         }
         setPreferredSize(preferredSize);
     }
