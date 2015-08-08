@@ -14,11 +14,13 @@ public class ScrollBar extends AbstractComponent<ScrollBar> {
     private final Direction direction;
     private int maximum;
     private int position;
+    private int viewSize;
 
     public ScrollBar(Direction direction) {
         this.direction = direction;
         this.maximum = 100;
         this.position = 0;
+        this.viewSize = 0;
     }
 
     public Direction getDirection() {
@@ -48,12 +50,19 @@ public class ScrollBar extends AbstractComponent<ScrollBar> {
         return position;
     }
 
-    public int getViewSize(TerminalSize componentSize) {
+    public void setViewSize(int viewSize) {
+        this.viewSize = viewSize;
+    }
+
+    public int getViewSize() {
+        if(viewSize > 0) {
+            return viewSize;
+        }
         if(direction == Direction.HORIZONTAL) {
-            return componentSize.getColumns();
+            return getSize().getColumns();
         }
         else {
-            return componentSize.getRows();
+            return getSize().getRows();
         }
     }
 
@@ -70,21 +79,32 @@ public class ScrollBar extends AbstractComponent<ScrollBar> {
     }
 
     public static class ClassicScrollBarRenderer extends ScrollBarRenderer {
+
+        private boolean growScrollTracker;
+
+        public ClassicScrollBarRenderer() {
+            this.growScrollTracker = true;
+        }
+
+        public void setGrowScrollTracker(boolean growScrollTracker) {
+            this.growScrollTracker = growScrollTracker;
+        }
+
         @Override
         public void drawComponent(TextGUIGraphics graphics, ScrollBar component) {
             TerminalSize size = graphics.getSize();
             Direction direction = component.getDirection();
             int position = component.getScrollPosition();
             int maximum = component.getScrollMaximum();
-            int viewSize = component.getViewSize(size);
+            int viewSize = component.getViewSize();
 
             if(size.getRows() == 0 || size.getColumns() == 0) {
                 return;
             }
 
             //Adjust position if necessary
-            if(position + size.getRows() >= maximum) {
-                position = Math.max(0, maximum - size.getRows());
+            if(position + viewSize >= maximum) {
+                position = Math.max(0, maximum - viewSize);
                 component.setScrollPosition(position);
             }
 
@@ -100,10 +120,13 @@ public class ScrollBar extends AbstractComponent<ScrollBar> {
                 }
                 else {
                     int scrollableArea = size.getRows() - 2;
-                    float ratio = clampRatio((float) viewSize / (float) maximum);
-                    int scrollTrackerSize = Math.max(1, (int) (ratio * (float) scrollableArea));
+                    int scrollTrackerSize = 1;
+                    if(growScrollTracker) {
+                        float ratio = clampRatio((float) viewSize / (float) maximum);
+                        scrollTrackerSize = Math.max(1, (int) (ratio * (float) scrollableArea));
+                    }
 
-                    ratio = clampRatio((float)position / (float)(maximum - viewSize));
+                    float ratio = clampRatio((float)position / (float)(maximum - viewSize));
                     int scrollTrackerPosition = (int)(ratio * (float)(scrollableArea - scrollTrackerSize)) + 1;
 
                     graphics.setCharacter(0, 0, Symbols.ARROW_UP);
@@ -134,10 +157,13 @@ public class ScrollBar extends AbstractComponent<ScrollBar> {
                 }
                 else {
                     int scrollableArea = size.getColumns() - 2;
-                    float ratio = clampRatio((float) viewSize / (float) maximum);
-                    int scrollTrackerSize = Math.max(1, (int) (ratio * (float)scrollableArea));
+                    int scrollTrackerSize = 1;
+                    if(growScrollTracker) {
+                        float ratio = clampRatio((float) viewSize / (float) maximum);
+                        scrollTrackerSize = Math.max(1, (int) (ratio * (float) scrollableArea));
+                    }
 
-                    ratio = clampRatio((float)position / (float)(maximum - viewSize));
+                    float ratio = clampRatio((float)position / (float)(maximum - viewSize));
                     int scrollTrackerPosition = (int)(ratio * (float)(scrollableArea - scrollTrackerSize)) + 1;
 
                     graphics.setCharacter(0, 0, Symbols.ARROW_LEFT);
