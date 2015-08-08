@@ -64,10 +64,10 @@ public class SwingTerminalFontConfiguration {
     ));
 
     private static final List<Font> DEFAULT_LINUX_FONTS = Collections.unmodifiableList(Arrays.asList(
+            new Font("DejaVu Sans Mono", Font.PLAIN, 14),
             new Font("Monospaced", Font.PLAIN, 14),
             new Font("Ubuntu Mono", Font.PLAIN, 14),
             new Font("FreeMono", Font.PLAIN, 14),
-            new Font("DejaVu Sans Mono", Font.PLAIN, 14),
             new Font("Liberation Mono", Font.PLAIN, 14)
     ));
 
