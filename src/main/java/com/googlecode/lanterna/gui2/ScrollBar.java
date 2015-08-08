@@ -1,0 +1,175 @@
+package com.googlecode.lanterna.gui2;
+
+import com.googlecode.lanterna.Symbols;
+import com.googlecode.lanterna.TerminalSize;
+
+/**
+ * Classic scrollbar that can be used to display where inside a larger component a view is showing. This implementation
+ * is not interactable and needs to be driven externally.
+ *
+ * @author Martin
+ */
+public class ScrollBar extends AbstractComponent<ScrollBar> {
+
+    private final Direction direction;
+    private int maximum;
+    private int position;
+
+    public ScrollBar(Direction direction) {
+        this.direction = direction;
+        this.maximum = 100;
+        this.position = 0;
+    }
+
+    public Direction getDirection() {
+        return direction;
+    }
+
+    public ScrollBar setScrollMaximum(int maximum) {
+        if(maximum < 0) {
+            throw new IllegalArgumentException("Cannot set ScrollBar maximum to " + maximum);
+        }
+        this.maximum = maximum;
+        invalidate();
+        return this;
+    }
+
+    public int getScrollMaximum() {
+        return maximum;
+    }
+
+    public ScrollBar setScrollPosition(int position) {
+        this.position = Math.min(position, this.maximum);
+        invalidate();
+        return this;
+    }
+
+    public int getScrollPosition() {
+        return position;
+    }
+
+    public int getViewSize(TerminalSize componentSize) {
+        if(direction == Direction.HORIZONTAL) {
+            return componentSize.getColumns();
+        }
+        else {
+            return componentSize.getRows();
+        }
+    }
+
+    @Override
+    protected ComponentRenderer<ScrollBar> createDefaultRenderer() {
+        return new ClassicScrollBarRenderer();
+    }
+
+    public static abstract class ScrollBarRenderer implements ComponentRenderer<ScrollBar> {
+        @Override
+        public TerminalSize getPreferredSize(ScrollBar component) {
+            return TerminalSize.ONE;
+        }
+    }
+
+    public static class ClassicScrollBarRenderer extends ScrollBarRenderer {
+        @Override
+        public void drawComponent(TextGUIGraphics graphics, ScrollBar component) {
+            TerminalSize size = graphics.getSize();
+            Direction direction = component.getDirection();
+            int position = component.getScrollPosition();
+            int maximum = component.getScrollMaximum();
+            int viewSize = component.getViewSize(size);
+
+            if(size.getRows() == 0 || size.getColumns() == 0) {
+                return;
+            }
+
+            //Adjust position if necessary
+            if(position + size.getRows() >= maximum) {
+                position = Math.max(0, maximum - size.getRows());
+                component.setScrollPosition(position);
+            }
+
+            graphics.applyThemeStyle(graphics.getThemeDefinition(ScrollBar.class).getNormal());
+
+            if(direction == Direction.VERTICAL) {
+                if(size.getRows() == 1) {
+                    graphics.setCharacter(0, 0, Symbols.BLOCK_MIDDLE);
+                }
+                else if(size.getRows() == 2) {
+                    graphics.setCharacter(0, 0, Symbols.ARROW_UP);
+                    graphics.setCharacter(0, 1, Symbols.ARROW_DOWN);
+                }
+                else {
+                    int scrollableArea = size.getRows() - 2;
+                    float ratio = clampRatio((float) viewSize / (float) maximum);
+                    int scrollTrackerSize = Math.max(1, (int) (ratio * (float) scrollableArea));
+
+                    ratio = clampRatio((float)position / (float)(maximum - viewSize));
+                    int scrollTrackerPosition = (int)(ratio * (float)(scrollableArea - scrollTrackerSize)) + 1;
+
+                    graphics.setCharacter(0, 0, Symbols.ARROW_UP);
+                    graphics.drawLine(0, 1, 0, size.getRows() - 2, Symbols.BLOCK_MIDDLE);
+                    graphics.setCharacter(0, size.getRows() - 1, Symbols.ARROW_DOWN);
+                    if(scrollTrackerSize == 1) {
+                        graphics.setCharacter(0, scrollTrackerPosition, Symbols.SOLID_SQUARE_SMALL);
+                    }
+                    else if(scrollTrackerSize == 2) {
+                        graphics.setCharacter(0, scrollTrackerPosition, Symbols.SINGLE_LINE_T_UP);
+                        graphics.setCharacter(0, scrollTrackerPosition + 1, Symbols.SINGLE_LINE_T_DOWN);
+                    }
+                    else {
+                        graphics.setCharacter(0, scrollTrackerPosition, Symbols.SINGLE_LINE_T_UP);
+                        graphics.drawLine(0, scrollTrackerPosition + 1, 0, scrollTrackerPosition + scrollTrackerSize - 2, ' ');
+                        graphics.setCharacter(0, scrollTrackerPosition + (scrollTrackerSize / 2), Symbols.SOLID_SQUARE_SMALL);
+                        graphics.setCharacter(0, scrollTrackerPosition + scrollTrackerSize - 1, Symbols.SINGLE_LINE_T_DOWN);
+                    }
+                }
+            }
+            else {
+                if(size.getColumns() == 1) {
+                    graphics.setCharacter(0, 0, Symbols.BLOCK_MIDDLE);
+                }
+                else if(size.getColumns() == 2) {
+                    graphics.setCharacter(0, 0, Symbols.ARROW_LEFT);
+                    graphics.setCharacter(1, 0, Symbols.ARROW_RIGHT);
+                }
+                else {
+                    int scrollableArea = size.getColumns() - 2;
+                    float ratio = clampRatio((float) viewSize / (float) maximum);
+                    int scrollTrackerSize = Math.max(1, (int) (ratio * (float)scrollableArea));
+
+                    ratio = clampRatio((float)position / (float)(maximum - viewSize));
+                    int scrollTrackerPosition = (int)(ratio * (float)(scrollableArea - scrollTrackerSize)) + 1;
+
+                    graphics.setCharacter(0, 0, Symbols.ARROW_LEFT);
+                    graphics.drawLine(1, 0, size.getColumns() - 2, 0, Symbols.BLOCK_MIDDLE);
+                    graphics.setCharacter(size.getColumns() - 1, 0, Symbols.ARROW_RIGHT);
+                    if(scrollTrackerSize == 1) {
+                        graphics.setCharacter(scrollTrackerPosition, 0, Symbols.SOLID_SQUARE_SMALL);
+                    }
+                    else if(scrollTrackerSize == 2) {
+                        graphics.setCharacter(scrollTrackerPosition, 0, Symbols.SINGLE_LINE_T_LEFT);
+                        graphics.setCharacter(scrollTrackerPosition + 1, 0, Symbols.SINGLE_LINE_T_RIGHT);
+                    }
+                    else {
+                        graphics.setCharacter(scrollTrackerPosition, 0, Symbols.SINGLE_LINE_T_LEFT);
+                        graphics.drawLine(scrollTrackerPosition + 1, 0, scrollTrackerPosition + scrollTrackerSize - 2, 0, ' ');
+                        graphics.setCharacter(scrollTrackerPosition + (scrollTrackerSize / 2), 0, Symbols.SOLID_SQUARE_SMALL);
+                        graphics.setCharacter(scrollTrackerPosition + scrollTrackerSize - 1, 0, Symbols.SINGLE_LINE_T_RIGHT);
+                    }
+                }
+            }
+        }
+
+        private float clampRatio(float value) {
+            if(value < 0.0f) {
+                return 0.0f;
+            }
+            else if(value > 1.0f) {
+                return 1.0f;
+            }
+            else {
+                return value;
+            }
+        }
+    }
+}
