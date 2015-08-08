@@ -457,9 +457,13 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
 
     public static class DefaultTextBoxRenderer extends TextBoxRenderer {
         private TerminalPosition viewTopLeft;
+        private ScrollBar verticalScrollBar;
+        private ScrollBar horizontalScrollBar;
 
         public DefaultTextBoxRenderer() {
             viewTopLeft = TerminalPosition.TOP_LEFT_CORNER;
+            verticalScrollBar = new ScrollBar(Direction.VERTICAL);
+            horizontalScrollBar = new ScrollBar(Direction.HORIZONTAL);
         }
 
         @Override
@@ -496,6 +500,42 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
 
         @Override
         public void drawComponent(TextGUIGraphics graphics, TextBox component) {
+            TerminalSize realTextArea = graphics.getSize();
+            if(realTextArea.getRows() == 0 || realTextArea.getColumns() == 0) {
+                return;
+            }
+            if(component.getLineCount() > realTextArea.getRows()) {
+                realTextArea = realTextArea.withRelativeColumns(-1);
+            }
+            if(component.longestRow > realTextArea.getColumns()) {
+                realTextArea = realTextArea.withRelativeRows(-1);
+                if(component.getLineCount() > realTextArea.getRows() && realTextArea.getRows() == graphics.getSize().getRows()) {
+                    realTextArea = realTextArea.withRelativeColumns(-1);
+                }
+            }
+
+            drawTextArea(graphics.newTextGraphics(TerminalPosition.TOP_LEFT_CORNER, realTextArea), component);
+
+            //Draw scrollbars, if any
+            if(component.getLineCount() > realTextArea.getRows()) {
+                verticalScrollBar.setViewSize(realTextArea.getRows());
+                verticalScrollBar.setScrollMaximum(component.getLineCount());
+                verticalScrollBar.setScrollPosition(viewTopLeft.getRow());
+                verticalScrollBar.draw(graphics.newTextGraphics(
+                        new TerminalPosition(graphics.getSize().getColumns() - 1, 0),
+                        new TerminalSize(1, graphics.getSize().getRows() - 1)));
+            }
+            if(component.longestRow > realTextArea.getColumns()) {
+                horizontalScrollBar.setViewSize(realTextArea.getColumns());
+                horizontalScrollBar.setScrollMaximum(component.longestRow - 1);
+                horizontalScrollBar.setScrollPosition(viewTopLeft.getColumn());
+                horizontalScrollBar.draw(graphics.newTextGraphics(
+                        new TerminalPosition(0, graphics.getSize().getRows() - 1),
+                        new TerminalSize(graphics.getSize().getColumns() - 1, 1)));
+            }
+        }
+
+        private void drawTextArea(TextGUIGraphics graphics, TextBox component) {
             if(viewTopLeft.getColumn() + graphics.getSize().getColumns() > component.longestRow) {
                 viewTopLeft = viewTopLeft.withColumn(component.longestRow - graphics.getSize().getColumns());
                 if(viewTopLeft.getColumn() < 0) {
