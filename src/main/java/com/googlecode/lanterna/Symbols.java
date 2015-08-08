@@ -68,6 +68,24 @@ public class Symbols {
      * ◙
      */
     public static final char INVERSE_WHITE_CIRCLE = 0x25d9;
+
+    /**
+     * ■
+     */
+    public static final char SOLID_SQUARE = 0x25A0;
+    /**
+     * □
+     */
+    public static final char SOLID_SQUARE_SMALL = 0x25AA;
+    /**
+     * ▪
+     */
+    public static final char OUTLINED_SQUARE = 0x25A1;
+    /**
+     * ▫
+     */
+    public static final char OUTLINED_SQUARE_SMALL = 0x25AB;
+
     /**
      * ♀
      */
@@ -116,6 +134,18 @@ public class Symbols {
      */
     public static final char SINGLE_LINE_HORIZONTAL = 0x2500;
     /**
+     * ━
+     */
+    public static final char BOLD_SINGLE_LINE_HORIZONTAL = 0x2501;
+    /**
+     * ╾
+     */
+    public static final char BOLD_TO_NORMAL_SINGLE_LINE_HORIZONTAL = 0x257E;
+    /**
+     * ╼
+     */
+    public static final char BOLD_FROM_NORMAL_SINGLE_LINE_HORIZONTAL = 0x257C;
+    /**
      * ═
      */
     public static final char DOUBLE_LINE_HORIZONTAL = 0x2550;
@@ -123,6 +153,18 @@ public class Symbols {
      * │
      */
     public static final char SINGLE_LINE_VERTICAL = 0x2502;
+    /**
+     * ┃
+     */
+    public static final char BOLD_SINGLE_LINE_VERTICAL = 0x2503;
+    /**
+     * ╿
+     */
+    public static final char BOLD_TO_NORMAL_SINGLE_LINE_VERTICAL = 0x257F;
+    /**
+     * ╽
+     */
+    public static final char BOLD_FROM_NORMAL_SINGLE_LINE_VERTICAL = 0x257D;
     /**
      * ║
      */
