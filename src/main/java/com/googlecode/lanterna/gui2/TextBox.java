@@ -102,8 +102,9 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
      * of the TextBox in a way that does not match the pattern, the operation will be silently ignored. If you set this
      * pattern to {@code null}, all validation is turned off.
      * @param validationPattern Pattern to validate the lines in this TextBox against, or {@code null} to disable
+     * @return itself
      */
-    public void setValidationPattern(Pattern validationPattern) {
+    public TextBox setValidationPattern(Pattern validationPattern) {
         if(validationPattern != null) {
             for(String line: lines) {
                 if(!validated(line)) {
@@ -112,6 +113,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
             }
         }
         this.validationPattern = validationPattern;
+        return this;
     }
 
     public TextBox setText(String text) {
