@@ -70,11 +70,11 @@ public class Symbols {
     public static final char INVERSE_WHITE_CIRCLE = 0x25d9;
 
     /**
-     * ▪
+     * ■
      */
     public static final char SOLID_SQUARE = 0x25A0;
     /**
-     * ■
+     * ▪
      */
     public static final char SOLID_SQUARE_SMALL = 0x25AA;
     /**
