@@ -78,6 +78,16 @@ public class CheckBoxList<V> extends AbstractListBox<V, CheckBoxList<V>> {
         itemStatus.set(indexOf(object), checked);
     }
 
+    public synchronized List<V> getCheckedItems() {
+        List<V> result = new ArrayList<V>();
+        for(int i = 0; i < itemStatus.size(); i++) {
+            if(itemStatus.get(i)) {
+                result.add(getItemAt(i));
+            }
+        }
+        return result;
+    }
+
     @Override
     public synchronized Result handleKeyStroke(KeyStroke keyStroke) {
         if(keyStroke.getKeyType() == KeyType.Enter ||
