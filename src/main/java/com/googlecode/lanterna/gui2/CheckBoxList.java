@@ -46,15 +46,25 @@ public class CheckBoxList<V> extends AbstractListBox<V, CheckBoxList<V>> {
     }
 
     @Override
-    public synchronized void clearItems() {
+    public synchronized CheckBoxList<V> clearItems() {
         itemStatus.clear();
-        super.clearItems();
+        return super.clearItems();
     }
 
     @Override
-    public synchronized void addItem(V object) {
-        itemStatus.add(Boolean.FALSE);
-        super.addItem(object);
+    public CheckBoxList<V> addItem(V object) {
+        return addItem(object, false);
+    }
+
+    /**
+     * Adds an item to the checkbox list with an explicit checked status
+     * @param object Object to add to the list
+     * @param checkedState If <code>true</code>, the new item will be initially checked
+     * @return Itself
+     */
+    public synchronized CheckBoxList<V> addItem(V object, boolean checkedState) {
+        itemStatus.add(checkedState);
+        return super.addItem(object);
     }
 
     public synchronized Boolean isChecked(V object) {
@@ -71,11 +81,11 @@ public class CheckBoxList<V> extends AbstractListBox<V, CheckBoxList<V>> {
         return itemStatus.get(index);
     }
 
-    public synchronized void setChecked(V object, boolean checked) {
-        if(indexOf(object) == -1)
-            return;
-
-        itemStatus.set(indexOf(object), checked);
+    public synchronized CheckBoxList<V> setChecked(V object, boolean checked) {
+        if(indexOf(object) != -1) {
+            itemStatus.set(indexOf(object), checked);
+        }
+        return self();
     }
 
     public synchronized List<V> getCheckedItems() {

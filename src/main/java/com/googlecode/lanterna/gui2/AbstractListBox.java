@@ -66,7 +66,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
         return listItemRenderer;
     }
 
-    public synchronized void setListItemRenderer(ListItemRenderer<V,T> listItemRenderer) {
+    public synchronized T setListItemRenderer(ListItemRenderer<V,T> listItemRenderer) {
         if(listItemRenderer == null) {
             listItemRenderer = createDefaultListItemRenderer();
             if(listItemRenderer == null) {
@@ -74,6 +74,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
             }
         }
         this.listItemRenderer = listItemRenderer;
+        return self();
     }
 
     @Override
@@ -138,9 +139,9 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
             selectedIndex = items.size() - 1;
     }
 
-    public synchronized void addItem(V item) {
+    public synchronized T addItem(V item) {
         if (item == null) {
-            return;
+            return self();
         }
 
         items.add(item);
@@ -148,12 +149,14 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
             selectedIndex = 0;
         }
         invalidate();
+        return self();
     }
 
-    public synchronized void clearItems() {
+    public synchronized T clearItems() {
         items.clear();
         selectedIndex = -1;
         invalidate();
+        return self();
     }
 
     public synchronized int indexOf(V item) {
@@ -180,7 +183,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
         return new ArrayList<V>(items);
     }
 
-    public synchronized void setSelectedIndex(int index) {
+    public synchronized T setSelectedIndex(int index) {
         selectedIndex = index;
         if(selectedIndex < 0) {
             selectedIndex = 0;
@@ -189,6 +192,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
             selectedIndex = items.size() - 1;
         }
         invalidate();
+        return self();
     }
 
     public int getSelectedIndex() {
