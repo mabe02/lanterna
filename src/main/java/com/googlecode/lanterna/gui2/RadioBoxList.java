@@ -66,9 +66,9 @@ public class RadioBoxList<V> extends AbstractListBox<V, RadioBoxList<V>> {
     }
 
     @Override
-    public synchronized void clearItems() {
+    public synchronized RadioBoxList<V> clearItems() {
         checkedIndex = -1;
-        super.clearItems();
+        return super.clearItems();
     }
 
     /**

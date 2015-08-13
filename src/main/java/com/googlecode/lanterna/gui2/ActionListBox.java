@@ -37,8 +37,8 @@ public class ActionListBox extends AbstractListBox<Runnable, ActionListBox> {
     }
 
     @Override
-    public void addItem(Runnable object) {
-        super.addItem(object);
+    public ActionListBox addItem(Runnable object) {
+        return super.addItem(object);
     }
 
     public void addItem(final String label, final Runnable action) {
