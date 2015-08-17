@@ -539,7 +539,10 @@ public class Table extends AbstractComponent<Table> implements Container {
                     Component component = rowComponents.get(columnIndex);
                     if(component != null) {
                         TerminalSize componentArea = new TerminalSize(columnWidths.get(columnIndex), rowHeights.get(rowIndex));
-                        component.draw(graphics.newTextGraphics(new TerminalPosition(leftPosition, topPosition), componentArea));
+                        TerminalPosition componentPosition = new TerminalPosition(leftPosition, topPosition);
+                        component.setSize(componentArea);
+                        component.setPosition(componentPosition);
+                        component.draw(graphics.newTextGraphics(componentPosition, componentArea));
                     }
                     leftPosition += columnWidths.get(columnIndex);
                     if(leftPosition > area.getColumns()) {
