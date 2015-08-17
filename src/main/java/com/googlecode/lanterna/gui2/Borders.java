@@ -22,6 +22,7 @@ import com.googlecode.lanterna.Symbols;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextCharacter;
+import com.googlecode.lanterna.graphics.TextGraphics;
 
 import java.util.Arrays;
 import java.util.List;
@@ -201,200 +202,7 @@ public class Borders {
             wrappedComponent.draw(graphics.newTextGraphics(getWrappedComponentTopLeftOffset(), getWrappedComponentSize(drawableArea)));
 
 
-            if(drawableArea.getRows() > 2 && drawableArea.getColumns() > 2) {
-                //Extend lines along the edges, if any
-                int upperRow = 0;
-                int lowerRow = drawableArea.getRows() - 1;
-                int leftRow = 0;
-                int rightRow = drawableArea.getColumns() - 1;
-
-                List<Character> junctionFromBelowSingle = Arrays.asList(
-                        Symbols.SINGLE_LINE_VERTICAL,
-                        Symbols.BOLD_FROM_NORMAL_SINGLE_LINE_VERTICAL,
-                        Symbols.SINGLE_LINE_CROSS,
-                        Symbols.DOUBLE_LINE_HORIZONTAL_SINGLE_LINE_CROSS,
-                        Symbols.SINGLE_LINE_BOTTOM_LEFT_CORNER,
-                        Symbols.SINGLE_LINE_BOTTOM_RIGHT_CORNER,
-                        Symbols.SINGLE_LINE_T_LEFT,
-                        Symbols.SINGLE_LINE_T_RIGHT,
-                        Symbols.SINGLE_LINE_T_UP,
-                        Symbols.SINGLE_LINE_T_DOUBLE_LEFT,
-                        Symbols.SINGLE_LINE_T_DOUBLE_RIGHT,
-                        Symbols.DOUBLE_LINE_T_SINGLE_UP);
-                List<Character> junctionFromBelowDouble = Arrays.asList(
-                        Symbols.DOUBLE_LINE_VERTICAL,
-                        Symbols.DOUBLE_LINE_CROSS,
-                        Symbols.DOUBLE_LINE_VERTICAL_SINGLE_LINE_CROSS,
-                        Symbols.DOUBLE_LINE_BOTTOM_LEFT_CORNER,
-                        Symbols.DOUBLE_LINE_BOTTOM_RIGHT_CORNER,
-                        Symbols.DOUBLE_LINE_T_LEFT,
-                        Symbols.DOUBLE_LINE_T_RIGHT,
-                        Symbols.DOUBLE_LINE_T_UP,
-                        Symbols.DOUBLE_LINE_T_SINGLE_LEFT,
-                        Symbols.DOUBLE_LINE_T_SINGLE_RIGHT,
-                        Symbols.SINGLE_LINE_T_DOUBLE_UP);
-                List<Character> junctionFromAboveSingle = Arrays.asList(
-                        Symbols.SINGLE_LINE_VERTICAL,
-                        Symbols.BOLD_TO_NORMAL_SINGLE_LINE_VERTICAL,
-                        Symbols.SINGLE_LINE_CROSS,
-                        Symbols.DOUBLE_LINE_HORIZONTAL_SINGLE_LINE_CROSS,
-                        Symbols.SINGLE_LINE_TOP_LEFT_CORNER,
-                        Symbols.SINGLE_LINE_TOP_RIGHT_CORNER,
-                        Symbols.SINGLE_LINE_T_LEFT,
-                        Symbols.SINGLE_LINE_T_RIGHT,
-                        Symbols.SINGLE_LINE_T_DOWN,
-                        Symbols.SINGLE_LINE_T_DOUBLE_LEFT,
-                        Symbols.SINGLE_LINE_T_DOUBLE_RIGHT,
-                        Symbols.DOUBLE_LINE_T_SINGLE_DOWN);
-                List<Character> junctionFromAboveDouble = Arrays.asList(
-                        Symbols.DOUBLE_LINE_VERTICAL,
-                        Symbols.DOUBLE_LINE_CROSS,
-                        Symbols.DOUBLE_LINE_VERTICAL_SINGLE_LINE_CROSS,
-                        Symbols.DOUBLE_LINE_TOP_LEFT_CORNER,
-                        Symbols.DOUBLE_LINE_TOP_RIGHT_CORNER,
-                        Symbols.DOUBLE_LINE_T_LEFT,
-                        Symbols.DOUBLE_LINE_T_RIGHT,
-                        Symbols.DOUBLE_LINE_T_DOWN,
-                        Symbols.DOUBLE_LINE_T_SINGLE_LEFT,
-                        Symbols.DOUBLE_LINE_T_SINGLE_RIGHT,
-                        Symbols.SINGLE_LINE_T_DOUBLE_DOWN);
-                List<Character> junctionFromLeftSingle = Arrays.asList(
-                        Symbols.SINGLE_LINE_HORIZONTAL,
-                        Symbols.BOLD_TO_NORMAL_SINGLE_LINE_HORIZONTAL,
-                        Symbols.SINGLE_LINE_CROSS,
-                        Symbols.DOUBLE_LINE_VERTICAL_SINGLE_LINE_CROSS,
-                        Symbols.SINGLE_LINE_BOTTOM_LEFT_CORNER,
-                        Symbols.SINGLE_LINE_TOP_LEFT_CORNER,
-                        Symbols.SINGLE_LINE_T_UP,
-                        Symbols.SINGLE_LINE_T_DOWN,
-                        Symbols.SINGLE_LINE_T_RIGHT,
-                        Symbols.SINGLE_LINE_T_DOUBLE_UP,
-                        Symbols.SINGLE_LINE_T_DOUBLE_DOWN,
-                        Symbols.DOUBLE_LINE_T_SINGLE_RIGHT);
-                List<Character> junctionFromLeftDouble = Arrays.asList(
-                        Symbols.DOUBLE_LINE_HORIZONTAL,
-                        Symbols.DOUBLE_LINE_CROSS,
-                        Symbols.DOUBLE_LINE_HORIZONTAL_SINGLE_LINE_CROSS,
-                        Symbols.DOUBLE_LINE_BOTTOM_LEFT_CORNER,
-                        Symbols.DOUBLE_LINE_TOP_LEFT_CORNER,
-                        Symbols.DOUBLE_LINE_T_UP,
-                        Symbols.DOUBLE_LINE_T_DOWN,
-                        Symbols.DOUBLE_LINE_T_RIGHT,
-                        Symbols.DOUBLE_LINE_T_SINGLE_UP,
-                        Symbols.DOUBLE_LINE_T_SINGLE_DOWN,
-                        Symbols.SINGLE_LINE_T_DOUBLE_RIGHT);
-                List<Character> junctionFromRightSingle = Arrays.asList(
-                        Symbols.SINGLE_LINE_HORIZONTAL,
-                        Symbols.BOLD_FROM_NORMAL_SINGLE_LINE_HORIZONTAL,
-                        Symbols.SINGLE_LINE_CROSS,
-                        Symbols.DOUBLE_LINE_VERTICAL_SINGLE_LINE_CROSS,
-                        Symbols.SINGLE_LINE_BOTTOM_RIGHT_CORNER,
-                        Symbols.SINGLE_LINE_TOP_RIGHT_CORNER,
-                        Symbols.SINGLE_LINE_T_UP,
-                        Symbols.SINGLE_LINE_T_DOWN,
-                        Symbols.SINGLE_LINE_T_LEFT,
-                        Symbols.SINGLE_LINE_T_DOUBLE_UP,
-                        Symbols.SINGLE_LINE_T_DOUBLE_DOWN,
-                        Symbols.DOUBLE_LINE_T_SINGLE_LEFT);
-                List<Character> junctionFromRightDouble = Arrays.asList(
-                        Symbols.DOUBLE_LINE_HORIZONTAL,
-                        Symbols.DOUBLE_LINE_CROSS,
-                        Symbols.DOUBLE_LINE_HORIZONTAL_SINGLE_LINE_CROSS,
-                        Symbols.DOUBLE_LINE_BOTTOM_RIGHT_CORNER,
-                        Symbols.DOUBLE_LINE_TOP_RIGHT_CORNER,
-                        Symbols.DOUBLE_LINE_T_UP,
-                        Symbols.DOUBLE_LINE_T_DOWN,
-                        Symbols.DOUBLE_LINE_T_LEFT,
-                        Symbols.DOUBLE_LINE_T_SINGLE_UP,
-                        Symbols.DOUBLE_LINE_T_SINGLE_DOWN,
-                        Symbols.SINGLE_LINE_T_DOUBLE_LEFT);
-
-                //Go horizontally and check vertical neighbours if it's possible to extend lines into the border
-                for(int column = 1; column < drawableArea.getColumns() - 1; column++) {
-                    //Check first row
-                    TextCharacter borderCharacter = graphics.getCharacter(column, upperRow);
-                    char neighbour = graphics.getCharacter(column, upperRow + 1).getCharacter();
-                    if(borderCharacter.getCharacter() == Symbols.SINGLE_LINE_HORIZONTAL) {
-                        if(junctionFromBelowSingle.contains(neighbour)) {
-                            graphics.setCharacter(column, upperRow, borderCharacter.withCharacter(Symbols.SINGLE_LINE_T_DOWN));
-                        }
-                        else if(junctionFromBelowDouble.contains(neighbour)) {
-                            graphics.setCharacter(column, upperRow, borderCharacter.withCharacter(Symbols.SINGLE_LINE_T_DOUBLE_DOWN));
-                        }
-                    }
-                    else if(borderCharacter.getCharacter() == Symbols.DOUBLE_LINE_HORIZONTAL) {
-                        if(junctionFromBelowSingle.contains(neighbour)) {
-                            graphics.setCharacter(column, upperRow, borderCharacter.withCharacter(Symbols.DOUBLE_LINE_T_SINGLE_DOWN));
-                        }
-                        else if(junctionFromBelowDouble.contains(neighbour)) {
-                            graphics.setCharacter(column, upperRow, borderCharacter.withCharacter(Symbols.DOUBLE_LINE_T_DOWN));
-                        }
-                    }
-
-                    //Check last row
-                    borderCharacter = graphics.getCharacter(column, lowerRow);
-                    neighbour = graphics.getCharacter(column, lowerRow - 1).getCharacter();
-                    if(borderCharacter.getCharacter() == Symbols.SINGLE_LINE_HORIZONTAL) {
-                        if(junctionFromAboveSingle.contains(neighbour)) {
-                            graphics.setCharacter(column, lowerRow, borderCharacter.withCharacter(Symbols.SINGLE_LINE_T_UP));
-                        }
-                        else if(junctionFromAboveDouble.contains(neighbour)) {
-                            graphics.setCharacter(column, lowerRow, borderCharacter.withCharacter(Symbols.SINGLE_LINE_T_DOUBLE_UP));
-                        }
-                    }
-                    else if(borderCharacter.getCharacter() == Symbols.DOUBLE_LINE_HORIZONTAL) {
-                        if(junctionFromAboveSingle.contains(neighbour)) {
-                            graphics.setCharacter(column, lowerRow, borderCharacter.withCharacter(Symbols.DOUBLE_LINE_T_SINGLE_UP));
-                        }
-                        else if(junctionFromAboveDouble.contains(neighbour)) {
-                            graphics.setCharacter(column, lowerRow, borderCharacter.withCharacter(Symbols.DOUBLE_LINE_T_UP));
-                        }
-                    }
-                }
-
-                //Go vertically and check horizontal neighbours if it's possible to extend lines into the border
-                for(int row = 1; row < drawableArea.getRows() - 1; row++) {
-                    //Check first column
-                    TextCharacter borderCharacter = graphics.getCharacter(leftRow, row);
-                    char neighbour = graphics.getCharacter(leftRow + 1, row).getCharacter();
-                    if(borderCharacter.getCharacter() == Symbols.SINGLE_LINE_VERTICAL) {
-                        if(junctionFromRightSingle.contains(neighbour)) {
-                            graphics.setCharacter(leftRow, row, borderCharacter.withCharacter(Symbols.SINGLE_LINE_T_RIGHT));
-                        }
-                        else if(junctionFromRightDouble.contains(neighbour)) {
-                            graphics.setCharacter(leftRow, row, borderCharacter.withCharacter(Symbols.SINGLE_LINE_T_DOUBLE_RIGHT));
-                        }
-                    }
-                    else if(borderCharacter.getCharacter() == Symbols.DOUBLE_LINE_VERTICAL) {
-                        if(junctionFromRightSingle.contains(neighbour)) {
-                            graphics.setCharacter(leftRow, row, borderCharacter.withCharacter(Symbols.DOUBLE_LINE_T_SINGLE_RIGHT));
-                        }
-                        else if(junctionFromRightDouble.contains(neighbour)) {
-                            graphics.setCharacter(leftRow, row, borderCharacter.withCharacter(Symbols.DOUBLE_LINE_T_RIGHT));
-                        }
-                    }
-
-                    //Check last column
-                    borderCharacter = graphics.getCharacter(rightRow, row);
-                    neighbour = graphics.getCharacter(rightRow - 1, row).getCharacter();
-                    if(borderCharacter.getCharacter() == Symbols.SINGLE_LINE_VERTICAL) {
-                        if(junctionFromLeftSingle.contains(neighbour)) {
-                            graphics.setCharacter(rightRow, row, borderCharacter.withCharacter(Symbols.SINGLE_LINE_T_LEFT));
-                        }
-                        else if(junctionFromLeftDouble.contains(neighbour)) {
-                            graphics.setCharacter(rightRow, row, borderCharacter.withCharacter(Symbols.SINGLE_LINE_T_DOUBLE_LEFT));
-                        }
-                    }
-                    else if(borderCharacter.getCharacter() == Symbols.DOUBLE_LINE_VERTICAL) {
-                        if(junctionFromLeftSingle.contains(neighbour)) {
-                            graphics.setCharacter(rightRow, row, borderCharacter.withCharacter(Symbols.DOUBLE_LINE_T_SINGLE_LEFT));
-                        }
-                        else if(junctionFromLeftDouble.contains(neighbour)) {
-                            graphics.setCharacter(rightRow, row, borderCharacter.withCharacter(Symbols.DOUBLE_LINE_T_LEFT));
-                        }
-                    }
-                }
-            }
+            joinLinesWithFrame(graphics);
         }
 
         protected abstract char getHorizontalLine(TextGUIGraphics graphics);
@@ -403,6 +211,213 @@ public class Borders {
         protected abstract char getTopLeftCorner(TextGUIGraphics graphics);
         protected abstract char getBottomRightCorner(TextGUIGraphics graphics);
         protected abstract char getTopRightCorner(TextGUIGraphics graphics);
+    }
+
+    /**
+     * This method will attempt to join line drawing characters with the outermost bottom and top rows and left and
+     * right columns. For example, if a vertical left border character is ║ and the character immediately to the right
+     * of it is ─, then the border character will be updated to ╟ to join the two together. Please note that this method
+     * will <b>only</b> join the outer border columns and rows.
+     * @param graphics Graphics to use when inspecting and joining characters
+     */
+    public static void joinLinesWithFrame(TextGraphics graphics) {
+        TerminalSize drawableArea = graphics.getSize();
+        if(drawableArea.getRows() <= 2 || drawableArea.getColumns() <= 2) {
+            //Too small
+            return;
+        }
+
+        int upperRow = 0;
+        int lowerRow = drawableArea.getRows() - 1;
+        int leftRow = 0;
+        int rightRow = drawableArea.getColumns() - 1;
+
+        List<Character> junctionFromBelowSingle = Arrays.asList(
+                Symbols.SINGLE_LINE_VERTICAL,
+                Symbols.BOLD_FROM_NORMAL_SINGLE_LINE_VERTICAL,
+                Symbols.SINGLE_LINE_CROSS,
+                Symbols.DOUBLE_LINE_HORIZONTAL_SINGLE_LINE_CROSS,
+                Symbols.SINGLE_LINE_BOTTOM_LEFT_CORNER,
+                Symbols.SINGLE_LINE_BOTTOM_RIGHT_CORNER,
+                Symbols.SINGLE_LINE_T_LEFT,
+                Symbols.SINGLE_LINE_T_RIGHT,
+                Symbols.SINGLE_LINE_T_UP,
+                Symbols.SINGLE_LINE_T_DOUBLE_LEFT,
+                Symbols.SINGLE_LINE_T_DOUBLE_RIGHT,
+                Symbols.DOUBLE_LINE_T_SINGLE_UP);
+        List<Character> junctionFromBelowDouble = Arrays.asList(
+                Symbols.DOUBLE_LINE_VERTICAL,
+                Symbols.DOUBLE_LINE_CROSS,
+                Symbols.DOUBLE_LINE_VERTICAL_SINGLE_LINE_CROSS,
+                Symbols.DOUBLE_LINE_BOTTOM_LEFT_CORNER,
+                Symbols.DOUBLE_LINE_BOTTOM_RIGHT_CORNER,
+                Symbols.DOUBLE_LINE_T_LEFT,
+                Symbols.DOUBLE_LINE_T_RIGHT,
+                Symbols.DOUBLE_LINE_T_UP,
+                Symbols.DOUBLE_LINE_T_SINGLE_LEFT,
+                Symbols.DOUBLE_LINE_T_SINGLE_RIGHT,
+                Symbols.SINGLE_LINE_T_DOUBLE_UP);
+        List<Character> junctionFromAboveSingle = Arrays.asList(
+                Symbols.SINGLE_LINE_VERTICAL,
+                Symbols.BOLD_TO_NORMAL_SINGLE_LINE_VERTICAL,
+                Symbols.SINGLE_LINE_CROSS,
+                Symbols.DOUBLE_LINE_HORIZONTAL_SINGLE_LINE_CROSS,
+                Symbols.SINGLE_LINE_TOP_LEFT_CORNER,
+                Symbols.SINGLE_LINE_TOP_RIGHT_CORNER,
+                Symbols.SINGLE_LINE_T_LEFT,
+                Symbols.SINGLE_LINE_T_RIGHT,
+                Symbols.SINGLE_LINE_T_DOWN,
+                Symbols.SINGLE_LINE_T_DOUBLE_LEFT,
+                Symbols.SINGLE_LINE_T_DOUBLE_RIGHT,
+                Symbols.DOUBLE_LINE_T_SINGLE_DOWN);
+        List<Character> junctionFromAboveDouble = Arrays.asList(
+                Symbols.DOUBLE_LINE_VERTICAL,
+                Symbols.DOUBLE_LINE_CROSS,
+                Symbols.DOUBLE_LINE_VERTICAL_SINGLE_LINE_CROSS,
+                Symbols.DOUBLE_LINE_TOP_LEFT_CORNER,
+                Symbols.DOUBLE_LINE_TOP_RIGHT_CORNER,
+                Symbols.DOUBLE_LINE_T_LEFT,
+                Symbols.DOUBLE_LINE_T_RIGHT,
+                Symbols.DOUBLE_LINE_T_DOWN,
+                Symbols.DOUBLE_LINE_T_SINGLE_LEFT,
+                Symbols.DOUBLE_LINE_T_SINGLE_RIGHT,
+                Symbols.SINGLE_LINE_T_DOUBLE_DOWN);
+        List<Character> junctionFromLeftSingle = Arrays.asList(
+                Symbols.SINGLE_LINE_HORIZONTAL,
+                Symbols.BOLD_TO_NORMAL_SINGLE_LINE_HORIZONTAL,
+                Symbols.SINGLE_LINE_CROSS,
+                Symbols.DOUBLE_LINE_VERTICAL_SINGLE_LINE_CROSS,
+                Symbols.SINGLE_LINE_BOTTOM_LEFT_CORNER,
+                Symbols.SINGLE_LINE_TOP_LEFT_CORNER,
+                Symbols.SINGLE_LINE_T_UP,
+                Symbols.SINGLE_LINE_T_DOWN,
+                Symbols.SINGLE_LINE_T_RIGHT,
+                Symbols.SINGLE_LINE_T_DOUBLE_UP,
+                Symbols.SINGLE_LINE_T_DOUBLE_DOWN,
+                Symbols.DOUBLE_LINE_T_SINGLE_RIGHT);
+        List<Character> junctionFromLeftDouble = Arrays.asList(
+                Symbols.DOUBLE_LINE_HORIZONTAL,
+                Symbols.DOUBLE_LINE_CROSS,
+                Symbols.DOUBLE_LINE_HORIZONTAL_SINGLE_LINE_CROSS,
+                Symbols.DOUBLE_LINE_BOTTOM_LEFT_CORNER,
+                Symbols.DOUBLE_LINE_TOP_LEFT_CORNER,
+                Symbols.DOUBLE_LINE_T_UP,
+                Symbols.DOUBLE_LINE_T_DOWN,
+                Symbols.DOUBLE_LINE_T_RIGHT,
+                Symbols.DOUBLE_LINE_T_SINGLE_UP,
+                Symbols.DOUBLE_LINE_T_SINGLE_DOWN,
+                Symbols.SINGLE_LINE_T_DOUBLE_RIGHT);
+        List<Character> junctionFromRightSingle = Arrays.asList(
+                Symbols.SINGLE_LINE_HORIZONTAL,
+                Symbols.BOLD_FROM_NORMAL_SINGLE_LINE_HORIZONTAL,
+                Symbols.SINGLE_LINE_CROSS,
+                Symbols.DOUBLE_LINE_VERTICAL_SINGLE_LINE_CROSS,
+                Symbols.SINGLE_LINE_BOTTOM_RIGHT_CORNER,
+                Symbols.SINGLE_LINE_TOP_RIGHT_CORNER,
+                Symbols.SINGLE_LINE_T_UP,
+                Symbols.SINGLE_LINE_T_DOWN,
+                Symbols.SINGLE_LINE_T_LEFT,
+                Symbols.SINGLE_LINE_T_DOUBLE_UP,
+                Symbols.SINGLE_LINE_T_DOUBLE_DOWN,
+                Symbols.DOUBLE_LINE_T_SINGLE_LEFT);
+        List<Character> junctionFromRightDouble = Arrays.asList(
+                Symbols.DOUBLE_LINE_HORIZONTAL,
+                Symbols.DOUBLE_LINE_CROSS,
+                Symbols.DOUBLE_LINE_HORIZONTAL_SINGLE_LINE_CROSS,
+                Symbols.DOUBLE_LINE_BOTTOM_RIGHT_CORNER,
+                Symbols.DOUBLE_LINE_TOP_RIGHT_CORNER,
+                Symbols.DOUBLE_LINE_T_UP,
+                Symbols.DOUBLE_LINE_T_DOWN,
+                Symbols.DOUBLE_LINE_T_LEFT,
+                Symbols.DOUBLE_LINE_T_SINGLE_UP,
+                Symbols.DOUBLE_LINE_T_SINGLE_DOWN,
+                Symbols.SINGLE_LINE_T_DOUBLE_LEFT);
+
+        //Go horizontally and check vertical neighbours if it's possible to extend lines into the border
+        for(int column = 1; column < drawableArea.getColumns() - 1; column++) {
+            //Check first row
+            TextCharacter borderCharacter = graphics.getCharacter(column, upperRow);
+            char neighbour = graphics.getCharacter(column, upperRow + 1).getCharacter();
+            if(borderCharacter.getCharacter() == Symbols.SINGLE_LINE_HORIZONTAL) {
+                if(junctionFromBelowSingle.contains(neighbour)) {
+                    graphics.setCharacter(column, upperRow, borderCharacter.withCharacter(Symbols.SINGLE_LINE_T_DOWN));
+                }
+                else if(junctionFromBelowDouble.contains(neighbour)) {
+                    graphics.setCharacter(column, upperRow, borderCharacter.withCharacter(Symbols.SINGLE_LINE_T_DOUBLE_DOWN));
+                }
+            }
+            else if(borderCharacter.getCharacter() == Symbols.DOUBLE_LINE_HORIZONTAL) {
+                if(junctionFromBelowSingle.contains(neighbour)) {
+                    graphics.setCharacter(column, upperRow, borderCharacter.withCharacter(Symbols.DOUBLE_LINE_T_SINGLE_DOWN));
+                }
+                else if(junctionFromBelowDouble.contains(neighbour)) {
+                    graphics.setCharacter(column, upperRow, borderCharacter.withCharacter(Symbols.DOUBLE_LINE_T_DOWN));
+                }
+            }
+
+            //Check last row
+            borderCharacter = graphics.getCharacter(column, lowerRow);
+            neighbour = graphics.getCharacter(column, lowerRow - 1).getCharacter();
+            if(borderCharacter.getCharacter() == Symbols.SINGLE_LINE_HORIZONTAL) {
+                if(junctionFromAboveSingle.contains(neighbour)) {
+                    graphics.setCharacter(column, lowerRow, borderCharacter.withCharacter(Symbols.SINGLE_LINE_T_UP));
+                }
+                else if(junctionFromAboveDouble.contains(neighbour)) {
+                    graphics.setCharacter(column, lowerRow, borderCharacter.withCharacter(Symbols.SINGLE_LINE_T_DOUBLE_UP));
+                }
+            }
+            else if(borderCharacter.getCharacter() == Symbols.DOUBLE_LINE_HORIZONTAL) {
+                if(junctionFromAboveSingle.contains(neighbour)) {
+                    graphics.setCharacter(column, lowerRow, borderCharacter.withCharacter(Symbols.DOUBLE_LINE_T_SINGLE_UP));
+                }
+                else if(junctionFromAboveDouble.contains(neighbour)) {
+                    graphics.setCharacter(column, lowerRow, borderCharacter.withCharacter(Symbols.DOUBLE_LINE_T_UP));
+                }
+            }
+        }
+
+        //Go vertically and check horizontal neighbours if it's possible to extend lines into the border
+        for(int row = 1; row < drawableArea.getRows() - 1; row++) {
+            //Check first column
+            TextCharacter borderCharacter = graphics.getCharacter(leftRow, row);
+            char neighbour = graphics.getCharacter(leftRow + 1, row).getCharacter();
+            if(borderCharacter.getCharacter() == Symbols.SINGLE_LINE_VERTICAL) {
+                if(junctionFromRightSingle.contains(neighbour)) {
+                    graphics.setCharacter(leftRow, row, borderCharacter.withCharacter(Symbols.SINGLE_LINE_T_RIGHT));
+                }
+                else if(junctionFromRightDouble.contains(neighbour)) {
+                    graphics.setCharacter(leftRow, row, borderCharacter.withCharacter(Symbols.SINGLE_LINE_T_DOUBLE_RIGHT));
+                }
+            }
+            else if(borderCharacter.getCharacter() == Symbols.DOUBLE_LINE_VERTICAL) {
+                if(junctionFromRightSingle.contains(neighbour)) {
+                    graphics.setCharacter(leftRow, row, borderCharacter.withCharacter(Symbols.DOUBLE_LINE_T_SINGLE_RIGHT));
+                }
+                else if(junctionFromRightDouble.contains(neighbour)) {
+                    graphics.setCharacter(leftRow, row, borderCharacter.withCharacter(Symbols.DOUBLE_LINE_T_RIGHT));
+                }
+            }
+
+            //Check last column
+            borderCharacter = graphics.getCharacter(rightRow, row);
+            neighbour = graphics.getCharacter(rightRow - 1, row).getCharacter();
+            if(borderCharacter.getCharacter() == Symbols.SINGLE_LINE_VERTICAL) {
+                if(junctionFromLeftSingle.contains(neighbour)) {
+                    graphics.setCharacter(rightRow, row, borderCharacter.withCharacter(Symbols.SINGLE_LINE_T_LEFT));
+                }
+                else if(junctionFromLeftDouble.contains(neighbour)) {
+                    graphics.setCharacter(rightRow, row, borderCharacter.withCharacter(Symbols.SINGLE_LINE_T_DOUBLE_LEFT));
+                }
+            }
+            else if(borderCharacter.getCharacter() == Symbols.DOUBLE_LINE_VERTICAL) {
+                if(junctionFromLeftSingle.contains(neighbour)) {
+                    graphics.setCharacter(rightRow, row, borderCharacter.withCharacter(Symbols.DOUBLE_LINE_T_SINGLE_LEFT));
+                }
+                else if(junctionFromLeftDouble.contains(neighbour)) {
+                    graphics.setCharacter(rightRow, row, borderCharacter.withCharacter(Symbols.DOUBLE_LINE_T_LEFT));
+                }
+            }
+        }
     }
 
     private static class SingleLine extends StandardBorder {
