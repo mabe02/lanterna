@@ -459,11 +459,13 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
         private TerminalPosition viewTopLeft;
         private ScrollBar verticalScrollBar;
         private ScrollBar horizontalScrollBar;
+        private boolean hideScrollBars;
 
         public DefaultTextBoxRenderer() {
             viewTopLeft = TerminalPosition.TOP_LEFT_CORNER;
             verticalScrollBar = new ScrollBar(Direction.VERTICAL);
             horizontalScrollBar = new ScrollBar(Direction.HORIZONTAL);
+            hideScrollBars = false;
         }
 
         @Override
@@ -498,6 +500,10 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
             return new TerminalSize(component.longestRow, component.lines.size());
         }
 
+        public void setHideScrollBars(boolean hideScrollBars) {
+            this.hideScrollBars = hideScrollBars;
+        }
+
         @Override
         public void drawComponent(TextGUIGraphics graphics, TextBox component) {
             TerminalSize realTextArea = graphics.getSize();
@@ -505,10 +511,10 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
                 return;
             }
             int textBoxLineCount = component.getLineCount();
-            if(textBoxLineCount > realTextArea.getRows()) {
+            if(!hideScrollBars && textBoxLineCount > realTextArea.getRows()) {
                 realTextArea = realTextArea.withRelativeColumns(-1);
             }
-            if(component.longestRow > realTextArea.getColumns()) {
+            if(!hideScrollBars && component.longestRow > realTextArea.getColumns()) {
                 realTextArea = realTextArea.withRelativeRows(-1);
                 if(textBoxLineCount > realTextArea.getRows() && realTextArea.getRows() == graphics.getSize().getRows()) {
                     realTextArea = realTextArea.withRelativeColumns(-1);
@@ -518,7 +524,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
             drawTextArea(graphics.newTextGraphics(TerminalPosition.TOP_LEFT_CORNER, realTextArea), component);
 
             //Draw scrollbars, if any
-            if(textBoxLineCount > realTextArea.getRows()) {
+            if(!hideScrollBars && textBoxLineCount > realTextArea.getRows()) {
                 verticalScrollBar.setViewSize(realTextArea.getRows());
                 verticalScrollBar.setScrollMaximum(textBoxLineCount);
                 verticalScrollBar.setScrollPosition(viewTopLeft.getRow());
@@ -526,7 +532,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
                         new TerminalPosition(graphics.getSize().getColumns() - 1, 0),
                         new TerminalSize(1, graphics.getSize().getRows() - 1)));
             }
-            if(component.longestRow > realTextArea.getColumns() && textBoxLineCount > 0) {
+            if(!hideScrollBars && component.longestRow > realTextArea.getColumns() && textBoxLineCount > 0) {
                 horizontalScrollBar.setViewSize(realTextArea.getColumns());
                 horizontalScrollBar.setScrollMaximum(component.longestRow - 1);
                 horizontalScrollBar.setScrollPosition(viewTopLeft.getColumn());
