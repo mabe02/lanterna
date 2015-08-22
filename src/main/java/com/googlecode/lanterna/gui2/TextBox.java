@@ -504,12 +504,13 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
             if(realTextArea.getRows() == 0 || realTextArea.getColumns() == 0) {
                 return;
             }
-            if(component.getLineCount() > realTextArea.getRows()) {
+            int textBoxLineCount = component.getLineCount();
+            if(textBoxLineCount > realTextArea.getRows()) {
                 realTextArea = realTextArea.withRelativeColumns(-1);
             }
             if(component.longestRow > realTextArea.getColumns()) {
                 realTextArea = realTextArea.withRelativeRows(-1);
-                if(component.getLineCount() > realTextArea.getRows() && realTextArea.getRows() == graphics.getSize().getRows()) {
+                if(textBoxLineCount > realTextArea.getRows() && realTextArea.getRows() == graphics.getSize().getRows()) {
                     realTextArea = realTextArea.withRelativeColumns(-1);
                 }
             }
@@ -517,15 +518,15 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
             drawTextArea(graphics.newTextGraphics(TerminalPosition.TOP_LEFT_CORNER, realTextArea), component);
 
             //Draw scrollbars, if any
-            if(component.getLineCount() > realTextArea.getRows()) {
+            if(textBoxLineCount > realTextArea.getRows()) {
                 verticalScrollBar.setViewSize(realTextArea.getRows());
-                verticalScrollBar.setScrollMaximum(component.getLineCount());
+                verticalScrollBar.setScrollMaximum(textBoxLineCount);
                 verticalScrollBar.setScrollPosition(viewTopLeft.getRow());
                 verticalScrollBar.draw(graphics.newTextGraphics(
                         new TerminalPosition(graphics.getSize().getColumns() - 1, 0),
                         new TerminalSize(1, graphics.getSize().getRows() - 1)));
             }
-            if(component.longestRow > realTextArea.getColumns()) {
+            if(component.longestRow > realTextArea.getColumns() && textBoxLineCount > 0) {
                 horizontalScrollBar.setViewSize(realTextArea.getColumns());
                 horizontalScrollBar.setScrollMaximum(component.longestRow - 1);
                 horizontalScrollBar.setScrollPosition(viewTopLeft.getColumn());
