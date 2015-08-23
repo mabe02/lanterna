@@ -3,6 +3,10 @@ package com.googlecode.lanterna.gui2;
 import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.dialogs.*;
+import com.googlecode.lanterna.gui2.table.DefaultTableRenderer;
+import com.googlecode.lanterna.gui2.table.Table;
+import com.googlecode.lanterna.gui2.table.TableCellBorderStyle;
+import com.googlecode.lanterna.gui2.table.TableModel;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,13 +26,11 @@ public class TableTest extends TestBase {
     public void init(final WindowBasedTextGUI textGUI) {
         final BasicWindow window = new BasicWindow("Table container test");
 
-        final Table table = new Table("Column 1", "Column 2", "Column3");
-        table.addRow("Row1", "Row1", "Row1");
-        table.addRow("Row2", "Row2", "Row2");
-        table.addRow("Row3", "Row3", "Row3");
-        table.setCellComponent(0, 0, new Button("Row1").setRenderer(new Button.FlatButtonRenderer()));
-        table.setCellComponent(1, 0, new Button("Row2").setRenderer(new Button.FlatButtonRenderer()));
-        table.setCellComponent(2, 0, new Button("Row3").setRenderer(new Button.FlatButtonRenderer()));
+        final Table<String> table = new Table("Column 1", "Column 2", "Column3");
+        final TableModel<String> model = table.getTableModel();
+        model.addRow("Row1", "Row1", "Row1");
+        model.addRow("Row2", "Row2", "Row2");
+        model.addRow("Row3", "Row3", "Row3");
 
         Panel buttonPanel = new Panel();
         buttonPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
@@ -42,20 +44,32 @@ public class TableTest extends TestBase {
                             @Override
                             public void run() {
                                 List<String> labels = new ArrayList<String>();
-                                for(int i = 0; i < table.getColumnCount(); i++) {
-                                    labels.add("Row" + (table.getRowCount() + 1));
+                                for(int i = 0; i < model.getColumnCount(); i++) {
+                                    labels.add("Row" + (model.getRowCount() + 1));
                                 }
-                                table.addRow(labels.toArray(new String[labels.size()]));
+                                model.addRow(labels.toArray(new String[labels.size()]));
+                            }
+                        })
+                        .addAction("5 Rows", new Runnable() {
+                            @Override
+                            public void run() {
+                                for(int row = 0; row < 5; row++) {
+                                    List<String> labels = new ArrayList<String>();
+                                    for(int i = 0; i < model.getColumnCount(); i++) {
+                                        labels.add("Row" + (model.getRowCount() + 1));
+                                    }
+                                    model.addRow(labels.toArray(new String[labels.size()]));
+                                }
                             }
                         })
                         .addAction("Column", new Runnable() {
                             @Override
                             public void run() {
                                 List<String> labels = new ArrayList<String>();
-                                for(int i = 0; i < table.getRowCount(); i++) {
+                                for(int i = 0; i < model.getRowCount(); i++) {
                                     labels.add("Row" + (i + 1));
                                 }
-                                table.addColumn("NewColumn", labels.toArray(new String[labels.size()]));
+                                model.addColumn("NewColumn", labels.toArray(new String[labels.size()]));
                             }
                         })
                         .build()
@@ -76,18 +90,18 @@ public class TableTest extends TestBase {
                         .addAction("Row", new Runnable() {
                             @Override
                             public void run() {
-                                String numberAsText = askForANumber(textGUI, "Enter row # to remove (0-" + (table.getRowCount()-1) + ")");
+                                String numberAsText = askForANumber(textGUI, "Enter row # to remove (0-" + (model.getRowCount()-1) + ")");
                                 if(numberAsText != null) {
-                                    table.removeRow(Integer.parseInt(numberAsText));
+                                    model.removeRow(Integer.parseInt(numberAsText));
                                 }
                             }
                         })
                         .addAction("Column", new Runnable() {
                             @Override
                             public void run() {
-                                String numberAsText = askForANumber(textGUI, "Enter column # to remove (0-" + (table.getColumnCount()-1) + ")");
+                                String numberAsText = askForANumber(textGUI, "Enter column # to remove (0-" + (model.getColumnCount()-1) + ")");
                                 if(numberAsText != null) {
-                                    table.removeColumn(Integer.parseInt(numberAsText));
+                                    model.removeColumn(Integer.parseInt(numberAsText));
                                 }
                             }
                         })
@@ -111,7 +125,8 @@ public class TableTest extends TestBase {
     private void onModify(WindowBasedTextGUI textGUI, Table table) {
         String[] dialogChoices = new String[] {
                 "Change table content",
-                "Change table style"
+                "Change table style",
+                "Change view size"
         };
         String choice = chooseAString(textGUI, "Modify what?", dialogChoices);
         if(choice == null) {
@@ -123,45 +138,24 @@ public class TableTest extends TestBase {
         else if(choice == dialogChoices[1]) {
             onModifyStyle(textGUI, table);
         }
+        else if(choice == dialogChoices[2]) {
+            onModifyViewSize(textGUI, table);
+        }
     }
 
-    private void onModifyContent(WindowBasedTextGUI textGUI, Table table) {
-        String columnIndexAsText = askForANumber(textGUI, "Enter column # to modify (0-" + (table.getColumnCount() - 1) + ")");
+    private void onModifyContent(WindowBasedTextGUI textGUI, Table<String> table) {
+        TableModel<String> model = table.getTableModel();
+        String columnIndexAsText = askForANumber(textGUI, "Enter column # to modify (0-" + (model.getColumnCount() - 1) + ")");
         if(columnIndexAsText == null) {
             return;
         }
-        String rowIndexAsText = askForANumber(textGUI, "Enter row # to modify (0-" + (table.getRowCount() - 1) + ")");
+        String rowIndexAsText = askForANumber(textGUI, "Enter row # to modify (0-" + (model.getRowCount() - 1) + ")");
         if(rowIndexAsText == null) {
             return;
         }
-        String[] componentTypes = new String[] {
-                "Label",
-                "Button",
-                "Flat Button"
-        };
-        String choice = chooseAString(textGUI, "Which component to create at " + columnIndexAsText + "x" + rowIndexAsText + "?", componentTypes);
-        if(choice == null) {
-            return;
-        }
-        if(choice == componentTypes[0]) {
-            String newLabel = askForAString(textGUI, "Enter new label for the table cell at row " + rowIndexAsText + " column " + columnIndexAsText);
-            if(newLabel != null) {
-                table.setCellComponent(Integer.parseInt(rowIndexAsText), Integer.parseInt(columnIndexAsText), new Label(newLabel));
-            }
-        }
-        else if(choice == componentTypes[1]) {
-            String newLabel = askForAString(textGUI, "Enter a label for the button at table cell row " + rowIndexAsText + " column " + columnIndexAsText);
-            if(newLabel != null) {
-                table.setCellComponent(Integer.parseInt(rowIndexAsText), Integer.parseInt(columnIndexAsText), new Button(newLabel));
-            }
-        }
-        else if(choice == componentTypes[2]) {
-            String newLabel = askForAString(textGUI, "Enter a label for the flat button at table cell row " + rowIndexAsText + " column " + columnIndexAsText);
-            if(newLabel != null) {
-                Button button = new Button(newLabel);
-                button.setRenderer(new Button.FlatButtonRenderer());
-                table.setCellComponent(Integer.parseInt(rowIndexAsText), Integer.parseInt(columnIndexAsText), button);
-            }
+        String newLabel = askForAString(textGUI, "Enter new label for the table cell at row " + rowIndexAsText + " column " + columnIndexAsText);
+        if(newLabel != null) {
+            model.setCell(Integer.parseInt(rowIndexAsText), Integer.parseInt(columnIndexAsText), newLabel);
         }
     }
 
@@ -171,50 +165,20 @@ public class TableTest extends TestBase {
                 "Header border style (horizontal)",
                 "Cell border style (vertical)",
                 "Cell border style (horizontal)",
-                "Row Highlighting"
+                "Toggle cell selection"
         };
         String choice = chooseAString(textGUI, "Which style do you want to change?", dialogChoices);
-        Table.DefaultTableRenderer renderer = (Table.DefaultTableRenderer) table.getRenderer();
+        DefaultTableRenderer renderer = (DefaultTableRenderer) table.getRenderer();
         if(choice == null) {
             return;
         }
         else if(choice == dialogChoices[4]) {
-            MessageDialogButton resetAction = MessageDialog.showMessageDialog(
-                    textGUI,
-                    "Reset?",
-                    "Do you want to reset current row highlighting setting?",
-                    MessageDialogButton.Yes,
-                    MessageDialogButton.No);
-            if(resetAction == null) {
-                return;
-            }
-            else if(resetAction == MessageDialogButton.Yes) {
-                renderer.setSelectionOverlay(null, null, null);
-            }
-            else {
-                TextColor.ANSI foreground = new ListSelectDialogBuilder<TextColor.ANSI>()
-                        .setTitle("Choose highlight foreground color")
-                        .addListItems(TextColor.ANSI.values())
-                        .build()
-                        .showDialog(textGUI);
-                if(foreground == null) {
-                    return;
-                }
-                TextColor.ANSI background = new ListSelectDialogBuilder<TextColor.ANSI>()
-                        .setTitle("Choose highlight background color")
-                        .addListItems(TextColor.ANSI.values())
-                        .build()
-                        .showDialog(textGUI);
-                if(background == null) {
-                    return;
-                }
-                renderer.setSelectionOverlay(foreground, background, EnumSet.noneOf(SGR.class));
-            }
+            table.setCellSelection(!table.isCellSelection());
         }
         else {
-            Table.TableCellBorderStyle newStyle = new ListSelectDialogBuilder<Table.TableCellBorderStyle>()
+            TableCellBorderStyle newStyle = new ListSelectDialogBuilder<TableCellBorderStyle>()
                     .setTitle("Choose a new style")
-                    .addListItems(Table.TableCellBorderStyle.values())
+                    .addListItems(TableCellBorderStyle.values())
                     .build()
                     .showDialog(textGUI);
             if(newStyle != null) {
@@ -235,6 +199,14 @@ public class TableTest extends TestBase {
         table.invalidate();
     }
 
+    private void onModifyViewSize(WindowBasedTextGUI textGUI, Table table) {
+        String viewSize = askForANumber(textGUI, "Enter number of rows to display at once");
+        if(viewSize == null) {
+            return;
+        }
+        table.setVisibleRows(Integer.parseInt(viewSize));
+    }
+
     private String chooseAString(WindowBasedTextGUI textGUI, String title, String... items) {
         return new ListSelectDialogBuilder<String>()
                 .setTitle(title)
@@ -251,8 +223,13 @@ public class TableTest extends TestBase {
     }
 
     private String askForANumber(WindowBasedTextGUI textGUI, String title) {
+        return askForANumber(textGUI, title, "");
+    }
+
+    private String askForANumber(WindowBasedTextGUI textGUI, String title, String initialNumber) {
         return new TextInputDialogBuilder()
                 .setTitle(title)
+                .setInitialContent(initialNumber)
                 .setValidationPattern(Pattern.compile("[0-9]+"), "Not a number")
                 .build()
                 .showDialog(textGUI);
