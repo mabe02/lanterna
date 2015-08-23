@@ -58,7 +58,7 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
     protected abstract InteractableRenderer<T> createDefaultRenderer();
 
     @Override
-    protected InteractableRenderer<T> getRenderer() {
+    public InteractableRenderer<T> getRenderer() {
         return (InteractableRenderer<T>)super.getRenderer();
     }
 

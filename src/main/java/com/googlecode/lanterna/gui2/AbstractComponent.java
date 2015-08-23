@@ -71,12 +71,13 @@ public abstract class AbstractComponent<T extends Component> implements Componen
         }
     }
 
-    protected T setRenderer(ComponentRenderer<T> renderer) {
+    public T setRenderer(ComponentRenderer<T> renderer) {
         this.renderer = renderer;
         return self();
     }
 
-    protected ComponentRenderer<T> getRenderer() {
+    @Override
+    public ComponentRenderer<T> getRenderer() {
         if(renderer == null) {
             renderer = createDefaultRenderer();
             if(renderer == null) {

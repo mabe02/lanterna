@@ -58,7 +58,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
 
     @SuppressWarnings("unchecked")
     @Override
-    protected ListBoxRenderer<V, T> getRenderer() {
+    public ListBoxRenderer<V, T> getRenderer() {
         return (ListBoxRenderer<V, T>)super.getRenderer();
     }
     

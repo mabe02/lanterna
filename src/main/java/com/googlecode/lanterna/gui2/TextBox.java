@@ -134,7 +134,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
     }
 
     @Override
-    protected TextBoxRenderer getRenderer() {
+    public TextBoxRenderer getRenderer() {
         return (TextBoxRenderer)super.getRenderer();
     }
 

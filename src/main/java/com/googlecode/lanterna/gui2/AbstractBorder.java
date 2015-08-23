@@ -36,7 +36,7 @@ public abstract class AbstractBorder extends AbstractComposite<Border> implement
     }
 
     @Override
-    protected BorderRenderer getRenderer() {
+    public BorderRenderer getRenderer() {
         return (BorderRenderer)super.getRenderer();
     }
 

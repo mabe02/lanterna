@@ -118,6 +118,13 @@ public interface Component extends TextGUIElement {
     boolean isInside(Container container);
 
     /**
+     * Returns the renderer used to draw this component and measure its preferred size. You probably won't need to call
+     * this method unless you know exactly which ComponentRenderer implementation is used and you need to customize it.
+     * @return Renderer this component is using
+     */
+    ComponentRenderer<? extends Component> getRenderer();
+
+    /**
      * Marks the component as invalid and requiring to be re-drawn at next opportunity. Container components should take
      * this as a hint to layout the child components again.
      */
