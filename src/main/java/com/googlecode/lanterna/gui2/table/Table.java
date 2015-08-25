@@ -121,6 +121,12 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
 
     public void setCellSelection(boolean cellSelection) {
         this.cellSelection = cellSelection;
+        if(cellSelection && selectedColumn == -1) {
+            selectedColumn = 0;
+        }
+        else if(!cellSelection) {
+            selectedColumn = -1;
+        }
     }
 
     public boolean isCellSelection() {
