@@ -234,6 +234,7 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
             tableHeaderRenderer.drawHeader(table, label, index, graphics.newTextGraphics(new TerminalPosition(leftPosition, 0), size));
             leftPosition += size.getColumns();
             if(headerHorizontalBorderStyle != TableCellBorderStyle.None) {
+                graphics.applyThemeStyle(graphics.getThemeDefinition(Table.class).getNormal());
                 graphics.setCharacter(leftPosition, 0, getVerticalCharacter(headerHorizontalBorderStyle));
                 leftPosition++;
             }
@@ -242,6 +243,7 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
 
         if(headerVerticalBorderStyle != TableCellBorderStyle.None) {
             leftPosition = 0;
+            graphics.applyThemeStyle(graphics.getThemeDefinition(Table.class).getNormal());
             for(int i = 0; i < columnSizes.size(); i++) {
                 if(i > 0) {
                     graphics.setCharacter(
@@ -283,6 +285,17 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
             List<V> row = rows.get(rowIndex);
             for(int columnIndex = viewLeftColumn; columnIndex < Math.min(viewLeftColumn + visibleColumns, row.size()); columnIndex++) {
                 if(columnIndex > 0) {
+                    if(table.getSelectedRow() == rowIndex && !table.isCellSelection()) {
+                        if(table.isFocused()) {
+                            graphics.applyThemeStyle(graphics.getThemeDefinition(Table.class).getActive());
+                        }
+                        else {
+                            graphics.applyThemeStyle(graphics.getThemeDefinition(Table.class).getSelected());
+                        }
+                    }
+                    else {
+                        graphics.applyThemeStyle(graphics.getThemeDefinition(Table.class).getNormal());
+                    }
                     graphics.setCharacter(leftPosition, topPosition, getVerticalCharacter(cellHorizontalBorderStyle));
                     leftPosition++;
                 }

@@ -33,6 +33,7 @@ public class DefaultTableCellRenderer<V> implements TableCellRenderer<V> {
             else {
                 textGUIGraphics.applyThemeStyle(themeDefinition.getSelected());
             }
+            textGUIGraphics.fill(' ');  //Make sure to fill the whole cell first
         }
         else {
             textGUIGraphics.applyThemeStyle(themeDefinition.getNormal());
