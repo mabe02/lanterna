@@ -48,6 +48,7 @@ public class TableTest extends TestBase {
                                     labels.add("Row" + (model.getRowCount() + 1));
                                 }
                                 model.addRow(labels.toArray(new String[labels.size()]));
+                                table.invalidate();
                             }
                         })
                         .addAction("5 Rows", new Runnable() {
@@ -60,6 +61,7 @@ public class TableTest extends TestBase {
                                     }
                                     model.addRow(labels.toArray(new String[labels.size()]));
                                 }
+                                table.invalidate();
                             }
                         })
                         .addAction("Column", new Runnable() {
@@ -70,6 +72,7 @@ public class TableTest extends TestBase {
                                     labels.add("Row" + (i + 1));
                                 }
                                 model.addColumn("NewColumn", labels.toArray(new String[labels.size()]));
+                                table.invalidate();
                             }
                         })
                         .build()
