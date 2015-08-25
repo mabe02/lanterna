@@ -27,7 +27,7 @@ public class ListSelectDialogBuilder<T> extends AbstractDialogBuilder<ListSelect
     }
 
     @Override
-    public ListSelectDialog<T> build() {
+    protected ListSelectDialog<T> buildDialog() {
         return new ListSelectDialog<T>(
                 title,
                 description,

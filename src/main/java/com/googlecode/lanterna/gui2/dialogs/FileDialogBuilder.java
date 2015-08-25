@@ -23,7 +23,7 @@ public class FileDialogBuilder extends AbstractDialogBuilder<FileDialogBuilder, 
     }
 
     @Override
-    public FileDialog build() {
+    protected FileDialog buildDialog() {
         return new FileDialog(title, description, actionLabel, suggestedSize, showHiddenDirectories, selectedFile);
     }
 

@@ -22,6 +22,7 @@ import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.TerminalSize;
 
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -118,6 +119,13 @@ public interface Window extends BasePane {
      * Closes the window, which will remove it from the GUI
      */
     void close();
+
+    /**
+     * Updates the set of active hints for this window. Please note that it's up to the window manager if these hints
+     * will be honored or not.
+     * @param hints Set of hints to be active for this window
+     */
+    void setHints(Collection<Hint> hints);
 
     /**
      * Returns a set of window hints that can be used by the text gui system, the window manager or any other part that

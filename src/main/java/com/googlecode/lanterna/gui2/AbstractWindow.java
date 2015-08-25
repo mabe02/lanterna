@@ -23,8 +23,8 @@ import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.input.KeyType;
 
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * Abstract Window implementation that contains much code that is shared between different concrete Window
@@ -39,6 +39,7 @@ public class AbstractWindow extends AbstractBasePane implements Window {
     private TerminalSize lastKnownDecoratedSize;
     private TerminalPosition lastKnownPosition;
     private TerminalPosition contentOffset;
+    private Set<Hint> hints;
 
     public AbstractWindow() {
         this("");
@@ -52,6 +53,8 @@ public class AbstractWindow extends AbstractBasePane implements Window {
         this.lastKnownPosition = null;
         this.lastKnownSize = null;
         this.lastKnownDecoratedSize = null;
+
+        this.hints = new HashSet<Hint>();
     }
 
     @Override
@@ -128,8 +131,13 @@ public class AbstractWindow extends AbstractBasePane implements Window {
     }
 
     @Override
+    public void setHints(Collection<Hint> hints) {
+        this.hints = new HashSet<Hint>(hints);
+    }
+
+    @Override
     public Set<Hint> getHints() {
-        return Collections.emptySet();
+        return Collections.unmodifiableSet(hints);
     }
 
     @Override

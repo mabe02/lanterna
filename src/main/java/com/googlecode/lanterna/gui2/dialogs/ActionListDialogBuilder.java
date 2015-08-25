@@ -27,7 +27,7 @@ public class ActionListDialogBuilder extends AbstractDialogBuilder<ActionListDia
     }
 
     @Override
-    public ActionListDialog build() {
+    protected ActionListDialog buildDialog() {
         return new ActionListDialog(
                 title,
                 description,

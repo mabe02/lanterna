@@ -17,6 +17,7 @@ public abstract class DialogWindow extends BasicWindow {
 
     protected DialogWindow(String title) {
         super(title);
+        setHints(GLOBAL_DIALOG_HINTS);
     }
 
     public Object showDialog(WindowBasedTextGUI textGUI) {
@@ -25,10 +26,5 @@ public abstract class DialogWindow extends BasicWindow {
         //Wait for the window to close, in case the window manager doesn't honor the MODAL hint
         waitUntilClosed();
         return null;
-    }
-
-    @Override
-    public Set<Hint> getHints() {
-        return GLOBAL_DIALOG_HINTS;
     }
 }
