@@ -41,9 +41,17 @@ public class ListSelectDialogBuilder<T> extends AbstractDialogBuilder<ListSelect
         return this;
     }
 
+    public TerminalSize getListBoxSize() {
+        return listBoxSize;
+    }
+
     public ListSelectDialogBuilder<T> setCanCancel(boolean canCancel) {
         this.canCancel = canCancel;
         return this;
+    }
+
+    public boolean isCanCancel() {
+        return canCancel;
     }
 
     public ListSelectDialogBuilder<T> addListItem(T item) {
@@ -54,5 +62,9 @@ public class ListSelectDialogBuilder<T> extends AbstractDialogBuilder<ListSelect
     public ListSelectDialogBuilder<T> addListItems(T... items) {
         this.content.addAll(Arrays.asList(items));
         return this;
+    }
+
+    public List<T> getListItems() {
+        return new ArrayList<T>(content);
     }
 }

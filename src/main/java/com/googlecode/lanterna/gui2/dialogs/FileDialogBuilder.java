@@ -32,9 +32,17 @@ public class FileDialogBuilder extends AbstractDialogBuilder<FileDialogBuilder, 
         return this;
     }
 
+    public String getActionLabel() {
+        return actionLabel;
+    }
+
     public FileDialogBuilder setSuggestedSize(TerminalSize suggestedSize) {
         this.suggestedSize = suggestedSize;
         return this;
+    }
+
+    public TerminalSize getSuggestedSize() {
+        return suggestedSize;
     }
 
     public FileDialogBuilder setSelectedFile(File selectedFile) {
@@ -42,8 +50,16 @@ public class FileDialogBuilder extends AbstractDialogBuilder<FileDialogBuilder, 
         return this;
     }
 
+    public File getSelectedFile() {
+        return selectedFile;
+    }
+
     public void setShowHiddenDirectories(boolean showHiddenDirectories) {
         this.showHiddenDirectories = showHiddenDirectories;
+    }
+
+    public boolean isShowHiddenDirectories() {
+        return showHiddenDirectories;
     }
 
     @Override

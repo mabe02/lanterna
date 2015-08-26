@@ -41,9 +41,17 @@ public class ActionListDialogBuilder extends AbstractDialogBuilder<ActionListDia
         return this;
     }
 
+    public TerminalSize getListBoxSize() {
+        return listBoxSize;
+    }
+
     public ActionListDialogBuilder setCanCancel(boolean canCancel) {
         this.canCancel = canCancel;
         return this;
+    }
+
+    public boolean isCanCancel() {
+        return canCancel;
     }
 
     public ActionListDialogBuilder addAction(final String label, final Runnable action) {
@@ -68,5 +76,9 @@ public class ActionListDialogBuilder extends AbstractDialogBuilder<ActionListDia
     public ActionListDialogBuilder addActions(Runnable... actions) {
         this.actions.addAll(Arrays.asList(actions));
         return this;
+    }
+
+    public List<Runnable> getActions() {
+        return new ArrayList<Runnable>(actions);
     }
 }

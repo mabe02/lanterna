@@ -2,6 +2,8 @@ package com.googlecode.lanterna.gui2.dialogs;
 
 import com.googlecode.lanterna.gui2.Window;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -10,12 +12,12 @@ import java.util.Set;
 public abstract class AbstractDialogBuilder<B, T extends DialogWindow> {
     protected String title;
     protected String description;
-    protected boolean centered;
+    protected Set<Window.Hint> extraWindowHints;
 
     public AbstractDialogBuilder(String title) {
         this.title = title;
         this.description = null;
-        this.centered = true;
+        this.extraWindowHints = Collections.singleton(Window.Hint.CENTERED);
     }
 
     public B setTitle(String title) {
@@ -26,14 +28,25 @@ public abstract class AbstractDialogBuilder<B, T extends DialogWindow> {
         return self();
     }
 
+    public String getTitle() {
+        return title;
+    }
+
     public B setDescription(String description) {
         this.description = description;
         return self();
     }
 
-    public B setCentered(boolean centered) {
-        this.centered = centered;
-        return self();
+    public String getDescription() {
+        return description;
+    }
+
+    public void setExtraWindowHints(Set<Window.Hint> extraWindowHints) {
+        this.extraWindowHints = extraWindowHints;
+    }
+
+    public Set<Window.Hint> getExtraWindowHints() {
+        return extraWindowHints;
     }
 
     protected abstract B self();
@@ -42,10 +55,10 @@ public abstract class AbstractDialogBuilder<B, T extends DialogWindow> {
 
     public final T build() {
         T dialog = buildDialog();
-        if(centered) {
-            Set<Window.Hint> hints = dialog.getHints();
-            hints.add(Window.Hint.CENTERED);
-            dialog.setHints(hints);
+        if(!extraWindowHints.isEmpty()) {
+            Set<Window.Hint> combinedHints = new HashSet<Window.Hint>(dialog.getHints());
+            combinedHints.addAll(extraWindowHints);
+            dialog.setHints(combinedHints);
         }
         return dialog;
     }

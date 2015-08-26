@@ -46,14 +46,26 @@ public class TextInputDialogBuilder extends AbstractDialogBuilder<TextInputDialo
         return this;
     }
 
+    public String getInitialContent() {
+        return initialContent;
+    }
+
     public TextInputDialogBuilder setTextBoxSize(TerminalSize textBoxSize) {
         this.textBoxSize = textBoxSize;
         return this;
     }
 
+    public TerminalSize getTextBoxSize() {
+        return textBoxSize;
+    }
+
     public TextInputDialogBuilder setValidator(TextInputDialogResultValidator validator) {
         this.validator = validator;
         return this;
+    }
+
+    public TextInputDialogResultValidator getValidator() {
+        return validator;
     }
 
     public TextInputDialogBuilder setValidationPattern(final Pattern pattern, final String errorMessage) {
@@ -75,5 +87,9 @@ public class TextInputDialogBuilder extends AbstractDialogBuilder<TextInputDialo
     public TextInputDialogBuilder setPasswordInput(boolean passwordInput) {
         this.passwordInput = passwordInput;
         return this;
+    }
+
+    public boolean isPasswordInput() {
+        return passwordInput;
     }
 }
