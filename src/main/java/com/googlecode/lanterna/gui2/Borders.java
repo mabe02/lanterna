@@ -357,6 +357,9 @@ public class Borders {
 
             //Check last row
             borderCharacter = graphics.getCharacter(column, lowerRow);
+            if(borderCharacter == null) {
+                continue;
+            }
             neighbour = graphics.getCharacter(column, lowerRow - 1).getCharacter();
             if(borderCharacter.getCharacter() == Symbols.SINGLE_LINE_HORIZONTAL) {
                 if(junctionFromAboveSingle.contains(neighbour)) {
@@ -380,6 +383,9 @@ public class Borders {
         for(int row = 1; row < drawableArea.getRows() - 1; row++) {
             //Check first column
             TextCharacter borderCharacter = graphics.getCharacter(leftRow, row);
+            if(borderCharacter == null) {
+                continue;
+            }
             char neighbour = graphics.getCharacter(leftRow + 1, row).getCharacter();
             if(borderCharacter.getCharacter() == Symbols.SINGLE_LINE_VERTICAL) {
                 if(junctionFromRightSingle.contains(neighbour)) {
