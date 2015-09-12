@@ -151,7 +151,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
             TerminalPosition lastPosition = window.getPosition();
             minimumTerminalSize = minimumTerminalSize.max(
                     //Add position to size to get the bottom-right corner of the window
-                    window.getPreferredSize().withRelative(lastPosition.getColumn(), lastPosition.getRow()));
+                    window.getDecoratedSize().withRelative(lastPosition.getColumn(), lastPosition.getRow()));
         }
         virtualScreen.setMinimumSize(minimumTerminalSize);
         super.updateScreen();
