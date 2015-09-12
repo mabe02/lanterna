@@ -193,6 +193,18 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
             default:
                 return super.handleKeyStroke(keyStroke);
         }
+        if(visibleRows > 0 && selectedRow < viewTopRow) {
+            viewTopRow = selectedRow;
+        }
+        else if(visibleRows > 0 && selectedRow >= viewTopRow + visibleRows) {
+            viewTopRow = Math.max(0, selectedRow - visibleRows + 1);
+        }
+        if(visibleColumns > 0 && selectedColumn < viewLeftColumn) {
+            viewLeftColumn = selectedColumn;
+        }
+        else if(visibleColumns > 0 && selectedColumn >= viewLeftColumn + visibleColumns) {
+            viewLeftColumn = Math.max(0, selectedColumn - visibleColumns + 1);
+        }
         return Result.HANDLED;
     }
 }
