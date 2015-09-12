@@ -146,6 +146,10 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
 
         for(int columnIndex = 0; columnIndex < columnHeaders.size(); columnIndex++) {
             for(int rowIndex = viewTopRow; rowIndex < viewTopRow + visibleRows; rowIndex++) {
+                if(rowIndex >= rows.size()) {
+                    //If the view allows for more items than the table has, then exit so we don't get an NPE
+                    break;
+                }
                 V cell = rows.get(rowIndex).get(columnIndex);
                 int rowSize = tableCellRenderer.getPreferredSize(table, cell, columnIndex, rowIndex).getRows();
                 int listOffset = rowIndex - viewTopRow;
