@@ -10,6 +10,7 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
     private TableModel<V> tableModel;
     private TableHeaderRenderer<V> tableHeaderRenderer;
     private TableCellRenderer<V> tableCellRenderer;
+    private Runnable selectAction;
     private boolean cellSelection;
     private int visibleRows;
     private int visibleColumns;
@@ -25,6 +26,7 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
         this.tableHeaderRenderer = new DefaultTableHeaderRenderer<V>();
         this.tableCellRenderer = new DefaultTableCellRenderer<V>();
         this.tableModel = new TableModel<V>(columnLabels);
+        this.selectAction = null;
         this.visibleColumns = 0;
         this.visibleRows = 0;
         this.viewTopRow = 0;
@@ -129,6 +131,10 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
         }
     }
 
+    public void setSelectAction(Runnable selectAction) {
+        this.selectAction = selectAction;
+    }
+
     public boolean isCellSelection() {
         return cellSelection;
     }
@@ -150,20 +156,38 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
                 if(selectedRow > 0) {
                     selectedRow--;
                 }
+                else {
+                    return Result.MOVE_FOCUS_UP;
+                }
                 break;
             case ArrowDown:
                 if(selectedRow < tableModel.getRowCount() - 1) {
                     selectedRow++;
+                }
+                else {
+                    return Result.MOVE_FOCUS_DOWN;
                 }
                 break;
             case ArrowLeft:
                 if(cellSelection && selectedColumn > 0) {
                     selectedColumn--;
                 }
+                else {
+                    return Result.MOVE_FOCUS_LEFT;
+                }
                 break;
             case ArrowRight:
                 if(cellSelection && selectedColumn < tableModel.getColumnCount() - 1) {
                     selectedColumn++;
+                }
+                else {
+                    return Result.MOVE_FOCUS_RIGHT;
+                }
+                break;
+            case Enter:
+                Runnable runnable = selectAction;   //To avoid synchronizing
+                if(runnable != null) {
+                    runnable.run();
                 }
                 break;
             default:
