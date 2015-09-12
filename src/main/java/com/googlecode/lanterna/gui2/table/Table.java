@@ -114,11 +114,13 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
     public void setSelectedColumn(int selectedColumn) {
         if(cellSelection) {
             this.selectedColumn = selectedColumn;
+            ensureSelectedItemIsVisible();
         }
     }
 
     public void setSelectedRow(int selectedRow) {
         this.selectedRow = selectedRow;
+        ensureSelectedItemIsVisible();
     }
 
     public void setCellSelection(boolean cellSelection) {
@@ -193,6 +195,11 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
             default:
                 return super.handleKeyStroke(keyStroke);
         }
+        ensureSelectedItemIsVisible();
+        return Result.HANDLED;
+    }
+
+    private void ensureSelectedItemIsVisible() {
         if(visibleRows > 0 && selectedRow < viewTopRow) {
             viewTopRow = selectedRow;
         }
@@ -205,6 +212,5 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
         else if(visibleColumns > 0 && selectedColumn >= viewLeftColumn + visibleColumns) {
             viewLeftColumn = Math.max(0, selectedColumn - visibleColumns + 1);
         }
-        return Result.HANDLED;
     }
 }
