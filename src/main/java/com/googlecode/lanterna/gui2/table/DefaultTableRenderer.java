@@ -242,12 +242,13 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
         }
         int topPosition = 0;
         int leftPosition = 0;
-        for(int index = viewLeftColumn; index < Math.min(headers.size(), viewLeftColumn + visibleColumns); index++) {
+        int endColumnIndex = Math.min(headers.size(), viewLeftColumn + visibleColumns);
+        for(int index = viewLeftColumn; index < endColumnIndex; index++) {
             String label = headers.get(index);
             TerminalSize size = new TerminalSize(columnSizes.get(index - viewLeftColumn), headerSizeInRows);
             tableHeaderRenderer.drawHeader(table, label, index, graphics.newTextGraphics(new TerminalPosition(leftPosition, 0), size));
             leftPosition += size.getColumns();
-            if(headerHorizontalBorderStyle != TableCellBorderStyle.None) {
+            if(headerHorizontalBorderStyle != TableCellBorderStyle.None && index < (endColumnIndex - 1)) {
                 graphics.applyThemeStyle(graphics.getThemeDefinition(Table.class).getNormal());
                 graphics.setCharacter(leftPosition, 0, getVerticalCharacter(headerHorizontalBorderStyle));
                 leftPosition++;
@@ -272,6 +273,10 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
                 int columnWidth = columnSizes.get(i);
                 graphics.drawLine(leftPosition, topPosition, leftPosition + columnWidth - 1, topPosition, getHorizontalCharacter(headerVerticalBorderStyle));
                 leftPosition += columnWidth;
+            }
+            //Expand out the line in case the area is bigger
+            if(leftPosition < graphics.getSize().getColumns()) {
+                graphics.drawLine(leftPosition, topPosition, graphics.getSize().getColumns() - 1, topPosition, getHorizontalCharacter(headerVerticalBorderStyle));
             }
             topPosition++;
         }
