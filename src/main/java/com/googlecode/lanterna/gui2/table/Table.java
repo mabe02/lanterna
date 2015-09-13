@@ -196,6 +196,7 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
                 return super.handleKeyStroke(keyStroke);
         }
         ensureSelectedItemIsVisible();
+        invalidate();
         return Result.HANDLED;
     }
 
