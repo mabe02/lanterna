@@ -113,7 +113,7 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
 
         for(int rowIndex = 0; rowIndex < rows.size(); rowIndex++) {
             List<V> row = rows.get(rowIndex);
-            for(int columnIndex = viewLeftColumn; columnIndex < viewLeftColumn + visibleColumns; columnIndex++) {
+            for(int columnIndex = viewLeftColumn; columnIndex < Math.min(row.size(), viewLeftColumn + visibleColumns); columnIndex++) {
                 V cell = row.get(columnIndex);
                 int columnSize = tableCellRenderer.getPreferredSize(table, cell, columnIndex, rowIndex).getColumns();
                 int listOffset = columnIndex - viewLeftColumn;
@@ -129,7 +129,7 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
 
             //Do the headers too, on the first iteration
             if(rowIndex == 0) {
-                for(int columnIndex = viewLeftColumn; columnIndex < viewLeftColumn + visibleColumns; columnIndex++) {
+                for(int columnIndex = viewLeftColumn; columnIndex < Math.min(row.size(), viewLeftColumn + visibleColumns); columnIndex++) {
                     int columnSize = tableHeaderRenderer.getPreferredSize(table, columnHeaders.get(columnIndex), columnIndex).getColumns();
                     int listOffset = columnIndex - viewLeftColumn;
                     if(columnSizes.size() == listOffset) {
