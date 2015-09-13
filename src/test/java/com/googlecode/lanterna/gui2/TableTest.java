@@ -26,7 +26,7 @@ public class TableTest extends TestBase {
     public void init(final WindowBasedTextGUI textGUI) {
         final BasicWindow window = new BasicWindow("Table container test");
 
-        final Table<String> table = new Table("Column 1", "Column 2", "Column3");
+        final Table<String> table = new Table("Column 1", "Column 2", "Column 3");
         final TableModel<String> model = table.getTableModel();
         model.addRow("Row1", "Row1", "Row1");
         model.addRow("Row2", "Row2", "Row2");
