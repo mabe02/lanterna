@@ -129,7 +129,8 @@ public class TableTest extends TestBase {
         String[] dialogChoices = new String[] {
                 "Change table content",
                 "Change table style",
-                "Change view size"
+                "Change view size",
+                "Force re-calculate/re-draw"
         };
         String choice = chooseAString(textGUI, "Modify what?", dialogChoices);
         if(choice == null) {
@@ -143,6 +144,9 @@ public class TableTest extends TestBase {
         }
         else if(choice == dialogChoices[2]) {
             onModifyViewSize(textGUI, table);
+        }
+        else if(choice == dialogChoices[3]) {
+            table.invalidate();
         }
     }
 
