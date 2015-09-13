@@ -203,11 +203,16 @@ public class TableTest extends TestBase {
     }
 
     private void onModifyViewSize(WindowBasedTextGUI textGUI, Table table) {
-        String viewSize = askForANumber(textGUI, "Enter number of rows to display at once");
-        if(viewSize == null) {
+        String verticalViewSize = askForANumber(textGUI, "Enter number of rows to display at once (0 = all)");
+        if(verticalViewSize == null) {
             return;
         }
-        table.setVisibleRows(Integer.parseInt(viewSize));
+        table.setVisibleRows(Integer.parseInt(verticalViewSize));
+        String horizontalViewSize = askForANumber(textGUI, "Enter number of columns to display at once (0 = all)");
+        if(horizontalViewSize == null) {
+            return;
+        }
+        table.setVisibleColumns(Integer.parseInt(horizontalViewSize));
     }
 
     private String chooseAString(WindowBasedTextGUI textGUI, String title, String... items) {
