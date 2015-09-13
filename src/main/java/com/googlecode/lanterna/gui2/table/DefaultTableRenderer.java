@@ -311,6 +311,9 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
             }
             verticalScrollBar.setPosition(new TerminalPosition(graphics.getSize().getColumns() - verticalScrollBarPreferredSize.getColumns(), 0));
             verticalScrollBar.setSize(verticalScrollBarPreferredSize.withRows(scrollBarHeight));
+            verticalScrollBar.setScrollMaximum(rows.size());
+            verticalScrollBar.setViewSize(visibleRows);
+            verticalScrollBar.setScrollPosition(viewTopRow);
             verticalScrollBar.draw(graphics.newTextGraphics(verticalScrollBar.getPosition(), verticalScrollBar.getSize()));
             graphics = graphics.newTextGraphics(TerminalPosition.TOP_LEFT_CORNER, graphics.getSize().withRelativeColumns(-verticalScrollBarPreferredSize.getColumns()));
         }
@@ -319,6 +322,9 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
             int scrollBarWidth = graphics.getSize().getColumns();
             horizontalScrollBar.setPosition(new TerminalPosition(0, graphics.getSize().getRows() - horizontalScrollBarPreferredSize.getRows()));
             horizontalScrollBar.setSize(horizontalScrollBarPreferredSize.withColumns(scrollBarWidth));
+            horizontalScrollBar.setScrollMaximum(tableModel.getColumnCount());
+            horizontalScrollBar.setViewSize(visibleColumns);
+            horizontalScrollBar.setScrollPosition(viewLeftColumn);
             horizontalScrollBar.draw(graphics.newTextGraphics(horizontalScrollBar.getPosition(), horizontalScrollBar.getSize()));
             graphics = graphics.newTextGraphics(TerminalPosition.TOP_LEFT_CORNER, graphics.getSize().withRelativeRows(-horizontalScrollBarPreferredSize.getRows()));
         }
