@@ -2,6 +2,8 @@ package com.googlecode.lanterna.gui2.table;
 
 import com.googlecode.lanterna.*;
 import com.googlecode.lanterna.gui2.Component;
+import com.googlecode.lanterna.gui2.Direction;
+import com.googlecode.lanterna.gui2.ScrollBar;
 import com.googlecode.lanterna.gui2.TextGUIGraphics;
 
 import java.util.ArrayList;
@@ -11,6 +13,10 @@ import java.util.List;
  * Created by martin on 23/08/15.
  */
 public class DefaultTableRenderer<V> implements TableRenderer<V> {
+
+    private final ScrollBar verticalScrollBar;
+    private final ScrollBar horizontalScrollBar;
+
     private TableCellBorderStyle headerVerticalBorderStyle;
     private TableCellBorderStyle headerHorizontalBorderStyle;
     private TableCellBorderStyle cellVerticalBorderStyle;
@@ -23,6 +29,9 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
     private int headerSizeInRows;
 
     public DefaultTableRenderer() {
+        verticalScrollBar = new ScrollBar(Direction.VERTICAL);
+        horizontalScrollBar = new ScrollBar(Direction.HORIZONTAL);
+
         headerVerticalBorderStyle = TableCellBorderStyle.None;
         headerHorizontalBorderStyle = TableCellBorderStyle.EmptySpace;
         cellVerticalBorderStyle = TableCellBorderStyle.None;
@@ -192,6 +201,14 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
             }
         }
 
+        //Add on space taken by scrollbars (if needed)
+        if(visibleRows < rows.size()) {
+            preferredColumnSize++;
+        }
+        if(visibleColumns < tableModel.getColumnCount()) {
+            preferredRowSize++;
+        }
+
         cachedSize = new TerminalSize(preferredColumnSize, preferredRowSize);
         return cachedSize;
     }
@@ -279,6 +296,33 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
         if(visibleRows == 0) {
             visibleRows = tableModel.getRowCount();
         }
+
+        //Exit if there are no rows
+        if(rows.isEmpty()) {
+            return;
+        }
+
+        //Draw scrollbars (if needed)
+        if(visibleRows < rows.size()) {
+            TerminalSize verticalScrollBarPreferredSize = verticalScrollBar.getPreferredSize();
+            int scrollBarHeight = graphics.getSize().getRows();
+            if(visibleColumns < tableModel.getColumnCount()) {
+                scrollBarHeight--;
+            }
+            verticalScrollBar.setPosition(new TerminalPosition(graphics.getSize().getColumns() - verticalScrollBarPreferredSize.getColumns(), 0));
+            verticalScrollBar.setSize(verticalScrollBarPreferredSize.withRows(scrollBarHeight));
+            verticalScrollBar.draw(graphics.newTextGraphics(verticalScrollBar.getPosition(), verticalScrollBar.getSize()));
+            graphics = graphics.newTextGraphics(TerminalPosition.TOP_LEFT_CORNER, graphics.getSize().withRelativeColumns(-verticalScrollBarPreferredSize.getColumns()));
+        }
+        if(visibleColumns < tableModel.getColumnCount()) {
+            TerminalSize horizontalScrollBarPreferredSize = horizontalScrollBar.getPreferredSize();
+            int scrollBarWidth = graphics.getSize().getColumns();
+            horizontalScrollBar.setPosition(new TerminalPosition(0, graphics.getSize().getRows() - horizontalScrollBarPreferredSize.getRows()));
+            horizontalScrollBar.setSize(horizontalScrollBarPreferredSize.withColumns(scrollBarWidth));
+            horizontalScrollBar.draw(graphics.newTextGraphics(horizontalScrollBar.getPosition(), horizontalScrollBar.getSize()));
+            graphics = graphics.newTextGraphics(TerminalPosition.TOP_LEFT_CORNER, graphics.getSize().withRelativeRows(-horizontalScrollBarPreferredSize.getRows()));
+        }
+
         int leftPosition;
         for(int rowIndex = viewTopRow; rowIndex < Math.min(viewTopRow + visibleRows, rows.size()); rowIndex++) {
             leftPosition = 0;
