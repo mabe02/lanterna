@@ -192,12 +192,12 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
         }
         if(cellVerticalBorderStyle != TableCellBorderStyle.None) {
             if(!rows.isEmpty()) {
-                preferredRowSize += visibleRows - 1; //Vertical space between cells
+                preferredRowSize += Math.min(rows.size(), visibleRows) - 1; //Vertical space between cells
             }
         }
         if(isHorizontallySpaced()) {
             if(!columnHeaders.isEmpty()) {
-                preferredColumnSize += visibleColumns - 1;    //Spacing between the columns
+                preferredColumnSize += Math.min(tableModel.getColumnCount(), visibleColumns) - 1;    //Spacing between the columns
             }
         }
 
