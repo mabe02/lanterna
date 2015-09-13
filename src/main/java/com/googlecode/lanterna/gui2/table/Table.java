@@ -18,6 +18,7 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
     private int viewLeftColumn;
     private int selectedRow;
     private int selectedColumn;
+    private boolean escapeByArrowKey;
 
     public Table(String... columnLabels) {
         if(columnLabels.length == 0) {
@@ -34,6 +35,7 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
         this.cellSelection = false;
         this.selectedRow = 0;
         this.selectedColumn = -1;
+        this.escapeByArrowKey = true;
     }
 
     public TableModel<V> getTableModel() {
@@ -141,6 +143,14 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
         return cellSelection;
     }
 
+    public boolean isEscapeByArrowKey() {
+        return escapeByArrowKey;
+    }
+
+    public void setEscapeByArrowKey(boolean escapeByArrowKey) {
+        this.escapeByArrowKey = escapeByArrowKey;
+    }
+
     @Override
     protected TableRenderer<V> createDefaultRenderer() {
         return new DefaultTableRenderer();
@@ -158,7 +168,7 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
                 if(selectedRow > 0) {
                     selectedRow--;
                 }
-                else {
+                else if(escapeByArrowKey) {
                     return Result.MOVE_FOCUS_UP;
                 }
                 break;
@@ -166,7 +176,7 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
                 if(selectedRow < tableModel.getRowCount() - 1) {
                     selectedRow++;
                 }
-                else {
+                else if(escapeByArrowKey) {
                     return Result.MOVE_FOCUS_DOWN;
                 }
                 break;
@@ -174,7 +184,7 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
                 if(cellSelection && selectedColumn > 0) {
                     selectedColumn--;
                 }
-                else {
+                else if(escapeByArrowKey) {
                     return Result.MOVE_FOCUS_LEFT;
                 }
                 break;
@@ -182,7 +192,7 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
                 if(cellSelection && selectedColumn < tableModel.getColumnCount() - 1) {
                     selectedColumn++;
                 }
-                else {
+                else if(escapeByArrowKey) {
                     return Result.MOVE_FOCUS_RIGHT;
                 }
                 break;
@@ -190,6 +200,9 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
                 Runnable runnable = selectAction;   //To avoid synchronizing
                 if(runnable != null) {
                     runnable.run();
+                }
+                else {
+                    return Result.MOVE_FOCUS_NEXT;
                 }
                 break;
             default:
