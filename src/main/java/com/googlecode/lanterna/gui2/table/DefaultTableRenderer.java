@@ -145,11 +145,7 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
         }
 
         for(int columnIndex = 0; columnIndex < columnHeaders.size(); columnIndex++) {
-            for(int rowIndex = viewTopRow; rowIndex < viewTopRow + visibleRows; rowIndex++) {
-                if(rowIndex >= rows.size()) {
-                    //If the view allows for more items than the table has, then exit so we don't get an NPE
-                    break;
-                }
+            for(int rowIndex = viewTopRow; rowIndex < Math.min(rows.size(), viewTopRow + visibleRows); rowIndex++) {
                 V cell = rows.get(rowIndex).get(columnIndex);
                 int rowSize = tableCellRenderer.getPreferredSize(table, cell, columnIndex, rowIndex).getRows();
                 int listOffset = rowIndex - viewTopRow;
@@ -187,12 +183,12 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
         }
         if(cellVerticalBorderStyle != TableCellBorderStyle.None) {
             if(!rows.isEmpty()) {
-                preferredRowSize += rows.size() - 1; //Vertical space between cells
+                preferredRowSize += visibleRows - 1; //Vertical space between cells
             }
         }
         if(isHorizontallySpaced()) {
             if(!columnHeaders.isEmpty()) {
-                preferredColumnSize += columnHeaders.size() - 1;    //Spacing between the columns
+                preferredColumnSize += visibleColumns - 1;    //Spacing between the columns
             }
         }
 
