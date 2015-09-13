@@ -284,7 +284,7 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
             leftPosition = 0;
             List<V> row = rows.get(rowIndex);
             for(int columnIndex = viewLeftColumn; columnIndex < Math.min(viewLeftColumn + visibleColumns, row.size()); columnIndex++) {
-                if(columnIndex > 0) {
+                if(columnIndex > viewLeftColumn) {
                     if(table.getSelectedRow() == rowIndex && !table.isCellSelection()) {
                         if(table.isFocused()) {
                             graphics.applyThemeStyle(graphics.getThemeDefinition(Table.class).getActive());
