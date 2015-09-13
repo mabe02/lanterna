@@ -220,9 +220,6 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
 
     @Override
     public void drawComponent(TextGUIGraphics graphics, Table<V> table) {
-        //Save a reference
-        TextGUIGraphics originalGraphics = graphics;
-
         //Get the size
         TerminalSize area = graphics.getSize();
 
@@ -305,11 +302,11 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
         //Draw scrollbars (if needed)
         if(visibleRows < rows.size()) {
             TerminalSize verticalScrollBarPreferredSize = verticalScrollBar.getPreferredSize();
-            int scrollBarHeight = graphics.getSize().getRows();
+            int scrollBarHeight = graphics.getSize().getRows() - topPosition;
             if(visibleColumns < tableModel.getColumnCount()) {
                 scrollBarHeight--;
             }
-            verticalScrollBar.setPosition(new TerminalPosition(graphics.getSize().getColumns() - verticalScrollBarPreferredSize.getColumns(), 0));
+            verticalScrollBar.setPosition(new TerminalPosition(graphics.getSize().getColumns() - verticalScrollBarPreferredSize.getColumns(), topPosition));
             verticalScrollBar.setSize(verticalScrollBarPreferredSize.withRows(scrollBarHeight));
             verticalScrollBar.setScrollMaximum(rows.size());
             verticalScrollBar.setViewSize(visibleRows);
