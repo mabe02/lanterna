@@ -281,13 +281,6 @@ public abstract class AbstractComponent<T extends Component> implements Componen
         }
     }
 
-    @Override
-    public void lockAndRun(Runnable runnable) {
-        synchronized(this) {
-            runnable.run();
-        }
-    }
-
     @SuppressWarnings("unchecked")
     protected T self() {
         return (T)this;
