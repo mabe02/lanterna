@@ -77,7 +77,7 @@ public abstract class AbstractComponent<T extends Component> implements Componen
     }
 
     @Override
-    public ComponentRenderer<T> getRenderer() {
+    public synchronized ComponentRenderer<T> getRenderer() {
         if(renderer == null) {
             renderer = createDefaultRenderer();
             if(renderer == null) {
@@ -94,8 +94,10 @@ public abstract class AbstractComponent<T extends Component> implements Componen
 
     @Override
     public T setSize(TerminalSize size) {
-        this.size = size;
-        return self();
+        synchronized(this) {
+            this.size = size;
+            return self();
+        }
     }
 
     @Override
@@ -115,18 +117,24 @@ public abstract class AbstractComponent<T extends Component> implements Componen
 
     @Override
     public final T setPreferredSize(TerminalSize explicitPreferredSize) {
-        this.explicitPreferredSize = explicitPreferredSize;
-        return self();
+        synchronized(this) {
+            this.explicitPreferredSize = explicitPreferredSize;
+            return self();
+        }
     }
 
     public TerminalSize calculatePreferredSize() {
-        return getRenderer().getPreferredSize(self());
+        synchronized(this) {
+            return getRenderer().getPreferredSize(self());
+        }
     }
 
     @Override
     public T setPosition(TerminalPosition position) {
-        this.position = position;
-        return self();
+        synchronized(this) {
+            this.position = position;
+            return self();
+        }
     }
 
     @Override
@@ -140,16 +148,18 @@ public abstract class AbstractComponent<T extends Component> implements Componen
     }
 
     @Override
-    public final void draw(TextGUIGraphics graphics) {
-        drawComponent(graphics);
-        invalid = false;
+    public final void draw(final TextGUIGraphics graphics) {
+        synchronized(this) {
+            drawComponent(graphics);
+            invalid = false;
+        }
     }
 
     /**
      * Implement this method to define the logic to draw the component. The reason for this abstract method, instead of
-     * overriding {@code Component.draw(..)} is because {@code AbstractComponent.draw(..)} calls this method and then
-     * resets the invalid flag. If you could override {@code draw}, you might forget to call the super method and
-     * probably won't notice that your code keeps refreshing the GUI even though nothing has changed.
+     * overriding {@code Component.draw(..)} is because {@code AbstractComponent.draw(..)} locks the internal state,
+     * calls this method and then resets the invalid flag. If you could override {@code draw}, you might forget to call
+     * the super method and probably won't notice that your code keeps refreshing the GUI even though nothing has changed.
      * @param graphics TextGraphics to be used to draw the component
      */
     public void drawComponent(TextGUIGraphics graphics) {
@@ -170,11 +180,13 @@ public abstract class AbstractComponent<T extends Component> implements Componen
 
     @Override
     public T setLayoutData(LayoutData data) {
-        if(layoutData != data) {
-            layoutData = data;
-            invalidate();
+        synchronized(this) {
+            if(layoutData != data) {
+                layoutData = data;
+                invalidate();
+            }
+            return self();
         }
-        return self();
     }
 
     @Override
@@ -241,24 +253,39 @@ public abstract class AbstractComponent<T extends Component> implements Componen
 
     @Override
     public Border withBorder(Border border) {
-        border.setComponent(this);
-        return border;
+        synchronized(this) {
+            border.setComponent(this);
+            return border;
+        }
     }
 
     @Override
     public T addTo(Panel panel) {
-        panel.addComponent(this);
-        return self();
+        synchronized(this) {
+            panel.addComponent(this);
+            return self();
+        }
     }
 
     @Override
     public void onAdded(Container container) {
-        parent = container;
+        synchronized(this) {
+            parent = container;
+        }
     }
 
     @Override
     public void onRemoved(Container container) {
-        parent = null;
+        synchronized(this) {
+            parent = null;
+        }
+    }
+
+    @Override
+    public void lockAndRun(Runnable runnable) {
+        synchronized(this) {
+            runnable.run();
+        }
     }
 
     @SuppressWarnings("unchecked")

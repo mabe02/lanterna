@@ -174,4 +174,13 @@ public interface Component extends TextGUIElement {
      * @param container Container that this component was just removed from
      */
     void onRemoved(Container container);
+
+    /**
+     * This method provides support for external synchronization by locking the internals of the class and running the
+     * supplied Runnable while the lock is held (it's automatically released after the runnable has finished). All
+     * classes implementing <code>Component</code> should use the same lock when rendering the component, to protect
+     * from modifying the internal state while the component is being rendered. If the class extends from
+     * <code>AbstractComponent</code>, this is already taken care of.
+     */
+    void lockAndRun(Runnable runnable);
 }
