@@ -1,0 +1,316 @@
+package com.googlecode.lanterna.gui2;
+
+import com.googlecode.lanterna.*;
+import com.googlecode.lanterna.input.KeyStroke;
+
+import javax.xml.soap.Text;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
+/**
+ * Created by martin on 15/09/15.
+ */
+public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
+
+    private final List<V> items;
+    private String text;
+    private int selectedIndex;
+
+    private boolean readOnly;
+    private int textInputPosition;
+
+    public ComboBox(V... items) {
+        this(Arrays.asList(items));
+    }
+
+    public ComboBox(Collection<V> items) {
+        this(items, -1);
+    }
+
+    public ComboBox(String initialText, Collection<V> items) {
+        this(items, -1);
+        this.text = initialText;
+    }
+
+    public ComboBox(Collection<V> items, int selectedIndex) {
+        for(V item: items) {
+            if(item == null) {
+                throw new IllegalArgumentException("Cannot add null elements to a ComboBox");
+            }
+        }
+        this.items = new ArrayList<V>(items);
+        this.selectedIndex = selectedIndex;
+        this.textInputPosition = 0;
+        if(selectedIndex != -1) {
+            this.text = this.items.get(selectedIndex).toString();
+        }
+        else {
+            this.text = "";
+        }
+    }
+
+    public ComboBox<V> addItem(V item) {
+        if(item == null) {
+            throw new IllegalArgumentException("Cannot add null elements to a ComboBox");
+        }
+        synchronized(this) {
+            items.add(item);
+            if(selectedIndex == -1 && items.size() == 1) {
+                setSelectedIndex(0);
+            }
+            invalidate();
+            return this;
+        }
+    }
+
+    public ComboBox<V> addItem(int index, V item) {
+        if(item == null) {
+            throw new IllegalArgumentException("Cannot add null elements to a ComboBox");
+        }
+        synchronized(this) {
+            items.add(index, item);
+            if(index <= selectedIndex) {
+                setSelectedIndex(selectedIndex + 1);
+            }
+            invalidate();
+            return this;
+        }
+    }
+
+    public ComboBox<V> clearItems() {
+        synchronized(this) {
+            items.clear();
+            setSelectedIndex(-1);
+            invalidate();
+            return this;
+        }
+    }
+
+    public ComboBox<V> removeItem(V item) {
+        synchronized(this) {
+            int index = items.indexOf(item);
+            if(index == -1) {
+                return this;
+            }
+            return remoteItem(index);
+        }
+    }
+
+    public ComboBox<V> remoteItem(int index) {
+        synchronized(this) {
+            items.remove(index);
+            if(index < selectedIndex) {
+                setSelectedIndex(selectedIndex - 1);
+            }
+            else if(index == selectedIndex) {
+                setSelectedIndex(-1);
+            }
+            invalidate();
+            return this;
+        }
+    }
+
+    public ComboBox<V> setItem(int index, V item) {
+        if(item == null) {
+            throw new IllegalArgumentException("Cannot add null elements to a ComboBox");
+        }
+        synchronized(this) {
+            items.set(index, item);
+            invalidate();
+            return this;
+        }
+    }
+
+    public int getItemCount() {
+        synchronized(this) {
+            return items.size();
+        }
+    }
+
+    public V getItem(int index) {
+        synchronized(this) {
+            return items.get(index);
+        }
+    }
+
+    public String getText() {
+        synchronized(this) {
+            return text;
+        }
+    }
+
+    public ComboBox<V> setReadOnly(boolean readOnly) {
+        this.readOnly = readOnly;
+        return this;
+    }
+
+    public boolean isReadOnly() {
+        return readOnly;
+    }
+
+    public int getTextInputPosition() {
+        return textInputPosition;
+    }
+
+    public void setSelectedIndex(int selectedIndex) {
+        synchronized(this) {
+            if(items.size() <= selectedIndex || selectedIndex < -1) {
+                throw new IllegalArgumentException("Illegal argument to ComboBox.setSelectedIndex: " + selectedIndex);
+            }
+            this.selectedIndex = selectedIndex;
+            if(selectedIndex == -1) {
+                text = "";
+            }
+            else {
+                text = items.get(selectedIndex).toString();
+            }
+            if(textInputPosition > text.length()) {
+                textInputPosition = text.length();
+            }
+            invalidate();
+        }
+    }
+
+    public int getSelectedIndex() {
+        return selectedIndex;
+    }
+
+    @Override
+    protected InteractableRenderer<ComboBox<V>> createDefaultRenderer() {
+        return new DefaultComboBoxRenderer<V>();
+    }
+
+    @Override
+    public Result handleKeyStroke(KeyStroke keyStroke) {
+        synchronized(this) {
+            if(isReadOnly()) {
+                return handleReadOnlyCBKeyStroke(keyStroke);
+            }
+            else {
+                return handleEditableCBKeyStroke(keyStroke);
+            }
+        }
+    }
+
+
+    private Result handleReadOnlyCBKeyStroke(KeyStroke keyStroke) {
+        switch(keyStroke.getKeyType()) {
+            case ArrowDown:
+                if(selectedIndex < items.size() - 1) {
+                    setSelectedIndex(selectedIndex + 1);
+                    return Result.HANDLED;
+                }
+                break;
+
+            case ArrowUp:
+                if(selectedIndex > 0) {
+                    setSelectedIndex(selectedIndex - 1);
+                    return Result.HANDLED;
+                }
+                break;
+        }
+        return super.handleKeyStroke(keyStroke);
+    }
+
+    private Result handleEditableCBKeyStroke(KeyStroke keyStroke) {
+        switch(keyStroke.getKeyType()) {
+            case Character:
+                text = text.substring(0, textInputPosition) + keyStroke.getCharacter() + text.substring(textInputPosition);
+                textInputPosition++;
+                return Result.HANDLED;
+
+            case Backspace:
+                if(textInputPosition > 0) {
+                    text = text.substring(0, textInputPosition - 1) + text.substring(textInputPosition);
+                    textInputPosition--;
+                }
+                return Result.HANDLED;
+
+            case Delete:
+                if(textInputPosition < text.length()) {
+                    text = text.substring(0, textInputPosition) + text.substring(textInputPosition + 1);
+                }
+                return Result.HANDLED;
+
+            case ArrowLeft:
+                if(textInputPosition > 0) {
+                    textInputPosition--;
+                }
+                else {
+                    return Result.MOVE_FOCUS_LEFT;
+                }
+                return Result.HANDLED;
+
+            case ArrowRight:
+                if(textInputPosition < text.length()) {
+                    textInputPosition++;
+                }
+                else {
+                    return Result.MOVE_FOCUS_RIGHT;
+                }
+                return Result.HANDLED;
+
+            case ArrowDown:
+                if(selectedIndex < items.size() - 1) {
+                    setSelectedIndex(selectedIndex + 1);
+                    return Result.HANDLED;
+                }
+                break;
+
+            case ArrowUp:
+                if(selectedIndex > 0) {
+                    setSelectedIndex(selectedIndex - 1);
+                    return Result.HANDLED;
+                }
+                break;
+        }
+        return super.handleKeyStroke(keyStroke);
+    }
+
+    public static abstract class ComboBoxRenderer<V> implements InteractableRenderer<ComboBox<V>> {
+    }
+
+    public static class DefaultComboBoxRenderer<V> extends ComboBoxRenderer<V> {
+        @Override
+        public TerminalPosition getCursorLocation(ComboBox<V> comboBox) {
+            if(comboBox.isReadOnly()) {
+                return new TerminalPosition(comboBox.getSize().getColumns() - 1, 0);
+            }
+            else {
+                return new TerminalPosition(comboBox.getTextInputPosition(), 0);
+            }
+        }
+
+        @Override
+        public TerminalSize getPreferredSize(ComboBox<V> comboBox) {
+            TerminalSize size = TerminalSize.ONE.withColumns(CJKUtils.getTrueWidth(comboBox.getText()) + 2);
+            synchronized(comboBox) {
+                for(int i = 0; i < comboBox.getItemCount(); i++) {
+                    V item = comboBox.getItem(i);
+                    size = size.max(new TerminalSize(CJKUtils.getTrueWidth(item.toString()) + 2, 1));
+                }
+            }
+            return size;
+        }
+
+        @Override
+        public void drawComponent(TextGUIGraphics graphics, ComboBox<V> comboBox) {
+            graphics.setForegroundColor(TextColor.ANSI.WHITE);
+            graphics.setBackgroundColor(TextColor.ANSI.BLUE);
+            if(comboBox.isFocused()) {
+                graphics.setForegroundColor(TextColor.ANSI.YELLOW);
+                graphics.enableModifiers(SGR.BOLD);
+            }
+            graphics.fill(' ');
+            graphics.putString(0, 0, comboBox.getText());
+            if(comboBox.isFocused()) {
+                graphics.disableModifiers(SGR.BOLD);
+            }
+            graphics.setForegroundColor(TextColor.ANSI.BLACK);
+            graphics.setBackgroundColor(TextColor.ANSI.WHITE);
+            graphics.putString(graphics.getSize().getColumns() - 2, 0, "|v");
+        }
+    }
+}
