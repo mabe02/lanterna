@@ -254,6 +254,11 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
 
     @Override
     public synchronized WindowBasedTextGUI addWindow(Window window) {
+        //To protect against NPE if the user forgot to set a content component
+        if(window.getComponent() == null) {
+            window.setComponent(new EmptySpace(TerminalSize.ONE));
+        }
+
         if(window.getTextGUI() != null) {
             window.getTextGUI().removeWindow(window);
         }
