@@ -320,13 +320,20 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
                 return new TerminalPosition(comboBox.getSize().getColumns() - 1, 0);
             }
             else {
-                return new TerminalPosition(comboBox.getTextInputPosition() - textVisibleLeftPosition, 0);
+                int textInputPosition = comboBox.getTextInputPosition();
+                if(textInputPosition < textVisibleLeftPosition) {
+                    textVisibleLeftPosition = textInputPosition;
+                }
+                String substring = comboBox.getText().substring(textVisibleLeftPosition);
+                substring = substring.substring(0, textInputPosition - textVisibleLeftPosition);
+                return new TerminalPosition(CJKUtils.getTrueWidth(substring), 0);
             }
         }
 
         @Override
         public TerminalSize getPreferredSize(ComboBox<V> comboBox) {
-            TerminalSize size = TerminalSize.ONE.withColumns(CJKUtils.getTrueWidth(comboBox.getText()) + 2);
+            TerminalSize size = TerminalSize.ONE.withColumns(
+                    (comboBox.getItemCount() == 0 ? CJKUtils.getTrueWidth(comboBox.getText()) : 0) + 2);
             synchronized(comboBox) {
                 for(int i = 0; i < comboBox.getItemCount(); i++) {
                     V item = comboBox.getItem(i);
@@ -345,27 +352,25 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
                 graphics.enableModifiers(SGR.BOLD);
             }
             graphics.fill(' ');
-
-            String fullText = comboBox.getText();
-            int textInputPosition = comboBox.getTextInputPosition();
             int editableArea = graphics.getSize().getColumns() - 2; //This is exclusing the 'drop-down arrow'
-            int lastVisiblePosition = textVisibleLeftPosition + editableArea;
-
-            if(textVisibleLeftPosition > fullText.length()) {
-                textVisibleLeftPosition = Math.max(0, fullText.length() - editableArea);
-            }
+            int textInputPosition = comboBox.getTextInputPosition();
             if(textInputPosition < textVisibleLeftPosition) {
-                textVisibleLeftPosition = textInputPosition;
+                textVisibleLeftPosition = 0;
             }
-            else if(textInputPosition >= lastVisiblePosition) {
-                textVisibleLeftPosition = textInputPosition - editableArea + 1;
+            String textToDraw = comboBox.getText().substring(textVisibleLeftPosition);
+            int distanceToInputPosition = CJKUtils.getTrueWidth(textToDraw.substring(0, textInputPosition - textVisibleLeftPosition));
+            if(textInputPosition < comboBox.getText().length()) {
+                if(CJKUtils.isCharCJK(comboBox.getText().charAt(textInputPosition))) {
+                    distanceToInputPosition++;
+                }
+            }
+            while(distanceToInputPosition >= editableArea ) {
+                textVisibleLeftPosition++;
+                textToDraw = comboBox.getText().substring(textVisibleLeftPosition);
+                distanceToInputPosition = CJKUtils.getTrueWidth(textToDraw.substring(0, textInputPosition - textVisibleLeftPosition));
             }
 
-            String textToDraw = fullText.substring(
-                    textVisibleLeftPosition,
-                    Math.min(
-                            lastVisiblePosition + 1,
-                            fullText.length()));
+            textToDraw = CJKUtils.fitString(comboBox.getText(), textVisibleLeftPosition, editableArea);
 
             graphics.putString(0, 0, textToDraw);
             if(comboBox.isFocused()) {

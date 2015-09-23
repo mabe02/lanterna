@@ -20,15 +20,22 @@ public class ComboBoxTest extends TestBase {
 
         final ComboBox<String> comboBoxReadOnly = new ComboBox<String>();
         final ComboBox<String> comboBoxEditable = new ComboBox<String>().setReadOnly(false);
+        final ComboBox<String> comboBoxCJK = new ComboBox<String>().setReadOnly(false);
 
         for(String item: Arrays.asList("Berlin", "London", "Paris", "Stockholm", "Tokyo")) {
             comboBoxEditable.addItem(item);
             comboBoxReadOnly.addItem(item);
         }
+        comboBoxCJK.addItem("维基百科人人可編輯的自由百科全書");
+        comboBoxCJK.addItem("ウィキペディアは誰でも編集できるフリー百科事典です");
+        comboBoxCJK.addItem("위키백과는 전 세계 여러 언어로 만들어 나가는 자유 백과사전으로, 누구나 참여하실 수 있습니다.");
+        comboBoxCJK.addItem("This is a string without double-width characters");
+        comboBoxCJK.setPreferredSize(new TerminalSize(13, 1));
 
         mainPanel.addComponent(Panels.horizontal(
                 comboBoxReadOnly.withBorder(Borders.singleLine("Read-only")),
-                comboBoxEditable.withBorder(Borders.singleLine("Editable"))));
+                comboBoxEditable.withBorder(Borders.singleLine("Editable")),
+                comboBoxCJK.withBorder(Borders.singleLine("CJK"))));
         mainPanel.addComponent(new EmptySpace(TerminalSize.ONE));
 
         final TextBox textBoxNewItem = new TextBox();
