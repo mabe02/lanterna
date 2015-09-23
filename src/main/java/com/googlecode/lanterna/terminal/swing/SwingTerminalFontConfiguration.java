@@ -20,11 +20,14 @@ package com.googlecode.lanterna.terminal.swing;
 
 import com.googlecode.lanterna.Symbols;
 import com.googlecode.lanterna.TextCharacter;
+import sun.font.CompositeFont;
+import sun.font.PhysicalFont;
 
 import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.List;
@@ -58,6 +61,16 @@ public class SwingTerminalFontConfiguration {
         ;
     }
 
+    private static final Set<String> MONOSPACE_CHECK_OVERRIDE = Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(
+            "VL Gothic Regular",
+            "NanumGothic",
+            "WenQuanYi Zen Hei Mono",
+            "WenQuanYi Zen Hei",
+            "AR PL UMing TW",
+            "AR PL UMing HK",
+            "AR PL UMing CN"
+    )));
+
     private static final List<Font> DEFAULT_WINDOWS_FONTS = Collections.unmodifiableList(Arrays.asList(
             new Font("Courier New", Font.PLAIN, 14), //Monospaced can look pretty bad on Windows, so let's override it
             new Font("Monospaced", Font.PLAIN, 14)
@@ -66,10 +79,18 @@ public class SwingTerminalFontConfiguration {
     private static final List<Font> DEFAULT_LINUX_FONTS = Collections.unmodifiableList(Arrays.asList(
             new Font("DejaVu Sans Mono", Font.PLAIN, 14),
             new Font("Monospaced", Font.PLAIN, 14),
+            //Below, these should be redundant (Monospaced is supposed to catch-all)
+            // but Java 6 seems to have issues with finding monospaced fonts sometimes
             new Font("Ubuntu Mono", Font.PLAIN, 14),
             new Font("FreeMono", Font.PLAIN, 14),
-            new Font("Liberation Mono", Font.PLAIN, 14)
-    ));
+            new Font("Liberation Mono", Font.PLAIN, 14),
+            new Font("VL Gothic Regular", Font.PLAIN, 14),
+            new Font("NanumGothic", Font.PLAIN, 14),
+            new Font("WenQuanYi Zen Hei Mono", Font.PLAIN, 14),
+            new Font("WenQuanYi Zen Hei", Font.PLAIN, 14),
+            new Font("AR PL UMing TW", Font.PLAIN, 14),
+            new Font("AR PL UMing HK", Font.PLAIN, 14),
+            new Font("AR PL UMing CN", Font.PLAIN, 14)));
 
     private static final List<Font> DEFAULT_FONTS = Collections.unmodifiableList(Collections.singletonList(
             new Font("Monospaced", Font.PLAIN, 14)
@@ -194,6 +215,9 @@ public class SwingTerminalFontConfiguration {
     }
 
     private static boolean isFontMonospaced(Font font) {
+        if(MONOSPACE_CHECK_OVERRIDE.contains(font.getName())) {
+            return true;
+        }
         FontRenderContext frc = new FontRenderContext(
                 null,
                 RenderingHints.VALUE_TEXT_ANTIALIAS_OFF,
