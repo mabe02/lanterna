@@ -73,4 +73,30 @@ public class CJKUtils {
         }
         return count;
     }
+
+    /**
+     * Given a string that may or may not contain CJK characters, returns the substring which will fit inside
+     * <code>width</code> columns. This method does not handle special cases like tab or new-line.
+     * @param string The string to fit inside the width
+     * @param startIndex From what character in the input string to start fitting
+     * @param width Number of columns to fit the string inside
+     * @return The whole or part of the input string which will fit inside the supplied width
+     */
+    public static String fitString(String string, int startIndex, int width) {
+        StringBuilder bob = new StringBuilder(width);
+        int consumedWidth = 0;
+        for(int index = startIndex; index < string.length(); index++) {
+            char c = string.charAt(index);
+            int charWidth = isCharCJK(c) ? 2 : 1;
+            if(consumedWidth + charWidth > width) {
+                return bob.toString();
+            }
+            bob.append(c);
+            consumedWidth += charWidth;
+            if(consumedWidth == width) {
+                break;
+            }
+        }
+        return bob.toString();
+    }
 }
