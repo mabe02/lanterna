@@ -288,6 +288,7 @@ public class TerminalScreen extends AbstractScreen {
                 if(CJKUtils.isCharCJK(newCharacter.getCharacter())) {
                     //CJK characters take up two columns
                     currentColumn += 2;
+                    x++;
                 }
                 else {
                     //Normal characters take up one column
