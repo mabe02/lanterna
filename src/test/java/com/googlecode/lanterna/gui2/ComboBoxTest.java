@@ -18,8 +18,8 @@ public class ComboBoxTest extends TestBase {
         final BasicWindow window = new BasicWindow("ComboBoxTest");
         Panel mainPanel = new Panel();
 
-        final ComboBox<String> comboBoxReadOnly = new ComboBox<String>().setReadOnly(true);
-        final ComboBox<String> comboBoxEditable = new ComboBox<String>();
+        final ComboBox<String> comboBoxReadOnly = new ComboBox<String>();
+        final ComboBox<String> comboBoxEditable = new ComboBox<String>().setReadOnly(false);
 
         for(String item: Arrays.asList("Berlin", "London", "Paris", "Stockholm", "Tokyo")) {
             comboBoxEditable.addItem(item);

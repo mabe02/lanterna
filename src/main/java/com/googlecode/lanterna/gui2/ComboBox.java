@@ -19,6 +19,7 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
     private int selectedIndex;
 
     private boolean readOnly;
+    private boolean dropDownFocused;
     private int textInputPosition;
 
     public ComboBox(V... items) {
@@ -42,6 +43,8 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
         }
         this.items = new ArrayList<V>(items);
         this.selectedIndex = selectedIndex;
+        this.readOnly = true;
+        this.dropDownFocused = true;
         this.textInputPosition = 0;
         if(selectedIndex != -1) {
             this.text = this.items.get(selectedIndex).toString();
@@ -143,11 +146,18 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
 
     public ComboBox<V> setReadOnly(boolean readOnly) {
         this.readOnly = readOnly;
+        if(readOnly) {
+            dropDownFocused = true;
+        }
         return this;
     }
 
     public boolean isReadOnly() {
         return readOnly;
+    }
+
+    public boolean isDropDownFocused() {
+        return dropDownFocused || isReadOnly();
     }
 
     public int getTextInputPosition() {
@@ -178,6 +188,14 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
     }
 
     @Override
+    protected void afterEnterFocus(FocusChangeDirection direction, Interactable previouslyInFocus) {
+        if(direction == FocusChangeDirection.RIGHT && !isReadOnly()) {
+            dropDownFocused = false;
+            selectedIndex = 0;
+        }
+    }
+
+    @Override
     protected InteractableRenderer<ComboBox<V>> createDefaultRenderer() {
         return new DefaultComboBoxRenderer<V>();
     }
@@ -200,25 +218,42 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
             case ArrowDown:
                 if(selectedIndex < items.size() - 1) {
                     setSelectedIndex(selectedIndex + 1);
-                    return Result.HANDLED;
                 }
-                break;
+                return Result.HANDLED;
 
             case ArrowUp:
                 if(selectedIndex > 0) {
                     setSelectedIndex(selectedIndex - 1);
-                    return Result.HANDLED;
                 }
-                break;
+                return Result.HANDLED;
         }
         return super.handleKeyStroke(keyStroke);
     }
 
     private Result handleEditableCBKeyStroke(KeyStroke keyStroke) {
+        //First check if we are in drop-down focused mode, treat keystrokes a bit differently then
+        if(isDropDownFocused()) {
+            switch(keyStroke.getKeyType()) {
+                case ReverseTab:
+                case ArrowLeft:
+                    dropDownFocused = false;
+                    textInputPosition = text.length();
+                    return Result.HANDLED;
+
+                //The rest we can process in the same way as with read-only combo boxes when we are in drop-down focused mode
+                default:
+                    return handleReadOnlyCBKeyStroke(keyStroke);
+            }
+        }
+
         switch(keyStroke.getKeyType()) {
             case Character:
                 text = text.substring(0, textInputPosition) + keyStroke.getCharacter() + text.substring(textInputPosition);
                 textInputPosition++;
+                return Result.HANDLED;
+
+            case Tab:
+                dropDownFocused = true;
                 return Result.HANDLED;
 
             case Backspace:
@@ -248,23 +283,22 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
                     textInputPosition++;
                 }
                 else {
-                    return Result.MOVE_FOCUS_RIGHT;
+                    dropDownFocused = true;
+                    return Result.HANDLED;
                 }
                 return Result.HANDLED;
 
             case ArrowDown:
                 if(selectedIndex < items.size() - 1) {
                     setSelectedIndex(selectedIndex + 1);
-                    return Result.HANDLED;
                 }
-                break;
+                return Result.HANDLED;
 
             case ArrowUp:
                 if(selectedIndex > 0) {
                     setSelectedIndex(selectedIndex - 1);
-                    return Result.HANDLED;
                 }
-                break;
+                return Result.HANDLED;
         }
         return super.handleKeyStroke(keyStroke);
     }
@@ -273,13 +307,20 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
     }
 
     public static class DefaultComboBoxRenderer<V> extends ComboBoxRenderer<V> {
+
+        private int textVisibleLeftPosition;
+
+        public DefaultComboBoxRenderer() {
+            this.textVisibleLeftPosition = 0;
+        }
+
         @Override
         public TerminalPosition getCursorLocation(ComboBox<V> comboBox) {
-            if(comboBox.isReadOnly()) {
+            if(comboBox.isDropDownFocused()) {
                 return new TerminalPosition(comboBox.getSize().getColumns() - 1, 0);
             }
             else {
-                return new TerminalPosition(comboBox.getTextInputPosition(), 0);
+                return new TerminalPosition(comboBox.getTextInputPosition() - textVisibleLeftPosition, 0);
             }
         }
 
@@ -289,7 +330,7 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
             synchronized(comboBox) {
                 for(int i = 0; i < comboBox.getItemCount(); i++) {
                     V item = comboBox.getItem(i);
-                    size = size.max(new TerminalSize(CJKUtils.getTrueWidth(item.toString()) + 2, 1));
+                    size = size.max(new TerminalSize(CJKUtils.getTrueWidth(item.toString()) + 2 + 1, 1));   // +1 to add a single column of space
                 }
             }
             return size;
@@ -304,13 +345,35 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
                 graphics.enableModifiers(SGR.BOLD);
             }
             graphics.fill(' ');
-            graphics.putString(0, 0, comboBox.getText());
+
+            String fullText = comboBox.getText();
+            int textInputPosition = comboBox.getTextInputPosition();
+            int editableArea = graphics.getSize().getColumns() - 2; //This is exclusing the 'drop-down arrow'
+            int lastVisiblePosition = textVisibleLeftPosition + editableArea;
+
+            if(textVisibleLeftPosition > fullText.length()) {
+                textVisibleLeftPosition = Math.max(0, fullText.length() - editableArea);
+            }
+            if(textInputPosition < textVisibleLeftPosition) {
+                textVisibleLeftPosition = textInputPosition;
+            }
+            else if(textInputPosition >= lastVisiblePosition) {
+                textVisibleLeftPosition = textInputPosition - editableArea + 1;
+            }
+
+            String textToDraw = fullText.substring(
+                    textVisibleLeftPosition,
+                    Math.min(
+                            lastVisiblePosition + 1,
+                            fullText.length()));
+
+            graphics.putString(0, 0, textToDraw);
             if(comboBox.isFocused()) {
                 graphics.disableModifiers(SGR.BOLD);
             }
             graphics.setForegroundColor(TextColor.ANSI.BLACK);
             graphics.setBackgroundColor(TextColor.ANSI.WHITE);
-            graphics.putString(graphics.getSize().getColumns() - 2, 0, "|v");
+            graphics.putString(editableArea, 0, "|" + Symbols.ARROW_DOWN);
         }
     }
 }
