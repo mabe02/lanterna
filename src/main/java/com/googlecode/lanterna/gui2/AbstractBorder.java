@@ -31,7 +31,7 @@ public abstract class AbstractBorder extends AbstractComposite<Border> implement
     public void setComponent(Component component) {
         super.setComponent(component);
         if(component != null) {
-            component.setPosition(getWrappedComponentTopLeftOffset());
+            component.setPosition(TerminalPosition.TOP_LEFT_CORNER);
         }
     }
 
@@ -56,6 +56,16 @@ public abstract class AbstractBorder extends AbstractComposite<Border> implement
     public Border setLayoutData(LayoutData ld) {
         getComponent().setLayoutData(ld);
         return this;
+    }
+
+    @Override
+    public TerminalPosition toBasePane(TerminalPosition position) {
+        return super.toBasePane(position).withRelative(getWrappedComponentTopLeftOffset());
+    }
+
+    @Override
+    public TerminalPosition toGlobal(TerminalPosition position) {
+        return super.toGlobal(position).withRelative(getWrappedComponentTopLeftOffset());
     }
 
     private TerminalPosition getWrappedComponentTopLeftOffset() {
