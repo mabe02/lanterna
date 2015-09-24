@@ -70,7 +70,7 @@ public interface WindowBasedTextGUI extends ComponentBasedTextGUI {
      * to close will be resumed.
      *
      * @param window Window to close
-     * @return The WindowBasedTextGUI Itself
+     * @return The WindowBasedTextGUI itself
      */
     WindowBasedTextGUI removeWindow(Window window);
 
@@ -81,6 +81,13 @@ public interface WindowBasedTextGUI extends ComponentBasedTextGUI {
      * @return Unmodifiable list of all windows in the TextGUI at the time of the call
      */
     Collection<Window> getWindows();
+
+    /**
+     * Selects a particular window to be considered 'active' and receive all input events
+     * @param activeWindow Window to become active and receive input events
+     * @return The WindowBasedTextGUI itself
+     */
+    WindowBasedTextGUI setActiveWindow(Window activeWindow);
 
     /**
      * Returns the window which the TextGUI considers the active one at the time of the method call. The active window

@@ -43,6 +43,8 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
     private final BasePane backgroundPane;
     private final List<Window> windows;
     private final WindowPostRenderer postRenderer;
+
+    private Window activeWindow;
     private boolean eofWhenNoWindows;
 
     public MultiWindowTextGUI(Screen screen) {
@@ -267,6 +269,9 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
         if(!windows.contains(window)) {
             windows.add(window);
         }
+        if(!window.getHints().contains(Window.Hint.NO_FOCUS)) {
+            activeWindow = window;
+        }
         invalidate();
         return this;
     }
@@ -286,6 +291,16 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
         }
         window.setTextGUI(null);
         windowManager.onRemoved(this, window, windows);
+        if(activeWindow == window) {
+            //Go backward in reverse and find the first suitable window
+            for(int index = windows.size() - 1; index >= 0; index--) {
+                Window candidate = windows.get(index);
+                if(!candidate.getHints().contains(Window.Hint.NO_FOCUS)) {
+                    activeWindow = candidate;
+                    break;
+                }
+            }
+        }
         invalidate();
         return this;
     }
@@ -322,8 +337,14 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
     }
 
     @Override
+    public synchronized MultiWindowTextGUI setActiveWindow(Window activeWindow) {
+        this.activeWindow = activeWindow;
+        return this;
+    }
+
+    @Override
     public synchronized Window getActiveWindow() {
-        return windows.isEmpty() ? null : windows.get(windows.size() - 1);
+        return activeWindow;
     }
 
     public BasePane getBackgroundPane() {

@@ -49,10 +49,19 @@ public interface Window extends BasePane {
          */
         public static final Hint NO_POST_RENDERING = new Hint();
         /**
+         * With this hint, the window should never receive focus by the window manager
+         */
+        public static final Hint NO_FOCUS = new Hint();
+        /**
          * With this hint, the window wants to be at the center of the terminal instead of using the cascading layout
          * which is the standard.
          */
         public static final Hint CENTERED = new Hint();
+        /**
+         * Windows with this hint should not be positioned by the window manager, rather they should use whatever
+         * position is pre-set.
+         */
+        public static final Hint FIXED_POSITION = new Hint();
         /**
          * With this hint, don't let the window grow larger than the terminal screen, rather set components to a smaller
          * size than they prefer.
