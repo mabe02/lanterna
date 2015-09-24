@@ -15,6 +15,8 @@ import java.util.List;
 public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
 
     private final List<V> items;
+
+    private PopupWindow popupWindow;
     private String text;
     private int selectedIndex;
 
@@ -42,6 +44,7 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
             }
         }
         this.items = new ArrayList<V>(items);
+        this.popupWindow = null;
         this.selectedIndex = selectedIndex;
         this.readOnly = true;
         this.dropDownFocused = true;
@@ -196,6 +199,14 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
     }
 
     @Override
+    protected void afterLeaveFocus(FocusChangeDirection direction, Interactable nextInFocus) {
+        if(popupWindow != null) {
+            popupWindow.close();
+            popupWindow = null;
+        }
+    }
+
+    @Override
     protected InteractableRenderer<ComboBox<V>> createDefaultRenderer() {
         return new DefaultComboBoxRenderer<V>();
     }
@@ -216,16 +227,43 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
     private Result handleReadOnlyCBKeyStroke(KeyStroke keyStroke) {
         switch(keyStroke.getKeyType()) {
             case ArrowDown:
-                if(selectedIndex < items.size() - 1) {
+                if(popupWindow != null) {
+                    popupWindow.listBox.handleKeyStroke(keyStroke);
+                }
+                else if(selectedIndex < items.size() - 1) {
                     setSelectedIndex(selectedIndex + 1);
                 }
                 return Result.HANDLED;
 
             case ArrowUp:
-                if(selectedIndex > 0) {
+                if(popupWindow != null) {
+                    popupWindow.listBox.handleKeyStroke(keyStroke);
+                }
+                else if(selectedIndex > 0) {
                     setSelectedIndex(selectedIndex - 1);
                 }
                 return Result.HANDLED;
+
+            case Enter:
+                if(popupWindow != null) {
+                    popupWindow.listBox.handleKeyStroke(keyStroke);
+                    popupWindow.close();
+                    popupWindow = null;
+                }
+                else {
+                    popupWindow = new PopupWindow();
+                    popupWindow.setPosition(toGlobal(getPosition().withRelativeRow(1)));
+                    ((WindowBasedTextGUI) getTextGUI()).addWindow(popupWindow);
+                }
+                break;
+
+            case Escape:
+                if(popupWindow != null) {
+                    popupWindow.close();
+                    popupWindow = null;
+                    return Result.HANDLED;
+                }
+                break;
         }
         return super.handleKeyStroke(keyStroke);
     }
@@ -301,6 +339,30 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
                 return Result.HANDLED;
         }
         return super.handleKeyStroke(keyStroke);
+    }
+
+    private class PopupWindow extends BasicWindow {
+        private final ActionListBox listBox;
+
+        public PopupWindow() {
+            setHints(Arrays.asList(
+                    Hint.NO_FOCUS,
+                    Hint.FIXED_POSITION));
+            listBox = new ActionListBox(ComboBox.this.getSize().withRows(getItemCount()));
+            for(int i = 0; i < getItemCount(); i++) {
+                V item = items.get(i);
+                final int index = i;
+                listBox.addItem(item.toString(), new Runnable() {
+                    @Override
+                    public void run() {
+                        setSelectedIndex(index);
+                        close();
+                    }
+                });
+            }
+            listBox.setSelectedIndex(getSelectedIndex());
+            setComponent(listBox);
+        }
     }
 
     public static abstract class ComboBoxRenderer<V> implements InteractableRenderer<ComboBox<V>> {
