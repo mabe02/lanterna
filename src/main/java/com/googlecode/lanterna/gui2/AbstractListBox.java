@@ -18,6 +18,7 @@
  */
 package com.googlecode.lanterna.gui2;
 
+import com.googlecode.lanterna.CJKUtils;
 import com.googlecode.lanterna.Symbols;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
@@ -335,7 +336,9 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
             else {
                 graphics.applyThemeStyle(graphics.getThemeDefinition(AbstractListBox.class).getNormal());
             }
-            graphics.putString(0, 0, getLabel(listBox, index, item));
+            String label = getLabel(listBox, index, item);
+            label = CJKUtils.fitString(label, 0, graphics.getSize().getColumns());
+            graphics.putString(0, 0, label);
         }
     }
 }
