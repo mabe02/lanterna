@@ -252,6 +252,15 @@ public abstract class AbstractComponent<T extends Component> implements Componen
     }
 
     @Override
+    public TerminalPosition toGlobal(TerminalPosition position) {
+        Container parent = getParent();
+        if(parent == null) {
+            return null;
+        }
+        return parent.toGlobal(getPosition().withRelative(position));
+    }
+
+    @Override
     public Border withBorder(Border border) {
         synchronized(this) {
             border.setComponent(this);

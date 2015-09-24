@@ -280,6 +280,11 @@ public abstract class AbstractBasePane implements BasePane {
         }
 
         @Override
+        public TerminalPosition toGlobal(TerminalPosition position) {
+            return AbstractBasePane.this.toGlobal(position);
+        }
+
+        @Override
         public TerminalPosition toBasePane(TerminalPosition position) {
             return position;
         }

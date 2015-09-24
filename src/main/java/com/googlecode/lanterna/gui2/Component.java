@@ -151,6 +151,15 @@ public interface Component extends TextGUIElement {
     TerminalPosition toBasePane(TerminalPosition position);
 
     /**
+     * Translates a position local to the container to global coordinate space. This should be the absolute coordinate
+     * in the terminal screen, taking no windows or containers into account. If the component belongs to no base pane,
+     * it will return {@code null}.
+     * @param position Position to translate (relative to the container's top-left corner)
+     * @return Position in global (or absolute) coordinates, or {@code null} if the component is an orphan
+     */
+    TerminalPosition toGlobal(TerminalPosition position);
+
+    /**
      * Returns the BasePane that this container belongs to. In a window-based GUI system, this will be a Window.
      * @return The base pane this component is placed on, or {@code null} if none
      */
