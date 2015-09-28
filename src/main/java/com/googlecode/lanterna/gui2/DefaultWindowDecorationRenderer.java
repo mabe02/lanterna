@@ -41,10 +41,7 @@ public class DefaultWindowDecorationRenderer implements WindowDecorationRenderer
         char bottomRightCorner = themeDefinition.getCharacter("BOTTOM_RIGHT_CORNER", Symbols.SINGLE_LINE_BOTTOM_RIGHT_CORNER);
         char topRightCorner = themeDefinition.getCharacter("TOP_RIGHT_CORNER", Symbols.SINGLE_LINE_TOP_RIGHT_CORNER);
 
-        //Resize if necessary
         TerminalSize drawableArea = graphics.getSize();
-        title = title.substring(0, Math.max(0, Math.min(title.length(), drawableArea.getColumns() - 3)));
-
         graphics.applyThemeStyle(themeDefinition.getPreLight());
         graphics.drawLine(new TerminalPosition(0, drawableArea.getRows() - 2), new TerminalPosition(0, 1), verticalLine);
         graphics.drawLine(new TerminalPosition(1, 0), new TerminalPosition(drawableArea.getColumns() - 2, 0), horizontalLine);
@@ -65,8 +62,8 @@ public class DefaultWindowDecorationRenderer implements WindowDecorationRenderer
         graphics.setCharacter(drawableArea.getColumns() - 1, 0, topRightCorner);
         graphics.setCharacter(drawableArea.getColumns() - 1, drawableArea.getRows() - 1, bottomRightCorner);
 
-        if(title.length() > 0) {
-            graphics.putString(2, 0, title);
+        if(!title.isEmpty()) {
+            graphics.putString(2, 0, CJKUtils.fitString(title, 0, drawableArea.getColumns() - 3));
         }
 
         return graphics.newTextGraphics(new TerminalPosition(1, 1), graphics.getSize().withRelativeColumns(-2).withRelativeRows(-2));
@@ -77,7 +74,7 @@ public class DefaultWindowDecorationRenderer implements WindowDecorationRenderer
         return contentAreaSize
                 .withRelativeColumns(2)
                 .withRelativeRows(2)
-                .max(new TerminalSize(window.getTitle().length() + 4, 1));  //Make sure the title fits!
+                .max(new TerminalSize(CJKUtils.getTrueWidth(window.getTitle()) + 4, 1));  //Make sure the title fits!
     }
 
     private static final TerminalPosition OFFSET = new TerminalPosition(1, 1);
