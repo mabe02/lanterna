@@ -83,6 +83,9 @@ public class CJKUtils {
      * @return The whole or part of the input string which will fit inside the supplied width
      */
     public static String fitString(String string, int startIndex, int width) {
+        if(width <= 0) {
+            return "";
+        }
         StringBuilder bob = new StringBuilder(width);
         int consumedWidth = 0;
         for(int index = startIndex; index < string.length(); index++) {
