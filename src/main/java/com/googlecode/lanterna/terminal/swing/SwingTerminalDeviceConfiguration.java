@@ -31,7 +31,9 @@ public class SwingTerminalDeviceConfiguration {
     /**
      * This is a static reference to the default terminal device configuration. Use this one if you are unsure.
      */
-    public static final SwingTerminalDeviceConfiguration DEFAULT = new SwingTerminalDeviceConfiguration();
+    public static final SwingTerminalDeviceConfiguration getDefault() {
+        return new SwingTerminalDeviceConfiguration();
+    }
 
     private final int lineBufferScrollbackSize;
     private final int blinkLengthInMilliSeconds;

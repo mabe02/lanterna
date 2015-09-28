@@ -112,7 +112,9 @@ public class SwingTerminalFontConfiguration {
     /**
      * This is the default font settings that will be used if you don't specify anything
      */
-    public static final SwingTerminalFontConfiguration DEFAULT = newInstance(filterMonospaced(selectDefaultFont()));
+    public static final SwingTerminalFontConfiguration getDefault() {
+        return newInstance(filterMonospaced(selectDefaultFont()));
+    }
 
     /**
      * Given an array of fonts, returns another array with only the ones that are monospaced. The fonts in the result

@@ -49,9 +49,9 @@ public class ScrollingSwingTerminal extends JComponent implements IOSafeTerminal
      * Creates a new ScrollingSwingTerminal with all default options
      */
     public ScrollingSwingTerminal() {
-        this(SwingTerminalDeviceConfiguration.DEFAULT,
-                SwingTerminalFontConfiguration.DEFAULT,
-                SwingTerminalColorConfiguration.DEFAULT);
+        this(SwingTerminalDeviceConfiguration.getDefault(),
+                SwingTerminalFontConfiguration.getDefault(),
+                SwingTerminalColorConfiguration.getDefault());
     }
 
     /**

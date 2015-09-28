@@ -89,9 +89,9 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
      */
     @SuppressWarnings("WeakerAccess")
     public SwingTerminal(TerminalScrollController scrollController) {
-        this(SwingTerminalDeviceConfiguration.DEFAULT,
-                SwingTerminalFontConfiguration.DEFAULT,
-                SwingTerminalColorConfiguration.DEFAULT,
+        this(SwingTerminalDeviceConfiguration.getDefault(),
+                SwingTerminalFontConfiguration.getDefault(),
+                SwingTerminalColorConfiguration.getDefault(),
                 scrollController);
     }
 
@@ -174,13 +174,13 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
 
         //Enforce valid values on the input parameters
         if(deviceConfiguration == null) {
-            deviceConfiguration = SwingTerminalDeviceConfiguration.DEFAULT;
+            deviceConfiguration = SwingTerminalDeviceConfiguration.getDefault();
         }
         if(fontConfiguration == null) {
-            fontConfiguration = SwingTerminalFontConfiguration.DEFAULT;
+            fontConfiguration = SwingTerminalFontConfiguration.getDefault();
         }
         if(colorConfiguration == null) {
-            colorConfiguration = SwingTerminalColorConfiguration.DEFAULT;
+            colorConfiguration = SwingTerminalColorConfiguration.getDefault();
         }
 
         //This is kind of meaningless since we don't know how large the

@@ -81,9 +81,9 @@ public final class DefaultTerminalFactory implements TerminalFactory {
         this.autoOpenSwingTerminalFrame = true;
         this.title = "SwingTerminalFrame";
         this.autoCloseTrigger = SwingTerminalFrame.AutoCloseTrigger.CloseOnExitPrivateMode;
-        this.colorConfiguration = SwingTerminalColorConfiguration.DEFAULT;
-        this.deviceConfiguration = SwingTerminalDeviceConfiguration.DEFAULT;
-        this.fontConfiguration = SwingTerminalFontConfiguration.DEFAULT;
+        this.colorConfiguration = SwingTerminalColorConfiguration.getDefault();
+        this.deviceConfiguration = SwingTerminalDeviceConfiguration.getDefault();
+        this.fontConfiguration = SwingTerminalFontConfiguration.getDefault();
         this.mouseCaptureMode = null;
     }
     
