@@ -127,15 +127,9 @@ public class Label extends AbstractComponent<Label> {
                         graphics.putString(0, row, line);
                     }
                     else {
-                        int remainingColumns = graphics.getSize().getColumns();
-                        for(int i = 0; i < line.length() && remainingColumns > 0; i++) {
-                            char c = line.charAt(i);
-                            int width = CJKUtils.isCharCJK(c) ? 2 : 1;
-                            if(remainingColumns >= width) {
-                                graphics.setCharacter(graphics.getSize().getColumns() - remainingColumns, row, c);
-                                remainingColumns -= width;
-                            }
-                        }
+                        int availableColumns = graphics.getSize().getColumns();
+                        String fitString = CJKUtils.fitString(line, 0, availableColumns);
+                        graphics.putString(0, row, fitString);
                     }
                 }
             }
