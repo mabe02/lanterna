@@ -18,10 +18,7 @@
  */
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.Symbols;
-import com.googlecode.lanterna.TerminalPosition;
-import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.TextCharacter;
+import com.googlecode.lanterna.*;
 import com.googlecode.lanterna.graphics.TextGraphics;
 
 import java.util.Arrays;
@@ -130,7 +127,7 @@ public class Borders {
             }
             preferredSize = preferredSize.withRelativeColumns(2).withRelativeRows(2);
             String borderTitle = border.getTitle();
-            return preferredSize.max(new TerminalSize((borderTitle.isEmpty() ? 2 : borderTitle.length() + 4), 2));
+            return preferredSize.max(new TerminalSize((borderTitle.isEmpty() ? 2 : CJKUtils.getTrueWidth(borderTitle) + 4), 2));
         }
 
         @Override
@@ -195,7 +192,7 @@ public class Borders {
                         horizontalLine);
             }
 
-            if(drawableArea.getColumns() >= border.getTitle().length() + 4) {
+            if(drawableArea.getColumns() >= CJKUtils.getTrueWidth(border.getTitle()) + 4) {
                 graphics.putString(2, 0, border.getTitle());
             }
 

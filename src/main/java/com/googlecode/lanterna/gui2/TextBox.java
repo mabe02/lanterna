@@ -585,6 +585,8 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
                     continue;
                 }
                 String line = component.lines.get(rowIndex);
+
+                //TODO: Fix CJK character handling!
                 if(line.length() > viewTopLeft.getColumn()) {
                     String string = line.substring(viewTopLeft.getColumn());
                     if(component.mask != null) {

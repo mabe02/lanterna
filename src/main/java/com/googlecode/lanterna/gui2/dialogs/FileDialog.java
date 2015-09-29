@@ -1,5 +1,6 @@
 package com.googlecode.lanterna.gui2.dialogs;
 
+import com.googlecode.lanterna.CJKUtils;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 
@@ -210,9 +211,10 @@ public class FileDialog extends DialogWindow {
         public void drawComponent(TextGUIGraphics graphics) {
             TerminalSize area = graphics.getSize();
             String absolutePath = directory.getAbsolutePath();
-            if(area.getColumns() < absolutePath.length()) {
-                absolutePath = absolutePath.substring(absolutePath.length() - area.getColumns());
-                absolutePath = "..." + absolutePath.substring(Math.min(absolutePath.length(), 3));
+            int absolutePathLengthInColumns = CJKUtils.getTrueWidth(absolutePath);
+            if(area.getColumns() < absolutePathLengthInColumns) {
+                absolutePath = absolutePath.substring(absolutePathLengthInColumns - area.getColumns());
+                absolutePath = "..." + absolutePath.substring(Math.min(absolutePathLengthInColumns, 3));
             }
             setText(absolutePath);
             super.drawComponent(graphics);

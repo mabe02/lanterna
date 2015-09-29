@@ -250,8 +250,9 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
             int index = 0;
             for (V item : listBox.getItems()) {
                 String itemString = listBox.getListItemRenderer().getLabel(listBox, index++, item);
-                if (itemString.length() > maxWidth) {
-                    maxWidth = itemString.length();
+                int stringLengthInColumns = CJKUtils.getTrueWidth(itemString);
+                if (stringLengthInColumns > maxWidth) {
+                    maxWidth = stringLengthInColumns;
                 }
             }
             return new TerminalSize(maxWidth + 1, listBox.getItemCount());
