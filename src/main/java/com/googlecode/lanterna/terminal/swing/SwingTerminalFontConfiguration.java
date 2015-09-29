@@ -20,14 +20,11 @@ package com.googlecode.lanterna.terminal.swing;
 
 import com.googlecode.lanterna.Symbols;
 import com.googlecode.lanterna.TextCharacter;
-import sun.font.CompositeFont;
-import sun.font.PhysicalFont;
 
 import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.List;
@@ -71,41 +68,48 @@ public class SwingTerminalFontConfiguration {
             "AR PL UMing CN"
     )));
 
-    private static final List<Font> DEFAULT_WINDOWS_FONTS = Collections.unmodifiableList(Arrays.asList(
-            new Font("Courier New", Font.PLAIN, 14), //Monospaced can look pretty bad on Windows, so let's override it
-            new Font("Monospaced", Font.PLAIN, 14)
-    ));
+    private static final List<Font> getDefaultWindowsFonts() {
+        return Collections.unmodifiableList(Arrays.asList(
+                new Font("Courier New", Font.PLAIN, 14), //Monospaced can look pretty bad on Windows, so let's override it
+                new Font("Monospaced", Font.PLAIN, 14)));
+    }
 
-    private static final List<Font> DEFAULT_LINUX_FONTS = Collections.unmodifiableList(Arrays.asList(
-            new Font("DejaVu Sans Mono", Font.PLAIN, 14),
-            new Font("Monospaced", Font.PLAIN, 14),
-            //Below, these should be redundant (Monospaced is supposed to catch-all)
-            // but Java 6 seems to have issues with finding monospaced fonts sometimes
-            new Font("Ubuntu Mono", Font.PLAIN, 14),
-            new Font("FreeMono", Font.PLAIN, 14),
-            new Font("Liberation Mono", Font.PLAIN, 14),
-            new Font("VL Gothic Regular", Font.PLAIN, 14),
-            new Font("NanumGothic", Font.PLAIN, 14),
-            new Font("WenQuanYi Zen Hei Mono", Font.PLAIN, 14),
-            new Font("WenQuanYi Zen Hei", Font.PLAIN, 14),
-            new Font("AR PL UMing TW", Font.PLAIN, 14),
-            new Font("AR PL UMing HK", Font.PLAIN, 14),
-            new Font("AR PL UMing CN", Font.PLAIN, 14)));
+    private static final List<Font> getDefaultLinuxFonts() {
+        return Collections.unmodifiableList(Arrays.asList(
+                new Font("DejaVu Sans Mono", Font.PLAIN, 14),
+                new Font("Monospaced", Font.PLAIN, 14),
+                //Below, these should be redundant (Monospaced is supposed to catch-all)
+                // but Java 6 seems to have issues with finding monospaced fonts sometimes
+                new Font("Ubuntu Mono", Font.PLAIN, 14),
+                new Font("FreeMono", Font.PLAIN, 14),
+                new Font("Liberation Mono", Font.PLAIN, 14),
+                new Font("VL Gothic Regular", Font.PLAIN, 14),
+                new Font("NanumGothic", Font.PLAIN, 14),
+                new Font("WenQuanYi Zen Hei Mono", Font.PLAIN, 14),
+                new Font("WenQuanYi Zen Hei", Font.PLAIN, 14),
+                new Font("AR PL UMing TW", Font.PLAIN, 14),
+                new Font("AR PL UMing HK", Font.PLAIN, 14),
+                new Font("AR PL UMing CN", Font.PLAIN, 14)));
+    }
 
-    private static final List<Font> DEFAULT_FONTS = Collections.unmodifiableList(Collections.singletonList(
-            new Font("Monospaced", Font.PLAIN, 14)
-    ));
+    private static final List<Font> getDefaultFonts() {
+        return Collections.unmodifiableList(Collections.singletonList(
+                new Font("Monospaced", Font.PLAIN, 14)));
+    }
 
     private static Font[] selectDefaultFont() {
         String osName = System.getProperty("os.name", "").toLowerCase();
         if(osName.contains("win")) {
-            return DEFAULT_WINDOWS_FONTS.toArray(new Font[DEFAULT_WINDOWS_FONTS.size()]);
+            List<Font> windowsFonts = getDefaultWindowsFonts();
+            return windowsFonts.toArray(new Font[windowsFonts.size()]);
         }
         else if(osName.contains("linux")) {
-            return DEFAULT_LINUX_FONTS.toArray(new Font[DEFAULT_LINUX_FONTS.size()]);
+            List<Font> linuxFonts = getDefaultLinuxFonts();
+            return linuxFonts.toArray(new Font[linuxFonts.size()]);
         }
         else {
-            return DEFAULT_FONTS.toArray(new Font[DEFAULT_FONTS.size()]);
+            List<Font> defaultFonts = getDefaultFonts();
+            return defaultFonts.toArray(new Font[defaultFonts.size()]);
         }
     }
 
