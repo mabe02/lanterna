@@ -8,13 +8,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by martin on 15/09/15.
  */
 public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
 
+    public interface Listener {
+        void onSelectionChanged(int selectedIndex, int previousSelection);
+    }
+
     private final List<V> items;
+    private final List<Listener> listeners;
 
     private PopupWindow popupWindow;
     private String text;
@@ -44,6 +50,7 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
             }
         }
         this.items = new ArrayList<V>(items);
+        this.listeners = new CopyOnWriteArrayList<Listener>();
         this.popupWindow = null;
         this.selectedIndex = selectedIndex;
         this.readOnly = true;
@@ -172,6 +179,7 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
             if(items.size() <= selectedIndex || selectedIndex < -1) {
                 throw new IllegalArgumentException("Illegal argument to ComboBox.setSelectedIndex: " + selectedIndex);
             }
+            int oldSelection = this.selectedIndex;
             this.selectedIndex = selectedIndex;
             if(selectedIndex == -1) {
                 text = "";
@@ -182,12 +190,27 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
             if(textInputPosition > text.length()) {
                 textInputPosition = text.length();
             }
+            for(Listener listener: listeners) {
+                listener.onSelectionChanged(selectedIndex, oldSelection);
+            }
             invalidate();
         }
     }
 
     public int getSelectedIndex() {
         return selectedIndex;
+    }
+
+    public ComboBox<V> addListener(Listener listener) {
+        if(listener != null && !listeners.contains(listener)) {
+            listeners.add(listener);
+        }
+        return this;
+    }
+
+    public ComboBox<V> removeListener(Listener listener) {
+        listeners.remove(listener);
+        return this;
     }
 
     @Override
