@@ -57,6 +57,14 @@ public class Panel extends AbstractComponent<Panel> implements Container {
         return this;
     }
 
+    public Panel addComponent(Component component, LayoutData layoutData) {
+        if(component != null) {
+            component.setLayoutData(layoutData);
+            addComponent(component);
+        }
+        return this;
+    }
+
     @Override
     public boolean containsComponent(Component component) {
         return component != null && component.hasParent(this);
