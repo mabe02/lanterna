@@ -451,8 +451,8 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
     }
 
     public static abstract class TextBoxRenderer implements InteractableRenderer<TextBox> {
-        protected abstract TerminalPosition getViewTopLeft();
-        protected abstract void setViewTopLeft(TerminalPosition position);
+        public abstract TerminalPosition getViewTopLeft();
+        public abstract void setViewTopLeft(TerminalPosition position);
     }
 
     public static class DefaultTextBoxRenderer extends TextBoxRenderer {
@@ -469,12 +469,12 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
         }
 
         @Override
-        protected TerminalPosition getViewTopLeft() {
+        public TerminalPosition getViewTopLeft() {
             return viewTopLeft;
         }
 
         @Override
-        protected void setViewTopLeft(TerminalPosition position) {
+        public void setViewTopLeft(TerminalPosition position) {
             if(position.getColumn() < 0) {
                 position = position.withColumn(0);
             }
