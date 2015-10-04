@@ -29,7 +29,7 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
     }
 
     public ComboBox(Collection<V> items) {
-        this(items, -1);
+        this(items, items.isEmpty() ? -1 : 0);
     }
 
     public ComboBox(String initialText, Collection<V> items) {
