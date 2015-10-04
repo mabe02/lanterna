@@ -229,20 +229,16 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
             case ArrowDown:
                 if(popupWindow != null) {
                     popupWindow.listBox.handleKeyStroke(keyStroke);
+                    return Result.HANDLED;
                 }
-                else if(selectedIndex < items.size() - 1) {
-                    setSelectedIndex(selectedIndex + 1);
-                }
-                return Result.HANDLED;
+                return Result.MOVE_FOCUS_DOWN;
 
             case ArrowUp:
                 if(popupWindow != null) {
                     popupWindow.listBox.handleKeyStroke(keyStroke);
+                    return Result.HANDLED;
                 }
-                else if(selectedIndex > 0) {
-                    setSelectedIndex(selectedIndex - 1);
-                }
-                return Result.HANDLED;
+                return Result.MOVE_FOCUS_UP;
 
             case Enter:
                 if(popupWindow != null) {
