@@ -511,10 +511,10 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
                 return;
             }
             int textBoxLineCount = component.getLineCount();
-            if(!hideScrollBars && textBoxLineCount > realTextArea.getRows()) {
+            if(!hideScrollBars && textBoxLineCount > realTextArea.getRows() && realTextArea.getColumns() > 1) {
                 realTextArea = realTextArea.withRelativeColumns(-1);
             }
-            if(!hideScrollBars && component.longestRow > realTextArea.getColumns()) {
+            if(!hideScrollBars && component.longestRow > realTextArea.getColumns() && realTextArea.getRows() > 1) {
                 realTextArea = realTextArea.withRelativeRows(-1);
                 if(textBoxLineCount > realTextArea.getRows() && realTextArea.getRows() == graphics.getSize().getRows()) {
                     realTextArea = realTextArea.withRelativeColumns(-1);
