@@ -167,6 +167,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
         if (longestRow < lineWidth + 1) {
             longestRow = lineWidth + 1;
         }
+        invalidate();
     }
 
     public TerminalPosition getCaretPosition() {
