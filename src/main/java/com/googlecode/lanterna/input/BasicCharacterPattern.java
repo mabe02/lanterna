@@ -29,7 +29,7 @@ public class BasicCharacterPattern implements CharacterPattern {
     private final KeyStroke result;
     private final char[] pattern;
 
-    BasicCharacterPattern(KeyStroke result, char... pattern) {
+    public BasicCharacterPattern(KeyStroke result, char... pattern) {
         this.result = result;
         this.pattern = pattern;
     }
