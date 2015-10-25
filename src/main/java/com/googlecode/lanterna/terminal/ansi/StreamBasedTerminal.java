@@ -131,10 +131,16 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
      *
      * @see KeyDecodingProfile
      * @param profile Decoding profile to add
+     * @deprecated Use {@code getInputDecoder().addProfile(profile)} instead
      */
+    @Deprecated
     @SuppressWarnings("WeakerAccess")
     public void addKeyDecodingProfile(KeyDecodingProfile profile) {
         inputDecoder.addProfile(profile);
+    }
+
+    public InputDecoder getInputDecoder() {
+        return inputDecoder;
     }
 
     @SuppressWarnings("ConstantConditions")

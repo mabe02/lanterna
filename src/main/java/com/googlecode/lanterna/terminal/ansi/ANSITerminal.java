@@ -47,7 +47,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
         super(terminalInput, terminalOutput, terminalCharset);
         this.inPrivateMode = false;
         this.mouseCaptureMode = null;
-        addKeyDecodingProfile(getDefaultKeyDecodingProfile());
+        getInputDecoder().addProfile(getDefaultKeyDecodingProfile());
     }
 
     /**

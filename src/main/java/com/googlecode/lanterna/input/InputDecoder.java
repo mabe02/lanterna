@@ -54,11 +54,13 @@ public class InputDecoder {
      * when decoding input.
      * @param profile Profile to add
      */
-    public synchronized void addProfile(KeyDecodingProfile profile) {
+    public void addProfile(KeyDecodingProfile profile) {
         for (CharacterPattern pattern : profile.getPatterns()) {
-            //If an equivivalent pattern already exists, remove it first
-            bytePatterns.remove(pattern);
-            bytePatterns.add(pattern);
+            synchronized(bytePatterns) {
+                //If an equivivalent pattern already exists, remove it first
+                bytePatterns.remove(pattern);
+                bytePatterns.add(pattern);
+            }
         }
     }
 
@@ -67,7 +69,9 @@ public class InputDecoder {
      * @return Collection of patterns in the InputDecoder
      */
     public synchronized Collection<CharacterPattern> getPatterns() {
-        return new ArrayList<CharacterPattern>(bytePatterns);
+        synchronized(bytePatterns) {
+            return new ArrayList<CharacterPattern>(bytePatterns);
+        }
     }
 
     /**
@@ -75,8 +79,10 @@ public class InputDecoder {
      * @param pattern Pattern to remove
      * @return {@code true} if the supplied pattern was found and was removed, otherwise {@code false}
      */
-    public synchronized boolean removePattern(CharacterPattern pattern) {
-        return bytePatterns.remove(pattern);
+    public boolean removePattern(CharacterPattern pattern) {
+        synchronized(bytePatterns) {
+            return bytePatterns.remove(pattern);
+        }
     }
 
     /**
@@ -154,14 +160,16 @@ public class InputDecoder {
         return lastReportedTerminalPosition;
     }
 
-    private synchronized Matching getBestMatch(List<Character> characterSequence) {
+    private Matching getBestMatch(List<Character> characterSequence) {
         boolean partialMatch = false;
         KeyStroke bestMatch = null;
-        for(CharacterPattern pattern : bytePatterns) {
-            if (pattern.matches(characterSequence)) {
-                partialMatch = true;
-                if (pattern.isCompleteMatch(characterSequence)) {
-                    bestMatch = pattern.getResult(characterSequence);
+        synchronized(bytePatterns) {
+            for(CharacterPattern pattern : bytePatterns) {
+                if(pattern.matches(characterSequence)) {
+                    partialMatch = true;
+                    if(pattern.isCompleteMatch(characterSequence)) {
+                        bestMatch = pattern.getResult(characterSequence);
+                    }
                 }
             }
         }
