@@ -36,6 +36,7 @@ public class InputDecoder {
     private final List<Character> currentMatching;
     private TerminalPosition lastReportedTerminalPosition;
     private boolean seenEOF;
+    private int timeoutUnits;
 
     /**
      * Creates a new input decoder using a specified Reader as the source to read characters from
@@ -47,6 +48,7 @@ public class InputDecoder {
         this.currentMatching = new ArrayList<Character>();
         this.lastReportedTerminalPosition = null;
         this.seenEOF = false;
+        this.timeoutUnits = 0; // default is no wait at all
     }
 
     /**
@@ -86,59 +88,125 @@ public class InputDecoder {
     }
 
     /**
+     * Sets the number of 1/4-second units for how long to try to get further input
+     * to complete an escape-sequence for a special Key.
+     * 
+     * Negative numbers are mapped to 0 (no wait at all), and unreasonably high
+     * values are mapped to a maximum of 240 (1 minute).
+     */
+    public void setTimeoutUnits(int units) {
+        timeoutUnits = (units < 0) ? 0 :
+                       (units > 240) ? 240 :
+                        units;
+    }
+    /**
+     * queries the current timeoutUnits value. One unit is 1/4 second.
+     */
+    public int getTimeoutUnits() {
+        return timeoutUnits;
+    }
+
+    /**
      * Reads and decodes the next key stroke from the input stream
      * @return Key stroke read from the input stream, or {@code null} if none
      * @throws IOException If there was an I/O error when reading from the input stream
      */
     public synchronized KeyStroke getNextCharacter(boolean blockingIO) throws IOException {
-        while ((blockingIO && currentMatching.isEmpty()) || source.ready()) {
-            int readChar = source.read();
-            if (readChar == -1) {
-                seenEOF = true;
-                if(currentMatching.isEmpty()) {
-                    return new KeyStroke(KeyType.EOF);
-                }
-                break;
-            }
-            currentMatching.add((char) readChar);
-        }
-
-        //Return null if we don't have anything from the input buffer (nothing was pressed?)
-        if (currentMatching.isEmpty()) {
-            return null;
-        }
 
         KeyStroke bestMatch = null;
-        int nrOfCharactersMatched = 0;
+        int bestLen = 0;
+        int curLen = 0;
 
-        //Slowly iterate by adding characters, until either the buffer is empty or no pattern matches
-        for(int i = 0; i < currentMatching.size(); i++) {
-            List<Character> subList = currentMatching.subList(0, i + 1);
-            Matching matching = getBestMatch(subList);
-            if(bestMatch != null && matching.fullMatch == null && !matching.partialMatch) {
-                break;
+        while(true) {
+
+            if ( curLen < currentMatching.size() ) {
+                // (re-)consume characters previously read:
+                curLen++;
             }
-            else if(matching.fullMatch != null) {
+            else {
+                // If we already have a bestMatch but a chance for a longer match
+                //   then we poll for the configured number of timeout units:
+                // It would be much better, if we could just read with a timeout,
+                //   but lacking that, we wait 1/4s units and check for readiness.
+                if (bestMatch != null) {
+                    int timeout = getTimeoutUnits();
+                    while (timeout > 0 && ! source.ready() ) {
+                        try {
+                            timeout--; Thread.sleep(250);
+                        } catch (InterruptedException e) { timeout = 0; }
+                    }
+                }
+                // if input is available, we can just read a char without waiting,
+                // otherwise, for readInput() with no bestMatch found yet,
+                //  we have to wait blocking for more input:
+                if ( source.ready() || ( blockingIO && bestMatch == null ) ) {
+                    int readChar = source.read();
+                    if (readChar == -1) {
+                        seenEOF = true;
+                        if(currentMatching.isEmpty()) {
+                            return new KeyStroke(KeyType.EOF);
+                        }
+                        break;
+                    }
+                    currentMatching.add( (char)readChar );
+                    curLen++;
+                } else { // no more available input at this time.
+                    // already found something:
+                    if (bestMatch != null) {
+                        break; // it's something...
+                    }
+                    // otherwise: no KeyStroke yet
+                    return null;
+                }
+            }
+
+            List<Character> curSub = currentMatching.subList(0, curLen);
+            Matching matching = getBestMatch( curSub );
+
+            // fullMatch found...
+            if (matching.fullMatch != null) {
                 bestMatch = matching.fullMatch;
-                nrOfCharactersMatched = i + 1;
+                bestLen = curLen;
+
+                if (! matching.partialMatch) {
+                    // that match and no more
+                    break;
+                } else {
+                    // that match, but maybe more
+                    continue;
+                }
             }
-            else if(bestMatch == null && !matching.partialMatch) {
-                //No match, not even a partial match, then clear the input buffer, otherwise we'll never ever match anything
-                subList.clear();
-                break;
+            // No match found yet, but there's still potential...
+            else if ( matching.partialMatch ) {
+                continue;
+            }
+            // no longer match possible at this point:
+            else {
+                if (bestMatch != null ) {
+                    // there was already a previous full-match, use it:
+                    break;
+                } else { // invalid input!
+                    // remove the whole fail and re-try finding a KeyStroke...
+                    curSub.clear(); // or just 1 char?  currentMatching.remove(0);
+                    curLen = 0;
+                    continue;
+                }
             }
         }
 
         //Did we find anything? Otherwise return null
         if(bestMatch == null) {
             if(seenEOF) {
+                currentMatching.clear();
                 return new KeyStroke(KeyType.EOF);
             }
             return null;
         }
 
+        List<Character> bestSub = currentMatching.subList(0, bestLen );
+
         if (bestMatch.getKeyType() == KeyType.CursorLocation) {
-            TerminalPosition cursorPosition = ScreenInfoCharacterPattern.getCursorPosition(currentMatching.subList(0, nrOfCharactersMatched));
+            TerminalPosition cursorPosition = ScreenInfoCharacterPattern.getCursorPosition(bestSub);
             if(cursorPosition != null && cursorPosition.getColumn() == 5 && cursorPosition.getRow() == 1) {
                 //Special case for CTRL + F3
                 bestMatch = new KeyStroke(KeyType.F3, true, false);
@@ -148,7 +216,7 @@ public class InputDecoder {
             }
         }
 
-        currentMatching.subList(0, nrOfCharactersMatched).clear();
+        bestSub.clear(); // remove matched characters from input
         return bestMatch;
     }
 
@@ -166,9 +234,10 @@ public class InputDecoder {
         synchronized(bytePatterns) {
             for(CharacterPattern pattern : bytePatterns) {
                 if(pattern.matches(characterSequence)) {
-                    partialMatch = true;
                     if(pattern.isCompleteMatch(characterSequence)) {
                         bestMatch = pattern.getResult(characterSequence);
+                    } else {
+                        partialMatch = true;
                     }
                 }
             }
