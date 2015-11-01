@@ -28,7 +28,12 @@ public class TextBoxTest extends TestBase {
                 "Well here we are again\n" +
                 "It's always such a pleasure\n" +
                 "Remember when you tried\n" +
-                "to kill me twice?").withBorder(Borders.singleLine()));
+                "to kill me twice?\n" +
+                "\n" +
+                "あのときは笑いが止まりませんでしたね\n" +
+                "私は笑っていませんが\n" +
+                "状況を振り返ると\n" +
+                "自分のやさしさに驚くほどです").withBorder(Borders.singleLine()));
 
         mainPanel.addComponent(leftPanel.withBorder(Borders.singleLine("Single line")));
         mainPanel.addComponent(rightPanel.withBorder(Borders.singleLine("Multiline")));
