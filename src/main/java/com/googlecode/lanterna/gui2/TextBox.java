@@ -43,6 +43,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
     private final Style style;
 
     private TerminalPosition caretPosition;
+    private boolean caretWarp;
     private boolean readOnly;
     private boolean horizontalFocusSwitching;
     private boolean verticalFocusSwitching;
@@ -80,6 +81,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
         this.lines = new ArrayList<String>();
         this.style = style;
         this.readOnly = false;
+        this.caretWarp = false;
         this.verticalFocusSwitching = true;
         this.horizontalFocusSwitching = true;
         this.caretPosition = TerminalPosition.TOP_LEFT_CORNER;
@@ -168,6 +170,27 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
             longestRow = lineWidth + 1;
         }
         invalidate();
+    }
+
+    /**
+     * Sets if the caret should jump to the beginning of the next line if right arrow is pressed while at the end of a
+     * line. Similarly, pressing left arrow at the beginning of a line will make the caret jump to the end of the
+     * previous line. This only makes sense for multi-line TextBox:es; for single-line ones it has no effect. By default
+     * this is {@code false}.
+     * @param caretWarp Whether the caret will warp at the beginning/end of lines
+     * @return Itself
+     */
+    public TextBox setCaretWarp(boolean caretWarp) {
+        this.caretWarp = caretWarp;
+        return this;
+    }
+
+    /**
+     * Checks whether caret warp mode is enabled or not. See {@code setCaretWarp} for more details.
+     * @return {@code true} if caret warp mode is enabled
+     */
+    public boolean isCaretWarp() {
+        return caretWarp;
     }
 
     public TerminalPosition getCaretPosition() {
@@ -325,7 +348,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
                 if(caretPosition.getColumn() > 0) {
                     caretPosition = caretPosition.withRelativeColumn(-1);
                 }
-                else if(style == Style.MULTI_LINE && caretPosition.getRow() > 0) {
+                else if(style == Style.MULTI_LINE && caretWarp && caretPosition.getRow() > 0) {
                     caretPosition = caretPosition.withRelativeRow(-1);
                     caretPosition = caretPosition.withColumn(lines.get(caretPosition.getRow()).length());
                 }
@@ -337,7 +360,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
                 if(caretPosition.getColumn() < lines.get(caretPosition.getRow()).length()) {
                     caretPosition = caretPosition.withRelativeColumn(1);
                 }
-                else if(style == Style.MULTI_LINE && caretPosition.getRow() < lines.size() - 1) {
+                else if(style == Style.MULTI_LINE && caretWarp && caretPosition.getRow() < lines.size() - 1) {
                     caretPosition = caretPosition.withRelativeRow(1);
                     caretPosition = caretPosition.withColumn(0);
                 }
