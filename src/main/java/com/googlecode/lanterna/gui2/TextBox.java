@@ -282,10 +282,22 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
         return this;
     }
 
+    /**
+     * Returns the line on the specific row. For non-multiline TextBox:es, calling this with index set to 0 will return
+     * the same as calling {@code getText()}. If the row index is invalid (less than zero or equals or larger than the
+     * number of rows), this method will throw IndexOutOfBoundsException.
+     * @param index
+     * @return The line at the specified index, as a String
+     * @throws IndexOutOfBoundsException if the row index is less than zero or too large
+     */
     public String getLine(int index) {
         return lines.get(index);
     }
 
+    /**
+     * Returns the number of lines currently in this TextBox. For single-line TextBox:es, this will always return 1.
+     * @return Number of lines of text currently in this TextBox
+     */
     public int getLineCount() {
         return lines.size();
     }
