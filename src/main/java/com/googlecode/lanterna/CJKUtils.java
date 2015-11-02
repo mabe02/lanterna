@@ -54,7 +54,8 @@ public class CJKUtils {
                 || (unicodeBlock == Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS)
                 || (unicodeBlock == Character.UnicodeBlock.CJK_RADICALS_SUPPLEMENT)
                 || (unicodeBlock == Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION)
-                || (unicodeBlock == Character.UnicodeBlock.ENCLOSED_CJK_LETTERS_AND_MONTHS);
+                || (unicodeBlock == Character.UnicodeBlock.ENCLOSED_CJK_LETTERS_AND_MONTHS)
+                || (unicodeBlock == Character.UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS && c < 0xFF61);    //The magic number here is the separating index between full-width and half-width
     }
 
     /**
@@ -101,5 +102,71 @@ public class CJKUtils {
             }
         }
         return bob.toString();
+    }
+
+    /**
+     * Finds and returns the character in the supplied string at the particular column specified. The difference between
+     * calling this method and using {@code charAt(..)} directly on the string is that this method will take CJK
+     * character spacing into account. For example, if the String contains あいうえお and you call
+     * {@code getCharacterInColumn(4, 0)}, it will return う and not お.<p/>
+     * Please note that the method will return {@code null} if the column index out of bounds (when taking CJK double
+     * width into account).
+     * @param string String to look for the character in
+     * @param column Column to fetch the character from, assuming CJK characters take up two columns
+     * @return The character at the specified coordinates, or {@code null} if the column value is out of range
+     * @throws IndexOutOfBoundsException If the row value is outside of the valid range
+     */
+    public static Character getCharacterInColumn(String string, int column) {
+        if(column < 0) {
+            throw new IllegalArgumentException("Cannot call getCharacterInColumn(..) with negative column index!");
+        }
+        int characterIndex = 0;
+        int currentColumn = 0;
+        try {
+            while(currentColumn < column) {
+                if(CJKUtils.isCharCJK(string.charAt(characterIndex++))) {
+                    currentColumn += 2;
+                    if(currentColumn > column) {
+                        characterIndex--;
+                    }
+                }
+                else {
+                    currentColumn += 1;
+                }
+            }
+            return string.charAt(characterIndex);
+        }
+        catch(StringIndexOutOfBoundsException ignore) {
+            return null;
+        }
+    }
+
+    /**
+     * Returns {@code true} if and only if the character in the string at the specified column is the second half of a
+     * double-width CJK character. If a 'regular' character is at this position, or if it's the first half of a CJK
+     * character, this will return {@code false}. This is essentially pretending the string has been printed in the
+     * top-left corner of a terminal and looks at what's in the specified column.
+     * @param column Column to fetch the character from, assuming CJK characters take up two columns
+     * @return {@code true} if the character is a CJK filler space, {@code false} otherwise
+     * @throws IndexOutOfBoundsException If the column values are outside of the valid range
+     */
+    public boolean isColumnCJKFillerCharacter(String string, int column) {
+        if(column < 0) {
+            throw new IllegalArgumentException("Cannot call isColumnCJKFillerCharacter(..) with negative column index!");
+        }
+        int characterIndex = 0;
+        int currentColumn = 0;
+        while(currentColumn < column) {
+            if(CJKUtils.isCharCJK(string.charAt(characterIndex++))) {
+                currentColumn += 2;
+                if(currentColumn > column) {
+                    return true;
+                }
+            }
+            else {
+                currentColumn += 1;
+            }
+        }
+        return false;
     }
 }
