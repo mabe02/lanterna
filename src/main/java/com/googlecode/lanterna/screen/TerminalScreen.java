@@ -139,6 +139,7 @@ public class TerminalScreen extends AbstractScreen {
         else {
             refreshByDelta();
         }
+        getBackBuffer().copyTo(getFrontBuffer());
         TerminalPosition cursorPosition = getCursorPosition();
         if(cursorPosition != null) {
             getTerminal().setCursorVisible(true);
@@ -153,7 +154,6 @@ public class TerminalScreen extends AbstractScreen {
             getTerminal().setCursorVisible(false);
         }
         getTerminal().flush();
-        getBackBuffer().copyTo(getFrontBuffer());
     }
 
     private void useScrollHint() throws IOException {
