@@ -92,15 +92,15 @@ public class CJKUtilsTest {
     @Test
     public void fitStringGeneralTest() {
         String testString = "端末（英: computer terminal）";
-        assertEquals("", CJKUtils.fitString(testString, 0, 0));
-        assertEquals(" ", CJKUtils.fitString(testString, 0, 1));
-        assertEquals("端", CJKUtils.fitString(testString, 0, 2));
-        assertEquals("端 ", CJKUtils.fitString(testString, 0, 3));
-        assertEquals("端末", CJKUtils.fitString(testString, 0, 4));
-        assertEquals("端末（英", CJKUtils.fitString(testString, 0, 8));
-        assertEquals("端末（英:", CJKUtils.fitString(testString, 0, 9));
-        assertEquals("端末（英: ", CJKUtils.fitString(testString, 0, 10));
-        assertEquals("端末（英: c", CJKUtils.fitString(testString, 0, 11));
+        assertEquals("", CJKUtils.fitString(testString, 0));
+        assertEquals(" ", CJKUtils.fitString(testString, 1));
+        assertEquals("端", CJKUtils.fitString(testString, 2));
+        assertEquals("端 ", CJKUtils.fitString(testString, 3));
+        assertEquals("端末", CJKUtils.fitString(testString, 4));
+        assertEquals("端末（英", CJKUtils.fitString(testString, 8));
+        assertEquals("端末（英:", CJKUtils.fitString(testString, 9));
+        assertEquals("端末（英: ", CJKUtils.fitString(testString, 10));
+        assertEquals("端末（英: c", CJKUtils.fitString(testString, 11));
 
         testString = "日本語";
         assertEquals("日本語", CJKUtils.fitString(testString, 0, 20));

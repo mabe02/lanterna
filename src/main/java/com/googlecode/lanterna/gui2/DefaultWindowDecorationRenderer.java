@@ -63,7 +63,7 @@ public class DefaultWindowDecorationRenderer implements WindowDecorationRenderer
         graphics.setCharacter(drawableArea.getColumns() - 1, drawableArea.getRows() - 1, bottomRightCorner);
 
         if(!title.isEmpty()) {
-            graphics.putString(2, 0, CJKUtils.fitString(title, 0, drawableArea.getColumns() - 3));
+            graphics.putString(2, 0, CJKUtils.fitString(title, drawableArea.getColumns() - 3));
         }
 
         return graphics.newTextGraphics(new TerminalPosition(1, 1), graphics.getSize().withRelativeColumns(-2).withRelativeRows(-2));

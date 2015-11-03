@@ -338,7 +338,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
                 graphics.applyThemeStyle(graphics.getThemeDefinition(AbstractListBox.class).getNormal());
             }
             String label = getLabel(listBox, index, item);
-            label = CJKUtils.fitString(label, 0, graphics.getSize().getColumns());
+            label = CJKUtils.fitString(label, graphics.getSize().getColumns());
             graphics.putString(0, 0, label);
         }
     }

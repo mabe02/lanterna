@@ -128,7 +128,7 @@ public class Label extends AbstractComponent<Label> {
                     }
                     else {
                         int availableColumns = graphics.getSize().getColumns();
-                        String fitString = CJKUtils.fitString(line, 0, availableColumns);
+                        String fitString = CJKUtils.fitString(line, availableColumns);
                         graphics.putString(0, row, fitString);
                     }
                 }
