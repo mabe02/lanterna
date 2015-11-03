@@ -40,6 +40,7 @@ public class KeyStroke {
     private final Character character;
     private final boolean ctrlDown;
     private final boolean altDown;
+    private final boolean shiftDown;
     private final long eventTime;
 
     /**
@@ -61,20 +62,36 @@ public class KeyStroke {
      * @param altDown Was alt held down when the main key was pressed?
      */
     public KeyStroke(KeyType keyType, boolean ctrlDown, boolean altDown) {
-        this(keyType, null, ctrlDown, altDown);
+        this(keyType, null, ctrlDown, altDown, false);
+    }
+    
+    /**
+     * Constructs a KeyStroke based on a supplied keyType; character will be null.
+     * If you try to construct a KeyStroke with type KeyType.Character with this constructor, it
+     * will always throw an exception; use another overload that allows you to specify the character value instead.
+     * @param keyType Type of the key pressed by this keystroke
+     * @param ctrlDown Was ctrl held down when the main key was pressed?
+     * @param altDown Was alt held down when the main key was pressed?
+     * @param shiftDown Was shift held down when the main key was pressed?
+     */
+    public KeyStroke(KeyType keyType, boolean ctrlDown, boolean altDown, boolean shiftDown) {
+        this(keyType, null, ctrlDown, altDown, shiftDown);
     }
     
     /**
      * Constructs a KeyStroke based on a supplied character, keyType is implicitly KeyType.Character.
+     * <p>
+     * A character-based KeyStroke does not support the shiftDown flag, as the shift state has
+     * already been accounted for in the character itself, depending on user's keyboard layout.
      * @param character Character that was typed on the keyboard
      * @param ctrlDown Was ctrl held down when the main key was pressed?
      * @param altDown Was alt held down when the main key was pressed?
      */
     public KeyStroke(Character character, boolean ctrlDown, boolean altDown) {
-        this(KeyType.Character, character, ctrlDown, altDown);
+        this(KeyType.Character, character, ctrlDown, altDown, false);
     }
     
-    private KeyStroke(KeyType keyType, Character character, boolean ctrlDown, boolean altDown) {
+    private KeyStroke(KeyType keyType, Character character, boolean ctrlDown, boolean altDown, boolean shiftDown) {
         if(keyType == KeyType.Character && character == null) {
             throw new IllegalArgumentException("Cannot construct a KeyStroke with type KeyType.Character but no character information");
         }
@@ -93,6 +110,7 @@ public class KeyStroke {
         }
         this.keyType = keyType;
         this.character = character;
+        this.shiftDown = shiftDown;
         this.ctrlDown = ctrlDown;
         this.altDown = altDown;
         this.eventTime = System.currentTimeMillis();
@@ -132,6 +150,13 @@ public class KeyStroke {
     }
 
     /**
+     * @return Returns true if shift was help down while the key was typed (depending on terminal implementation)
+     */
+    public boolean isShiftDown() {
+        return shiftDown;
+    }
+
+    /**
      * Gets the time when the keystroke was recorded. This isn't necessarily the time the keystroke happened, but when
      * Lanterna received the event, so it may not be accurate down to the millisecond.
      * @return The unix time of when the keystroke happened, in milliseconds
@@ -142,7 +167,10 @@ public class KeyStroke {
 
     @Override
     public String toString() {
-        return "KeyStroke{" + "keyType=" + keyType + ", character=" + character + ", ctrlDown=" + ctrlDown + ", altDown=" + altDown + '}';
+        return "KeyStroke{" + "keyType=" + keyType + ", character=" + character + 
+                ", ctrlDown=" + ctrlDown + 
+                ", altDown=" + altDown + 
+                ", shiftDown=" + shiftDown + '}';
     }
 
     @Override
@@ -152,6 +180,7 @@ public class KeyStroke {
         hash = 41 * hash + (this.character != null ? this.character.hashCode() : 0);
         hash = 41 * hash + (this.ctrlDown ? 1 : 0);
         hash = 41 * hash + (this.altDown ? 1 : 0);
+        hash = 41 * hash + (this.shiftDown ? 1 : 0);
         return hash;
     }
 
@@ -171,7 +200,9 @@ public class KeyStroke {
         if (this.character != other.character && (this.character == null || !this.character.equals(other.character))) {
             return false;
         }
-        return this.ctrlDown == other.ctrlDown && this.altDown == other.altDown;
+        return this.ctrlDown == other.ctrlDown && 
+               this.altDown == other.altDown &&
+               this.shiftDown == other.shiftDown;
     }
     
     /**
@@ -184,7 +215,7 @@ public class KeyStroke {
         String keyStrLC = keyStr.toLowerCase();
         KeyStroke k;
         if (keyStr.length() == 1) {
-            k = new KeyStroke(KeyType.Character, keyStr.charAt(0), false, false);
+            k = new KeyStroke(KeyType.Character, keyStr.charAt(0), false, false, false);
         } else if (keyStr.startsWith("<") && keyStr.endsWith(">")) {
             if (keyStrLC.equals("<s-tab>")) {
                 k = new KeyStroke(KeyType.ReverseTab);
