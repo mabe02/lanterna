@@ -18,6 +18,9 @@
  */
 package com.googlecode.lanterna;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Utilities class for analyzing and working with CJK (Chinese, Japanese, Korean) characters. The main purpose of this
  * class is to assist in figuring out how many terminal columns a character (and in extension, a String) takes up. The
@@ -77,28 +80,42 @@ public class CJKUtils {
 
     /**
      * Given a string that may or may not contain CJK characters, returns the substring which will fit inside
-     * <code>width</code> columns. This method does not handle special cases like tab or new-line.
-     * @param string The string to fit inside the width
-     * @param startIndex From what character in the input string to start fitting
-     * @param width Number of columns to fit the string inside
-     * @return The whole or part of the input string which will fit inside the supplied width
+     * <code>availableColumnSpace</code> columns. This method does not handle special cases like tab or new-line. Please
+     * notice that {@code fromColumn} is not a character index inside the string, but a column index as if the string
+     * has been printed from the left-most side of the terminal. So if the string is "日本語", fromColumn set to 1 will
+     * not starting counting from the second character ("本") in the string but from the CJK filler character belonging
+     * to "日". If you want to count from a particular character index inside the string, please pass in a substring
+     * and use fromColumn set to 0.
+     * @param string The string to fit inside the availableColumnSpace
+     * @param fromColumn From what column of the input string to start fitting (see description above!)
+     * @param availableColumnSpace Number of columns to fit the string inside
+     * @return The whole or part of the input string which will fit inside the supplied availableColumnSpace
      */
-    public static String fitString(String string, int startIndex, int width) {
-        if(width <= 0) {
+    public static String fitString(String string, int fromColumn, int availableColumnSpace) {
+        if(availableColumnSpace <= 0) {
             return "";
         }
-        StringBuilder bob = new StringBuilder(width);
-        int consumedWidth = 0;
-        for(int index = startIndex; index < string.length(); index++) {
-            char c = string.charAt(index);
-            int charWidth = isCharCJK(c) ? 2 : 1;
-            if(consumedWidth + charWidth > width) {
-                return bob.toString();
+
+        StringBuilder bob = new StringBuilder();
+        int column = 0;
+        int index = 0;
+        while(index < string.length() && column < fromColumn) {
+            char c = string.charAt(index++);
+            column += CJKUtils.isCharCJK(c) ? 2 : 1;
+        }
+        if(column > fromColumn) {
+            bob.append(" ");
+            availableColumnSpace--;
+        }
+
+        while(availableColumnSpace > 0 && index < string.length()) {
+            char c = string.charAt(index++);
+            availableColumnSpace -= CJKUtils.isCharCJK(c) ? 2 : 1;
+            if(availableColumnSpace < 0) {
+                bob.append(' ');
             }
-            bob.append(c);
-            consumedWidth += charWidth;
-            if(consumedWidth == width) {
-                break;
+            else {
+                bob.append(c);
             }
         }
         return bob.toString();
@@ -108,37 +125,32 @@ public class CJKUtils {
      * Finds and returns the character in the supplied string at the particular column specified. The difference between
      * calling this method and using {@code charAt(..)} directly on the string is that this method will take CJK
      * character spacing into account. For example, if the String contains あいうえお and you call
-     * {@code getCharacterInColumn(4, 0)}, it will return う and not お.<p/>
-     * Please note that the method will return {@code null} if the column index out of bounds (when taking CJK double
-     * width into account).
+     * {@code getCharacterInColumn(4, 0)}, it will return う and not お.
+     *
      * @param string String to look for the character in
      * @param column Column to fetch the character from, assuming CJK characters take up two columns
-     * @return The character at the specified coordinates, or {@code null} if the column value is out of range
-     * @throws IndexOutOfBoundsException If the row value is outside of the valid range
+     * @return The character at the specified coordinates. If the character at the index is the second half of a CJK
+     * character, it will return the char at the position before (i.e. the CJK character).
+     * @throws IndexOutOfBoundsException If the column value is outside of the valid range
      */
-    public static Character getCharacterInColumn(String string, int column) {
+    public static char getCharacterInColumn(String string, int column) {
         if(column < 0) {
             throw new IllegalArgumentException("Cannot call getCharacterInColumn(..) with negative column index!");
         }
         int characterIndex = 0;
         int currentColumn = 0;
-        try {
-            while(currentColumn < column) {
-                if(CJKUtils.isCharCJK(string.charAt(characterIndex++))) {
-                    currentColumn += 2;
-                    if(currentColumn > column) {
-                        characterIndex--;
-                    }
-                }
-                else {
-                    currentColumn += 1;
+        while(currentColumn < column) {
+            if(CJKUtils.isCharCJK(string.charAt(characterIndex++))) {
+                currentColumn += 2;
+                if(currentColumn > column) {
+                    characterIndex--;
                 }
             }
-            return string.charAt(characterIndex);
+            else {
+                currentColumn += 1;
+            }
         }
-        catch(StringIndexOutOfBoundsException ignore) {
-            return null;
-        }
+        return string.charAt(characterIndex);
     }
 
     /**
@@ -150,7 +162,7 @@ public class CJKUtils {
      * @return {@code true} if the character is a CJK filler space, {@code false} otherwise
      * @throws IndexOutOfBoundsException If the column values are outside of the valid range
      */
-    public boolean isColumnCJKFillerCharacter(String string, int column) {
+    public static boolean isColumnCJKFillerCharacter(String string, int column) {
         if(column < 0) {
             throw new IllegalArgumentException("Cannot call isColumnCJKFillerCharacter(..) with negative column index!");
         }
@@ -167,6 +179,9 @@ public class CJKUtils {
                 currentColumn += 1;
             }
         }
+        //Make sure out position is valid within the string (if not, this will throw)
+        string.charAt(characterIndex);
+        //Must be a non-filler at this point
         return false;
     }
 }

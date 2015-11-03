@@ -64,8 +64,121 @@ public class CJKUtilsTest {
         }
     }
 
+    @Test
+    public void getTrueWidthReturnsDoubleSizeForCJKCharacters() {
+        String[] cjkCharacters = new String[] { HIRAGANA, KATAKANA, FULL_WIDTH_ROMANJI, JOUYOU_KANJI, HANGUL, SIMPLIFIED_CHINESE_2500_MOST_COMMON };
+        for(String characters: cjkCharacters) {
+            for(int i = 0; i < characters.length(); i++) {
+                int expected = 2;
+                int actual = CJKUtils.getTrueWidth(characters.substring(i, i + 1));
+                assertEquals("CJK character '" + characters.charAt(i) + "' didn't return 2", expected, actual);
+            }
+        }
+        String[] nonCJKCharacters = new String[] { LATIN1, HALF_WIDTH_KATAKANA };
+        for(String characters: nonCJKCharacters) {
+            for(int i = 0; i < characters.length(); i++) {
+                int expected = 1;
+                int actual = CJKUtils.getTrueWidth(characters.substring(i, i + 1));
+                assertEquals("Non-CJK character '" + characters.charAt(i) + "' didn't return 1", expected, actual);
+            }
+        }
+
+        // Some static tests
+        assertEquals(0, CJKUtils.getTrueWidth(""));
+        assertEquals(9, CJKUtils.getTrueWidth("123456789"));
+        assertEquals(29, CJKUtils.getTrueWidth("端末（英: computer terminal）"));
+    }
+
+    @Test
+    public void fitStringGeneralTest() {
+        String testString = "端末（英: computer terminal）";
+        assertEquals("", CJKUtils.fitString(testString, 0, 0));
+        assertEquals(" ", CJKUtils.fitString(testString, 0, 1));
+        assertEquals("端", CJKUtils.fitString(testString, 0, 2));
+        assertEquals("端 ", CJKUtils.fitString(testString, 0, 3));
+        assertEquals("端末", CJKUtils.fitString(testString, 0, 4));
+        assertEquals("端末（英", CJKUtils.fitString(testString, 0, 8));
+        assertEquals("端末（英:", CJKUtils.fitString(testString, 0, 9));
+        assertEquals("端末（英: ", CJKUtils.fitString(testString, 0, 10));
+        assertEquals("端末（英: c", CJKUtils.fitString(testString, 0, 11));
+
+        testString = "日本語";
+        assertEquals("日本語", CJKUtils.fitString(testString, 0, 20));
+        assertEquals(" 本語", CJKUtils.fitString(testString, 1, 20));
+        assertEquals("本語", CJKUtils.fitString(testString, 2, 20));
+        assertEquals(" 語", CJKUtils.fitString(testString, 3, 20));
+        assertEquals("語", CJKUtils.fitString(testString, 4, 20));
+        assertEquals(" ", CJKUtils.fitString(testString, 5, 20));
+        assertEquals("", CJKUtils.fitString(testString, 6, 20));
+    }
+
+    @Test
+    public void getCharacterInColumnGeneralTest() {
+        String testString = "端末（英: computer terminal）";
+        assertEquals('端', CJKUtils.getCharacterInColumn(testString, 0));
+        assertEquals('端', CJKUtils.getCharacterInColumn(testString, 1));
+        assertEquals('末', CJKUtils.getCharacterInColumn(testString, 2));
+        assertEquals('末', CJKUtils.getCharacterInColumn(testString, 3));
+        assertEquals('（', CJKUtils.getCharacterInColumn(testString, 4));
+        assertEquals('（', CJKUtils.getCharacterInColumn(testString, 5));
+        assertEquals('英', CJKUtils.getCharacterInColumn(testString, 6));
+        assertEquals('英', CJKUtils.getCharacterInColumn(testString, 7));
+        assertEquals(':', CJKUtils.getCharacterInColumn(testString, 8));
+        assertEquals(' ', CJKUtils.getCharacterInColumn(testString, 9));
+        assertEquals('c', CJKUtils.getCharacterInColumn(testString, 10));
+        assertEquals('o', CJKUtils.getCharacterInColumn(testString, 11));
+        assertEquals('m', CJKUtils.getCharacterInColumn(testString, 12));
+        //...
+        assertEquals('）', CJKUtils.getCharacterInColumn(testString, 27));
+        assertEquals('）', CJKUtils.getCharacterInColumn(testString, 28));
+        try {
+            CJKUtils.getCharacterInColumn(testString, 29);
+        }
+        catch(StringIndexOutOfBoundsException ignore) {
+            //Expected
+        }
+    }
+
+    @Test
+    public void isColumnCJKFillerCharacterGeneralTest() {
+        String testString = "端末（英: computer terminal）";
+        assertEquals(false, CJKUtils.isColumnCJKFillerCharacter(testString, 0));
+        assertEquals(true, CJKUtils.isColumnCJKFillerCharacter(testString, 1));
+        assertEquals(false, CJKUtils.isColumnCJKFillerCharacter(testString, 2));
+        assertEquals(true, CJKUtils.isColumnCJKFillerCharacter(testString, 3));
+        assertEquals(false, CJKUtils.isColumnCJKFillerCharacter(testString, 4));
+        assertEquals(true, CJKUtils.isColumnCJKFillerCharacter(testString, 5));
+        assertEquals(false, CJKUtils.isColumnCJKFillerCharacter(testString, 6));
+        assertEquals(true, CJKUtils.isColumnCJKFillerCharacter(testString, 7));
+        assertEquals(false, CJKUtils.isColumnCJKFillerCharacter(testString, 8));
+        assertEquals(false, CJKUtils.isColumnCJKFillerCharacter(testString, 9));
+        assertEquals(false, CJKUtils.isColumnCJKFillerCharacter(testString, 10));
+        assertEquals(false, CJKUtils.isColumnCJKFillerCharacter(testString, 11));
+        assertEquals(false, CJKUtils.isColumnCJKFillerCharacter(testString, 12));
+        //...
+        assertEquals(false, CJKUtils.isColumnCJKFillerCharacter(testString, 26));
+        assertEquals(false, CJKUtils.isColumnCJKFillerCharacter(testString, 27));
+        assertEquals(true, CJKUtils.isColumnCJKFillerCharacter(testString, 28));
+        try {
+            CJKUtils.isColumnCJKFillerCharacter(testString, 29);
+            fail("Calling CJKUtils.isColumnCJKFillerCharacter(..) outside of string range didn't throw");
+        }
+        catch(IndexOutOfBoundsException ignore) {
+            //Expected
+        }
+
+        //Calling on non-CJK characters should always return false
+        for(int i = 0; i < LATIN1.length(); i++) {
+            assertEquals(false, CJKUtils.isColumnCJKFillerCharacter(LATIN1, i));
+        }
+    }
+
     // Add a test for traditional Chinese characters here? If someone can contribute a list! The list of simplified
     // Chinese characters was difficult enough...
+    private static final String LATIN1 =
+            " !\"#$%&()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_" +
+                    "`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿" +
+                    "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ";
 
     private static final String HIRAGANA =
             "ぁあぃいぅうぇえぉおかがきぎくぐけげこごさざしじすずせぜそぞただちぢっつづてでとどなにぬねのはばぱひびぴふぶぷへべ" +
