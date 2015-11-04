@@ -53,3 +53,4 @@ Development Guide:
 ----------
 
 See wiki for examples and Development Guide: https://code.google.com/p/lanterna/wiki/DevelopmentGuide
+See [docs](docs/contents.md) for more examples and guides.
