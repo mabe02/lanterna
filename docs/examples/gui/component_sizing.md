@@ -7,7 +7,7 @@ For example, to set the on screen size of a `Panel`, call the `setPreferredSize`
 
 ```
 	Panel panel = new Panel();
-    panel.setPreferredSize(new TerminalSize(40, 2));
+	panel.setPreferredSize(new TerminalSize(40, 2));
 ```
 
 You can also pass a `TerminalSize` object into the constructor of many GUI components, for example, the `TextBox` component:
