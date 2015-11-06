@@ -3,9 +3,9 @@ Lanterna 3 Documentation
 
 ### Overview
 Lanterna 3 is a large, and probably final, update to the Lanterna library.
-Many parts have been completely rewritten and the parts not rewritten has been touched in at least some way.
-The reason for this major overhaul is to finally get it 'right' and fix up all those API mistakes that have been highlighted
-over the years since lanterna was first published.
+Many parts have been completely rewritten and the parts not rewritten have been touched in at least some way.
+The reason for this major overhaul is to finally get it 'right' and fix up all of those API mistakes that have been highlighted
+over the years, since lanterna was first published.
 
 ### Terminal Layer
 TODO
