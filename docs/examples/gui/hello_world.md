@@ -16,7 +16,7 @@ import com.googlecode.lanterna.terminal.Terminal;
 
 import java.io.IOException;
 
-public class PoliceTerminal {
+public class HelloWorld {
     public static void main(String[] args) throws IOException {
 
         // Setup terminal and screen layers
