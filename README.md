@@ -53,4 +53,8 @@ Development Guide
 ---
 See [docs](docs/contents.md) for examples and guides.
 
+JavaDoc is available here:
+2.1: http://mabe02.github.io/lanterna/apidocs/2.1/
+3.0: http://mabe02.github.io/lanterna/apidocs/3.0/
+
 See wiki for examples and Development Guide: https://code.google.com/p/lanterna/wiki/DevelopmentGuide
