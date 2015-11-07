@@ -70,7 +70,7 @@ public class CJKUtilsTest {
         for(String characters: cjkCharacters) {
             for(int i = 0; i < characters.length(); i++) {
                 int expected = 2;
-                int actual = CJKUtils.getTrueWidth(characters.substring(i, i + 1));
+                int actual = CJKUtils.getColumnWidth(characters.substring(i, i + 1));
                 assertEquals("CJK character '" + characters.charAt(i) + "' didn't return 2", expected, actual);
             }
         }
@@ -78,15 +78,52 @@ public class CJKUtilsTest {
         for(String characters: nonCJKCharacters) {
             for(int i = 0; i < characters.length(); i++) {
                 int expected = 1;
-                int actual = CJKUtils.getTrueWidth(characters.substring(i, i + 1));
+                int actual = CJKUtils.getColumnWidth(characters.substring(i, i + 1));
                 assertEquals("Non-CJK character '" + characters.charAt(i) + "' didn't return 1", expected, actual);
             }
         }
 
         // Some static tests
-        assertEquals(0, CJKUtils.getTrueWidth(""));
-        assertEquals(9, CJKUtils.getTrueWidth("123456789"));
-        assertEquals(29, CJKUtils.getTrueWidth("端末（英: computer terminal）"));
+        assertEquals(0, CJKUtils.getColumnWidth(""));
+        assertEquals(9, CJKUtils.getColumnWidth("123456789"));
+        assertEquals(29, CJKUtils.getColumnWidth("端末（英: computer terminal）"));
+    }
+
+    @Test
+    public void getColumnIndexGeneralTest() {
+        String testString = "端末（英: computer terminal）";
+        assertEquals(0, CJKUtils.getColumnIndex(testString, 0));
+        assertEquals(2, CJKUtils.getColumnIndex(testString, 1));
+        assertEquals(4, CJKUtils.getColumnIndex(testString, 2));
+        assertEquals(6, CJKUtils.getColumnIndex(testString, 3));
+        assertEquals(8, CJKUtils.getColumnIndex(testString, 4));
+        assertEquals(9, CJKUtils.getColumnIndex(testString, 5));
+        assertEquals(10, CJKUtils.getColumnIndex(testString, 6));
+        assertEquals(11, CJKUtils.getColumnIndex(testString, 7));
+        assertEquals(12, CJKUtils.getColumnIndex(testString, 8));
+        assertEquals(13, CJKUtils.getColumnIndex(testString, 9));
+        assertEquals(14, CJKUtils.getColumnIndex(testString, 10));
+        assertEquals(27, CJKUtils.getColumnIndex(testString, 23));
+        assertEquals(29, CJKUtils.getColumnIndex(testString, 24));
+    }
+
+    @Test
+    public void getStringCharacterIndex() {
+        String testString = "端末（英: computer terminal）";
+        assertEquals(0, CJKUtils.getStringCharacterIndex(testString, 0));
+        assertEquals(0, CJKUtils.getStringCharacterIndex(testString, 1));
+        assertEquals(1, CJKUtils.getStringCharacterIndex(testString, 2));
+        assertEquals(1, CJKUtils.getStringCharacterIndex(testString, 3));
+        assertEquals(2, CJKUtils.getStringCharacterIndex(testString, 4));
+        assertEquals(2, CJKUtils.getStringCharacterIndex(testString, 5));
+        assertEquals(3, CJKUtils.getStringCharacterIndex(testString, 6));
+        assertEquals(3, CJKUtils.getStringCharacterIndex(testString, 7));
+        assertEquals(4, CJKUtils.getStringCharacterIndex(testString, 8));
+        assertEquals(5, CJKUtils.getStringCharacterIndex(testString, 9));
+        assertEquals(6, CJKUtils.getStringCharacterIndex(testString, 10));
+        assertEquals(23, CJKUtils.getStringCharacterIndex(testString, 27));
+        assertEquals(23, CJKUtils.getStringCharacterIndex(testString, 28));
+        assertEquals(24, CJKUtils.getStringCharacterIndex(testString, 29));
     }
 
     @Test
@@ -110,67 +147,6 @@ public class CJKUtilsTest {
         assertEquals("語", CJKUtils.fitString(testString, 4, 20));
         assertEquals(" ", CJKUtils.fitString(testString, 5, 20));
         assertEquals("", CJKUtils.fitString(testString, 6, 20));
-    }
-
-    @Test
-    public void getCharacterInColumnGeneralTest() {
-        String testString = "端末（英: computer terminal）";
-        assertEquals('端', CJKUtils.getCharacterInColumn(testString, 0));
-        assertEquals('端', CJKUtils.getCharacterInColumn(testString, 1));
-        assertEquals('末', CJKUtils.getCharacterInColumn(testString, 2));
-        assertEquals('末', CJKUtils.getCharacterInColumn(testString, 3));
-        assertEquals('（', CJKUtils.getCharacterInColumn(testString, 4));
-        assertEquals('（', CJKUtils.getCharacterInColumn(testString, 5));
-        assertEquals('英', CJKUtils.getCharacterInColumn(testString, 6));
-        assertEquals('英', CJKUtils.getCharacterInColumn(testString, 7));
-        assertEquals(':', CJKUtils.getCharacterInColumn(testString, 8));
-        assertEquals(' ', CJKUtils.getCharacterInColumn(testString, 9));
-        assertEquals('c', CJKUtils.getCharacterInColumn(testString, 10));
-        assertEquals('o', CJKUtils.getCharacterInColumn(testString, 11));
-        assertEquals('m', CJKUtils.getCharacterInColumn(testString, 12));
-        //...
-        assertEquals('）', CJKUtils.getCharacterInColumn(testString, 27));
-        assertEquals('）', CJKUtils.getCharacterInColumn(testString, 28));
-        try {
-            CJKUtils.getCharacterInColumn(testString, 29);
-        }
-        catch(StringIndexOutOfBoundsException ignore) {
-            //Expected
-        }
-    }
-
-    @Test
-    public void isColumnCJKFillerCharacterGeneralTest() {
-        String testString = "端末（英: computer terminal）";
-        assertEquals(false, CJKUtils.isColumnCJKFillerCharacter(testString, 0));
-        assertEquals(true, CJKUtils.isColumnCJKFillerCharacter(testString, 1));
-        assertEquals(false, CJKUtils.isColumnCJKFillerCharacter(testString, 2));
-        assertEquals(true, CJKUtils.isColumnCJKFillerCharacter(testString, 3));
-        assertEquals(false, CJKUtils.isColumnCJKFillerCharacter(testString, 4));
-        assertEquals(true, CJKUtils.isColumnCJKFillerCharacter(testString, 5));
-        assertEquals(false, CJKUtils.isColumnCJKFillerCharacter(testString, 6));
-        assertEquals(true, CJKUtils.isColumnCJKFillerCharacter(testString, 7));
-        assertEquals(false, CJKUtils.isColumnCJKFillerCharacter(testString, 8));
-        assertEquals(false, CJKUtils.isColumnCJKFillerCharacter(testString, 9));
-        assertEquals(false, CJKUtils.isColumnCJKFillerCharacter(testString, 10));
-        assertEquals(false, CJKUtils.isColumnCJKFillerCharacter(testString, 11));
-        assertEquals(false, CJKUtils.isColumnCJKFillerCharacter(testString, 12));
-        //...
-        assertEquals(false, CJKUtils.isColumnCJKFillerCharacter(testString, 26));
-        assertEquals(false, CJKUtils.isColumnCJKFillerCharacter(testString, 27));
-        assertEquals(true, CJKUtils.isColumnCJKFillerCharacter(testString, 28));
-        try {
-            CJKUtils.isColumnCJKFillerCharacter(testString, 29);
-            fail("Calling CJKUtils.isColumnCJKFillerCharacter(..) outside of string range didn't throw");
-        }
-        catch(IndexOutOfBoundsException ignore) {
-            //Expected
-        }
-
-        //Calling on non-CJK characters should always return false
-        for(int i = 0; i < LATIN1.length(); i++) {
-            assertEquals(false, CJKUtils.isColumnCJKFillerCharacter(LATIN1, i));
-        }
     }
 
     // Add a test for traditional Chinese characters here? If someone can contribute a list! The list of simplified

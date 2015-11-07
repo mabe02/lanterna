@@ -71,6 +71,15 @@ public abstract class AbstractComponent<T extends Component> implements Componen
         }
     }
 
+    protected void runOnGUIThreadIfExistsOtherwiseRunDirect(Runnable runnable) {
+        if(getTextGUI() != null && getTextGUI().getGUIThread() != null) {
+            getTextGUI().getGUIThread().invokeLater(runnable);
+        }
+        else {
+            runnable.run();
+        }
+    }
+
     public T setRenderer(ComponentRenderer<T> renderer) {
         this.renderer = renderer;
         return self();

@@ -14,7 +14,7 @@ public class DefaultTableCellRenderer<V> implements TableCellRenderer<V> {
         String[] lines = getContent(cell);
         int maxWidth = 0;
         for(String line: lines) {
-            int length = CJKUtils.getTrueWidth(line);
+            int length = CJKUtils.getColumnWidth(line);
             if(maxWidth < length) {
                 maxWidth = length;
             }

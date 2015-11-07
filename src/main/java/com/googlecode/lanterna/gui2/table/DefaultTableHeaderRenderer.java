@@ -13,7 +13,7 @@ public class DefaultTableHeaderRenderer<V> implements TableHeaderRenderer<V> {
         if(label == null) {
             return TerminalSize.ZERO;
         }
-        return new TerminalSize(CJKUtils.getTrueWidth(label), 1);
+        return new TerminalSize(CJKUtils.getColumnWidth(label), 1);
     }
 
     @Override

@@ -25,11 +25,19 @@ import com.googlecode.lanterna.graphics.ThemeDefinition;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 /**
  * Created by martin on 19/10/14.
  */
 public class CheckBox extends AbstractInteractableComponent<CheckBox> {
 
+    public interface Listener {
+        void onStatusChanged(boolean checked);
+    }
+
+    private final List<Listener> listeners;
     private String label;
     private boolean checked;
 
@@ -44,14 +52,25 @@ public class CheckBox extends AbstractInteractableComponent<CheckBox> {
         else if(label.contains("\n") || label.contains("\r")) {
             throw new IllegalArgumentException("Multiline checkbox labels are not supported");
         }
+        this.listeners = new CopyOnWriteArrayList<Listener>();
         this.label = label;
         this.checked = false;
     }
 
-    public CheckBox setChecked(boolean checked) {
-        this.checked = checked;
-        invalidate();
-        return this;
+    public CheckBox setChecked(final boolean checked) {
+        synchronized(this) {
+            this.checked = checked;
+            runOnGUIThreadIfExistsOtherwiseRunDirect(new Runnable() {
+                @Override
+                public void run() {
+                    for(Listener listener : listeners) {
+                        listener.onStatusChanged(checked);
+                    }
+                }
+            });
+            invalidate();
+            return this;
+        }
     }
 
     public boolean isChecked() {
@@ -69,16 +88,30 @@ public class CheckBox extends AbstractInteractableComponent<CheckBox> {
     }
 
     public CheckBox setLabel(String label) {
-        if(label == null) {
-            throw new IllegalArgumentException("Cannot set CheckBox label to null");
+        synchronized(this) {
+            if(label == null) {
+                throw new IllegalArgumentException("Cannot set CheckBox label to null");
+            }
+            this.label = label;
+            invalidate();
+            return this;
         }
-        this.label = label;
-        invalidate();
-        return this;
     }
 
     public String getLabel() {
         return label;
+    }
+
+    public CheckBox addListener(Listener listener) {
+        if(listener != null && !listeners.contains(listener)) {
+            listeners.add(listener);
+        }
+        return this;
+    }
+
+    public CheckBox removeListener(Listener listener) {
+        listeners.remove(listener);
+        return this;
     }
 
     @Override
@@ -100,7 +133,7 @@ public class CheckBox extends AbstractInteractableComponent<CheckBox> {
         public TerminalSize getPreferredSize(CheckBox component) {
             int width = 3;
             if(!component.label.isEmpty()) {
-                width += 1 + CJKUtils.getTrueWidth(component.label);
+                width += 1 + CJKUtils.getColumnWidth(component.label);
             }
             return new TerminalSize(width, 1);
         }

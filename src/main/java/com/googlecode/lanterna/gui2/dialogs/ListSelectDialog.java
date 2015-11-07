@@ -96,7 +96,7 @@ public class ListSelectDialog<T> extends DialogWindow {
     public static <T> T showDialog(WindowBasedTextGUI textGUI, String title, String description, int listBoxHeight, T... items) {
         int width = 0;
         for(T item: items) {
-            width = Math.max(width, CJKUtils.getTrueWidth(item.toString()));
+            width = Math.max(width, CJKUtils.getColumnWidth(item.toString()));
         }
         width += 2;
         return showDialog(textGUI, title, description, new TerminalSize(width, listBoxHeight), items);

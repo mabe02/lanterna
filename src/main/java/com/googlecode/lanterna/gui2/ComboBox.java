@@ -3,7 +3,6 @@ package com.googlecode.lanterna.gui2;
 import com.googlecode.lanterna.*;
 import com.googlecode.lanterna.input.KeyStroke;
 
-import javax.xml.soap.Text;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -174,12 +173,12 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
         return textInputPosition;
     }
 
-    public void setSelectedIndex(int selectedIndex) {
+    public void setSelectedIndex(final int selectedIndex) {
         synchronized(this) {
             if(items.size() <= selectedIndex || selectedIndex < -1) {
                 throw new IllegalArgumentException("Illegal argument to ComboBox.setSelectedIndex: " + selectedIndex);
             }
-            int oldSelection = this.selectedIndex;
+            final int oldSelection = this.selectedIndex;
             this.selectedIndex = selectedIndex;
             if(selectedIndex == -1) {
                 text = "";
@@ -190,9 +189,14 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
             if(textInputPosition > text.length()) {
                 textInputPosition = text.length();
             }
-            for(Listener listener: listeners) {
-                listener.onSelectionChanged(selectedIndex, oldSelection);
-            }
+            runOnGUIThreadIfExistsOtherwiseRunDirect(new Runnable() {
+                @Override
+                public void run() {
+                    for(Listener listener: listeners) {
+                        listener.onSelectionChanged(selectedIndex, oldSelection);
+                    }
+                }
+            });
             invalidate();
         }
     }
@@ -402,7 +406,7 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
             }
             else {
                 int textInputPosition = comboBox.getTextInputPosition();
-                int textInputColumn = CJKUtils.getTrueWidth(comboBox.getText().substring(0, textInputPosition));
+                int textInputColumn = CJKUtils.getColumnWidth(comboBox.getText().substring(0, textInputPosition));
                 return new TerminalPosition(textInputColumn - textVisibleLeftPosition, 0);
             }
         }
@@ -410,11 +414,11 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
         @Override
         public TerminalSize getPreferredSize(ComboBox<V> comboBox) {
             TerminalSize size = TerminalSize.ONE.withColumns(
-                    (comboBox.getItemCount() == 0 ? CJKUtils.getTrueWidth(comboBox.getText()) : 0) + 2);
+                    (comboBox.getItemCount() == 0 ? CJKUtils.getColumnWidth(comboBox.getText()) : 0) + 2);
             synchronized(comboBox) {
                 for(int i = 0; i < comboBox.getItemCount(); i++) {
                     V item = comboBox.getItem(i);
-                    size = size.max(new TerminalSize(CJKUtils.getTrueWidth(item.toString()) + 2 + 1, 1));   // +1 to add a single column of space
+                    size = size.max(new TerminalSize(CJKUtils.getColumnWidth(item.toString()) + 2 + 1, 1));   // +1 to add a single column of space
                 }
             }
             return size;
@@ -431,7 +435,7 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
             graphics.fill(' ');
             int editableArea = graphics.getSize().getColumns() - 2; //This is exclusing the 'drop-down arrow'
             int textInputPosition = comboBox.getTextInputPosition();
-            int columnsToInputPosition = CJKUtils.getTrueWidth(comboBox.getText().substring(0, textInputPosition));
+            int columnsToInputPosition = CJKUtils.getColumnWidth(comboBox.getText().substring(0, textInputPosition));
             if(columnsToInputPosition < textVisibleLeftPosition) {
                 textVisibleLeftPosition = columnsToInputPosition;
             }

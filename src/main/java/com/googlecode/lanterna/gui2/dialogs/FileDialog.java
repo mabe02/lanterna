@@ -211,7 +211,7 @@ public class FileDialog extends DialogWindow {
         public void drawComponent(TextGUIGraphics graphics) {
             TerminalSize area = graphics.getSize();
             String absolutePath = directory.getAbsolutePath();
-            int absolutePathLengthInColumns = CJKUtils.getTrueWidth(absolutePath);
+            int absolutePathLengthInColumns = CJKUtils.getColumnWidth(absolutePath);
             if(area.getColumns() < absolutePathLengthInColumns) {
                 absolutePath = absolutePath.substring(absolutePathLengthInColumns - area.getColumns());
                 absolutePath = "..." + absolutePath.substring(Math.min(absolutePathLengthInColumns, 3));

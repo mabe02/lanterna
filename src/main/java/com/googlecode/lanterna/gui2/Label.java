@@ -67,7 +67,7 @@ public class Label extends AbstractComponent<Label> {
         currentBounds = currentBounds.withRows(lines.length);
         int preferredWidth = 0;
         for(String line: lines) {
-            int lineWidth = CJKUtils.getTrueWidth(line);
+            int lineWidth = CJKUtils.getColumnWidth(line);
             if(preferredWidth < lineWidth) {
                 preferredWidth = lineWidth;
             }

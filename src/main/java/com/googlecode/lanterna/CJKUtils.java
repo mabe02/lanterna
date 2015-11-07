@@ -37,7 +37,7 @@ public class CJKUtils {
     /**
      * Given a character, is this character considered to be a CJK character?
      * Shamelessly stolen from
-     * <a href="http://stackoverflow.com/questions/1499804/how-can-i-detect-japanese-text-in-a-java-string>StackOverflow</a>
+     * <a href="http://stackoverflow.com/questions/1499804/how-can-i-detect-japanese-text-in-a-java-string">StackOverflow</a>
      * where it was contributed by user Rakesh N
      * @param c Character to test
      * @return {@code true} if the character is a CJK character
@@ -62,23 +62,70 @@ public class CJKUtils {
     }
 
     /**
+     * @deprecated Call {@code getColumnWidth(s)} instead
+     */
+    @Deprecated
+    public static int getTrueWidth(String s) {
+        return getColumnWidth(s);
+    }
+
+    /**
      * Given a string, returns how many columns this string would need to occupy in a terminal, taking into account that
      * CJK characters takes up two columns.
      * @param s String to check length
      * @return Number of actual terminal columns the string would occupy
      */
-    public static int getTrueWidth(String s) {
-        int count = 0;
-        for(int i = 0; i < s.length(); i++) {
-            if(isCharCJK(s.charAt(i))) {
-                count++;
-            }
-            count++;
-        }
-        return count;
+    public static int getColumnWidth(String s) {
+        return getColumnIndex(s, s.length());
     }
 
+    /**
+     * Given a string and a character index inside that string, find out what the column index of that character would
+     * be if printed in a terminal. If the string only contains non-CJK characters then the returned value will be same
+     * as {@code stringCharacterIndex}, but if there are CJK characters the value will be different due to CJK
+     * characters taking up two columns in width. If the character at the index in the string is a CJK character itself,
+     * the returned value will be the index of the left-side of character.
+     * @param s String to translate the index from
+     * @param stringCharacterIndex Index within the string to get the terminal column index of
+     * @return Index of the character inside the String at {@code stringCharacterIndex} when it has been writted to a
+     * terminal
+     */
+    public static int getColumnIndex(String s, int stringCharacterIndex) {
+        int index = 0;
+        for(int i = 0; i < stringCharacterIndex; i++) {
+            if(isCharCJK(s.charAt(i))) {
+                index++;
+            }
+            index++;
+        }
+        return index;
+    }
 
+    /**
+     * This method does the reverse of getColumnIndex, given a String and imagining it has been printed out to the
+     * top-left corner of a terminal, in the column specified by {@code columnIndex}, what is the index of that
+     * character in the string. If the string contains no CJK characters, this will always be the same as
+     * {@code columnIndex}. If the index specified is the right column of a CJK character, the index is the same as if
+     * the column was the left column. So calling {@code getStringCharacterIndex("英", 0)} and
+     * {@code getStringCharacterIndex("英", 1)} will both return 0.
+     * @param s String to translate the index to
+     * @param columnIndex Column index of the string written to a terminal
+     * @return The index in the string of the character in terminal column {@code columnIndex}
+     */
+    public static int getStringCharacterIndex(String s, int columnIndex) {
+        int index = 0;
+        int counter = 0;
+        while(counter < columnIndex) {
+            if(isCharCJK(s.charAt(index++))) {
+                counter++;
+                if(counter == columnIndex) {
+                    return index - 1;
+                }
+            }
+            counter++;
+        }
+        return index;
+    }
 
     /**
      * Given a string that may or may not contain CJK characters, returns the substring which will fit inside
@@ -136,69 +183,5 @@ public class CJKUtils {
             }
         }
         return bob.toString();
-    }
-
-    /**
-     * Finds and returns the character in the supplied string at the particular column specified. The difference between
-     * calling this method and using {@code charAt(..)} directly on the string is that this method will take CJK
-     * character spacing into account. For example, if the String contains あいうえお and you call
-     * {@code getCharacterInColumn(4, 0)}, it will return う and not お.
-     *
-     * @param string String to look for the character in
-     * @param column Column to fetch the character from, assuming CJK characters take up two columns
-     * @return The character at the specified coordinates. If the character at the index is the second half of a CJK
-     * character, it will return the char at the position before (i.e. the CJK character).
-     * @throws IndexOutOfBoundsException If the column value is outside of the valid range
-     */
-    public static char getCharacterInColumn(String string, int column) {
-        if(column < 0) {
-            throw new IllegalArgumentException("Cannot call getCharacterInColumn(..) with negative column index!");
-        }
-        int characterIndex = 0;
-        int currentColumn = 0;
-        while(currentColumn < column) {
-            if(CJKUtils.isCharCJK(string.charAt(characterIndex++))) {
-                currentColumn += 2;
-                if(currentColumn > column) {
-                    characterIndex--;
-                }
-            }
-            else {
-                currentColumn += 1;
-            }
-        }
-        return string.charAt(characterIndex);
-    }
-
-    /**
-     * Returns {@code true} if and only if the character in the string at the specified column is the second half of a
-     * double-width CJK character. If a 'regular' character is at this position, or if it's the first half of a CJK
-     * character, this will return {@code false}. This is essentially pretending the string has been printed in the
-     * top-left corner of a terminal and looks at what's in the specified column.
-     * @param column Column to fetch the character from, assuming CJK characters take up two columns
-     * @return {@code true} if the character is a CJK filler space, {@code false} otherwise
-     * @throws IndexOutOfBoundsException If the column values are outside of the valid range
-     */
-    public static boolean isColumnCJKFillerCharacter(String string, int column) {
-        if(column < 0) {
-            throw new IllegalArgumentException("Cannot call isColumnCJKFillerCharacter(..) with negative column index!");
-        }
-        int characterIndex = 0;
-        int currentColumn = 0;
-        while(currentColumn < column) {
-            if(CJKUtils.isCharCJK(string.charAt(characterIndex++))) {
-                currentColumn += 2;
-                if(currentColumn > column) {
-                    return true;
-                }
-            }
-            else {
-                currentColumn += 1;
-            }
-        }
-        //Make sure out position is valid within the string (if not, this will throw)
-        string.charAt(characterIndex);
-        //Must be a non-filler at this point
-        return false;
     }
 }

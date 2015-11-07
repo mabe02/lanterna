@@ -1,5 +1,5 @@
 Lanterna
-=========
+---
 
 ![Lanterna screenshot](http://wiki.lanterna.googlecode.com/git/images/screenshots/screenshot1.png)
 
@@ -26,7 +26,7 @@ Lanterna is structured into three layers, each built on top of the other and you
 
 
 Maven
-------
+---
 
 Lanterna is available on [Maven Central](http://search.maven.org/), through [Sonatype OSS hosting](http://oss.sonatype.org/). Here's what you want to use:
 
@@ -49,7 +49,12 @@ There's also a preview release available of the upcoming 3.0 release:
 ```
 
 
-Development Guide:
-----------
+Development Guide
+---
+See [docs](docs/contents.md) for examples and guides.
+
+JavaDoc is available here:
+ * 2.1: http://mabe02.github.io/lanterna/apidocs/2.1/
+ * 3.0: http://mabe02.github.io/lanterna/apidocs/3.0/
 
 See wiki for examples and Development Guide: https://code.google.com/p/lanterna/wiki/DevelopmentGuide
