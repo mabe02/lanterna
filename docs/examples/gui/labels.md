@@ -9,9 +9,7 @@ To create a simple label:
 	Label label = new Label("Here is a label");
 ```
 
-### Tip
-
-You can add a `Label` to a `Panel` just after creation:
+As with many other components, you can add a `Label` to a `Panel` after instantiation:
 
 ```
 	Panel panel = new Panel();
