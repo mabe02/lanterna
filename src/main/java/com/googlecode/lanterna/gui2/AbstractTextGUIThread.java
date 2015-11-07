@@ -34,7 +34,12 @@ public abstract class AbstractTextGUIThread implements TextGUIThread {
 
     @Override
     public void invokeLater(Runnable runnable) throws IllegalStateException {
-        customTasks.add(runnable);
+        if(Thread.currentThread() == getThread()) {
+            runnable.run();
+        }
+        else {
+            customTasks.add(runnable);
+        }
     }
 
     @Override
