@@ -302,74 +302,6 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
         return lines.size();
     }
 
-    /**
-     * Finds and returns the character in the TextBox at the particular row and column specified. The difference between
-     * calling this method and using {@code getLine(..)} followed by {@code charAt(..)} is that this method will take
-     * CJK character spacing into account. For example, if the TextBox contains あいうえお and you call
-     * {@code getCharacterAt(4, 0)}, it will return う and not お.<p/>
-     * Please note that the method will return {@code null} if the column index out of bounds (when taking CJK double
-     * width into account) but throw {@code IndexOutOfBoundsException} if the row index is.
-     * @param column Column to fetch the character from, assuming CJK characters take up two columns
-     * @param row Row to fetch the character from
-     * @return The character at the specified coordinates, or {@code null} if the column value is out of range
-     * @throws IndexOutOfBoundsException If the row value is outside of the valid range
-     */
-    public Character getCharacterAt(int column, int row) {
-        if(column < 0) {
-            throw new IllegalArgumentException("Cannot call getCharacterAt(..) with negative column index!");
-        }
-        String line = getLine(row);
-        int characterIndex = 0;
-        int currentColumn = 0;
-        try {
-            while(currentColumn < column) {
-                if(CJKUtils.isCharCJK(line.charAt(characterIndex++))) {
-                    currentColumn += 2;
-                    if(currentColumn > column) {
-                        characterIndex--;
-                    }
-                }
-                else {
-                    currentColumn += 1;
-                }
-            }
-            return line.charAt(characterIndex);
-        }
-        catch(StringIndexOutOfBoundsException ignore) {
-            return null;
-        }
-    }
-
-    /**
-     * Returns {@code true} if and only if the character at the specified position is the second half of a double-width
-     * CJK character. If a 'regular' character is at this position, or if it's the first half of a CJK character, this
-     * will return {@code false}.
-     * @param column Column to fetch the character from, assuming CJK characters take up two columns
-     * @param row Row to fetch the character from
-     * @return {@code true} if the character is a CJK filler space, {@code false} otherwise
-     * @throws IndexOutOfBoundsException If the row or column values are outside of the valid range
-     */
-    public boolean isCJKFillerCharacter(int column, int row) {
-        if(column < 0 || row < 0) {
-            throw new IllegalArgumentException("Cannot call isCJKFillerCharacter(..) with negative coordinates!");
-        }
-        String line = getLine(row);
-        int characterIndex = 0;
-        int currentColumn = 0;
-        while(currentColumn < column) {
-            if(CJKUtils.isCharCJK(line.charAt(characterIndex++))) {
-                currentColumn += 2;
-                if(currentColumn > column) {
-                    return true;
-                }
-            }
-            else {
-                currentColumn += 1;
-            }
-        }
-        return false;
-    }
-
     @Override
     protected TextBoxRenderer createDefaultRenderer() {
         return new DefaultTextBoxRenderer();
@@ -427,9 +359,6 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
             case ArrowLeft:
                 if(caretPosition.getColumn() > 0) {
                     caretPosition = caretPosition.withRelativeColumn(-1);
-                    if(isCJKFillerCharacter(caretPosition.getColumn(), caretPosition.getRow())) {
-                        caretPosition = caretPosition.withRelativeColumn(-1);
-                    }
                 }
                 else if(style == Style.MULTI_LINE && caretWarp && caretPosition.getRow() > 0) {
                     caretPosition = caretPosition.withRelativeRow(-1);
@@ -442,9 +371,6 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
             case ArrowRight:
                 if(caretPosition.getColumn() < lines.get(caretPosition.getRow()).length()) {
                     caretPosition = caretPosition.withRelativeColumn(1);
-                    if(isCJKFillerCharacter(caretPosition.getColumn(), caretPosition.getRow())) {
-                        caretPosition = caretPosition.withRelativeColumn(1);
-                    }
                 }
                 else if(style == Style.MULTI_LINE && caretWarp && caretPosition.getRow() < lines.size() - 1) {
                     caretPosition = caretPosition.withRelativeRow(1);
@@ -456,13 +382,14 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
                 return Result.HANDLED;
             case ArrowUp:
                 if(caretPosition.getRow() > 0) {
+                    int trueColumnPosition = CJKUtils.getColumnIndex(lines.get(caretPosition.getRow()), caretPosition.getColumn());
                     caretPosition = caretPosition.withRelativeRow(-1);
                     line = lines.get(caretPosition.getRow());
-                    if(caretPosition.getColumn() > line.length()) {
+                    if(trueColumnPosition > CJKUtils.getTrueWidth(line)) {
                         caretPosition = caretPosition.withColumn(line.length());
                     }
-                    if(isCJKFillerCharacter(caretPosition.getColumn(), caretPosition.getRow())) {
-                        caretPosition = caretPosition.withRelativeColumn(-1);
+                    else {
+                        caretPosition = caretPosition.withColumn(CJKUtils.getStringCharacterIndex(line, trueColumnPosition));
                     }
                 }
                 else if(verticalFocusSwitching) {
@@ -471,13 +398,14 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
                 return Result.HANDLED;
             case ArrowDown:
                 if(caretPosition.getRow() < lines.size() - 1) {
+                    int trueColumnPosition = CJKUtils.getColumnIndex(lines.get(caretPosition.getRow()), caretPosition.getColumn());
                     caretPosition = caretPosition.withRelativeRow(1);
                     line = lines.get(caretPosition.getRow());
-                    if(caretPosition.getColumn() > line.length()) {
+                    if(trueColumnPosition > CJKUtils.getTrueWidth(line)) {
                         caretPosition = caretPosition.withColumn(line.length());
                     }
-                    if(isCJKFillerCharacter(caretPosition.getColumn(), caretPosition.getRow())) {
-                        caretPosition = caretPosition.withRelativeColumn(-1);
+                    else {
+                        caretPosition = caretPosition.withColumn(CJKUtils.getStringCharacterIndex(line, trueColumnPosition));
                     }
                 }
                 else if(verticalFocusSwitching) {
@@ -605,8 +533,10 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
             if(component.isReadOnly()) {
                 return null;
             }
-            return component
-                    .getCaretPosition()
+            TerminalPosition caretPosition = component.getCaretPosition();
+            String line = component.getLine(caretPosition.getRow());
+            return caretPosition
+                    .withColumn(CJKUtils.getColumnIndex(line, caretPosition.getColumn()))
                     .withRelativeColumn(-viewTopLeft.getColumn())
                     .withRelativeRow(-viewTopLeft.getRow());
         }
@@ -664,14 +594,15 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
         }
 
         private void drawTextArea(TextGUIGraphics graphics, TextBox component) {
-            if(viewTopLeft.getColumn() + graphics.getSize().getColumns() > component.longestRow) {
-                viewTopLeft = viewTopLeft.withColumn(component.longestRow - graphics.getSize().getColumns());
+            TerminalSize textAreaSize = graphics.getSize();
+            if(viewTopLeft.getColumn() + textAreaSize.getColumns() > component.longestRow) {
+                viewTopLeft = viewTopLeft.withColumn(component.longestRow - textAreaSize.getColumns());
                 if(viewTopLeft.getColumn() < 0) {
                     viewTopLeft = viewTopLeft.withColumn(0);
                 }
             }
-            if(viewTopLeft.getRow() + graphics.getSize().getRows() > component.getLineCount()) {
-                viewTopLeft = viewTopLeft.withRow(component.getLineCount() - graphics.getSize().getRows());
+            if(viewTopLeft.getRow() + textAreaSize.getRows() > component.getLineCount()) {
+                viewTopLeft = viewTopLeft.withRow(component.getLineCount() - textAreaSize.getRows());
                 if(viewTopLeft.getRow() < 0) {
                     viewTopLeft = viewTopLeft.withRow(0);
                 }
@@ -686,67 +617,38 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
 
             if(!component.isReadOnly()) {
                 //Adjust the view if necessary
-                if (component.caretPosition.getColumn() < viewTopLeft.getColumn()) {
-                    viewTopLeft = viewTopLeft.withColumn(component.caretPosition.getColumn());
+                TerminalPosition caretPosition = component.getCaretPosition();
+                String caretLine = component.getLine(caretPosition.getRow());
+                int trueColumnPosition = CJKUtils.getColumnIndex(caretLine, caretPosition.getColumn());
+                if (trueColumnPosition < viewTopLeft.getColumn()) {
+                    viewTopLeft = viewTopLeft.withColumn(trueColumnPosition);
                 }
-                else if (component.caretPosition.getColumn() >= graphics.getSize().getColumns() + viewTopLeft.getColumn()) {
-                    viewTopLeft = viewTopLeft.withColumn(component.caretPosition.getColumn() - graphics.getSize().getColumns() + 1);
+                else if (trueColumnPosition >= textAreaSize.getColumns() + viewTopLeft.getColumn()) {
+                    viewTopLeft = viewTopLeft.withColumn(trueColumnPosition - textAreaSize.getColumns() + 1);
                 }
-                if (component.caretPosition.getRow() < viewTopLeft.getRow()) {
+                if (caretPosition.getRow() < viewTopLeft.getRow()) {
                     viewTopLeft = viewTopLeft.withRow(component.getCaretPosition().getRow());
                 }
-                else if (component.caretPosition.getRow() >= graphics.getSize().getRows() + viewTopLeft.getRow()) {
-                    viewTopLeft = viewTopLeft.withRow(component.caretPosition.getRow() - graphics.getSize().getRows() + 1);
+                else if (caretPosition.getRow() >= textAreaSize.getRows() + viewTopLeft.getRow()) {
+                    viewTopLeft = viewTopLeft.withRow(caretPosition.getRow() - textAreaSize.getRows() + 1);
                 }
 
                 //Additional corner-case for CJK characters
-                if(component.caretPosition.getColumn() - viewTopLeft.getColumn() == graphics.getSize().getColumns() - 1) {
-                    Character character = component.getCharacterAt(component.caretPosition.getColumn(), component.caretPosition.getRow());
-                    if(character != null && CJKUtils.isCharCJK(character) && !component.isCJKFillerCharacter(component.caretPosition.getColumn(), component.caretPosition.getRow())) {
+                if(trueColumnPosition - viewTopLeft.getColumn() == graphics.getSize().getColumns() - 1) {
+                    if(caretLine.length() > caretPosition.getColumn() &&
+                            CJKUtils.isCharCJK(caretLine.charAt(caretPosition.getColumn()))) {
                         viewTopLeft = viewTopLeft.withRelativeColumn(1);
                     }
                 }
             }
 
-            for (int row = 0; row < graphics.getSize().getRows(); row++) {
+            for (int row = 0; row < textAreaSize.getRows(); row++) {
                 int rowIndex = row + viewTopLeft.getRow();
                 if(rowIndex >= component.lines.size()) {
                     continue;
                 }
                 String line = component.lines.get(rowIndex);
-
-                //Since CJK characters are twice as wide as 'normal' characters, we'll need to scan the string to find
-                //the starting point
-                int leftPosition = 0;
-                int cutIndex = -1;
-                boolean skipFirstCharacter = false;  //Used to skip the second "phantom" character of CJK characters used to fill up the double-space
-                for(int index = 0; index < line.length(); index++) {
-                    int positionInView = leftPosition - viewTopLeft.getColumn();
-                    if(positionInView >= 0) {
-                        cutIndex = index;
-                        if(positionInView > 0) {
-                            skipFirstCharacter = true;
-                        }
-                        break;
-                    }
-                    char character = line.charAt(index);
-                    if(CJKUtils.isCharCJK(character)) {
-                        leftPosition += 2;
-                    }
-                    else {
-                        leftPosition += 1;
-                    }
-                }
-
-                //If cutIndex is -1 here, it means the string is completely outside the view
-                if(cutIndex != -1) {
-                    int leftOffset = skipFirstCharacter ? 1 : 0;
-                    String string = CJKUtils.fitString(line, cutIndex, graphics.getSize().getColumns() - leftOffset);
-                    if(component.mask != null) {
-                        string = new String(new char[CJKUtils.getTrueWidth(string)]).replace('\0', component.mask);
-                    }
-                    graphics.putString(leftOffset, row, string);
-                }
+                graphics.putString(0, row, CJKUtils.fitString(line, viewTopLeft.getColumn(), textAreaSize.getColumns()));
             }
         }
     }
