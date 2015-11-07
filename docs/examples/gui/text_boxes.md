@@ -37,6 +37,6 @@ You can limit what the user can type by adding a validation pattern via `setVali
 
 ```
 	new TextBox().setValidationPattern(Pattern.compile("[0-9]"))
-``
+```
 
 This will validate the users input on each key press and only allow a single number to be present in the textbox at any given time. Partial matchings are not allowed; the whole pattern must match, however, empty lines will always be allowed. When the user tries to modify the content of the `TextBox` in a way that does not match the pattern, the operation will be silently ignored.
