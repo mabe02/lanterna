@@ -17,7 +17,6 @@ TODO
 1. [Hello World](examples/gui/hello_world.md)
 2. [Component sizing](examples/gui/component_sizing.md)
 3. A basic form with submission
-4. Labels
 5. Text boxes
 6. Buttons
-7. Dropdowns
+7. Dropdowns4. [Labels](examples/gui/labels.md)
