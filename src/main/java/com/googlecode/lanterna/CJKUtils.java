@@ -37,7 +37,7 @@ public class CJKUtils {
     /**
      * Given a character, is this character considered to be a CJK character?
      * Shamelessly stolen from
-     * <a href="http://stackoverflow.com/questions/1499804/how-can-i-detect-japanese-text-in-a-java-string>StackOverflow</a>
+     * <a href="http://stackoverflow.com/questions/1499804/how-can-i-detect-japanese-text-in-a-java-string">StackOverflow</a>
      * where it was contributed by user Rakesh N
      * @param c Character to test
      * @return {@code true} if the character is a CJK character
