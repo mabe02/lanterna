@@ -20,6 +20,7 @@ package com.googlecode.lanterna.terminal;
 
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
+import com.googlecode.lanterna.terminal.ansi.StreamBasedTerminal;
 import com.googlecode.lanterna.TestTerminalFactory;
 import java.io.IOException;
 
@@ -35,13 +36,20 @@ public class TerminalInputTest {
 
         for(String arg: args) {
             if("--mouse-click".equals(arg)) {
-                ((ExtendedTerminal)rawTerminal).setMouseCaptureMode(MouseCaptureMode.CLICK_RELEASE);
+                if (rawTerminal instanceof ExtendedTerminal)
+                    ((ExtendedTerminal)rawTerminal).setMouseCaptureMode(MouseCaptureMode.CLICK_RELEASE);
             }
             else if("--mouse-drag".equals(arg)) {
-                ((ExtendedTerminal)rawTerminal).setMouseCaptureMode(MouseCaptureMode.CLICK_RELEASE_DRAG);
+                if (rawTerminal instanceof ExtendedTerminal)
+                    ((ExtendedTerminal)rawTerminal).setMouseCaptureMode(MouseCaptureMode.CLICK_RELEASE_DRAG);
             }
             else if("--mouse-move".equals(arg)) {
-                ((ExtendedTerminal)rawTerminal).setMouseCaptureMode(MouseCaptureMode.CLICK_RELEASE_DRAG_MOVE);
+                if (rawTerminal instanceof ExtendedTerminal)
+                    ((ExtendedTerminal)rawTerminal).setMouseCaptureMode(MouseCaptureMode.CLICK_RELEASE_DRAG_MOVE);
+            }
+            else if("--with-timeout".equals(arg)) {
+                if (rawTerminal instanceof StreamBasedTerminal)
+                    ((StreamBasedTerminal)rawTerminal).getInputDecoder().setTimeoutUnits(40); // 10s
             }
         }
 
@@ -70,7 +78,9 @@ public class TerminalInputTest {
             }
         }
 
-        ((ExtendedTerminal)rawTerminal).setMouseCaptureMode(null);
+        if (rawTerminal instanceof ExtendedTerminal)
+            ((ExtendedTerminal)rawTerminal).setMouseCaptureMode(null);
+
         rawTerminal.exitPrivateMode();
     }
 
