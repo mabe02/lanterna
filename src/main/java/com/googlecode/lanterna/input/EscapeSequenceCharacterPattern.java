@@ -10,7 +10,7 @@ import java.util.Map;
  * This implementation of CharacterPattern matches two similar patterns
  * of Escape sequences, that many terminals produce for special keys.<p>
  * 
- * These sequences start with Escape, followed by either an open bracket
+ * These sequences all start with Escape, followed by either an open bracket
  * or a capital letter O (these two are treated as equivalent).<p>
  * 
  * Then follows a list of zero or up to two decimals separated by a 
@@ -33,7 +33,7 @@ import java.util.Map;
  * F6 is "Esc [ 1 7 ~"; Ctrl-Shift-F6 is "Esc [ 1 7 ; 6 R"<br>
  * both are handled by stdMap mapping 17 to F6 <br><br>
  * 
- * @author Andreas L.
+ * @author Andreas
  *
  */
 public class EscapeSequenceCharacterPattern implements CharacterPattern {
@@ -42,12 +42,7 @@ public class EscapeSequenceCharacterPattern implements CharacterPattern {
         START, INTRO, NUM1, NUM2, DONE;
     }
     // bit-values for modifier keys: only used internally
-    private static final int SHIFT = 1, ALT = 2, CTRL = 4;
-
-    // Retain information from successful call to matches():
-    // overridden methods can access them for customization.
-    protected List<Character> cacheSeq = null;
-    protected KeyType cacheKey; protected int cacheMods;
+    public static final int SHIFT = 1, ALT = 2, CTRL = 4;
 
     /**
      *  Map of recognized "standard pattern" sequences:<br>
@@ -59,7 +54,14 @@ public class EscapeSequenceCharacterPattern implements CharacterPattern {
      *   e.g.: 'A' -> ArrowUp : "Esc [ <b>A</b>"
      */
     protected final Map<Character, KeyType> finMap = new HashMap<Character, KeyType>();
-
+    /**
+     *  A flag to control, whether an Esc-prefix for an Esc-sequence is to be treated
+     *  as Alt-pressed. Some Terminals (e.g. putty) report the Alt-modifier like that.<p>
+     *  If the application is e.g. more interested in seeing separate Escape and plain
+     *  Arrow keys, then it should replace this class by a subclass that sets this flag
+     *  to false. (It might then also want to remove the CtrlAltAndCharacterPattern.)
+     */
+    protected boolean useEscEsc = true;
     
     /**
      * Create an instance with a standard set of mappings.
@@ -105,53 +107,83 @@ public class EscapeSequenceCharacterPattern implements CharacterPattern {
         stdMap.put(33, KeyType.F19);
     }
 
-    @Override
-    public KeyStroke getResult(List<Character> cur) {
-        if (cacheSeq != cur) {
-            return null;
-        }
+    /**
+     * combines a KeyType and modifiers into a KeyStroke.
+     * Subclasses can override this for customization purposes.
+     * 
+     * @param key the KeyType as determined by parsing the sequence.
+     *   It will be null, if the pattern looked like a key sequence but wasn't
+     *   identified.
+     * @param mods the bitmask of the modifer keys pressed along with the key.
+     * @return either null (to report mis-match), or a valid KeyStroke.
+     */
+    protected KeyStroke getKeyStroke(KeyType key, int mods) {
         boolean bShift = false, bCtrl = false, bAlt = false;
-        if (cacheMods > 0) {
-            int mods = cacheMods - 1;
+        if (key == null) { return null; } // alternative: key = KeyType.Unknown;
+        if (mods >= 0) { // only use when non-negative!
             bShift = (mods & SHIFT) != 0;
             bAlt   = (mods & ALT)   != 0;
             bCtrl  = (mods & CTRL)  != 0;
         }
-        return new KeyStroke( cacheKey , bCtrl, bAlt, bShift);
+        return new KeyStroke( key , bCtrl, bAlt, bShift);
     }
 
-    @Override
-    public boolean isCompleteMatch(List<Character> cur) {
-        return cacheSeq == cur; // assume that matches() was checked before
-    }
+    /**
+     * combines the raw parts of the sequence into a KeyStroke.
+     * This method does not check the first char, but overrides may do so.
+     * 
+     * @param first  the char following after Esc in the sequence (either [ or O)
+     * @param num1   the first decimal, or 0 if not in the sequence
+     * @param num2   the second decimal, or 0 if not in the sequence
+     * @param last   the terminating char.
+     * @param bEsc   whether an extra Escape-prefix was found.
+     * @return either null (to report mis-match), or a valid KeyStroke.
+     */
+    protected KeyStroke getKeyStrokeRaw(char first,int num1,int num2,char last,boolean bEsc) {
+        KeyType kt = null;
+        if (last == '~' && stdMap.containsKey(num1)) {
+            kt = stdMap.get(num1);
+        } else if (finMap.containsKey(last)) {
+            kt = finMap.get(last);
+        } else {
+            kt = null; // unknown key.
+        }
+        int mods = num2 - 1;
+        if (bEsc) {
+            if (mods >= 0) { mods |= ALT; }
+            else { mods = ALT; }
+        }
+        return getKeyStroke( kt, mods );
 
+    }
     @Override
-    public boolean matches(List<Character> cur) {
-        State state = State.START; cacheSeq = null;
-        int num1 = 0, num2 = 0; char last = '\0';
+    public Matching match(List<Character> cur) {
+        State state = State.START;
+        int num1 = 0, num2 = 0;
+        char first = '\0', last = '\0';
+        boolean bEsc = false;
 
         for (char ch : cur) {
             switch (state) {
             case START:
                 if (ch != ESC_CODE) {
-                    return false;
+                    return null; // nope
                 }
                 state = State.INTRO;
                 continue;
             case INTRO:
-                // Accept a second Escape to mean "Alt is pressed"?
-                // according to local terminfo database, no terminal
-                // seems to send it that way, but just in case...
-                if (ch == ESC_CODE && num2 == 0) {
-                    num2 = 1 + ALT; continue;
+                // Recognize a second Escape to mean "Alt is pressed".
+                // (at least putty sends it that way)
+                if (useEscEsc && ch == ESC_CODE && ! bEsc) {
+                    bEsc = true; continue;
                 }
 
                 // Key sequences supported by this class must
                 //    start either with Esc-[ or Esc-O
                 if (ch != '[' && ch != 'O') {
-                    return false;
+                    return null; // nope
                 }
-                state = State.NUM1;
+                first = ch; state = State.NUM1;
                 continue;
             case NUM1:
                 if (ch == ';') {
@@ -170,20 +202,14 @@ public class EscapeSequenceCharacterPattern implements CharacterPattern {
                 }
                 continue;
             case DONE: // once done, extra characters spoil it
-                return false;
+                return null; // nope
             }
         }
         if (state == State.DONE) {
-            if (last == '~' && stdMap.containsKey(num1)) {
-                cacheSeq = cur; cacheMods = num2;
-                cacheKey = stdMap.get(num1);
-            } else if (finMap.containsKey(last)) {
-                cacheSeq = cur; cacheMods = num2;
-                cacheKey = finMap.get(last);
-            } else {
-                return false; // unknown key.
-            }
+            KeyStroke ks = getKeyStrokeRaw(first,num1,num2,last,bEsc);
+            return ks != null ? new Matching( ks ) : null; // depends
+        } else {
+            return Matching.NOT_YET; // maybe later
         }
-        return true;
     }
 }

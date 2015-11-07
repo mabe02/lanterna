@@ -19,111 +19,41 @@
 package com.googlecode.lanterna.input;
 
 import com.googlecode.lanterna.TerminalPosition;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * This class recognizes character combinations which are actually a cursor position report. See
  * <a href="http://en.wikipedia.org/wiki/ANSI_escape_code">Wikipedia</a>'s article on ANSI escape codes for more
  * information about how cursor position reporting works ("DSR – Device Status Report").
  *
- * @author martin
+ * @author Martin, Andreas
  */
-public class ScreenInfoCharacterPattern implements CharacterPattern {
-
-    private static final Pattern REPORT_CURSOR_PATTERN
-            = Pattern.compile("\\[([0-9]+);([0-9]+)R");
-
-    @Override
-    public KeyStroke getResult(List<Character> matching) {
-        return new KeyStroke(KeyType.CursorLocation, false, false);
+public class ScreenInfoCharacterPattern extends EscapeSequenceCharacterPattern {
+    public ScreenInfoCharacterPattern() {
+        useEscEsc = false; // stdMap and finMap don't matter here.
+    }
+    protected KeyStroke getKeyStrokeRaw(char first,int num1,int num2,char last,boolean bEsc) {
+        if (first != '[' || last != 'R' || num1 == 0 || num2 == 0 || bEsc) {
+            return null; // nope
+        }
+        if (num1 == 1 && num2 <= 8) {
+            return null; // nope: much more likely it's an F3 with modifiers
+        }
+        TerminalPosition pos = new TerminalPosition(num2, num1);
+        return new ScreenInfoAction(pos); // yep
     }
 
-    @Override
-    public boolean isCompleteMatch(List<Character> currentMatching) {
-        if (currentMatching.isEmpty()) {
-            return false;
+    public static ScreenInfoAction tryToAdopt(KeyStroke ks) {
+        switch (ks.getKeyType()) {
+        case CursorLocation: return (ScreenInfoAction)ks;
+        case F3: // reconstruct position from F3's modifiers.
+            int col = 1 + (ks.isAltDown()  ? ALT  : 0)
+                        + (ks.isCtrlDown() ? CTRL : 0)
+                        + (ks.isShiftDown()? SHIFT: 0);
+            TerminalPosition pos = new TerminalPosition(col,1);
+            return new ScreenInfoAction(pos);
+        default:  return null;
         }
-
-        if (currentMatching.get(0) != KeyDecodingProfile.ESC_CODE) {
-            return false;
-        }
-
-        String asString = "";
-        for (int i = 1; i < currentMatching.size(); i++) {
-            asString += currentMatching.get(i);
-        }
-        return REPORT_CURSOR_PATTERN.matcher(asString).matches();
     }
 
-    @Override
-    public boolean matches(List<Character> currentMatching) {
-        if (currentMatching.isEmpty()) {
-            return true;
-        }
 
-        if (currentMatching.get(0) != KeyDecodingProfile.ESC_CODE) {
-            return false;
-        }
-        if (currentMatching.size() == 1) {
-            return true;
-        }
-
-        if (currentMatching.get(1) != '[') {
-            return false;
-        }
-        if (currentMatching.size() == 2) {
-            return true;
-        }
-
-        int i;
-        for (i = 2; i < currentMatching.size(); i++) {
-            if (!Character.isDigit(currentMatching.get(i)) && ';' != currentMatching.get(i)) {
-                return false;
-            }
-
-            if (';' == currentMatching.get(i)) {
-                break;
-            }
-        }
-
-        if (i == currentMatching.size()) {
-            return true;
-        }
-
-        for (i = i + 1; i < currentMatching.size(); i++) {
-            if (!Character.isDigit(currentMatching.get(i)) && 'R' != currentMatching.get(i)) {
-                return false;
-            }
-
-            if ('R' == currentMatching.get(i)) {
-                break;
-            }
-        }
-
-        return true;
-    }
-
-    public static TerminalPosition getCursorPosition(List<Character> currentMatching) {
-        if (currentMatching.isEmpty()) {
-            return null;
-        }
-
-        if (currentMatching.get(0) != KeyDecodingProfile.ESC_CODE) {
-            return null;
-        }
-
-        String asString = "";
-        for (int i = 1; i < currentMatching.size(); i++) {
-            asString += currentMatching.get(i);
-        }
-
-        Matcher matcher = REPORT_CURSOR_PATTERN.matcher(asString);
-        if (!matcher.matches()) {
-            return null;
-        }
-
-        return new TerminalPosition(Integer.parseInt(matcher.group(2)), Integer.parseInt(matcher.group(1)));
-    }
 }

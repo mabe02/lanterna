@@ -22,21 +22,22 @@ import java.util.List;
 
 /**
  * Character pattern that matches one character as one KeyStroke with the character that was read
+ * 
+ * @author Martin, Andreas
  */
 public class NormalCharacterPattern implements CharacterPattern {
     @Override
-    public KeyStroke getResult(List<Character> matching) {
-        return new KeyStroke(matching.get(0), false, false);
-    }
-
-    @Override
-    public boolean isCompleteMatch(List<Character> currentMatching) {
-        return currentMatching.size() == 1;
-    }
-
-    @Override
-    public boolean matches(List<Character> currentMatching) {
-        return currentMatching.size() == 1 && isPrintableChar(currentMatching.get(0));
+    public Matching match(List<Character> seq) {
+        if (seq.size() != 1) {
+            return null; // nope
+        }
+        char ch = seq.get(0);
+        if (isPrintableChar(ch)) {
+            KeyStroke ks = new KeyStroke(ch, false, false);
+            return new Matching( ks );
+        } else {
+            return null; // nope
+        }
     }
 
     /**
@@ -45,9 +46,8 @@ public class NormalCharacterPattern implements CharacterPattern {
      * @return True if this is a 'normal', printable character, false otherwise
      */
     private static boolean isPrintableChar(char c) {
+        if (Character.isISOControl(c)) { return false; }
         Character.UnicodeBlock block = Character.UnicodeBlock.of(c);
-        return (!Character.isISOControl(c)) &&
-                block != null &&
-                block != Character.UnicodeBlock.SPECIALS;
+        return block != null && block != Character.UnicodeBlock.SPECIALS;
     }
 }

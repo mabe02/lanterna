@@ -29,7 +29,8 @@ import com.googlecode.lanterna.Symbols;
 import com.googlecode.lanterna.input.InputDecoder;
 import com.googlecode.lanterna.input.KeyDecodingProfile;
 import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.input.KeyType;
+import com.googlecode.lanterna.input.ScreenInfoAction;
+import com.googlecode.lanterna.input.ScreenInfoCharacterPattern;
 import com.googlecode.lanterna.terminal.AbstractTerminal;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
@@ -161,21 +162,14 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
                     continue;
                 }
 
-                //If we got CTRL+F3, it's probably a size report instead!!!
-                if(key.getKeyType()!= KeyType.CursorLocation &&
-                        !(key.getKeyType() == KeyType.F3 && key.isCtrlDown() && !key.isAltDown())) {
+                // check both: real ScreenInfoActions and F3 keystrokes with modifiers:
+                ScreenInfoAction report = ScreenInfoCharacterPattern.tryToAdopt(key);
+                if (report == null) {
                     keyQueue.add(key);
                 }
                 else {
-                    TerminalPosition reportedTerminalPosition = inputDecoder.getLastReportedTerminalPosition();
-                    if(key.getKeyType() == KeyType.F3 && key.isCtrlDown() && !key.isAltDown()) {
-                        reportedTerminalPosition = new TerminalPosition(5, 1);
-                    }
-                    if(reportedTerminalPosition != null)
-                        onResized(reportedTerminalPosition.getColumn(), reportedTerminalPosition.getRow());
-                    else
-                        throw new IOException("Unexpected: inputDecoder.getLastReportedTerminalPosition() "
-                                + "returned null after position was reported");
+                    TerminalPosition reportedTerminalPosition = report.getPosition();
+                    onResized(reportedTerminalPosition.getColumn(), reportedTerminalPosition.getRow());
                     return new TerminalSize(reportedTerminalPosition.getColumn(), reportedTerminalPosition.getRow());
                 }
             }
@@ -194,15 +188,13 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
 
     private KeyStroke readInput(boolean blocking) throws IOException {
         synchronized(readMutex) {
-            if(!keyQueue.isEmpty())
+            if(!keyQueue.isEmpty()) {
                 return keyQueue.poll();
-
+            }
             KeyStroke key = inputDecoder.getNextCharacter(blocking);
-            if (key != null && key.getKeyType() == KeyType.CursorLocation) {
-                TerminalPosition reportedTerminalPosition = inputDecoder.getLastReportedTerminalPosition();
-                if (reportedTerminalPosition != null)
-                    onResized(reportedTerminalPosition.getColumn(), reportedTerminalPosition.getRow());
-
+            if (key instanceof ScreenInfoAction) {
+                TerminalPosition reportedTerminalPosition = ((ScreenInfoAction)key).getPosition();
+                onResized(reportedTerminalPosition.getColumn(), reportedTerminalPosition.getRow());
                 return pollInput();
             } else {
                 return key;
