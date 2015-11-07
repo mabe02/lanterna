@@ -20,6 +20,6 @@ You can also create a button with a callback:
 	});
 ```
 
-As you can see, the callback runs in it's own thread.
+As you can see, the callback runs in its own thread.
 
 Pressing the `Enter` key on the keyboard when the button is highlighted will trigger the callback.
