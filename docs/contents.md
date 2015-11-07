@@ -20,4 +20,4 @@ TODO
 4. [Labels](examples/gui/labels.md)
 5. [Text boxes](examples/gui/text_boxes.md)
 6. [Buttons](examples/gui/buttons.md)
-7. [Dropdowns](examples/gui/dropdown.md)
+7. [Combo boxes](examples/gui/combo_boxes.md)
