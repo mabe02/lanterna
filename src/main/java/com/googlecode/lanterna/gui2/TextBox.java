@@ -146,7 +146,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
             char c = line.charAt(i);
             if (c == '\n' && style == Style.MULTI_LINE) {
                 String string = bob.toString();
-                int lineWidth = CJKUtils.getTrueWidth(string);
+                int lineWidth = CJKUtils.getColumnWidth(string);
                 lines.add(string);
                 if (longestRow < lineWidth + 1) {
                     longestRow = lineWidth + 1;
@@ -164,7 +164,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
         if(!validated(string)) {
             throw new IllegalStateException("TextBox validation pattern " + validationPattern + " does not match the supplied text");
         }
-        int lineWidth = CJKUtils.getTrueWidth(string);
+        int lineWidth = CJKUtils.getColumnWidth(string);
         lines.add(string);
         if (longestRow < lineWidth + 1) {
             longestRow = lineWidth + 1;
@@ -385,7 +385,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
                     int trueColumnPosition = CJKUtils.getColumnIndex(lines.get(caretPosition.getRow()), caretPosition.getColumn());
                     caretPosition = caretPosition.withRelativeRow(-1);
                     line = lines.get(caretPosition.getRow());
-                    if(trueColumnPosition > CJKUtils.getTrueWidth(line)) {
+                    if(trueColumnPosition > CJKUtils.getColumnWidth(line)) {
                         caretPosition = caretPosition.withColumn(line.length());
                     }
                     else {
@@ -401,7 +401,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
                     int trueColumnPosition = CJKUtils.getColumnIndex(lines.get(caretPosition.getRow()), caretPosition.getColumn());
                     caretPosition = caretPosition.withRelativeRow(1);
                     line = lines.get(caretPosition.getRow());
-                    if(trueColumnPosition > CJKUtils.getTrueWidth(line)) {
+                    if(trueColumnPosition > CJKUtils.getColumnWidth(line)) {
                         caretPosition = caretPosition.withColumn(line.length());
                     }
                     else {

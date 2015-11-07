@@ -74,7 +74,7 @@ public class DefaultWindowDecorationRenderer implements WindowDecorationRenderer
         return contentAreaSize
                 .withRelativeColumns(2)
                 .withRelativeRows(2)
-                .max(new TerminalSize(CJKUtils.getTrueWidth(window.getTitle()) + 4, 1));  //Make sure the title fits!
+                .max(new TerminalSize(CJKUtils.getColumnWidth(window.getTitle()) + 4, 1));  //Make sure the title fits!
     }
 
     private static final TerminalPosition OFFSET = new TerminalPosition(1, 1);

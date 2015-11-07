@@ -97,7 +97,7 @@ public class Button extends AbstractInteractableComponent<Button> {
 
         @Override
         public TerminalSize getPreferredSize(Button button) {
-            return new TerminalSize(Math.max(8, CJKUtils.getTrueWidth(button.getLabel()) + 2), 1);
+            return new TerminalSize(Math.max(8, CJKUtils.getColumnWidth(button.getLabel()) + 2), 1);
         }
 
         @Override
@@ -121,7 +121,7 @@ public class Button extends AbstractInteractableComponent<Button> {
             int labelShift = getLabelShift(button, graphics.getSize());
             graphics.setCharacter(1 + labelShift, 0, button.getLabel().charAt(0));
 
-            if(CJKUtils.getTrueWidth(button.getLabel()) == 1) {
+            if(CJKUtils.getColumnWidth(button.getLabel()) == 1) {
                 return;
             }
             if(button.isFocused()) {
@@ -139,7 +139,7 @@ public class Button extends AbstractInteractableComponent<Button> {
                 return 0;
             }
             int labelShift = 0;
-            int widthInColumns = CJKUtils.getTrueWidth(button.getLabel());
+            int widthInColumns = CJKUtils.getColumnWidth(button.getLabel());
             if(availableSpace > widthInColumns) {
                 labelShift = (size.getColumns() - 2 - widthInColumns) / 2;
             }
@@ -155,7 +155,7 @@ public class Button extends AbstractInteractableComponent<Button> {
 
         @Override
         public TerminalSize getPreferredSize(Button component) {
-            return new TerminalSize(CJKUtils.getTrueWidth(component.getLabel()), 1);
+            return new TerminalSize(CJKUtils.getColumnWidth(component.getLabel()), 1);
         }
 
         @Override

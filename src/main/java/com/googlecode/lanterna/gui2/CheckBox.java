@@ -100,7 +100,7 @@ public class CheckBox extends AbstractInteractableComponent<CheckBox> {
         public TerminalSize getPreferredSize(CheckBox component) {
             int width = 3;
             if(!component.label.isEmpty()) {
-                width += 1 + CJKUtils.getTrueWidth(component.label);
+                width += 1 + CJKUtils.getColumnWidth(component.label);
             }
             return new TerminalSize(width, 1);
         }

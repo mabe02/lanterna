@@ -70,7 +70,7 @@ public class CJKUtilsTest {
         for(String characters: cjkCharacters) {
             for(int i = 0; i < characters.length(); i++) {
                 int expected = 2;
-                int actual = CJKUtils.getTrueWidth(characters.substring(i, i + 1));
+                int actual = CJKUtils.getColumnWidth(characters.substring(i, i + 1));
                 assertEquals("CJK character '" + characters.charAt(i) + "' didn't return 2", expected, actual);
             }
         }
@@ -78,15 +78,15 @@ public class CJKUtilsTest {
         for(String characters: nonCJKCharacters) {
             for(int i = 0; i < characters.length(); i++) {
                 int expected = 1;
-                int actual = CJKUtils.getTrueWidth(characters.substring(i, i + 1));
+                int actual = CJKUtils.getColumnWidth(characters.substring(i, i + 1));
                 assertEquals("Non-CJK character '" + characters.charAt(i) + "' didn't return 1", expected, actual);
             }
         }
 
         // Some static tests
-        assertEquals(0, CJKUtils.getTrueWidth(""));
-        assertEquals(9, CJKUtils.getTrueWidth("123456789"));
-        assertEquals(29, CJKUtils.getTrueWidth("端末（英: computer terminal）"));
+        assertEquals(0, CJKUtils.getColumnWidth(""));
+        assertEquals(9, CJKUtils.getColumnWidth("123456789"));
+        assertEquals(29, CJKUtils.getColumnWidth("端末（英: computer terminal）"));
     }
 
     @Test

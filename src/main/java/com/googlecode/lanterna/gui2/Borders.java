@@ -127,7 +127,7 @@ public class Borders {
             }
             preferredSize = preferredSize.withRelativeColumns(2).withRelativeRows(2);
             String borderTitle = border.getTitle();
-            return preferredSize.max(new TerminalSize((borderTitle.isEmpty() ? 2 : CJKUtils.getTrueWidth(borderTitle) + 4), 2));
+            return preferredSize.max(new TerminalSize((borderTitle.isEmpty() ? 2 : CJKUtils.getColumnWidth(borderTitle) + 4), 2));
         }
 
         @Override
@@ -192,7 +192,7 @@ public class Borders {
                         horizontalLine);
             }
 
-            if(drawableArea.getColumns() >= CJKUtils.getTrueWidth(border.getTitle()) + 4) {
+            if(drawableArea.getColumns() >= CJKUtils.getColumnWidth(border.getTitle()) + 4) {
                 graphics.putString(2, 0, border.getTitle());
             }
 
