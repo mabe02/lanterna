@@ -173,12 +173,12 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
         return textInputPosition;
     }
 
-    public void setSelectedIndex(int selectedIndex) {
+    public void setSelectedIndex(final int selectedIndex) {
         synchronized(this) {
             if(items.size() <= selectedIndex || selectedIndex < -1) {
                 throw new IllegalArgumentException("Illegal argument to ComboBox.setSelectedIndex: " + selectedIndex);
             }
-            int oldSelection = this.selectedIndex;
+            final int oldSelection = this.selectedIndex;
             this.selectedIndex = selectedIndex;
             if(selectedIndex == -1) {
                 text = "";
@@ -189,9 +189,14 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
             if(textInputPosition > text.length()) {
                 textInputPosition = text.length();
             }
-            for(Listener listener: listeners) {
-                listener.onSelectionChanged(selectedIndex, oldSelection);
-            }
+            getTextGUI().getGUIThread().invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    for(Listener listener: listeners) {
+                        listener.onSelectionChanged(selectedIndex, oldSelection);
+                    }
+                }
+            });
             invalidate();
         }
     }
