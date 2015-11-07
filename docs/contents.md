@@ -16,6 +16,8 @@ TODO
 ### GUI Layer
 1. [Hello World](examples/gui/hello_world.md)
 2. [Component sizing](examples/gui/component_sizing.md)
-3. A basic form with submission
-6. Buttons
-7. Dropdowns4. [Labels](examples/gui/labels.md)5. [Text boxes](examples/gui/text_boxes.md)
+3. [A basic form with submission](examples/gui/basic_form_submission.md)
+4. [Labels](examples/gui/labels.md)
+5. [Text boxes](examples/gui/text_boxes.md)
+6. [Buttons](examples/gui/buttons.md)
+7. [Dropdowns](examples/gui/dropdown.md)
