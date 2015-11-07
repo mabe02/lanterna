@@ -24,11 +24,18 @@ import com.googlecode.lanterna.input.KeyType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by martin on 29/09/14.
  */
 public class CheckBoxList<V> extends AbstractListBox<V, CheckBoxList<V>> {
+
+    public interface Listener {
+        void onStatusChanged(int itemIndex, boolean checked);
+    }
+
+    private final List<Listener> listeners;
     private final List<Boolean> itemStatus;
 
     public CheckBoxList() {
@@ -37,6 +44,7 @@ public class CheckBoxList<V> extends AbstractListBox<V, CheckBoxList<V>> {
 
     public CheckBoxList(TerminalSize preferredSize) {
         super(preferredSize);
+        this.listeners = new CopyOnWriteArrayList<Listener>();
         this.itemStatus = new ArrayList<Boolean>();
     }
 
@@ -46,9 +54,11 @@ public class CheckBoxList<V> extends AbstractListBox<V, CheckBoxList<V>> {
     }
 
     @Override
-    public synchronized CheckBoxList<V> clearItems() {
-        itemStatus.clear();
-        return super.clearItems();
+    public CheckBoxList<V> clearItems() {
+        synchronized(this) {
+            itemStatus.clear();
+            return super.clearItems();
+        }
     }
 
     @Override
@@ -62,51 +72,88 @@ public class CheckBoxList<V> extends AbstractListBox<V, CheckBoxList<V>> {
      * @param checkedState If <code>true</code>, the new item will be initially checked
      * @return Itself
      */
-    public synchronized CheckBoxList<V> addItem(V object, boolean checkedState) {
-        itemStatus.add(checkedState);
-        return super.addItem(object);
-    }
-
-    public synchronized Boolean isChecked(V object) {
-        if(indexOf(object) == -1)
-            return null;
-
-        return itemStatus.get(indexOf(object));
-    }
-
-    public synchronized Boolean isChecked(int index) {
-        if(index < 0 || index >= itemStatus.size())
-            return null;
-
-        return itemStatus.get(index);
-    }
-
-    public synchronized CheckBoxList<V> setChecked(V object, boolean checked) {
-        if(indexOf(object) != -1) {
-            itemStatus.set(indexOf(object), checked);
+    public CheckBoxList<V> addItem(V object, boolean checkedState) {
+        synchronized(this) {
+            itemStatus.add(checkedState);
+            return super.addItem(object);
         }
-        return self();
     }
 
-    public synchronized List<V> getCheckedItems() {
-        List<V> result = new ArrayList<V>();
-        for(int i = 0; i < itemStatus.size(); i++) {
-            if(itemStatus.get(i)) {
-                result.add(getItemAt(i));
+    public Boolean isChecked(V object) {
+        synchronized(this) {
+            if(indexOf(object) == -1)
+                return null;
+
+            return itemStatus.get(indexOf(object));
+        }
+    }
+
+    public Boolean isChecked(int index) {
+        synchronized(this) {
+            if(index < 0 || index >= itemStatus.size())
+                return null;
+
+            return itemStatus.get(index);
+        }
+    }
+
+    public CheckBoxList<V> setChecked(V object, boolean checked) {
+        synchronized(this) {
+            int index = indexOf(object);
+            if(index != -1) {
+                setChecked(index, checked);
             }
+            return self();
         }
-        return result;
+    }
+
+    private void setChecked(final int index, final boolean checked) {
+        itemStatus.set(index, checked);
+        runOnGUIThreadIfExistsOtherwiseRunDirect(new Runnable() {
+            @Override
+            public void run() {
+                for(Listener listener: listeners) {
+                    listener.onStatusChanged(index, checked);
+                }
+            }
+        });
+    }
+
+    public List<V> getCheckedItems() {
+        synchronized(this) {
+            List<V> result = new ArrayList<V>();
+            for(int i = 0; i < itemStatus.size(); i++) {
+                if(itemStatus.get(i)) {
+                    result.add(getItemAt(i));
+                }
+            }
+            return result;
+        }
+    }
+
+    public CheckBoxList<V> addListener(Listener listener) {
+        if(listener != null && !listeners.contains(listener)) {
+            listeners.add(listener);
+        }
+        return this;
+    }
+
+    public CheckBoxList<V> removeListener(Listener listener) {
+        listeners.remove(listener);
+        return this;
     }
 
     @Override
-    public synchronized Result handleKeyStroke(KeyStroke keyStroke) {
-        if(keyStroke.getKeyType() == KeyType.Enter ||
-                (keyStroke.getKeyType() == KeyType.Character && keyStroke.getCharacter() == ' ')) {
-            if(itemStatus.get(getSelectedIndex()))
-                itemStatus.set(getSelectedIndex(), Boolean.FALSE);
-            else
-                itemStatus.set(getSelectedIndex(), Boolean.TRUE);
-            return Result.HANDLED;
+    public Result handleKeyStroke(KeyStroke keyStroke) {
+        synchronized(this) {
+            if(keyStroke.getKeyType() == KeyType.Enter ||
+                    (keyStroke.getKeyType() == KeyType.Character && keyStroke.getCharacter() == ' ')) {
+                if(itemStatus.get(getSelectedIndex()))
+                    setChecked(getSelectedIndex(), Boolean.FALSE);
+                else
+                    setChecked(getSelectedIndex(), Boolean.TRUE);
+                return Result.HANDLED;
+            }
         }
         return super.handleKeyStroke(keyStroke);
     }

@@ -189,7 +189,7 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
             if(textInputPosition > text.length()) {
                 textInputPosition = text.length();
             }
-            getTextGUI().getGUIThread().invokeLater(new Runnable() {
+            runOnGUIThreadIfExistsOtherwiseRunDirect(new Runnable() {
                 @Override
                 public void run() {
                     for(Listener listener: listeners) {
