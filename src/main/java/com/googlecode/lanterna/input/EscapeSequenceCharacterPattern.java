@@ -142,9 +142,9 @@ public class EscapeSequenceCharacterPattern implements CharacterPattern {
                 // Accept a second Escape to mean "Alt is pressed"?
                 // according to local terminfo database, no terminal
                 // seems to send it that way, but just in case...
-                //if (ch == ESC_CODE && num2 == 0) {
-                //    num2 = 1 + ALT; continue;
-                //}
+                if (ch == ESC_CODE && num2 == 0) {
+                    num2 = 1 + ALT; continue;
+                }
 
                 // Key sequences supported by this class must
                 //    start either with Esc-[ or Esc-O
