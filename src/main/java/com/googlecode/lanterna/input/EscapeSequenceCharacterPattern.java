@@ -71,6 +71,8 @@ public class EscapeSequenceCharacterPattern implements CharacterPattern {
         finMap.put('B', KeyType.ArrowDown);
         finMap.put('C', KeyType.ArrowRight);
         finMap.put('D', KeyType.ArrowLeft);
+        finMap.put('E', KeyType.Unknown); // gnome-terminal center key on numpad
+        finMap.put('G', KeyType.Unknown); // putty center key on numpad
         finMap.put('H', KeyType.Home);
         finMap.put('F', KeyType.End);
         finMap.put('P', KeyType.F1);
