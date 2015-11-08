@@ -21,3 +21,4 @@ TODO
 5. [Text boxes](examples/gui/text_boxes.md)
 6. [Buttons](examples/gui/buttons.md)
 7. [Combo boxes](examples/gui/combo_boxes.md)
+8. [Check boxes](examples/gui/check_boxes.md)
