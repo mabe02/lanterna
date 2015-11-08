@@ -42,6 +42,7 @@ public class CtrlAltAndCharacterPattern implements CharacterPattern {
             char ctrlCode;
             switch (ch) {
             case KeyDecodingProfile.ESC_CODE: return null; // nope
+            case 0:  /* ^@ */ ctrlCode = ' '; break;
             case 28: /* ^\ */ ctrlCode = '\\'; break;
             case 29: /* ^] */ ctrlCode = ']'; break;
             case 30: /* ^^ */ ctrlCode = '^'; break;

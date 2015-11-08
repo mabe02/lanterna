@@ -38,13 +38,14 @@ public class CtrlAndCharacterPattern implements CharacterPattern {
             switch (ch) {
             case '\n': case '\r': case '\t':
             case KeyDecodingProfile.ESC_CODE: return null; // nope
+            case 0:  /* ^@ */ ctrlCode = ' '; break;
             case 28: /* ^\ */ ctrlCode = '\\'; break;
             case 29: /* ^] */ ctrlCode = ']'; break;
             case 30: /* ^^ */ ctrlCode = '^'; break;
             case 31: /* ^_ */ ctrlCode = '_'; break;
             default: ctrlCode = (char)('a' - 1 + ch);
             }
-            KeyStroke ks = new KeyStroke( ctrlCode, true, true);
+            KeyStroke ks = new KeyStroke( ctrlCode, true, false);
             return new Matching( ks ); // yep
         } else {
             return null; // nope
