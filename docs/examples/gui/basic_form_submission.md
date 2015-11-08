@@ -1,7 +1,7 @@
 Basic Form Submission Example
 ---
 
-The (last example) was pretty boring, to say the least. A much more interesting example would be one that involves interaction!
+The last example was pretty boring, to say the least. A much more interesting example would be one that involves interaction!
 
 In this example, we'll create a simple calculator.
 
@@ -61,7 +61,7 @@ public class Calculator {
 }
 ```
 
-Running the above code will show the user a simple form, showing two text boxes that only accept numbers and a button which, when activated, will add the two numbers in the text boxes and set the text of the output label to the result.
+Running the above code will show the user a simple form, showing two text boxes that only accept numbers and a button which, when activated (pressing the Enter key), will add the two numbers in the text boxes and set the text of the output label to the result.
 
 Hmm... this example is ok, but what if we wanted to do more than just add numbers? Let's add a combobox which allows the user to select between addition and subtraction:
 
