@@ -131,3 +131,9 @@ public class Calculator {
 ```
 
 The best way to get to grips with Lanterna is to experiment. Using the examples above, try adding more operations to the combo box, or producing a new way to display the result.
+
+### Screenshot
+
+Here's a screenshot of the finished calculator:
+
+![](screenshots/calculator.png)
