@@ -23,3 +23,7 @@ To get the currently checked item:
 	String checkedItems = radioBoxList.getCheckedItem();
 ```
 
+### Screenshot
+
+![](screenshots/radio_boxes.png)
+

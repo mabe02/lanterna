@@ -27,3 +27,7 @@ You can also check if a particular index is checked:
 ```
 	boolean result = checkBoxList.isChecked(2);
 ```
+
+### Screenshot
+
+![](screenshots/check_boxes.png)
