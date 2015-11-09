@@ -48,4 +48,4 @@ When the user highlights the combo box and presses the `Enter` key on the keyboa
 
 #### Activated:
 
-![](screenshots/combo_box_activated.md)
+![](screenshots/combo_box_activated.png)
