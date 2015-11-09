@@ -39,3 +39,13 @@ As with all components, you can set the preferred size via `setPreferredSize`:
 This will set the width of the combo box to be 15 characters wide. You can also change the height of the combo box if you so wish.
 
 When the user highlights the combo box and presses the `Enter` key on the keyboard, the list of selectable items will show.
+
+### Screenshots
+
+#### Non-activated:
+
+![](screenshots/combo_box.png)
+
+#### Activated:
+
+![](screenshots/combo_box_activated.md)
