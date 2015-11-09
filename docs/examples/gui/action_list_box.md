@@ -23,4 +23,4 @@ To add an action to the `ActionListBox`:
 
 ### Screenshot
 
-![image](examples/gui/screenshots/action_list_box.png)
+![](screenshots/action_list_box.png)
