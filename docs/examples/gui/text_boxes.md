@@ -44,3 +44,7 @@ This will validate the users input on each key press and only allow a single num
 Partial matchings are not allowed; the whole pattern must match, however, empty lines will always be allowed. When the user tries to modify the content of the `TextBox` in a way that does not match the pattern, the operation will be silently ignored.
 
 When setting the validation pattern on a given `TextBox`, the existing content will be validated. If the existing content does not match the provided pattern, a new `IllegalStateException` will be thrown.
+
+### Screenshot
+
+![](screenshots/text_boxes.png)
