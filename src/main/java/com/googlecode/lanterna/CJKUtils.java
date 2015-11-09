@@ -18,9 +18,6 @@
  */
 package com.googlecode.lanterna;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Utilities class for analyzing and working with CJK (Chinese, Japanese, Korean) characters. The main purpose of this
  * class is to assist in figuring out how many terminal columns a character (and in extension, a String) takes up. The

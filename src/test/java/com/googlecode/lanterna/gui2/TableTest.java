@@ -1,7 +1,5 @@
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.SGR;
-import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.dialogs.*;
 import com.googlecode.lanterna.gui2.table.DefaultTableRenderer;
 import com.googlecode.lanterna.gui2.table.Table;
@@ -10,7 +8,6 @@ import com.googlecode.lanterna.gui2.table.TableModel;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -26,7 +23,7 @@ public class TableTest extends TestBase {
     public void init(final WindowBasedTextGUI textGUI) {
         final BasicWindow window = new BasicWindow("Table container test");
 
-        final Table<String> table = new Table("Column 1", "Column 2", "Column 3");
+        final Table<String> table = new Table<String>("Column 1", "Column 2", "Column 3");
         final TableModel<String> model = table.getTableModel();
         model.addRow("Row1", "Row1", "Row1");
         model.addRow("Row2", "Row2", "Row2");
@@ -125,7 +122,7 @@ public class TableTest extends TestBase {
         textGUI.addWindow(window);
     }
 
-    private void onModify(WindowBasedTextGUI textGUI, Table table) {
+    private void onModify(WindowBasedTextGUI textGUI, Table<String> table) {
         String[] dialogChoices = new String[] {
                 "Change table content",
                 "Change table style",
@@ -166,7 +163,7 @@ public class TableTest extends TestBase {
         }
     }
 
-    private void onModifyStyle(WindowBasedTextGUI textGUI, Table table) {
+    private void onModifyStyle(WindowBasedTextGUI textGUI, Table<String> table) {
         String[] dialogChoices = new String[] {
                 "Header border style (vertical)",
                 "Header border style (horizontal)",
@@ -175,7 +172,7 @@ public class TableTest extends TestBase {
                 "Toggle cell selection"
         };
         String choice = chooseAString(textGUI, "Which style do you want to change?", dialogChoices);
-        DefaultTableRenderer renderer = (DefaultTableRenderer) table.getRenderer();
+        DefaultTableRenderer<String> renderer = (DefaultTableRenderer<String>) table.getRenderer();
         if(choice == null) {
             return;
         }
@@ -206,7 +203,7 @@ public class TableTest extends TestBase {
         table.invalidate();
     }
 
-    private void onModifyViewSize(WindowBasedTextGUI textGUI, Table table) {
+    private void onModifyViewSize(WindowBasedTextGUI textGUI, Table<String> table) {
         String verticalViewSize = askForANumber(textGUI, "Enter number of rows to display at once (0 = all)");
         if(verticalViewSize == null) {
             return;

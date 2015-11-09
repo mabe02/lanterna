@@ -45,6 +45,7 @@ public class GUIOverTelnet {
 
     private static final List<TextBox> ALL_TEXTBOXES = new ArrayList<TextBox>();
 
+    @SuppressWarnings({"rawtypes","unchecked"})
     private static void runGUI(final TelnetTerminal telnetTerminal) throws IOException {
         Screen screen = new TerminalScreen(telnetTerminal);
         screen.startScreen();

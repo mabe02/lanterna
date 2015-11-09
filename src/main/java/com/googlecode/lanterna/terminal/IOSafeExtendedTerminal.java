@@ -1,7 +1,5 @@
 package com.googlecode.lanterna.terminal;
 
-import java.io.IOException;
-
 /**
  * Interface extending ExtendedTerminal that removes the IOException throw clause.
  * 

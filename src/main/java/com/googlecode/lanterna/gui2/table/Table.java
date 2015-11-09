@@ -153,12 +153,12 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
 
     @Override
     protected TableRenderer<V> createDefaultRenderer() {
-        return new DefaultTableRenderer();
+        return new DefaultTableRenderer<V>();
     }
 
     @Override
     public TableRenderer<V> getRenderer() {
-        return (TableRenderer)super.getRenderer();
+        return (TableRenderer<V>)super.getRenderer();
     }
 
     @Override
