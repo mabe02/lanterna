@@ -392,8 +392,9 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
                 return Symbols.SINGLE_LINE_HORIZONTAL;
             case DoubleLine:
                 return Symbols.DOUBLE_LINE_HORIZONTAL;
+            default:
+                return ' ';
         }
-        return ' ';
     }
 
     private char getVerticalCharacter(TableCellBorderStyle style) {
@@ -402,8 +403,9 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
                 return Symbols.SINGLE_LINE_VERTICAL;
             case DoubleLine:
                 return Symbols.DOUBLE_LINE_VERTICAL;
+            default:
+                return ' ';
         }
-        return ' ';
     }
 
     private char getJunctionCharacter(TableCellBorderStyle mainStyle, TableCellBorderStyle styleAbove, TableCellBorderStyle styleBelow) {

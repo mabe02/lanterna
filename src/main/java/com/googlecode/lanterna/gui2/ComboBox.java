@@ -287,6 +287,8 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
                     return Result.HANDLED;
                 }
                 break;
+
+            default:
         }
         return super.handleKeyStroke(keyStroke);
     }
@@ -360,6 +362,8 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
                     setSelectedIndex(selectedIndex - 1);
                 }
                 return Result.HANDLED;
+
+            default:
         }
         return super.handleKeyStroke(keyStroke);
     }
