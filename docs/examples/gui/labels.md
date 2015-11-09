@@ -15,3 +15,7 @@ As with many other components, you can add a `Label` to a `Panel` after instanti
 	Panel panel = new Panel();
 	new Label("Surname").addTo(panel);
 ```
+
+### Screenshot
+
+![](screenshots/labels.png)
