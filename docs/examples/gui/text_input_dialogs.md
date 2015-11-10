@@ -47,4 +47,4 @@ By using a builder, you can set a validation pattern, as shown above, which spit
 
 ### Screenshot
 
-![](screenshots/input_dialogs.png)
+![](screenshots/text_input_dialogs.png)

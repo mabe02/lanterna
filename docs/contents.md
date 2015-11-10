@@ -28,3 +28,4 @@ TODO
 12. [Action list box](examples/gui/action_list_box.md)
 13. Windows
 14. [Message dialogs](examples/gui/message_dialogs.md)
+15. [Text Input dialogs](examples/gui/text_input_dialogs.md)
