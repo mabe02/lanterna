@@ -27,3 +27,4 @@ TODO
 11. [Radio boxes](examples/gui/radio_boxes.md)
 12. [Action list box](examples/gui/action_list_box.md)
 13. Windows
+14. [Message dialogs](examples/gui/message_dialogs.md)
