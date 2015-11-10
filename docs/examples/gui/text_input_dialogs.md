@@ -55,12 +55,12 @@ The `TextInputDialog` also supports multi-line text input:
 
 By using a builder, you can set a validation pattern, as shown above, which spits out an error if the user tries to pass in anything that doesn't match the provided regex.
 
-### Screenshot
+### Screenshots
 
-Single line:
+#### Single-line:
 
 ![](screenshots/text_input_dialogs.png)
 
-Multi line:
+#### Multi-line:
 
 ![](screenshots/multiline_input_dialogs.png)
