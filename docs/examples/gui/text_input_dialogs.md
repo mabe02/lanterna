@@ -43,8 +43,22 @@ You can also use a `TextInputDialogBuilder` to build up and show a text dialog:
 		.showDialog(textGUI);
 ```
 
+The `TextInputDialog` also supports multi-line text input:
+
+```
+	String result = new TextInputDialogBuilder()
+		.setTitle("Multi-line editor")
+		.setTextBoxSize(new TerminalSize(35, 5))
+		.build()
+		.showDialog(textGUI);
+```
+
 By using a builder, you can set a validation pattern, as shown above, which spits out an error if the user tries to pass in anything that doesn't match the provided regex.
 
 ### Screenshot
 
+Single line:
 ![](screenshots/text_input_dialogs.png)
+
+Multi line:
+![](screenshots/multiline_input_dialogs.png)
