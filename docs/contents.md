@@ -29,3 +29,4 @@ TODO
 13. Windows
 14. [Message dialogs](examples/gui/message_dialogs.md)
 15. [Text Input dialogs](examples/gui/text_input_dialogs.md)
+16. [File dialogs](examples/gui/file_dialogs.md)
