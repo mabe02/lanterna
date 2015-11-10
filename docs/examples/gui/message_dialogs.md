@@ -15,7 +15,7 @@ To create a message dialog, as with all dialogs, you'll need to create and pass 
 	final WindowBasedTextGUI textGUI = new MultiWindowTextGUI(screen);
 ```
 
-In the following example, a message box is show to the user when the button is clicked:
+In the following example, a message box is shown to the user when the button is clicked:
 
 ```
 	panel.addComponent(new Button("Test", new Runnable() {
@@ -41,6 +41,29 @@ You can also use a `MessageDialogBuilder` to build up and show a message dialog:
 		.build()
 		.showDialog(textGUI);
 ```
+
+You can also change the button on the `MessageDialog`:
+
+```
+	new MessageDialogBuilder()
+		.setTitle("Here is the title")
+		.setText("Here is a message")
+		.addButton(MessageDialogButton.Close)
+		.build()
+		.showDialog(textGUI);
+```
+
+The following buttons are available:
+
+- OK
+- Cancel
+- Yes
+- No
+- Close
+- Abort
+- Ignore
+- Retry
+- Continue
 
 ### Screenshot
 
