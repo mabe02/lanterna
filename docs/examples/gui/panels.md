@@ -9,13 +9,13 @@ To create a `Panel`:
 	Panel panel = new Panel();
 ```
 
-To add a component to a Panel:
+To add a component to a `Panel`:
 
 ```
 	panel.addComponent(new Button("Enter"));
 ```
 
-You can also nest panels:
+You can also nest `Panel`s:
 
 ```
 	BasicWindow window = new BasicWindow();
@@ -35,7 +35,7 @@ You can also nest panels:
 
 In the example above, the "Main Panel" holds two seperate panels: the "Left Panel" and the "Right Panel".
 
-The left and right panel sit next to each other because a layout manager was provided:
+The left and right panels sit next to each other because a layout manager was provided:
 
 ```
 	mainPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
