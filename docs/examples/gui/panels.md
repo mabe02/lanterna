@@ -19,7 +19,7 @@ You can also nest panels:
 
 ```
 	BasicWindow window = new BasicWindow();
-	
+
 	Panel mainPanel = new Panel();
 	mainPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
 
@@ -29,19 +29,19 @@ You can also nest panels:
 	Panel rightPanel = new Panel();
 	mainPanel.addComponent(rightPanel.withBorder(Borders.singleLine("Right Panel")));
 
-	window.setComponent(Panels.vertical(mainPanel.withBorder(Borders.singleLine("Main Panel"))));
+	window.setComponent(mainPanel.withBorder(Borders.singleLine("Main Panel")));
 	textGUI.addWindow(window);
 ```
 
 In the example above, the "Main Panel" holds two seperate panels: the "Left Panel" and the "Right Panel".
 
-The left and right panel sit next to each other because the `Panels` utility class was used:
+The left and right panel sit next to each other because a layout manager was provided:
 
 ```
-	Panel panel = Panels.vertical(mainPanel.withBorder(Borders.singleLine("Main Panel")));
+	mainPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
 ```
 
-The `Panels` class is a utility class for quickly bunching up components in a panel, arranged in a particular pattern.
+By default, the layout for `Panel`s is a default `LinearLayout` set to `VERTICAL`, meaning that when components are added, they will sit on top of each other rather than next to each other. More information on layout managers can be found in the layout manager section.
 
 ### Screenshot
 
