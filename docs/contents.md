@@ -18,7 +18,7 @@ TODO
 2. [Component sizing](examples/gui/component_sizing.md)
 3. [A basic form with submission](examples/gui/basic_form_submission.md)
 4. [Panels](examples/gui/panels.md)
-5. Layout Managers
+5. [Layout Managers](examples/gui/layout_managers.md)
 6. [Labels](examples/gui/labels.md)
 7. [Text boxes](examples/gui/text_boxes.md)
 8. [Buttons](examples/gui/buttons.md)
