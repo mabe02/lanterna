@@ -31,3 +31,4 @@ TODO
 15. [Text Input dialogs](examples/gui/text_input_dialogs.md)
 16. [File dialogs](examples/gui/file_dialogs.md)
 17. [Action list dialogs](examples/gui/action_list_dialogs.md)
+18. Tables
