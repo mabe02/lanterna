@@ -119,20 +119,22 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
     }
 
     public TextBox setText(String text) {
-        String[] split = text.split("\n");
-        lines.clear();
-        longestRow = 1;
-        for (String line : split) {
-            addLine(line);
+        synchronized(this) {
+            String[] split = text.split("\n");
+            lines.clear();
+            longestRow = 1;
+            for(String line : split) {
+                addLine(line);
+            }
+            if(caretPosition.getRow() > lines.size() - 1) {
+                caretPosition = caretPosition.withRow(lines.size() - 1);
+            }
+            if(caretPosition.getColumn() > lines.get(caretPosition.getRow()).length()) {
+                caretPosition = caretPosition.withColumn(lines.get(caretPosition.getRow()).length());
+            }
+            invalidate();
+            return this;
         }
-        if(caretPosition.getRow() > lines.size() - 1) {
-            caretPosition = caretPosition.withRow(lines.size() - 1);
-        }
-        if(caretPosition.getColumn() > lines.get(caretPosition.getRow()).length()) {
-            caretPosition = caretPosition.withColumn(lines.get(caretPosition.getRow()).length());
-        }
-        invalidate();
-        return this;
     }
 
     @Override
@@ -141,35 +143,37 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
     }
 
     public void addLine(String line) {
-        StringBuilder bob = new StringBuilder();
-        for (int i = 0; i < line.length(); i++) {
-            char c = line.charAt(i);
-            if (c == '\n' && style == Style.MULTI_LINE) {
-                String string = bob.toString();
-                int lineWidth = CJKUtils.getColumnWidth(string);
-                lines.add(string);
-                if (longestRow < lineWidth + 1) {
-                    longestRow = lineWidth + 1;
+        synchronized(this) {
+            StringBuilder bob = new StringBuilder();
+            for(int i = 0; i < line.length(); i++) {
+                char c = line.charAt(i);
+                if(c == '\n' && style == Style.MULTI_LINE) {
+                    String string = bob.toString();
+                    int lineWidth = CJKUtils.getColumnWidth(string);
+                    lines.add(string);
+                    if(longestRow < lineWidth + 1) {
+                        longestRow = lineWidth + 1;
+                    }
+                    addLine(line.substring(i + 1));
+                    return;
                 }
-                addLine(line.substring(i + 1));
-                return;
-            }
-            else if (Character.isISOControl(c)) {
-                continue;
-            }
+                else if(Character.isISOControl(c)) {
+                    continue;
+                }
 
-            bob.append(c);
+                bob.append(c);
+            }
+            String string = bob.toString();
+            if(!validated(string)) {
+                throw new IllegalStateException("TextBox validation pattern " + validationPattern + " does not match the supplied text");
+            }
+            int lineWidth = CJKUtils.getColumnWidth(string);
+            lines.add(string);
+            if(longestRow < lineWidth + 1) {
+                longestRow = lineWidth + 1;
+            }
+            invalidate();
         }
-        String string = bob.toString();
-        if(!validated(string)) {
-            throw new IllegalStateException("TextBox validation pattern " + validationPattern + " does not match the supplied text");
-        }
-        int lineWidth = CJKUtils.getColumnWidth(string);
-        lines.add(string);
-        if (longestRow < lineWidth + 1) {
-            longestRow = lineWidth + 1;
-        }
-        invalidate();
     }
 
     /**
@@ -198,11 +202,13 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
     }
 
     public String getText() {
-        StringBuilder bob = new StringBuilder(lines.get(0));
-        for(int i = 1; i < lines.size(); i++) {
-            bob.append("\n").append(lines.get(i));
+        synchronized(this) {
+            StringBuilder bob = new StringBuilder(lines.get(0));
+            for(int i = 1; i < lines.size(); i++) {
+                bob.append("\n").append(lines.get(i));
+            }
+            return bob.toString();
         }
-        return bob.toString();
     }
 
     public String getTextOrDefault(String defaultValueIfEmpty) {
@@ -291,7 +297,9 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
      * @throws IndexOutOfBoundsException if the row index is less than zero or too large
      */
     public String getLine(int index) {
-        return lines.get(index);
+        synchronized(this) {
+            return lines.get(index);
+        }
     }
 
     /**
@@ -299,7 +307,9 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
      * @return Number of lines of text currently in this TextBox
      */
     public int getLineCount() {
-        return lines.size();
+        synchronized(this) {
+            return lines.size();
+        }
     }
 
     @Override
@@ -309,142 +319,144 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
 
     @Override
     public Result handleKeyStroke(KeyStroke keyStroke) {
-        if(readOnly) {
-            return handleKeyStrokeReadOnly(keyStroke);
-        }
-        String line = lines.get(caretPosition.getRow());
-        switch (keyStroke.getKeyType()) {
-            case Character:
-                if(maxLineLength == -1 || maxLineLength > line.length() + 1) {
-                    line = line.substring(0, caretPosition.getColumn()) + keyStroke.getCharacter() + line.substring(caretPosition.getColumn());
-                    if(validated(line)) {
-                        lines.set(caretPosition.getRow(), line);
-                        caretPosition = caretPosition.withRelativeColumn(1);
+        synchronized(this) {
+            if(readOnly) {
+                return handleKeyStrokeReadOnly(keyStroke);
+            }
+            String line = lines.get(caretPosition.getRow());
+            switch(keyStroke.getKeyType()) {
+                case Character:
+                    if(maxLineLength == -1 || maxLineLength > line.length() + 1) {
+                        line = line.substring(0, caretPosition.getColumn()) + keyStroke.getCharacter() + line.substring(caretPosition.getColumn());
+                        if(validated(line)) {
+                            lines.set(caretPosition.getRow(), line);
+                            caretPosition = caretPosition.withRelativeColumn(1);
+                        }
                     }
-                }
-                return Result.HANDLED;
-            case Backspace:
-                if(caretPosition.getColumn() > 0) {
-                    line = line.substring(0, caretPosition.getColumn() - 1) + line.substring(caretPosition.getColumn());
-                    if(validated(line)) {
-                        lines.set(caretPosition.getRow(), line);
+                    return Result.HANDLED;
+                case Backspace:
+                    if(caretPosition.getColumn() > 0) {
+                        line = line.substring(0, caretPosition.getColumn() - 1) + line.substring(caretPosition.getColumn());
+                        if(validated(line)) {
+                            lines.set(caretPosition.getRow(), line);
+                            caretPosition = caretPosition.withRelativeColumn(-1);
+                        }
+                    }
+                    else if(style == Style.MULTI_LINE && caretPosition.getRow() > 0) {
+                        String concatenatedLines = lines.get(caretPosition.getRow() - 1) + line;
+                        if(validated(concatenatedLines)) {
+                            lines.remove(caretPosition.getRow());
+                            caretPosition = caretPosition.withRelativeRow(-1);
+                            caretPosition = caretPosition.withColumn(lines.get(caretPosition.getRow()).length());
+                            lines.set(caretPosition.getRow(), concatenatedLines);
+                        }
+                    }
+                    return Result.HANDLED;
+                case Delete:
+                    if(caretPosition.getColumn() < line.length()) {
+                        line = line.substring(0, caretPosition.getColumn()) + line.substring(caretPosition.getColumn() + 1);
+                        if(validated(line)) {
+                            lines.set(caretPosition.getRow(), line);
+                        }
+                    }
+                    else if(style == Style.MULTI_LINE && caretPosition.getRow() < lines.size() - 1) {
+                        String concatenatedLines = line + lines.get(caretPosition.getRow() + 1);
+                        if(validated(concatenatedLines)) {
+                            lines.set(caretPosition.getRow(), concatenatedLines);
+                            lines.remove(caretPosition.getRow() + 1);
+                        }
+                    }
+                    return Result.HANDLED;
+                case ArrowLeft:
+                    if(caretPosition.getColumn() > 0) {
                         caretPosition = caretPosition.withRelativeColumn(-1);
                     }
-                }
-                else if(style == Style.MULTI_LINE && caretPosition.getRow() > 0) {
-                    String concatenatedLines = lines.get(caretPosition.getRow() - 1) + line;
-                    if(validated(concatenatedLines)) {
-                        lines.remove(caretPosition.getRow());
+                    else if(style == Style.MULTI_LINE && caretWarp && caretPosition.getRow() > 0) {
                         caretPosition = caretPosition.withRelativeRow(-1);
                         caretPosition = caretPosition.withColumn(lines.get(caretPosition.getRow()).length());
-                        lines.set(caretPosition.getRow(), concatenatedLines);
                     }
-                }
-                return Result.HANDLED;
-            case Delete:
-                if(caretPosition.getColumn() < line.length()) {
-                    line = line.substring(0, caretPosition.getColumn()) + line.substring(caretPosition.getColumn() + 1);
-                    if(validated(line)) {
-                        lines.set(caretPosition.getRow(), line);
+                    else if(horizontalFocusSwitching) {
+                        return Result.MOVE_FOCUS_LEFT;
                     }
-                }
-                else if(style == Style.MULTI_LINE && caretPosition.getRow() < lines.size() - 1) {
-                    String concatenatedLines = line + lines.get(caretPosition.getRow() + 1);
-                    if(validated(concatenatedLines)) {
-                        lines.set(caretPosition.getRow(), concatenatedLines);
-                        lines.remove(caretPosition.getRow() + 1);
+                    return Result.HANDLED;
+                case ArrowRight:
+                    if(caretPosition.getColumn() < lines.get(caretPosition.getRow()).length()) {
+                        caretPosition = caretPosition.withRelativeColumn(1);
                     }
-                }
-                return Result.HANDLED;
-            case ArrowLeft:
-                if(caretPosition.getColumn() > 0) {
-                    caretPosition = caretPosition.withRelativeColumn(-1);
-                }
-                else if(style == Style.MULTI_LINE && caretWarp && caretPosition.getRow() > 0) {
-                    caretPosition = caretPosition.withRelativeRow(-1);
-                    caretPosition = caretPosition.withColumn(lines.get(caretPosition.getRow()).length());
-                }
-                else if(horizontalFocusSwitching) {
-                    return Result.MOVE_FOCUS_LEFT;
-                }
-                return Result.HANDLED;
-            case ArrowRight:
-                if(caretPosition.getColumn() < lines.get(caretPosition.getRow()).length()) {
-                    caretPosition = caretPosition.withRelativeColumn(1);
-                }
-                else if(style == Style.MULTI_LINE && caretWarp && caretPosition.getRow() < lines.size() - 1) {
-                    caretPosition = caretPosition.withRelativeRow(1);
+                    else if(style == Style.MULTI_LINE && caretWarp && caretPosition.getRow() < lines.size() - 1) {
+                        caretPosition = caretPosition.withRelativeRow(1);
+                        caretPosition = caretPosition.withColumn(0);
+                    }
+                    else if(horizontalFocusSwitching) {
+                        return Result.MOVE_FOCUS_RIGHT;
+                    }
+                    return Result.HANDLED;
+                case ArrowUp:
+                    if(caretPosition.getRow() > 0) {
+                        int trueColumnPosition = CJKUtils.getColumnIndex(lines.get(caretPosition.getRow()), caretPosition.getColumn());
+                        caretPosition = caretPosition.withRelativeRow(-1);
+                        line = lines.get(caretPosition.getRow());
+                        if(trueColumnPosition > CJKUtils.getColumnWidth(line)) {
+                            caretPosition = caretPosition.withColumn(line.length());
+                        }
+                        else {
+                            caretPosition = caretPosition.withColumn(CJKUtils.getStringCharacterIndex(line, trueColumnPosition));
+                        }
+                    }
+                    else if(verticalFocusSwitching) {
+                        return Result.MOVE_FOCUS_UP;
+                    }
+                    return Result.HANDLED;
+                case ArrowDown:
+                    if(caretPosition.getRow() < lines.size() - 1) {
+                        int trueColumnPosition = CJKUtils.getColumnIndex(lines.get(caretPosition.getRow()), caretPosition.getColumn());
+                        caretPosition = caretPosition.withRelativeRow(1);
+                        line = lines.get(caretPosition.getRow());
+                        if(trueColumnPosition > CJKUtils.getColumnWidth(line)) {
+                            caretPosition = caretPosition.withColumn(line.length());
+                        }
+                        else {
+                            caretPosition = caretPosition.withColumn(CJKUtils.getStringCharacterIndex(line, trueColumnPosition));
+                        }
+                    }
+                    else if(verticalFocusSwitching) {
+                        return Result.MOVE_FOCUS_DOWN;
+                    }
+                    return Result.HANDLED;
+                case End:
+                    caretPosition = caretPosition.withColumn(line.length());
+                    return Result.HANDLED;
+                case Enter:
+                    if(style == Style.SINGLE_LINE) {
+                        return Result.MOVE_FOCUS_NEXT;
+                    }
+                    String newLine = line.substring(caretPosition.getColumn());
+                    String oldLine = line.substring(0, caretPosition.getColumn());
+                    if(validated(newLine) && validated(oldLine)) {
+                        lines.set(caretPosition.getRow(), oldLine);
+                        lines.add(caretPosition.getRow() + 1, newLine);
+                        caretPosition = caretPosition.withColumn(0).withRelativeRow(1);
+                    }
+                    return Result.HANDLED;
+                case Home:
                     caretPosition = caretPosition.withColumn(0);
-                }
-                else if(horizontalFocusSwitching) {
-                    return Result.MOVE_FOCUS_RIGHT;
-                }
-                return Result.HANDLED;
-            case ArrowUp:
-                if(caretPosition.getRow() > 0) {
-                    int trueColumnPosition = CJKUtils.getColumnIndex(lines.get(caretPosition.getRow()), caretPosition.getColumn());
-                    caretPosition = caretPosition.withRelativeRow(-1);
-                    line = lines.get(caretPosition.getRow());
-                    if(trueColumnPosition > CJKUtils.getColumnWidth(line)) {
-                        caretPosition = caretPosition.withColumn(line.length());
+                    return Result.HANDLED;
+                case PageDown:
+                    caretPosition = caretPosition.withRelativeRow(getSize().getRows());
+                    if(caretPosition.getRow() > lines.size() - 1) {
+                        caretPosition = caretPosition.withRow(lines.size() - 1);
                     }
-                    else {
-                        caretPosition = caretPosition.withColumn(CJKUtils.getStringCharacterIndex(line, trueColumnPosition));
+                    return Result.HANDLED;
+                case PageUp:
+                    caretPosition = caretPosition.withRelativeRow(-getSize().getRows());
+                    if(caretPosition.getRow() < 0) {
+                        caretPosition = caretPosition.withRow(0);
                     }
-                }
-                else if(verticalFocusSwitching) {
-                    return Result.MOVE_FOCUS_UP;
-                }
-                return Result.HANDLED;
-            case ArrowDown:
-                if(caretPosition.getRow() < lines.size() - 1) {
-                    int trueColumnPosition = CJKUtils.getColumnIndex(lines.get(caretPosition.getRow()), caretPosition.getColumn());
-                    caretPosition = caretPosition.withRelativeRow(1);
-                    line = lines.get(caretPosition.getRow());
-                    if(trueColumnPosition > CJKUtils.getColumnWidth(line)) {
-                        caretPosition = caretPosition.withColumn(line.length());
-                    }
-                    else {
-                        caretPosition = caretPosition.withColumn(CJKUtils.getStringCharacterIndex(line, trueColumnPosition));
-                    }
-                }
-                else if(verticalFocusSwitching) {
-                    return Result.MOVE_FOCUS_DOWN;
-                }
-                return Result.HANDLED;
-            case End:
-                caretPosition = caretPosition.withColumn(line.length());
-                return Result.HANDLED;
-            case Enter:
-                if(style == Style.SINGLE_LINE) {
-                    return Result.MOVE_FOCUS_NEXT;
-                }
-                String newLine = line.substring(caretPosition.getColumn());
-                String oldLine = line.substring(0, caretPosition.getColumn());
-                if(validated(newLine) && validated(oldLine)) {
-                    lines.set(caretPosition.getRow(), oldLine);
-                    lines.add(caretPosition.getRow() + 1, newLine);
-                    caretPosition = caretPosition.withColumn(0).withRelativeRow(1);
-                }
-                return Result.HANDLED;
-            case Home:
-                caretPosition = caretPosition.withColumn(0);
-                return Result.HANDLED;
-            case PageDown:
-                caretPosition = caretPosition.withRelativeRow(getSize().getRows());
-                if(caretPosition.getRow() > lines.size() - 1) {
-                    caretPosition = caretPosition.withRow(lines.size() - 1);
-                }
-                return Result.HANDLED;
-            case PageUp:
-                caretPosition = caretPosition.withRelativeRow(-getSize().getRows());
-                if(caretPosition.getRow() < 0) {
-                    caretPosition = caretPosition.withRow(0);
-                }
-                return Result.HANDLED;
-            default:
+                    return Result.HANDLED;
+                default:
+            }
+            return super.handleKeyStroke(keyStroke);
         }
-        return super.handleKeyStroke(keyStroke);
     }
 
     private boolean validated(String line) {
