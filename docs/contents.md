@@ -16,7 +16,7 @@ TODO
 ### GUI Layer
 1. [Hello World](examples/gui/hello_world.md)
 2. [A basic form with submission](examples/gui/basic_form_submission.md)
-3. Windows
+3. [Windows](examples/gui/windows.md)
 4. [Panels](examples/gui/panels.md)
 5. [Component sizing](examples/gui/component_sizing.md)
 6. [Layout Managers](examples/gui/layout_managers.md)
