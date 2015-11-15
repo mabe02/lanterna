@@ -24,6 +24,8 @@ import java.util.List;
 /**
  * Very simple pattern that matches the input stream against a pre-defined list of characters. For the pattern to match,
  * the list of characters must match exactly what's coming in on the input stream.
+ * 
+ * @author Martin, Andreas
  */
 public class BasicCharacterPattern implements CharacterPattern {
     private final KeyStroke result;
@@ -51,27 +53,22 @@ public class BasicCharacterPattern implements CharacterPattern {
     }
 
     @Override
-    public boolean matches(List<Character> currentMatching) {
-        if(currentMatching.size() > pattern.length) {
-            return false;
+    public Matching match(List<Character> seq) {
+        int size = seq.size();
+        
+        if(size > pattern.length) {
+            return null; // nope
         }
-        int minSize = Math.min(currentMatching.size(), pattern.length);
-        for (int i = 0; i < minSize; i++) {
-            if (pattern[i] != currentMatching.get(i)) {
-                return false;
+        for (int i = 0; i < size; i++) {
+            if (pattern[i] != seq.get(i)) {
+                return null; // nope
             }
         }
-        return true;
-    }
-
-    @Override
-    public KeyStroke getResult(List<Character> matching) {
-        return result;
-    }
-
-    @Override
-    public boolean isCompleteMatch(List<Character> currentMatching) {
-        return pattern.length == currentMatching.size();
+        if (size == pattern.length) {
+            return new Matching( getResult() ); // yep
+        } else {
+            return Matching.NOT_YET; // maybe later
+        }
     }
 
     @Override
@@ -81,7 +78,7 @@ public class BasicCharacterPattern implements CharacterPattern {
         }
 
         BasicCharacterPattern other = (BasicCharacterPattern) obj;
-        return Arrays.equals(pattern, other.pattern);
+        return Arrays.equals(this.pattern, other.pattern);
     }
 
     @Override

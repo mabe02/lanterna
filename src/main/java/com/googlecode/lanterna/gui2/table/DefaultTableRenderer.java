@@ -1,7 +1,6 @@
 package com.googlecode.lanterna.gui2.table;
 
 import com.googlecode.lanterna.*;
-import com.googlecode.lanterna.gui2.Component;
 import com.googlecode.lanterna.gui2.Direction;
 import com.googlecode.lanterna.gui2.ScrollBar;
 import com.googlecode.lanterna.gui2.TextGUIGraphics;
@@ -233,7 +232,7 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
     }
 
     private int drawHeader(TextGUIGraphics graphics, Table<V> table) {
-        TableHeaderRenderer tableHeaderRenderer = table.getTableHeaderRenderer();
+        TableHeaderRenderer<V> tableHeaderRenderer = table.getTableHeaderRenderer();
         List<String> headers = table.getTableModel().getColumnLabels();
         int viewLeftColumn = table.getViewLeftColumn();
         int visibleColumns = table.getVisibleColumns();
@@ -393,8 +392,9 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
                 return Symbols.SINGLE_LINE_HORIZONTAL;
             case DoubleLine:
                 return Symbols.DOUBLE_LINE_HORIZONTAL;
+            default:
+                return ' ';
         }
-        return ' ';
     }
 
     private char getVerticalCharacter(TableCellBorderStyle style) {
@@ -403,8 +403,9 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
                 return Symbols.SINGLE_LINE_VERTICAL;
             case DoubleLine:
                 return Symbols.DOUBLE_LINE_VERTICAL;
+            default:
+                return ' ';
         }
-        return ' ';
     }
 
     private char getJunctionCharacter(TableCellBorderStyle mainStyle, TableCellBorderStyle styleAbove, TableCellBorderStyle styleBelow) {

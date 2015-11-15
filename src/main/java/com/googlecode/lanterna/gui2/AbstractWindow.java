@@ -24,7 +24,6 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.input.KeyType;
 
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * Abstract Window implementation that contains much code that is shared between different concrete Window

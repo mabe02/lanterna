@@ -22,27 +22,33 @@ import java.util.List;
 
 /**
  * Character pattern that matches characters pressed while CTRL key is held down
- * @author Martin
+ * 
+ * @author Martin, Andreas
  */
 public class CtrlAndCharacterPattern implements CharacterPattern {
     @Override
-    public KeyStroke getResult(List<Character> matching) {
-        int firstCode = 'a' - 1;
-        return new KeyStroke((char) (firstCode + (int) matching.get(0)), true, false);
-    }
-
-    @Override
-    public boolean isCompleteMatch(List<Character> currentMatching) {
-        return matches(currentMatching);
-    }
-
-    @Override
-    public boolean matches(List<Character> currentMatching) {
-        return currentMatching.size() <= 1 &&
-                !(currentMatching.get(0) == '\n' ||
-                        currentMatching.get(0) == '\r' ||
-                        currentMatching.get(0) == '\t') &&
-                currentMatching.get(0) <= 26;
-
+    public Matching match(List<Character> seq) {
+        int size = seq.size(); char ch = seq.get(0);
+        if (size != 1) {
+            return null; // nope
+        }
+        if (ch < 32) {
+            // Control-chars: exclude lf,cr,Tab,Esc(^[), but still include ^\, ^], ^^ and ^_
+            char ctrlCode;
+            switch (ch) {
+            case '\n': case '\r': case '\t':
+            case KeyDecodingProfile.ESC_CODE: return null; // nope
+            case 0:  /* ^@ */ ctrlCode = ' '; break;
+            case 28: /* ^\ */ ctrlCode = '\\'; break;
+            case 29: /* ^] */ ctrlCode = ']'; break;
+            case 30: /* ^^ */ ctrlCode = '^'; break;
+            case 31: /* ^_ */ ctrlCode = '_'; break;
+            default: ctrlCode = (char)('a' - 1 + ch);
+            }
+            KeyStroke ks = new KeyStroke( ctrlCode, true, false);
+            return new Matching( ks ); // yep
+        } else {
+            return null; // nope
+        }
     }
 }

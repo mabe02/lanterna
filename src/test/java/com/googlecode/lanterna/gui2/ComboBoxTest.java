@@ -15,7 +15,7 @@ public class ComboBoxTest extends TestBase {
 
     @Override
     public void init(WindowBasedTextGUI textGUI) {
-        final BasicWindow window = new BasicWindow("ComboBoxTest");
+        final BasicWindow window = new BasicWindow();
         Panel mainPanel = new Panel();
 
         final ComboBox<String> comboBoxReadOnly = new ComboBox<String>();
@@ -33,10 +33,8 @@ public class ComboBoxTest extends TestBase {
         comboBoxCJK.setPreferredSize(new TerminalSize(13, 1));
 
         mainPanel.addComponent(Panels.horizontal(
-                comboBoxReadOnly.withBorder(Borders.singleLine("Read-only")),
-                comboBoxEditable.withBorder(Borders.singleLine("Editable")),
-                comboBoxCJK.withBorder(Borders.singleLine("CJK"))));
-        mainPanel.addComponent(new EmptySpace(TerminalSize.ONE));
+                comboBoxReadOnly));
+        //mainPanel.addComponent(new EmptySpace(TerminalSize.ONE));
 
         final TextBox textBoxNewItem = new TextBox();
         Button buttonAddItem = new Button("Add", new Runnable() {
@@ -48,16 +46,7 @@ public class ComboBoxTest extends TestBase {
                 window.setFocusedInteractable(textBoxNewItem);
             }
         });
-        mainPanel.addComponent(Panels.horizontal(textBoxNewItem, buttonAddItem));
 
-        mainPanel.addComponent(new EmptySpace(TerminalSize.ONE));
-        mainPanel.addComponent(new Separator(Direction.HORIZONTAL).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Fill)));
-        mainPanel.addComponent(new Button("OK", new Runnable() {
-            @Override
-            public void run() {
-                window.close();
-            }
-        }));
         window.setComponent(mainPanel);
         textGUI.addWindow(window);
     }

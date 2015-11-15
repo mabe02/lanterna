@@ -3,26 +3,41 @@ package com.googlecode.lanterna.input;
 import com.googlecode.lanterna.TerminalPosition;
 
 import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * Pattern used to detect Xterm-protocol mouse events coming in on the standard input channel
  * Created by martin on 19/07/15.
+ * 
+ * @author Martin, Andreas
  */
 public class MouseCharacterPattern implements CharacterPattern {
-
-    private static final Pattern MOUSE_PATTERN
-            = Pattern.compile(KeyDecodingProfile.ESC_CODE + "\\[M(.)(.)(.)");
+    private static final char[] PATTERN = { KeyDecodingProfile.ESC_CODE, '[', 'M' };
 
     @Override
-    public KeyStroke getResult(List<Character> matching) {
+    public Matching match(List<Character> seq) {
+        int size = seq.size();
+        if (size > 6) {
+            return null; // nope
+        }
+        // check first 3 chars:
+        for (int i = 0; i < 3; i++) {
+            if ( i >= size ) {
+                return Matching.NOT_YET; // maybe later
+            }
+            if ( seq.get(i) != PATTERN[i] ) {
+                return null; // nope
+            }
+        }
+        if (size < 6) {
+            return Matching.NOT_YET; // maybe later
+        }
         MouseActionType actionType = null;
-        int button = (matching.get(3) & 0x3) + 1;
+        int button = (seq.get(3) & 0x3) + 1;
         if(button == 4) {
             //If last two bits are both set, it means button click release
             button = 0;
         }
-        int actionCode = (matching.get(3) & 0x60) >> 5;
+        int actionCode = (seq.get(3) & 0x60) >> 5;
         switch(actionCode) {
             case(1):
                 if(button > 0) {
@@ -51,44 +66,9 @@ public class MouseCharacterPattern implements CharacterPattern {
                 }
                 break;
         }
-        int x = matching.get(4) - 33;
-        int y = matching.get(5) - 33;
+        TerminalPosition pos = new TerminalPosition( seq.get(4) - 33, seq.get(5) - 33 );
 
-        return new MouseAction(actionType, button, new TerminalPosition(x, y));
-    }
-
-    @Override
-    public boolean isCompleteMatch(List<Character> currentMatching) {
-        String asString = "";
-        for(Character aCurrentMatching : currentMatching) {
-            asString += aCurrentMatching;
-        }
-        return MOUSE_PATTERN.matcher(asString).matches();
-    }
-
-    @Override
-    public boolean matches(List<Character> currentMatching) {
-        if (currentMatching.isEmpty()) {
-            return false;
-        }
-        if (currentMatching.get(0) != KeyDecodingProfile.ESC_CODE) {
-            return false;
-        }
-        if (currentMatching.size() == 1) {
-            return true;
-        }
-        if (currentMatching.get(1) != '[') {
-            return false;
-        }
-        if (currentMatching.size() == 2) {
-            return true;
-        }
-        if (currentMatching.get(2) != 'M') {
-            return false;
-        }
-        if (currentMatching.size() == 3) {
-            return true;
-        }
-        return true;
+        MouseAction ma = new MouseAction(actionType, button, pos );
+        return new Matching( ma ); // yep
     }
 }

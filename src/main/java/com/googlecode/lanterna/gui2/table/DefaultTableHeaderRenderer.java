@@ -17,7 +17,7 @@ public class DefaultTableHeaderRenderer<V> implements TableHeaderRenderer<V> {
     }
 
     @Override
-    public void drawHeader(Table table, String label, int index, TextGUIGraphics textGUIGraphics) {
+    public void drawHeader(Table<V> table, String label, int index, TextGUIGraphics textGUIGraphics) {
         textGUIGraphics.applyThemeStyle(textGUIGraphics.getThemeDefinition(Table.class).getCustom("HEADER"));
         textGUIGraphics.putString(0, 0, label);
     }

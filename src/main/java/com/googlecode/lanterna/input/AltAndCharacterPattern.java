@@ -22,23 +22,24 @@ import java.util.List;
 
 /**
  * Character pattern that matches characters pressed while ALT key is held down
+ * 
+ * @author Martin, Andreas
  */
 public class AltAndCharacterPattern implements CharacterPattern {
-    @Override
-    public KeyStroke getResult(List<Character> matching) {
-        return new KeyStroke(matching.get(1), false, true);
-    }
 
     @Override
-    public boolean isCompleteMatch(List<Character> currentMatching) {
-        return currentMatching.size() == 2 &&
-                currentMatching.get(0) == KeyDecodingProfile.ESC_CODE &&
-                Character.isLetterOrDigit(currentMatching.get(1));
-    }
-
-    @Override
-    public boolean matches(List<Character> currentMatching) {
-        return currentMatching.get(0) == KeyDecodingProfile.ESC_CODE &&
-                (currentMatching.size() == 1 || (Character.isLetterOrDigit(currentMatching.get(1)) && currentMatching.size() == 2));
+    public Matching match(List<Character> seq) {
+        int size = seq.size();
+        if (size > 2 || seq.get(0) != KeyDecodingProfile.ESC_CODE) {
+            return null; // nope
+        }
+        if (size == 1) {
+            return Matching.NOT_YET; // maybe later
+        }
+        if ( Character.isISOControl(seq.get(1)) ) {
+            return null; // nope
+        }
+        KeyStroke ks = new KeyStroke(seq.get(1), false, true);
+        return new Matching( ks ); // yep
     }
 }

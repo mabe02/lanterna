@@ -4,7 +4,6 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TestUtils;
 
 import java.io.*;
-import java.net.URL;
 
 /**
  * Created by martin on 19/10/14.

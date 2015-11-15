@@ -258,6 +258,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
                     return null;
                 }
                 break;
+            default:
         }
         return mouseAction;
     }

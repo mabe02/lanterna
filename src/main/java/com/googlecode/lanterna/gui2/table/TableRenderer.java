@@ -1,8 +1,6 @@
 package com.googlecode.lanterna.gui2.table;
 
 import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.gui2.Component;
-import com.googlecode.lanterna.gui2.ComponentRenderer;
 import com.googlecode.lanterna.gui2.InteractableRenderer;
 import com.googlecode.lanterna.gui2.TextGUIGraphics;
 

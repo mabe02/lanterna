@@ -48,3 +48,9 @@ public class HelloWorld {
     }
 }
 ```
+
+### Screenshot
+
+Here's a screenshot of the above code, running:
+
+![](screenshots/hello_world.png)

@@ -18,7 +18,7 @@
  */
 package com.googlecode.lanterna.input;
 
-import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.input.CharacterPattern.Matching;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -28,13 +28,12 @@ import java.util.*;
 /**
  * Used to read the input stream character by character and generate {@code Key} objects to be put in the input queue.
  *
- * @author Martin
+ * @author Martin, Andreas
  */
 public class InputDecoder {
     private final Reader source;
     private final List<CharacterPattern> bytePatterns;
     private final List<Character> currentMatching;
-    private TerminalPosition lastReportedTerminalPosition;
     private boolean seenEOF;
     private int timeoutUnits;
 
@@ -46,7 +45,6 @@ public class InputDecoder {
         this.source = new BufferedReader(source);
         this.bytePatterns = new ArrayList<CharacterPattern>();
         this.currentMatching = new ArrayList<Character>();
-        this.lastReportedTerminalPosition = null;
         this.seenEOF = false;
         this.timeoutUnits = 0; // default is no wait at all
     }
@@ -59,7 +57,7 @@ public class InputDecoder {
     public void addProfile(KeyDecodingProfile profile) {
         for (CharacterPattern pattern : profile.getPatterns()) {
             synchronized(bytePatterns) {
-                //If an equivivalent pattern already exists, remove it first
+                //If an equivalent pattern already exists, remove it first
                 bytePatterns.remove(pattern);
                 bytePatterns.add(pattern);
             }
@@ -204,28 +202,8 @@ public class InputDecoder {
         }
 
         List<Character> bestSub = currentMatching.subList(0, bestLen );
-
-        if (bestMatch.getKeyType() == KeyType.CursorLocation) {
-            TerminalPosition cursorPosition = ScreenInfoCharacterPattern.getCursorPosition(bestSub);
-            if(cursorPosition != null && cursorPosition.getColumn() == 5 && cursorPosition.getRow() == 1) {
-                //Special case for CTRL + F3
-                bestMatch = new KeyStroke(KeyType.F3, true, false);
-            }
-            else {
-                lastReportedTerminalPosition = cursorPosition;
-            }
-        }
-
         bestSub.clear(); // remove matched characters from input
         return bestMatch;
-    }
-
-    /**
-     * Returns the last position the cursor was reported by the terminal to be at, after a user-triggered cursor report
-     * @return Position of the cursor, as declared by the last cursor report this InputDecoder has seen
-     */
-    public TerminalPosition getLastReportedTerminalPosition() {
-        return lastReportedTerminalPosition;
     }
 
     private Matching getBestMatch(List<Character> characterSequence) {
@@ -233,30 +211,13 @@ public class InputDecoder {
         KeyStroke bestMatch = null;
         synchronized(bytePatterns) {
             for(CharacterPattern pattern : bytePatterns) {
-                if(pattern.matches(characterSequence)) {
-                    if(pattern.isCompleteMatch(characterSequence)) {
-                        bestMatch = pattern.getResult(characterSequence);
-                    } else {
-                        partialMatch = true;
-                    }
+                Matching res = pattern.match(characterSequence);
+                if (res != null) {
+                    if (res.partialMatch) { partialMatch = true; }
+                    if (res.fullMatch != null) { bestMatch = res.fullMatch; }
                 }
             }
         }
         return new Matching(partialMatch, bestMatch);
-    }
-
-    private static class Matching {
-        final boolean partialMatch;
-        final KeyStroke fullMatch;
-
-        public Matching(boolean partialMatch, KeyStroke fullMatch) {
-            this.partialMatch = partialMatch;
-            this.fullMatch = fullMatch;
-        }
-
-        @Override
-        public String toString() {
-            return "Matching{" + "partialMatch=" + partialMatch + ", fullMatch=" + fullMatch + '}';
-        }
     }
 }
