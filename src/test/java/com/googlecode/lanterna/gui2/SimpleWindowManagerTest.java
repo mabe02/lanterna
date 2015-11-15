@@ -3,11 +3,8 @@ package com.googlecode.lanterna.gui2;
 import com.googlecode.lanterna.TestUtils;
 
 import java.io.*;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Test/example class for various kinds of window manager behaviours
@@ -101,7 +98,7 @@ public class SimpleWindowManagerTest extends TestBase {
 
             setComponent(content);
 
-            setHints(decorations ? Arrays.asList(Hint.FULL_SCREEN) : Arrays.asList(Hint.FULL_SCREEN, Hint.NO_DECORATIONS));
+            setHints(this.decorations ? Arrays.asList(Hint.FULL_SCREEN) : Arrays.asList(Hint.FULL_SCREEN, Hint.NO_DECORATIONS));
         }
     }
 

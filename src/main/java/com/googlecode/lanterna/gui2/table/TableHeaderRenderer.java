@@ -9,5 +9,5 @@ import com.googlecode.lanterna.gui2.TextGUIGraphics;
 public interface TableHeaderRenderer<V> {
     TerminalSize getPreferredSize(Table<V> table, String label, int columnIndex);
 
-    void drawHeader(Table table, String label, int index, TextGUIGraphics textGUIGraphics);
+    void drawHeader(Table<V> table, String label, int index, TextGUIGraphics textGUIGraphics);
 }
