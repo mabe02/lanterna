@@ -31,7 +31,7 @@ public class SwingTerminalDeviceConfiguration {
     /**
      * This is a static reference to the default terminal device configuration. Use this one if you are unsure.
      */
-    public static final SwingTerminalDeviceConfiguration getDefault() {
+    public static SwingTerminalDeviceConfiguration getDefault() {
         return new SwingTerminalDeviceConfiguration();
     }
 

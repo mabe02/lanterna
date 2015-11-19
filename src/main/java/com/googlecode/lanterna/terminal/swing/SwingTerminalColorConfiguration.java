@@ -32,7 +32,7 @@ public class SwingTerminalColorConfiguration {
      * This is the default settings that is used when you create a new SwingTerminal without specifying any color
      * configuration. It will use classic VGA colors for the ANSI palette and bright colors on bold text.
      */
-    public static final SwingTerminalColorConfiguration getDefault() {
+    public static SwingTerminalColorConfiguration getDefault() {
         return newInstance(SwingTerminalPalette.STANDARD_VGA);
     }
 

@@ -68,13 +68,13 @@ public class SwingTerminalFontConfiguration {
             "AR PL UMing CN"
     )));
 
-    private static final List<Font> getDefaultWindowsFonts() {
+    private static List<Font> getDefaultWindowsFonts() {
         return Collections.unmodifiableList(Arrays.asList(
                 new Font("Courier New", Font.PLAIN, 14), //Monospaced can look pretty bad on Windows, so let's override it
                 new Font("Monospaced", Font.PLAIN, 14)));
     }
 
-    private static final List<Font> getDefaultLinuxFonts() {
+    private static List<Font> getDefaultLinuxFonts() {
         return Collections.unmodifiableList(Arrays.asList(
                 new Font("DejaVu Sans Mono", Font.PLAIN, 14),
                 new Font("Monospaced", Font.PLAIN, 14),
@@ -92,7 +92,7 @@ public class SwingTerminalFontConfiguration {
                 new Font("AR PL UMing CN", Font.PLAIN, 14)));
     }
 
-    private static final List<Font> getDefaultFonts() {
+    private static List<Font> getDefaultFonts() {
         return Collections.unmodifiableList(Collections.singletonList(
                 new Font("Monospaced", Font.PLAIN, 14)));
     }
@@ -116,7 +116,7 @@ public class SwingTerminalFontConfiguration {
     /**
      * This is the default font settings that will be used if you don't specify anything
      */
-    public static final SwingTerminalFontConfiguration getDefault() {
+    public static SwingTerminalFontConfiguration getDefault() {
         return newInstance(filterMonospaced(selectDefaultFont()));
     }
 

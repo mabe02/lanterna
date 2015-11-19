@@ -83,7 +83,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
         this.readOnly = false;
         this.caretWarp = false;
         this.verticalFocusSwitching = true;
-        this.horizontalFocusSwitching = (   style == Style.SINGLE_LINE ? true : false);
+        this.horizontalFocusSwitching = (style == Style.SINGLE_LINE);
         this.caretPosition = TerminalPosition.TOP_LEFT_CORNER;
         this.maxLineLength = -1;
         this.longestRow = 1;    //To fit the cursor

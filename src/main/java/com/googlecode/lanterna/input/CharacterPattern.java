@@ -56,7 +56,7 @@ public interface CharacterPattern {
      * This can happen, if (e.g.) a single CharacterPattern-instance matches
      * both the Escape key and a longer Escape-sequence.
      */
-    static class Matching {
+    class Matching {
         public final KeyStroke fullMatch;
         public final boolean partialMatch;
         

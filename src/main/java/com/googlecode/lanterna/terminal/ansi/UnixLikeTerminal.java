@@ -68,7 +68,7 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
             OutputStream terminalOutput,
             Charset terminalCharset,
             CtrlCBehaviour terminalCtrlCBehaviour,
-            File ttyDev) throws IOException {
+            File ttyDev) {
         super(terminalInput, terminalOutput, terminalCharset);
         this.terminalCtrlCBehaviour = terminalCtrlCBehaviour;
         this.sttyStatusToRestore = null;

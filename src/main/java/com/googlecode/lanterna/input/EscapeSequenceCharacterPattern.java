@@ -39,7 +39,7 @@ import java.util.Map;
 public class EscapeSequenceCharacterPattern implements CharacterPattern {
     // state machine used to match key sequence:
     private enum State {
-        START, INTRO, NUM1, NUM2, DONE;
+        START, INTRO, NUM1, NUM2, DONE
     }
     // bit-values for modifier keys: only used internally
     public static final int SHIFT = 1, ALT = 2, CTRL = 4;
