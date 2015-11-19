@@ -27,7 +27,7 @@ import java.util.EnumSet;
 
 /**
  * This class hold the default logic for drawing the basic text graphic as exposed by TextGraphic. All implementations
- * reply on a setCharacter method being implemented in subclasses.
+ * rely on a setCharacter method being implemented in subclasses.
  * @author Martin
  */
 public abstract class AbstractTextGraphics implements TextGraphics {
