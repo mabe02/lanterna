@@ -16,19 +16,38 @@ public class ImmutableThemedTextGraphics implements ThemedTextGraphics {
     private final TextGraphics backend;
     private final Theme theme;
 
+    /**
+     * Creates a new {@code ImmutableThemedTextGraphics} with a specified backend for all drawing operations and a
+     * theme.
+     * @param backend Backend to send all drawing operations to
+     * @param theme Theme to be associated with this object
+     */
     public ImmutableThemedTextGraphics(TextGraphics backend, Theme theme) {
         this.backend = backend;
         this.theme = theme;
     }
 
+    /**
+     * Returns a new {@code ImmutableThemedTextGraphics} that targets the same backend but with another theme
+     * @param theme Theme the new {@code ImmutableThemedTextGraphics} is using
+     * @return New {@code ImmutableThemedTextGraphics} object that uses the same backend as this object
+     */
     public ImmutableThemedTextGraphics withTheme(Theme theme) {
         return new ImmutableThemedTextGraphics(backend, theme);
     }
 
+    /**
+     * Returns the underlying {@code TextGraphics} that is handling all drawing operations
+     * @return Underlying {@code TextGraphics} that is handling all drawing operations
+     */
     public TextGraphics getUnderlyingTextGraphics() {
         return backend;
     }
 
+    /**
+     * Returns the theme associated with this {@code ImmutableThemedTextGraphics}
+     * @return The theme associated with this {@code ImmutableThemedTextGraphics}
+     */
     public Theme getTheme() {
         return theme;
     }

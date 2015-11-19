@@ -42,6 +42,10 @@ public final class PropertiesTheme implements Theme {
 
     private final ThemeTreeNode rootNode;
 
+    /**
+     * Creates a new {@code PropertiesTheme} that is initialized by the properties value
+     * @param properties Properties to initialize this theme with
+     */
     public PropertiesTheme(Properties properties) {
         rootNode = new ThemeTreeNode();
         rootNode.foregroundMap.put(STYLE_NORMAL, TextColor.ANSI.WHITE);

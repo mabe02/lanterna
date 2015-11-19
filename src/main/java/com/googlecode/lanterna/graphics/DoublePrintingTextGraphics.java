@@ -30,9 +30,13 @@ import com.googlecode.lanterna.TerminalSize;
  * and compare it when running with the --square parameter and without.
  */
 public class DoublePrintingTextGraphics extends AbstractTextGraphics {
-    private final AbstractTextGraphics underlyingTextGraphics;
+    private final TextGraphics underlyingTextGraphics;
 
-    public DoublePrintingTextGraphics(AbstractTextGraphics underlyingTextGraphics) {
+    /**
+     * Creates a new {@code DoublePrintingTextGraphics} on top of a supplied {@code TextGraphics}
+     * @param underlyingTextGraphics backend {@code TextGraphics} to forward all the calls to
+     */
+    public DoublePrintingTextGraphics(TextGraphics underlyingTextGraphics) {
         this.underlyingTextGraphics = underlyingTextGraphics;
     }
 

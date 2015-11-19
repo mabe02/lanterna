@@ -26,7 +26,8 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 /**
- * Default implementation of ShapeRenderer
+ * Default implementation of ShapeRenderer. This class (and the interface) is mostly here to make the code cleaner in
+ * {@code AbstractTextGraphics}.
  * @author Martin
  */
 class DefaultShapeRenderer implements ShapeRenderer {

@@ -25,7 +25,7 @@ import java.util.Collection;
 import java.util.EnumSet;
 
 /**
- * TextGraphics implementation that does nothing, but has a size
+ * TextGraphics implementation that does nothing, but has a pre-defined size
  * @author martin
  */
 class NullTextGraphics implements TextGraphics {
@@ -35,6 +35,11 @@ class NullTextGraphics implements TextGraphics {
     private TabBehaviour tabBehaviour;
     private final EnumSet<SGR> activeModifiers;
 
+    /**
+     * Creates a new {@code NullTextGraphics} that will return the specified size value if asked how big it is but other
+     * than that ignore all other calls.
+     * @param size The size to report
+     */
     public NullTextGraphics(TerminalSize size) {
         this.size = size;
         this.foregroundColor = TextColor.ANSI.DEFAULT;

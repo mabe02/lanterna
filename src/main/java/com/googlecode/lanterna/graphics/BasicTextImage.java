@@ -26,8 +26,9 @@ import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.TextColor;
 
 /**
- * Simple implementation of TextImage that keeps the content as a two-dimensional TextCharacter array. If you copy 
- * between two BasicTextImage:s, they can use {@code System.arrayCopy} to make the operation faster(?).
+ * Simple implementation of TextImage that keeps the content as a two-dimensional TextCharacter array. Copy operations
+ * between two BasicTextImage classes are semi-optimized by using System.arraycopy instead of iterating over each
+ * character and copying them over one by one.
  * @author martin
  */
 public class BasicTextImage implements TextImage {

@@ -2,6 +2,12 @@ package com.googlecode.lanterna.graphics;
 
 import java.io.IOException;
 
+/**
+ * Describes an area that can be 'scrolled', by moving a range of lines up or down. Certain terminals will implement
+ * this through extensions and are much faster than if lanterna tries to manually erase and re-print the text.
+ *
+ * @author Andreas
+ */
 public interface Scrollable {
     /**
      * Scroll a range of lines of this Scrollable according to given distance.
