@@ -99,6 +99,7 @@ public class InputDecoder {
     }
     /**
      * queries the current timeoutUnits value. One unit is 1/4 second.
+     * @return The timeout this InputDecoder will use when waiting for additional input, in units of 1/4 seconds
      */
     public int getTimeoutUnits() {
         return timeoutUnits;

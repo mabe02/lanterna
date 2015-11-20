@@ -30,6 +30,11 @@ package com.googlecode.lanterna.input;
  * @author Martin
  */
 public enum KeyType {
+    /**
+     * This value corresponds to a regular character 'typed', usually alphanumeric or a symbol. The one special case
+     * here is the enter key which could be expected to be returned as a '\n' character but is actually returned as a
+     * separate {@KeyType} (see below). Tab, backspace and some others works this way too.
+     */
     Character,
     Escape,
     Backspace,
@@ -68,8 +73,19 @@ public enum KeyType {
     Unknown,
 
     //"Virtual" KeyStroke types
+    /**
+     * This value is only internally within Lanterna to understand where the cursor currently is, it's not expected to
+     * be returned by the API to an input read call.
+     */
     CursorLocation,
+    /**
+     * This type is not really a key stroke but actually a 'catch-all' for mouse related events. Please note that mouse
+     * event capturing must first be enabled and many terminals don't suppose this extension at all.
+     */
     MouseEvent,
+    /**
+     * This value is returned when you try to read input and the input stream has been closed.
+     */
     EOF,
     ;
 }

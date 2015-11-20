@@ -31,6 +31,11 @@ public class BasicCharacterPattern implements CharacterPattern {
     private final KeyStroke result;
     private final char[] pattern;
 
+    /**
+     * Creates a new BasicCharacterPattern that matches a particular sequence of characters into a {@code KeyStroke}
+     * @param result {@code KeyStroke} that this pattern will translate to
+     * @param pattern Sequence of characters that translates into the {@code KeyStroke}
+     */
     public BasicCharacterPattern(KeyStroke result, char... pattern) {
         this.result = result;
         this.pattern = pattern;
