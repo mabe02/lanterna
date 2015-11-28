@@ -22,13 +22,19 @@ package com.googlecode.lanterna.terminal.ansi;
 import com.googlecode.lanterna.TerminalSize;
 
 /**
- * Using this terminal size provider, your terminal will be set to a fixed size
- * and will never resize.
+ * Using this terminal size provider, your terminal will be set to a fixed size and will never receive any resize
+ * events. Of course if the physical terminal is resized, in reality it will have a different size, but the application
+ * won't know about it. The size reported to the user is always the size attached to this object.
  * @author martin
  */
 public class FixedTerminalSizeProvider implements UnixTerminalSizeQuerier {
     private final TerminalSize size;
 
+    /**
+     * Creating a {@code FixedTerminalSizeProvider} set to a particular size that it will always report whenever the
+     * associated {@code Terminal} interface queries.
+     * @param size Size the terminal should be statically initialized to
+     */
     public FixedTerminalSizeProvider(TerminalSize size) {
         this.size = size;
     }

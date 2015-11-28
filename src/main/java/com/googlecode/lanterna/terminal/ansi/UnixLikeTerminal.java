@@ -60,7 +60,6 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
      * @param terminalCtrlCBehaviour Special settings on how the terminal will behave, see {@code UnixTerminalMode} for more
      * details
      * @param ttyDev File to redirect standard input from in exec(), if not null.
-     * @throws java.io.IOException If there was an I/O error initializing the terminal
      */
     @SuppressWarnings({"SameParameterValue", "WeakerAccess"})
     public UnixLikeTerminal(

@@ -33,6 +33,7 @@ import javax.net.ServerSocketFactory;
  * {@code TelnetTerminal}, i.e. their content will not be in sync automatically but considered as two different
  * terminals.
  * @author martin
+ * @see TelnetTerminal
  * @see <a href="http://en.wikipedia.org/wiki/Telnet">Wikipedia</a>
  */
 @SuppressWarnings("WeakerAccess")

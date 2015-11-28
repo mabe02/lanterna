@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 /**
- *
+ * Contains an entire text buffer used by Swing terminal
  * @author martin
  */
 class TextBuffer {

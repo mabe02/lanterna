@@ -75,7 +75,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
     private volatile boolean blinkOn;
 
     /**
-     * Creates a new SwingTerminal with all the defaults set
+     * Creates a new SwingTerminal with all the defaults set and no scroll controller connected.
      */
     public SwingTerminal() {
         this(new TerminalScrollController.Null());

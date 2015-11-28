@@ -83,7 +83,7 @@ public final class DefaultTerminalFactory implements TerminalFactory {
         this.autoCloseTrigger = SwingTerminalFrame.AutoCloseTrigger.CloseOnExitPrivateMode;
         this.mouseCaptureMode = null;
 
-        //The following will be replaced by .getDefault() in the SwingTerminal is unchanged here
+        //SwingTerminal will replace these null values for the default implementation if they are unchanged
         this.colorConfiguration = null;
         this.deviceConfiguration = null;
         this.fontConfiguration = null;
@@ -196,6 +196,12 @@ public final class DefaultTerminalFactory implements TerminalFactory {
         return this;
     }
 
+    /**
+     * Sets the mouse capture mode the terminal should use. Please note that this is an extension which isn't widely
+     * supported!
+     * @param mouseCaptureMode Capture mode for mouse interactions
+     * @return Itself
+     */
     public DefaultTerminalFactory setMouseCaptureMode(MouseCaptureMode mouseCaptureMode) {
         this.mouseCaptureMode = mouseCaptureMode;
         return this;

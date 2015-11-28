@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * Contains the internal state of the Swing terminal
  * @author martin
  */
 class VirtualTerminal {

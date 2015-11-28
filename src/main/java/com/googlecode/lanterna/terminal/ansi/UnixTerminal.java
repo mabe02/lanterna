@@ -186,10 +186,28 @@ public class UnixTerminal extends UnixLikeTerminal {
     }
     */
 
+
+    /**
+     * This method causes certain keystrokes (at the moment only ctrl+c) to be passed in to the program instead of
+     * interpreted by the shell and affect the program. For example, ctrl+c will send an interrupt that causes the
+     * JVM to shut down, but this method will make it pass in ctrl+c as a normal KeyStroke instead (you can still make
+     * ctrl+c kill the application, but Lanterna can do this for you after having restored the terminal).
+     * <p/>
+     * Please note that this method is generally called automatically (i.e. it's turned on by default), unless you
+     * define a system property "com.googlecode.lanterna.terminal.UnixTerminal.catchSpecialCharacters" and set it to
+     * the string "false".
+     * @throws IOException If there was an I/O error when attempting to disable special characters
+     * @see com.googlecode.lanterna.terminal.ansi.UnixLikeTerminal.CtrlCBehaviour
+     */
     public void disableSpecialCharacters() throws IOException {
         exec(getSTTYCommand(), "intr", "undef");
     }
 
+    /**
+     * This method restores the special characters disabled by {@code disableSpecialCharacters()}, if it has been
+     * called.
+     * @throws IOException If there was an I/O error when attempting to restore special characters
+     */
     public void restoreSpecialCharacters() throws IOException {
         exec(getSTTYCommand(), "intr", "^C");
     }

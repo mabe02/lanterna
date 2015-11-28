@@ -345,23 +345,14 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
         return inPrivateMode;
     }
 
-    /**
-     * Synchronize with writerMutex externally!!!
-     */
     void reportPosition() throws IOException {
         writeCSISequenceToTerminal("6n".getBytes());
     }
 
-    /**
-     * Synchronize with writerMutex externally!!!
-     */
     void restoreCursorPosition() throws IOException {
         writeCSISequenceToTerminal("u".getBytes());
     }
 
-    /**
-     * Synchronize with writerMutex externally!!!
-     */
     void saveCursorPosition() throws IOException {
         writeCSISequenceToTerminal("s".getBytes());
     }

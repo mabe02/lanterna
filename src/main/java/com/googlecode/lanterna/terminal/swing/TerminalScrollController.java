@@ -19,7 +19,9 @@
 package com.googlecode.lanterna.terminal.swing;
 
 /**
- * This interface can be used to control the backlog scrolling of a SwingTerminal
+ * This interface can be used to control the backlog scrolling of a SwingTerminal. It's used as a callback by the
+ * {@code SwingTerminal} when it needs to fetch the scroll position and also used whenever the backlog changes to that
+ * some view class, like a scrollbar for example, can update its view accordingly.
  * @author Martin
  */
 public interface TerminalScrollController {

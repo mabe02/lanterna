@@ -33,10 +33,13 @@ import java.util.List;
 /**
  * This class is used by the {@code TelnetTerminalServer} class when a client has connected in; this class will be the
  * interaction point for that client. All operations are sent to the client over the network socket and some of the
- * meta-operations (like echo mode) are communicated using Telnet negotiation language.
+ * meta-operations (like echo mode) are communicated using Telnet negotiation language. You can't create objects of this
+ * class directly; they are created for you when you are listening for incoming connections using a
+ * {@code TelnetTerminalServer} and a client connects.
  * <p/>
- * A good resource on telnet communication is http://www.tcpipguide.com/free/t_TelnetProtocol.htm
+ * A good resource on telnet communication is http://www.tcpipguide.com/free/t_TelnetProtocol.htm<br/>
  * Also here: http://support.microsoft.com/kb/231866
+ * @see TelnetTerminalServer
  * @author martin
  */
 public class TelnetTerminal extends ANSITerminal {
@@ -46,14 +49,6 @@ public class TelnetTerminal extends ANSITerminal {
 
     TelnetTerminal(Socket socket, Charset terminalCharset) throws IOException {
         this(socket, new TelnetClientIACFilterer(socket.getInputStream()), socket.getOutputStream(), terminalCharset);
-    }
-
-    /**
-     * Returns the socket address for the remote endpoint of the telnet connection
-     * @return SocketAddress representing the remote client
-     */
-    public SocketAddress getRemoteSocketAddress() {
-        return socket.getRemoteSocketAddress();
     }
 
     //This weird construction is just so that we can access the input filter without changing the visibility in StreamBasedTerminal
@@ -75,6 +70,14 @@ public class TelnetTerminal extends ANSITerminal {
         setLineMode0();
         setEchoOff();
         setResizeNotificationOn();
+    }
+
+    /**
+     * Returns the socket address for the remote endpoint of the telnet connection
+     * @return SocketAddress representing the remote client
+     */
+    public SocketAddress getRemoteSocketAddress() {
+        return socket.getRemoteSocketAddress();
     }
     
     private void setEchoOff() throws IOException {

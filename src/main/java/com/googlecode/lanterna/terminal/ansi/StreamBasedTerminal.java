@@ -78,10 +78,10 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
     }
 
     /**
-     * Outputs a single character to the terminal output stream, translating any UTF-8 graphical symbol if necessary
+     * {@inheritDoc}
      *
-     * @param c Character to write to the output stream
-     * @throws java.io.IOException If there was an underlying I/O error
+     * The {@code StreamBasedTerminal} class will attempt to translate some unicode characters to VT100 if the encoding
+     * attached to this {@code Terminal} isn't UTF-8.
      */
     @Override
     public void putCharacter(char c) throws IOException {
@@ -142,6 +142,11 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
         inputDecoder.addProfile(profile);
     }
 
+    /**
+     * Returns the {@code InputDecoder} attached to this {@code StreamBasedTerminal}. Can be used to add additional
+     * character patterns to recognize and tune the way input is turned in {@code KeyStroke}:s.
+     * @return {@code InputDecoder} attached to this {@code StreamBasedTerminal}
+     */
     public InputDecoder getInputDecoder() {
         return inputDecoder;
     }
