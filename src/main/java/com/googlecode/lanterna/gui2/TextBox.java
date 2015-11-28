@@ -545,8 +545,12 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
             if(component.isReadOnly()) {
                 return null;
             }
+
+            //Adjust caret position if necessary
             TerminalPosition caretPosition = component.getCaretPosition();
             String line = component.getLine(caretPosition.getRow());
+            caretPosition = caretPosition.withColumn(Math.min(caretPosition.getColumn(), line.length()));
+
             return caretPosition
                     .withColumn(CJKUtils.getColumnIndex(line, caretPosition.getColumn()))
                     .withRelativeColumn(-viewTopLeft.getColumn())
@@ -628,9 +632,12 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
             graphics.fill(component.unusedSpaceCharacter);
 
             if(!component.isReadOnly()) {
-                //Adjust the view if necessary
+                //Adjust caret position if necessary
                 TerminalPosition caretPosition = component.getCaretPosition();
                 String caretLine = component.getLine(caretPosition.getRow());
+                caretPosition = caretPosition.withColumn(Math.min(caretPosition.getColumn(), caretLine.length()));
+
+                //Adjust the view if necessary
                 int trueColumnPosition = CJKUtils.getColumnIndex(caretLine, caretPosition.getColumn());
                 if (trueColumnPosition < viewTopLeft.getColumn()) {
                     viewTopLeft = viewTopLeft.withColumn(trueColumnPosition);
@@ -639,7 +646,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
                     viewTopLeft = viewTopLeft.withColumn(trueColumnPosition - textAreaSize.getColumns() + 1);
                 }
                 if (caretPosition.getRow() < viewTopLeft.getRow()) {
-                    viewTopLeft = viewTopLeft.withRow(component.getCaretPosition().getRow());
+                    viewTopLeft = viewTopLeft.withRow(caretPosition.getRow());
                 }
                 else if (caretPosition.getRow() >= textAreaSize.getRows() + viewTopLeft.getRow()) {
                     viewTopLeft = viewTopLeft.withRow(caretPosition.getRow() - textAreaSize.getRows() + 1);
