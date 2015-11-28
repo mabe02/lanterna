@@ -43,30 +43,36 @@ public interface Window extends BasePane {
          * the same as the window size.
          */
         public static final Hint NO_DECORATIONS = new Hint();
+
         /**
          * With this hint, the TextGUI system should skip running any post renderers for the window. By default this
          * means the window won't have any shadow.
          */
         public static final Hint NO_POST_RENDERING = new Hint();
+
         /**
          * With this hint, the window should never receive focus by the window manager
          */
         public static final Hint NO_FOCUS = new Hint();
+
         /**
          * With this hint, the window wants to be at the center of the terminal instead of using the cascading layout
          * which is the standard.
          */
         public static final Hint CENTERED = new Hint();
+
         /**
          * Windows with this hint should not be positioned by the window manager, rather they should use whatever
          * position is pre-set.
          */
         public static final Hint FIXED_POSITION = new Hint();
+
         /**
          * With this hint, don't let the window grow larger than the terminal screen, rather set components to a smaller
          * size than they prefer.
          */
         public static final Hint FIT_TERMINAL_WINDOW = new Hint();
+
         /**
          * This hint tells the window manager that this window should have exclusive access to the keyboard input until
          * it is closed. For window managers that allows the user to switch between open windows, putting a window on
@@ -80,6 +86,13 @@ public interface Window extends BasePane {
          * NO_DECORATIONS if you want the content area to take up the entire terminal.
          */
         public static final Hint FULL_SCREEN = new Hint();
+
+        /**
+         * This window hint tells the window manager that the window should be taking up almost the entire screen,
+         * leaving only a small space around it. This is different from {@code FULL_SCREEN} which takes all available
+         * space and completely hide the background and any other window behind it.
+         */
+        public static final Hint EXPANDED = new Hint();
 
         protected Hint() {
         }

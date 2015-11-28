@@ -95,6 +95,12 @@ public class DefaultWindowManager implements WindowManager {
                 position = TerminalPosition.TOP_LEFT_CORNER;
                 size = screenSize;
             }
+            else if(window.getHints().contains(Window.Hint.EXPANDED)) {
+                position = TerminalPosition.OFFSET_1x1;
+                size = screenSize.withRelative(
+                        -Math.min(4, screenSize.getColumns()),
+                        -Math.min(3, screenSize.getRows()));
+            }
             else if(window.getHints().contains(Window.Hint.FIT_TERMINAL_WINDOW) ||
                     window.getHints().contains(Window.Hint.CENTERED)) {
                 //If the window is too big for the terminal, move it up towards 0x0 and if that's not enough then shrink

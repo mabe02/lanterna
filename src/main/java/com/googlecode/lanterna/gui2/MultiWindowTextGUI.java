@@ -146,7 +146,8 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
         TerminalSize minimumTerminalSize = TerminalSize.ZERO;
         for(Window window: windows) {
             if(window.getHints().contains(Window.Hint.FULL_SCREEN) ||
-                    window.getHints().contains(Window.Hint.FIT_TERMINAL_WINDOW)) {
+                    window.getHints().contains(Window.Hint.FIT_TERMINAL_WINDOW) ||
+                    window.getHints().contains(Window.Hint.EXPANDED)) {
                 //Don't take full screen windows or auto-sized windows into account
                 continue;
             }

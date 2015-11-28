@@ -50,6 +50,18 @@ public class SimpleWindowManagerTest extends TestBase {
                 textGUI.addWindow(new FullScreenWindow(false));
             }
         }));
+        contentArea.addComponent(new Button("Expanded window", new Runnable() {
+            @Override
+            public void run() {
+                textGUI.addWindow(new ExpandedWindow(true));
+            }
+        }));
+        contentArea.addComponent(new Button("Undecorated + Expanded window", new Runnable() {
+            @Override
+            public void run() {
+                textGUI.addWindow(new ExpandedWindow(false));
+            }
+        }));
         contentArea.addComponent(new Button("Close", new Runnable() {
             @Override
             public void run() {
@@ -99,6 +111,26 @@ public class SimpleWindowManagerTest extends TestBase {
             setComponent(content);
 
             setHints(this.decorations ? Arrays.asList(Hint.FULL_SCREEN) : Arrays.asList(Hint.FULL_SCREEN, Hint.NO_DECORATIONS));
+        }
+    }
+
+    private class ExpandedWindow extends TestWindow {
+        private final boolean decorations;
+
+        public ExpandedWindow(boolean decorations) {
+            super("ExpandedWindow");
+            this.decorations = decorations;
+
+            Panel content = new Panel();
+            content.setLayoutManager(new BorderLayout());
+            TextBox textBox = new TextBox(TestUtils.downloadGPL(), TextBox.Style.MULTI_LINE);
+            textBox.setLayoutData(BorderLayout.Location.CENTER);
+            textBox.setReadOnly(true);
+            content.addComponent(textBox);
+
+            setComponent(content);
+
+            setHints(this.decorations ? Arrays.asList(Hint.EXPANDED) : Arrays.asList(Hint.EXPANDED, Hint.NO_DECORATIONS));
         }
     }
 
