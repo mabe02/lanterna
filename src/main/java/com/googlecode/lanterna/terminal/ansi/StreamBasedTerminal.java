@@ -38,6 +38,8 @@ import java.io.ByteArrayOutputStream;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * An abstract terminal implementing functionality for terminals using OutputStream/InputStream. You can extend from
@@ -57,7 +59,7 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
 
     private final InputDecoder inputDecoder;
     private final Queue<KeyStroke> keyQueue;
-    private final Object readMutex;
+    private final Lock readLock;
     
     @SuppressWarnings("WeakerAccess")
     public StreamBasedTerminal(InputStream terminalInput, OutputStream terminalOutput, Charset terminalCharset) {
@@ -71,7 +73,7 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
         }
         this.inputDecoder = new InputDecoder(new InputStreamReader(this.terminalInput, this.terminalCharset));
         this.keyQueue = new LinkedList<KeyStroke>();
-        this.readMutex = new Object();
+        this.readLock = new ReentrantLock();
         //noinspection ConstantConditions
     }
 
@@ -147,7 +149,8 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
     @SuppressWarnings("ConstantConditions")
     TerminalSize waitForTerminalSizeReport() throws IOException {
         long startTime = System.currentTimeMillis();
-        synchronized(readMutex) {
+        readLock.lock();
+        try {
             while(true) {
                 KeyStroke key = inputDecoder.getNextCharacter(false);
                 if(key == null) {
@@ -174,6 +177,9 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
                 }
             }
         }
+        finally {
+            readLock.unlock();
+        }
     }
 
     @Override
@@ -187,7 +193,8 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
     }
 
     private KeyStroke readInput(boolean blocking) throws IOException {
-        synchronized(readMutex) {
+        readLock.lock();
+        try {
             if(!keyQueue.isEmpty()) {
                 return keyQueue.poll();
             }
@@ -199,6 +206,9 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
             } else {
                 return key;
             }
+        }
+        finally {
+            readLock.unlock();
         }
     }
 
