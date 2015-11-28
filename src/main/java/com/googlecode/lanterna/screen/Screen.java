@@ -96,17 +96,23 @@ public interface Screen extends InputProvider, Scrollable {
     void setCursorPosition(TerminalPosition position);
 
     /**
-     * Gets the behaviour for what to do about tab characters.
+     * Gets the behaviour for what to do about tab characters. If a tab character is written to the Screen, it would
+     * cause issues because we don't know how the terminal emulator would render it and we wouldn't know what state the
+     * front-buffer is in. Because of this, we convert tabs to a determined number of spaces depending on different
+     * rules that are available.
      *
-     * @return Behaviour for how this Screen should treat tab characters
+     * @return Tab behaviour that is used currently
      * @see TabBehaviour
      */
     TabBehaviour getTabBehaviour();
 
     /**
-     * Sets the behaviour for what to do about tab characters.
+     * Sets the behaviour for what to do about tab characters. If a tab character is written to the Screen, it would
+     * cause issues because we don't know how the terminal emulator would render it and we wouldn't know what state the
+     * front-buffer is in. Because of this, we convert tabs to a determined number of spaces depending on different
+     * rules that are available.
      *
-     * @param tabBehaviour Behaviour for how this Screen should treat tab characters
+     * @param tabBehaviour Tab behaviour to use when converting a \t character to a spaces
      * @see TabBehaviour
      */
     void setTabBehaviour(TabBehaviour tabBehaviour);

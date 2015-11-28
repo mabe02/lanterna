@@ -30,6 +30,10 @@ import com.googlecode.lanterna.graphics.TextGraphics;
 class ScreenTextGraphics extends AbstractTextGraphics {
     private final Screen screen;
 
+    /**
+     * Creates a new {@code ScreenTextGraphics} targeting the specified screen
+     * @param screen Screen we are targeting
+     */
     ScreenTextGraphics(Screen screen) {
         super();
         this.screen = screen;

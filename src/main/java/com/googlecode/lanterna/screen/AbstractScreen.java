@@ -99,12 +99,6 @@ public abstract class AbstractScreen implements Screen {
         }
     }
 
-    /**
-     * Sets the behaviour for what to do about tab characters.
-     *
-     * @param tabBehaviour Tab behaviour to use
-     * @see TabBehaviour
-     */
     @Override
     public void setTabBehaviour(TabBehaviour tabBehaviour) {
         if(tabBehaviour != null) {
@@ -112,12 +106,6 @@ public abstract class AbstractScreen implements Screen {
         }
     }
 
-    /**
-     * Gets the behaviour for what to do about tab characters.
-     *
-     * @return Tab behaviour that is used currently
-     * @see TabBehaviour
-     */
     @Override
     public TabBehaviour getTabBehaviour() {
         return tabBehaviour;
@@ -194,7 +182,6 @@ public abstract class AbstractScreen implements Screen {
         refresh(RefreshType.AUTOMATIC);
     }
 
-
     @Override
     public synchronized void clear() {
         backBuffer.setAll(defaultCharacter);
@@ -217,10 +204,18 @@ public abstract class AbstractScreen implements Screen {
         return terminalSize;
     }
 
+    /**
+     * Returns the front buffer connected to this screen, don't use this unless you know what you are doing!
+     * @return This Screen's front buffer
+     */
     protected ScreenBuffer getFrontBuffer() {
         return frontBuffer;
     }
 
+    /**
+     * Returns the back buffer connected to this screen, don't use this unless you know what you are doing!
+     * @return This Screen's back buffer
+     */
     protected ScreenBuffer getBackBuffer() {
         return backBuffer;
     }
@@ -234,6 +229,10 @@ public abstract class AbstractScreen implements Screen {
         return null;
     }
 
+    /**
+     * Tells this screen that the size has changed and it should, at next opportunity, resize itself and its buffers
+     * @param newSize New size the 'real' terminal now has
+     */
     protected void addResizeRequest(TerminalSize newSize) {
         latestResizeRequest = newSize;
     }
