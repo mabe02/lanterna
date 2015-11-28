@@ -86,8 +86,9 @@ public class CJKUtils {
      * @param stringCharacterIndex Index within the string to get the terminal column index of
      * @return Index of the character inside the String at {@code stringCharacterIndex} when it has been writted to a
      * terminal
+     * @throws StringIndexOutOfBoundsException if the index given is outside the String length or negative
      */
-    public static int getColumnIndex(String s, int stringCharacterIndex) {
+    public static int getColumnIndex(String s, int stringCharacterIndex) throws StringIndexOutOfBoundsException {
         int index = 0;
         for(int i = 0; i < stringCharacterIndex; i++) {
             if(isCharCJK(s.charAt(i))) {
