@@ -39,6 +39,7 @@ public class AbstractWindow extends AbstractBasePane implements Window {
     private TerminalPosition lastKnownPosition;
     private TerminalPosition contentOffset;
     private Set<Hint> hints;
+    private boolean closeWindowWithEscape;
 
     public AbstractWindow() {
         this("");
@@ -52,8 +53,13 @@ public class AbstractWindow extends AbstractBasePane implements Window {
         this.lastKnownPosition = null;
         this.lastKnownSize = null;
         this.lastKnownDecoratedSize = null;
+        this.closeWindowWithEscape = false;
 
         this.hints = new HashSet<Hint>();
+    }
+
+    public void setCloseWindowWithEscape(boolean closeWindowWithEscape) {
+        this.closeWindowWithEscape = closeWindowWithEscape;
     }
 
     @Override
@@ -100,7 +106,7 @@ public class AbstractWindow extends AbstractBasePane implements Window {
     @Override
     public boolean handleInput(KeyStroke key) {
         boolean handled = super.handleInput(key);
-        if(!handled && key.getKeyType() == KeyType.Escape) {
+        if(!handled && closeWindowWithEscape && key.getKeyType() == KeyType.Escape) {
             close();
             return true;
         }

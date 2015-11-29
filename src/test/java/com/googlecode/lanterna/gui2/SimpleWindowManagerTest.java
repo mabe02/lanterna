@@ -143,6 +143,7 @@ public class SimpleWindowManagerTest extends TestBase {
                     close();
                 }
             }));
+            setCloseWindowWithEscape(true);
         }
     }
 }
