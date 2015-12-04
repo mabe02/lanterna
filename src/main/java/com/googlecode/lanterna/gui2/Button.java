@@ -19,6 +19,7 @@
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.CJKUtils;
+import com.googlecode.lanterna.I18n;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.graphics.ThemeDefinition;
@@ -72,6 +73,9 @@ public class Button extends AbstractInteractableComponent<Button> {
         }
         if(label.isEmpty()) {
             label = " ";
+        } else {
+            String i18nLabel = I18n.get("component.button." + label.toLowerCase());
+            label = i18nLabel != null && i18nLabel.trim().length() > 0 ? i18nLabel : label;
         }
         this.label = label;
         invalidate();
