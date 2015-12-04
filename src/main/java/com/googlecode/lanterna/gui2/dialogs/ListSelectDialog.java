@@ -56,7 +56,7 @@ public class ListSelectDialog<T> extends DialogWindow {
         if(canCancel) {
             Panel buttonPanel = new Panel();
             buttonPanel.setLayoutManager(new GridLayout(2).setHorizontalSpacing(1));
-            buttonPanel.addComponent(new Button("Cancel", new Runnable() {
+            buttonPanel.addComponent(new Button(LocalizedString.Cancel.toString(), new Runnable() {
                 @Override
                 public void run() {
                     onCancel();

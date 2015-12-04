@@ -103,7 +103,7 @@ public class FileDialog extends DialogWindow {
         okButton = new Button(actionLabel, new OkHandler());
         Panels.grid(2,
                 okButton,
-                new Button("Cancel", new CancelHandler()))
+                new Button(LocalizedString.Cancel.toString(), new CancelHandler()))
                 .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.END, GridLayout.Alignment.CENTER, false, false, 2, 1))
                 .addTo(contentPane);
 
