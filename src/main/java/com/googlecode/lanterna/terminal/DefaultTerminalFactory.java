@@ -119,11 +119,12 @@ public final class DefaultTerminalFactory implements TerminalFactory {
      * Sets a hint to the TerminalFactory of what size to use when creating the terminal. Most terminals are not created
      * on request but for example the SwingTerminal and SwingTerminalFrame are and this value will be passed down on
      * creation.
-     *
      * @param initialTerminalSize Size (in rows and columns) of the newly created terminal
+     * @return Reference to itself, so multiple .set-calls can be chained
      */
-    public void setInitialTerminalSize(TerminalSize initialTerminalSize) {
+    public DefaultTerminalFactory setInitialTerminalSize(TerminalSize initialTerminalSize) {
         this.initialTerminalSize = initialTerminalSize;
+        return this;
     }
 
     /**
