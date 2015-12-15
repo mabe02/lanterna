@@ -14,7 +14,6 @@ import java.util.ResourceBundle;
 public abstract class BundleLocator {
 
     private final String bundleName;
-    private final Map<Locale, ResourceBundle> bundles = new HashMap<Locale, ResourceBundle>();
     private static final ClassLoader loader = BundleLocator.class.getClassLoader();
 
     /**
@@ -26,7 +25,7 @@ public abstract class BundleLocator {
     }
 
     /**
-     * Method that centralizes the way to get the bundle key associated value.
+     * Method that centralizes the way to get the value associated to a bundle key.
      * @param locale the locale.
      * @param key the key searched for.
      * @param parameters the parameters to apply to the value associated to the key.
@@ -43,16 +42,12 @@ public abstract class BundleLocator {
     }
 
     /**
-     * Loads the right bundle, taking into account the overrated file if any.
+     * Gets the right bundle.<br/>
+     * A cache is handled as well as the concurrent accesses.
      * @param locale the locale.
      * @return the instance of the bundle.
      */
     private ResourceBundle getBundle(Locale locale) {
-        ResourceBundle bundle = bundles.get(locale);
-        if (bundle == null) {
-            bundle = ResourceBundle.getBundle(bundleName, locale, loader);
-            bundles.put(locale, bundle);
-        }
-        return bundle;
+        return ResourceBundle.getBundle(bundleName, locale, loader);
     }
 }
