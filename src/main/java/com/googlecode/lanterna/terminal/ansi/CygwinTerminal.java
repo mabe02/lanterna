@@ -34,7 +34,8 @@ import java.util.regex.Pattern;
  * not supported by this class.<p/>
  * <p/>
  * <b>NOTE:</b> This class is experimental and does not fully work! Some of the operations, like disabling echo and
- * changing cbreak seems to be impossible to do without resorting to native code.
+ * changing cbreak seems to be impossible to do without resorting to native code. Running "stty raw" before starting the
+ * JVM will improve compatibility.
  *
  * @author Martin
  * @author Andreas
