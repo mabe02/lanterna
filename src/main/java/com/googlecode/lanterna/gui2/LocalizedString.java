@@ -1,16 +1,16 @@
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.bundle.LocalizedUiBundle;
+import com.googlecode.lanterna.bundle.LocalizedUIBundle;
 
 import java.util.Locale;
 
 /**
  * Set of predefined localized string.<br/>
- * All this strings are localized by using {@link LocalizedUiBundle}.<br/>
+ * All this strings are localized by using {@link LocalizedUIBundle}.<br/>
  * Changing the locale by calling {@link Locale#setDefault(Locale)}.
  * @author silveryocha.
  */
-public class LocalizedString {
+public final class LocalizedString {
 
     public final static LocalizedString OK = new LocalizedString("short.label.ok");
     public final static LocalizedString Cancel = new LocalizedString("short.label.cancel");
@@ -30,6 +30,6 @@ public class LocalizedString {
 
     @Override
     public String toString() {
-        return LocalizedUiBundle.get(Locale.getDefault(), bundleKey);
+        return LocalizedUIBundle.get(Locale.getDefault(), bundleKey);
     }
 }
