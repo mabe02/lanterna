@@ -184,6 +184,19 @@ public class BasicTextImage implements TextImage {
             rows = startRowIndex;
             startRowIndex = 0;
         }
+
+        // If the destination offset is negative, adjust the source start indexes
+        if(destinationColumnOffset < 0) {
+            startColumnIndex -= destinationColumnOffset;
+            columns += destinationColumnOffset;
+            destinationColumnOffset = 0;
+        }
+        if(destinationRowOffset < 0) {
+            startRowIndex -= destinationRowOffset;
+            rows += destinationRowOffset;
+            destinationRowOffset = 0;
+        }
+
         //Make sure we can't copy more than is available
         columns = Math.min(buffer[0].length - startColumnIndex, columns);
         rows = Math.min(buffer.length - startRowIndex, rows);
