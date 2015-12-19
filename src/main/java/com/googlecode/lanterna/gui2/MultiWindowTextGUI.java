@@ -28,10 +28,7 @@ import com.googlecode.lanterna.screen.VirtualScreen;
 
 import java.io.EOFException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  *
@@ -126,7 +123,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
             }
         };
         this.backgroundPane.setComponent(background);
-        this.windows = new ArrayList<Window>();
+        this.windows = new LinkedList<Window>();
         this.postRenderer = postRenderer;
         this.eofWhenNoWindows = false;
     }
@@ -271,7 +268,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
             windows.add(window);
         }
         if(!window.getHints().contains(Window.Hint.NO_FOCUS)) {
-            activeWindow = window;
+            setActiveWindow(window);
         }
         invalidate();
         return this;
@@ -297,7 +294,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
             for(int index = windows.size() - 1; index >= 0; index--) {
                 Window candidate = windows.get(index);
                 if(!candidate.getHints().contains(Window.Hint.NO_FOCUS)) {
-                    activeWindow = candidate;
+                    setActiveWindow(candidate);
                     break;
                 }
             }
@@ -362,5 +359,46 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
         windows.add(window);
         invalidate();
         return this;
+    }
+
+    public WindowBasedTextGUI cycleActiveWindow(boolean reverse) {
+        synchronized(this) {
+            if(windows.isEmpty() || windows.size() == 1) {
+                return this;
+            }
+            Window originalActiveWindow = activeWindow;
+            Window nextWindow = getNextWindow(reverse, originalActiveWindow);
+            while(nextWindow.getHints().contains(Window.Hint.NO_FOCUS)) {
+                nextWindow = getNextWindow(reverse, nextWindow);
+                if(nextWindow == originalActiveWindow) {
+                    return this;
+                }
+            }
+
+            if(reverse) {
+                moveToTop(nextWindow);
+            }
+            else {
+                windows.remove(originalActiveWindow);
+                windows.add(0, originalActiveWindow);
+            }
+            setActiveWindow(nextWindow);
+            return this;
+        }
+    }
+
+    private Window getNextWindow(boolean reverse, Window window) {
+        int index = windows.indexOf(window);
+        if(reverse) {
+            if(++index >= windows.size()) {
+                index = 0;
+            }
+        }
+        else {
+            if(--index < 0) {
+                index = windows.size() - 1;
+            }
+        }
+        return windows.get(index);
     }
 }

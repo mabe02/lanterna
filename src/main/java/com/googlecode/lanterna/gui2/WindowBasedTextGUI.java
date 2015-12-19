@@ -115,6 +115,14 @@ public interface WindowBasedTextGUI extends ComponentBasedTextGUI {
     WindowBasedTextGUI moveToTop(Window window);
 
     /**
+     * Takes the previously active window and makes it active, or if in reverse mode, takes the window at the bottom of
+     * the stack, moves it to the front and makes it active.
+     * @param reverse Direction to cycle through the windows
+     * @return The WindowBasedTextGUI Itself
+     */
+    WindowBasedTextGUI cycleActiveWindow(boolean reverse);
+
+    /**
      * Waits for the specified window to be closed
      * @param abstractWindow Window to wait for
      */
