@@ -139,6 +139,7 @@ public class AbstractWindow extends AbstractBasePane implements Window {
     @Override
     public void setHints(Collection<Hint> hints) {
         this.hints = new HashSet<Hint>(hints);
+        invalidate();
     }
 
     @Override
