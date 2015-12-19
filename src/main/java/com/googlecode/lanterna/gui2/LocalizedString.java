@@ -21,6 +21,8 @@ public final class LocalizedString {
     public final static LocalizedString Ignore = new LocalizedString("short.label.ignore");
     public final static LocalizedString Retry = new LocalizedString("short.label.retry");
     public final static LocalizedString Continue = new LocalizedString("short.label.continue");
+    public final static LocalizedString Open = new LocalizedString("short.label.open");
+    public final static LocalizedString Save = new LocalizedString("short.label.save");
 
     private final String bundleKey;
 

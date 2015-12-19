@@ -84,7 +84,19 @@ public class DialogsTextGUIBasicTest {
                     File result = new FileDialogBuilder()
                             .setTitle("Open File")
                             .setDescription("Choose a file:")
-                            .setActionLabel("Open")
+                            .setActionLabel(LocalizedString.Open.toString())
+                            .build()
+                            .showDialog(textGUI);
+                    System.out.println("Result was: " + result);
+                }
+            });
+            dialogsListBox.addItem("File dialog (save)", new Runnable() {
+                @Override
+                public void run() {
+                    File result = new FileDialogBuilder()
+                            .setTitle("Save File")
+                            .setDescription("Choose a file:")
+                            .setActionLabel(LocalizedString.Save.toString())
                             .build()
                             .showDialog(textGUI);
                     System.out.println("Result was: " + result);
@@ -99,19 +111,19 @@ public class DialogsTextGUIBasicTest {
                             .addAction("First Item", new Runnable() {
                                 @Override
                                 public void run() {
-                                    MessageDialog.showMessageDialog(textGUI, "ACtion List Dialog", "You chose First Item", MessageDialogButton.OK);
+                                    MessageDialog.showMessageDialog(textGUI, "Action List Dialog", "You chose First Item", MessageDialogButton.OK);
                                 }
                             })
                             .addAction("Second Item", new Runnable() {
                                 @Override
                                 public void run() {
-                                    MessageDialog.showMessageDialog(textGUI, "ACtion List Dialog", "You chose Second Item", MessageDialogButton.OK);
+                                    MessageDialog.showMessageDialog(textGUI, "Action List Dialog", "You chose Second Item", MessageDialogButton.OK);
                                 }
                             })
                             .addAction("Third Item", new Runnable() {
                                 @Override
                                 public void run() {
-                                    MessageDialog.showMessageDialog(textGUI, "ACtion List Dialog", "You chose Third Item", MessageDialogButton.OK);
+                                    MessageDialog.showMessageDialog(textGUI, "Action List Dialog", "You chose Third Item", MessageDialogButton.OK);
                                 }
                             })
                             .build()
