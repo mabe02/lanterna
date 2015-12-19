@@ -87,7 +87,13 @@ public class DefaultWindowManager implements WindowManager {
         this.lastKnownScreenSize = screenSize;
         for(Window window: allWindows) {
             WindowDecorationRenderer decorationRenderer = getWindowDecorationRenderer(window);
-            TerminalSize contentAreaSize = window.getPreferredSize();
+            TerminalSize contentAreaSize;
+            if(window.getHints().contains(Window.Hint.FIXED_SIZE)) {
+                contentAreaSize = window.getSize();
+            }
+            else {
+                contentAreaSize = window.getPreferredSize();
+            }
             TerminalSize size = decorationRenderer.getDecoratedSize(window, contentAreaSize);
             TerminalPosition position = window.getPosition();
 

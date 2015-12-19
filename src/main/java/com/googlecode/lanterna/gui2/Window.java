@@ -68,6 +68,13 @@ public interface Window extends BasePane {
         public static final Hint FIXED_POSITION = new Hint();
 
         /**
+         * Windows with this hint should not be automatically sized by the window manager (using
+         * {@code getPreferredSize()}), rather should rely on the code manually setting the size of the window using
+         * {@code setSize(..)}.
+         */
+        public static final Hint FIXED_SIZE = new Hint();
+
+        /**
          * With this hint, don't let the window grow larger than the terminal screen, rather set components to a smaller
          * size than they prefer.
          */
