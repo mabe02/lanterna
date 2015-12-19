@@ -139,6 +139,13 @@ public interface Window extends BasePane {
     boolean isInvalid();
 
     /**
+     * Invalidates the whole window (including all of its child components) which will cause it to be recalculated
+     * and redrawn.
+     */
+    @Override
+    void invalidate();
+
+    /**
      * Returns the size this window would like to be
      * @return Desired size of this window
      */

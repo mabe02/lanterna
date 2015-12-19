@@ -48,8 +48,11 @@ public abstract class AbstractBasePane implements BasePane {
         return invalid || contentHolder.isInvalid();
     }
 
-    protected void invalidate() {
+    public void invalidate() {
         invalid = true;
+
+        //Propagate
+        contentHolder.invalidate();
     }
 
     @Override

@@ -50,6 +50,12 @@ public interface BasePane extends Composite {
     boolean isInvalid();
 
     /**
+     * Invalidates the whole root container (including all of its child components) which will cause them all to be
+     * recalculated (for containers) and redrawn.
+     */
+    void invalidate();
+
+    /**
      * Called by the GUI system to delegate a keyboard input event. The root container will decide what to do with this
      * input, usually sending it to one of its sub-components, but if it isn't able to find any handler for this input
      * it should return {@code false} so that the GUI system can take further decisions on what to do with it.

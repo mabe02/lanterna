@@ -53,7 +53,7 @@ public class Panel extends AbstractComponent<Panel> implements Container {
             components.add(component);
             component.onAdded(this);
         }
-        invalidateStructure();
+        invalidate();
         return this;
     }
 
@@ -86,7 +86,7 @@ public class Panel extends AbstractComponent<Panel> implements Container {
             components.remove(index);
             component.onRemoved(this);
         }
-        invalidateStructure();
+        invalidate();
         return true;
     }
 
@@ -104,7 +104,7 @@ public class Panel extends AbstractComponent<Panel> implements Container {
             layoutManager = new AbsoluteLayout();
         }
         this.layoutManager = layoutManager;
-        invalidateStructure();
+        invalidate();
         return this;
     }
 
@@ -164,7 +164,7 @@ public class Panel extends AbstractComponent<Panel> implements Container {
                 return true;
             }
         }
-        return super.isInvalid() || layoutManager.hasChanged() || needsReLayout;
+        return super.isInvalid() || layoutManager.hasChanged();
     }    
 
     @Override
@@ -263,9 +263,14 @@ public class Panel extends AbstractComponent<Panel> implements Container {
         }
     }
 
-    private void invalidateStructure() {
-        needsReLayout = true;
-        invalidate();
+    @Override
+    public void invalidate() {
+        super.invalidate();
+
+        //Propagate
+        for(Component component: components) {
+            component.invalidate();
+        }
     }
 
     private void layout(TerminalSize size) {

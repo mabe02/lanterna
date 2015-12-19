@@ -89,10 +89,18 @@ public abstract class AbstractComposite<T extends Container> extends AbstractCom
         }
         return false;
     }
-    
+
     @Override
     public boolean isInvalid() {
         return component != null && component.isInvalid();
+    }
+
+    @Override
+    public void invalidate() {
+        super.invalidate();
+
+        //Propagate
+        component.invalidate();
     }
 
     @Override

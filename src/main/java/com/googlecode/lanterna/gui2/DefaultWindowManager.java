@@ -106,6 +106,9 @@ public class DefaultWindowManager implements WindowManager {
                 size = screenSize.withRelative(
                         -Math.min(4, screenSize.getColumns()),
                         -Math.min(3, screenSize.getRows()));
+                if(!size.equals(window.getDecoratedSize())) {
+                    window.invalidate();
+                }
             }
             else if(window.getHints().contains(Window.Hint.FIT_TERMINAL_WINDOW) ||
                     window.getHints().contains(Window.Hint.CENTERED)) {
