@@ -363,7 +363,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
 
     public WindowBasedTextGUI cycleActiveWindow(boolean reverse) {
         synchronized(this) {
-            if(windows.isEmpty() || windows.size() == 1) {
+            if(windows.isEmpty() || windows.size() == 1 || activeWindow.getHints().contains(Window.Hint.MODAL)) {
                 return this;
             }
             Window originalActiveWindow = activeWindow;
