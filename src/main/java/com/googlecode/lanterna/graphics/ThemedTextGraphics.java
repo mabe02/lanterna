@@ -24,6 +24,12 @@ package com.googlecode.lanterna.graphics;
  */
 public interface ThemedTextGraphics extends TextGraphics {
     /**
+     * Returns the {@code Theme} object active on this {@code ThemedTextGraphics}
+     * @return Active {@code Theme} object
+     */
+    Theme getTheme();
+
+    /**
      * Retrieves the ThemeDefinition associated with the class parameter passed in. The implementation should make sure
      * that there is always a fallback available if there's no direct definition for this class; the method should never
      * return null.

@@ -38,6 +38,11 @@ public final class TextGUIGraphics implements ThemedTextGraphics, TextGraphics {
         this.textGUI = textGUI;
     }
 
+    @Override
+    public Theme getTheme() {
+        return backend.getTheme();
+    }
+
     public TextGUIGraphics withTheme(Theme theme) {
         return new TextGUIGraphics(textGUI, backend.getUnderlyingTextGraphics(), theme);
     }
