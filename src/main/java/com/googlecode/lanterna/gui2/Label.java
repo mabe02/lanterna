@@ -51,9 +51,24 @@ public class Label extends AbstractComponent<Label> {
     }
 
     public void setText(String text) {
-        setLines(splitIntoMultipleLines(text));
-        this.preferredSize = getBounds(lines, preferredSize);
-        invalidate();
+        synchronized(this) {
+            setLines(splitIntoMultipleLines(text));
+            this.preferredSize = getBounds(lines, preferredSize);
+            invalidate();
+        }
+    }
+
+    public String getText() {
+        synchronized(this) {
+            if(lines.length == 0) {
+                return "";
+            }
+            StringBuilder bob = new StringBuilder(lines[0]);
+            for(int i = 1; i < lines.length; i++) {
+                bob.append("\n").append(lines[i]);
+            }
+            return bob.toString();
+        }
     }
 
     protected String[] splitIntoMultipleLines(String text) {
