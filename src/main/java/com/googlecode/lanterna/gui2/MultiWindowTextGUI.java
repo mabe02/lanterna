@@ -18,6 +18,8 @@
  */
 package com.googlecode.lanterna.gui2;
 
+import com.googlecode.lanterna.graphics.BasicTextImage;
+import com.googlecode.lanterna.graphics.TextImage;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
@@ -178,18 +180,26 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
         backgroundPane.draw(graphics);
         getWindowManager().prepareWindows(this, Collections.unmodifiableList(windows), graphics.getSize());
         for(Window window: windows) {
-            TextGUIGraphics windowGraphics = graphics.newTextGraphics(window.getPosition(), window.getDecoratedSize());
-            if(window.getHints().contains(Window.Hint.NO_DECORATIONS)) {
-                window.draw(windowGraphics);
-                window.setContentOffset(TerminalPosition.TOP_LEFT_CORNER);
-            }
-            else {
+            // First draw windows to a buffer, then copy it to the real destination. This is to make physical off-screen
+            // drawing work better.
+            // TODO: Don't create one every frame!!
+            TextImage textImage = new BasicTextImage(window.getDecoratedSize());
+            TextGUIGraphics windowGraphics = new TextGUIGraphics(this, textImage.newTextGraphics(), graphics.getTheme());
+
+            TerminalPosition contentOffset = TerminalPosition.TOP_LEFT_CORNER;
+            if(!window.getHints().contains(Window.Hint.NO_DECORATIONS)) {
                 WindowDecorationRenderer decorationRenderer = getWindowManager().getWindowDecorationRenderer(window);
-                TextGUIGraphics windowInnerGraphics = decorationRenderer.draw(this, windowGraphics, window);
-                window.draw(windowInnerGraphics);
-                window.setContentOffset(decorationRenderer.getOffset(window));
-                Borders.joinLinesWithFrame(windowGraphics);
+                windowGraphics = decorationRenderer.draw(this, windowGraphics, window);
+                contentOffset = decorationRenderer.getOffset(window);
             }
+
+            window.draw(windowGraphics);
+            window.setContentOffset(contentOffset);
+            Borders.joinLinesWithFrame(windowGraphics);
+
+            //TextGUIGraphics realGraphics = graphics.newTextGraphics(window.getPosition(), window.getDecoratedSize());
+            graphics.drawImage(window.getPosition(), textImage);
+
             if(postRenderer != null && !window.getHints().contains(Window.Hint.NO_POST_RENDERING)) {
                 postRenderer.postRender(graphics, this, window);
             }
