@@ -97,6 +97,9 @@ public abstract class AbstractScreen implements Screen {
                 && position.getRow() >= 0 && position.getRow() < terminalSize.getRows()) {
             this.cursorPosition = position;
         }
+        else {
+            this.cursorPosition = null;
+        }
     }
 
     @Override
