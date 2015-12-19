@@ -99,7 +99,7 @@ public class AbstractWindow extends AbstractBasePane implements Window {
         if(!graphics.getSize().equals(lastKnownSize)) {
             getComponent().invalidate();
         }
-        lastKnownSize = graphics.getSize();
+        setSize(graphics.getSize(), false);
         super.draw(graphics);
     }
 
@@ -159,6 +159,18 @@ public class AbstractWindow extends AbstractBasePane implements Window {
     @Override
     public final TerminalSize getSize() {
         return lastKnownSize;
+    }
+
+    @Override
+    public void setSize(TerminalSize size) {
+        setSize(size, true);
+    }
+
+    public void setSize(TerminalSize size, boolean invalidate) {
+        this.lastKnownSize = size;
+        if(invalidate) {
+            invalidate();
+        }
     }
 
     @Override

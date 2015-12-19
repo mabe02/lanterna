@@ -185,6 +185,16 @@ public interface Window extends BasePane {
     TerminalSize getSize();
 
     /**
+     * This method is called by the GUI system to update the window on how large it is, excluding window decorations.
+     * Calling this yourself will generally make no difference in the size of the window, since it will be reset on the
+     * next redraw based on how large area the TextGraphics given is covering. However, if you add the FIXED_SIZE
+     * window hint, the auto-size calculation will be turned off and you can use this method to set how large you want
+     * the window to be.
+     * @param size New size of the window
+     */
+    void setSize(TerminalSize size);
+
+    /**
      * Returns the last known size of the window including window decorations put on by the window manager. The value
      * returned here is passed in during drawing by the TextGUI through {@code setDecoratedSize(..)}.
      * @return Size of the window, including window decorations
