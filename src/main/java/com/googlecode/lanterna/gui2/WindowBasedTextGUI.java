@@ -96,6 +96,14 @@ public interface WindowBasedTextGUI extends ComponentBasedTextGUI {
      */
     Window getActiveWindow();
 
+
+    /**
+     * Returns the container for the background, which works as a single large component that takes up the whole
+     * terminal area and is always behind all windows.
+     * @return The {@code BasePane} used by this {@code WindowBasedTextGUI}
+     */
+    BasePane getBackgroundPane();
+
     /**
      * Windows are internally stored as a stack and newer windows are added at the top of the stack. The GUI system will
      * render windows in a predictable order from bottom to top. This method allows you to move a Window from its

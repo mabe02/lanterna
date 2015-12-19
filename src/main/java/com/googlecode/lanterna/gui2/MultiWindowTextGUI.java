@@ -348,6 +348,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
         return activeWindow;
     }
 
+    @Override
     public BasePane getBackgroundPane() {
         return backgroundPane;
     }
