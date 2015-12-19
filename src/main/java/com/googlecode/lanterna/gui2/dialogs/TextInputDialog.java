@@ -35,13 +35,13 @@ public class TextInputDialog extends DialogWindow {
 
         Panel buttonPanel = new Panel();
         buttonPanel.setLayoutManager(new GridLayout(2).setHorizontalSpacing(1));
-        buttonPanel.addComponent(new Button("OK", new Runnable() {
+        buttonPanel.addComponent(new Button(LocalizedString.OK.toString(), new Runnable() {
             @Override
             public void run() {
                 onOK();
             }
         }).setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER, GridLayout.Alignment.CENTER, true, false)));
-        buttonPanel.addComponent(new Button("Cancel", new Runnable() {
+        buttonPanel.addComponent(new Button(LocalizedString.Cancel.toString(), new Runnable() {
             @Override
             public void run() {
                 onCancel();
