@@ -69,23 +69,26 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
 
     @Override
     public Result handleKeyStroke(KeyStroke keyStroke) {
-        switch (keyStroke.getKeyType()) {
-            case ArrowDown:
-                return Result.MOVE_FOCUS_DOWN;
-            case ArrowLeft:
-                return Result.MOVE_FOCUS_LEFT;
-            case ArrowRight:
-                return Result.MOVE_FOCUS_RIGHT;
-            case ArrowUp:
-                return Result.MOVE_FOCUS_UP;
-            case Tab:
-                return Result.MOVE_FOCUS_NEXT;
-            case ReverseTab:
-                return Result.MOVE_FOCUS_PREVIOUS;
-            case MouseEvent:
-                getBasePane().setFocusedInteractable(this);
-                return Result.HANDLED;
-            default:
+        // Skip the keystroke if ctrl, alt or shift was down
+        if(!keyStroke.isAltDown() && !keyStroke.isCtrlDown() && !keyStroke.isShiftDown()) {
+            switch(keyStroke.getKeyType()) {
+                case ArrowDown:
+                    return Result.MOVE_FOCUS_DOWN;
+                case ArrowLeft:
+                    return Result.MOVE_FOCUS_LEFT;
+                case ArrowRight:
+                    return Result.MOVE_FOCUS_RIGHT;
+                case ArrowUp:
+                    return Result.MOVE_FOCUS_UP;
+                case Tab:
+                    return Result.MOVE_FOCUS_NEXT;
+                case ReverseTab:
+                    return Result.MOVE_FOCUS_PREVIOUS;
+                case MouseEvent:
+                    getBasePane().setFocusedInteractable(this);
+                    return Result.HANDLED;
+                default:
+            }
         }
         return Result.UNHANDLED;
     }
