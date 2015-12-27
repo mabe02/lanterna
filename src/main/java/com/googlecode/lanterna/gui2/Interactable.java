@@ -45,11 +45,12 @@ public interface Interactable extends Component {
      * the key stroke was not understood by this component and may be dealt with in another way. If event was processed
      * properly, it should return {@code Result.HANDLED}, which will make the GUI system stop processing this particular
      * key-stroke. Furthermore, if the component understood the key-stroke and would like to move focus to a different
-     * component, there are the {@code Result.MOVE_FOCUS_*} values.
+     * component, there are the {@code Result.MOVE_FOCUS_*} values. This method should be invoking the input filter, if
+     * it is set, to see if the input should be processed or not.
      * @param keyStroke What input was entered by the user
      * @return Result of processing the key-stroke
      */
-    Result handleKeyStroke(KeyStroke keyStroke);
+    Result handleInput(KeyStroke keyStroke);
 
     /**
      * Moves focus in the {@code BasePane} to this component. If the component has not been added to a {@code BasePane}
@@ -77,6 +78,21 @@ public interface Interactable extends Component {
      * @return {@code true} if the interactable has input focus, {@code false} otherwise
      */
     boolean isFocused();
+
+    /**
+     * Assigns an input filter to the interactable component. This will intercept any user input and decide if the input
+     * should be passed on to the component or not. {@code null} means there is no filter.
+     * @param inputFilter Input filter to assign to the interactable
+     * @return Itself
+     */
+    Interactable setInputFilter(InputFilter inputFilter);
+
+    /**
+     * Returns the input filter currently assigned to the interactable component. This will intercept any user input and
+     * decide if the input should be passed on to the component or not. {@code null} means there is no filter.
+     * @return Input filter currently assigned to the interactable component
+     */
+    InputFilter getInputFilter();
 
     /**
      * Enum to represent the various results coming out of the handleKeyStroke method

@@ -30,12 +30,14 @@ import com.googlecode.lanterna.input.KeyStroke;
  */
 public abstract class AbstractInteractableComponent<T extends AbstractInteractableComponent<T>> extends AbstractComponent<T> implements Interactable {
 
+    private InputFilter inputFilter;
     private boolean inFocus;
 
     /**
      * Default constructor
      */
     protected AbstractInteractableComponent() {
+        inputFilter = null;
         inFocus = false;
     }
 
@@ -108,7 +110,24 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
     }
 
     @Override
-    public Result handleKeyStroke(KeyStroke keyStroke) {
+    public final synchronized Result handleInput(KeyStroke keyStroke) {
+        if(inputFilter == null || inputFilter.onInput(this, keyStroke)) {
+            return handleKeyStroke(keyStroke);
+        }
+        else {
+            return Result.UNHANDLED;
+        }
+    }
+
+    /**
+     * This method can be overridden to handle various user input (mostly from the keyboard) when this component is in
+     * focus. The input method from the interface, {@code handleInput(..)} is final in
+     * {@code AbstractInteractableComponent} to ensure the input filter is properly handled. If the filter decides that
+     * this event should be processed, it will call this method.
+     * @param keyStroke What input was entered by the user
+     * @return Result of processing the key-stroke
+     */
+    protected Result handleKeyStroke(KeyStroke keyStroke) {
         // Skip the keystroke if ctrl, alt or shift was down
         if(!keyStroke.isAltDown() && !keyStroke.isCtrlDown() && !keyStroke.isShiftDown()) {
             switch(keyStroke.getKeyType()) {
@@ -136,5 +155,16 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
     @Override
     public TerminalPosition getCursorLocation() {
         return getRenderer().getCursorLocation(self());
+    }
+
+    @Override
+    public InputFilter getInputFilter() {
+        return inputFilter;
+    }
+
+    @Override
+    public synchronized T setInputFilter(InputFilter inputFilter) {
+        this.inputFilter = inputFilter;
+        return self();
     }
 }

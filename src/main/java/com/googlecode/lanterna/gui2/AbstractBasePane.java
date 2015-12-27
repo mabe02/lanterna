@@ -79,12 +79,12 @@ public abstract class AbstractBasePane implements BasePane {
             MouseAction mouseAction = (MouseAction)key;
             TerminalPosition localCoordinates = fromGlobal(mouseAction.getPosition());
             Interactable interactable = interactableLookupMap.getInteractableAt(localCoordinates);
-            interactable.handleKeyStroke(key);
+            interactable.handleInput(key);
         }
         else if(focusedInteractable != null) {
             Interactable next = null;
             Interactable.FocusChangeDirection direction = Interactable.FocusChangeDirection.TELEPORT; //Default
-            Interactable.Result result = focusedInteractable.handleKeyStroke(key);
+            Interactable.Result result = focusedInteractable.handleInput(key);
             if(!enableDirectionBasedMovements) {
                 if(result == Interactable.Result.MOVE_FOCUS_DOWN || result == Interactable.Result.MOVE_FOCUS_RIGHT) {
                     result = Interactable.Result.MOVE_FOCUS_NEXT;
