@@ -32,8 +32,20 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
 
     private boolean inFocus;
 
+    /**
+     * Default constructor
+     */
     protected AbstractInteractableComponent() {
         inFocus = false;
+    }
+
+    @Override
+    public Interactable takeFocus() {
+        BasePane basePane = getBasePane();
+        if(basePane != null) {
+            basePane.setFocusedInteractable(this);
+        }
+        return this;
     }
 
     /**

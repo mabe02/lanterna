@@ -52,6 +52,13 @@ public interface Interactable extends Component {
     Result handleKeyStroke(KeyStroke keyStroke);
 
     /**
+     * Moves focus in the {@code BasePane} to this component. If the component has not been added to a {@code BasePane}
+     * (i.e. a {@code Window} most of the time), does nothing.
+     * @return Itself
+     */
+    Interactable takeFocus();
+
+    /**
      * Method called when this component gained keyboard focus.
      * @param direction What direction did the focus come from
      * @param previouslyInFocus Which component had focus previously ({@code null} if none)
