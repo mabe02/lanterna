@@ -24,7 +24,9 @@ import java.util.List;
 /**
  * Layout manager that places components where they are manually specified to be and sizes them to the size they are 
  * manually assigned to. When using the AbsoluteLayout, please use setPosition(..) and setSize(..) manually on each
- * component to choose where to place them.
+ * component to choose where to place them. Components that have not had their position and size explicitly set will
+ * not be visible.
+ *
  * @author martin
  */
 public class AbsoluteLayout implements LayoutManager {

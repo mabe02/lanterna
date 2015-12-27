@@ -1,8 +1,14 @@
 package com.googlecode.lanterna.gui2;
 
 /**
- * Created by martin on 20/06/15.
+ * Factory class for creating {@code TextGUIThread} objects. This is used by {@code TextGUI} implementations to assign
+ * their local {@code TextGUIThread} reference
  */
 public interface TextGUIThreadFactory {
+    /**
+     * Creates a new {@code TextGUIThread} objects
+     * @param textGUI {@code TextGUI} this {@code TextGUIThread} should be associated with
+     * @return The new {@code TextGUIThread}
+     */
     TextGUIThread createTextGUIThread(TextGUI textGUI);
 }

@@ -23,7 +23,11 @@ import java.util.Collection;
 
 /**
  * Container is a component that contains a collection of child components. The basic example of an implementation of 
- * this is the {@code Panel} class which uses a layout manager to size and position the children over its area.
+ * this is the {@code Panel} class which uses a layout manager to size and position the children over its area. Note
+ * that there is no method for adding components to the container, since this depends on the implementation. In general,
+ * composites that contains one one (or zero) children, the method for specifying the child is in {@code Composite}.
+ * Multi-child containers are generally using the {@code Panel} implementation which has an {@code addComponent(..)}
+ * method.
  * @author Martin
  */
 public interface Container extends Component {

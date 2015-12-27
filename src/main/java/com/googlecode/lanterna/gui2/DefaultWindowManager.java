@@ -6,7 +6,10 @@ import com.googlecode.lanterna.TerminalSize;
 import java.util.List;
 
 /**
- * The default window manager implementation used by Lanterna
+ * The default window manager implementation used by Lanterna. New windows will be generally added in a tiled manner,
+ * starting in the top-left corner and moving down-right as new windows are added. By using the various window hints
+ * that are available you have some control over how the window manager will place and size the windows.
+ *
  * @author Martin
  */
 public class DefaultWindowManager implements WindowManager {
@@ -14,18 +17,47 @@ public class DefaultWindowManager implements WindowManager {
     private final WindowDecorationRenderer windowDecorationRenderer;
     private TerminalSize lastKnownScreenSize;
 
+    /**
+     * Default constructor, will create a window manager that uses {@code DefaultWindowDecorationRenderer} for drawing
+     * window decorations. Any size calculations done before the text GUI has actually been started and displayed on
+     * the terminal will assume the terminal size is 80x24.
+     */
     public DefaultWindowManager() {
         this(new DefaultWindowDecorationRenderer());
     }
 
+    /**
+     * Creates a new {@code DefaultWindowManager} with a specific window decoration renderer. Any size calculations done
+     * before the text GUI has actually been started and displayed on the terminal will assume the terminal size is
+     * 80x24.
+     *
+     * @param windowDecorationRenderer Window decoration renderer to use when drawing windows
+     */
     public DefaultWindowManager(WindowDecorationRenderer windowDecorationRenderer) {
         this(windowDecorationRenderer, null);
     }
 
+    /**
+     * Creates a new {@code DefaultWindowManager} using a {@code DefaultWindowDecorationRenderer} for drawing window
+     * decorations. Any size calculations done before the text GUI has actually been started and displayed on the
+     * terminal will use the size passed in with the {@code initialScreenSize} parameter
+     *
+     * @param initialScreenSize Size to assume the terminal has until the text GUI is started and can be notified of the
+     *                          correct size
+     */
     public DefaultWindowManager(TerminalSize initialScreenSize) {
         this(new DefaultWindowDecorationRenderer(), initialScreenSize);
     }
 
+    /**
+     * Creates a new {@code DefaultWindowManager} using a specified {@code windowDecorationRenderer} for drawing window
+     * decorations. Any size calculations done before the text GUI has actually been started and displayed on the
+     * terminal will use the size passed in with the {@code initialScreenSize} parameter
+     *
+     * @param windowDecorationRenderer Window decoration renderer to use when drawing windows
+     * @param initialScreenSize Size to assume the terminal has until the text GUI is started and can be notified of the
+     *                          correct size
+     */
     public DefaultWindowManager(WindowDecorationRenderer windowDecorationRenderer, TerminalSize initialScreenSize) {
         this.windowDecorationRenderer = windowDecorationRenderer;
         if(initialScreenSize != null) {

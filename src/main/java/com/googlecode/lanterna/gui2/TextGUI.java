@@ -71,6 +71,12 @@ public interface TextGUI {
     TextGUIThread getGUIThread();
 
     /**
+     * Returns the interactable component currently in focus
+     * @return Component that is currently in input focus
+     */
+    Interactable getFocusedInteractable();
+
+    /**
      * Adds a listener to this TextGUI to fire events on.
      * @param listener Listener to add
      */

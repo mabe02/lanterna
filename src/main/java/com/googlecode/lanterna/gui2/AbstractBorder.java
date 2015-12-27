@@ -23,7 +23,8 @@ import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 
 /**
- *
+ * Abstract implementation of {@code Border} interface that has some of the methods filled out. If you want to create
+ * your own {@code Border} implementation, should should probably extend from this.
  * @author Martin
  */
 public abstract class AbstractBorder extends AbstractComposite<Border> implements Border {

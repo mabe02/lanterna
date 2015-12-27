@@ -27,6 +27,18 @@ import java.util.concurrent.CountDownLatch;
  * needs to be explicitly started in order for the event processing loop to begin, so you must call {@code start()}
  * for this. The GUI thread will stop if {@code stop()} is called, the input stream returns EOF or an exception is
  * thrown from inside the event handling loop.
+ * <p/>
+ * Here is an example of how to use this {@code TextGUIThread}:
+ * <pre>
+ *     {@code
+ *     MultiWindowTextGUI textGUI = new MultiWindowTextGUI(new SeparateTextGUIThread.Factory(), screen);
+ *     // ... add components ...
+ *     ((AsynchronousTextGUIThread)textGUI.getGUIThread()).start();
+ *     // ... this thread will continue while the GUI runs on a separate thread ...
+ *     }
+ * </pre>
+ * @see TextGUIThread
+ * @see SameTextGUIThread
  * @author Martin
  */
 public class SeparateTextGUIThread extends AbstractTextGUIThread implements AsynchronousTextGUIThread {
@@ -34,7 +46,7 @@ public class SeparateTextGUIThread extends AbstractTextGUIThread implements Asyn
     private final Thread textGUIThread;
     private final CountDownLatch waitLatch;
 
-    SeparateTextGUIThread(TextGUI textGUI) {
+    private SeparateTextGUIThread(TextGUI textGUI) {
         super(textGUI);
         this.waitLatch = new CountDownLatch(1);
         this.textGUIThread = new Thread("LanternaGUI") {

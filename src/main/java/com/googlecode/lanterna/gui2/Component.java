@@ -22,7 +22,9 @@ import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 
 /**
- *
+ * This is the main interface defining a component in Lanterna, although you will probably not implement this directly
+ * but rather extend the {@code AbstractComponent} or another one of the sub-classes instead to avoid implementing most
+ * of the methods in this interface.
  * @author Martin
  */
 public interface Component extends TextGUIElement {

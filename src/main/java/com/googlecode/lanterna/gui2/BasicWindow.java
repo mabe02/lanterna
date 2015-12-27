@@ -19,15 +19,25 @@
 package com.googlecode.lanterna.gui2;
 
 /**
- * Simple AbstractWindow implementation that you can use with extending to build a Text GUI window
+ * Simple AbstractWindow implementation that you can use as a building block when creating new windows without having
+ * to create new classes.
+ *
  * @author Martin
  */
 public class BasicWindow extends AbstractWindow {
 
+    /**
+     * Default constructor, creates a new window with no title
+     */
     public BasicWindow() {
         super();
     }
 
+    /**
+     * This constructor creates a window with a specific title, that is (probably) going to be displayed in the window
+     * decoration
+     * @param title Title of the window
+     */
     public BasicWindow(String title) {
         super(title);
     }

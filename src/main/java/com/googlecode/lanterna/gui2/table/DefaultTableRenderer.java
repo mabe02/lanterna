@@ -9,7 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by martin on 23/08/15.
+ * Default implementation of {@code TableRenderer}
+ * @param <V> Type of data stored in each table cell
+ * @author Martin
  */
 public class DefaultTableRenderer<V> implements TableRenderer<V> {
 
@@ -27,6 +29,9 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
     private List<Integer> rowSizes;
     private int headerSizeInRows;
 
+    /**
+     * Default constructor
+     */
     public DefaultTableRenderer() {
         verticalScrollBar = new ScrollBar(Direction.VERTICAL);
         horizontalScrollBar = new ScrollBar(Direction.HORIZONTAL);

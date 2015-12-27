@@ -27,21 +27,38 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * Created by martin on 29/09/14.
+ * This is a list box implementation where each item has its own checked state that can be toggled on and off
+ * @author Martin
  */
 public class CheckBoxList<V> extends AbstractListBox<V, CheckBoxList<V>> {
-
+    /**
+     * Listener interface that can be attached to the {@code CheckBoxList} in order to be notified on user actions
+     */
     public interface Listener {
+        /**
+         * Called by the {@code CheckBoxList} when the user changes the toggle state of one item
+         * @param itemIndex Index of the item that was toggled
+         * @param checked If the state of the item is now checked, this will be {@code true}, otherwise {@code false}
+         */
         void onStatusChanged(int itemIndex, boolean checked);
     }
 
     private final List<Listener> listeners;
     private final List<Boolean> itemStatus;
 
+    /**
+     * Creates a new {@code CheckBoxList} that is initially empty and has no hardcoded preferred size, so it will
+     * attempt to be as big as necessary to draw all items.
+     */
     public CheckBoxList() {
         this(null);
     }
 
+    /**
+     * Creates a new {@code CheckBoxList} that is initially empty and has a pre-defined size that it will request. If
+     * there are more items that can fit in this size, the list box will use scrollbars.
+     * @param preferredSize Size the list box should request, no matter how many items it contains
+     */
     public CheckBoxList(TerminalSize preferredSize) {
         super(preferredSize);
         this.listeners = new CopyOnWriteArrayList<Listener>();
@@ -54,11 +71,9 @@ public class CheckBoxList<V> extends AbstractListBox<V, CheckBoxList<V>> {
     }
 
     @Override
-    public CheckBoxList<V> clearItems() {
-        synchronized(this) {
-            itemStatus.clear();
-            return super.clearItems();
-        }
+    public synchronized CheckBoxList<V> clearItems() {
+        itemStatus.clear();
+        return super.clearItems();
     }
 
     @Override
@@ -72,39 +87,51 @@ public class CheckBoxList<V> extends AbstractListBox<V, CheckBoxList<V>> {
      * @param checkedState If <code>true</code>, the new item will be initially checked
      * @return Itself
      */
-    public CheckBoxList<V> addItem(V object, boolean checkedState) {
-        synchronized(this) {
-            itemStatus.add(checkedState);
-            return super.addItem(object);
-        }
+    public synchronized CheckBoxList<V> addItem(V object, boolean checkedState) {
+        itemStatus.add(checkedState);
+        return super.addItem(object);
     }
 
-    public Boolean isChecked(V object) {
-        synchronized(this) {
-            if(indexOf(object) == -1)
-                return null;
+    /**
+     * Checks if a particular item is part of the check box list and returns a boolean value depending on the toggle
+     * state of the item.
+     * @param object Object to check the status of
+     * @return If the item wasn't found in the list box, {@code null} is returned, otherwise {@code true} or
+     * {@code false} depending on checked state of the item
+     */
+    public synchronized Boolean isChecked(V object) {
+        if(indexOf(object) == -1)
+            return null;
 
-            return itemStatus.get(indexOf(object));
-        }
+        return itemStatus.get(indexOf(object));
     }
 
-    public Boolean isChecked(int index) {
-        synchronized(this) {
-            if(index < 0 || index >= itemStatus.size())
-                return null;
+    /**
+     * Checks if a particular item is part of the check box list and returns a boolean value depending on the toggle
+     * state of the item.
+     * @param index Index of the item to check the status of
+     * @return If the index was not valid in the list box, {@code null} is returned, otherwise {@code true} or
+     * {@code false} depending on checked state of the item at that index
+     */
+    public synchronized Boolean isChecked(int index) {
+        if(index < 0 || index >= itemStatus.size())
+            return null;
 
-            return itemStatus.get(index);
-        }
+        return itemStatus.get(index);
     }
 
-    public CheckBoxList<V> setChecked(V object, boolean checked) {
-        synchronized(this) {
-            int index = indexOf(object);
-            if(index != -1) {
-                setChecked(index, checked);
-            }
-            return self();
+    /**
+     * Programmatically sets the checked state of an item in the list box
+     * @param object Object to set the checked state of
+     * @param checked If {@code true}, then the item is set to checked, otherwise not
+     * @return Itself
+     */
+    public synchronized CheckBoxList<V> setChecked(V object, boolean checked) {
+        int index = indexOf(object);
+        if(index != -1) {
+            setChecked(index, checked);
         }
+        return self();
     }
 
     private void setChecked(final int index, final boolean checked) {
@@ -119,45 +146,61 @@ public class CheckBoxList<V> extends AbstractListBox<V, CheckBoxList<V>> {
         });
     }
 
-    public List<V> getCheckedItems() {
-        synchronized(this) {
-            List<V> result = new ArrayList<V>();
-            for(int i = 0; i < itemStatus.size(); i++) {
-                if(itemStatus.get(i)) {
-                    result.add(getItemAt(i));
-                }
+    /**
+     * Returns all the items in the list box that have checked state, as a list
+     * @return List of all items in the list box that has checked state on
+     */
+    public synchronized List<V> getCheckedItems() {
+        List<V> result = new ArrayList<V>();
+        for(int i = 0; i < itemStatus.size(); i++) {
+            if(itemStatus.get(i)) {
+                result.add(getItemAt(i));
             }
-            return result;
         }
+        return result;
     }
 
-    public CheckBoxList<V> addListener(Listener listener) {
+    /**
+     * Adds a new listener to the {@code CheckBoxList} that will be called on certain user actions
+     * @param listener Listener to attach to this {@code CheckBoxList}
+     * @return Itself
+     */
+    public synchronized CheckBoxList<V> addListener(Listener listener) {
         if(listener != null && !listeners.contains(listener)) {
             listeners.add(listener);
         }
         return this;
     }
 
+    /**
+     * Removes a listener from this {@code CheckBoxList} so that if it had been added earlier, it will no longer be
+     * called on user actions
+     * @param listener Listener to remove from this {@code CheckBoxList}
+     * @return Itself
+     */
     public CheckBoxList<V> removeListener(Listener listener) {
         listeners.remove(listener);
         return this;
     }
 
     @Override
-    public Result handleKeyStroke(KeyStroke keyStroke) {
-        synchronized(this) {
-            if(keyStroke.getKeyType() == KeyType.Enter ||
-                    (keyStroke.getKeyType() == KeyType.Character && keyStroke.getCharacter() == ' ')) {
-                if(itemStatus.get(getSelectedIndex()))
-                    setChecked(getSelectedIndex(), Boolean.FALSE);
-                else
-                    setChecked(getSelectedIndex(), Boolean.TRUE);
-                return Result.HANDLED;
-            }
+    public synchronized Result handleKeyStroke(KeyStroke keyStroke) {
+        if(keyStroke.getKeyType() == KeyType.Enter ||
+                (keyStroke.getKeyType() == KeyType.Character && keyStroke.getCharacter() == ' ')) {
+            if(itemStatus.get(getSelectedIndex()))
+                setChecked(getSelectedIndex(), Boolean.FALSE);
+            else
+                setChecked(getSelectedIndex(), Boolean.TRUE);
+            return Result.HANDLED;
         }
         return super.handleKeyStroke(keyStroke);
     }
 
+    /**
+     * Default renderer for this component which is used unless overridden. The checked state is drawn on the left side
+     * of the item label using a "[ ]" block filled with an X if the item has checked state on
+     * @param <V>
+     */
     public static class CheckBoxListItemRenderer<V> extends ListItemRenderer<V,CheckBoxList<V>> {
         @Override
         protected int getHotSpotPositionOnLine(int selectedIndex) {

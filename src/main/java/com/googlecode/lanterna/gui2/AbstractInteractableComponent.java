@@ -22,9 +22,10 @@ import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.input.KeyStroke;
 
 /**
- * Default implementation of Interactable that extends from AbstractComponent. You will want to extend from this class
- * if you want to make your own interactable component.
- * @param <T> Type of renderer you which to use for this class
+ * Default implementation of Interactable that extends from AbstractComponent. If you want to write your own component
+ * that is interactable, i.e. can receive keyboard (and mouse) input, you probably want to extend from this class as
+ * it contains some common implementations of the methods from {@code Interactable} interface
+ * @param <T> Should always be itself, see {@code AbstractComponent}
  * @author Martin
  */
 public abstract class AbstractInteractableComponent<T extends AbstractInteractableComponent<T>> extends AbstractComponent<T> implements Interactable {
@@ -35,23 +36,50 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
         inFocus = false;
     }
 
+    /**
+     * {@inheritDoc}
+     * <p/>
+     * This method is final in {@code AbstractInteractableComponent}, please override {@code afterEnterFocus} instead
+     */
     @Override
     public final void onEnterFocus(FocusChangeDirection direction, Interactable previouslyInFocus) {
         inFocus = true;
         afterEnterFocus(direction, previouslyInFocus);
     }
 
+    /**
+     * Called by {@code AbstractInteractableComponent} automatically after this component has received input focus. You
+     * can override this method if you need to trigger some action based on this.
+     * @param direction How focus was transferred, keep in mind this is from the previous component's point of view so
+     *                  if this parameter has value DOWN, focus came in from above
+     * @param previouslyInFocus Which interactable component had focus previously
+     */
+    @SuppressWarnings("EmptyMethod")
     protected void afterEnterFocus(FocusChangeDirection direction, Interactable previouslyInFocus) {
+        //By default no action
     }
 
+    /**
+     * {@inheritDoc}
+     * <p/>
+     * This method is final in {@code AbstractInteractableComponent}, please override {@code afterLeaveFocus} instead
+     */
     @Override
     public final void onLeaveFocus(FocusChangeDirection direction, Interactable nextInFocus) {
         inFocus = false;
         afterLeaveFocus(direction, nextInFocus);
     }
 
+    /**
+     * Called by {@code AbstractInteractableComponent} automatically after this component has lost input focus. You
+     * can override this method if you need to trigger some action based on this.
+     * @param direction How focus was transferred, keep in mind this is from the this component's point of view so
+     *                  if this parameter has value DOWN, focus is moving down to a component below
+     * @param nextInFocus Which interactable component is going to receive focus
+     */
     @SuppressWarnings("EmptyMethod")
     protected void afterLeaveFocus(FocusChangeDirection direction, Interactable nextInFocus) {
+        //By default no action
     }
 
     @Override

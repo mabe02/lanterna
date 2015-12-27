@@ -43,10 +43,19 @@ public final class TextGUIGraphics implements ThemedTextGraphics, TextGraphics {
         return backend.getTheme();
     }
 
+    /**
+     * Returns a new {@code TextGUIGraphics} object that has another theme attached to it
+     * @param theme Theme to be used with the new {@code TextGUIGraphics}
+     * @return New {@code TextGUIGraphics} that has the specified theme
+     */
     public TextGUIGraphics withTheme(Theme theme) {
         return new TextGUIGraphics(textGUI, backend.getUnderlyingTextGraphics(), theme);
     }
 
+    /**
+     * Returns the {@code TextGUI} this {@code TextGUIGraphics} belongs to
+     * @return {@code TextGUI} this {@code TextGUIGraphics} belongs to
+     */
     public TextGUI getTextGUI() {
         return textGUI;
     }

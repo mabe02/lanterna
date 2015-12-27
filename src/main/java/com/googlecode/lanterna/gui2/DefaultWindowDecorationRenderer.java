@@ -22,7 +22,10 @@ import com.googlecode.lanterna.*;
 import com.googlecode.lanterna.graphics.ThemeDefinition;
 
 /**
- * Default window decoration renderer
+ * Default window decoration renderer that is used unless overridden with another decoration renderer. The windows are
+ * drawn using a bevel colored line and the window title in the top-left corner, very similar to ordinary titled
+ * borders.
+ *
  * @author Martin
  */
 public class DefaultWindowDecorationRenderer implements WindowDecorationRenderer {

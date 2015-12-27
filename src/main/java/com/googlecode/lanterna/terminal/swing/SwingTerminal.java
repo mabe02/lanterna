@@ -351,9 +351,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
         }
 
         g.dispose();
-        synchronized(this) {
-            notifyAll();
-        }
+        notifyAll();
     }
 
     private Color deriveTrueForegroundColor(TextCharacter character, boolean atCursorLocation) {

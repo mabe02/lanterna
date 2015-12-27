@@ -27,13 +27,38 @@ import java.util.*;
  * This emulates the behaviour of the GridLayout in SWT (as opposed to the one in AWT/Swing). I originally ported the
  * SWT class itself but due to licensing concerns (the eclipse license is not compatible with LGPL) I was advised not to
  * do that. This is a partial implementation and some of the semantics have changed, but in general it works the same
- * way.
+ * way so the SWT documentation will generally match.
+ * <p/>
+ * You use the {@code GridLayout} by specifying a number of columns you want your grid to have and then when you add
+ * components, you assign {@code LayoutData} to these components using the different static methods in this class
+ * ({@code createLayoutData(..)}). You can set components to span both rows and columns, as well as defining how to
+ * distribute the available space.
  */
 public class GridLayout implements LayoutManager {
+    /**
+     * The enum is used to specify where in a grid cell a component should be placed, in the case that the preferred
+     * size of the component is smaller than the space in the cell. This class will generally use two alignments, one
+     * for horizontal and one for vertical.
+     */
     public enum Alignment {
+        /**
+         * Place the component at the start of the cell (horizontally or vertically) and leave whatever space is left
+         * after the preferred size empty.
+         */
         BEGINNING,
+        /**
+         * Place the component at the middle of the cell (horizontally or vertically) and leave the space before and
+         * after empty.
+         */
         CENTER,
+        /**
+         * Place the component at the end of the cell (horizontally or vertically) and leave whatever space is left
+         * before the preferred size empty.
+         */
         END,
+        /**
+         * Force the component to be the same size as the table cell
+         */
         FILL,
         ;
     }
@@ -75,10 +100,34 @@ public class GridLayout implements LayoutManager {
             1,
             1);
 
+    /**
+     * Creates a layout data object for {@code GridLayout}:s that specify the horizontal and vertical alignment for the
+     * component in case the cell space is larger than the preferred size of the component
+     * @param horizontalAlignment Horizontal alignment strategy
+     * @param verticalAlignment Vertical alignment strategy
+     * @return The layout data object containing the specified alignments
+     */
     public static LayoutData createLayoutData(Alignment horizontalAlignment, Alignment verticalAlignment) {
         return createLayoutData(horizontalAlignment, verticalAlignment, false, false);
     }
 
+    /**
+     * Creates a layout data object for {@code GridLayout}:s that specify the horizontal and vertical alignment for the
+     * component in case the cell space is larger than the preferred size of the component. This method also has fields
+     * for indicating that the component would like to take more space if available to the container. For example, if
+     * the container is assigned is assigned an area of 50x15, but all the child components in the grid together only
+     * asks for 40x10, the remaining 10 columns and 5 rows will be empty. If just a single component asks for extra
+     * space horizontally and/or vertically, the grid will expand out to fill the entire area and the text space will be
+     * assigned to the component that asked for it.
+     *
+     * @param horizontalAlignment Horizontal alignment strategy
+     * @param verticalAlignment Vertical alignment strategy
+     * @param grabExtraHorizontalSpace If set to {@code true}, this component will ask to be assigned extra horizontal
+     *                                 space if there is any to assign
+     * @param grabExtraVerticalSpace If set to {@code true}, this component will ask to be assigned extra vertical
+     *                                 space if there is any to assign
+     * @return The layout data object containing the specified alignments and size requirements
+     */
     public static LayoutData createLayoutData(
             Alignment horizontalAlignment,
             Alignment verticalAlignment,
@@ -88,6 +137,26 @@ public class GridLayout implements LayoutManager {
         return createLayoutData(horizontalAlignment, verticalAlignment, grabExtraHorizontalSpace, grabExtraVerticalSpace, 1, 1);
     }
 
+    /**
+     * Creates a layout data object for {@code GridLayout}:s that specify the horizontal and vertical alignment for the
+     * component in case the cell space is larger than the preferred size of the component. This method also has fields
+     * for indicating that the component would like to take more space if available to the container. For example, if
+     * the container is assigned is assigned an area of 50x15, but all the child components in the grid together only
+     * asks for 40x10, the remaining 10 columns and 5 rows will be empty. If just a single component asks for extra
+     * space horizontally and/or vertically, the grid will expand out to fill the entire area and the text space will be
+     * assigned to the component that asked for it. It also puts in data on how many rows and/or columns the component
+     * should span.
+     *
+     * @param horizontalAlignment Horizontal alignment strategy
+     * @param verticalAlignment Vertical alignment strategy
+     * @param grabExtraHorizontalSpace If set to {@code true}, this component will ask to be assigned extra horizontal
+     *                                 space if there is any to assign
+     * @param grabExtraVerticalSpace If set to {@code true}, this component will ask to be assigned extra vertical
+     *                                 space if there is any to assign
+     * @param horizontalSpan How many "cells" this component wants to span horizontally
+     * @param verticalSpan How many "cells" this component wants to span vertically
+     * @return The layout data object containing the specified alignments, size requirements and cell spanning
+     */
     public static LayoutData createLayoutData(
             Alignment horizontalAlignment,
             Alignment verticalAlignment,
@@ -105,6 +174,12 @@ public class GridLayout implements LayoutManager {
                 verticalSpan);
     }
 
+    /**
+     * This is a shortcut method that will create a grid layout data object that will expand its cell as much as is can
+     * horizontally and make the component occupy the whole area horizontally and center it vertically
+     * @param horizontalSpan How many cells to span horizontally
+     * @return Layout data object with the specified span and horizontally expanding as much as it can
+     */
     public static LayoutData createHorizontallyFilledLayoutData(int horizontalSpan) {
         return createLayoutData(
                 Alignment.FILL,
@@ -115,6 +190,12 @@ public class GridLayout implements LayoutManager {
                 1);
     }
 
+    /**
+     * This is a shortcut method that will create a grid layout data object that will expand its cell as much as is can
+     * vertically and make the component occupy the whole area vertically and center it horizontally
+     * @param horizontalSpan How many cells to span vertically
+     * @return Layout data object with the specified span and vertically expanding as much as it can
+     */
     public static LayoutData createHorizontallyEndAlignedLayoutData(int horizontalSpan) {
         return createLayoutData(
                 Alignment.END,
@@ -135,6 +216,11 @@ public class GridLayout implements LayoutManager {
 
     private boolean changed;
 
+    /**
+     * Creates a new {@code GridLayout} with the specified number of columns. Initially, this layout will have a
+     * horizontal spacing of 1 and vertical spacing of 0, with a left and right margin of 1.
+     * @param numberOfColumns Number of columns in this grid
+     */
     public GridLayout(int numberOfColumns) {
         this.numberOfColumns = numberOfColumns;
         this.horizontalSpacing = 1;
@@ -146,10 +232,19 @@ public class GridLayout implements LayoutManager {
         this.changed = true;
     }
 
+    /**
+     * Returns the horizontal spacing, i.e. the number of empty columns between each cell
+     * @return Horizontal spacing
+     */
     public int getHorizontalSpacing() {
         return horizontalSpacing;
     }
 
+    /**
+     * Sets the horizontal spacing, i.e. the number of empty columns between each cell
+     * @param horizontalSpacing New horizontal spacing
+     * @return Itself
+     */
     public GridLayout setHorizontalSpacing(int horizontalSpacing) {
         if(horizontalSpacing < 0) {
             throw new IllegalArgumentException("Horizontal spacing cannot be less than 0");
@@ -159,10 +254,19 @@ public class GridLayout implements LayoutManager {
         return this;
     }
 
+    /**
+     * Returns the vertical spacing, i.e. the number of empty columns between each row
+     * @return Vertical spacing
+     */
     public int getVerticalSpacing() {
         return verticalSpacing;
     }
 
+    /**
+     * Sets the vertical spacing, i.e. the number of empty columns between each row
+     * @param verticalSpacing New vertical spacing
+     * @return Itself
+     */
     public GridLayout setVerticalSpacing(int verticalSpacing) {
         if(verticalSpacing < 0) {
             throw new IllegalArgumentException("Vertical spacing cannot be less than 0");
@@ -172,10 +276,19 @@ public class GridLayout implements LayoutManager {
         return this;
     }
 
+    /**
+     * Returns the top margin, i.e. number of empty rows above the first row in the grid
+     * @return Top margin, in number of rows
+     */
     public int getTopMarginSize() {
         return topMarginSize;
     }
 
+    /**
+     * Sets the top margin, i.e. number of empty rows above the first row in the grid
+     * @param topMarginSize Top margin, in number of rows
+     * @return Itself
+     */
     public GridLayout setTopMarginSize(int topMarginSize) {
         if(topMarginSize < 0) {
             throw new IllegalArgumentException("Top margin size cannot be less than 0");
@@ -185,10 +298,19 @@ public class GridLayout implements LayoutManager {
         return this;
     }
 
+    /**
+     * Returns the bottom margin, i.e. number of empty rows below the last row in the grid
+     * @return Bottom margin, in number of rows
+     */
     public int getBottomMarginSize() {
         return bottomMarginSize;
     }
 
+    /**
+     * Sets the bottom margin, i.e. number of empty rows below the last row in the grid
+     * @param bottomMarginSize Bottom margin, in number of rows
+     * @return Itself
+     */
     public GridLayout setBottomMarginSize(int bottomMarginSize) {
         if(bottomMarginSize < 0) {
             throw new IllegalArgumentException("Bottom margin size cannot be less than 0");
@@ -198,10 +320,19 @@ public class GridLayout implements LayoutManager {
         return this;
     }
 
+    /**
+     * Returns the left margin, i.e. number of empty columns left of the first column in the grid
+     * @return Left margin, in number of columns
+     */
     public int getLeftMarginSize() {
         return leftMarginSize;
     }
 
+    /**
+     * Sets the left margin, i.e. number of empty columns left of the first column in the grid
+     * @param leftMarginSize Left margin, in number of columns
+     * @return Itself
+     */
     public GridLayout setLeftMarginSize(int leftMarginSize) {
         if(leftMarginSize < 0) {
             throw new IllegalArgumentException("Left margin size cannot be less than 0");
@@ -211,10 +342,19 @@ public class GridLayout implements LayoutManager {
         return this;
     }
 
+    /**
+     * Returns the right margin, i.e. number of empty columns right of the last column in the grid
+     * @return Right margin, in number of columns
+     */
     public int getRightMarginSize() {
         return rightMarginSize;
     }
 
+    /**
+     * Sets the right margin, i.e. number of empty columns right of the last column in the grid
+     * @param rightMarginSize Right margin, in number of columns
+     * @return Itself
+     */
     public GridLayout setRightMarginSize(int rightMarginSize) {
         if(rightMarginSize < 0) {
             throw new IllegalArgumentException("Right margin size cannot be less than 0");

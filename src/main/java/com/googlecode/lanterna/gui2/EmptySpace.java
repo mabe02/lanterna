@@ -22,7 +22,9 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 
 /**
- * Component which draws a solid color over its area. The preferred size is customizable.
+ * Simple component which draws a solid color over its area. The size this component will request is specified through
+ * it's constructor.
+ *
  * @author Martin
  */
 public class EmptySpace extends AbstractComponent<EmptySpace> {
@@ -55,10 +57,20 @@ public class EmptySpace extends AbstractComponent<EmptySpace> {
         this.size = size;
     }
 
+    /**
+     * Changes the color this component will use when drawn
+     * @param color New color to draw the component with, if {@code null} then the component will use the theme's
+     *              default color
+     */
     public void setColor(TextColor color) {
         this.color = color;
     }
 
+    /**
+     * Returns the color this component is drawn with, or {@code null} if this component uses whatever the default color
+     * the theme is set to use
+     * @return Color used when drawing or {@code null} if it's using the theme
+     */
     public TextColor getColor() {
         return color;
     }

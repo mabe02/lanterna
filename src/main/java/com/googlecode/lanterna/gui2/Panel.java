@@ -26,37 +26,60 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Simple container for other components
+ * This class is the basic building block for creating user interfaces, being the standard implementation of
+ * {@code Container} that supports multiple children. A {@code Panel} is a component that can contain one or more
+ * other components, including nested panels. The panel itself doesn't have any particular appearance and isn't
+ * interactable by itself, although you can set a border for the panel and interactable components inside the panel will
+ * receive input focus as expected.
+ *
  * @author Martin
  */
 public class Panel extends AbstractComponent<Panel> implements Container {
     private final List<Component> components;
     private LayoutManager layoutManager;
     private TerminalSize cachedPreferredSize;
-    private boolean needsReLayout;
 
+    /**
+     * Default constructor, creates a new panel with no child components and by default set to a vertical
+     * {@code LinearLayout} layout manager.
+     */
     public Panel() {
         components = new ArrayList<Component>();
         layoutManager = new LinearLayout();
         cachedPreferredSize = null;
-        needsReLayout = false;
     }
-    
-    public Panel addComponent(Component component) {
+
+    /**
+     * Adds a new child component to the panel. Where within the panel the child will be displayed is up to the layout
+     * manager assigned to this panel.
+     * @param component Child component to add to this panel
+     * @return Itself
+     */
+    public synchronized Panel addComponent(Component component) {
         if(component == null) {
             throw new IllegalArgumentException("Cannot add null component");
         }
-        synchronized(components) {
-            if(components.contains(component)) {
-                return this;
-            }
-            components.add(component);
-            component.onAdded(this);
+        if(components.contains(component)) {
+            return this;
         }
+        components.add(component);
+        component.onAdded(this);
         invalidate();
         return this;
     }
 
+    /**
+     * This method is a shortcut for calling:
+     * <pre>
+     *     {@code
+     *     component.setLayoutData(layoutData);
+     *     panel.addComponent(component);
+     *     }
+     * </pre>
+     * @param component Component to add to the panel
+     * @param layoutData Layout data to assign to the component
+     * @return Itself
+     */
     public Panel addComponent(Component component, LayoutData layoutData) {
         if(component != null) {
             component.setLayoutData(layoutData);
@@ -71,35 +94,42 @@ public class Panel extends AbstractComponent<Panel> implements Container {
     }
 
     @Override
-    public boolean removeComponent(Component component) {
+    public synchronized boolean removeComponent(Component component) {
         if(component == null) {
             throw new IllegalArgumentException("Cannot remove null component");
         }
-        synchronized(components) {
-            int index = components.indexOf(component);
-            if(index == -1) {
-                return false;
-            }
-            if(getBasePane() != null && getBasePane().getFocusedInteractable() == component) {
-                getBasePane().setFocusedInteractable(null);
-            }
-            components.remove(index);
-            component.onRemoved(this);
+        int index = components.indexOf(component);
+        if(index == -1) {
+            return false;
         }
+        if(getBasePane() != null && getBasePane().getFocusedInteractable() == component) {
+            getBasePane().setFocusedInteractable(null);
+        }
+        components.remove(index);
+        component.onRemoved(this);
         invalidate();
         return true;
     }
 
-    public Panel removeAllComponents() {
-        synchronized(components) {
-            for(Component component: new ArrayList<Component>(components)) {
-                removeComponent(component);
-            }
+    /**
+     * Removes all child components from this panel
+     * @return Itself
+     */
+    public synchronized Panel removeAllComponents() {
+        for(Component component: new ArrayList<Component>(components)) {
+            removeComponent(component);
         }
         return this;
     }
-    
-    public Panel setLayoutManager(LayoutManager layoutManager) {
+
+    /**
+     * Assigns a new layout manager to this panel, replacing the previous layout manager assigned. Please note that if
+     * the panel is not empty at the time you assign a new layout manager, the existing components might not show up
+     * where you expect them and their layout data property might need to be re-assigned.
+     * @param layoutManager New layout manager this panel should be using
+     * @return Itself
+     */
+    public synchronized Panel setLayoutManager(LayoutManager layoutManager) {
         if(layoutManager == null) {
             layoutManager = new AbsoluteLayout();
         }
@@ -108,6 +138,10 @@ public class Panel extends AbstractComponent<Panel> implements Container {
         return this;
     }
 
+    /**
+     * Returns the layout manager assigned to this panel
+     * @return
+     */
     public LayoutManager getLayoutManager() {
         return layoutManager;
     }
@@ -275,6 +309,5 @@ public class Panel extends AbstractComponent<Panel> implements Container {
 
     private void layout(TerminalSize size) {
         layoutManager.doLayout(size, components);
-        needsReLayout = false;
     }
 }

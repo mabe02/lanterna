@@ -3,17 +3,48 @@ package com.googlecode.lanterna.gui2.dialogs;
 import com.googlecode.lanterna.gui2.LocalizedString;
 
 /**
- * Created by martin on 21/06/15.
+ * This enum has the available selection of buttons that you can add to a {@code MessageDialog}. They are used both for
+ * specifying which buttons the dialog will have but is also returned when the user makes a selection
+ *
+ * @author Martin
  */
 public enum MessageDialogButton {
+    /**
+     * "OK"
+     */
     OK(LocalizedString.OK),
+    /**
+     * "Cancel"
+     */
     Cancel(LocalizedString.Cancel),
+    /**
+     * "Yes"
+     */
     Yes(LocalizedString.Yes),
+    /**
+     * "No"
+     */
     No(LocalizedString.No),
+    /**
+     * "Close"
+     */
     Close(LocalizedString.Close),
+    /**
+     * "Abort"
+     */
     Abort(LocalizedString.Abort),
+    /**
+     * "Ignore"
+     */
     Ignore(LocalizedString.Ignore),
+    /**
+     * "Retry"
+     */
     Retry(LocalizedString.Retry),
+
+    /**
+     * "Continue"
+     */
     Continue(LocalizedString.Continue);
 
     private final LocalizedString label;

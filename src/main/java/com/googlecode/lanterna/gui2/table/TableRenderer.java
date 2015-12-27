@@ -5,7 +5,8 @@ import com.googlecode.lanterna.gui2.InteractableRenderer;
 import com.googlecode.lanterna.gui2.TextGUIGraphics;
 
 /**
- * Created by martin on 23/08/15.
+ * Formalized interactable renderer for tables
+ * @author Martin
  */
 public interface TableRenderer<V> extends InteractableRenderer<Table<V>> {
     @Override

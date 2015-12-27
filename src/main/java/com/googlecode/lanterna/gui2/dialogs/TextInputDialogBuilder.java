@@ -6,7 +6,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Created by martin on 21/06/15.
+ * Dialog builder for the {@code TextInputDialog} class, use this to create instances of that class and to customize
+ * them
+ * @author Martin
  */
 public class TextInputDialogBuilder extends AbstractDialogBuilder<TextInputDialogBuilder, TextInputDialog> {
     private String initialContent;
@@ -14,6 +16,9 @@ public class TextInputDialogBuilder extends AbstractDialogBuilder<TextInputDialo
     private TextInputDialogResultValidator validator;
     private boolean passwordInput;
 
+    /**
+     * Default constructor
+     */
     public TextInputDialogBuilder() {
         super("TextInputDialog");
         this.initialContent = "";
@@ -41,33 +46,66 @@ public class TextInputDialogBuilder extends AbstractDialogBuilder<TextInputDialo
                 passwordInput);
     }
 
+    /**
+     * Sets the initial content the dialog will have
+     * @param initialContent Initial content the dialog will have
+     * @return Itself
+     */
     public TextInputDialogBuilder setInitialContent(String initialContent) {
         this.initialContent = initialContent;
         return this;
     }
 
+    /**
+     * Returns the initial content the dialog will have
+     * @return Initial content the dialog will have
+     */
     public String getInitialContent() {
         return initialContent;
     }
 
+    /**
+     * Sets the size of the text box the dialog will have
+     * @param textBoxSize Size of the text box the dialog will have
+     * @return Itself
+     */
     public TextInputDialogBuilder setTextBoxSize(TerminalSize textBoxSize) {
         this.textBoxSize = textBoxSize;
         return this;
     }
 
+    /**
+     * Returns the size of the text box the dialog will have
+     * @return Size of the text box the dialog will have
+     */
     public TerminalSize getTextBoxSize() {
         return textBoxSize;
     }
 
+    /**
+     * Sets the validator that will be attached to the text box in the dialog
+     * @param validator Validator that will be attached to the text box in the dialog
+     * @return Itself
+     */
     public TextInputDialogBuilder setValidator(TextInputDialogResultValidator validator) {
         this.validator = validator;
         return this;
     }
 
+    /**
+     * Returns the validator that will be attached to the text box in the dialog
+     * @return validator that will be attached to the text box in the dialog
+     */
     public TextInputDialogResultValidator getValidator() {
         return validator;
     }
 
+    /**
+     * Helper method that assigned a validator to the text box the dialog will have which matches the pattern supplied
+     * @param pattern Pattern to validate the text box
+     * @param errorMessage Error message to show when the pattern doesn't match
+     * @return Itself
+     */
     public TextInputDialogBuilder setValidationPattern(final Pattern pattern, final String errorMessage) {
         return setValidator(new TextInputDialogResultValidator() {
             @Override
@@ -84,11 +122,20 @@ public class TextInputDialogBuilder extends AbstractDialogBuilder<TextInputDialo
         });
     }
 
+    /**
+     * Sets if the text box the dialog will have contains a password and should be masked (default: {@code false})
+     * @param passwordInput {@code true} if the text box should be password masked, {@code false} otherwise
+     * @return Itself
+     */
     public TextInputDialogBuilder setPasswordInput(boolean passwordInput) {
         this.passwordInput = passwordInput;
         return this;
     }
 
+    /**
+     * Returns {@code true} if the text box the dialog will have contains a password and should be masked
+     * @return {@code true} if the text box the dialog will have contains a password and should be masked
+     */
     public boolean isPasswordInput() {
         return passwordInput;
     }

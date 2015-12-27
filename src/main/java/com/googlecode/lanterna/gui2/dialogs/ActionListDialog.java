@@ -6,7 +6,8 @@ import com.googlecode.lanterna.gui2.*;
 import java.util.List;
 
 /**
- * Created by martin on 23/06/15.
+ * Dialog containing a multiple item action list box
+ * @author Martin
  */
 public class ActionListDialog extends DialogWindow {
 
@@ -75,6 +76,15 @@ public class ActionListDialog extends DialogWindow {
         close();
     }
 
+    /**
+     * Helper method for immediately displaying a {@code ActionListDialog}, the method will return when the dialog is
+     * closed
+     * @param textGUI Text GUI the dialog should be added to
+     * @param title Title of the dialog
+     * @param description Description of the dialog
+     * @param items Items in the {@code ActionListBox}, the label will be taken from each {@code Runnable} by calling
+     *              {@code toString()} on each one
+     */
     public static void showDialog(WindowBasedTextGUI textGUI, String title, String description, Runnable... items) {
         ActionListDialog actionListDialog = new ActionListDialogBuilder()
                 .setTitle(title)

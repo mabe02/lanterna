@@ -33,6 +33,12 @@ public class Separator extends AbstractComponent<Separator> {
 
     private final Direction direction;
 
+    /**
+     * Creates a new {@code Separator} for a specific direction, which will decide whether to draw a horizontal line or
+     * a vertical line
+     *
+     * @param direction Direction of the line to draw within the separator
+     */
     public Separator(Direction direction) {
         if(direction == null) {
             throw new IllegalArgumentException("Cannot create a separator with a null direction");
@@ -40,6 +46,10 @@ public class Separator extends AbstractComponent<Separator> {
         this.direction = direction;
     }
 
+    /**
+     * Returns the direction of the line drawn for this separator
+     * @return Direction of the line drawn for this separator
+     */
     public Direction getDirection() {
         return direction;
     }
@@ -49,9 +59,17 @@ public class Separator extends AbstractComponent<Separator> {
         return new DefaultSeparatorRenderer();
     }
 
+    /**
+     * Helper interface that doesn't add any new methods but makes coding new button renderers a little bit more clear
+     */
     public static abstract class SeparatorRenderer implements ComponentRenderer<Separator> {
     }
 
+    /**
+     * This is the default separator renderer that is used if you don't override anything. With this renderer, the
+     * separator has a preferred size of one but will take up the whole area it is given and fill that space with either
+     * horizontal or vertical lines, depending on the direction of the {@code Separator}
+     */
     public static class DefaultSeparatorRenderer extends SeparatorRenderer {
         @Override
         public TerminalSize getPreferredSize(Separator component) {

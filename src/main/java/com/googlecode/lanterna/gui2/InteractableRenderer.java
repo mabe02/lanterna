@@ -21,8 +21,12 @@ package com.googlecode.lanterna.gui2;
 import com.googlecode.lanterna.TerminalPosition;
 
 /**
+ * Extended interface for component renderers used with interactable components. Because only the renderer knows what
+ * the component looks like, the component itself cannot know where to place the text cursor, so this method is instead
+ * delegated to this interface that extends the regular component renderer.
+ *
  * @author Martin
- * @param <T>
+ * @param <T> Type of the component this {@code InteractableRenderer} is designed for
  */
 public interface InteractableRenderer<T extends Component & Interactable> extends ComponentRenderer<T> {
     TerminalPosition getCursorLocation(T component);

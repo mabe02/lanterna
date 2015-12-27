@@ -6,7 +6,9 @@ import com.googlecode.lanterna.graphics.ThemeDefinition;
 import com.googlecode.lanterna.gui2.TextGUIGraphics;
 
 /**
- * Created by martin on 23/08/15.
+ * Default implementation of {@code TableCellRenderer}
+ * @param <V> Type of data stored in each table cell
+ * @author Martin
  */
 public class DefaultTableCellRenderer<V> implements TableCellRenderer<V> {
     @Override

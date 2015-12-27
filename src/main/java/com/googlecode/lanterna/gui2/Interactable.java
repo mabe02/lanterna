@@ -22,7 +22,11 @@ import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.input.KeyStroke;
 
 /**
- * This interface marks a component as able to receive keyboard input from the user.
+ * This interface marks a component as able to receive keyboard input from the user. Components that do not implement
+ * this interface in some way will not be able to receive input focus. Normally if you create a new component, you'll
+ * probably want to extend from {@code AbstractInteractableComponent} instead of implementing this one directly.
+ *
+ * @see AbstractInteractableComponent
  * @author Martin
  */
 public interface Interactable extends Component {

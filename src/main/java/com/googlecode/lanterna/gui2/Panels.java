@@ -24,6 +24,12 @@ package com.googlecode.lanterna.gui2;
  */
 public class Panels {
 
+    /**
+     * Creates a new {@code Panel} with a {@code LinearLayout} layout manager in horizontal mode and adds all the
+     * components passed in
+     * @param components Components to be added to the new {@code Panel}, in order
+     * @return The new {@code Panel}
+     */
     public static Panel horizontal(Component... components) {
         Panel panel = new Panel();
         panel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
@@ -33,6 +39,12 @@ public class Panels {
         return panel;
     }
 
+    /**
+     * Creates a new {@code Panel} with a {@code LinearLayout} layout manager in vertical mode and adds all the
+     * components passed in
+     * @param components Components to be added to the new {@code Panel}, in order
+     * @return The new {@code Panel}
+     */
     public static Panel vertical(Component... components) {
         Panel panel = new Panel();
         panel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
@@ -42,6 +54,12 @@ public class Panels {
         return panel;
     }
 
+    /**
+     * Creates a new {@code Panel} with a {@code GridLayout} layout manager and adds all the components passed in
+     * @param columns Number of columns in the grid
+     * @param components Components to be added to the new {@code Panel}, in order
+     * @return The new {@code Panel}
+     */
     public static Panel grid(int columns, Component... components) {
         Panel panel = new Panel();
         panel.setLayoutManager(new GridLayout(columns));

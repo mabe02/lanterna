@@ -4,7 +4,9 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 
 /**
- * Created by martin on 21/06/15.
+ * Simple message dialog that displays a message and has optional selection/confirmation buttons
+ *
+ * @author Martin
  */
 public class MessageDialog extends DialogWindow {
 
@@ -50,6 +52,11 @@ public class MessageDialog extends DialogWindow {
         setComponent(mainPanel);
     }
 
+    /**
+     * {@inheritDoc}
+     * @param textGUI Text GUI to add the dialog to
+     * @return The selected button's enum value
+     */
     @Override
     public MessageDialogButton showDialog(WindowBasedTextGUI textGUI) {
         result = null;
@@ -57,6 +64,14 @@ public class MessageDialog extends DialogWindow {
         return result;
     }
 
+    /**
+     * Shortcut for quickly displaying a message box
+     * @param textGUI The GUI to display the message box on
+     * @param title Title of the message box
+     * @param text Main message of the message box
+     * @param buttons Buttons that the user can confirm the message box with
+     * @return Which button the user selected
+     */
     public static MessageDialogButton showMessageDialog(
             WindowBasedTextGUI textGUI,
             String title,

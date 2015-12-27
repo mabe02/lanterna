@@ -25,7 +25,10 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * This class containers a couple of border implementation
+ * This class containers a couple of border implementation and utility methods for instantiating them. It also contains
+ * a utility method for joining border line graphics together with adjacent lines so they blend in together:
+ * {@code joinLinesWithFrame(..)}.
+ * @author Martin
  */
 public class Borders {
     private Borders() {
@@ -38,50 +41,110 @@ public class Borders {
         ReverseBevel,
     }
 
+    /**
+     * Creates a {@code Border} that is drawn as a solid color single line surrounding the wrapped component
+     * @return New solid color single line {@code Border}
+     */
     public static Border singleLine() {
         return singleLine("");
     }
 
+    /**
+     * Creates a {@code Border} that is drawn as a solid color single line surrounding the wrapped component with a
+     * title string normally drawn at the top-left side
+     * @param title The title to draw on the border
+     * @return New solid color single line {@code Border} with a title
+     */
     public static Border singleLine(String title) {
         return new SingleLine(title, BorderStyle.Solid);
     }
 
+    /**
+     * Creates a {@code Border} that is drawn as a bevel color single line surrounding the wrapped component
+     * @return New bevel color single line {@code Border}
+     */
     public static Border singleLineBevel() {
         return singleLineBevel("");
     }
 
+    /**
+     * Creates a {@code Border} that is drawn as a bevel color single line surrounding the wrapped component with a
+     * title string normally drawn at the top-left side
+     * @param title The title to draw on the border
+     * @return New bevel color single line {@code Border} with a title
+     */
     public static Border singleLineBevel(String title) {
         return new SingleLine(title, BorderStyle.Bevel);
     }
 
+    /**
+     * Creates a {@code Border} that is drawn as a reverse bevel color single line surrounding the wrapped component
+     * @return New reverse bevel color single line {@code Border}
+     */
     public static Border singleLineReverseBevel() {
         return singleLineReverseBevel("");
     }
 
+    /**
+     * Creates a {@code Border} that is drawn as a reverse bevel color single line surrounding the wrapped component
+     * with a title string normally drawn at the top-left side
+     * @param title The title to draw on the border
+     * @return New reverse bevel color single line {@code Border} with a title
+     */
     public static Border singleLineReverseBevel(String title) {
         return new SingleLine(title, BorderStyle.ReverseBevel);
     }
 
+    /**
+     * Creates a {@code Border} that is drawn as a solid color double line surrounding the wrapped component
+     * @return New solid color double line {@code Border}
+     */
     public static Border doubleLine() {
         return doubleLine("");
     }
 
+    /**
+     * Creates a {@code Border} that is drawn as a solid color double line surrounding the wrapped component with a
+     * title string normally drawn at the top-left side
+     * @param title The title to draw on the border
+     * @return New solid color double line {@code Border} with a title
+     */
     public static Border doubleLine(String title) {
         return new DoubleLine(title, BorderStyle.Solid);
     }
 
+    /**
+     * Creates a {@code Border} that is drawn as a bevel color double line surrounding the wrapped component
+     * @return New bevel color double line {@code Border}
+     */
     public static Border doubleLineBevel() {
         return doubleLineBevel("");
     }
 
+    /**
+     * Creates a {@code Border} that is drawn as a bevel color double line surrounding the wrapped component with a
+     * title string normally drawn at the top-left side
+     * @param title The title to draw on the border
+     * @return New bevel color double line {@code Border} with a title
+     */
     public static Border doubleLineBevel(String title) {
         return new DoubleLine(title, BorderStyle.Bevel);
     }
 
+    /**
+     * Creates a {@code Border} that is drawn as a reverse bevel color double line surrounding the wrapped component
+     * @return New reverse bevel color double line {@code Border}
+     */
     public static Border doubleLineReverseBevel() {
         return doubleLineReverseBevel("");
     }
 
+    /**
+     * Creates a {@code Border} that is drawn as a reverse bevel color double line surrounding the wrapped component
+     * with a title string normally drawn at the top-left side
+     * @param title The title to draw on the border
+     * @return New reverse bevel color double line {@code Border} with a title
+     */
     public static Border doubleLineReverseBevel(String title) {
         return new DoubleLine(title, BorderStyle.ReverseBevel);
     }

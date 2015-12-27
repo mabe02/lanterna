@@ -33,6 +33,9 @@ import java.io.IOException;
 import java.util.*;
 
 /**
+ * This is the main Text GUI implementation built into Lanterna, supporting multiple tiled windows and a dynamic
+ * background area that can be fully customized. If you want to create a text-based GUI with windows and controls,
+ * it's very likely this is what you want to use.
  *
  * @author Martin
  */
@@ -46,10 +49,23 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
     private Window activeWindow;
     private boolean eofWhenNoWindows;
 
+    /**
+     * Creates a new {@code MultiWindowTextGUI} that uses the specified {@code Screen} as the backend for all drawing
+     * operations. The screen will be automatically wrapped in a {@code VirtualScreen} in order to deal with GUIs
+     * becoming too big to fit the terminal. The background area of the GUI will be solid blue.
+     * @param screen Screen to use as the backend for drawing operations
+     */
     public MultiWindowTextGUI(Screen screen) {
         this(screen, TextColor.ANSI.BLUE);
     }
 
+    /**
+     * Creates a new {@code MultiWindowTextGUI} that uses the specified {@code Screen} as the backend for all drawing
+     * operations. The screen will be automatically wrapped in a {@code VirtualScreen} in order to deal with GUIs
+     * becoming too big to fit the terminal. The background area of the GUI will be solid blue
+     * @param guiThreadFactory Factory implementation to use when creating the {@code TextGUIThread}
+     * @param screen Screen to use as the backend for drawing operations
+     */
     public MultiWindowTextGUI(TextGUIThreadFactory guiThreadFactory, Screen screen) {
         this(guiThreadFactory,
                 screen,
@@ -58,6 +74,14 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
                 new EmptySpace(TextColor.ANSI.BLUE));
     }
 
+    /**
+     * Creates a new {@code MultiWindowTextGUI} that uses the specified {@code Screen} as the backend for all drawing
+     * operations. The screen will be automatically wrapped in a {@code VirtualScreen} in order to deal with GUIs
+     * becoming too big to fit the terminal. The background area of the GUI is a solid color as decided by the
+     * {@code backgroundColor} parameter.
+     * @param screen Screen to use as the backend for drawing operations
+     * @param backgroundColor Color to use for the GUI background
+     */
     public MultiWindowTextGUI(
             Screen screen,
             TextColor backgroundColor) {
@@ -65,6 +89,15 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
         this(screen, new DefaultWindowManager(), new EmptySpace(backgroundColor));
     }
 
+    /**
+     * Creates a new {@code MultiWindowTextGUI} that uses the specified {@code Screen} as the backend for all drawing
+     * operations. The screen will be automatically wrapped in a {@code VirtualScreen} in order to deal with GUIs
+     * becoming too big to fit the terminal. The background area of the GUI is the component passed in as the
+     * {@code background} parameter, forced to full size.
+     * @param screen Screen to use as the backend for drawing operations
+     * @param windowManager Window manager implementation to use
+     * @param background Component to use as the background of the GUI, behind all the windows
+     */
     public MultiWindowTextGUI(
             Screen screen,
             WindowManager windowManager,
@@ -73,6 +106,16 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
         this(screen, windowManager, new WindowShadowRenderer(), background);
     }
 
+    /**
+     * Creates a new {@code MultiWindowTextGUI} that uses the specified {@code Screen} as the backend for all drawing
+     * operations. The screen will be automatically wrapped in a {@code VirtualScreen} in order to deal with GUIs
+     * becoming too big to fit the terminal. The background area of the GUI is the component passed in as the
+     * {@code background} parameter, forced to full size.
+     * @param screen Screen to use as the backend for drawing operations
+     * @param windowManager Window manager implementation to use
+     * @param postRenderer {@code WindowPostRenderer} object to invoke after each window has been drawn
+     * @param background Component to use as the background of the GUI, behind all the windows
+     */
     public MultiWindowTextGUI(
             Screen screen,
             WindowManager windowManager,
@@ -82,6 +125,17 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
         this(new SameTextGUIThread.Factory(), screen, windowManager, postRenderer, background);
     }
 
+    /**
+     * Creates a new {@code MultiWindowTextGUI} that uses the specified {@code Screen} as the backend for all drawing
+     * operations. The screen will be automatically wrapped in a {@code VirtualScreen} in order to deal with GUIs
+     * becoming too big to fit the terminal. The background area of the GUI is the component passed in as the
+     * {@code background} parameter, forced to full size.
+     * @param guiThreadFactory Factory implementation to use when creating the {@code TextGUIThread}
+     * @param screen Screen to use as the backend for drawing operations
+     * @param windowManager Window manager implementation to use
+     * @param postRenderer {@code WindowPostRenderer} object to invoke after each window has been drawn
+     * @param background Component to use as the background of the GUI, behind all the windows
+     */
     public MultiWindowTextGUI(
             TextGUIThreadFactory guiThreadFactory,
             Screen screen,
@@ -373,30 +427,36 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
         return this;
     }
 
-    public WindowBasedTextGUI cycleActiveWindow(boolean reverse) {
-        synchronized(this) {
-            if(windows.isEmpty() || windows.size() == 1 || activeWindow.getHints().contains(Window.Hint.MODAL)) {
-                return this;
-            }
-            Window originalActiveWindow = activeWindow;
-            Window nextWindow = getNextWindow(reverse, originalActiveWindow);
-            while(nextWindow.getHints().contains(Window.Hint.NO_FOCUS)) {
-                nextWindow = getNextWindow(reverse, nextWindow);
-                if(nextWindow == originalActiveWindow) {
-                    return this;
-                }
-            }
-
-            if(reverse) {
-                moveToTop(nextWindow);
-            }
-            else {
-                windows.remove(originalActiveWindow);
-                windows.add(0, originalActiveWindow);
-            }
-            setActiveWindow(nextWindow);
+    /**
+     * Switches the active window by cyclically shuffling the window list. If {@code reverse} parameter is {@code false}
+     * then the current top window is placed at the bottom of the stack and the window immediately behind it is the new
+     * top. If {@code reverse} is set to {@code true} then the window at the bottom of the stack is moved up to the
+     * front and the previous top window will be immediately below it
+     * @param reverse Direction to cycle through the windows
+     * @return Itself
+     */
+    public synchronized WindowBasedTextGUI cycleActiveWindow(boolean reverse) {
+        if(windows.isEmpty() || windows.size() == 1 || activeWindow.getHints().contains(Window.Hint.MODAL)) {
             return this;
         }
+        Window originalActiveWindow = activeWindow;
+        Window nextWindow = getNextWindow(reverse, originalActiveWindow);
+        while(nextWindow.getHints().contains(Window.Hint.NO_FOCUS)) {
+            nextWindow = getNextWindow(reverse, nextWindow);
+            if(nextWindow == originalActiveWindow) {
+                return this;
+            }
+        }
+
+        if(reverse) {
+            moveToTop(nextWindow);
+        }
+        else {
+            windows.remove(originalActiveWindow);
+            windows.add(0, originalActiveWindow);
+        }
+        setActiveWindow(nextWindow);
+        return this;
     }
 
     private Window getNextWindow(boolean reverse, Window window) {

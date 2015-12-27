@@ -27,7 +27,7 @@ import com.googlecode.lanterna.graphics.ThemeDefinition;
 import java.util.EnumSet;
 
 /**
- * Label is a simple read-only text display component that can show multi-line text in multiple colors
+ * Label is a simple read-only text display component. It supports customized colors and multi-line text.
  * @author Martin
  */
 public class Label extends AbstractComponent<Label> {
@@ -37,6 +37,10 @@ public class Label extends AbstractComponent<Label> {
     private TextColor backgroundColor;
     private final EnumSet<SGR> additionalStyles;
 
+    /**
+     * Main constructor, creates a new Label displaying a specific text.
+     * @param text Text the label will display
+     */
     public Label(String text) {
         this.lines = null;
         this.preferredSize = TerminalSize.ZERO;
@@ -46,35 +50,60 @@ public class Label extends AbstractComponent<Label> {
         setText(text);
     }
 
+    /**
+     * Protected access to set the internal representation of the text in this label, to be used by sub-classes of label
+     * in certain cases where {@code setText(..)} doesn't work. In general, you probably want to stick to
+     * {@code setText(..)} instead of this method unless you have a good reason not to.
+     * @param lines New lines this label will display
+     */
     protected void setLines(String[] lines) {
         this.lines = lines;
     }
 
-    public void setText(String text) {
-        synchronized(this) {
-            setLines(splitIntoMultipleLines(text));
-            this.preferredSize = getBounds(lines, preferredSize);
-            invalidate();
-        }
+    /**
+     * Updates the text this label is displaying
+     * @param text New text to display
+     */
+    public synchronized void setText(String text) {
+        setLines(splitIntoMultipleLines(text));
+        this.preferredSize = getBounds(lines, preferredSize);
+        invalidate();
     }
 
-    public String getText() {
-        synchronized(this) {
-            if(lines.length == 0) {
-                return "";
-            }
-            StringBuilder bob = new StringBuilder(lines[0]);
-            for(int i = 1; i < lines.length; i++) {
-                bob.append("\n").append(lines[i]);
-            }
-            return bob.toString();
+    /**
+     * Returns the text this label is displaying. Multi-line labels will have their text concatenated with \n, even if
+     * they were originally set using multi-line text having \r\n as line terminators.
+     * @return String of the text this label is displaying
+     */
+    public synchronized String getText() {
+        if(lines.length == 0) {
+            return "";
         }
+        StringBuilder bob = new StringBuilder(lines[0]);
+        for(int i = 1; i < lines.length; i++) {
+            bob.append("\n").append(lines[i]);
+        }
+        return bob.toString();
     }
 
+    /**
+     * Utility method for taking a string and turning it into an array of lines. This method is used in order to deal
+     * with line endings consistently.
+     * @param text Text to split
+     * @return Array of strings that forms the lines of the original string
+     */
     protected String[] splitIntoMultipleLines(String text) {
         return text.replace("\r", "").split("\n");
     }
 
+    /**
+     * Returns the area, in terminal columns and rows, required to fully draw the lines passed in.
+     * @param lines Lines to measure the size of
+     * @param currentBounds Optional (can pass {@code null}) terminal size to use for storing the output values. If the
+     *                      method is called many times and always returning the same value, passing in an external
+     *                      reference of this size will avoid creating new {@code TerminalSize} objects every time
+     * @return Size that is required to draw the lines
+     */
     protected TerminalSize getBounds(String[] lines, TerminalSize currentBounds) {
         if(currentBounds == null) {
             currentBounds = TerminalSize.ZERO;
@@ -91,28 +120,69 @@ public class Label extends AbstractComponent<Label> {
         return currentBounds;
     }
 
-    public void setForegroundColor(TextColor foregroundColor) {
+    /**
+     * Overrides the current theme's foreground color and use the one specified. If called with {@code null}, the
+     * override is cleared and the theme is used again.
+     * @param foregroundColor Foreground color to use when drawing the label, if {@code null} then use the theme's
+     *                        default
+     * @return Itself
+     */
+    public Label setForegroundColor(TextColor foregroundColor) {
         this.foregroundColor = foregroundColor;
+        return this;
     }
 
+    /**
+     * Returns the foreground color used when drawing the label, or {@code null} if the color is read from the current
+     * theme.
+     * @return Foreground color used when drawing the label, or {@code null} if the color is read from the current
+     * theme.
+     */
     public TextColor getForegroundColor() {
         return foregroundColor;
     }
 
-    public void setBackgroundColor(TextColor backgroundColor) {
+    /**
+     * Overrides the current theme's background color and use the one specified. If called with {@code null}, the
+     * override is cleared and the theme is used again.
+     * @param backgroundColor Background color to use when drawing the label, if {@code null} then use the theme's
+     *                        default
+     * @return Itself
+     */
+    public Label setBackgroundColor(TextColor backgroundColor) {
         this.backgroundColor = backgroundColor;
+        return this;
     }
 
+    /**
+     * Returns the background color used when drawing the label, or {@code null} if the color is read from the current
+     * theme.
+     * @return Background color used when drawing the label, or {@code null} if the color is read from the current
+     * theme.
+     */
     public TextColor getBackgroundColor() {
         return backgroundColor;
     }
 
-    public void addStyle(SGR sgr) {
+    /**
+     * Adds an additional SGR style to use when drawing the label, in case it wasn't enabled by the theme
+     * @param sgr SGR style to enable for this label
+     * @return Itself
+     */
+    public Label addStyle(SGR sgr) {
         additionalStyles.add(sgr);
+        return this;
     }
 
-    public void removeStyle(SGR sgr) {
+    /**
+     * Removes an additional SGR style used when drawing the label, previously added by {@code addStyle(..)}. If the
+     * style you are trying to remove is specified by the theme, calling this method will have no effect.
+     * @param sgr SGR style to remove
+     * @return Itself
+     */
+    public Label removeStyle(SGR sgr) {
         additionalStyles.remove(sgr);
+        return this;
     }
 
     @Override

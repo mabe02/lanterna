@@ -21,7 +21,12 @@ package com.googlecode.lanterna.gui2;
 import java.io.IOException;
 
 /**
- * Class that manages a TextGUI in a separate thread, doing input processing and screen updates automatically.
+ * Class that represents the thread this is expected to run the event/input/update loop for the {@code TextGUI}. There
+ * are mainly two implementations of this interface, one for having lanterna automatically spawn a new thread for doing
+ * all the processing and leaving the creator thread free to do other things, and one that assumes the creator thread
+ * will hand over control to lanterna for as long as the GUI is running.
+ * @see SameTextGUIThread
+ * @see SeparateTextGUIThread
  * @author Martin
  */
 public interface TextGUIThread {
@@ -33,8 +38,12 @@ public interface TextGUIThread {
     void invokeLater(Runnable runnable) throws IllegalStateException;
 
     /**
-     *
-     * @return
+     * Main method to call when you are managing the event/input/update loop yourself. This method will run one round
+     * through the GUI's event/input queue and update the visuals if required. If the operation did nothing (returning
+     * {@code false}) you could sleep for a millisecond and then try again. If you use {@code SameTextGUIThread} you
+     * must either call this method directly to make the GUI update or use one of the methods on
+     * {@code WindowBasedTextGUI} that blocks until a particular window has closed.
+     * @return {@code true} if there was anything to process or the GUI was updated, otherwise {@code false}
      * @throws IOException
      */
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")

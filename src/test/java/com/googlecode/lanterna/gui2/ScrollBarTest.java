@@ -32,11 +32,11 @@ public class ScrollBarTest extends TestBase {
         Button buttonRefresh = new Button("Refresh", new Runnable() {
             @Override
             public void run() {
-                ((ScrollBar.ClassicScrollBarRenderer)verticalScroll.getRenderer()).setGrowScrollTracker(checkVerticalTrackerGrow.isChecked());
+                ((ScrollBar.DefaultScrollBarRenderer)verticalScroll.getRenderer()).setGrowScrollTracker(checkVerticalTrackerGrow.isChecked());
                 verticalScroll.setScrollMaximum(getInteger(textBoxVerticalMax.getText(), 100));
                 verticalScroll.setScrollPosition(getInteger(textBoxVerticalPosition.getText(), 100));
                 verticalScroll.setViewSize(getInteger(textBoxVerticalSize.getText(), 1));
-                ((ScrollBar.ClassicScrollBarRenderer)horizontalScroll.getRenderer()).setGrowScrollTracker(checkHorizontalTrackerGrow.isChecked());
+                ((ScrollBar.DefaultScrollBarRenderer)horizontalScroll.getRenderer()).setGrowScrollTracker(checkHorizontalTrackerGrow.isChecked());
                 horizontalScroll.setScrollMaximum(getInteger(textBoxHorizontalMax.getText(), 0));
                 horizontalScroll.setScrollPosition(getInteger(textBoxHorizontalPosition.getText(), 0));
                 horizontalScroll.setViewSize(getInteger(textBoxHorizontalSize.getText(), 1));

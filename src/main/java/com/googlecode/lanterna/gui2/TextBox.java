@@ -29,12 +29,26 @@ import java.util.regex.Pattern;
 
 /**
  * This component keeps a text content that is editable by the user. A TextBox can be single line or multiline and lets
- * the user navigate the cursor in the text area by using the arrow keys.
+ * the user navigate the cursor in the text area by using the arrow keys, page up, page down, home and end. For
+ * multi-line {@code TextBox}:es, scrollbars will be automatically displayed if needed.
+ * <p/>
+ * Size-wise, a {@code TextBox} should be hard-coded to a particular size, it's not good at guessing how large it should
+ * be. You can do this through the constructor.
  */
 public class TextBox extends AbstractInteractableComponent<TextBox> {
 
+    /**
+     * Enum value to force a {@code TextBox} to be either single line or multi line. This is usually auto-detected if
+     * the text box has some initial content by scanning that content for \n characters.
+     */
     public enum Style {
+        /**
+         * The {@code TextBox} contains a single line of text and is typically drawn on one row
+         */
         SINGLE_LINE,
+        /**
+         * The {@code TextBox} contains a none, one or many lines of text and is normally drawn over multiple lines
+         */
         MULTI_LINE,
         ;
     }
@@ -53,30 +67,65 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
     private Character mask;
     private Pattern validationPattern;
 
+    /**
+     * Default constructor, this creates a single-line {@code TextBox} of size 10 which is initially empty
+     */
     public TextBox() {
         this(new TerminalSize(10, 1), "", Style.SINGLE_LINE);
     }
 
+    /**
+     * Constructor that creates a {@code TextBox} with an initial content and attempting to be big enough to display
+     * the whole text at once without scrollbars
+     * @param initialContent Initial content of the {@code TextBox}
+     */
     public TextBox(String initialContent) {
         this(null, initialContent, initialContent.contains("\n") ? Style.MULTI_LINE : Style.SINGLE_LINE);
     }
 
+    /**
+     * Creates a {@code TextBox} that has an initial content and attempting to be big enough to display the whole text
+     * at once without scrollbars.
+     *
+     * @param initialContent Initial content of the {@code TextBox}
+     * @param style Forced style instead of auto-detecting
+     */
     public TextBox(String initialContent, Style style) {
         this(null, initialContent, style);
     }
 
+    /**
+     * Creates a new empty {@code TextBox} with a specific size
+     * @param preferredSize Size of the {@code TextBox}
+     */
     public TextBox(TerminalSize preferredSize) {
         this(preferredSize, (preferredSize != null && preferredSize.getRows() > 1) ? Style.MULTI_LINE : Style.SINGLE_LINE);
     }
 
+    /**
+     * Creates a new empty {@code TextBox} with a specific size and style
+     * @param preferredSize Size of the {@code TextBox}
+     * @param style Style to use
+     */
     public TextBox(TerminalSize preferredSize, Style style) {
         this(preferredSize, "", style);
     }
 
+    /**
+     * Creates a new empty {@code TextBox} with a specific size and initial content
+     * @param preferredSize Size of the {@code TextBox}
+     * @param initialContent Initial content of the {@code TextBox}
+     */
     public TextBox(TerminalSize preferredSize, String initialContent) {
         this(preferredSize, initialContent, (preferredSize != null && preferredSize.getRows() > 1) || initialContent.contains("\n") ? Style.MULTI_LINE : Style.SINGLE_LINE);
     }
 
+    /**
+     * Main constructor of the {@code TextBox} which decides size, initial content and style
+     * @param preferredSize Size of the {@code TextBox}
+     * @param initialContent Initial content of the {@code TextBox}
+     * @param style Style to use for this {@code TextBox}, instead of auto-detecting
+     */
     public TextBox(TerminalSize preferredSize, String initialContent, Style style) {
         this.lines = new ArrayList<String>();
         this.style = style;
@@ -106,7 +155,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
      * @param validationPattern Pattern to validate the lines in this TextBox against, or {@code null} to disable
      * @return itself
      */
-    public TextBox setValidationPattern(Pattern validationPattern) {
+    public synchronized TextBox setValidationPattern(Pattern validationPattern) {
         if(validationPattern != null) {
             for(String line: lines) {
                 if(!validated(line)) {
@@ -118,23 +167,26 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
         return this;
     }
 
-    public TextBox setText(String text) {
-        synchronized(this) {
-            String[] split = text.split("\n");
-            lines.clear();
-            longestRow = 1;
-            for(String line : split) {
-                addLine(line);
-            }
-            if(caretPosition.getRow() > lines.size() - 1) {
-                caretPosition = caretPosition.withRow(lines.size() - 1);
-            }
-            if(caretPosition.getColumn() > lines.get(caretPosition.getRow()).length()) {
-                caretPosition = caretPosition.withColumn(lines.get(caretPosition.getRow()).length());
-            }
-            invalidate();
-            return this;
+    /**
+     * Updates the text content of the {@code TextBox} to the supplied string.
+     * @param text New text to assign to the {@code TextBox}
+     * @return Itself
+     */
+    public synchronized TextBox setText(String text) {
+        String[] split = text.split("\n");
+        lines.clear();
+        longestRow = 1;
+        for(String line : split) {
+            addLine(line);
         }
+        if(caretPosition.getRow() > lines.size() - 1) {
+            caretPosition = caretPosition.withRow(lines.size() - 1);
+        }
+        if(caretPosition.getColumn() > lines.get(caretPosition.getRow()).length()) {
+            caretPosition = caretPosition.withColumn(lines.get(caretPosition.getRow()).length());
+        }
+        invalidate();
+        return this;
     }
 
     @Override
@@ -142,38 +194,42 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
         return (TextBoxRenderer)super.getRenderer();
     }
 
-    public void addLine(String line) {
-        synchronized(this) {
-            StringBuilder bob = new StringBuilder();
-            for(int i = 0; i < line.length(); i++) {
-                char c = line.charAt(i);
-                if(c == '\n' && style == Style.MULTI_LINE) {
-                    String string = bob.toString();
-                    int lineWidth = CJKUtils.getColumnWidth(string);
-                    lines.add(string);
-                    if(longestRow < lineWidth + 1) {
-                        longestRow = lineWidth + 1;
-                    }
-                    addLine(line.substring(i + 1));
-                    return;
+    /**
+     * Adds a single line to the {@code TextBox} at the end, this only works when in multi-line mode
+     * @param line Line to add at the end of the content in this {@code TextBox}
+     * @return Itself
+     */
+    public synchronized TextBox addLine(String line) {
+        StringBuilder bob = new StringBuilder();
+        for(int i = 0; i < line.length(); i++) {
+            char c = line.charAt(i);
+            if(c == '\n' && style == Style.MULTI_LINE) {
+                String string = bob.toString();
+                int lineWidth = CJKUtils.getColumnWidth(string);
+                lines.add(string);
+                if(longestRow < lineWidth + 1) {
+                    longestRow = lineWidth + 1;
                 }
-                else if(Character.isISOControl(c)) {
-                    continue;
-                }
+                addLine(line.substring(i + 1));
+                return this;
+            }
+            else if(Character.isISOControl(c)) {
+                continue;
+            }
 
-                bob.append(c);
-            }
-            String string = bob.toString();
-            if(!validated(string)) {
-                throw new IllegalStateException("TextBox validation pattern " + validationPattern + " does not match the supplied text");
-            }
-            int lineWidth = CJKUtils.getColumnWidth(string);
-            lines.add(string);
-            if(longestRow < lineWidth + 1) {
-                longestRow = lineWidth + 1;
-            }
-            invalidate();
+            bob.append(c);
         }
+        String string = bob.toString();
+        if(!validated(string)) {
+            throw new IllegalStateException("TextBox validation pattern " + validationPattern + " does not match the supplied text");
+        }
+        int lineWidth = CJKUtils.getColumnWidth(string);
+        lines.add(string);
+        if(longestRow < lineWidth + 1) {
+            longestRow = lineWidth + 1;
+        }
+        invalidate();
+        return this;
     }
 
     /**
@@ -197,20 +253,34 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
         return caretWarp;
     }
 
+    /**
+     * Returns the position of the caret, as a {@code TerminalPosition} where the row and columns equals the coordinates
+     * in a multi-line {@code TextBox} and for single-line {@code TextBox} you can ignore the {@code row} component.
+     * @return Position of the text input caret
+     */
     public TerminalPosition getCaretPosition() {
         return caretPosition;
     }
 
-    public String getText() {
-        synchronized(this) {
-            StringBuilder bob = new StringBuilder(lines.get(0));
-            for(int i = 1; i < lines.size(); i++) {
-                bob.append("\n").append(lines.get(i));
-            }
-            return bob.toString();
+    /**
+     * Returns the text in this {@code TextBox}, for multi-line mode all lines will be concatenated together with \n as
+     * separator.
+     * @return The text inside this {@code TextBox}
+     */
+    public synchronized String getText() {
+        StringBuilder bob = new StringBuilder(lines.get(0));
+        for(int i = 1; i < lines.size(); i++) {
+            bob.append("\n").append(lines.get(i));
         }
+        return bob.toString();
     }
 
+    /**
+     * Helper method, it will return the content of the {@code TextBox} unless it's empty in which case it will return
+     * the supplied default value
+     * @param defaultValueIfEmpty Value to return if the {@code TextBox} is empty
+     * @return Text in the {@code TextBox} or {@code defaultValueIfEmpty} is the {@code TextBox} is empty
+     */
     public String getTextOrDefault(String defaultValueIfEmpty) {
         String text = getText();
         if(text.isEmpty()) {
@@ -219,10 +289,21 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
         return text;
     }
 
+    /**
+     * Returns the current text mask, meaning the substitute to draw instead of the text inside the {@code TextBox}.
+     * This is normally used for password input fields so the password isn't shown
+     * @return Current text mask or {@code null} if there is no mask
+     */
     public Character getMask() {
         return mask;
     }
 
+    /**
+     * Sets the current text mask, meaning the substitute to draw instead of the text inside the {@code TextBox}.
+     * This is normally used for password input fields so the password isn't shown
+     * @param mask New text mask or {@code null} if there is no mask
+     * @return Itself
+     */
     public TextBox setMask(Character mask) {
         if(mask != null && CJKUtils.isCharCJK(mask)) {
             throw new IllegalArgumentException("Cannot use a CJK character as a mask");
@@ -232,10 +313,21 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
         return this;
     }
 
+    /**
+     * Returns {@code true} if this {@code TextBox} is in read-only mode, meaning text input from the user through the
+     * keyboard is prevented
+     * @return {@code true} if this {@code TextBox} is in read-only mode
+     */
     public boolean isReadOnly() {
         return readOnly;
     }
 
+    /**
+     * Sets the read-only mode of the {@code TextBox}, meaning text input from the user through the keyboard is
+     * prevented. The user can still focus and scroll through the text in this mode.
+     * @param readOnly If {@code true} then the {@code TextBox} will switch to read-only mode
+     * @return Itself
+     */
     public TextBox setReadOnly(boolean readOnly) {
         this.readOnly = readOnly;
         invalidate();
@@ -296,20 +388,16 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
      * @return The line at the specified index, as a String
      * @throws IndexOutOfBoundsException if the row index is less than zero or too large
      */
-    public String getLine(int index) {
-        synchronized(this) {
-            return lines.get(index);
-        }
+    public synchronized String getLine(int index) {
+        return lines.get(index);
     }
 
     /**
      * Returns the number of lines currently in this TextBox. For single-line TextBox:es, this will always return 1.
      * @return Number of lines of text currently in this TextBox
      */
-    public int getLineCount() {
-        synchronized(this) {
-            return lines.size();
-        }
+    public synchronized int getLineCount() {
+        return lines.size();
     }
 
     @Override
@@ -318,145 +406,143 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
     }
 
     @Override
-    public Result handleKeyStroke(KeyStroke keyStroke) {
-        synchronized(this) {
-            if(readOnly) {
-                return handleKeyStrokeReadOnly(keyStroke);
-            }
-            String line = lines.get(caretPosition.getRow());
-            switch(keyStroke.getKeyType()) {
-                case Character:
-                    if(maxLineLength == -1 || maxLineLength > line.length() + 1) {
-                        line = line.substring(0, caretPosition.getColumn()) + keyStroke.getCharacter() + line.substring(caretPosition.getColumn());
-                        if(validated(line)) {
-                            lines.set(caretPosition.getRow(), line);
-                            caretPosition = caretPosition.withRelativeColumn(1);
-                        }
-                    }
-                    return Result.HANDLED;
-                case Backspace:
-                    if(caretPosition.getColumn() > 0) {
-                        line = line.substring(0, caretPosition.getColumn() - 1) + line.substring(caretPosition.getColumn());
-                        if(validated(line)) {
-                            lines.set(caretPosition.getRow(), line);
-                            caretPosition = caretPosition.withRelativeColumn(-1);
-                        }
-                    }
-                    else if(style == Style.MULTI_LINE && caretPosition.getRow() > 0) {
-                        String concatenatedLines = lines.get(caretPosition.getRow() - 1) + line;
-                        if(validated(concatenatedLines)) {
-                            lines.remove(caretPosition.getRow());
-                            caretPosition = caretPosition.withRelativeRow(-1);
-                            caretPosition = caretPosition.withColumn(lines.get(caretPosition.getRow()).length());
-                            lines.set(caretPosition.getRow(), concatenatedLines);
-                        }
-                    }
-                    return Result.HANDLED;
-                case Delete:
-                    if(caretPosition.getColumn() < line.length()) {
-                        line = line.substring(0, caretPosition.getColumn()) + line.substring(caretPosition.getColumn() + 1);
-                        if(validated(line)) {
-                            lines.set(caretPosition.getRow(), line);
-                        }
-                    }
-                    else if(style == Style.MULTI_LINE && caretPosition.getRow() < lines.size() - 1) {
-                        String concatenatedLines = line + lines.get(caretPosition.getRow() + 1);
-                        if(validated(concatenatedLines)) {
-                            lines.set(caretPosition.getRow(), concatenatedLines);
-                            lines.remove(caretPosition.getRow() + 1);
-                        }
-                    }
-                    return Result.HANDLED;
-                case ArrowLeft:
-                    if(caretPosition.getColumn() > 0) {
-                        caretPosition = caretPosition.withRelativeColumn(-1);
-                    }
-                    else if(style == Style.MULTI_LINE && caretWarp && caretPosition.getRow() > 0) {
-                        caretPosition = caretPosition.withRelativeRow(-1);
-                        caretPosition = caretPosition.withColumn(lines.get(caretPosition.getRow()).length());
-                    }
-                    else if(horizontalFocusSwitching) {
-                        return Result.MOVE_FOCUS_LEFT;
-                    }
-                    return Result.HANDLED;
-                case ArrowRight:
-                    if(caretPosition.getColumn() < lines.get(caretPosition.getRow()).length()) {
+    public synchronized Result handleKeyStroke(KeyStroke keyStroke) {
+        if(readOnly) {
+            return handleKeyStrokeReadOnly(keyStroke);
+        }
+        String line = lines.get(caretPosition.getRow());
+        switch(keyStroke.getKeyType()) {
+            case Character:
+                if(maxLineLength == -1 || maxLineLength > line.length() + 1) {
+                    line = line.substring(0, caretPosition.getColumn()) + keyStroke.getCharacter() + line.substring(caretPosition.getColumn());
+                    if(validated(line)) {
+                        lines.set(caretPosition.getRow(), line);
                         caretPosition = caretPosition.withRelativeColumn(1);
                     }
-                    else if(style == Style.MULTI_LINE && caretWarp && caretPosition.getRow() < lines.size() - 1) {
-                        caretPosition = caretPosition.withRelativeRow(1);
-                        caretPosition = caretPosition.withColumn(0);
+                }
+                return Result.HANDLED;
+            case Backspace:
+                if(caretPosition.getColumn() > 0) {
+                    line = line.substring(0, caretPosition.getColumn() - 1) + line.substring(caretPosition.getColumn());
+                    if(validated(line)) {
+                        lines.set(caretPosition.getRow(), line);
+                        caretPosition = caretPosition.withRelativeColumn(-1);
                     }
-                    else if(horizontalFocusSwitching) {
-                        return Result.MOVE_FOCUS_RIGHT;
-                    }
-                    return Result.HANDLED;
-                case ArrowUp:
-                    if(caretPosition.getRow() > 0) {
-                        int trueColumnPosition = CJKUtils.getColumnIndex(lines.get(caretPosition.getRow()), caretPosition.getColumn());
+                }
+                else if(style == Style.MULTI_LINE && caretPosition.getRow() > 0) {
+                    String concatenatedLines = lines.get(caretPosition.getRow() - 1) + line;
+                    if(validated(concatenatedLines)) {
+                        lines.remove(caretPosition.getRow());
                         caretPosition = caretPosition.withRelativeRow(-1);
-                        line = lines.get(caretPosition.getRow());
-                        if(trueColumnPosition > CJKUtils.getColumnWidth(line)) {
-                            caretPosition = caretPosition.withColumn(line.length());
-                        }
-                        else {
-                            caretPosition = caretPosition.withColumn(CJKUtils.getStringCharacterIndex(line, trueColumnPosition));
-                        }
+                        caretPosition = caretPosition.withColumn(lines.get(caretPosition.getRow()).length());
+                        lines.set(caretPosition.getRow(), concatenatedLines);
                     }
-                    else if(verticalFocusSwitching) {
-                        return Result.MOVE_FOCUS_UP;
+                }
+                return Result.HANDLED;
+            case Delete:
+                if(caretPosition.getColumn() < line.length()) {
+                    line = line.substring(0, caretPosition.getColumn()) + line.substring(caretPosition.getColumn() + 1);
+                    if(validated(line)) {
+                        lines.set(caretPosition.getRow(), line);
                     }
-                    return Result.HANDLED;
-                case ArrowDown:
-                    if(caretPosition.getRow() < lines.size() - 1) {
-                        int trueColumnPosition = CJKUtils.getColumnIndex(lines.get(caretPosition.getRow()), caretPosition.getColumn());
-                        caretPosition = caretPosition.withRelativeRow(1);
-                        line = lines.get(caretPosition.getRow());
-                        if(trueColumnPosition > CJKUtils.getColumnWidth(line)) {
-                            caretPosition = caretPosition.withColumn(line.length());
-                        }
-                        else {
-                            caretPosition = caretPosition.withColumn(CJKUtils.getStringCharacterIndex(line, trueColumnPosition));
-                        }
+                }
+                else if(style == Style.MULTI_LINE && caretPosition.getRow() < lines.size() - 1) {
+                    String concatenatedLines = line + lines.get(caretPosition.getRow() + 1);
+                    if(validated(concatenatedLines)) {
+                        lines.set(caretPosition.getRow(), concatenatedLines);
+                        lines.remove(caretPosition.getRow() + 1);
                     }
-                    else if(verticalFocusSwitching) {
-                        return Result.MOVE_FOCUS_DOWN;
-                    }
-                    return Result.HANDLED;
-                case End:
-                    caretPosition = caretPosition.withColumn(line.length());
-                    return Result.HANDLED;
-                case Enter:
-                    if(style == Style.SINGLE_LINE) {
-                        return Result.MOVE_FOCUS_NEXT;
-                    }
-                    String newLine = line.substring(caretPosition.getColumn());
-                    String oldLine = line.substring(0, caretPosition.getColumn());
-                    if(validated(newLine) && validated(oldLine)) {
-                        lines.set(caretPosition.getRow(), oldLine);
-                        lines.add(caretPosition.getRow() + 1, newLine);
-                        caretPosition = caretPosition.withColumn(0).withRelativeRow(1);
-                    }
-                    return Result.HANDLED;
-                case Home:
+                }
+                return Result.HANDLED;
+            case ArrowLeft:
+                if(caretPosition.getColumn() > 0) {
+                    caretPosition = caretPosition.withRelativeColumn(-1);
+                }
+                else if(style == Style.MULTI_LINE && caretWarp && caretPosition.getRow() > 0) {
+                    caretPosition = caretPosition.withRelativeRow(-1);
+                    caretPosition = caretPosition.withColumn(lines.get(caretPosition.getRow()).length());
+                }
+                else if(horizontalFocusSwitching) {
+                    return Result.MOVE_FOCUS_LEFT;
+                }
+                return Result.HANDLED;
+            case ArrowRight:
+                if(caretPosition.getColumn() < lines.get(caretPosition.getRow()).length()) {
+                    caretPosition = caretPosition.withRelativeColumn(1);
+                }
+                else if(style == Style.MULTI_LINE && caretWarp && caretPosition.getRow() < lines.size() - 1) {
+                    caretPosition = caretPosition.withRelativeRow(1);
                     caretPosition = caretPosition.withColumn(0);
-                    return Result.HANDLED;
-                case PageDown:
-                    caretPosition = caretPosition.withRelativeRow(getSize().getRows());
-                    if(caretPosition.getRow() > lines.size() - 1) {
-                        caretPosition = caretPosition.withRow(lines.size() - 1);
+                }
+                else if(horizontalFocusSwitching) {
+                    return Result.MOVE_FOCUS_RIGHT;
+                }
+                return Result.HANDLED;
+            case ArrowUp:
+                if(caretPosition.getRow() > 0) {
+                    int trueColumnPosition = CJKUtils.getColumnIndex(lines.get(caretPosition.getRow()), caretPosition.getColumn());
+                    caretPosition = caretPosition.withRelativeRow(-1);
+                    line = lines.get(caretPosition.getRow());
+                    if(trueColumnPosition > CJKUtils.getColumnWidth(line)) {
+                        caretPosition = caretPosition.withColumn(line.length());
                     }
-                    return Result.HANDLED;
-                case PageUp:
-                    caretPosition = caretPosition.withRelativeRow(-getSize().getRows());
-                    if(caretPosition.getRow() < 0) {
-                        caretPosition = caretPosition.withRow(0);
+                    else {
+                        caretPosition = caretPosition.withColumn(CJKUtils.getStringCharacterIndex(line, trueColumnPosition));
                     }
-                    return Result.HANDLED;
-                default:
-            }
-            return super.handleKeyStroke(keyStroke);
+                }
+                else if(verticalFocusSwitching) {
+                    return Result.MOVE_FOCUS_UP;
+                }
+                return Result.HANDLED;
+            case ArrowDown:
+                if(caretPosition.getRow() < lines.size() - 1) {
+                    int trueColumnPosition = CJKUtils.getColumnIndex(lines.get(caretPosition.getRow()), caretPosition.getColumn());
+                    caretPosition = caretPosition.withRelativeRow(1);
+                    line = lines.get(caretPosition.getRow());
+                    if(trueColumnPosition > CJKUtils.getColumnWidth(line)) {
+                        caretPosition = caretPosition.withColumn(line.length());
+                    }
+                    else {
+                        caretPosition = caretPosition.withColumn(CJKUtils.getStringCharacterIndex(line, trueColumnPosition));
+                    }
+                }
+                else if(verticalFocusSwitching) {
+                    return Result.MOVE_FOCUS_DOWN;
+                }
+                return Result.HANDLED;
+            case End:
+                caretPosition = caretPosition.withColumn(line.length());
+                return Result.HANDLED;
+            case Enter:
+                if(style == Style.SINGLE_LINE) {
+                    return Result.MOVE_FOCUS_NEXT;
+                }
+                String newLine = line.substring(caretPosition.getColumn());
+                String oldLine = line.substring(0, caretPosition.getColumn());
+                if(validated(newLine) && validated(oldLine)) {
+                    lines.set(caretPosition.getRow(), oldLine);
+                    lines.add(caretPosition.getRow() + 1, newLine);
+                    caretPosition = caretPosition.withColumn(0).withRelativeRow(1);
+                }
+                return Result.HANDLED;
+            case Home:
+                caretPosition = caretPosition.withColumn(0);
+                return Result.HANDLED;
+            case PageDown:
+                caretPosition = caretPosition.withRelativeRow(getSize().getRows());
+                if(caretPosition.getRow() > lines.size() - 1) {
+                    caretPosition = caretPosition.withRow(lines.size() - 1);
+                }
+                return Result.HANDLED;
+            case PageUp:
+                caretPosition = caretPosition.withRelativeRow(-getSize().getRows());
+                if(caretPosition.getRow() < 0) {
+                    caretPosition = caretPosition.withRow(0);
+                }
+                return Result.HANDLED;
+            default:
         }
+        return super.handleKeyStroke(keyStroke);
     }
 
     private boolean validated(String line) {
@@ -506,17 +592,28 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
         return super.handleKeyStroke(keyStroke);
     }
 
-    public static abstract class TextBoxRenderer implements InteractableRenderer<TextBox> {
-        public abstract TerminalPosition getViewTopLeft();
-        public abstract void setViewTopLeft(TerminalPosition position);
+    /**
+     * Helper interface that doesn't add any new methods but makes coding new text box renderers a little bit more clear
+     */
+    public interface TextBoxRenderer extends InteractableRenderer<TextBox> {
+        TerminalPosition getViewTopLeft();
+        void setViewTopLeft(TerminalPosition position);
     }
 
-    public static class DefaultTextBoxRenderer extends TextBoxRenderer {
+    /**
+     * This is the default text box renderer that is used if you don't override anything. With this renderer, the text
+     * box is filled with a solid background color and the text is drawn on top of it. Scrollbars are added for
+     * multi-line text whenever the text inside the {@code TextBox} does not fit in the available area.
+     */
+    public static class DefaultTextBoxRenderer implements TextBoxRenderer {
         private TerminalPosition viewTopLeft;
         private ScrollBar verticalScrollBar;
         private ScrollBar horizontalScrollBar;
         private boolean hideScrollBars;
 
+        /**
+         * Default constructor
+         */
         public DefaultTextBoxRenderer() {
             viewTopLeft = TerminalPosition.TOP_LEFT_CORNER;
             verticalScrollBar = new ScrollBar(Direction.VERTICAL);
@@ -562,6 +659,12 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
             return new TerminalSize(component.longestRow, component.lines.size());
         }
 
+        /**
+         * Controls whether scrollbars should be visible or not when a multi-line {@code TextBox} has more content than
+         * it can draw in the area it was assigned (default: false)
+         * @param hideScrollBars If {@code true}, don't show scrollbars if the multi-line content is bigger than the
+         *                       area
+         */
         public void setHideScrollBars(boolean hideScrollBars) {
             this.hideScrollBars = hideScrollBars;
         }

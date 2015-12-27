@@ -22,11 +22,23 @@ import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 
 /**
- * AbstractComponent provides some good default behaviour for a Component, all components in Lanterna extends from this
- * class in some way. If you want to write your own component that isn't interactable or theme:able, you probably want
- * to extend from this class.
+ * AbstractComponent provides some good default behaviour for a {@code Component}, all components in Lanterna extends
+ * from this class in some way. If you want to write your own component that isn't interactable or theme:able, you
+ * probably want to extend from this class.
+ * <p/>
+ * The way you want to declare your new {@code Component} is to pass in itself as the generic parameter, like this:
+ * <pre>
+ * {@code
+ *     public class MyComponent extends AbstractComponent<MyComponent> {
+ *         ...
+ *     }
+ * }
+ * </pre>
+ * This was, the component renderer will be correctly setup type-wise and you will need to do fewer typecastings when
+ * you implement the drawing method your new component.
+ *
  * @author Martin
- * @param <T> Type of Renderer this component will use
+ * @param <T> Should always be itself, this value will be used for the {@code ComponentRenderer} declaration
  */
 public abstract class AbstractComponent<T extends Component> implements Component {
     private ComponentRenderer<T> renderer;
@@ -37,6 +49,9 @@ public abstract class AbstractComponent<T extends Component> implements Componen
     private LayoutData layoutData;
     private boolean invalid;
 
+    /**
+     * Default constructor
+     */
     public AbstractComponent() {
         size = TerminalSize.ZERO;
         position = TerminalPosition.TOP_LEFT_CORNER;
@@ -55,6 +70,15 @@ public abstract class AbstractComponent<T extends Component> implements Componen
      */
     protected abstract ComponentRenderer<T> createDefaultRenderer();
 
+    /**
+     * This will attempt to dynamically construct a {@code ComponentRenderer} class from a string, assumed to be passed
+     * in from a theme. This makes it possible to create themes that supplies their own {@code ComponentRenderers} that
+     * can even replace the ones built into lanterna and used for the bundled components.
+     *
+     * @param className Fully qualified name of the {@code ComponentRenderer} we want to instatiate
+     * @return {@code null} if {@code className} was null, otherwise the {@code ComponentRenderer} instance
+     * @throws RuntimeException If there were any problems instatiating the class
+     */
     @SuppressWarnings("unchecked")
     protected ComponentRenderer<T> getRendererFromTheme(String className) {
         if(className == null) {
@@ -71,6 +95,11 @@ public abstract class AbstractComponent<T extends Component> implements Componen
         }
     }
 
+    /**
+     * Takes a {@code Runnable} and immediately executes it if this is called on the designated GUI thread, otherwise
+     * schedules it for later invocation.
+     * @param runnable {@code Runnable} to execute on the GUI thread
+     */
     protected void runOnGUIThreadIfExistsOtherwiseRunDirect(Runnable runnable) {
         if(getTextGUI() != null && getTextGUI().getGUIThread() != null) {
             getTextGUI().getGUIThread().invokeLater(runnable);
@@ -80,6 +109,11 @@ public abstract class AbstractComponent<T extends Component> implements Componen
         }
     }
 
+    /**
+     * Explicitly sets the {@code ComponentRenderer} to be used when drawing this component.
+     * @param renderer {@code ComponentRenderer} to be used when drawing this component
+     * @return Itself
+     */
     public T setRenderer(ComponentRenderer<T> renderer) {
         this.renderer = renderer;
         return self();
@@ -102,11 +136,9 @@ public abstract class AbstractComponent<T extends Component> implements Componen
     }
 
     @Override
-    public T setSize(TerminalSize size) {
-        synchronized(this) {
-            this.size = size;
-            return self();
-        }
+    public synchronized T setSize(TerminalSize size) {
+        this.size = size;
+        return self();
     }
 
     @Override
@@ -125,25 +157,24 @@ public abstract class AbstractComponent<T extends Component> implements Componen
     }
 
     @Override
-    public final T setPreferredSize(TerminalSize explicitPreferredSize) {
-        synchronized(this) {
-            this.explicitPreferredSize = explicitPreferredSize;
-            return self();
-        }
+    public final synchronized T setPreferredSize(TerminalSize explicitPreferredSize) {
+        this.explicitPreferredSize = explicitPreferredSize;
+        return self();
     }
 
-    public TerminalSize calculatePreferredSize() {
-        synchronized(this) {
-            return getRenderer().getPreferredSize(self());
-        }
+    /**
+     * Invokes the component renderer's size calculation logic and returns the result. This value represents the
+     * preferred size and isn't necessarily what it will eventually be assigned later on.
+     * @return Size that the component renderer believes the component should be
+     */
+    protected synchronized TerminalSize calculatePreferredSize() {
+        return getRenderer().getPreferredSize(self());
     }
 
     @Override
-    public T setPosition(TerminalPosition position) {
-        synchronized(this) {
-            this.position = position;
-            return self();
-        }
+    public synchronized T setPosition(TerminalPosition position) {
+        this.position = position;
+        return self();
     }
 
     @Override
@@ -157,21 +188,7 @@ public abstract class AbstractComponent<T extends Component> implements Componen
     }
 
     @Override
-    public final void draw(final TextGUIGraphics graphics) {
-        synchronized(this) {
-            drawComponent(graphics);
-            invalid = false;
-        }
-    }
-
-    /**
-     * Implement this method to define the logic to draw the component. The reason for this abstract method, instead of
-     * overriding {@code Component.draw(..)} is because {@code AbstractComponent.draw(..)} locks the internal state,
-     * calls this method and then resets the invalid flag. If you could override {@code draw}, you might forget to call
-     * the super method and probably won't notice that your code keeps refreshing the GUI even though nothing has changed.
-     * @param graphics TextGraphics to be used to draw the component
-     */
-    public void drawComponent(TextGUIGraphics graphics) {
+    public final synchronized void draw(final TextGUIGraphics graphics) {
         if(getRenderer() == null) {
             ComponentRenderer<T> renderer = getRendererFromTheme(graphics.getThemeDefinition(getClass()).getRenderer());
             if(renderer == null) {
@@ -184,18 +201,39 @@ public abstract class AbstractComponent<T extends Component> implements Componen
         }
         //Delegate drawing the component to the renderer
         setSize(graphics.getSize());
+        onBeforeDrawing();
         getRenderer().drawComponent(graphics, self());
+        onAfterDrawing(graphics);
+        invalid = false;
+    }
+
+    /**
+     * This method is called just before the component's renderer is invoked for the drawing operation. You can use this
+     * hook to do some last-minute adjustments to the component, as an alternative to coding it into the renderer
+     * itself. The component should have the correct size and position at this point, if you call {@code getSize()} and
+     * {@code getPosition()}.
+     */
+    protected void onBeforeDrawing() {
+        //No operation by default
+    }
+
+    /**
+     * This method is called immediately after the component's renderer has finished the drawing operation. You can use
+     * this hook to do some post-processing if you need, as an alternative to coding it into the renderer. The
+     * {@code TextGUIGraphics} supplied is the same that was fed into the renderer.
+     * @param graphics Graphics object you can use to manipulate the appearance of the component
+     */
+    protected void onAfterDrawing(TextGUIGraphics graphics) {
+        //No operation by default
     }
 
     @Override
-    public T setLayoutData(LayoutData data) {
-        synchronized(this) {
-            if(layoutData != data) {
-                layoutData = data;
-                invalidate();
-            }
-            return self();
+    public synchronized T setLayoutData(LayoutData data) {
+        if(layoutData != data) {
+            layoutData = data;
+            invalidate();
         }
+        return self();
     }
 
     @Override
@@ -270,35 +308,32 @@ public abstract class AbstractComponent<T extends Component> implements Componen
     }
 
     @Override
-    public Border withBorder(Border border) {
-        synchronized(this) {
-            border.setComponent(this);
-            return border;
-        }
+    public synchronized Border withBorder(Border border) {
+        border.setComponent(this);
+        return border;
     }
 
     @Override
-    public T addTo(Panel panel) {
-        synchronized(this) {
-            panel.addComponent(this);
-            return self();
-        }
+    public synchronized T addTo(Panel panel) {
+        panel.addComponent(this);
+        return self();
     }
 
     @Override
-    public void onAdded(Container container) {
-        synchronized(this) {
-            parent = container;
-        }
+    public synchronized void onAdded(Container container) {
+        parent = container;
     }
 
     @Override
-    public void onRemoved(Container container) {
-        synchronized(this) {
-            parent = null;
-        }
+    public synchronized void onRemoved(Container container) {
+        parent = null;
     }
 
+    /**
+     * This is a little hack to avoid doing typecasts all over the place when having to return {@code T}. Credit to
+     * avl42 for this one!
+     * @return Itself, but as type T
+     */
     @SuppressWarnings("unchecked")
     protected T self() {
         return (T)this;

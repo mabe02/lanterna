@@ -5,7 +5,8 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.TextGUIGraphics;
 
 /**
- * Created by martin on 23/08/15.
+ * Default implementation of {@code TableHeaderRenderer}
+ * @author Martin
  */
 public class DefaultTableHeaderRenderer<V> implements TableHeaderRenderer<V> {
     @Override

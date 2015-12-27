@@ -6,7 +6,20 @@ import com.googlecode.lanterna.graphics.ThemeDefinition;
 
 /**
  * Classic scrollbar that can be used to display where inside a larger component a view is showing. This implementation
- * is not interactable and needs to be driven externally.
+ * is not interactable and needs to be driven externally, meaning you can't focus on the scrollbar itself, you have to
+ * update its state as part of another component being modified. {@code ScrollBar}s are either horizontal or vertical,
+ * which affects the way they appear and how they are drawn.
+ * <p/>
+ * This class works on two concepts, the min-position-max values and the view size. The minimum value is always 0 and
+ * cannot be changed. The maximum value is 100 and can be adjusted programmatically. Position value is whever along the
+ * axis of 0 to max the scrollbar's tracker currently is placed. The view size is an important concept, it determines
+ * how big the tracker should be and limits the position so that it can only reach {@code maximum value - view size}.
+ * <p/>
+ * The regular way to use the {@code ScrollBar} class is to tie it to the model-view of another component and set the
+ * scrollbar's maximum to the total height (or width, if the scrollbar is horizontal) of the model-view. View size
+ * should then be assigned based on the current size of the view, meaning as the terminal and/or the GUI changes and the
+ * components visible space changes, the scrollbar's view size is updated along with it. Finally the position of the
+ * scrollbar should be equal to the scroll offset in the component.
  *
  * @author Martin
  */
@@ -17,6 +30,10 @@ public class ScrollBar extends AbstractComponent<ScrollBar> {
     private int position;
     private int viewSize;
 
+    /**
+     * Creates a new {@code ScrollBar} with a specified direction
+     * @param direction Direction of the scrollbar
+     */
     public ScrollBar(Direction direction) {
         this.direction = direction;
         this.maximum = 100;
@@ -24,10 +41,19 @@ public class ScrollBar extends AbstractComponent<ScrollBar> {
         this.viewSize = 0;
     }
 
+    /**
+     * Returns the direction of this {@code ScrollBar}
+     * @return Direction of this {@code ScrollBar}
+     */
     public Direction getDirection() {
         return direction;
     }
 
+    /**
+     * Sets the maximum value the scrollbar's position (minus the view size) can have
+     * @param maximum Maximum value
+     * @return Itself
+     */
     public ScrollBar setScrollMaximum(int maximum) {
         if(maximum < 0) {
             throw new IllegalArgumentException("Cannot set ScrollBar maximum to " + maximum);
@@ -37,24 +63,49 @@ public class ScrollBar extends AbstractComponent<ScrollBar> {
         return this;
     }
 
+    /**
+     * Returns the maximum scroll value
+     * @return Maximum scroll value
+     */
     public int getScrollMaximum() {
         return maximum;
     }
 
+
+    /**
+     * Sets the scrollbar's position, should be a value between 0 and {@code maximum - view size}
+     * @param position Scrollbar's tracker's position
+     * @return Itself
+     */
     public ScrollBar setScrollPosition(int position) {
         this.position = Math.min(position, this.maximum);
         invalidate();
         return this;
     }
 
+    /**
+     * Returns the position of the {@code ScrollBar}'s tracker
+     * @return Position of the {@code ScrollBar}'s tracker
+     */
     public int getScrollPosition() {
         return position;
     }
 
-    public void setViewSize(int viewSize) {
+    /**
+     * Sets the view size of the scrollbar, determining how big the scrollbar's tracker should be and also affecting the
+     * maximum value of tracker's position
+     * @param viewSize View size of the scrollbar
+     * @return Itself
+     */
+    public ScrollBar setViewSize(int viewSize) {
         this.viewSize = viewSize;
+        return this;
     }
 
+    /**
+     * Returns the view size of the scrollbar
+     * @return View size of the scrollbar
+     */
     public int getViewSize() {
         if(viewSize > 0) {
             return viewSize;
@@ -69,9 +120,12 @@ public class ScrollBar extends AbstractComponent<ScrollBar> {
 
     @Override
     protected ComponentRenderer<ScrollBar> createDefaultRenderer() {
-        return new ClassicScrollBarRenderer();
+        return new DefaultScrollBarRenderer();
     }
 
+    /**
+     * Helper class for making new {@code ScrollBar} renderers a little bit cleaner
+     */
     public static abstract class ScrollBarRenderer implements ComponentRenderer<ScrollBar> {
         @Override
         public TerminalSize getPreferredSize(ScrollBar component) {
@@ -79,14 +133,27 @@ public class ScrollBar extends AbstractComponent<ScrollBar> {
         }
     }
 
-    public static class ClassicScrollBarRenderer extends ScrollBarRenderer {
+    /**
+     * Default renderer for {@code ScrollBar} which will be used unless overridden. This will draw a scrollbar using
+     * arrows at each extreme end, a background color for spaces between those arrows and the tracker and then the
+     * tracker itself in three different styles depending on the size of the tracker. All characters and colors are
+     * customizable through whatever theme is currently in use.
+     */
+    public static class DefaultScrollBarRenderer extends ScrollBarRenderer {
 
         private boolean growScrollTracker;
 
-        public ClassicScrollBarRenderer() {
+        /**
+         * Default constructor
+         */
+        public DefaultScrollBarRenderer() {
             this.growScrollTracker = true;
         }
 
+        /**
+         * Should tracker automatically grow in size along with the {@code ScrollBar} (default: {@code true})
+         * @param growScrollTracker Automatically grow tracker
+         */
         public void setGrowScrollTracker(boolean growScrollTracker) {
             this.growScrollTracker = growScrollTracker;
         }

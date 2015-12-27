@@ -25,7 +25,8 @@ import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
 
 /**
- * This WindowPostRenderer implementation draws a shadow under the previously rendered window
+ * This WindowPostRenderer implementation draws a shadow under the window
+ *
  * @author Martin
  */
 public class WindowShadowRenderer implements WindowPostRenderer {

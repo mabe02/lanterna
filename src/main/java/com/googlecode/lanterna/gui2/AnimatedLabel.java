@@ -24,16 +24,27 @@ import java.lang.ref.WeakReference;
 import java.util.*;
 
 /**
- * Special kind of label that cycles through a list of texts
+ * This is a special label that contains not just a single text to display but a number of frames that are cycled
+ * through. The class will manage a timer on its own and ensure the label is updated and redrawn. There is a static
+ * helper method available to create the classic "spinning bar": {@code createClassicSpinningLine()}
  */
 public class AnimatedLabel extends Label {
     private static Timer TIMER = null;
     private static final WeakHashMap<AnimatedLabel, TimerTask> SCHEDULED_TASKS = new WeakHashMap<AnimatedLabel, TimerTask>();
 
+    /**
+     * Creates a classic spinning bar which can be used to signal to the user that an operation in is process.
+     * @return {@code AnimatedLabel} instance which is setup to show a spinning bar
+     */
     public static AnimatedLabel createClassicSpinningLine() {
         return createClassicSpinningLine(150);
     }
 
+    /**
+     * Creates a classic spinning bar which can be used to signal to the user that an operation in is process.
+     * @param speed Delay in between each frame
+     * @return {@code AnimatedLabel} instance which is setup to show a spinning bar
+     */
     public static AnimatedLabel createClassicSpinningLine(int speed) {
         AnimatedLabel animatedLabel = new AnimatedLabel("-");
         animatedLabel.addFrame("\\");
@@ -47,6 +58,12 @@ public class AnimatedLabel extends Label {
     private TerminalSize combinedMaximumPreferredSize;
     private int currentFrame;
 
+    /**
+     * Creates a new animated label, initially set to one frame. You will need to add more frames and call
+     * {@code startAnimation()} for this to start moving.
+     *
+     * @param firstFrameText The content of the label at the first frame
+     */
     public AnimatedLabel(String firstFrameText) {
         super(firstFrameText);
         frames = new ArrayList<String[]>();
@@ -58,7 +75,11 @@ public class AnimatedLabel extends Label {
         ensurePreferredSize(lines);
     }
 
-    public void addFrame(String text) {
+    /**
+     * Adds one more frame at the end of the list of frames
+     * @param text Text to use for the label at this frame
+     */
+    public synchronized void addFrame(String text) {
         String[] lines = splitIntoMultipleLines(text);
         frames.add(lines);
         ensurePreferredSize(lines);
@@ -68,7 +89,11 @@ public class AnimatedLabel extends Label {
         combinedMaximumPreferredSize = combinedMaximumPreferredSize.max(getBounds(lines, combinedMaximumPreferredSize));
     }
 
-    public void nextFrame() {
+    /**
+     * Advances the animated label to the next frame. You normally don't need to call this manually as it will be done
+     * by the animation thread.
+     */
+    public synchronized void nextFrame() {
         currentFrame++;
         if(currentFrame >= frames.size()) {
             currentFrame = 0;
@@ -82,6 +107,12 @@ public class AnimatedLabel extends Label {
         stopAnimation();
     }
 
+    /**
+     * Starts the animation thread which will periodically call {@code nextFrame()} at the interval specified by the
+     * {@code millisecondsPerFrame} parameter. After all frames have been cycled through, it will start over from the
+     * first frame again.
+     * @param millisecondsPerFrame The interval in between every frame
+     */
     public synchronized void startAnimation(long millisecondsPerFrame) {
         if(TIMER == null) {
             TIMER = new Timer("AnimatedLabel");
@@ -91,7 +122,11 @@ public class AnimatedLabel extends Label {
         TIMER.scheduleAtFixedRate(animationTimerTask, millisecondsPerFrame, millisecondsPerFrame);
     }
 
-    public void stopAnimation() {
+    /**
+     * Halts the animation thread and the label will stop at whatever was the current frame at the time when this was
+     * called
+     */
+    public synchronized void stopAnimation() {
         removeTaskFromTimer(this);
     }
 

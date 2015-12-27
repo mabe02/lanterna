@@ -29,11 +29,22 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * Created by martin on 19/10/14.
+ * The checkbox component looks like a regular checkbox that you can find in modern graphics user interfaces, a label
+ * and a space that the user can toggle on and off by using enter or space keys.
+ *
+ * @author Martin
  */
 public class CheckBox extends AbstractInteractableComponent<CheckBox> {
 
+    /**
+     * Listener interface that can be used to catch user events on the check box
+     */
     public interface Listener {
+        /**
+         * This is fired when the user has altered the checked state of this {@code CheckBox}
+         * @param checked If the {@code CheckBox} is now toggled on, this is set to {@code true}, otherwise
+         * {@code false}
+         */
         void onStatusChanged(boolean checked);
     }
 
@@ -41,10 +52,17 @@ public class CheckBox extends AbstractInteractableComponent<CheckBox> {
     private String label;
     private boolean checked;
 
+    /**
+     * Creates a new checkbox with no label, initially set to un-checked
+     */
     public CheckBox() {
         this("");
     }
 
+    /**
+     * Creates a new checkbox with a specific label, initially set to un-checked
+     * @param label Label to assign to the check box
+     */
     public CheckBox(String label) {
         if(label == null) {
             throw new IllegalArgumentException("Cannot create a CheckBox with null label");
@@ -57,22 +75,29 @@ public class CheckBox extends AbstractInteractableComponent<CheckBox> {
         this.checked = false;
     }
 
-    public CheckBox setChecked(final boolean checked) {
-        synchronized(this) {
-            this.checked = checked;
-            runOnGUIThreadIfExistsOtherwiseRunDirect(new Runnable() {
-                @Override
-                public void run() {
-                    for(Listener listener : listeners) {
-                        listener.onStatusChanged(checked);
-                    }
+    /**
+     * Programmatically updated the check box to a particular checked state
+     * @param checked If {@code true}, the check box will be set to toggled on, otherwise {@code false}
+     * @return Itself
+     */
+    public synchronized CheckBox setChecked(final boolean checked) {
+        this.checked = checked;
+        runOnGUIThreadIfExistsOtherwiseRunDirect(new Runnable() {
+            @Override
+            public void run() {
+                for(Listener listener : listeners) {
+                    listener.onStatusChanged(checked);
                 }
-            });
-            invalidate();
-            return this;
-        }
+            }
+        });
+        invalidate();
+        return this;
     }
 
+    /**
+     * Returns the checked state of this check box
+     * @return {@code true} if the check box is toggled on, otherwise {@code false}
+     */
     public boolean isChecked() {
         return checked;
     }
@@ -87,21 +112,33 @@ public class CheckBox extends AbstractInteractableComponent<CheckBox> {
         return super.handleKeyStroke(keyStroke);
     }
 
-    public CheckBox setLabel(String label) {
-        synchronized(this) {
-            if(label == null) {
-                throw new IllegalArgumentException("Cannot set CheckBox label to null");
-            }
-            this.label = label;
-            invalidate();
-            return this;
+    /**
+     * Updates the label of the checkbox
+     * @param label New label to assign to the check box
+     * @return Itself
+     */
+    public synchronized CheckBox setLabel(String label) {
+        if(label == null) {
+            throw new IllegalArgumentException("Cannot set CheckBox label to null");
         }
+        this.label = label;
+        invalidate();
+        return this;
     }
 
+    /**
+     * Returns the label of check box
+     * @return Label currently assigned to the check box
+     */
     public String getLabel() {
         return label;
     }
 
+    /**
+     * Adds a listener to this check box so that it will be notificed on certain user actions
+     * @param listener Listener to fire events on
+     * @return Itself
+     */
     public CheckBox addListener(Listener listener) {
         if(listener != null && !listeners.contains(listener)) {
             listeners.add(listener);
@@ -109,6 +146,11 @@ public class CheckBox extends AbstractInteractableComponent<CheckBox> {
         return this;
     }
 
+    /**
+     * Removes a listener from this check box so that, if it was previously added, it will no long receive any events
+     * @param listener Listener to remove from the check box
+     * @return Itself
+     */
     public CheckBox removeListener(Listener listener) {
         listeners.remove(listener);
         return this;
@@ -119,9 +161,16 @@ public class CheckBox extends AbstractInteractableComponent<CheckBox> {
         return new DefaultCheckBoxRenderer();
     }
 
+    /**
+     * Helper interface that doesn't add any new methods but makes coding new check box renderers a little bit more clear
+     */
     public static abstract class CheckBoxRenderer implements InteractableRenderer<CheckBox> {
     }
 
+    /**
+     * The default renderer that is used unless overridden. This renderer will draw the checkbox label on the right side
+     * of a "[ ]" block which will contain a "X" inside it if the check box has toggle status on
+     */
     public static class DefaultCheckBoxRenderer extends CheckBoxRenderer {
         private static final TerminalPosition CURSOR_LOCATION = new TerminalPosition(1, 0);
         @Override

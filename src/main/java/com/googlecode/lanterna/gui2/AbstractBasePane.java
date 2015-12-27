@@ -25,7 +25,8 @@ import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.input.MouseAction;
 
 /**
- * Created by martin on 27/10/14.
+ * This abstract implementation of {@code BasePane} has the common code shared by all different concrete
+ * implementations.
  */
 public abstract class AbstractBasePane implements BasePane {
     protected final ContentHolder contentHolder;
@@ -48,6 +49,7 @@ public abstract class AbstractBasePane implements BasePane {
         return invalid || contentHolder.isInvalid();
     }
 
+    @Override
     public void invalidate() {
         invalid = true;
 
@@ -208,24 +210,12 @@ public abstract class AbstractBasePane implements BasePane {
         invalidate();
     }
 
-    /**
-     * If set to true, up/down array keys will not translate to next/previous if there are no more components
-     * above/below.
-     * @param strictFocusChange Will not allow relaxed navigation if set to {@code true}
-     */
+    @Override
     public void setStrictFocusChange(boolean strictFocusChange) {
         this.strictFocusChange = strictFocusChange;
     }
 
-    /**
-     * If set to false, using the keyboard arrows keys will have the same effect as using the tab and reverse tab.
-     * Lanterna will map arrow down and arrow right to tab, going to the next component, and array up and array left to
-     * reverse tab, going to the previous component. If set to true, Lanterna will search for the next component
-     * starting at the cursor position in the general direction of the arrow. By default this is enabled.
-     * <p/>
-     * In Lanterna 2, direction based movements were not available.
-     * @param enableDirectionBasedMovements Should direction based focus movements be enabled?
-     */
+    @Override
     public void setEnableDirectionBasedMovements(boolean enableDirectionBasedMovements) {
         this.enableDirectionBasedMovements = enableDirectionBasedMovements;
     }

@@ -24,13 +24,31 @@ import com.googlecode.lanterna.TerminalSize;
 import java.util.List;
 
 /**
- * Simple layout manager the puts all components on a single line
+ * Simple layout manager the puts all components on a single line, either horizontally or vertically.
  */
 public class LinearLayout implements LayoutManager {
+    /**
+     * This enum type will decide the alignment of a component on the counter-axis, meaning the horizontal alignment on
+     * vertical {@code LinearLayout}s and vertical alignment on horizontal {@code LinearLayout}s.
+     */
     public enum Alignment {
+        /**
+         * The component will be placed to the left (for vertical layouts) or top (for horizontal layouts)
+         */
         Beginning,
+        /**
+         * The component will be placed horizontally centered (for vertical layouts) or vertically centered (for
+         * horizontal layouts)
+         */
         Center,
+        /**
+         * The component will be placed to the right (for vertical layouts) or bottom (for horizontal layouts)
+         */
         End,
+        /**
+         * The component will be forced to take up all the horizontal space (for vertical layouts) or vertical space
+         * (for horizontal layouts)
+         */
         Fill,
     }
 
@@ -42,6 +60,14 @@ public class LinearLayout implements LayoutManager {
         }
     }
 
+    /**
+     * Creates a {@code LayoutData} for {@code LinearLayout} that assigns a component to a particular alignment on its
+     * counter-axis, meaning the horizontal alignment on vertical {@code LinearLayout}s and vertical alignment on
+     * horizontal {@code LinearLayout}s.
+     * @param alignment Alignment to store in the {@code LayoutData} object
+     * @return {@code LayoutData} object created for {@code LinearLayout}s with the specified alignment
+     * @see Alignment
+     */
     public static LayoutData createLayoutData(Alignment alignment) {
         return new LinearLayoutData(alignment);
     }
@@ -50,22 +76,40 @@ public class LinearLayout implements LayoutManager {
     private int spacing;
     private boolean changed;
 
+    /**
+     * Default constructor, creates a vertical {@code LinearLayout}
+     */
     public LinearLayout() {
         this(Direction.VERTICAL);
     }
 
+    /**
+     * Standard constructor that creates a {@code LinearLayout} with a specified direction to position the components on
+     * @param direction Direction for this {@code Direction}
+     */
     public LinearLayout(Direction direction) {
         this.direction = direction;
         this.spacing = direction == Direction.HORIZONTAL ? 1 : 0;
         this.changed = true;
     }
 
+    /**
+     * Sets the amount of empty space to put in between components. For horizontal layouts, this is number of columns
+     * (by default 1) and for vertical layouts this is number of rows (by default 0).
+     * @param spacing Spacing between components, either in number of columns or rows depending on the direction
+     * @return Itself
+     */
     public LinearLayout setSpacing(int spacing) {
         this.spacing = spacing;
         this.changed = true;
         return this;
     }
 
+    /**
+     * Returns the amount of empty space to put in between components. For horizontal layouts, this is number of columns
+     * (by default 1) and for vertical layouts this is number of rows (by default 0).
+     * @return Spacing between components, either in number of columns or rows depending on the direction
+     */
     public int getSpacing() {
         return spacing;
     }

@@ -23,7 +23,14 @@ import com.googlecode.lanterna.input.KeyStroke;
 
 /**
  * BasePane is the base container in a Text GUI. A text gui may have several base panes, although they are
- * always independent. One common example of this is a multi-window system where each window is a base pane.
+ * always independent. One common example of this is a multi-window system where each window is a base pane. Think of
+ * the base pane as a root container, the ultimate parent of all components added to a GUI. When you use
+ * {@code MultiWindowTextGUI}, the background space behind the windows is a {@code BasePane} too, just like each of the
+ * windows. They are all drawn separately and composited together. Every {@code BasePane} has a single component that
+ * is drawn over the entire area the {@code BasePane} is occupying, it's very likely you want to set this component to
+ * be a container of some sort, probably a {@code Panel}, that can host multiple child components.
+ *
+ * @see Panel
  * @author Martin
  */
 public interface BasePane extends Composite {
@@ -119,4 +126,22 @@ public interface BasePane extends Composite {
      * @return The global coordinates expressed as local coordinates
      */
     TerminalPosition fromGlobal(TerminalPosition position);
+
+    /**
+     * If set to true, up/down array keys will not translate to next/previous if there are no more components
+     * above/below.
+     * @param strictFocusChange Will not allow relaxed navigation if set to {@code true}
+     */
+    void setStrictFocusChange(boolean strictFocusChange);
+
+    /**
+     * If set to false, using the keyboard arrows keys will have the same effect as using the tab and reverse tab.
+     * Lanterna will map arrow down and arrow right to tab, going to the next component, and array up and array left to
+     * reverse tab, going to the previous component. If set to true, Lanterna will search for the next component
+     * starting at the cursor position in the general direction of the arrow. By default this is enabled.
+     * <p/>
+     * In Lanterna 2, direction based movements were not available.
+     * @param enableDirectionBasedMovements Should direction based focus movements be enabled?
+     */
+    void setEnableDirectionBasedMovements(boolean enableDirectionBasedMovements);
 }

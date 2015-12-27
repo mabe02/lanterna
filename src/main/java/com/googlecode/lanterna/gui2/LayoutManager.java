@@ -22,7 +22,15 @@ import com.googlecode.lanterna.TerminalSize;
 import java.util.List;
 
 /**
- *
+ * A layout manager is a class that takes an area of usable space and a list of components to fit on that space. This
+ * is very similar to how AWT/Swing/SWT works. Lanterna contains a number of layout managers built-in that will arrange
+ * components in various ways, but you can also write your own. The typical way of providing customization and tuning,
+ * so the layout manager can distinguish between components and treat them in different ways, is to create a class
+ * and/or objects based on the {@code LayoutData} object, which can be assigned to each {@code Component}.
+ * @see AbsoluteLayout
+ * @see BorderLayout
+ * @see GridLayout
+ * @see LinearLayout
  * @author Martin
  */
 public interface LayoutManager {

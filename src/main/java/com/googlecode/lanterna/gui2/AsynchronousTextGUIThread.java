@@ -4,7 +4,7 @@ package com.googlecode.lanterna.gui2;
  * Extended interface of TextGUIThread for implementations that uses a separate thread for all GUI event processing and
  * updating.
  *
- * Created by martin on 19/07/15.
+ * @author Martin
  */
 public interface AsynchronousTextGUIThread extends TextGUIThread {
     /**

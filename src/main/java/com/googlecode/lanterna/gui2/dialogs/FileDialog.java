@@ -9,7 +9,9 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 /**
- * Created by martin on 24/06/15.
+ * Dialog that allows the user to iterate the file system and pick file to open/save
+ *
+ * @author Martin
  */
 public class FileDialog extends DialogWindow {
 
@@ -22,6 +24,15 @@ public class FileDialog extends DialogWindow {
     private File directory;
     private File selectedFile;
 
+    /**
+     * Default constructor for {@code FileDialog}
+     * @param title Title of the dialog
+     * @param description Description of the dialog, is displayed at the top of the content area
+     * @param actionLabel Label to use on the "confirm" button, for example "open" or "save"
+     * @param dialogSize Rough estimation of how big you want the dialog to be
+     * @param showHiddenFilesAndDirs If {@code true}, hidden files and directories will be visible
+     * @param selectedObject Initially selected file node
+     */
     public FileDialog(
             String title,
             String description,
@@ -119,6 +130,11 @@ public class FileDialog extends DialogWindow {
         setComponent(contentPane);
     }
 
+    /**
+     * {@inheritDoc}
+     * @param textGUI Text GUI to add the dialog to
+     * @return The file which was selected in the dialog or {@code null} if the dialog was cancelled
+     */
     @Override
     public File showDialog(WindowBasedTextGUI textGUI) {
         selectedFile = null;
@@ -147,7 +163,7 @@ public class FileDialog extends DialogWindow {
         }
     }
 
-    public class DoNothing implements Runnable {
+    private class DoNothing implements Runnable {
         @Override
         public void run() {
         }
@@ -208,8 +224,8 @@ public class FileDialog extends DialogWindow {
         }
 
         @Override
-        public void drawComponent(TextGUIGraphics graphics) {
-            TerminalSize area = graphics.getSize();
+        public void onBeforeDrawing() {
+            TerminalSize area = getSize();
             String absolutePath = directory.getAbsolutePath();
             int absolutePathLengthInColumns = CJKUtils.getColumnWidth(absolutePath);
             if(area.getColumns() < absolutePathLengthInColumns) {
@@ -217,7 +233,6 @@ public class FileDialog extends DialogWindow {
                 absolutePath = "..." + absolutePath.substring(Math.min(absolutePathLengthInColumns, 3));
             }
             setText(absolutePath);
-            super.drawComponent(graphics);
         }
     }
 }

@@ -26,14 +26,18 @@ import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 
 /**
- * Simple labeled button with an option action attached to it. You trigger the action by pressing the Enter key on the
- * keyboard.
+ * Simple labeled button with an optional action attached to it, you trigger the action by pressing the Enter key on the
+ * keyboard when the component is in focus.
  * @author Martin
  */
 public class Button extends AbstractInteractableComponent<Button> {
     private final Runnable action;
     private String label;
 
+    /**
+     * Creates a new button with a specific label and no attached action. Why would you need this? I have no idea.
+     * @param label Label to put on the button
+     */
     public Button(String label) {
         this(label, new Runnable() {
             @Override
@@ -42,6 +46,11 @@ public class Button extends AbstractInteractableComponent<Button> {
         });
     }
 
+    /**
+     * Creates a new button with a label and an associated action to fire when triggered by the user
+     * @param label Label to put on the button
+     * @param action What action to fire when the user triggers the button by pressing the enter key
+     */
     public Button(String label, Runnable action) {
         this.action = action;
         setLabel(label);
@@ -53,12 +62,12 @@ public class Button extends AbstractInteractableComponent<Button> {
     }
 
     @Override
-    public TerminalPosition getCursorLocation() {
+    public synchronized TerminalPosition getCursorLocation() {
         return getRenderer().getCursorLocation(this);
     }
 
     @Override
-    public Result handleKeyStroke(KeyStroke keyStroke) {
+    public synchronized Result handleKeyStroke(KeyStroke keyStroke) {
         if(keyStroke.getKeyType() == KeyType.Enter) {
             action.run();
             return Result.HANDLED;
@@ -66,7 +75,11 @@ public class Button extends AbstractInteractableComponent<Button> {
         return super.handleKeyStroke(keyStroke);
     }
 
-    public final void setLabel(String label) {
+    /**
+     * Updates the label on the button to the specified string
+     * @param label New label to use on the button
+     */
+    public final synchronized void setLabel(String label) {
         if(label == null) {
             throw new IllegalArgumentException("null label to a button is not allowed");
         }
@@ -77,6 +90,10 @@ public class Button extends AbstractInteractableComponent<Button> {
         invalidate();
     }
 
+    /**
+     * Returns the label current assigned to the button
+     * @return Label currently used by the button
+     */
     public String getLabel() {
         return label;
     }
@@ -86,10 +103,17 @@ public class Button extends AbstractInteractableComponent<Button> {
         return "Button{" + label + "}";
     }
 
-    public static abstract class ButtonRenderer implements InteractableRenderer<Button> {
+    /**
+     * Helper interface that doesn't add any new methods but makes coding new button renderers a little bit more clear
+     */
+    public interface ButtonRenderer extends InteractableRenderer<Button> {
     }
 
-    public static class DefaultButtonRenderer extends ButtonRenderer {
+    /**
+     * This is the default button renderer that is used if you don't override anything. With this renderer, buttons are
+     * drawn on a single line, with the label inside of "&lt;" and "&gt;".
+     */
+    public static class DefaultButtonRenderer implements ButtonRenderer {
         @Override
         public TerminalPosition getCursorLocation(Button button) {
             return new TerminalPosition(1 + getLabelShift(button, button.getSize()), 0);
@@ -147,7 +171,10 @@ public class Button extends AbstractInteractableComponent<Button> {
         }
     }
 
-    public static class FlatButtonRenderer extends ButtonRenderer {
+    /**
+     * Alternative button renderer that displays buttons with just the label and minimal decoration
+     */
+    public static class FlatButtonRenderer implements ButtonRenderer {
         @Override
         public TerminalPosition getCursorLocation(Button component) {
             return null;

@@ -117,6 +117,8 @@ public interface Window extends BasePane {
     void setTextGUI(WindowBasedTextGUI textGUI);
 
     /**
+     * This method returns the title of the window, which is normally drawn at the top-left corder of the window
+     * decoration, but depending on the {@code WindowDecorationRenderer} used by the {@code TextGUI}
      * @return title of the window
      */
     String getTitle();

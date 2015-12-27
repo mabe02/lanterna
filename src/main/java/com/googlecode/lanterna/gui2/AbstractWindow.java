@@ -26,11 +26,12 @@ import com.googlecode.lanterna.input.KeyType;
 import java.util.*;
 
 /**
- * Abstract Window implementation that contains much code that is shared between different concrete Window
- * implementations.
+ * Abstract Window has most of the code requiring for a window to function, all concrete window implementations extends
+ * from this in one way or another. You can define your own window by extending from this, as an alternative to building
+ * up the GUI externally by constructing a {@code BasicWindow} and adding components to it.
  * @author Martin
  */
-public class AbstractWindow extends AbstractBasePane implements Window {
+public abstract class AbstractWindow extends AbstractBasePane implements Window {
     private String title;
     private WindowBasedTextGUI textGUI;
     private boolean visible;
@@ -41,10 +42,17 @@ public class AbstractWindow extends AbstractBasePane implements Window {
     private Set<Hint> hints;
     private boolean closeWindowWithEscape;
 
+    /**
+     * Default constructor, this creates a window with no title
+     */
     public AbstractWindow() {
         this("");
     }
 
+    /**
+     * Creates a window with a specific title that will (probably) be drawn in the window decorations
+     * @param title Title of this window
+     */
     public AbstractWindow(String title) {
         super();
         this.title = title;
@@ -58,6 +66,13 @@ public class AbstractWindow extends AbstractBasePane implements Window {
         this.hints = new HashSet<Hint>();
     }
 
+    /**
+     * Setting this property to {@code true} will cause pressing the ESC key to close the window. This used to be the
+     * default behaviour of lanterna 3 during the development cycle but is not longer the case. You are encouraged to
+     * put proper buttons or other kind of components to clearly mark to the user how to close the window instead of
+     * magically taking ESC, but sometimes it can be useful (when doing testing, for example) to enable this mode.
+     * @param closeWindowWithEscape If {@code true}, this window will self-close if you press ESC key
+     */
     public void setCloseWindowWithEscape(boolean closeWindowWithEscape) {
         this.closeWindowWithEscape = closeWindowWithEscape;
     }
@@ -79,6 +94,10 @@ public class AbstractWindow extends AbstractBasePane implements Window {
         return textGUI;
     }
 
+    /**
+     * Alters the title of the window to the supplied string
+     * @param title New title of the window
+     */
     public void setTitle(String title) {
         this.title = title;
         invalidate();
@@ -167,7 +186,7 @@ public class AbstractWindow extends AbstractBasePane implements Window {
         setSize(size, true);
     }
 
-    public void setSize(TerminalSize size, boolean invalidate) {
+    private void setSize(TerminalSize size, boolean invalidate) {
         this.lastKnownSize = size;
         if(invalidate) {
             invalidate();

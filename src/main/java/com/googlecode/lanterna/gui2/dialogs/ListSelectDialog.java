@@ -7,7 +7,10 @@ import com.googlecode.lanterna.gui2.*;
 import java.util.List;
 
 /**
- * Created by martin on 23/06/15.
+ * Dialog that allows the user to select an item from a list
+ *
+ * @param <T> Type of elements in the list
+ * @author Martin
  */
 public class ListSelectDialog<T> extends DialogWindow {
     private T result;
@@ -82,6 +85,12 @@ public class ListSelectDialog<T> extends DialogWindow {
         close();
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param textGUI Text GUI to add the dialog to
+     * @return The item in the list that was selected or {@code null} if the dialog was cancelled
+     */
     @Override
     public T showDialog(WindowBasedTextGUI textGUI) {
         result = null;
@@ -89,10 +98,29 @@ public class ListSelectDialog<T> extends DialogWindow {
         return result;
     }
 
+    /**
+     * Shortcut for quickly creating a new dialog
+     * @param textGUI Text GUI to add the dialog to
+     * @param title Title of the dialog
+     * @param description Description of the dialog
+     * @param items Items in the dialog
+     * @param <T> Type of items in the dialog
+     * @return The selected item or {@code null} if cancelled
+     */
     public static <T> T showDialog(WindowBasedTextGUI textGUI, String title, String description, T... items) {
         return showDialog(textGUI, title, description, null, items);
     }
 
+    /**
+     * Shortcut for quickly creating a new dialog
+     * @param textGUI Text GUI to add the dialog to
+     * @param title Title of the dialog
+     * @param description Description of the dialog
+     * @param listBoxHeight Maximum height of the list box, scrollbars will be used if there are more items
+     * @param items Items in the dialog
+     * @param <T> Type of items in the dialog
+     * @return The selected item or {@code null} if cancelled
+     */
     public static <T> T showDialog(WindowBasedTextGUI textGUI, String title, String description, int listBoxHeight, T... items) {
         int width = 0;
         for(T item: items) {
@@ -102,6 +130,16 @@ public class ListSelectDialog<T> extends DialogWindow {
         return showDialog(textGUI, title, description, new TerminalSize(width, listBoxHeight), items);
     }
 
+    /**
+     * Shortcut for quickly creating a new dialog
+     * @param textGUI Text GUI to add the dialog to
+     * @param title Title of the dialog
+     * @param description Description of the dialog
+     * @param listBoxSize Maximum size of the list box, scrollbars will be used if the items cannot fit
+     * @param items Items in the dialog
+     * @param <T> Type of items in the dialog
+     * @return The selected item or {@code null} if cancelled
+     */
     public static <T> T showDialog(WindowBasedTextGUI textGUI, String title, String description, TerminalSize listBoxSize, T... items) {
         ListSelectDialog<T> listSelectDialog = new ListSelectDialogBuilder<T>()
                 .setTitle(title)

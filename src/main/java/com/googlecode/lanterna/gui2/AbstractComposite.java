@@ -25,14 +25,20 @@ import java.util.Collection;
 import java.util.Collections;
 
 /**
- *
+ * This abstract implementation contains common code for the different {@code Composite} implementations. A
+ * {@code Composite} component is one that encapsulates a single component, like borders. Because of this, a
+ * {@code Composite} can be seen as a special case of a {@code Container} and indeed this abstract class does in fact
+ * implement the {@code Container} interface as well, to make the composites easier to work with internally.
  * @author martin
- * @param <T>
+ * @param <T> Should always be itself, see {@code AbstractComponent}
  */
 public abstract class AbstractComposite<T extends Container> extends AbstractComponent<T> implements Composite, Container {
     
     private Component component;
 
+    /**
+     * Default constructor
+     */
     public AbstractComposite() {
         component = null;
     }
@@ -100,7 +106,9 @@ public abstract class AbstractComposite<T extends Container> extends AbstractCom
         super.invalidate();
 
         //Propagate
-        component.invalidate();
+        if(component != null) {
+            component.invalidate();
+        }
     }
 
     @Override

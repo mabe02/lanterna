@@ -33,7 +33,17 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @author Martin
  */
 public class RadioBoxList<V> extends AbstractListBox<V, RadioBoxList<V>> {
+    /**
+     * Listener interface that can be attached to the {@code RadioBoxList} in order to be notified on user actions
+     */
     public interface Listener {
+        /**
+         * Called by the {@code RadioBoxList} when the user changes which item is selected
+         * @param selectedIndex Index of the newly selected item, or -1 if the selection has been cleared (can only be
+         *                      done programmatically)
+         * @param previousSelection The index of the previously selected item which is now no longer selected, or -1 if
+         *                          nothing was previously selected
+         */
         void onSelectionChanged(int selectedIndex, int previousSelection);
     }
 
@@ -41,16 +51,18 @@ public class RadioBoxList<V> extends AbstractListBox<V, RadioBoxList<V>> {
     private int checkedIndex;
 
     /**
-     * Creates a new RadioCheckBoxList with no items
+     * Creates a new RadioCheckBoxList with no items. The size of the {@code RadioBoxList} will be as big as is required
+     * to display all items.
      */
     public RadioBoxList() {
         this(null);
     }
 
     /**
-     * Creates a new RadioCheckBoxList with a specified size.
-     * @param preferredSize Size of the RadioCheckBoxList or {@code null} to use the default
-     * calculation algorithm
+     * Creates a new RadioCheckBoxList with a specified size. If the items in the {@code RadioBoxList} cannot fit in the
+     * size specified, scrollbars will be used
+     * @param preferredSize Size of the {@code RadioBoxList} or {@code null} to have it try to be as big as necessary to
+     *                      be able to draw all items
      */
     public RadioBoxList(TerminalSize preferredSize) {
         super(preferredSize);
@@ -64,24 +76,20 @@ public class RadioBoxList<V> extends AbstractListBox<V, RadioBoxList<V>> {
     }
 
     @Override
-    public Result handleKeyStroke(KeyStroke keyStroke) {
-        synchronized(this) {
-            if(keyStroke.getKeyType() == KeyType.Enter ||
-                    (keyStroke.getKeyType() == KeyType.Character && keyStroke.getCharacter() == ' ')) {
-                checkedIndex = getSelectedIndex();
-                invalidate();
-                return Result.HANDLED;
-            }
+    public synchronized Result handleKeyStroke(KeyStroke keyStroke) {
+        if(keyStroke.getKeyType() == KeyType.Enter ||
+                (keyStroke.getKeyType() == KeyType.Character && keyStroke.getCharacter() == ' ')) {
+            checkedIndex = getSelectedIndex();
+            invalidate();
+            return Result.HANDLED;
         }
         return super.handleKeyStroke(keyStroke);
     }
 
     @Override
-    public RadioBoxList<V> clearItems() {
-        synchronized(this) {
-            setCheckedIndex(-1);
-            return super.clearItems();
-        }
+    public synchronized RadioBoxList<V> clearItems() {
+        setCheckedIndex(-1);
+        return super.clearItems();
     }
 
     /**
@@ -90,16 +98,14 @@ public class RadioBoxList<V> extends AbstractListBox<V, RadioBoxList<V>> {
      * @return {@code true} if the supplied object is what's currently selected in the list box,
      * {@code false} otherwise. Returns null if the supplied object is not an item in the list box.
      */
-    public Boolean isChecked(V object) {
-        synchronized(this) {
-            if(object == null)
-                return null;
+    public synchronized Boolean isChecked(V object) {
+        if(object == null)
+            return null;
 
-            if(indexOf(object) == -1)
-                return null;
+        if(indexOf(object) == -1)
+            return null;
 
-            return checkedIndex == indexOf(object);
-        }
+        return checkedIndex == indexOf(object);
     }
 
     /**
@@ -110,14 +116,12 @@ public class RadioBoxList<V> extends AbstractListBox<V, RadioBoxList<V>> {
      * {@code false} otherwise. Returns false if the index is out of range.
      */
     @SuppressWarnings("SimplifiableIfStatement")
-    public boolean isChecked(int index) {
-        synchronized(this) {
-            if(index < 0 || index >= getItemCount()) {
-                return false;
-            }
-
-            return checkedIndex == index;
+    public synchronized boolean isChecked(int index) {
+        if(index < 0 || index >= getItemCount()) {
+            return false;
         }
+
+        return checkedIndex == index;
     }
 
     /**
@@ -125,14 +129,12 @@ public class RadioBoxList<V> extends AbstractListBox<V, RadioBoxList<V>> {
      * any previously selected item is deselected.
      * @param item Item to be checked
      */
-    public void setCheckedItem(V item) {
-        synchronized(this) {
-            if(item == null) {
-                setCheckedIndex(-1);
-            }
-            else {
-                setCheckedItemIndex(indexOf(item));
-            }
+    public synchronized void setCheckedItem(V item) {
+        if(item == null) {
+            setCheckedIndex(-1);
+        }
+        else {
+            setCheckedItemIndex(indexOf(item));
         }
     }
 
@@ -140,13 +142,11 @@ public class RadioBoxList<V> extends AbstractListBox<V, RadioBoxList<V>> {
      * Sets the currently selected item by index. If the index is out of range, it does nothing.
      * @param index Index of the item to be selected
      */
-    public void setCheckedItemIndex(int index) {
-        synchronized(this) {
-            if(index < -1 || index >= getItemCount())
-                return;
+    public synchronized void setCheckedItemIndex(int index) {
+        if(index < -1 || index >= getItemCount())
+            return;
 
-            setCheckedIndex(index);
-        }
+        setCheckedIndex(index);
     }
 
     /**
@@ -159,24 +159,25 @@ public class RadioBoxList<V> extends AbstractListBox<V, RadioBoxList<V>> {
     /**
      * @return The object currently selected, or null if there is no selection
      */
-    public V getCheckedItem() {
-        synchronized(this) {
-            if(checkedIndex == -1 || checkedIndex >= getItemCount())
-                return null;
+    public synchronized V getCheckedItem() {
+        if(checkedIndex == -1 || checkedIndex >= getItemCount())
+            return null;
 
-            return getItemAt(checkedIndex);
-        }
+        return getItemAt(checkedIndex);
     }
 
     /**
      * Un-checks the currently checked item (if any) and leaves the radio check box in a state where no item is checked.
      */
-    public void clearSelection() {
-        synchronized(this) {
-            setCheckedIndex(-1);
-        }
+    public synchronized void clearSelection() {
+        setCheckedIndex(-1);
     }
 
+    /**
+     * Adds a new listener to the {@code RadioBoxList} that will be called on certain user actions
+     * @param listener Listener to attach to this {@code RadioBoxList}
+     * @return Itself
+     */
     public RadioBoxList<V> addListener(Listener listener) {
         if(listener != null && !listeners.contains(listener)) {
             listeners.add(listener);
@@ -184,6 +185,12 @@ public class RadioBoxList<V> extends AbstractListBox<V, RadioBoxList<V>> {
         return this;
     }
 
+    /**
+     * Removes a listener from this {@code RadioBoxList} so that if it had been added earlier, it will no longer be
+     * called on user actions
+     * @param listener Listener to remove from this {@code RadioBoxList}
+     * @return Itself
+     */
     public RadioBoxList<V> removeListener(Listener listener) {
         listeners.remove(listener);
         return this;
@@ -203,6 +210,11 @@ public class RadioBoxList<V> extends AbstractListBox<V, RadioBoxList<V>> {
         });
     }
 
+    /**
+     * Default renderer for this component which is used unless overridden. The selected state is drawn on the left side
+     * of the item label using a "&lt; &gt;" block filled with an "o" if the item is the selected one
+     * @param <V>
+     */
     public static class RadioBoxListItemRenderer<V> extends ListItemRenderer<V,RadioBoxList<V>> {
         @Override
         protected int getHotSpotPositionOnLine(int selectedIndex) {

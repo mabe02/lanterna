@@ -7,8 +7,9 @@ import java.math.BigInteger;
 import java.util.regex.Pattern;
 
 /**
- * TextInputDialog is a modal text input dialog that prompts the user to enter a text string. The class supports
- * validation and password masking. The builder class to help setup TextInputDialogs is TextInputDialogBuilder.
+ * {@code TextInputDialog} is a modal text input dialog that prompts the user to enter a text string. The class supports
+ * validation and password masking. The builder class to help setup {@code TextInputDialog}s is
+ * {@code TextInputDialogBuilder}.
  */
 public class TextInputDialog extends DialogWindow {
 
@@ -99,7 +100,14 @@ public class TextInputDialog extends DialogWindow {
         return result;
     }
 
-
+    /**
+     * Shortcut for quickly showing a {@code TextInputDialog}
+     * @param textGUI GUI to show the dialog on
+     * @param title Title of the dialog
+     * @param description Description of the dialog
+     * @param initialContent What content to place in the text box initially
+     * @return The string the user typed into the text box, or {@code null} if the dialog was cancelled
+     */
     public static String showDialog(WindowBasedTextGUI textGUI, String title, String description, String initialContent) {
         TextInputDialog textInputDialog = new TextInputDialogBuilder()
                 .setTitle(title)
@@ -109,6 +117,14 @@ public class TextInputDialog extends DialogWindow {
         return textInputDialog.showDialog(textGUI);
     }
 
+    /**
+     * Shortcut for quickly showing a {@code TextInputDialog} that only accepts numbers
+     * @param textGUI GUI to show the dialog on
+     * @param title Title of the dialog
+     * @param description Description of the dialog
+     * @param initialContent What content to place in the text box initially
+     * @return The number the user typed into the text box, or {@code null} if the dialog was cancelled
+     */
     public static BigInteger showNumberDialog(WindowBasedTextGUI textGUI, String title, String description, String initialContent) {
         TextInputDialog textInputDialog = new TextInputDialogBuilder()
                 .setTitle(title)
@@ -120,6 +136,14 @@ public class TextInputDialog extends DialogWindow {
         return numberString != null ? new BigInteger(numberString) : null;
     }
 
+    /**
+     * Shortcut for quickly showing a {@code TextInputDialog} with password masking
+     * @param textGUI GUI to show the dialog on
+     * @param title Title of the dialog
+     * @param description Description of the dialog
+     * @param initialContent What content to place in the text box initially
+     * @return The string the user typed into the text box, or {@code null} if the dialog was cancelled
+     */
     public static String showPasswordDialog(WindowBasedTextGUI textGUI, String title, String description, String initialContent) {
         TextInputDialog textInputDialog = new TextInputDialogBuilder()
                 .setTitle(title)

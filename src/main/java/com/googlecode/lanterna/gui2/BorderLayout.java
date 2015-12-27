@@ -30,11 +30,40 @@ import java.util.*;
  * @author martin
  */
 public class BorderLayout implements LayoutManager {
+
+    /**
+     * This type is what you use as the layout data for components added to a panel using {@code BorderLayout} for its
+     * layout manager. This values specified where inside the panel the component should be added.
+     */
     public enum Location implements LayoutData {
+        /**
+         * The component with this value as its layout data will occupy the center space, whatever is remaining after
+         * the other components (if any) have allocated their space.
+         */
         CENTER,
+        /**
+         * The component with this value as its layout data will occupy the left side of the container, attempting to
+         * allocate the preferred width of the component and at least the preferred height, but could be more depending
+         * on the other components added.
+         */
         LEFT,
+        /**
+         * The component with this value as its layout data will occupy the right side of the container, attempting to
+         * allocate the preferred width of the component and at least the preferred height, but could be more depending
+         * on the other components added.
+         */
         RIGHT,
+        /**
+         * The component with this value as its layout data will occupy the top side of the container, attempting to
+         * allocate the preferred height of the component and at least the preferred width, but could be more depending
+         * on the other components added.
+         */
         TOP,
+        /**
+         * The component with this value as its layout data will occupy the bottom side of the container, attempting to
+         * allocate the preferred height of the component and at least the preferred width, but could be more depending
+         * on the other components added.
+         */
         BOTTOM,
         ;
     }

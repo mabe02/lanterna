@@ -22,13 +22,15 @@ import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 
 /**
- * Interface that defines a class that draws window decorations
+ * Interface that defines a class that draws window decorations, i.e. a surrounding layer around the window that usually
+ * looks like a border to make it easier for a user to visually separate the windows.
+ * @see DefaultWindowDecorationRenderer
  * @author Martin
  */
 public interface WindowDecorationRenderer {
     /**
-     * Draws the window decorations for a particular window and returns a new TextGraphics that is locked to the inside
-     * of the window decorations
+     * Draws the window decorations for a particular window and returns a new TextGraphics that is locked to the area
+     * inside of the window decorations where the content of the window should be drawn
      * @param textGUI Which TextGUI is calling
      * @param graphics Graphics to use for drawing
      * @param window Window to draw

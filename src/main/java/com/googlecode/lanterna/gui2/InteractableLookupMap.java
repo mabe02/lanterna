@@ -32,7 +32,7 @@ public class InteractableLookupMap {
     private final int[][] lookupMap;
     private final List<Interactable> interactables;
 
-    public InteractableLookupMap(TerminalSize size) {
+    InteractableLookupMap(TerminalSize size) {
         lookupMap = new int[size.getRows()][size.getColumns()];
         interactables = new ArrayList<Interactable>();
         for (int[] aLookupMap : lookupMap) {
@@ -40,20 +40,24 @@ public class InteractableLookupMap {
         }
     }
 
-    public void reset() {
+    void reset() {
         interactables.clear();
         for (int[] aLookupMap : lookupMap) {
             Arrays.fill(aLookupMap, -1);
         }
     }
 
-    public TerminalSize getSize() {
+    TerminalSize getSize() {
         if (lookupMap.length==0) { return TerminalSize.ZERO; }
         return new TerminalSize(lookupMap[0].length, lookupMap.length);
     }
 
+    /**
+     * Adds an interactable component to the lookup map
+     * @param interactable Interactable to add to the lookup map
+     */
     @SuppressWarnings("ConstantConditions")
-    public void add(Interactable interactable) {
+    public synchronized void add(Interactable interactable) {
         TerminalPosition topLeft = interactable.toBasePane(TerminalPosition.TOP_LEFT_CORNER);
         TerminalSize size = interactable.getSize();
         interactables.add(interactable);
@@ -69,6 +73,11 @@ public class InteractableLookupMap {
         }
     }
 
+    /**
+     * Looks up what interactable component is as a particular location in the map
+     * @param position Position to look up
+     * @return The {@code Interactable} component at the specified location or {@code null} if there's nothing there
+     */
     public synchronized Interactable getInteractableAt(TerminalPosition position) {
         if(position.getRow() >= lookupMap.length) {
             return null;
@@ -82,11 +91,23 @@ public class InteractableLookupMap {
         return interactables.get(lookupMap[position.getRow()][position.getColumn()]);
     }
 
-    public Interactable findNextUp(Interactable interactable) {
+    /**
+     * Starting from a particular {@code Interactable} and going up, which is the next interactable?
+     * @param interactable What {@code Interactable} to start searching from
+     * @return The next {@code Interactable} above the one specified or {@code null} if there are no more
+     * {@code Interactable}:s above it
+     */
+    public synchronized Interactable findNextUp(Interactable interactable) {
         return findNextUpOrDown(interactable, false);
     }
 
-    public Interactable findNextDown(Interactable interactable) {
+    /**
+     * Starting from a particular {@code Interactable} and going down, which is the next interactable?
+     * @param interactable What {@code Interactable} to start searching from
+     * @return The next {@code Interactable} below the one specified or {@code null} if there are no more
+     * {@code Interactable}:s below it
+     */
+    public synchronized Interactable findNextDown(Interactable interactable) {
         return findNextUpOrDown(interactable, true);
     }
 
@@ -146,11 +167,23 @@ public class InteractableLookupMap {
         return null;
     }
 
-    public Interactable findNextLeft(Interactable interactable) {
+    /**
+     * Starting from a particular {@code Interactable} and going left, which is the next interactable?
+     * @param interactable What {@code Interactable} to start searching from
+     * @return The next {@code Interactable} left of the one specified or {@code null} if there are no more
+     * {@code Interactable}:s left of it
+     */
+    public synchronized Interactable findNextLeft(Interactable interactable) {
         return findNextLeftOrRight(interactable, false);
     }
 
-    public Interactable findNextRight(Interactable interactable) {
+    /**
+     * Starting from a particular {@code Interactable} and going right, which is the next interactable?
+     * @param interactable What {@code Interactable} to start searching from
+     * @return The next {@code Interactable} right of the one specified or {@code null} if there are no more
+     * {@code Interactable}:s right of it
+     */
+    public synchronized Interactable findNextRight(Interactable interactable) {
         return findNextLeftOrRight(interactable, true);
     }
 

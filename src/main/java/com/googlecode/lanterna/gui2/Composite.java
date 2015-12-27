@@ -26,7 +26,7 @@ package com.googlecode.lanterna.gui2;
 public interface Composite {
     /**
      * Returns the component that this Composite is wrapping
-     * @return 
+     * @return Component the composite is wrapping
      */
     Component getComponent();
     
