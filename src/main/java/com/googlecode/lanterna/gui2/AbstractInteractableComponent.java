@@ -40,12 +40,12 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
     }
 
     @Override
-    public Interactable takeFocus() {
+    public T takeFocus() {
         BasePane basePane = getBasePane();
         if(basePane != null) {
             basePane.setFocusedInteractable(this);
         }
-        return this;
+        return self();
     }
 
     /**
