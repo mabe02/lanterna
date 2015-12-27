@@ -15,7 +15,7 @@ public class LocalizedUIBundle extends BundleLocator {
     }
 
     public static String get(Locale locale, String key, String... parameters) {
-        return MY_BUNDLE.getBundleKeyValue(locale, key, parameters);
+        return MY_BUNDLE.getBundleKeyValue(locale, key, (Object[])parameters);
     }
 
     private LocalizedUIBundle(final String bundleName) {
