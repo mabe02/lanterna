@@ -1,12 +1,12 @@
- * Label background color
- * Editable TextArea
+ * [DONE] Label background color
+ * [DONE] Editable TextArea
  * Overlapping windows - X-Y offset
- * ListBox page up/page down
+ * [DONE] ListBox page up/page down
  * Menus
- * TextBox fill character (Issue 66)
+ * [DONE] TextBox fill character (Issue 66)
  * [DONE] Telnet support
- * Proper Table class (+scroll)
- * Manual setFocus() for components
+ * [DONE] Proper Table class (+scroll)
+ * [DONE] Manual setFocus() for components
  * [DONE] Resize terminal (http://invisible-island.net/xterm/ctlseqs/ctlseqs.html)
  * Tabbed panel
  * Render window title other place than left-aligned
