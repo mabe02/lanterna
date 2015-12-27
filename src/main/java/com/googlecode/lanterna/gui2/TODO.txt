@@ -13,10 +13,10 @@
 
 From Brad C. by email to lanterna-discuss on 2014-06-09:
  * Border Colors - Would be nice if you could optionally override the Theme to include a Background and Foreground color on the various borders. 
- * Double Border - Much like the Standard border, but using ACS.DOUBLE_LINE.*
- * Text Box (On Key Press) - Allow for an Override on Key Press of the Text Box Component. This would allow someone to apply a default action specific to that component. In this case, I wanted the ENTER key to perform an action.
+ * [DONE] Double Border - Much like the Standard border, but using ACS.DOUBLE_LINE.*
+ * [DONE] Text Box (On Key Press) - Allow for an Override on Key Press of the Text Box Component. This would allow someone to apply a default action specific to that component. In this case, I wanted the ENTER key to perform an action.
  * Wrapped Label - I developed a Label component that wraps according to the width of the parent container. This is similar to the logic you have for your label, other than I am doing some Regular Expression work to wrap at logical spaces. I believe yours simply cuts off the line and adds the periods (...)
  * Custom Theme Categories - As I am developing my own components, I found the need to utilize custom categories.. This quickly became problematic, and I was only able to solve it by creating an extended Theme class of my own. It works, but it would be nice if those of us who write components had a way of using something other than the Category Enumeration. 
  * CommonProfile Accessor - We use a Terminal that is slightly customized (Anzio), so it would have been great if I could have extended CommonProfile (like you do for Putty) and implemented my own. Right now it's protected, so I am unable to do so..
  * Colors - I think there would be some value in having more control of the colors (foreground and background) for most of the components. Basically overriding the theme itself.
- * ListView Component - I am working on this now, but I am looking at a component that resembles a fully featured ListView component. Much like a table, only the entire "Row" is a single interactable item. 
+ * [DONE] ListView Component - I am working on this now, but I am looking at a component that resembles a fully featured ListView component. Much like a table, only the entire "Row" is a single interactable item.
