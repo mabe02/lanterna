@@ -77,7 +77,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
         return new ListItemRenderer<V,T>();
     }
     
-    private ListItemRenderer<V,T> getListItemRenderer() {
+    ListItemRenderer<V,T> getListItemRenderer() {
         return listItemRenderer;
     }
 
@@ -403,7 +403,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
          * @param selectedIndex Which item is currently selected
          * @return Index of the character in the string we want to place the terminal cursor on, or -1 to hide it
          */
-        protected int getHotSpotPositionOnLine(int selectedIndex) {
+        public int getHotSpotPositionOnLine(int selectedIndex) {
             return 0;
         }
 
@@ -416,7 +416,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
          * @param item The item itself
          * @return String to draw for this item
          */
-        protected String getLabel(T listBox, int index, V item) {
+        public String getLabel(T listBox, int index, V item) {
             return item != null ? item.toString() : "<null>";
         }
 
@@ -433,7 +433,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
          *                 please notice what context 'selected' refers to here (see {@code setSelectedIndex})
          * @param focused Will be set to {@code true} if the list box currently has input focus, otherwise {@code false}
          */
-        protected void drawItem(TextGUIGraphics graphics, T listBox, int index, V item, boolean selected, boolean focused) {
+        public void drawItem(TextGUIGraphics graphics, T listBox, int index, V item, boolean selected, boolean focused) {
             if(selected && focused) {
                 graphics.applyThemeStyle(graphics.getThemeDefinition(AbstractListBox.class).getSelected());
             }

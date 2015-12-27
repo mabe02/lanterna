@@ -203,12 +203,12 @@ public class CheckBoxList<V> extends AbstractListBox<V, CheckBoxList<V>> {
      */
     public static class CheckBoxListItemRenderer<V> extends ListItemRenderer<V,CheckBoxList<V>> {
         @Override
-        protected int getHotSpotPositionOnLine(int selectedIndex) {
+        public int getHotSpotPositionOnLine(int selectedIndex) {
             return 1;
         }
 
         @Override
-        protected String getLabel(CheckBoxList<V> listBox, int index, V item) {
+        public String getLabel(CheckBoxList<V> listBox, int index, V item) {
             String check = " ";
             List<Boolean> itemStatus = listBox.itemStatus;
             if(itemStatus.get(index))

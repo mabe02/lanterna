@@ -217,12 +217,12 @@ public class RadioBoxList<V> extends AbstractListBox<V, RadioBoxList<V>> {
      */
     public static class RadioBoxListItemRenderer<V> extends ListItemRenderer<V,RadioBoxList<V>> {
         @Override
-        protected int getHotSpotPositionOnLine(int selectedIndex) {
+        public int getHotSpotPositionOnLine(int selectedIndex) {
             return 1;
         }
 
         @Override
-        protected String getLabel(RadioBoxList<V> listBox, int index, V item) {
+        public String getLabel(RadioBoxList<V> listBox, int index, V item) {
             String check = " ";
             if(listBox.checkedIndex == index)
                 check = "o";
