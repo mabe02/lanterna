@@ -127,7 +127,7 @@ public class Label extends AbstractComponent<Label> {
      *                        default
      * @return Itself
      */
-    public Label setForegroundColor(TextColor foregroundColor) {
+    public synchronized Label setForegroundColor(TextColor foregroundColor) {
         this.foregroundColor = foregroundColor;
         return this;
     }
@@ -149,7 +149,7 @@ public class Label extends AbstractComponent<Label> {
      *                        default
      * @return Itself
      */
-    public Label setBackgroundColor(TextColor backgroundColor) {
+    public synchronized Label setBackgroundColor(TextColor backgroundColor) {
         this.backgroundColor = backgroundColor;
         return this;
     }
@@ -169,7 +169,7 @@ public class Label extends AbstractComponent<Label> {
      * @param sgr SGR style to enable for this label
      * @return Itself
      */
-    public Label addStyle(SGR sgr) {
+    public synchronized Label addStyle(SGR sgr) {
         additionalStyles.add(sgr);
         return this;
     }
@@ -180,7 +180,7 @@ public class Label extends AbstractComponent<Label> {
      * @param sgr SGR style to remove
      * @return Itself
      */
-    public Label removeStyle(SGR sgr) {
+    public synchronized Label removeStyle(SGR sgr) {
         additionalStyles.remove(sgr);
         return this;
     }
