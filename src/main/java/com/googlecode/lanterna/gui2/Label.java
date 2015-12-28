@@ -32,7 +32,7 @@ import java.util.EnumSet;
  */
 public class Label extends AbstractComponent<Label> {
     private String[] lines;
-    private TerminalSize preferredSize;
+    private TerminalSize labelSize;
     private TextColor foregroundColor;
     private TextColor backgroundColor;
     private final EnumSet<SGR> additionalStyles;
@@ -43,7 +43,7 @@ public class Label extends AbstractComponent<Label> {
      */
     public Label(String text) {
         this.lines = null;
-        this.preferredSize = TerminalSize.ZERO;
+        this.labelSize = TerminalSize.ZERO;
         this.foregroundColor = null;
         this.backgroundColor = null;
         this.additionalStyles = EnumSet.noneOf(SGR.class);
@@ -66,7 +66,7 @@ public class Label extends AbstractComponent<Label> {
      */
     public synchronized void setText(String text) {
         setLines(splitIntoMultipleLines(text));
-        this.preferredSize = getBounds(lines, preferredSize);
+        this.labelSize = getBounds(lines, labelSize);
         invalidate();
     }
 
@@ -190,7 +190,7 @@ public class Label extends AbstractComponent<Label> {
         return new ComponentRenderer<Label>() {
             @Override
             public TerminalSize getPreferredSize(Label Label) {
-                return preferredSize;
+                return labelSize;
             }
 
             @Override
@@ -206,9 +206,9 @@ public class Label extends AbstractComponent<Label> {
                 for(SGR sgr: additionalStyles) {
                     graphics.enableModifiers(sgr);
                 }
-                for(int row = 0; row < Math.min(graphics.getSize().getRows(), preferredSize.getRows()); row++) {
+                for(int row = 0; row < Math.min(graphics.getSize().getRows(), labelSize.getRows()); row++) {
                     String line = lines[row];
-                    if(graphics.getSize().getColumns() >= preferredSize.getColumns()) {
+                    if(graphics.getSize().getColumns() >= labelSize.getColumns()) {
                         graphics.putString(0, row, line);
                     }
                     else {
