@@ -1,6 +1,6 @@
 package com.googlecode.lanterna.gui2.table;
 
-import com.googlecode.lanterna.CJKUtils;
+import com.googlecode.lanterna.TerminalTextUtils;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.graphics.ThemeDefinition;
 import com.googlecode.lanterna.gui2.TextGUIGraphics;
@@ -16,7 +16,7 @@ public class DefaultTableCellRenderer<V> implements TableCellRenderer<V> {
         String[] lines = getContent(cell);
         int maxWidth = 0;
         for(String line: lines) {
-            int length = CJKUtils.getColumnWidth(line);
+            int length = TerminalTextUtils.getColumnWidth(line);
             if(maxWidth < length) {
                 maxWidth = length;
             }

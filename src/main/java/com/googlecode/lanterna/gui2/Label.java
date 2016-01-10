@@ -18,7 +18,7 @@
  */
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.CJKUtils;
+import com.googlecode.lanterna.TerminalTextUtils;
 import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
@@ -111,7 +111,7 @@ public class Label extends AbstractComponent<Label> {
         currentBounds = currentBounds.withRows(lines.length);
         int preferredWidth = 0;
         for(String line: lines) {
-            int lineWidth = CJKUtils.getColumnWidth(line);
+            int lineWidth = TerminalTextUtils.getColumnWidth(line);
             if(preferredWidth < lineWidth) {
                 preferredWidth = lineWidth;
             }
@@ -213,7 +213,7 @@ public class Label extends AbstractComponent<Label> {
                     }
                     else {
                         int availableColumns = graphics.getSize().getColumns();
-                        String fitString = CJKUtils.fitString(line, availableColumns);
+                        String fitString = TerminalTextUtils.fitString(line, availableColumns);
                         graphics.putString(0, row, fitString);
                     }
                 }

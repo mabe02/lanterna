@@ -18,7 +18,7 @@
  */
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.CJKUtils;
+import com.googlecode.lanterna.TerminalTextUtils;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.input.KeyStroke;
@@ -205,7 +205,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
             char c = line.charAt(i);
             if(c == '\n' && style == Style.MULTI_LINE) {
                 String string = bob.toString();
-                int lineWidth = CJKUtils.getColumnWidth(string);
+                int lineWidth = TerminalTextUtils.getColumnWidth(string);
                 lines.add(string);
                 if(longestRow < lineWidth + 1) {
                     longestRow = lineWidth + 1;
@@ -223,7 +223,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
         if(!validated(string)) {
             throw new IllegalStateException("TextBox validation pattern " + validationPattern + " does not match the supplied text");
         }
-        int lineWidth = CJKUtils.getColumnWidth(string);
+        int lineWidth = TerminalTextUtils.getColumnWidth(string);
         lines.add(string);
         if(longestRow < lineWidth + 1) {
             longestRow = lineWidth + 1;
@@ -305,7 +305,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
      * @return Itself
      */
     public TextBox setMask(Character mask) {
-        if(mask != null && CJKUtils.isCharCJK(mask)) {
+        if(mask != null && TerminalTextUtils.isCharCJK(mask)) {
             throw new IllegalArgumentException("Cannot use a CJK character as a mask");
         }
         this.mask = mask;
@@ -480,14 +480,14 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
                 return Result.HANDLED;
             case ArrowUp:
                 if(caretPosition.getRow() > 0) {
-                    int trueColumnPosition = CJKUtils.getColumnIndex(lines.get(caretPosition.getRow()), caretPosition.getColumn());
+                    int trueColumnPosition = TerminalTextUtils.getColumnIndex(lines.get(caretPosition.getRow()), caretPosition.getColumn());
                     caretPosition = caretPosition.withRelativeRow(-1);
                     line = lines.get(caretPosition.getRow());
-                    if(trueColumnPosition > CJKUtils.getColumnWidth(line)) {
+                    if(trueColumnPosition > TerminalTextUtils.getColumnWidth(line)) {
                         caretPosition = caretPosition.withColumn(line.length());
                     }
                     else {
-                        caretPosition = caretPosition.withColumn(CJKUtils.getStringCharacterIndex(line, trueColumnPosition));
+                        caretPosition = caretPosition.withColumn(TerminalTextUtils.getStringCharacterIndex(line, trueColumnPosition));
                     }
                 }
                 else if(verticalFocusSwitching) {
@@ -496,14 +496,14 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
                 return Result.HANDLED;
             case ArrowDown:
                 if(caretPosition.getRow() < lines.size() - 1) {
-                    int trueColumnPosition = CJKUtils.getColumnIndex(lines.get(caretPosition.getRow()), caretPosition.getColumn());
+                    int trueColumnPosition = TerminalTextUtils.getColumnIndex(lines.get(caretPosition.getRow()), caretPosition.getColumn());
                     caretPosition = caretPosition.withRelativeRow(1);
                     line = lines.get(caretPosition.getRow());
-                    if(trueColumnPosition > CJKUtils.getColumnWidth(line)) {
+                    if(trueColumnPosition > TerminalTextUtils.getColumnWidth(line)) {
                         caretPosition = caretPosition.withColumn(line.length());
                     }
                     else {
-                        caretPosition = caretPosition.withColumn(CJKUtils.getStringCharacterIndex(line, trueColumnPosition));
+                        caretPosition = caretPosition.withColumn(TerminalTextUtils.getStringCharacterIndex(line, trueColumnPosition));
                     }
                 }
                 else if(verticalFocusSwitching) {
@@ -649,7 +649,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
             caretPosition = caretPosition.withColumn(Math.min(caretPosition.getColumn(), line.length()));
 
             return caretPosition
-                    .withColumn(CJKUtils.getColumnIndex(line, caretPosition.getColumn()))
+                    .withColumn(TerminalTextUtils.getColumnIndex(line, caretPosition.getColumn()))
                     .withRelativeColumn(-viewTopLeft.getColumn())
                     .withRelativeRow(-viewTopLeft.getRow());
         }
@@ -741,7 +741,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
                 caretPosition = caretPosition.withColumn(Math.min(caretPosition.getColumn(), caretLine.length()));
 
                 //Adjust the view if necessary
-                int trueColumnPosition = CJKUtils.getColumnIndex(caretLine, caretPosition.getColumn());
+                int trueColumnPosition = TerminalTextUtils.getColumnIndex(caretLine, caretPosition.getColumn());
                 if (trueColumnPosition < viewTopLeft.getColumn()) {
                     viewTopLeft = viewTopLeft.withColumn(trueColumnPosition);
                 }
@@ -758,7 +758,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
                 //Additional corner-case for CJK characters
                 if(trueColumnPosition - viewTopLeft.getColumn() == graphics.getSize().getColumns() - 1) {
                     if(caretLine.length() > caretPosition.getColumn() &&
-                            CJKUtils.isCharCJK(caretLine.charAt(caretPosition.getColumn()))) {
+                            TerminalTextUtils.isCharCJK(caretLine.charAt(caretPosition.getColumn()))) {
                         viewTopLeft = viewTopLeft.withRelativeColumn(1);
                     }
                 }
@@ -770,7 +770,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
                     continue;
                 }
                 String line = component.lines.get(rowIndex);
-                graphics.putString(0, row, CJKUtils.fitString(line, viewTopLeft.getColumn(), textAreaSize.getColumns()));
+                graphics.putString(0, row, TerminalTextUtils.fitString(line, viewTopLeft.getColumn(), textAreaSize.getColumns()));
             }
         }
     }

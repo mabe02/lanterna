@@ -18,7 +18,7 @@
  */
 package com.googlecode.lanterna.terminal.swing;
 
-import com.googlecode.lanterna.CJKUtils;
+import com.googlecode.lanterna.TerminalTextUtils;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.screen.TabBehaviour;
 import com.googlecode.lanterna.TerminalPosition;
@@ -125,7 +125,7 @@ class VirtualTerminal {
             currentBuffer.setCharacter(size, cursorPosition, terminalCharacter);
 
             //Advance cursor
-            cursorPosition = cursorPosition.withRelativeColumn(CJKUtils.isCharCJK(terminalCharacter.getCharacter()) ? 2 : 1);
+            cursorPosition = cursorPosition.withRelativeColumn(TerminalTextUtils.isCharCJK(terminalCharacter.getCharacter()) ? 2 : 1);
             if(cursorPosition.getColumn() >= size.getColumns()) {
                 moveCursorToNextLine();
             }

@@ -296,10 +296,10 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
                 if(!atCursorLocation &&
                         translatedCursorPosition.getColumn() == columnIndex + 1 &&
                         translatedCursorPosition.getRow() == rowIndex &&
-                        CJKUtils.isCharCJK(character.getCharacter())) {
+                        TerminalTextUtils.isCharCJK(character.getCharacter())) {
                     atCursorLocation = true;
                 }
-                int characterWidth = fontWidth * (CJKUtils.isCharCJK(character.getCharacter()) ? 2 : 1);
+                int characterWidth = fontWidth * (TerminalTextUtils.isCharCJK(character.getCharacter()) ? 2 : 1);
 
                 Color foregroundColor = deriveTrueForegroundColor(character, atCursorLocation);
                 Color backgroundColor = deriveTrueBackgroundColor(character, atCursorLocation);
@@ -343,7 +343,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
                         g.fillRect(columnIndex * fontWidth, rowIndex * fontHeight + 1, 2, fontHeight - 2);
                     }
                 }
-                if(CJKUtils.isCharCJK(character.getCharacter())) {
+                if(TerminalTextUtils.isCharCJK(character.getCharacter())) {
                     columnIndex++; //Skip the trailing space after a CJK character
                 }
             }

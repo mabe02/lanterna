@@ -145,7 +145,7 @@ public class TerminalScreen extends AbstractScreen {
         if(cursorPosition != null) {
             getTerminal().setCursorVisible(true);
             //If we are trying to move the cursor to the padding of a CJK character, put it on the actual character instead
-            if(cursorPosition.getColumn() > 0 && CJKUtils.isCharCJK(getFrontBuffer().getCharacterAt(cursorPosition.withRelativeColumn(-1)).getCharacter())) {
+            if(cursorPosition.getColumn() > 0 && TerminalTextUtils.isCharCJK(getFrontBuffer().getCharacterAt(cursorPosition.withRelativeColumn(-1)).getCharacter())) {
                 getTerminal().setCursorPosition(cursorPosition.getColumn() - 1, cursorPosition.getRow());
             }
             else {
@@ -186,7 +186,7 @@ public class TerminalScreen extends AbstractScreen {
                 if(!backBufferCharacter.equals(getFrontBuffer().getCharacterAt(x, y))) {
                     updateMap.put(new TerminalPosition(x, y), backBufferCharacter);
                 }
-                if(CJKUtils.isCharCJK(backBufferCharacter.getCharacter())) {
+                if(TerminalTextUtils.isCharCJK(backBufferCharacter.getCharacter())) {
                     x++;    //Skip the trailing padding
                 }
             }
@@ -233,7 +233,7 @@ public class TerminalScreen extends AbstractScreen {
                 }
             }
             getTerminal().putCharacter(newCharacter.getCharacter());
-            if(CJKUtils.isCharCJK(newCharacter.getCharacter())) {
+            if(TerminalTextUtils.isCharCJK(newCharacter.getCharacter())) {
                 //CJK characters advances two columns
                 currentPosition = currentPosition.withRelativeColumn(2);
             }
@@ -286,7 +286,7 @@ public class TerminalScreen extends AbstractScreen {
                     currentColumn = x;
                 }
                 getTerminal().putCharacter(newCharacter.getCharacter());
-                if(CJKUtils.isCharCJK(newCharacter.getCharacter())) {
+                if(TerminalTextUtils.isCharCJK(newCharacter.getCharacter())) {
                     //CJK characters take up two columns
                     currentColumn += 2;
                     x++;

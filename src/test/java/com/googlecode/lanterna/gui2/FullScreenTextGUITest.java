@@ -196,7 +196,7 @@ public class FullScreenTextGUITest {
 
                     @Override
                     public TerminalSize getPreferredSize(Button component) {
-                        return new TerminalSize(CJKUtils.getColumnWidth(getLabel()), 1);
+                        return new TerminalSize(TerminalTextUtils.getColumnWidth(getLabel()), 1);
                     }
 
                     @Override

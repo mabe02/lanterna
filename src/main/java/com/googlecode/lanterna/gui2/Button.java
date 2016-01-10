@@ -18,7 +18,7 @@
  */
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.CJKUtils;
+import com.googlecode.lanterna.TerminalTextUtils;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.graphics.ThemeDefinition;
@@ -121,7 +121,7 @@ public class Button extends AbstractInteractableComponent<Button> {
 
         @Override
         public TerminalSize getPreferredSize(Button button) {
-            return new TerminalSize(Math.max(8, CJKUtils.getColumnWidth(button.getLabel()) + 2), 1);
+            return new TerminalSize(Math.max(8, TerminalTextUtils.getColumnWidth(button.getLabel()) + 2), 1);
         }
 
         @Override
@@ -145,7 +145,7 @@ public class Button extends AbstractInteractableComponent<Button> {
             int labelShift = getLabelShift(button, graphics.getSize());
             graphics.setCharacter(1 + labelShift, 0, button.getLabel().charAt(0));
 
-            if(CJKUtils.getColumnWidth(button.getLabel()) == 1) {
+            if(TerminalTextUtils.getColumnWidth(button.getLabel()) == 1) {
                 return;
             }
             if(button.isFocused()) {
@@ -163,7 +163,7 @@ public class Button extends AbstractInteractableComponent<Button> {
                 return 0;
             }
             int labelShift = 0;
-            int widthInColumns = CJKUtils.getColumnWidth(button.getLabel());
+            int widthInColumns = TerminalTextUtils.getColumnWidth(button.getLabel());
             if(availableSpace > widthInColumns) {
                 labelShift = (size.getColumns() - 2 - widthInColumns) / 2;
             }
@@ -182,7 +182,7 @@ public class Button extends AbstractInteractableComponent<Button> {
 
         @Override
         public TerminalSize getPreferredSize(Button component) {
-            return new TerminalSize(CJKUtils.getColumnWidth(component.getLabel()), 1);
+            return new TerminalSize(TerminalTextUtils.getColumnWidth(component.getLabel()), 1);
         }
 
         @Override

@@ -18,7 +18,7 @@
  */
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.CJKUtils;
+import com.googlecode.lanterna.TerminalTextUtils;
 import com.googlecode.lanterna.Symbols;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
@@ -319,7 +319,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
             int index = 0;
             for (V item : listBox.getItems()) {
                 String itemString = listBox.getListItemRenderer().getLabel(listBox, index++, item);
-                int stringLengthInColumns = CJKUtils.getColumnWidth(itemString);
+                int stringLengthInColumns = TerminalTextUtils.getColumnWidth(itemString);
                 if (stringLengthInColumns > maxWidth) {
                     maxWidth = stringLengthInColumns;
                 }
@@ -441,7 +441,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
                 graphics.applyThemeStyle(graphics.getThemeDefinition(AbstractListBox.class).getNormal());
             }
             String label = getLabel(listBox, index, item);
-            label = CJKUtils.fitString(label, graphics.getSize().getColumns());
+            label = TerminalTextUtils.fitString(label, graphics.getSize().getColumns());
             graphics.putString(0, 0, label);
         }
     }

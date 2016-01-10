@@ -531,7 +531,7 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
             }
             else {
                 int textInputPosition = comboBox.getTextInputPosition();
-                int textInputColumn = CJKUtils.getColumnWidth(comboBox.getText().substring(0, textInputPosition));
+                int textInputColumn = TerminalTextUtils.getColumnWidth(comboBox.getText().substring(0, textInputPosition));
                 return new TerminalPosition(textInputColumn - textVisibleLeftPosition, 0);
             }
         }
@@ -539,11 +539,11 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
         @Override
         public TerminalSize getPreferredSize(final ComboBox<V> comboBox) {
             TerminalSize size = TerminalSize.ONE.withColumns(
-                    (comboBox.getItemCount() == 0 ? CJKUtils.getColumnWidth(comboBox.getText()) : 0) + 2);
+                    (comboBox.getItemCount() == 0 ? TerminalTextUtils.getColumnWidth(comboBox.getText()) : 0) + 2);
             synchronized(comboBox) {
                 for(int i = 0; i < comboBox.getItemCount(); i++) {
                     V item = comboBox.getItem(i);
-                    size = size.max(new TerminalSize(CJKUtils.getColumnWidth(item.toString()) + 2 + 1, 1));   // +1 to add a single column of space
+                    size = size.max(new TerminalSize(TerminalTextUtils.getColumnWidth(item.toString()) + 2 + 1, 1));   // +1 to add a single column of space
                 }
             }
             return size;
@@ -560,7 +560,7 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
             graphics.fill(' ');
             int editableArea = graphics.getSize().getColumns() - 2; //This is exclusing the 'drop-down arrow'
             int textInputPosition = comboBox.getTextInputPosition();
-            int columnsToInputPosition = CJKUtils.getColumnWidth(comboBox.getText().substring(0, textInputPosition));
+            int columnsToInputPosition = TerminalTextUtils.getColumnWidth(comboBox.getText().substring(0, textInputPosition));
             if(columnsToInputPosition < textVisibleLeftPosition) {
                 textVisibleLeftPosition = columnsToInputPosition;
             }
@@ -569,11 +569,11 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
             }
             if(columnsToInputPosition - textVisibleLeftPosition + 1 == editableArea &&
                     comboBox.getText().length() > textInputPosition &&
-                    CJKUtils.isCharCJK(comboBox.getText().charAt(textInputPosition))) {
+                    TerminalTextUtils.isCharCJK(comboBox.getText().charAt(textInputPosition))) {
                 textVisibleLeftPosition++;
             }
 
-            String textToDraw = CJKUtils.fitString(comboBox.getText(), textVisibleLeftPosition, editableArea);
+            String textToDraw = TerminalTextUtils.fitString(comboBox.getText(), textVisibleLeftPosition, editableArea);
             graphics.putString(0, 0, textToDraw);
             if(comboBox.isFocused()) {
                 graphics.disableModifiers(SGR.BOLD);

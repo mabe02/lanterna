@@ -1,6 +1,6 @@
 package com.googlecode.lanterna.gui2.dialogs;
 
-import com.googlecode.lanterna.CJKUtils;
+import com.googlecode.lanterna.TerminalTextUtils;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 
@@ -227,7 +227,7 @@ public class FileDialog extends DialogWindow {
         public void onBeforeDrawing() {
             TerminalSize area = getSize();
             String absolutePath = directory.getAbsolutePath();
-            int absolutePathLengthInColumns = CJKUtils.getColumnWidth(absolutePath);
+            int absolutePathLengthInColumns = TerminalTextUtils.getColumnWidth(absolutePath);
             if(area.getColumns() < absolutePathLengthInColumns) {
                 absolutePath = absolutePath.substring(absolutePathLengthInColumns - area.getColumns());
                 absolutePath = "..." + absolutePath.substring(Math.min(absolutePathLengthInColumns, 3));

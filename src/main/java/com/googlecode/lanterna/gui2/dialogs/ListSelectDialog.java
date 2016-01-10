@@ -1,6 +1,6 @@
 package com.googlecode.lanterna.gui2.dialogs;
 
-import com.googlecode.lanterna.CJKUtils;
+import com.googlecode.lanterna.TerminalTextUtils;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 
@@ -124,7 +124,7 @@ public class ListSelectDialog<T> extends DialogWindow {
     public static <T> T showDialog(WindowBasedTextGUI textGUI, String title, String description, int listBoxHeight, T... items) {
         int width = 0;
         for(T item: items) {
-            width = Math.max(width, CJKUtils.getColumnWidth(item.toString()));
+            width = Math.max(width, TerminalTextUtils.getColumnWidth(item.toString()));
         }
         width += 2;
         return showDialog(textGUI, title, description, new TerminalSize(width, listBoxHeight), items);

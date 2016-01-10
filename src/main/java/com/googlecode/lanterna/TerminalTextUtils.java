@@ -19,18 +19,16 @@
 package com.googlecode.lanterna;
 
 /**
- * Utilities class for analyzing and working with CJK (Chinese, Japanese, Korean) characters. The main purpose of this
- * class is to assist in figuring out how many terminal columns a character (and in extension, a String) takes up. The
- * main issue is that while most latin (and latin-related) character can be trusted to consume one column in the
- * terminal, CJK characters tends to take two, partly due to the square nature of the characters but mostly due to the
- * fact that they require most space to distinguish.
+ * This class contains a number of utility methods for analyzing characters and strings in a terminal context. The main
+ * purpose is to make it easier to work with text that may or may not contain double-width text characters, such as CJK
+ * (Chinese, Japanese, Korean) and other special symbols. This class assumes those are all double-width and in case the
+ * terminal (-emulator) chooses to draw them (somehow) as single-column then all the calculations in this class will be
+ * wrong. It seems safe to assume what this class considers double-width really is taking up two columns though.
  * 
  * @author Martin
- * @see TerminalTextUtils
- * @deprecated Use {@code TerminalTextUtils} instead
  */
-public class CJKUtils {    
-    private CJKUtils() {
+public class TerminalTextUtils {
+    private TerminalTextUtils() {
     }
 
     /**
@@ -40,12 +38,36 @@ public class CJKUtils {
      * where it was contributed by user Rakesh N
      * @param c Character to test
      * @return {@code true} if the character is a CJK character
-     * @deprecated Use {@code TerminalTextUtils.isCharJCK(c)} instead
-     * @see TerminalTextUtils#isCharCJK(char)
+     *
      */
-    @Deprecated
     public static boolean isCharCJK(final char c) {
-        return TerminalTextUtils.isCharCJK(c);
+        Character.UnicodeBlock unicodeBlock = Character.UnicodeBlock.of(c);
+        return (unicodeBlock == Character.UnicodeBlock.HIRAGANA)
+                || (unicodeBlock == Character.UnicodeBlock.KATAKANA)
+                || (unicodeBlock == Character.UnicodeBlock.KATAKANA_PHONETIC_EXTENSIONS)
+                || (unicodeBlock == Character.UnicodeBlock.HANGUL_COMPATIBILITY_JAMO)
+                || (unicodeBlock == Character.UnicodeBlock.HANGUL_JAMO)
+                || (unicodeBlock == Character.UnicodeBlock.HANGUL_SYLLABLES)
+                || (unicodeBlock == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS)
+                || (unicodeBlock == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A)
+                || (unicodeBlock == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B)
+                || (unicodeBlock == Character.UnicodeBlock.CJK_COMPATIBILITY_FORMS)
+                || (unicodeBlock == Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS)
+                || (unicodeBlock == Character.UnicodeBlock.CJK_RADICALS_SUPPLEMENT)
+                || (unicodeBlock == Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION)
+                || (unicodeBlock == Character.UnicodeBlock.ENCLOSED_CJK_LETTERS_AND_MONTHS)
+                || (unicodeBlock == Character.UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS && c < 0xFF61);    //The magic number here is the separating index between full-width and half-width
+    }
+
+    /**
+     * Checks if a character is expected to be taking up two columns if printed to a terminal. This will generally be
+     * {@code true} for CJK (Chinese, Japanese and Korean) characters.
+     * @param c Character to test if it's double-width when printed to a terminal
+     * @return {@code true} if this character is expected to be taking up two columns when printed to the terminal,
+     * otherwise {@code false}
+     */
+    public static boolean isCharDoubleWidth(final char c) {
+        return isCharCJK(c);
     }
 
     /**
@@ -53,7 +75,7 @@ public class CJKUtils {
      */
     @Deprecated
     public static int getTrueWidth(String s) {
-        return TerminalTextUtils.getColumnWidth(s);
+        return getColumnWidth(s);
     }
 
     /**
@@ -61,12 +83,9 @@ public class CJKUtils {
      * CJK characters takes up two columns.
      * @param s String to check length
      * @return Number of actual terminal columns the string would occupy
-     * @deprecated Use {@code TerminalTextUtils.getColumnWidth(s)} instead
-     * @see TerminalTextUtils#getColumnWidth(String)
      */
-    @Deprecated
     public static int getColumnWidth(String s) {
-        return TerminalTextUtils.getColumnIndex(s, s.length());
+        return getColumnIndex(s, s.length());
     }
 
     /**
@@ -80,12 +99,16 @@ public class CJKUtils {
      * @return Index of the character inside the String at {@code stringCharacterIndex} when it has been writted to a
      * terminal
      * @throws StringIndexOutOfBoundsException if the index given is outside the String length or negative
-     * @deprecated Use {@code TerminalTextUtils.getColumnIndex(s, stringCharacterIndex)} instead
-     * @see TerminalTextUtils#getColumnIndex(String, int)
      */
-    @Deprecated
     public static int getColumnIndex(String s, int stringCharacterIndex) throws StringIndexOutOfBoundsException {
-        return TerminalTextUtils.getColumnIndex(s, stringCharacterIndex);
+        int index = 0;
+        for(int i = 0; i < stringCharacterIndex; i++) {
+            if(isCharCJK(s.charAt(i))) {
+                index++;
+            }
+            index++;
+        }
+        return index;
     }
 
     /**
@@ -98,12 +121,20 @@ public class CJKUtils {
      * @param s String to translate the index to
      * @param columnIndex Column index of the string written to a terminal
      * @return The index in the string of the character in terminal column {@code columnIndex}
-     * @deprecated Use {@code TerminalTextUtils.getStringCharacterIndex(s, columnIndex} instead
-     * @see TerminalTextUtils#getStringCharacterIndex(String, int)
      */
-    @Deprecated
     public static int getStringCharacterIndex(String s, int columnIndex) {
-        return TerminalTextUtils.getStringCharacterIndex(s, columnIndex);
+        int index = 0;
+        int counter = 0;
+        while(counter < columnIndex) {
+            if(isCharCJK(s.charAt(index++))) {
+                counter++;
+                if(counter == columnIndex) {
+                    return index - 1;
+                }
+            }
+            counter++;
+        }
+        return index;
     }
 
     /**
@@ -114,12 +145,9 @@ public class CJKUtils {
      * @param string The string to fit inside the availableColumnSpace
      * @param availableColumnSpace Number of columns to fit the string inside
      * @return The whole or part of the input string which will fit inside the supplied availableColumnSpace
-     * @deprecated Use {@code TerminalTextUtils.fitString(string, availableColumnSpace)} instead
-     * @see TerminalTextUtils#fitString(String, int)
      */
-    @Deprecated
     public static String fitString(String string, int availableColumnSpace) {
-        return TerminalTextUtils.fitString(string, availableColumnSpace);
+        return fitString(string, 0, availableColumnSpace);
     }
 
     /**
@@ -136,11 +164,34 @@ public class CJKUtils {
      * @param fromColumn From what column of the input string to start fitting (see description above!)
      * @param availableColumnSpace Number of columns to fit the string inside
      * @return The whole or part of the input string which will fit inside the supplied availableColumnSpace
-     * @deprecated Use {@code TerminalTextUtils.fitString(string, fromColumn, availableColumnSpace)} instead
-     * @see TerminalTextUtils#fitString(String, int, int)
      */
-    @Deprecated
     public static String fitString(String string, int fromColumn, int availableColumnSpace) {
-        return TerminalTextUtils.fitString(string, fromColumn, availableColumnSpace);
+        if(availableColumnSpace <= 0) {
+            return "";
+        }
+
+        StringBuilder bob = new StringBuilder();
+        int column = 0;
+        int index = 0;
+        while(index < string.length() && column < fromColumn) {
+            char c = string.charAt(index++);
+            column += TerminalTextUtils.isCharCJK(c) ? 2 : 1;
+        }
+        if(column > fromColumn) {
+            bob.append(" ");
+            availableColumnSpace--;
+        }
+
+        while(availableColumnSpace > 0 && index < string.length()) {
+            char c = string.charAt(index++);
+            availableColumnSpace -= TerminalTextUtils.isCharCJK(c) ? 2 : 1;
+            if(availableColumnSpace < 0) {
+                bob.append(' ');
+            }
+            else {
+                bob.append(c);
+            }
+        }
+        return bob.toString();
     }
 }

@@ -66,7 +66,7 @@ public class DefaultWindowDecorationRenderer implements WindowDecorationRenderer
         graphics.setCharacter(drawableArea.getColumns() - 1, drawableArea.getRows() - 1, bottomRightCorner);
 
         if(!title.isEmpty()) {
-            graphics.putString(2, 0, CJKUtils.fitString(title, drawableArea.getColumns() - 3));
+            graphics.putString(2, 0, TerminalTextUtils.fitString(title, drawableArea.getColumns() - 3));
         }
 
         return graphics.newTextGraphics(new TerminalPosition(1, 1), graphics.getSize().withRelativeColumns(-2).withRelativeRows(-2));
@@ -77,7 +77,7 @@ public class DefaultWindowDecorationRenderer implements WindowDecorationRenderer
         return contentAreaSize
                 .withRelativeColumns(2)
                 .withRelativeRows(2)
-                .max(new TerminalSize(CJKUtils.getColumnWidth(window.getTitle()) + 4, 1));  //Make sure the title fits!
+                .max(new TerminalSize(TerminalTextUtils.getColumnWidth(window.getTitle()) + 4, 1));  //Make sure the title fits!
     }
 
     private static final TerminalPosition OFFSET = new TerminalPosition(1, 1);

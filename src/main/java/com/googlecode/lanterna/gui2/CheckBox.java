@@ -18,7 +18,7 @@
  */
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.CJKUtils;
+import com.googlecode.lanterna.TerminalTextUtils;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.graphics.ThemeDefinition;
@@ -182,7 +182,7 @@ public class CheckBox extends AbstractInteractableComponent<CheckBox> {
         public TerminalSize getPreferredSize(CheckBox component) {
             int width = 3;
             if(!component.label.isEmpty()) {
-                width += 1 + CJKUtils.getColumnWidth(component.label);
+                width += 1 + TerminalTextUtils.getColumnWidth(component.label);
             }
             return new TerminalSize(width, 1);
         }

@@ -18,7 +18,7 @@
  */
 package com.googlecode.lanterna.screen;
 
-import com.googlecode.lanterna.CJKUtils;
+import com.googlecode.lanterna.TerminalTextUtils;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.graphics.TextGraphics;
@@ -148,13 +148,13 @@ public abstract class AbstractScreen implements Screen {
         }
 
         //Pad CJK character with a trailing space
-        if(CJKUtils.isCharCJK(screenCharacter.getCharacter())) {
+        if(TerminalTextUtils.isCharCJK(screenCharacter.getCharacter())) {
             backBuffer.setCharacterAt(column + 1, row, screenCharacter.withCharacter(' '));
         }
         //If there's a CJK character immediately to our left, reset it
         if(column > 0) {
             TextCharacter cjkTest = backBuffer.getCharacterAt(column - 1, row);
-            if(cjkTest != null && CJKUtils.isCharCJK(cjkTest.getCharacter())) {
+            if(cjkTest != null && TerminalTextUtils.isCharCJK(cjkTest.getCharacter())) {
                 backBuffer.setCharacterAt(column - 1, row, backBuffer.getCharacterAt(column - 1, row).withCharacter(' '));
             }
         }
@@ -248,7 +248,7 @@ public abstract class AbstractScreen implements Screen {
                 //If the character left of us doesn't exist, we don't exist either
                 return null;
             }
-            else if(CJKUtils.isCharCJK(leftOfSpecifiedCharacter.getCharacter())) {
+            else if(TerminalTextUtils.isCharCJK(leftOfSpecifiedCharacter.getCharacter())) {
                 return leftOfSpecifiedCharacter;
             }
         }

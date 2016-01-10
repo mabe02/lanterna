@@ -284,7 +284,7 @@ public abstract class AbstractTextGraphics implements TextGraphics {
                             backgroundColor,
                             activeModifiers.clone()));
             
-            if(CJKUtils.isCharCJK(character)) {
+            if(TerminalTextUtils.isCharCJK(character)) {
                 //CJK characters are twice the normal characters in width, so next character position is two columns forward
                 offset += 2;
             }
