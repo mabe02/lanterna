@@ -3,6 +3,8 @@ package com.googlecode.lanterna;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
+import java.util.Arrays;
+
 /**
  * Created by martin on 02/11/15.
  */
@@ -147,6 +149,77 @@ public class TerminalTextUtilsTest {
         assertEquals("語", TerminalTextUtils.fitString(testString, 4, 20));
         assertEquals(" ", TerminalTextUtils.fitString(testString, 5, 20));
         assertEquals("", TerminalTextUtils.fitString(testString, 6, 20));
+    }
+
+    @Test
+    public void testWordWrapping() {
+        assertEquals("Incorrect word wrapping",
+                Arrays.asList("abc abc"),
+                TerminalTextUtils.getWordWrappedText(80, "abc abc"));
+
+        assertEquals("Incorrect word wrapping",
+                Arrays.asList("abc", "abc"),
+                TerminalTextUtils.getWordWrappedText(5, "abc abc"));
+
+        assertEquals("Incorrect word wrapping",
+                Arrays.asList("abc", "abc", "abc"),
+                TerminalTextUtils.getWordWrappedText(3, "abc abc abc"));
+        assertEquals("Incorrect word wrapping",
+                Arrays.asList("abc", "abc", "abc"),
+                TerminalTextUtils.getWordWrappedText(4, "abc abc abc"));
+        assertEquals("Incorrect word wrapping",
+                Arrays.asList("abc", "abc", "abc"),
+                TerminalTextUtils.getWordWrappedText(5, "abc abc abc"));
+        assertEquals("Incorrect word wrapping",
+                Arrays.asList("abc", "abc", "abc"),
+                TerminalTextUtils.getWordWrappedText(6, "abc abc abc"));
+        assertEquals("Incorrect word wrapping",
+                Arrays.asList("abc abc", "abc"),
+                TerminalTextUtils.getWordWrappedText(7, "abc abc abc"));
+        assertEquals("Incorrect word wrapping",
+                Arrays.asList("abc abc", "abc"),
+                TerminalTextUtils.getWordWrappedText(8, "abc abc abc"));
+        assertEquals("Incorrect word wrapping",
+                Arrays.asList("abc abc", "abc"),
+                TerminalTextUtils.getWordWrappedText(9, "abc abc abc"));
+        assertEquals("Incorrect word wrapping",
+                Arrays.asList("abc abc", "abc"),
+                TerminalTextUtils.getWordWrappedText(10, "abc abc abc"));
+        assertEquals("Incorrect word wrapping",
+                Arrays.asList("abc abc abc"),
+                TerminalTextUtils.getWordWrappedText(11, "abc abc abc"));
+
+        assertEquals("Incorrect word wrapping",
+                Arrays.asList("abc", "def"),
+                TerminalTextUtils.getWordWrappedText(3, "abcdef"));
+
+        assertEquals("Incorrect word wrapping",
+                Arrays.asList("This is a rather", "long text that", "will demonstrate", "a more real-world", "example of how", "word-wrapping is", "applied on a", "single line"),
+                TerminalTextUtils.getWordWrappedText(17, "This is a rather long text that will demonstrate a more real-world example of how word-wrapping is applied on a single line"));
+
+        assertEquals("Incorrect word wrapping",
+                Arrays.asList("This is a rather long text that", "will demonstrate how", "word-wrapping is applied on", "texts that are already", "split over multiple lines"),
+                TerminalTextUtils.getWordWrappedText(32,
+                        "This is a rather long text that will demonstrate how",
+                        "word-wrapping is applied on texts that are already",
+                        "split over multiple lines"));
+
+        assertEquals("Didn't skip over all the extra spaces",
+                Arrays.asList("abc   ", "def"),
+                TerminalTextUtils.getWordWrappedText(6, "abc        def"));
+    }
+
+    @Test
+    public void testWordWrappingWithCJK() {
+        assertEquals("Incorrect word wrapping",
+                Arrays.asList("あいうえお"),
+                TerminalTextUtils.getWordWrappedText(80, "あいうえお"));
+        assertEquals("Incorrect word wrapping",
+                Arrays.asList("あいうえ", "お"),
+                TerminalTextUtils.getWordWrappedText(8, "あいうえお"));
+        assertEquals("Incorrect word wrapping",
+                Arrays.asList("あいう", "えお"),
+                TerminalTextUtils.getWordWrappedText(7, "あいうえお"));
     }
 
     // Add a test for traditional Chinese characters here? If someone can contribute a list! The list of simplified

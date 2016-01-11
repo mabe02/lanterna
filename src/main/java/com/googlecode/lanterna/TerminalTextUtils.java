@@ -18,6 +18,11 @@
  */
 package com.googlecode.lanterna;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * This class contains a number of utility methods for analyzing characters and strings in a terminal context. The main
  * purpose is to make it easier to work with text that may or may not contain double-width text characters, such as CJK
@@ -193,5 +198,49 @@ public class TerminalTextUtils {
             }
         }
         return bob.toString();
+    }
+
+    /**
+     * This method will calculate word wrappings given a number of lines of text and how wide the text can be printed.
+     * The result is a list of new rows where word-wrapping was applied.
+     * @param maxWidth Maximum number of columns that can be used before word-wrapping is applied
+     * @param lines Input text
+     * @return The input text word-wrapped at {@code maxWidth}; this may contain more rows than the input text
+     */
+    public static List<String> getWordWrappedText(int maxWidth, String... lines) {
+        List<String> result = new ArrayList<String>();
+        LinkedList<String> linesToBeWrapped = new LinkedList<String>(Arrays.asList(lines));
+        while(!linesToBeWrapped.isEmpty()) {
+            String row = linesToBeWrapped.removeFirst();
+            int rowWidth = getColumnWidth(row);
+            if(rowWidth <= maxWidth) {
+                result.add(row);
+            }
+            else {
+                //Now search in reverse and find the first possible line-break
+                int characterIndex = getStringCharacterIndex(row, maxWidth);
+                while(!Character.isSpaceChar(row.charAt(characterIndex)) &&
+                        !isCharCJK(row.charAt(characterIndex)) &&
+                        characterIndex > 0) {
+                    characterIndex--;
+                }
+
+                if(characterIndex == 0) {
+                    //Failed! There was no 'nice' place to cut so just cut it at maxWidth
+                    result.add(row.substring(0, maxWidth));
+                    linesToBeWrapped.addFirst(row.substring(maxWidth));
+                }
+                else {
+                    //Ok, split the row, add it to the result and continue processing the second half on a new line
+                    result.add(row.substring(0, characterIndex));
+                    int spaceCharsToSkip = 0;
+                    while(Character.isSpaceChar(row.charAt(characterIndex)) && characterIndex < row.length()) {
+                        characterIndex++;
+                    };
+                    linesToBeWrapped.addFirst(row.substring(characterIndex));
+                }
+            }
+        }
+        return result;
     }
 }

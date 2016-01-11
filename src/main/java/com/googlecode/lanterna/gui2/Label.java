@@ -25,6 +25,7 @@ import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.ThemeDefinition;
 
 import java.util.EnumSet;
+import java.util.List;
 
 /**
  * Label is a simple read-only text display component. It supports customized colors and multi-line text.
@@ -32,6 +33,7 @@ import java.util.EnumSet;
  */
 public class Label extends AbstractComponent<Label> {
     private String[] lines;
+    private Integer labelWidth;
     private TerminalSize labelSize;
     private TextColor foregroundColor;
     private TextColor backgroundColor;
@@ -109,14 +111,20 @@ public class Label extends AbstractComponent<Label> {
             currentBounds = TerminalSize.ZERO;
         }
         currentBounds = currentBounds.withRows(lines.length);
-        int preferredWidth = 0;
-        for(String line: lines) {
-            int lineWidth = TerminalTextUtils.getColumnWidth(line);
-            if(preferredWidth < lineWidth) {
-                preferredWidth = lineWidth;
+        if(labelWidth == 0) {
+            int preferredWidth = 0;
+            for(String line : lines) {
+                int lineWidth = TerminalTextUtils.getColumnWidth(line);
+                if(preferredWidth < lineWidth) {
+                    preferredWidth = lineWidth;
+                }
             }
+            currentBounds = currentBounds.withColumns(preferredWidth);
         }
-        currentBounds = currentBounds.withColumns(preferredWidth);
+        else {
+            List<String> wordWrapped = TerminalTextUtils.getWordWrappedText(labelWidth, lines);
+            currentBounds = currentBounds.withColumns(labelWidth).withRows(wordWrapped.size());
+        }
         return currentBounds;
     }
 
@@ -185,6 +193,34 @@ public class Label extends AbstractComponent<Label> {
         return this;
     }
 
+    /**
+     * Use this method to limit how wide the label can grow. If set to {@code null} there is no limit but if set to a
+     * positive integer then the preferred size will be calculated using word wrapping for lines that are longer than
+     * the label width. This may make the label increase in height as new rows may be requested. Please note that some
+     * layout managers might assign more space to the label and because of this the wrapping might not be as you expect
+     * it.
+     * @param labelWidth Either {@code null} for no limit on how wide the label can be, or a positive integer setting
+     *                   the requested maximum width at what point word wrapping will begin
+     * @return Itself
+     */
+    public synchronized Label setLabelWidth(Integer labelWidth) {
+        this.labelWidth = labelWidth;
+        return this;
+    }
+
+    /**
+     * Returns the limit how wide the label can grow. If set to {@code null} there is no limit but if set to a
+     * positive integer then the preferred size will be calculated using word wrapping for lines that are longer than
+     * the label width. This may make the label increase in height as new rows may be requested. Please note that some
+     * layout managers might assign more space to the label and because of this the wrapping might not be as you expect
+     * it.
+     * @return Either {@code null} for no limit on how wide the label can be, or a positive integer setting
+     *                   the requested maximum width at what point word wrapping will begin
+     */
+    public Integer getLabelWidth() {
+        return labelWidth;
+    }
+
     @Override
     protected ComponentRenderer<Label> createDefaultRenderer() {
         return new ComponentRenderer<Label>() {
@@ -206,8 +242,17 @@ public class Label extends AbstractComponent<Label> {
                 for(SGR sgr: additionalStyles) {
                     graphics.enableModifiers(sgr);
                 }
-                for(int row = 0; row < Math.min(graphics.getSize().getRows(), labelSize.getRows()); row++) {
-                    String line = lines[row];
+
+                String[] linesToDraw;
+                if(component.getLabelWidth() == 0) {
+                    linesToDraw = component.lines;
+                }
+                else {
+                    linesToDraw = TerminalTextUtils.getWordWrappedText(component.getLabelWidth(), component.lines).toArray(new String[0]);
+                }
+
+                for(int row = 0; row < Math.min(graphics.getSize().getRows(), linesToDraw.length); row++) {
+                    String line = linesToDraw[row];
                     if(graphics.getSize().getColumns() >= labelSize.getColumns()) {
                         graphics.putString(0, row, line);
                     }
