@@ -311,9 +311,6 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
     }
 
     private byte[] convertToCharset(char input) {
-        //TODO: This is a silly way to do it, improve?
-        final char[] buffer = new char[1];
-        buffer[0] = input;
-        return terminalCharset.encode(CharBuffer.wrap(buffer)).array();
+        return terminalCharset.encode(Character.toString(input)).array();
     }
 }
