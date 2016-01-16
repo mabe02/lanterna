@@ -12,7 +12,7 @@
  * Render window title other place than left-aligned
 
 From Brad C. by email to lanterna-discuss on 2014-06-09:
- * Border Colors - Would be nice if you could optionally override the Theme to include a Background and Foreground color on the various borders. 
+ * [DONE] Border Colors - Would be nice if you could optionally override the Theme to include a Background and Foreground color on the various borders.
  * [DONE] Double Border - Much like the Standard border, but using ACS.DOUBLE_LINE.*
  * [DONE] Text Box (On Key Press) - Allow for an Override on Key Press of the Text Box Component. This would allow someone to apply a default action specific to that component. In this case, I wanted the ENTER key to perform an action.
  * [DONE] Wrapped Label - I developed a Label component that wraps according to the width of the parent container. This is similar to the logic you have for your label, other than I am doing some Regular Expression work to wrap at logical spaces. I believe yours simply cuts off the line and adds the periods (...)
