@@ -18,6 +18,7 @@
  */
 package com.googlecode.lanterna.gui2;
 
+import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.graphics.BasicTextImage;
 import com.googlecode.lanterna.graphics.TextImage;
 import com.googlecode.lanterna.input.KeyStroke;
@@ -44,6 +45,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
     private final WindowManager windowManager;
     private final BasePane backgroundPane;
     private final List<Window> windows;
+    private final IdentityHashMap<Window, TextImage> windowRenderBufferCache;
     private final WindowPostRenderer postRenderer;
 
     private Window activeWindow;
@@ -180,6 +182,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
         };
         this.backgroundPane.setComponent(background);
         this.windows = new LinkedList<Window>();
+        this.windowRenderBufferCache = new IdentityHashMap<Window, TextImage>();
         this.postRenderer = postRenderer;
         this.eofWhenNoWindows = false;
     }
@@ -235,9 +238,12 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
         getWindowManager().prepareWindows(this, Collections.unmodifiableList(windows), graphics.getSize());
         for(Window window: windows) {
             // First draw windows to a buffer, then copy it to the real destination. This is to make physical off-screen
-            // drawing work better.
-            // TODO: Don't create one every frame!!
-            TextImage textImage = new BasicTextImage(window.getDecoratedSize());
+            // drawing work better. Store the buffers in a cache so we don't have to re-create them every time.
+            TextImage textImage = windowRenderBufferCache.get(window);
+            if(textImage == null || !textImage.getSize().equals(window.getDecoratedSize())) {
+                textImage = new BasicTextImage(window.getDecoratedSize());
+                windowRenderBufferCache.put(window, textImage);
+            }
             TextGUIGraphics windowGraphics = new TextGUIGraphics(this, textImage.newTextGraphics(), graphics.getTheme());
 
             TerminalPosition contentOffset = TerminalPosition.TOP_LEFT_CORNER;
@@ -251,13 +257,15 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
             window.setContentOffset(contentOffset);
             Borders.joinLinesWithFrame(windowGraphics);
 
-            //TextGUIGraphics realGraphics = graphics.newTextGraphics(window.getPosition(), window.getDecoratedSize());
             graphics.drawImage(window.getPosition(), textImage);
 
             if(postRenderer != null && !window.getHints().contains(Window.Hint.NO_POST_RENDERING)) {
                 postRenderer.postRender(graphics, this, window);
             }
         }
+
+        // Purge the render buffer cache from windows that have been removed
+        windowRenderBufferCache.keySet().retainAll(windows);
     }
 
     @Override
