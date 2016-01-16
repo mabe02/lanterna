@@ -105,8 +105,10 @@ public class DefaultWindowManager implements WindowManager {
                 nextPosition = TerminalPosition.OFFSET_1x1;
             }
             window.setPosition(nextPosition);
-
         }
+
+        // Finally, run through the usual calculations so the window manager's usual prepare method can have it's say
+        prepareWindow(lastKnownScreenSize, window);
     }
 
     @Override
@@ -122,6 +124,17 @@ public class DefaultWindowManager implements WindowManager {
         }
     }
 
+    /**
+     * Called by {@link DefaultWindowManager} when iterating through all windows to decide their size and position. If
+     * you override {@link DefaultWindowManager} to add your own logic to how windows are placed on the screen, you can
+     * override this method and selectively choose which window to interfere with. Note that the two key properties that
+     * are read by the GUI system after preparing all windows are the position and decorated size. Your custom
+     * implementation should set these two fields directly on the window. You can infer the decorated size from the
+     * content size by using the window decoration renderer that is attached to the window manager.
+     *
+     * @param screenSize Size of the terminal that is available to draw on
+     * @param window Window to prepare decorated size and position for
+     */
     protected void prepareWindow(TerminalSize screenSize, Window window) {
         WindowDecorationRenderer decorationRenderer = getWindowDecorationRenderer(window);
         TerminalSize contentAreaSize;
