@@ -13,7 +13,7 @@ public abstract class TestBase {
     void run(String[] args) throws IOException, InterruptedException {
         Screen screen = new TestTerminalFactory(args).createScreen();
         screen.startScreen();
-        MultiWindowTextGUI textGUI = new MultiWindowTextGUI(new SeparateTextGUIThread.Factory(), screen);
+        MultiWindowTextGUI textGUI = createTextGUI(screen);
         textGUI.setBlockingIO(false);
         textGUI.setEOFWhenNoWindows(true);
         textGUI.isEOFWhenNoWindows();   //No meaning, just to silence IntelliJ:s "is never used" alert
@@ -27,6 +27,10 @@ public abstract class TestBase {
         finally {
             screen.stopScreen();
         }
+    }
+
+    protected MultiWindowTextGUI createTextGUI(Screen screen) {
+        return new MultiWindowTextGUI(new SeparateTextGUIThread.Factory(), screen);
     }
 
     public abstract void init(WindowBasedTextGUI textGUI);
