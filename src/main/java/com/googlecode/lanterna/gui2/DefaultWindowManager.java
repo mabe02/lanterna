@@ -118,55 +118,59 @@ public class DefaultWindowManager implements WindowManager {
     public void prepareWindows(WindowBasedTextGUI textGUI, List<Window> allWindows, TerminalSize screenSize) {
         this.lastKnownScreenSize = screenSize;
         for(Window window: allWindows) {
-            WindowDecorationRenderer decorationRenderer = getWindowDecorationRenderer(window);
-            TerminalSize contentAreaSize;
-            if(window.getHints().contains(Window.Hint.FIXED_SIZE)) {
-                contentAreaSize = window.getSize();
-            }
-            else {
-                contentAreaSize = window.getPreferredSize();
-            }
-            TerminalSize size = decorationRenderer.getDecoratedSize(window, contentAreaSize);
-            TerminalPosition position = window.getPosition();
-
-            if(window.getHints().contains(Window.Hint.FULL_SCREEN)) {
-                position = TerminalPosition.TOP_LEFT_CORNER;
-                size = screenSize;
-            }
-            else if(window.getHints().contains(Window.Hint.EXPANDED)) {
-                position = TerminalPosition.OFFSET_1x1;
-                size = screenSize.withRelative(
-                        -Math.min(4, screenSize.getColumns()),
-                        -Math.min(3, screenSize.getRows()));
-                if(!size.equals(window.getDecoratedSize())) {
-                    window.invalidate();
-                }
-            }
-            else if(window.getHints().contains(Window.Hint.FIT_TERMINAL_WINDOW) ||
-                    window.getHints().contains(Window.Hint.CENTERED)) {
-                //If the window is too big for the terminal, move it up towards 0x0 and if that's not enough then shrink
-                //it instead
-                while(position.getRow() > 0 && position.getRow() + size.getRows() > screenSize.getRows()) {
-                    position = position.withRelativeRow(-1);
-                }
-                while(position.getColumn() > 0 && position.getColumn() + size.getColumns() > screenSize.getColumns()) {
-                    position = position.withRelativeColumn(-1);
-                }
-                if(position.getRow() + size.getRows() > screenSize.getRows()) {
-                    size = size.withRows(screenSize.getRows() - position.getRow());
-                }
-                if(position.getColumn() + size.getColumns() > screenSize.getColumns()) {
-                    size = size.withColumns(screenSize.getColumns() - position.getColumn());
-                }
-                if(window.getHints().contains(Window.Hint.CENTERED)) {
-                    int left = (lastKnownScreenSize.getColumns() - size.getColumns()) / 2;
-                    int top = (lastKnownScreenSize.getRows() - size.getRows()) / 2;
-                    position = new TerminalPosition(left, top);
-                }
-            }
-
-            window.setPosition(position);
-            window.setDecoratedSize(size);
+            prepareWindow(screenSize, window);
         }
+    }
+
+    protected void prepareWindow(TerminalSize screenSize, Window window) {
+        WindowDecorationRenderer decorationRenderer = getWindowDecorationRenderer(window);
+        TerminalSize contentAreaSize;
+        if(window.getHints().contains(Window.Hint.FIXED_SIZE)) {
+            contentAreaSize = window.getSize();
+        }
+        else {
+            contentAreaSize = window.getPreferredSize();
+        }
+        TerminalSize size = decorationRenderer.getDecoratedSize(window, contentAreaSize);
+        TerminalPosition position = window.getPosition();
+
+        if(window.getHints().contains(Window.Hint.FULL_SCREEN)) {
+            position = TerminalPosition.TOP_LEFT_CORNER;
+            size = screenSize;
+        }
+        else if(window.getHints().contains(Window.Hint.EXPANDED)) {
+            position = TerminalPosition.OFFSET_1x1;
+            size = screenSize.withRelative(
+                    -Math.min(4, screenSize.getColumns()),
+                    -Math.min(3, screenSize.getRows()));
+            if(!size.equals(window.getDecoratedSize())) {
+                window.invalidate();
+            }
+        }
+        else if(window.getHints().contains(Window.Hint.FIT_TERMINAL_WINDOW) ||
+                window.getHints().contains(Window.Hint.CENTERED)) {
+            //If the window is too big for the terminal, move it up towards 0x0 and if that's not enough then shrink
+            //it instead
+            while(position.getRow() > 0 && position.getRow() + size.getRows() > screenSize.getRows()) {
+                position = position.withRelativeRow(-1);
+            }
+            while(position.getColumn() > 0 && position.getColumn() + size.getColumns() > screenSize.getColumns()) {
+                position = position.withRelativeColumn(-1);
+            }
+            if(position.getRow() + size.getRows() > screenSize.getRows()) {
+                size = size.withRows(screenSize.getRows() - position.getRow());
+            }
+            if(position.getColumn() + size.getColumns() > screenSize.getColumns()) {
+                size = size.withColumns(screenSize.getColumns() - position.getColumn());
+            }
+            if(window.getHints().contains(Window.Hint.CENTERED)) {
+                int left = (lastKnownScreenSize.getColumns() - size.getColumns()) / 2;
+                int top = (lastKnownScreenSize.getRows() - size.getRows()) / 2;
+                position = new TerminalPosition(left, top);
+            }
+        }
+
+        window.setPosition(position);
+        window.setDecoratedSize(size);
     }
 }
