@@ -71,7 +71,9 @@ public interface WindowManager {
      * Called by the GUI system before iterating through all windows during the drawing process. The window manager
      * should ensure the position and decorated size of all windows at this point by using
      * {@code Window.setPosition(..)} and {@code Window.setDecoratedSize(..)}. Be sure to inspect the window hints
-     * assigned to the window, in case you want to try to honour them.
+     * assigned to the window, in case you want to try to honour them. Use the
+     * {@link #getWindowDecorationRenderer(Window)} method to get the currently assigned window decoration rendering
+     * class which can tell you the decorated size of a window given it's content size.
      *
      * @param textGUI Text GUI that is about to draw the windows
      * @param allWindows All windows that are going to be drawn, in the order they will be drawn
