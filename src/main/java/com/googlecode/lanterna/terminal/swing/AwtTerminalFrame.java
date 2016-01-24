@@ -1,0 +1,298 @@
+/*
+ * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ *
+ * lanterna is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright (C) 2010-2015 Martin
+ */
+package com.googlecode.lanterna.terminal.swing;
+
+import com.googlecode.lanterna.SGR;
+import com.googlecode.lanterna.graphics.TextGraphics;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
+import com.googlecode.lanterna.terminal.IOSafeTerminal;
+import com.googlecode.lanterna.terminal.ResizeListener;
+import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TextColor;
+
+import java.awt.*;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+
+/**
+ * This class is similar to what SwingTerminal used to be before Lanterna 3.0; a JFrame that contains a terminal
+ * emulator. In Lanterna 3, this class is just a JFrame containing a SwingTerminal component, but it also implements
+ * the Terminal interface and delegates all calls to the internal SwingTerminal. You can tweak the class a bit to have
+ * special behaviours when exiting private mode or when the user presses ESC key.
+ * @author martin
+ */
+@SuppressWarnings("serial")
+public class AwtTerminalFrame extends Frame implements IOSafeTerminal {
+    
+    /**
+     * This enum stored various ways the SwingTerminalFrame can automatically close (hide and dispose) itself when a
+     * certain condition happens. By default, auto-close is not active.
+     */
+    public enum AutoCloseTrigger {
+        /**
+         * Auto-close disabled
+         */
+        DoNotAutoClose,
+        /**
+         * Close the frame when exiting from private mode
+         */
+        CloseOnExitPrivateMode,
+        /**
+         * Close if the user presses ESC key on the keyboard
+         */
+        CloseOnEscape,
+        ;
+    }
+
+    private final AwtTerminal awtTerminal;
+    private AutoCloseTrigger autoCloseTrigger;
+    private boolean disposed;
+
+    /**
+     * Creates a new SwingTerminalFrame that doesn't automatically close.
+     */
+    public AwtTerminalFrame() throws HeadlessException {
+        this(AutoCloseTrigger.DoNotAutoClose);
+    }
+
+    /**
+     * Creates a new SwingTerminalFrame with a specified auto-close behaviour
+     * @param autoCloseTrigger What to trigger automatic disposal of the JFrame
+     */
+    @SuppressWarnings({"SameParameterValue", "WeakerAccess"})
+    public AwtTerminalFrame(AutoCloseTrigger autoCloseTrigger) {
+        this("AwtTerminalFrame", autoCloseTrigger);
+    }
+
+    /**
+     * Creates a new SwingTerminalFrame with a given title and no automatic closing.
+     * @param title Title to use for the window
+     */
+    public AwtTerminalFrame(String title) throws HeadlessException {
+        this(title, AutoCloseTrigger.DoNotAutoClose);
+    }
+
+    /**
+     * Creates a new SwingTerminalFrame with a specified auto-close behaviour and specific title
+     * @param title Title to use for the window
+     * @param autoCloseTrigger What to trigger automatic disposal of the JFrame
+     */
+    @SuppressWarnings("WeakerAccess")
+    public AwtTerminalFrame(String title, AutoCloseTrigger autoCloseTrigger) throws HeadlessException {
+        this(title, new AwtTerminal(), autoCloseTrigger);
+    }
+
+    /**
+     * Creates a new SwingTerminalFrame using a specified title and a series of swing terminal configuration objects
+     * @param title What title to use for the window
+     * @param deviceConfiguration Device configuration for the embedded SwingTerminal
+     * @param fontConfiguration Font configuration for the embedded SwingTerminal
+     * @param colorConfiguration Color configuration for the embedded SwingTerminal
+     */
+    public AwtTerminalFrame(String title,
+            SwingTerminalDeviceConfiguration deviceConfiguration,
+            SwingTerminalFontConfiguration fontConfiguration,
+            SwingTerminalColorConfiguration colorConfiguration) {
+        this(title, deviceConfiguration, fontConfiguration, colorConfiguration, AutoCloseTrigger.DoNotAutoClose);
+    }
+
+    /**
+     * Creates a new SwingTerminalFrame using a specified title and a series of swing terminal configuration objects
+     * @param title What title to use for the window
+     * @param deviceConfiguration Device configuration for the embedded SwingTerminal
+     * @param fontConfiguration Font configuration for the embedded SwingTerminal
+     * @param colorConfiguration Color configuration for the embedded SwingTerminal
+     * @param autoCloseTrigger What to trigger automatic disposal of the JFrame
+     */
+    public AwtTerminalFrame(String title,
+            SwingTerminalDeviceConfiguration deviceConfiguration,
+            SwingTerminalFontConfiguration fontConfiguration,
+            SwingTerminalColorConfiguration colorConfiguration,
+            AutoCloseTrigger autoCloseTrigger) {
+        this(title, null, deviceConfiguration, fontConfiguration, colorConfiguration, autoCloseTrigger);
+    }
+
+    /**
+     * Creates a new SwingTerminalFrame using a specified title and a series of swing terminal configuration objects
+     * @param title What title to use for the window
+     * @param terminalSize Initial size of the terminal, in rows and columns. If null, it will default to 80x25.
+     * @param deviceConfiguration Device configuration for the embedded SwingTerminal
+     * @param fontConfiguration Font configuration for the embedded SwingTerminal
+     * @param colorConfiguration Color configuration for the embedded SwingTerminal
+     * @param autoCloseTrigger What to trigger automatic disposal of the JFrame
+     */
+    public AwtTerminalFrame(String title,
+                              TerminalSize terminalSize,
+                              SwingTerminalDeviceConfiguration deviceConfiguration,
+                              SwingTerminalFontConfiguration fontConfiguration,
+                              SwingTerminalColorConfiguration colorConfiguration,
+                              AutoCloseTrigger autoCloseTrigger) {
+        this(title,
+                new AwtTerminal(terminalSize, deviceConfiguration, fontConfiguration, colorConfiguration),
+                autoCloseTrigger);
+    }
+    
+    private AwtTerminalFrame(String title, AwtTerminal awtTerminal, AutoCloseTrigger autoCloseTrigger) {
+        super(title);
+        this.awtTerminal = awtTerminal;
+        this.autoCloseTrigger = autoCloseTrigger;
+        this.disposed = false;
+
+        /*getContentPane().*/setLayout(new BorderLayout());
+        /*getContentPane().*/add(awtTerminal, BorderLayout.CENTER);
+        setBackground(Color.BLACK); //This will reduce white flicker when resizing the window
+        pack();
+
+        //Put input focus on the terminal component by default
+        awtTerminal.requestFocusInWindow();
+    }
+
+    /**
+     * Returns the auto-close trigger used by the SwingTerminalFrame
+     * @return Current auto-close trigger
+     */
+    public AutoCloseTrigger getAutoCloseTrigger() {
+        return autoCloseTrigger;
+    }
+
+    /**
+     * Changes the current auto-close trigger used by this SwingTerminalFrame
+     * @param autoCloseTrigger New auto-close trigger to use
+     */
+    public void setAutoCloseTrigger(AutoCloseTrigger autoCloseTrigger) {
+        this.autoCloseTrigger = autoCloseTrigger;
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        disposed = true;
+    }
+    
+    ///////////
+    // Delegate all Terminal interface implementations to SwingTerminal
+    ///////////
+    @Override
+    public KeyStroke pollInput() {
+        if(disposed) {
+            return new KeyStroke(KeyType.EOF);
+        }
+        KeyStroke keyStroke = awtTerminal.pollInput();
+        if(autoCloseTrigger == AutoCloseTrigger.CloseOnEscape && 
+                keyStroke != null && 
+                keyStroke.getKeyType() == KeyType.Escape) {
+            dispose();
+        }
+        return keyStroke;
+    }
+
+    @Override
+    public KeyStroke readInput() throws IOException {
+        return awtTerminal.readInput();
+    }
+
+    @Override
+    public void enterPrivateMode() {
+        awtTerminal.enterPrivateMode();
+    }
+
+    @Override
+    public void exitPrivateMode() {
+        awtTerminal.exitPrivateMode();
+        if(autoCloseTrigger == AutoCloseTrigger.CloseOnExitPrivateMode) {
+            dispose();
+        }
+    }
+
+    @Override
+    public void clearScreen() {
+        awtTerminal.clearScreen();
+    }
+
+    @Override
+    public void setCursorPosition(int x, int y) {
+        awtTerminal.setCursorPosition(x, y);
+    }
+
+    @Override
+    public void setCursorVisible(boolean visible) {
+        awtTerminal.setCursorVisible(visible);
+    }
+
+    @Override
+    public void putCharacter(char c) {
+        awtTerminal.putCharacter(c);
+    }
+
+    @Override
+    public TextGraphics newTextGraphics() throws IOException {
+        return awtTerminal.newTextGraphics();
+    }
+
+    @Override
+    public void enableSGR(SGR sgr) {
+        awtTerminal.enableSGR(sgr);
+    }
+
+    @Override
+    public void disableSGR(SGR sgr) {
+        awtTerminal.disableSGR(sgr);
+    }
+
+    @Override
+    public void resetColorAndSGR() {
+        awtTerminal.resetColorAndSGR();
+    }
+
+    @Override
+    public void setForegroundColor(TextColor color) {
+        awtTerminal.setForegroundColor(color);
+    }
+
+    @Override
+    public void setBackgroundColor(TextColor color) {
+        awtTerminal.setBackgroundColor(color);
+    }
+
+    @Override
+    public TerminalSize getTerminalSize() {
+        return awtTerminal.getTerminalSize();
+    }
+
+    @Override
+    public byte[] enquireTerminal(int timeout, TimeUnit timeoutUnit) {
+        return awtTerminal.enquireTerminal(timeout, timeoutUnit);
+    }
+
+    @Override
+    public void flush() {
+        awtTerminal.flush();
+    }
+
+    @Override
+    public void addResizeListener(ResizeListener listener) {
+        awtTerminal.addResizeListener(listener);
+    }
+
+    @Override
+    public void removeResizeListener(ResizeListener listener) {
+        awtTerminal.removeResizeListener(listener);
+    }
+}
