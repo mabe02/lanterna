@@ -66,10 +66,10 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
     private final List<ResizeListener> resizeListeners;
     private final Timer blinkTimer;
 
+    private final String enquiryString;
     private final EnumSet<SGR> activeSGRs;
     private TextColor foregroundColor;
     private TextColor backgroundColor;
-    private final String enquiryString;
 
     private volatile boolean cursorIsVisible;
     private volatile boolean blinkOn;
