@@ -33,6 +33,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
@@ -72,7 +73,21 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
     private TextColor backgroundColor;
 
     private volatile boolean cursorIsVisible;
+    private volatile boolean hasBlinkingText;
     private volatile boolean blinkOn;
+
+    // We use two different data structures to optimize drawing
+    //  * A map (as a two-dimensional array) of all characters currently visible inside this component
+    //  * A backbuffer with the graphics content
+    //
+    // The buffer is the most important one as it allows us to re-use what was drawn earlier. It is not reset on every
+    // drawing operation but updates just in those places where the map tells us the character has changed. Note that
+    // when the component is resized, we always update the whole buffer.
+    //
+    // DON'T RELY ON THESE FOR SIZE! We make it a big bigger than necessary to make resizing smoother. Use the AWT/Swing
+    // methods to get the correct dimensions or use {@code getTerminalSize()} to get the size in terminal space.
+    private CharacterState[][] visualState;
+    private BufferedImage backbuffer;
 
     /**
      * Creates a new SwingTerminal with all the defaults set and no scroll controller connected.
@@ -203,7 +218,11 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
         this.backgroundColor = TextColor.ANSI.DEFAULT;
         this.cursorIsVisible = true;        //Always start with an activate and visible cursor
         this.enquiryString = "SwingTerminal";
+        this.visualState = new CharacterState[48][160];
+        this.backbuffer = null;  // We don't know the dimensions yet
         this.blinkTimer = new Timer(deviceConfiguration.getBlinkLengthInMilliSeconds(), new BlinkTimerCallback());
+        this.hasBlinkingText = false;   // Assume initial content doesn't have any blinking text
+        this.blinkOn = true;
 
         //Set the initial scrollable size
         //scrollObserver.newScrollableLength(fontConfiguration.getFontHeight() * terminalSize.getRows());
@@ -252,13 +271,14 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
     }
 
     @Override
-    protected synchronized void paintComponent(Graphics g) {
+    protected synchronized void paintComponent(Graphics componentGraphics) {
         //First, resize the buffer width/height if necessary
         int fontWidth = fontConfiguration.getFontWidth();
         int fontHeight = fontConfiguration.getFontHeight();
         boolean antiAliasing = fontConfiguration.isAntiAliased();
         int widthInNumberOfCharacters = getWidth() / fontWidth;
         int visibleRows = getHeight() / fontHeight;
+        boolean terminalResized = false;
 
         //Don't let size be less than 1
         widthInNumberOfCharacters = Math.max(1, widthInNumberOfCharacters);
@@ -271,24 +291,33 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
             for(ResizeListener listener: resizeListeners) {
                 listener.onResized(this, terminalSize);
             }
+            terminalResized = true;
+            ensureVisualStateHasRightSize(terminalSize);
         }
+        ensureBackbufferHasRightSize();
+
         //Retrieve the position of the cursor, relative to the scrolling state
         TerminalPosition translatedCursorPosition = virtualTerminal.getTranslatedCursorPosition();
 
         //Setup the graphics object
+        Graphics2D backbufferGraphics = backbuffer.createGraphics();
         if(antiAliasing) {
-            ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-            ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+            backbufferGraphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            backbufferGraphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         }
 
-        //Fill with black to remove any previous content
-        g.setColor(Color.BLACK);
-        g.fillRect(0, 0, getWidth(), getHeight());
-
-        //Draw line by line, character by character
+        // Draw line by line, character by character
+        // Initiate the blink state to whatever the cursor is using, since if the cursor is blinking then we always want
+        // to do the blink repaint
+        boolean foundBlinkingCharacters = deviceConfiguration.isCursorBlinking();
         int rowIndex = 0;
         for(List<TextCharacter> row: virtualTerminal.getLines()) {
             for(int columnIndex = 0; columnIndex < row.size(); columnIndex++) {
+                //Any extra characters from the virtual terminal that doesn't fit can be discarded
+                if(columnIndex >= terminalSize.getColumns()) {
+                    continue;
+                }
+
                 TextCharacter character = row.get(columnIndex);
                 boolean atCursorLocation = translatedCursorPosition.equals(columnIndex, rowIndex);
                 //If next position is the cursor location and this is a CJK character (i.e. cursor is on the padding),
@@ -304,44 +333,27 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
                 Color foregroundColor = deriveTrueForegroundColor(character, atCursorLocation);
                 Color backgroundColor = deriveTrueBackgroundColor(character, atCursorLocation);
 
-                g.setColor(backgroundColor);
-                g.fillRect(columnIndex * fontWidth, rowIndex * fontHeight, characterWidth, fontHeight);
-
-                g.setColor(foregroundColor);
-                Font font = fontConfiguration.getFontForCharacter(character);
-                g.setFont(font);
-                FontMetrics fontMetrics = g.getFontMetrics();
-                g.drawString(Character.toString(character.getCharacter()), columnIndex * fontWidth, ((rowIndex + 1) * fontHeight) - fontMetrics.getDescent());
-
-                if(character.isCrossedOut()) {
-                    int lineStartX = columnIndex * fontWidth;
-                    int lineStartY = rowIndex * fontHeight + (fontHeight / 2);
-                    int lineEndX = lineStartX + characterWidth;
-                    g.drawLine(lineStartX, lineStartY, lineEndX, lineStartY);
-                }
-                if(character.isUnderlined()) {
-                    int lineStartX = columnIndex * fontWidth;
-                    int lineStartY = ((rowIndex + 1) * fontHeight) - fontMetrics.getDescent() + 1;
-                    int lineEndX = lineStartX + characterWidth;
-                    g.drawLine(lineStartX, lineStartY, lineEndX, lineStartY);
-                }
-
-                //Here we are drawing the cursor if the style isn't solid color or reversed
-                if(atCursorLocation &&
+                boolean drawCursor = atCursorLocation &&
                         (!deviceConfiguration.isCursorBlinking() ||     //Always draw if the cursor isn't blinking
-                                (deviceConfiguration.isCursorBlinking() && blinkOn))) { //If the cursor is blinking, only draw when blinkOn is true
-                    if(deviceConfiguration.getCursorColor() == null) {
-                        g.setColor(foregroundColor);
-                    }
-                    else {
-                        g.setColor(colorConfiguration.toAWTColor(deviceConfiguration.getCursorColor(), false, false));
-                    }
-                    if(deviceConfiguration.getCursorStyle() == SwingTerminalDeviceConfiguration.CursorStyle.UNDER_BAR) {
-                        g.fillRect(columnIndex * fontWidth, (rowIndex * fontHeight) + fontHeight - 3, characterWidth, 2);
-                    }
-                    else if(deviceConfiguration.getCursorStyle() == SwingTerminalDeviceConfiguration.CursorStyle.VERTICAL_BAR) {
-                        g.fillRect(columnIndex * fontWidth, rowIndex * fontHeight + 1, 2, fontHeight - 2);
-                    }
+                                (deviceConfiguration.isCursorBlinking() && blinkOn));    //If the cursor is blinking, only draw when blinkOn is true
+
+                CharacterState characterState = new CharacterState(character, foregroundColor, backgroundColor, drawCursor);
+                if(!characterState.equals(visualState[rowIndex][columnIndex]) || terminalResized) {
+                    drawCharacter(backbufferGraphics,
+                            character,
+                            columnIndex,
+                            rowIndex,
+                            foregroundColor,
+                            backgroundColor,
+                            fontWidth,
+                            fontHeight,
+                            characterWidth,
+                            drawCursor);
+                    visualState[rowIndex][columnIndex] = characterState;
+                }
+
+                if(character.getModifiers().contains(SGR.BLINK)) {
+                    foundBlinkingCharacters = true;
                 }
                 if(TerminalTextUtils.isCharCJK(character.getCharacter())) {
                     columnIndex++; //Skip the trailing space after a CJK character
@@ -350,8 +362,123 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
             rowIndex++;
         }
 
-        g.dispose();
+        // Take care of the left-over area at the bottom and right of the component where no character can fit
+        int leftoverHeight = getHeight() % fontHeight;
+        int leftoverWidth = getWidth() % fontWidth;
+        backbufferGraphics.setColor(Color.BLACK);
+        if(leftoverWidth > 0) {
+            backbufferGraphics.fillRect(getWidth() - leftoverWidth, 0, leftoverWidth, getHeight());
+        }
+        if(leftoverHeight > 0) {
+            backbufferGraphics.fillRect(0, getHeight() - leftoverHeight, getWidth(), leftoverHeight);
+        }
+
+        componentGraphics.drawImage(backbuffer, 0, 0, null);
+
+        // Dispose the graphic objects
+        backbufferGraphics.dispose();
+        componentGraphics.dispose();
+
+        // Update the blink status according to if there were any blinking characters or not
+        this.hasBlinkingText = foundBlinkingCharacters;
+
+        // Tell anyone waiting on us that drawing is complete
         notifyAll();
+    }
+
+    private void ensureBackbufferHasRightSize() {
+        if(backbuffer == null) {
+            backbuffer = new BufferedImage(getWidth() * 2, getHeight() * 2, BufferedImage.TYPE_INT_RGB);
+        }
+        if(backbuffer.getWidth() < getWidth() || backbuffer.getWidth() > getWidth() * 4 ||
+                backbuffer.getHeight() < getHeight() || backbuffer.getHeight() > getHeight() * 4) {
+            BufferedImage newBackbuffer = new BufferedImage(Math.max(getWidth(), 1) * 2, Math.max(getHeight(), 1) * 2, BufferedImage.TYPE_INT_RGB);
+            Graphics2D graphics = newBackbuffer.createGraphics();
+            graphics.drawImage(backbuffer, 0, 0, null);
+            graphics.dispose();
+            backbuffer = newBackbuffer;
+        }
+    }
+
+    private void ensureVisualStateHasRightSize(TerminalSize terminalSize) {
+        if(visualState == null) {
+            visualState = new CharacterState[terminalSize.getRows() * 2][terminalSize.getColumns() * 2];
+        }
+        if(visualState.length < terminalSize.getRows() || visualState.length > Math.max(terminalSize.getRows(), 1) * 4) {
+            visualState = Arrays.copyOf(visualState, terminalSize.getRows() * 2);
+        }
+        for(int rowIndex = 0; rowIndex < visualState.length; rowIndex++) {
+            CharacterState[] row = visualState[rowIndex];
+            if(row == null) {
+                row = new CharacterState[terminalSize.getColumns() * 2];
+                visualState[rowIndex] = row;
+            }
+            if(row.length < terminalSize.getColumns() || row.length > Math.max(terminalSize.getColumns(), 1) * 4) {
+                row = Arrays.copyOf(row, terminalSize.getColumns() * 2);
+                visualState[rowIndex] = row;
+            }
+
+            // Make sure all items outside the 'real' terminal size are null
+            if(rowIndex < terminalSize.getRows()) {
+                Arrays.fill(row, terminalSize.getColumns(), row.length, null);
+            }
+            else {
+                Arrays.fill(row, null);
+            }
+        }
+    }
+
+    private void drawCharacter(
+            Graphics g,
+            TextCharacter character,
+            int columnIndex,
+            int rowIndex,
+            Color foregroundColor,
+            Color backgroundColor,
+            int fontWidth,
+            int fontHeight,
+            int characterWidth,
+            boolean drawCursor) {
+
+        int x = columnIndex * fontWidth;
+        int y = rowIndex * fontHeight;
+        g.setColor(backgroundColor);
+        g.setClip(x, y, fontWidth, fontHeight);
+        g.fillRect(x, y, characterWidth, fontHeight);
+
+        g.setColor(foregroundColor);
+        Font font = fontConfiguration.getFontForCharacter(character);
+        g.setFont(font);
+        FontMetrics fontMetrics = g.getFontMetrics();
+        g.drawString(Character.toString(character.getCharacter()), x, ((rowIndex + 1) * fontHeight) - fontMetrics.getDescent());
+
+        if(character.isCrossedOut()) {
+            int lineStartX = x;
+            int lineStartY = y + (fontHeight / 2);
+            int lineEndX = lineStartX + characterWidth;
+            g.drawLine(lineStartX, lineStartY, lineEndX, lineStartY);
+        }
+        if(character.isUnderlined()) {
+            int lineStartX = x;
+            int lineStartY = ((rowIndex + 1) * fontHeight) - fontMetrics.getDescent() + 1;
+            int lineEndX = lineStartX + characterWidth;
+            g.drawLine(lineStartX, lineStartY, lineEndX, lineStartY);
+        }
+
+        if(drawCursor) {
+            if(deviceConfiguration.getCursorColor() == null) {
+                g.setColor(foregroundColor);
+            }
+            else {
+                g.setColor(colorConfiguration.toAWTColor(deviceConfiguration.getCursorColor(), false, false));
+            }
+            if(deviceConfiguration.getCursorStyle() == SwingTerminalDeviceConfiguration.CursorStyle.UNDER_BAR) {
+                g.fillRect(x, y + fontHeight - 3, characterWidth, 2);
+            }
+            else if(deviceConfiguration.getCursorStyle() == SwingTerminalDeviceConfiguration.CursorStyle.VERTICAL_BAR) {
+                g.fillRect(x, y + 1, 2, fontHeight - 2);
+            }
+        }
     }
 
     private Color deriveTrueForegroundColor(TextCharacter character, boolean atCursorLocation) {
@@ -578,7 +705,9 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
         @Override
         public void actionPerformed(ActionEvent e) {
             blinkOn = !blinkOn;
-            repaint();
+            if(hasBlinkingText) {
+                repaint();
+            }
         }
     }
 
@@ -693,6 +822,51 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
                     keyQueue.add(new KeyStroke(asLowerCase, true, true));
                 }
             }
+        }
+    }
+
+
+    private static class CharacterState {
+        private final TextCharacter textCharacter;
+        private final Color foregroundColor;
+        private final Color backgroundColor;
+        private final boolean drawCursor;
+
+        CharacterState(TextCharacter textCharacter, Color foregroundColor, Color backgroundColor, boolean drawCursor) {
+            this.textCharacter = textCharacter;
+            this.foregroundColor = foregroundColor;
+            this.backgroundColor = backgroundColor;
+            this.drawCursor = drawCursor;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if(this == o) {
+                return true;
+            }
+            if(o == null || getClass() != o.getClass()) {
+                return false;
+            }
+            CharacterState that = (CharacterState) o;
+            if(drawCursor != that.drawCursor) {
+                return false;
+            }
+            if(!textCharacter.equals(that.textCharacter)) {
+                return false;
+            }
+            if(!foregroundColor.equals(that.foregroundColor)) {
+                return false;
+            }
+            return backgroundColor.equals(that.backgroundColor);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = textCharacter.hashCode();
+            result = 31 * result + foregroundColor.hashCode();
+            result = 31 * result + backgroundColor.hashCode();
+            result = 31 * result + (drawCursor ? 1 : 0);
+            return result;
         }
     }
 }
