@@ -429,7 +429,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
     }
 
     @Override
-    public VirtualScreen getVirtualScreen() {
+    public Screen getScreen() {
         return virtualScreen;
     }
 

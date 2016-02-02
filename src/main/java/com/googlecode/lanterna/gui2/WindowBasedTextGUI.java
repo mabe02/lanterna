@@ -18,6 +18,7 @@
  */
 package com.googlecode.lanterna.gui2;
 
+import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.VirtualScreen;
 
 import java.util.Collection;
@@ -107,10 +108,10 @@ public interface WindowBasedTextGUI extends TextGUI {
     BasePane getBackgroundPane();
 
     /**
-     * Returns the {@link VirtualScreen} for this {@link WindowBasedTextGUI}
-     * @return the {@link VirtualScreen} used by this {@link WindowBasedTextGUI}
+     * Returns the {@link Screen} for this {@link WindowBasedTextGUI}
+     * @return the {@link Screen} used by this {@link WindowBasedTextGUI}
      */
-    VirtualScreen getVirtualScreen();
+    Screen getScreen();
 
     /**
      * Returns the {@link WindowPostRenderer} for this {@link WindowBasedTextGUI}
