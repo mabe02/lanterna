@@ -18,6 +18,9 @@
  */
 package com.googlecode.lanterna.gui2;
 
+import com.googlecode.lanterna.screen.Screen;
+import com.googlecode.lanterna.screen.VirtualScreen;
+
 import java.util.Collection;
 
 /**
@@ -103,6 +106,18 @@ public interface WindowBasedTextGUI extends TextGUI {
      * @return The {@code BasePane} used by this {@code WindowBasedTextGUI}
      */
     BasePane getBackgroundPane();
+
+    /**
+     * Returns the {@link Screen} for this {@link WindowBasedTextGUI}
+     * @return the {@link Screen} used by this {@link WindowBasedTextGUI}
+     */
+    Screen getScreen();
+
+    /**
+     * Returns the {@link WindowPostRenderer} for this {@link WindowBasedTextGUI}
+     * @return the {@link WindowPostRenderer} for this {@link WindowBasedTextGUI}
+     */
+    WindowPostRenderer getWindowPostRenderer();
 
     /**
      * Windows are internally stored as a stack and newer windows are added at the top of the stack. The GUI system will

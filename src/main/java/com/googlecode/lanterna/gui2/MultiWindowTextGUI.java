@@ -201,18 +201,20 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
     public synchronized void updateScreen() throws IOException {
         TerminalSize minimumTerminalSize = TerminalSize.ZERO;
         for(Window window: windows) {
-            if(window.getHints().contains(Window.Hint.FULL_SCREEN) ||
-                    window.getHints().contains(Window.Hint.FIT_TERMINAL_WINDOW) ||
-                    window.getHints().contains(Window.Hint.EXPANDED)) {
-                //Don't take full screen windows or auto-sized windows into account
-                continue;
+            if(window.isVisible()) {
+                if (window.getHints().contains(Window.Hint.FULL_SCREEN) ||
+                        window.getHints().contains(Window.Hint.FIT_TERMINAL_WINDOW) ||
+                        window.getHints().contains(Window.Hint.EXPANDED)) {
+                    //Don't take full screen windows or auto-sized windows into account
+                    continue;
+                }
+                TerminalPosition lastPosition = window.getPosition();
+                minimumTerminalSize = minimumTerminalSize.max(
+                        //Add position to size to get the bottom-right corner of the window
+                        window.getDecoratedSize().withRelative(
+                                Math.max(lastPosition.getColumn(), 0),
+                                Math.max(lastPosition.getRow(), 0)));
             }
-            TerminalPosition lastPosition = window.getPosition();
-            minimumTerminalSize = minimumTerminalSize.max(
-                    //Add position to size to get the bottom-right corner of the window
-                    window.getDecoratedSize().withRelative(
-                            Math.max(lastPosition.getColumn(), 0),
-                            Math.max(lastPosition.getRow(), 0)));
         }
         virtualScreen.setMinimumSize(minimumTerminalSize);
         super.updateScreen();
@@ -237,30 +239,32 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
         backgroundPane.draw(graphics);
         getWindowManager().prepareWindows(this, Collections.unmodifiableList(windows), graphics.getSize());
         for(Window window: windows) {
-            // First draw windows to a buffer, then copy it to the real destination. This is to make physical off-screen
-            // drawing work better. Store the buffers in a cache so we don't have to re-create them every time.
-            TextImage textImage = windowRenderBufferCache.get(window);
-            if(textImage == null || !textImage.getSize().equals(window.getDecoratedSize())) {
-                textImage = new BasicTextImage(window.getDecoratedSize());
-                windowRenderBufferCache.put(window, textImage);
-            }
-            TextGUIGraphics windowGraphics = new TextGUIGraphics(this, textImage.newTextGraphics(), graphics.getTheme());
+            if (window.isVisible()) {
+                // First draw windows to a buffer, then copy it to the real destination. This is to make physical off-screen
+                // drawing work better. Store the buffers in a cache so we don't have to re-create them every time.
+                TextImage textImage = windowRenderBufferCache.get(window);
+                if (textImage == null || !textImage.getSize().equals(window.getDecoratedSize())) {
+                    textImage = new BasicTextImage(window.getDecoratedSize());
+                    windowRenderBufferCache.put(window, textImage);
+                }
+                TextGUIGraphics windowGraphics = new TextGUIGraphics(this, textImage.newTextGraphics(), graphics.getTheme());
 
-            TerminalPosition contentOffset = TerminalPosition.TOP_LEFT_CORNER;
-            if(!window.getHints().contains(Window.Hint.NO_DECORATIONS)) {
-                WindowDecorationRenderer decorationRenderer = getWindowManager().getWindowDecorationRenderer(window);
-                windowGraphics = decorationRenderer.draw(this, windowGraphics, window);
-                contentOffset = decorationRenderer.getOffset(window);
-            }
+                TerminalPosition contentOffset = TerminalPosition.TOP_LEFT_CORNER;
+                if (!window.getHints().contains(Window.Hint.NO_DECORATIONS)) {
+                    WindowDecorationRenderer decorationRenderer = getWindowManager().getWindowDecorationRenderer(window);
+                    windowGraphics = decorationRenderer.draw(this, windowGraphics, window);
+                    contentOffset = decorationRenderer.getOffset(window);
+                }
 
-            window.draw(windowGraphics);
-            window.setContentOffset(contentOffset);
-            Borders.joinLinesWithFrame(windowGraphics);
+                window.draw(windowGraphics);
+                window.setContentOffset(contentOffset);
+                Borders.joinLinesWithFrame(windowGraphics);
 
-            graphics.drawImage(window.getPosition(), textImage);
+                graphics.drawImage(window.getPosition(), textImage);
 
-            if(postRenderer != null && !window.getHints().contains(Window.Hint.NO_POST_RENDERING)) {
-                postRenderer.postRender(graphics, this, window);
+                if (postRenderer != null && !window.getHints().contains(Window.Hint.NO_POST_RENDERING)) {
+                    postRenderer.postRender(graphics, this, window);
+                }
             }
         }
 
@@ -422,6 +426,16 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
     @Override
     public BasePane getBackgroundPane() {
         return backgroundPane;
+    }
+
+    @Override
+    public Screen getScreen() {
+        return virtualScreen;
+    }
+
+    @Override
+    public WindowPostRenderer getWindowPostRenderer() {
+        return postRenderer;
     }
 
     @Override
