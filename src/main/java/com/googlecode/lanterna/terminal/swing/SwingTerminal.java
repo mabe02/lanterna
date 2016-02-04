@@ -443,7 +443,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
         int x = columnIndex * fontWidth;
         int y = rowIndex * fontHeight;
         g.setColor(backgroundColor);
-        g.setClip(x, y, fontWidth, fontHeight);
+        g.setClip(x, y, characterWidth, fontHeight);
         g.fillRect(x, y, characterWidth, fontHeight);
 
         g.setColor(foregroundColor);
