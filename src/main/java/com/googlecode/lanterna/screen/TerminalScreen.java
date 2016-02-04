@@ -102,17 +102,23 @@ public class TerminalScreen extends AbstractScreen {
     }
 
     @Override
-    public synchronized void stopScreen() throws IOException {
+    public void stopScreen() throws IOException {
+        stopScreen(true);
+    }
+    
+    public synchronized void stopScreen(boolean flush) throws IOException {
         if(!isStarted) {
             return;
         }
 
-        //Drain the input queue
-        KeyStroke keyStroke;
-        do {
-            keyStroke = pollInput();
+        if (flush) {
+            //Drain the input queue
+            KeyStroke keyStroke;
+            do {
+                keyStroke = pollInput();
+            }
+            while(keyStroke != null && keyStroke.getKeyType() != KeyType.EOF);
         }
-        while(keyStroke != null && keyStroke.getKeyType() != KeyType.EOF);
 
         getTerminal().exitPrivateMode();
         isStarted = false;
