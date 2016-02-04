@@ -533,11 +533,17 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
                 if(caretPosition.getRow() > lines.size() - 1) {
                     caretPosition = caretPosition.withRow(lines.size() - 1);
                 }
+                if(lines.get(caretPosition.getRow()).length() < caretPosition.getColumn()) {
+                    caretPosition = caretPosition.withColumn(lines.get(caretPosition.getRow()).length());
+                }
                 return Result.HANDLED;
             case PageUp:
                 caretPosition = caretPosition.withRelativeRow(-getSize().getRows());
                 if(caretPosition.getRow() < 0) {
                     caretPosition = caretPosition.withRow(0);
+                }
+                if(lines.get(caretPosition.getRow()).length() < caretPosition.getColumn()) {
+                    caretPosition = caretPosition.withColumn(lines.get(caretPosition.getRow()).length());
                 }
                 return Result.HANDLED;
             default:
