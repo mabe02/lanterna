@@ -56,9 +56,9 @@ import java.util.concurrent.*;
  */
 @SuppressWarnings("serial")
 public class AwtTerminal extends Component implements IOSafeTerminal {
-    private final SwingTerminalDeviceConfiguration deviceConfiguration;
+    private final TerminalEmulatorDeviceConfiguration deviceConfiguration;
     private final SwingTerminalFontConfiguration fontConfiguration;
-    private final SwingTerminalColorConfiguration colorConfiguration;
+    private final TerminalEmulatorColorConfiguration colorConfiguration;
     private final VirtualTerminal virtualTerminal;
     private final BlockingQueue<KeyStroke> keyQueue;
     private final List<ResizeListener> resizeListeners;
@@ -87,9 +87,9 @@ public class AwtTerminal extends Component implements IOSafeTerminal {
      */
     @SuppressWarnings("WeakerAccess")
     public AwtTerminal(TerminalScrollController scrollController) {
-        this(SwingTerminalDeviceConfiguration.getDefault(),
+        this(TerminalEmulatorDeviceConfiguration.getDefault(),
                 SwingTerminalFontConfiguration.getDefault(),
-                SwingTerminalColorConfiguration.getDefault(),
+                TerminalEmulatorColorConfiguration.getDefault(),
                 scrollController);
     }
 
@@ -100,9 +100,9 @@ public class AwtTerminal extends Component implements IOSafeTerminal {
      * @param colorConfiguration Color configuration to use for this SwingTerminal
      */
     public AwtTerminal(
-            SwingTerminalDeviceConfiguration deviceConfiguration,
+            TerminalEmulatorDeviceConfiguration deviceConfiguration,
             SwingTerminalFontConfiguration fontConfiguration,
-            SwingTerminalColorConfiguration colorConfiguration) {
+            TerminalEmulatorColorConfiguration colorConfiguration) {
 
         this(null, deviceConfiguration, fontConfiguration, colorConfiguration);
     }
@@ -118,9 +118,9 @@ public class AwtTerminal extends Component implements IOSafeTerminal {
      */
     public AwtTerminal(
             TerminalSize initialTerminalSize,
-            SwingTerminalDeviceConfiguration deviceConfiguration,
+            TerminalEmulatorDeviceConfiguration deviceConfiguration,
             SwingTerminalFontConfiguration fontConfiguration,
-            SwingTerminalColorConfiguration colorConfiguration) {
+            TerminalEmulatorColorConfiguration colorConfiguration) {
 
         this(initialTerminalSize,
                 deviceConfiguration,
@@ -140,9 +140,9 @@ public class AwtTerminal extends Component implements IOSafeTerminal {
      *                         scrollable area has changed
      */
     public AwtTerminal(
-            SwingTerminalDeviceConfiguration deviceConfiguration,
+            TerminalEmulatorDeviceConfiguration deviceConfiguration,
             SwingTerminalFontConfiguration fontConfiguration,
-            SwingTerminalColorConfiguration colorConfiguration,
+            TerminalEmulatorColorConfiguration colorConfiguration,
             TerminalScrollController scrollController) {
 
         this(null, deviceConfiguration, fontConfiguration, colorConfiguration, scrollController);
@@ -165,20 +165,20 @@ public class AwtTerminal extends Component implements IOSafeTerminal {
      */
     public AwtTerminal(
             TerminalSize initialTerminalSize,
-            SwingTerminalDeviceConfiguration deviceConfiguration,
+            TerminalEmulatorDeviceConfiguration deviceConfiguration,
             SwingTerminalFontConfiguration fontConfiguration,
-            SwingTerminalColorConfiguration colorConfiguration,
+            TerminalEmulatorColorConfiguration colorConfiguration,
             TerminalScrollController scrollController) {
 
         //Enforce valid values on the input parameters
         if(deviceConfiguration == null) {
-            deviceConfiguration = SwingTerminalDeviceConfiguration.getDefault();
+            deviceConfiguration = TerminalEmulatorDeviceConfiguration.getDefault();
         }
         if(fontConfiguration == null) {
             fontConfiguration = SwingTerminalFontConfiguration.getDefault();
         }
         if(colorConfiguration == null) {
-            colorConfiguration = SwingTerminalColorConfiguration.getDefault();
+            colorConfiguration = TerminalEmulatorColorConfiguration.getDefault();
         }
 
         //This is kind of meaningless since we don't know how large the
@@ -352,10 +352,10 @@ public class AwtTerminal extends Component implements IOSafeTerminal {
                     else {
                         g.setColor(colorConfiguration.toAWTColor(deviceConfiguration.getCursorColor(), false, false));
                     }
-                    if(deviceConfiguration.getCursorStyle() == SwingTerminalDeviceConfiguration.CursorStyle.UNDER_BAR) {
+                    if(deviceConfiguration.getCursorStyle() == TerminalEmulatorDeviceConfiguration.CursorStyle.UNDER_BAR) {
                         g.fillRect(columnIndex * fontWidth, (rowIndex * fontHeight) + fontHeight - 3, characterWidth, 2);
                     }
-                    else if(deviceConfiguration.getCursorStyle() == SwingTerminalDeviceConfiguration.CursorStyle.VERTICAL_BAR) {
+                    else if(deviceConfiguration.getCursorStyle() == TerminalEmulatorDeviceConfiguration.CursorStyle.VERTICAL_BAR) {
                         g.fillRect(columnIndex * fontWidth, rowIndex * fontHeight + 1, 2, fontHeight - 2);
                     }
                 }
@@ -377,7 +377,7 @@ public class AwtTerminal extends Component implements IOSafeTerminal {
         boolean blink = character.isBlinking();
 
         if(cursorIsVisible && atCursorLocation) {
-            if(deviceConfiguration.getCursorStyle() == SwingTerminalDeviceConfiguration.CursorStyle.REVERSED &&
+            if(deviceConfiguration.getCursorStyle() == TerminalEmulatorDeviceConfiguration.CursorStyle.REVERSED &&
                     (!deviceConfiguration.isCursorBlinking() || !blinkOn)) {
                 reverse = true;
             }
@@ -400,11 +400,11 @@ public class AwtTerminal extends Component implements IOSafeTerminal {
         boolean reverse = character.isReversed();
 
         if(cursorIsVisible && atCursorLocation) {
-            if(deviceConfiguration.getCursorStyle() == SwingTerminalDeviceConfiguration.CursorStyle.REVERSED &&
+            if(deviceConfiguration.getCursorStyle() == TerminalEmulatorDeviceConfiguration.CursorStyle.REVERSED &&
                     (!deviceConfiguration.isCursorBlinking() || !blinkOn)) {
                 reverse = true;
             }
-            else if(deviceConfiguration.getCursorStyle() == SwingTerminalDeviceConfiguration.CursorStyle.FIXED_BACKGROUND) {
+            else if(deviceConfiguration.getCursorStyle() == TerminalEmulatorDeviceConfiguration.CursorStyle.FIXED_BACKGROUND) {
                 backgroundColor = deviceConfiguration.getCursorColor();
             }
         }
@@ -421,7 +421,7 @@ public class AwtTerminal extends Component implements IOSafeTerminal {
      * Returns the current device configuration. Note that it is immutable and cannot be changed.
      * @return This SwingTerminal's current device configuration
      */
-    public SwingTerminalDeviceConfiguration getDeviceConfiguration() {
+    public TerminalEmulatorDeviceConfiguration getDeviceConfiguration() {
         return deviceConfiguration;
     }
 
@@ -437,7 +437,7 @@ public class AwtTerminal extends Component implements IOSafeTerminal {
      * Returns the current color configuration. Note that it is immutable and cannot be changed.
      * @return This SwingTerminal's current color configuration
      */
-    public SwingTerminalColorConfiguration getColorConfiguration() {
+    public TerminalEmulatorColorConfiguration getColorConfiguration() {
         return colorConfiguration;
     }
 

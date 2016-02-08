@@ -24,6 +24,7 @@ import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.IOSafeTerminal;
 import com.googlecode.lanterna.terminal.ResizeListener;
+import com.sun.awt.AWTUtilities;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -36,18 +37,9 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashSet;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.*;
-import javax.swing.JComponent;
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
-import javax.swing.event.AncestorEvent;
-import javax.swing.event.AncestorListener;
 
 /**
  * This class provides a Swing implementation of the Terminal interface that is an embeddable component you can put into
@@ -58,10 +50,9 @@ import javax.swing.event.AncestorListener;
  * @author martin
  */
 @SuppressWarnings("serial")
-public class GraphicalTerminalImplementation extends JComponent implements IOSafeTerminal {
-    private final SwingTerminalDeviceConfiguration deviceConfiguration;
-    private final SwingTerminalFontConfiguration fontConfiguration;
-    private final SwingTerminalColorConfiguration colorConfiguration;
+abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
+    private final TerminalEmulatorDeviceConfiguration deviceConfiguration;
+    private final TerminalEmulatorColorConfiguration colorConfiguration;
     private final VirtualTerminal virtualTerminal;
     private final BlockingQueue<KeyStroke> keyQueue;
     private final List<ResizeListener> resizeListeners;
@@ -90,84 +81,6 @@ public class GraphicalTerminalImplementation extends JComponent implements IOSaf
     private BufferedImage backbuffer;
 
     /**
-     * Creates a new SwingTerminal with all the defaults set and no scroll controller connected.
-     */
-    public SwingTerminal() {
-        this(new TerminalScrollController.Null());
-    }
-
-
-    /**
-     * Creates a new SwingTerminal with a particular scrolling controller that will be notified when the terminals
-     * history size grows and will be called when this class needs to figure out the current scrolling position.
-     * @param scrollController Controller for scrolling the terminal history
-     */
-    @SuppressWarnings("WeakerAccess")
-    public SwingTerminal(TerminalScrollController scrollController) {
-        this(SwingTerminalDeviceConfiguration.getDefault(),
-                SwingTerminalFontConfiguration.getDefault(),
-                SwingTerminalColorConfiguration.getDefault(),
-                scrollController);
-    }
-
-    /**
-     * Creates a new SwingTerminal component using custom settings and no scroll controller.
-     * @param deviceConfiguration Device configuration to use for this SwingTerminal
-     * @param fontConfiguration Font configuration to use for this SwingTerminal
-     * @param colorConfiguration Color configuration to use for this SwingTerminal
-     */
-    public SwingTerminal(
-            SwingTerminalDeviceConfiguration deviceConfiguration,
-            SwingTerminalFontConfiguration fontConfiguration,
-            SwingTerminalColorConfiguration colorConfiguration) {
-
-        this(null, deviceConfiguration, fontConfiguration, colorConfiguration);
-    }
-
-    /**
-     * Creates a new SwingTerminal component using custom settings and no scroll controller.
-     * @param initialTerminalSize Initial size of the terminal, which will be used when calculating the preferred size
-     *                            of the component. If null, it will default to 80x25. If the AWT layout manager forces
-     *                            the component to a different size, the value of this parameter won't have any meaning
-     * @param deviceConfiguration Device configuration to use for this SwingTerminal
-     * @param fontConfiguration Font configuration to use for this SwingTerminal
-     * @param colorConfiguration Color configuration to use for this SwingTerminal
-     */
-    public SwingTerminal(
-            TerminalSize initialTerminalSize,
-            SwingTerminalDeviceConfiguration deviceConfiguration,
-            SwingTerminalFontConfiguration fontConfiguration,
-            SwingTerminalColorConfiguration colorConfiguration) {
-
-        this(initialTerminalSize,
-                deviceConfiguration,
-                fontConfiguration,
-                colorConfiguration,
-                new TerminalScrollController.Null());
-    }
-
-    /**
-     * Creates a new SwingTerminal component using custom settings and a custom scroll controller. The scrolling
-     * controller will be notified when the terminal's history size grows and will be called when this class needs to
-     * figure out the current scrolling position.
-     * @param deviceConfiguration Device configuration to use for this SwingTerminal
-     * @param fontConfiguration Font configuration to use for this SwingTerminal
-     * @param colorConfiguration Color configuration to use for this SwingTerminal
-     * @param scrollController Controller to use for scrolling, the object passed in will be notified whenever the
-     *                         scrollable area has changed
-     */
-    public SwingTerminal(
-            SwingTerminalDeviceConfiguration deviceConfiguration,
-            SwingTerminalFontConfiguration fontConfiguration,
-            SwingTerminalColorConfiguration colorConfiguration,
-            TerminalScrollController scrollController) {
-
-        this(null, deviceConfiguration, fontConfiguration, colorConfiguration, scrollController);
-    }
-
-
-
-    /**
      * Creates a new SwingTerminal component using custom settings and a custom scroll controller. The scrolling
      * controller will be notified when the terminal's history size grows and will be called when this class needs to
      * figure out the current scrolling position.
@@ -175,28 +88,15 @@ public class GraphicalTerminalImplementation extends JComponent implements IOSaf
      *                            of the component. If null, it will default to 80x25. If the AWT layout manager forces
      *                            the component to a different size, the value of this parameter won't have any meaning
      * @param deviceConfiguration Device configuration to use for this SwingTerminal
-     * @param fontConfiguration Font configuration to use for this SwingTerminal
      * @param colorConfiguration Color configuration to use for this SwingTerminal
      * @param scrollController Controller to use for scrolling, the object passed in will be notified whenever the
      *                         scrollable area has changed
      */
-    public SwingTerminal(
+    public GraphicalTerminalImplementation(
             TerminalSize initialTerminalSize,
-            SwingTerminalDeviceConfiguration deviceConfiguration,
-            SwingTerminalFontConfiguration fontConfiguration,
-            SwingTerminalColorConfiguration colorConfiguration,
+            TerminalEmulatorDeviceConfiguration deviceConfiguration,
+            TerminalEmulatorColorConfiguration colorConfiguration,
             TerminalScrollController scrollController) {
-
-        //Enforce valid values on the input parameters
-        if(deviceConfiguration == null) {
-            deviceConfiguration = SwingTerminalDeviceConfiguration.getDefault();
-        }
-        if(fontConfiguration == null) {
-            fontConfiguration = SwingTerminalFontConfiguration.getDefault();
-        }
-        if(colorConfiguration == null) {
-            colorConfiguration = SwingTerminalColorConfiguration.getDefault();
-        }
 
         //This is kind of meaningless since we don't know how large the
         //component is at this point, but we should set it to something
@@ -210,7 +110,6 @@ public class GraphicalTerminalImplementation extends JComponent implements IOSaf
         this.keyQueue = new LinkedBlockingQueue<KeyStroke>();
         this.resizeListeners = new CopyOnWriteArrayList<ResizeListener>();
         this.deviceConfiguration = deviceConfiguration;
-        this.fontConfiguration = fontConfiguration;
         this.colorConfiguration = colorConfiguration;
 
         this.activeSGRs = EnumSet.noneOf(SGR.class);
@@ -220,62 +119,52 @@ public class GraphicalTerminalImplementation extends JComponent implements IOSaf
         this.enquiryString = "SwingTerminal";
         this.visualState = new CharacterState[48][160];
         this.backbuffer = null;  // We don't know the dimensions yet
-        this.blinkTimer = new Timer(deviceConfiguration.getBlinkLengthInMilliSeconds(), new BlinkTimerCallback());
+        this.blinkTimer = new Timer();
         this.hasBlinkingText = false;   // Assume initial content doesn't have any blinking text
         this.blinkOn = true;
 
+        this.blinkTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                blinkOn = !blinkOn;
+                if(hasBlinkingText) {
+                    repaint();
+                }
+            }
+        }, deviceConfiguration.getBlinkLengthInMilliSeconds(), deviceConfiguration.getBlinkLengthInMilliSeconds());
+
         //Set the initial scrollable size
         //scrollObserver.newScrollableLength(fontConfiguration.getFontHeight() * terminalSize.getRows());
+    }
 
-        //Prevent us from shrinking beyond one character
-        setMinimumSize(new Dimension(fontConfiguration.getFontWidth(), fontConfiguration.getFontHeight()));
+    ///////////
+    // First abstract methods that are implemented in AWTTerminalImplementation and SwingTerminalImplementation
+    ///////////
+    protected abstract int getFontHeight();
+    protected abstract int getFontWidth();
+    protected abstract int getHeight();
+    protected abstract int getWidth();
+    protected abstract Font getFontForCharacter(TextCharacter character);
+    protected abstract boolean isEventDispatchThread();
+    protected abstract void repaint();
 
-        //noinspection unchecked
-        setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, Collections.<AWTKeyStroke>emptySet());
-        //noinspection unchecked
-        setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, Collections.<AWTKeyStroke>emptySet());
-
-        //Make sure the component is double-buffered to prevent flickering
-        setDoubleBuffered(true);
-
-        addKeyListener(new TerminalInputListener());
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                requestFocusInWindow();
-            }
-        });
-        addAncestorListener(new AncestorListener() {
-            @Override
-            public void ancestorAdded(AncestorEvent event) {
-                blinkTimer.start();
-            }
-
-            @Override
-            public void ancestorRemoved(AncestorEvent event) {
-                blinkTimer.stop();
-            }
-
-            @Override
-            public void ancestorMoved(AncestorEvent event) { }
-        });
+    protected void cancelTimer() {
+        blinkTimer.cancel();
     }
 
     ///////////
     // First implement all the Swing-related methods
     ///////////
-    @Override
     public synchronized Dimension getPreferredSize() {
-        return new Dimension(fontConfiguration.getFontWidth() * virtualTerminal.getSize().getColumns(),
-                fontConfiguration.getFontHeight() * virtualTerminal.getSize().getRows());
+        return new Dimension(getFontWidth() * virtualTerminal.getSize().getColumns(),
+                getFontHeight() * virtualTerminal.getSize().getRows());
     }
 
-    @Override
     protected synchronized void paintComponent(Graphics componentGraphics) {
         //First, resize the buffer width/height if necessary
-        int fontWidth = fontConfiguration.getFontWidth();
-        int fontHeight = fontConfiguration.getFontHeight();
-        boolean antiAliasing = fontConfiguration.isAntiAliased();
+        int fontWidth = getFontWidth();
+        int fontHeight = getFontHeight();
+        //boolean antiAliasing = fontConfiguration.isAntiAliased();
         int widthInNumberOfCharacters = getWidth() / fontWidth;
         int visibleRows = getHeight() / fontHeight;
         boolean terminalResized = false;
@@ -301,10 +190,12 @@ public class GraphicalTerminalImplementation extends JComponent implements IOSaf
 
         //Setup the graphics object
         Graphics2D backbufferGraphics = backbuffer.createGraphics();
+        /*
         if(antiAliasing) {
             backbufferGraphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
             backbufferGraphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         }
+        */
 
         // Draw line by line, character by character
         // Initiate the blink state to whatever the cursor is using, since if the cursor is blinking then we always want
@@ -447,7 +338,7 @@ public class GraphicalTerminalImplementation extends JComponent implements IOSaf
         g.fillRect(x, y, characterWidth, fontHeight);
 
         g.setColor(foregroundColor);
-        Font font = fontConfiguration.getFontForCharacter(character);
+        Font font = getFontForCharacter(character);
         g.setFont(font);
         FontMetrics fontMetrics = g.getFontMetrics();
         g.drawString(Character.toString(character.getCharacter()), x, ((rowIndex + 1) * fontHeight) - fontMetrics.getDescent());
@@ -472,14 +363,15 @@ public class GraphicalTerminalImplementation extends JComponent implements IOSaf
             else {
                 g.setColor(colorConfiguration.toAWTColor(deviceConfiguration.getCursorColor(), false, false));
             }
-            if(deviceConfiguration.getCursorStyle() == SwingTerminalDeviceConfiguration.CursorStyle.UNDER_BAR) {
+            if(deviceConfiguration.getCursorStyle() == TerminalEmulatorDeviceConfiguration.CursorStyle.UNDER_BAR) {
                 g.fillRect(x, y + fontHeight - 3, characterWidth, 2);
             }
-            else if(deviceConfiguration.getCursorStyle() == SwingTerminalDeviceConfiguration.CursorStyle.VERTICAL_BAR) {
+            else if(deviceConfiguration.getCursorStyle() == TerminalEmulatorDeviceConfiguration.CursorStyle.VERTICAL_BAR) {
                 g.fillRect(x, y + 1, 2, fontHeight - 2);
             }
         }
     }
+
 
     private Color deriveTrueForegroundColor(TextCharacter character, boolean atCursorLocation) {
         TextColor foregroundColor = character.getForegroundColor();
@@ -488,7 +380,7 @@ public class GraphicalTerminalImplementation extends JComponent implements IOSaf
         boolean blink = character.isBlinking();
 
         if(cursorIsVisible && atCursorLocation) {
-            if(deviceConfiguration.getCursorStyle() == SwingTerminalDeviceConfiguration.CursorStyle.REVERSED &&
+            if(deviceConfiguration.getCursorStyle() == TerminalEmulatorDeviceConfiguration.CursorStyle.REVERSED &&
                     (!deviceConfiguration.isCursorBlinking() || !blinkOn)) {
                 reverse = true;
             }
@@ -511,11 +403,11 @@ public class GraphicalTerminalImplementation extends JComponent implements IOSaf
         boolean reverse = character.isReversed();
 
         if(cursorIsVisible && atCursorLocation) {
-            if(deviceConfiguration.getCursorStyle() == SwingTerminalDeviceConfiguration.CursorStyle.REVERSED &&
+            if(deviceConfiguration.getCursorStyle() == TerminalEmulatorDeviceConfiguration.CursorStyle.REVERSED &&
                     (!deviceConfiguration.isCursorBlinking() || !blinkOn)) {
                 reverse = true;
             }
-            else if(deviceConfiguration.getCursorStyle() == SwingTerminalDeviceConfiguration.CursorStyle.FIXED_BACKGROUND) {
+            else if(deviceConfiguration.getCursorStyle() == TerminalEmulatorDeviceConfiguration.CursorStyle.FIXED_BACKGROUND) {
                 backgroundColor = deviceConfiguration.getCursorColor();
             }
         }
@@ -532,23 +424,15 @@ public class GraphicalTerminalImplementation extends JComponent implements IOSaf
      * Returns the current device configuration. Note that it is immutable and cannot be changed.
      * @return This SwingTerminal's current device configuration
      */
-    public SwingTerminalDeviceConfiguration getDeviceConfiguration() {
+    public TerminalEmulatorDeviceConfiguration getDeviceConfiguration() {
         return deviceConfiguration;
-    }
-
-    /**
-     * Returns the current font configuration. Note that it is immutable and cannot be changed.
-     * @return This SwingTerminal's current font configuration
-     */
-    public SwingTerminalFontConfiguration getFontConfiguration() {
-        return fontConfiguration;
     }
 
     /**
      * Returns the current color configuration. Note that it is immutable and cannot be changed.
      * @return This SwingTerminal's current color configuration
      */
-    public SwingTerminalColorConfiguration getColorConfiguration() {
+    public TerminalEmulatorColorConfiguration getColorConfiguration() {
         return colorConfiguration;
     }
 
@@ -565,7 +449,7 @@ public class GraphicalTerminalImplementation extends JComponent implements IOSaf
 
     @Override
     public KeyStroke readInput() throws IOException {
-        if(SwingUtilities.isEventDispatchThread()) {
+        if(isEventDispatchThread()) {
             throw new UnsupportedOperationException("Cannot call SwingTerminal.readInput() on the AWT thread");
         }
         try {
@@ -579,34 +463,19 @@ public class GraphicalTerminalImplementation extends JComponent implements IOSaf
     @Override
     public synchronized void enterPrivateMode() {
         virtualTerminal.switchToPrivateMode();
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                repaint();
-            }
-        });
+        repaint();
     }
 
     @Override
     public synchronized void exitPrivateMode() {
         virtualTerminal.switchToNormalMode();
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                repaint();
-            }
-        });
+        repaint();
     }
 
     @Override
     public synchronized void clearScreen() {
         virtualTerminal.clear();
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                repaint();
-            }
-        });
+        repaint();
     }
 
     @Override
@@ -665,7 +534,7 @@ public class GraphicalTerminalImplementation extends JComponent implements IOSaf
     public byte[] enquireTerminal(int timeout, TimeUnit timeoutUnit) {
         return enquiryString.getBytes();
     }
-
+/*
     @Override
     public void flush() {
         if(SwingUtilities.isEventDispatchThread()) {
@@ -687,7 +556,7 @@ public class GraphicalTerminalImplementation extends JComponent implements IOSaf
             }
         }
     }
-
+*/
     @Override
     public void addResizeListener(ResizeListener listener) {
         resizeListeners.add(listener);
@@ -701,18 +570,8 @@ public class GraphicalTerminalImplementation extends JComponent implements IOSaf
     ///////////
     // Remaining are private internal classes used by SwingTerminal
     ///////////
-    private class BlinkTimerCallback implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            blinkOn = !blinkOn;
-            if(hasBlinkingText) {
-                repaint();
-            }
-        }
-    }
-
     private static final Set<Character> TYPED_KEYS_TO_IGNORE = new HashSet<Character>(Arrays.asList('\n', '\t', '\r', '\b', '\33', (char)127));
-    private class TerminalInputListener extends KeyAdapter {
+    protected class TerminalInputListener extends KeyAdapter {
         @Override
         public void keyTyped(KeyEvent e) {
             char character = e.getKeyChar();
@@ -824,7 +683,6 @@ public class GraphicalTerminalImplementation extends JComponent implements IOSaf
             }
         }
     }
-
 
     private static class CharacterState {
         private final TextCharacter textCharacter;

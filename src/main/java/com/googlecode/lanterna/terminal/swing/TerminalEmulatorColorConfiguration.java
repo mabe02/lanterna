@@ -26,14 +26,14 @@ import java.awt.Color;
  * by SwingTerminal when it renders the component.
  * @author martin
  */
-public class SwingTerminalColorConfiguration {
+public class TerminalEmulatorColorConfiguration {
 
     /**
      * This is the default settings that is used when you create a new SwingTerminal without specifying any color
      * configuration. It will use classic VGA colors for the ANSI palette and bright colors on bold text.
      */
-    public static SwingTerminalColorConfiguration getDefault() {
-        return newInstance(SwingTerminalPalette.STANDARD_VGA);
+    public static TerminalEmulatorColorConfiguration getDefault() {
+        return newInstance(TerminalEmulatorPalette.STANDARD_VGA);
     }
 
     /**
@@ -42,14 +42,14 @@ public class SwingTerminalColorConfiguration {
      * @return The resulting color configuration
      */
     @SuppressWarnings("SameParameterValue")
-    public static SwingTerminalColorConfiguration newInstance(SwingTerminalPalette colorPalette) {
-        return new SwingTerminalColorConfiguration(colorPalette, true);
+    public static TerminalEmulatorColorConfiguration newInstance(TerminalEmulatorPalette colorPalette) {
+        return new TerminalEmulatorColorConfiguration(colorPalette, true);
     }
 
-    private final SwingTerminalPalette colorPalette;
+    private final TerminalEmulatorPalette colorPalette;
     private final boolean useBrightColorsOnBold;
 
-    private SwingTerminalColorConfiguration(SwingTerminalPalette colorPalette, boolean useBrightColorsOnBold) {
+    private TerminalEmulatorColorConfiguration(TerminalEmulatorPalette colorPalette, boolean useBrightColorsOnBold) {
         this.colorPalette = colorPalette;
         this.useBrightColorsOnBold = useBrightColorsOnBold;
     }

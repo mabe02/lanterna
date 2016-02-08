@@ -49,9 +49,9 @@ public class ScrollingAwtTerminal extends Container implements IOSafeTerminal {
      * Creates a new ScrollingSwingTerminal with all default options
      */
     public ScrollingAwtTerminal() {
-        this(SwingTerminalDeviceConfiguration.getDefault(),
+        this(TerminalEmulatorDeviceConfiguration.getDefault(),
                 SwingTerminalFontConfiguration.getDefault(),
-                SwingTerminalColorConfiguration.getDefault());
+                TerminalEmulatorColorConfiguration.getDefault());
     }
 
     /**
@@ -62,9 +62,9 @@ public class ScrollingAwtTerminal extends Container implements IOSafeTerminal {
      */
     @SuppressWarnings({"SameParameterValue", "WeakerAccess"})
     public ScrollingAwtTerminal(
-            SwingTerminalDeviceConfiguration deviceConfiguration,
+            TerminalEmulatorDeviceConfiguration deviceConfiguration,
             SwingTerminalFontConfiguration fontConfiguration,
-            SwingTerminalColorConfiguration colorConfiguration) {
+            TerminalEmulatorColorConfiguration colorConfiguration) {
 
         this.scrollBar = new Scrollbar(Scrollbar.VERTICAL);
         this.awtTerminal = new AwtTerminal(

@@ -2,7 +2,7 @@ package com.googlecode.lanterna.terminal.swing;
 
 import org.junit.Test;
 
-public class SwingTerminalDeviceConfigurationTest {
+public class TerminalEmulatorDeviceConfigurationTest {
 
     @Test
     public void testGetBlinkLengthInMilliSeconds() throws Exception {

@@ -108,9 +108,9 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
      * @param colorConfiguration Color configuration for the embedded SwingTerminal
      */
     public SwingTerminalFrame(String title,
-            SwingTerminalDeviceConfiguration deviceConfiguration,
+            TerminalEmulatorDeviceConfiguration deviceConfiguration,
             SwingTerminalFontConfiguration fontConfiguration,
-            SwingTerminalColorConfiguration colorConfiguration) {
+            TerminalEmulatorColorConfiguration colorConfiguration) {
         this(title, deviceConfiguration, fontConfiguration, colorConfiguration, AutoCloseTrigger.DoNotAutoClose);
     }
 
@@ -123,9 +123,9 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
      * @param autoCloseTrigger What to trigger automatic disposal of the JFrame
      */
     public SwingTerminalFrame(String title,
-            SwingTerminalDeviceConfiguration deviceConfiguration,
+            TerminalEmulatorDeviceConfiguration deviceConfiguration,
             SwingTerminalFontConfiguration fontConfiguration,
-            SwingTerminalColorConfiguration colorConfiguration,
+            TerminalEmulatorColorConfiguration colorConfiguration,
             AutoCloseTrigger autoCloseTrigger) {
         this(title, null, deviceConfiguration, fontConfiguration, colorConfiguration, autoCloseTrigger);
     }
@@ -141,9 +141,9 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
      */
     public SwingTerminalFrame(String title,
                               TerminalSize terminalSize,
-                              SwingTerminalDeviceConfiguration deviceConfiguration,
+                              TerminalEmulatorDeviceConfiguration deviceConfiguration,
                               SwingTerminalFontConfiguration fontConfiguration,
-                              SwingTerminalColorConfiguration colorConfiguration,
+                              TerminalEmulatorColorConfiguration colorConfiguration,
                               AutoCloseTrigger autoCloseTrigger) {
         this(title,
                 new SwingTerminal(terminalSize, deviceConfiguration, fontConfiguration, colorConfiguration),

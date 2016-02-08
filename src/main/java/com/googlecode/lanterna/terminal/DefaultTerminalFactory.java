@@ -21,8 +21,8 @@ package com.googlecode.lanterna.terminal;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.terminal.ansi.CygwinTerminal;
 import com.googlecode.lanterna.terminal.ansi.UnixTerminal;
-import com.googlecode.lanterna.terminal.swing.SwingTerminalColorConfiguration;
-import com.googlecode.lanterna.terminal.swing.SwingTerminalDeviceConfiguration;
+import com.googlecode.lanterna.terminal.swing.TerminalEmulatorColorConfiguration;
+import com.googlecode.lanterna.terminal.swing.TerminalEmulatorDeviceConfiguration;
 import com.googlecode.lanterna.terminal.swing.SwingTerminalFontConfiguration;
 import com.googlecode.lanterna.terminal.swing.SwingTerminalFrame;
 import java.awt.GraphicsEnvironment;
@@ -53,8 +53,8 @@ public final class DefaultTerminalFactory implements TerminalFactory {
     private String title;
     private boolean autoOpenSwingTerminalFrame;
     private SwingTerminalFrame.AutoCloseTrigger autoCloseTrigger;
-    private SwingTerminalColorConfiguration colorConfiguration;
-    private SwingTerminalDeviceConfiguration deviceConfiguration;
+    private TerminalEmulatorColorConfiguration colorConfiguration;
+    private TerminalEmulatorDeviceConfiguration deviceConfiguration;
     private SwingTerminalFontConfiguration fontConfiguration;
     private MouseCaptureMode mouseCaptureMode;
     
@@ -172,7 +172,7 @@ public final class DefaultTerminalFactory implements TerminalFactory {
      * @param colorConfiguration Color configuration to use on created SwingTerminalFrames created by this factory
      * @return Reference to itself, so multiple .set-calls can be chained
      */
-    public DefaultTerminalFactory setSwingTerminalFrameColorConfiguration(SwingTerminalColorConfiguration colorConfiguration) {
+    public DefaultTerminalFactory setSwingTerminalFrameColorConfiguration(TerminalEmulatorColorConfiguration colorConfiguration) {
         this.colorConfiguration = colorConfiguration;
         return this;
     }
@@ -182,7 +182,7 @@ public final class DefaultTerminalFactory implements TerminalFactory {
      * @param deviceConfiguration Device configuration to use on created SwingTerminalFrames created by this factory
      * @return Reference to itself, so multiple .set-calls can be chained
      */
-    public DefaultTerminalFactory setSwingTerminalFrameDeviceConfiguration(SwingTerminalDeviceConfiguration deviceConfiguration) {
+    public DefaultTerminalFactory setSwingTerminalFrameDeviceConfiguration(TerminalEmulatorDeviceConfiguration deviceConfiguration) {
         this.deviceConfiguration = deviceConfiguration;
         return this;
     }

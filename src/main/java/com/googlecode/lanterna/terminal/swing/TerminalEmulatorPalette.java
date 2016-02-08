@@ -29,12 +29,12 @@ import java.awt.Color;
  * @author Martin
  */
 @SuppressWarnings("WeakerAccess")
-public class SwingTerminalPalette {
+public class TerminalEmulatorPalette {
     /**
      * Values taken from gnome-terminal on Ubuntu
      */
-    public static final SwingTerminalPalette GNOME_TERMINAL =
-            new SwingTerminalPalette(
+    public static final TerminalEmulatorPalette GNOME_TERMINAL =
+            new TerminalEmulatorPalette(
                     new java.awt.Color(211, 215, 207),
                     new java.awt.Color(238, 238, 236),
                     new java.awt.Color(46, 52, 54),
@@ -59,8 +59,8 @@ public class SwingTerminalPalette {
      * Values taken from <a href="http://en.wikipedia.org/wiki/ANSI_escape_code">
      * wikipedia</a>, these are supposed to be the standard VGA palette.
      */
-    public static final SwingTerminalPalette STANDARD_VGA =
-            new SwingTerminalPalette(
+    public static final TerminalEmulatorPalette STANDARD_VGA =
+            new TerminalEmulatorPalette(
                     new java.awt.Color(170, 170, 170),
                     new java.awt.Color(255, 255, 255),
                     new java.awt.Color(0, 0, 0),
@@ -85,8 +85,8 @@ public class SwingTerminalPalette {
      * Values taken from <a href="http://en.wikipedia.org/wiki/ANSI_escape_code">
      * wikipedia</a>, these are supposed to be what Windows XP cmd is using.
      */
-    public static final SwingTerminalPalette WINDOWS_XP_COMMAND_PROMPT =
-            new SwingTerminalPalette(
+    public static final TerminalEmulatorPalette WINDOWS_XP_COMMAND_PROMPT =
+            new TerminalEmulatorPalette(
                     new java.awt.Color(192, 192, 192),
                     new java.awt.Color(255, 255, 255),
                     new java.awt.Color(0, 0, 0),
@@ -111,8 +111,8 @@ public class SwingTerminalPalette {
      * Values taken from <a href="http://en.wikipedia.org/wiki/ANSI_escape_code">
      * wikipedia</a>, these are supposed to be what terminal.app on MacOSX is using.
      */
-    public static final SwingTerminalPalette MAC_OS_X_TERMINAL_APP =
-            new SwingTerminalPalette(
+    public static final TerminalEmulatorPalette MAC_OS_X_TERMINAL_APP =
+            new TerminalEmulatorPalette(
                     new java.awt.Color(203, 204, 205),
                     new java.awt.Color(233, 235, 235),
                     new java.awt.Color(0, 0, 0),
@@ -137,8 +137,8 @@ public class SwingTerminalPalette {
      * Values taken from <a href="http://en.wikipedia.org/wiki/ANSI_escape_code">
      * wikipedia</a>, these are supposed to be what putty is using.
      */
-    public static final SwingTerminalPalette PUTTY =
-            new SwingTerminalPalette(
+    public static final TerminalEmulatorPalette PUTTY =
+            new TerminalEmulatorPalette(
                     new java.awt.Color(187, 187, 187),
                     new java.awt.Color(255, 255, 255),
                     new java.awt.Color(0, 0, 0),
@@ -163,8 +163,8 @@ public class SwingTerminalPalette {
      * Values taken from <a href="http://en.wikipedia.org/wiki/ANSI_escape_code">
      * wikipedia</a>, these are supposed to be what xterm is using.
      */
-    public static final SwingTerminalPalette XTERM =
-            new SwingTerminalPalette(
+    public static final TerminalEmulatorPalette XTERM =
+            new TerminalEmulatorPalette(
                     new java.awt.Color(229, 229, 229),
                     new java.awt.Color(255, 255, 255),
                     new java.awt.Color(0, 0, 0),
@@ -188,7 +188,7 @@ public class SwingTerminalPalette {
     /**
      * Default colors the SwingTerminal is using if you don't specify anything
      */
-    public static final SwingTerminalPalette DEFAULT = GNOME_TERMINAL;
+    public static final TerminalEmulatorPalette DEFAULT = GNOME_TERMINAL;
 
     private final Color defaultColor;
     private final Color defaultBrightColor;
@@ -232,7 +232,7 @@ public class SwingTerminalPalette {
      * @param normalWhite Color for normal white
      * @param brightWhite Color for bright white
      */
-    public SwingTerminalPalette(
+    public TerminalEmulatorPalette(
             Color defaultColor,
             Color defaultBrightColor,
             Color defaultBackgroundColor,
@@ -338,7 +338,7 @@ public class SwingTerminalPalette {
         if(getClass() != obj.getClass()) {
             return false;
         }
-        final SwingTerminalPalette other = (SwingTerminalPalette) obj;
+        final TerminalEmulatorPalette other = (TerminalEmulatorPalette) obj;
         if(this.defaultColor != other.defaultColor && (this.defaultColor == null || !this.defaultColor.equals(other.defaultColor))) {
             return false;
         }

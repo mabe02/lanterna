@@ -107,9 +107,9 @@ public class AwtTerminalFrame extends Frame implements IOSafeTerminal {
      * @param colorConfiguration Color configuration for the embedded SwingTerminal
      */
     public AwtTerminalFrame(String title,
-            SwingTerminalDeviceConfiguration deviceConfiguration,
+            TerminalEmulatorDeviceConfiguration deviceConfiguration,
             SwingTerminalFontConfiguration fontConfiguration,
-            SwingTerminalColorConfiguration colorConfiguration) {
+            TerminalEmulatorColorConfiguration colorConfiguration) {
         this(title, deviceConfiguration, fontConfiguration, colorConfiguration, AutoCloseTrigger.DoNotAutoClose);
     }
 
@@ -122,9 +122,9 @@ public class AwtTerminalFrame extends Frame implements IOSafeTerminal {
      * @param autoCloseTrigger What to trigger automatic disposal of the JFrame
      */
     public AwtTerminalFrame(String title,
-            SwingTerminalDeviceConfiguration deviceConfiguration,
+            TerminalEmulatorDeviceConfiguration deviceConfiguration,
             SwingTerminalFontConfiguration fontConfiguration,
-            SwingTerminalColorConfiguration colorConfiguration,
+            TerminalEmulatorColorConfiguration colorConfiguration,
             AutoCloseTrigger autoCloseTrigger) {
         this(title, null, deviceConfiguration, fontConfiguration, colorConfiguration, autoCloseTrigger);
     }
@@ -140,9 +140,9 @@ public class AwtTerminalFrame extends Frame implements IOSafeTerminal {
      */
     public AwtTerminalFrame(String title,
                               TerminalSize terminalSize,
-                              SwingTerminalDeviceConfiguration deviceConfiguration,
+                              TerminalEmulatorDeviceConfiguration deviceConfiguration,
                               SwingTerminalFontConfiguration fontConfiguration,
-                              SwingTerminalColorConfiguration colorConfiguration,
+                              TerminalEmulatorColorConfiguration colorConfiguration,
                               AutoCloseTrigger autoCloseTrigger) {
         this(title,
                 new AwtTerminal(terminalSize, deviceConfiguration, fontConfiguration, colorConfiguration),

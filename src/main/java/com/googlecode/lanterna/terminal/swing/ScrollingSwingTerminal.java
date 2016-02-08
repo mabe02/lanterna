@@ -49,9 +49,9 @@ public class ScrollingSwingTerminal extends JComponent implements IOSafeTerminal
      * Creates a new ScrollingSwingTerminal with all default options
      */
     public ScrollingSwingTerminal() {
-        this(SwingTerminalDeviceConfiguration.getDefault(),
+        this(TerminalEmulatorDeviceConfiguration.getDefault(),
                 SwingTerminalFontConfiguration.getDefault(),
-                SwingTerminalColorConfiguration.getDefault());
+                TerminalEmulatorColorConfiguration.getDefault());
     }
 
     /**
@@ -62,9 +62,9 @@ public class ScrollingSwingTerminal extends JComponent implements IOSafeTerminal
      */
     @SuppressWarnings({"SameParameterValue", "WeakerAccess"})
     public ScrollingSwingTerminal(
-            SwingTerminalDeviceConfiguration deviceConfiguration,
+            TerminalEmulatorDeviceConfiguration deviceConfiguration,
             SwingTerminalFontConfiguration fontConfiguration,
-            SwingTerminalColorConfiguration colorConfiguration) {
+            TerminalEmulatorColorConfiguration colorConfiguration) {
 
         this.scrollBar = new JScrollBar(JScrollBar.VERTICAL);
         this.swingTerminal = new SwingTerminal(

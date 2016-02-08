@@ -26,13 +26,13 @@ import com.googlecode.lanterna.TextColor;
  * and if the cursor should blink or not.
  * @author martin
  */
-public class SwingTerminalDeviceConfiguration {
+public class TerminalEmulatorDeviceConfiguration {
 
     /**
      * This is a static reference to the default terminal device configuration. Use this one if you are unsure.
      */
-    public static SwingTerminalDeviceConfiguration getDefault() {
-        return new SwingTerminalDeviceConfiguration();
+    public static TerminalEmulatorDeviceConfiguration getDefault() {
+        return new TerminalEmulatorDeviceConfiguration();
     }
 
     private final int lineBufferScrollbackSize;
@@ -45,7 +45,7 @@ public class SwingTerminalDeviceConfiguration {
      * Creates a new terminal device configuration object with all the defaults set
      */
     @SuppressWarnings("WeakerAccess")
-    public SwingTerminalDeviceConfiguration() {
+    public TerminalEmulatorDeviceConfiguration() {
         this(2000, 500, CursorStyle.REVERSED, new TextColor.RGB(255, 255, 255), false);
     }
 
@@ -58,7 +58,7 @@ public class SwingTerminalDeviceConfiguration {
      * @param cursorBlinking Should the terminal text cursor blink?
      */
     @SuppressWarnings("WeakerAccess")
-    public SwingTerminalDeviceConfiguration(int lineBufferScrollbackSize, int blinkLengthInMilliSeconds, CursorStyle cursorStyle, TextColor cursorColor, boolean cursorBlinking) {
+    public TerminalEmulatorDeviceConfiguration(int lineBufferScrollbackSize, int blinkLengthInMilliSeconds, CursorStyle cursorStyle, TextColor cursorColor, boolean cursorBlinking) {
         this.lineBufferScrollbackSize = lineBufferScrollbackSize;
         this.blinkLengthInMilliSeconds = blinkLengthInMilliSeconds;
         this.cursorStyle = cursorStyle;
@@ -86,7 +86,7 @@ public class SwingTerminalDeviceConfiguration {
     /**
      * Style the text cursor should take
      * @return Text cursor style
-     * @see com.googlecode.lanterna.terminal.swing.SwingTerminalDeviceConfiguration.CursorStyle
+     * @see TerminalEmulatorDeviceConfiguration.CursorStyle
      */
     public CursorStyle getCursorStyle() {
         return cursorStyle;
@@ -114,12 +114,12 @@ public class SwingTerminalDeviceConfiguration {
      * @param lineBufferScrollbackSize Size of the scrollback buffer (in number of lines) the copy should have
      * @return Copy of this device configuration with a specified size for the scrollback buffer
      */
-    public SwingTerminalDeviceConfiguration withLineBufferScrollbackSize(int lineBufferScrollbackSize) {
+    public TerminalEmulatorDeviceConfiguration withLineBufferScrollbackSize(int lineBufferScrollbackSize) {
         if(this.lineBufferScrollbackSize == lineBufferScrollbackSize) {
             return this;
         }
         else {
-            return new SwingTerminalDeviceConfiguration(
+            return new TerminalEmulatorDeviceConfiguration(
                     lineBufferScrollbackSize,
                     blinkLengthInMilliSeconds,
                     cursorStyle,
