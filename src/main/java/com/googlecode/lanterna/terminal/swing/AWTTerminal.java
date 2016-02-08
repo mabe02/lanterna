@@ -55,7 +55,7 @@ import java.util.concurrent.*;
  * @author martin
  */
 @SuppressWarnings("serial")
-public class AwtTerminal extends Component implements IOSafeTerminal {
+public class AWTTerminal extends Component implements IOSafeTerminal {
     private final TerminalEmulatorDeviceConfiguration deviceConfiguration;
     private final SwingTerminalFontConfiguration fontConfiguration;
     private final TerminalEmulatorColorConfiguration colorConfiguration;
@@ -75,7 +75,7 @@ public class AwtTerminal extends Component implements IOSafeTerminal {
     /**
      * Creates a new SwingTerminal with all the defaults set and no scroll controller connected.
      */
-    public AwtTerminal() {
+    public AWTTerminal() {
         this(new TerminalScrollController.Null());
     }
 
@@ -86,7 +86,7 @@ public class AwtTerminal extends Component implements IOSafeTerminal {
      * @param scrollController Controller for scrolling the terminal history
      */
     @SuppressWarnings("WeakerAccess")
-    public AwtTerminal(TerminalScrollController scrollController) {
+    public AWTTerminal(TerminalScrollController scrollController) {
         this(TerminalEmulatorDeviceConfiguration.getDefault(),
                 SwingTerminalFontConfiguration.getDefault(),
                 TerminalEmulatorColorConfiguration.getDefault(),
@@ -99,7 +99,7 @@ public class AwtTerminal extends Component implements IOSafeTerminal {
      * @param fontConfiguration Font configuration to use for this SwingTerminal
      * @param colorConfiguration Color configuration to use for this SwingTerminal
      */
-    public AwtTerminal(
+    public AWTTerminal(
             TerminalEmulatorDeviceConfiguration deviceConfiguration,
             SwingTerminalFontConfiguration fontConfiguration,
             TerminalEmulatorColorConfiguration colorConfiguration) {
@@ -116,7 +116,7 @@ public class AwtTerminal extends Component implements IOSafeTerminal {
      * @param fontConfiguration Font configuration to use for this SwingTerminal
      * @param colorConfiguration Color configuration to use for this SwingTerminal
      */
-    public AwtTerminal(
+    public AWTTerminal(
             TerminalSize initialTerminalSize,
             TerminalEmulatorDeviceConfiguration deviceConfiguration,
             SwingTerminalFontConfiguration fontConfiguration,
@@ -139,7 +139,7 @@ public class AwtTerminal extends Component implements IOSafeTerminal {
      * @param scrollController Controller to use for scrolling, the object passed in will be notified whenever the
      *                         scrollable area has changed
      */
-    public AwtTerminal(
+    public AWTTerminal(
             TerminalEmulatorDeviceConfiguration deviceConfiguration,
             SwingTerminalFontConfiguration fontConfiguration,
             TerminalEmulatorColorConfiguration colorConfiguration,
@@ -163,7 +163,7 @@ public class AwtTerminal extends Component implements IOSafeTerminal {
      * @param scrollController Controller to use for scrolling, the object passed in will be notified whenever the
      *                         scrollable area has changed
      */
-    public AwtTerminal(
+    public AWTTerminal(
             TerminalSize initialTerminalSize,
             TerminalEmulatorDeviceConfiguration deviceConfiguration,
             SwingTerminalFontConfiguration fontConfiguration,
@@ -245,11 +245,11 @@ public class AwtTerminal extends Component implements IOSafeTerminal {
             
             @Override
             public void hierarchyChanged(HierarchyEvent e) {
-                if (AwtTerminal.this.isShowing() && blinkTimerCallback == null) {  // isShowing: displayable and visible
+                if (AWTTerminal.this.isShowing() && blinkTimerCallback == null) {  // isShowing: displayable and visible
                     blinkTimerCallback = new BlinkTimerCallback();
-                    blinkTimer.schedule(blinkTimerCallback, 0, AwtTerminal.this.deviceConfiguration.getBlinkLengthInMilliSeconds());
+                    blinkTimer.schedule(blinkTimerCallback, 0, AWTTerminal.this.deviceConfiguration.getBlinkLengthInMilliSeconds());
                 }
-                if (!AwtTerminal.this.isShowing() && blinkTimerCallback != null) {
+                if (!AWTTerminal.this.isShowing() && blinkTimerCallback != null) {
                     blinkTimerCallback.cancel();
                     blinkTimerCallback = null;
                     blinkTimer.purge();

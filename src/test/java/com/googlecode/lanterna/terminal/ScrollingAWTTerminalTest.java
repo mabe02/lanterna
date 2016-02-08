@@ -19,7 +19,7 @@
 package com.googlecode.lanterna.terminal;
 
 import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.terminal.swing.ScrollingAwtTerminal;
+import com.googlecode.lanterna.terminal.swing.ScrollingAWTTerminal;
 import com.googlecode.lanterna.terminal.swing.TerminalEmulatorColorConfiguration;
 import com.googlecode.lanterna.terminal.swing.TerminalEmulatorDeviceConfiguration;
 import com.googlecode.lanterna.terminal.swing.SwingTerminalFontConfiguration;
@@ -32,17 +32,17 @@ import javax.swing.UIManager;
  * @author Martin
  */
 @SuppressWarnings("FieldCanBeLocal")
-public class ScrollingAwtTerminalTest extends javax.swing.JFrame {
+public class ScrollingAWTTerminalTest extends javax.swing.JFrame {
 
     private static final long serialVersionUID = 1L;
-    private final ScrollingAwtTerminal scrollingAwtTerminal;
+    private final ScrollingAWTTerminal scrollingAwtTerminal;
 
     /**
      * Creates new form ScrollingSwingTerminalTest
      */
-    public ScrollingAwtTerminalTest() {
+    public ScrollingAWTTerminalTest() {
         initComponents();
-        scrollingAwtTerminal = new ScrollingAwtTerminal(
+        scrollingAwtTerminal = new ScrollingAWTTerminal(
                 TerminalEmulatorDeviceConfiguration.getDefault().withLineBufferScrollbackSize(150),
                 SwingTerminalFontConfiguration.getDefault(),
                 TerminalEmulatorColorConfiguration.getDefault());
@@ -181,22 +181,22 @@ public class ScrollingAwtTerminalTest extends javax.swing.JFrame {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         }
         catch(ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ScrollingAwtTerminalTest.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ScrollingAWTTerminalTest.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         catch(InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ScrollingAwtTerminalTest.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ScrollingAWTTerminalTest.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         catch(IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ScrollingAwtTerminalTest.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ScrollingAWTTerminalTest.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         catch(javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ScrollingAwtTerminalTest.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ScrollingAWTTerminalTest.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ScrollingAwtTerminalTest().setVisible(true);
+                new ScrollingAWTTerminalTest().setVisible(true);
             }
         });
     }

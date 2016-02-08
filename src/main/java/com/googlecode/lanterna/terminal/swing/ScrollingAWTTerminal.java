@@ -40,15 +40,15 @@ import java.util.concurrent.TimeUnit;
  * @author Martin
  */
 @SuppressWarnings("serial")
-public class ScrollingAwtTerminal extends Container implements IOSafeTerminal {
+public class ScrollingAWTTerminal extends Container implements IOSafeTerminal {
 
-    private final AwtTerminal awtTerminal;
+    private final AWTTerminal awtTerminal;
     private final Scrollbar scrollBar;
 
     /**
      * Creates a new ScrollingSwingTerminal with all default options
      */
-    public ScrollingAwtTerminal() {
+    public ScrollingAWTTerminal() {
         this(TerminalEmulatorDeviceConfiguration.getDefault(),
                 SwingTerminalFontConfiguration.getDefault(),
                 TerminalEmulatorColorConfiguration.getDefault());
@@ -61,13 +61,13 @@ public class ScrollingAwtTerminal extends Container implements IOSafeTerminal {
      * @param colorConfiguration Which color schema to use for ANSI colors
      */
     @SuppressWarnings({"SameParameterValue", "WeakerAccess"})
-    public ScrollingAwtTerminal(
+    public ScrollingAWTTerminal(
             TerminalEmulatorDeviceConfiguration deviceConfiguration,
             SwingTerminalFontConfiguration fontConfiguration,
             TerminalEmulatorColorConfiguration colorConfiguration) {
 
         this.scrollBar = new Scrollbar(Scrollbar.VERTICAL);
-        this.awtTerminal = new AwtTerminal(
+        this.awtTerminal = new AWTTerminal(
                 deviceConfiguration,
                 fontConfiguration,
                 colorConfiguration,

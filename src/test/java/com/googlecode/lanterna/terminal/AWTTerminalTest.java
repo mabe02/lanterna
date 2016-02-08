@@ -20,7 +20,7 @@ package com.googlecode.lanterna.terminal;
 
 import com.googlecode.lanterna.Symbols;
 import com.googlecode.lanterna.SGR;
-import com.googlecode.lanterna.terminal.swing.AwtTerminalFrame;
+import com.googlecode.lanterna.terminal.swing.AWTTerminalFrame;
 
 import java.io.IOException;
 
@@ -28,16 +28,16 @@ import java.io.IOException;
  *
  * @author Martin
  */
-public class AwtTerminalTest {
+public class AWTTerminalTest {
 
     public static void main(String[] args) throws InterruptedException, IOException {
-        AwtTerminalFrame terminal = new AwtTerminalFrame(
+        AWTTerminalFrame terminal = new AWTTerminalFrame(
                         "AwtTerminalFrame",  //title
                         null,  //initialTerminalSize
                         null,  //deviceConfiguration
                         null,  //fontConfiguration
                         null,  //colorConfiguration
-                        AwtTerminalFrame.AutoCloseTrigger.CloseOnExitPrivateMode);  //autoCloseTrigger
+                        AWTTerminalFrame.AutoCloseTrigger.CloseOnExitPrivateMode);  //autoCloseTrigger
         terminal.setVisible(true);
         
         terminal.enterPrivateMode();
