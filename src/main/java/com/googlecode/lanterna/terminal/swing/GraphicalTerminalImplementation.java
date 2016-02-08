@@ -58,7 +58,7 @@ import javax.swing.event.AncestorListener;
  * @author martin
  */
 @SuppressWarnings("serial")
-public class SwingTerminal extends JComponent implements IOSafeTerminal {
+public class GraphicalTerminalImplementation extends JComponent implements IOSafeTerminal {
     private final SwingTerminalDeviceConfiguration deviceConfiguration;
     private final SwingTerminalFontConfiguration fontConfiguration;
     private final SwingTerminalColorConfiguration colorConfiguration;
