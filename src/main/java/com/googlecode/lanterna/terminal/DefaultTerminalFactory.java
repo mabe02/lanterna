@@ -99,31 +99,40 @@ public final class DefaultTerminalFactory implements TerminalFactory {
             }
         }
         else {
-            Window window;
-            if(hasSwing()) {
-                window = new SwingTerminalFrame(
-                        title,
-                        initialTerminalSize,
-                        deviceConfiguration,
-                        fontConfiguration,
-                        colorConfiguration,
-                        autoCloseTrigger);
-            }
-            else {
-                window = new AWTTerminalFrame(
-                        title,
-                        initialTerminalSize,
-                        deviceConfiguration,
-                        fontConfiguration,
-                        colorConfiguration,
-                        autoCloseTrigger);
-            }
-
-            if(autoOpenTerminalFrame) {
-                window.setVisible(true);
-            }
-            return (Terminal)window;
+            return createTerminalEmulator();
         }
+    }
+
+    /**
+     * Creates a new terminal emulator window which will be either Swing-based or AWT-based depending on what is
+     * available on the system
+     * @return New terminal emulator exposed as a {@link Terminal} interface
+     */
+    public Terminal createTerminalEmulator() {
+        Window window;
+        if(hasSwing()) {
+            window = new SwingTerminalFrame(
+                    title,
+                    initialTerminalSize,
+                    deviceConfiguration,
+                    fontConfiguration,
+                    colorConfiguration,
+                    autoCloseTrigger);
+        }
+        else {
+            window = new AWTTerminalFrame(
+                    title,
+                    initialTerminalSize,
+                    deviceConfiguration,
+                    fontConfiguration,
+                    colorConfiguration,
+                    autoCloseTrigger);
+        }
+
+        if(autoOpenTerminalFrame) {
+            window.setVisible(true);
+        }
+        return (Terminal)window;
     }
 
     private boolean hasSwing() {
@@ -196,7 +205,7 @@ public final class DefaultTerminalFactory implements TerminalFactory {
      * @param autoCloseTrigger Auto-close trigger to use on created SwingTerminalFrames created by this factory
      * @return Reference to itself, so multiple .set-calls can be chained
      */
-    public DefaultTerminalFactory setSwingTerminalFrameAutoCloseTrigger(TerminalEmulatorAutoCloseTrigger autoCloseTrigger) {
+    public DefaultTerminalFactory setTerminalEmulatorFrameAutoCloseTrigger(TerminalEmulatorAutoCloseTrigger autoCloseTrigger) {
         this.autoCloseTrigger = autoCloseTrigger;
         return this;
     }

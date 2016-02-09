@@ -25,6 +25,9 @@ import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.MouseCaptureMode;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.swing.SwingTerminalFrame;
+import com.googlecode.lanterna.terminal.swing.TerminalEmulatorAutoCloseTrigger;
+
+import java.awt.*;
 import java.io.IOException;
 import javax.swing.JFrame;
 
@@ -36,17 +39,26 @@ import javax.swing.JFrame;
 public class TestTerminalFactory {
 
     private final DefaultTerminalFactory factory;
+    private boolean forceTerminalEmulator;
 
     public TestTerminalFactory(String[] args) {
-        this(args, SwingTerminalFrame.AutoCloseTrigger.CloseOnExitPrivateMode);
+        this(args, TerminalEmulatorAutoCloseTrigger.CloseOnExitPrivateMode);
     }
     
-    public TestTerminalFactory(String[] args, SwingTerminalFrame.AutoCloseTrigger autoCloseTrigger) {
+    public TestTerminalFactory(String[] args, TerminalEmulatorAutoCloseTrigger autoCloseTrigger) {
         factory = new DefaultTerminalFactory();
-        factory.setSwingTerminalFrameAutoCloseTrigger(autoCloseTrigger);
+        factory.setTerminalEmulatorFrameAutoCloseTrigger(autoCloseTrigger);
         for(String arg: args) {
-            if("--no-swing".equals(arg)) {
+            if("--text-terminal".equals(arg) || "--no-swing".equals(arg)) {
                 factory.setForceTextTerminal(true);
+            }
+            else if("--awt".equals(arg)) {
+                factory.setForceAWTOverSwing(true);
+                forceTerminalEmulator = true;
+            }
+            else if("--swing".equals(arg)) {
+                factory.setForceAWTOverSwing(false);
+                forceTerminalEmulator = true;
             }
             else if("--mouse-click".equals(arg)) {
                 factory.setMouseCaptureMode(MouseCaptureMode.CLICK_RELEASE);
@@ -66,20 +78,19 @@ public class TestTerminalFactory {
         return this;
     }
 
-    public SwingTerminalFrame createSwingTerminal() {
-        try {
-            return (SwingTerminalFrame)createTerminal();
-        }
-        catch(Throwable e) {
-            throw new IllegalStateException("Unable to create a SwingTerminalFrame", e);
-        }
-    }
-
     public Terminal createTerminal() throws IOException {
-        Terminal terminal = factory.createTerminal();
-        if(terminal instanceof SwingTerminalFrame) {
-            ((SwingTerminalFrame)terminal).setVisible(true);
-            ((SwingTerminalFrame)terminal).setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        Terminal terminal;
+        if(forceTerminalEmulator) {
+            terminal = factory.createTerminalEmulator();
+        }
+        else {
+            terminal = factory.createTerminal();
+        }
+        if(terminal instanceof Window) {
+            ((Window) terminal).setVisible(true);
+        }
+        if(terminal instanceof JFrame) {
+            ((JFrame)terminal).setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         }
         return terminal;
     }
