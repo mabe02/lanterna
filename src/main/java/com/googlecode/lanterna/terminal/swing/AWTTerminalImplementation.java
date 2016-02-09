@@ -2,20 +2,24 @@ package com.googlecode.lanterna.terminal.swing;
 
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextCharacter;
+import com.googlecode.lanterna.input.KeyStroke;
 
 import java.awt.*;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.util.Collections;
 
 /**
  * Created by martin on 08/02/16.
  */
-public class AWTTerminalImplementation extends GraphicalTerminalImplementation {
+class AWTTerminalImplementation extends GraphicalTerminalImplementation {
     private final Component component;
     private final AWTTerminalFontConfiguration fontConfiguration;
 
-    public AWTTerminalImplementation(
+    AWTTerminalImplementation(
             Component component,
             AWTTerminalFontConfiguration fontConfiguration,
             TerminalSize initialTerminalSize,
@@ -42,22 +46,13 @@ public class AWTTerminalImplementation extends GraphicalTerminalImplementation {
                 AWTTerminalImplementation.this.component.requestFocusInWindow();
             }
         });
-        /*
-        component.addAncestorListener(new AncestorListener() {
-            @Override
-            public void ancestorAdded(AncestorEvent event) {
 
+        component.addHierarchyListener(new HierarchyListener() {
+            @Override
+            public void hierarchyChanged(HierarchyEvent e) {
+                System.out.println(e.toString());
             }
-
-            @Override
-            public void ancestorRemoved(AncestorEvent event) {
-                cancelTimer();
-            }
-
-            @Override
-            public void ancestorMoved(AncestorEvent event) { }
         });
-        */
     }
 
 
@@ -95,13 +90,8 @@ public class AWTTerminalImplementation extends GraphicalTerminalImplementation {
     }
 
     @Override
-    protected boolean isEventDispatchThread() {
-        return EventQueue.isDispatchThread();
-    }
-
-    @Override
     protected void repaint() {
-        if(isEventDispatchThread()) {
+        if(EventQueue.isDispatchThread()) {
             component.repaint();
         }
         else {
@@ -115,7 +105,10 @@ public class AWTTerminalImplementation extends GraphicalTerminalImplementation {
     }
 
     @Override
-    public void flush() {
-
+    public KeyStroke readInput() throws IOException {
+        if(EventQueue.isDispatchThread()) {
+            throw new UnsupportedOperationException("Cannot call SwingTerminal.readInput() on the AWT thread");
+        }
+        return super.readInput();
     }
 }

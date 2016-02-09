@@ -1,14 +1,23 @@
 package com.googlecode.lanterna.terminal.swing;
 
+import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.graphics.TextGraphics;
+import com.googlecode.lanterna.input.*;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.terminal.IOSafeTerminal;
+import com.googlecode.lanterna.terminal.ResizeListener;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by martin on 08/02/16.
  */
-public class SwingTerminal extends JComponent {
+public class SwingTerminal extends JComponent implements IOSafeTerminal {
 
     private final SwingTerminalImplementation terminalImplementation;
 
@@ -130,11 +139,110 @@ public class SwingTerminal extends JComponent {
                 scrollController);
     }
 
+    @Override
     public synchronized Dimension getPreferredSize() {
         return terminalImplementation.getPreferredSize();
     }
 
+    @Override
     protected synchronized void paintComponent(Graphics componentGraphics) {
         terminalImplementation.paintComponent(componentGraphics);
+    }
+
+    // Terminal methods below here, just forward to the implementation
+
+    @Override
+    public void enterPrivateMode() {
+        terminalImplementation.enterPrivateMode();
+    }
+
+    @Override
+    public void exitPrivateMode() {
+        terminalImplementation.exitPrivateMode();
+    }
+
+    @Override
+    public void clearScreen() {
+        terminalImplementation.clearScreen();
+    }
+
+    @Override
+    public void setCursorPosition(int x, int y) {
+        terminalImplementation.setCursorPosition(x, y);
+    }
+
+    @Override
+    public void setCursorVisible(boolean visible) {
+        terminalImplementation.setCursorVisible(visible);
+    }
+
+    @Override
+    public void putCharacter(char c) {
+        terminalImplementation.putCharacter(c);
+    }
+
+    @Override
+    public void enableSGR(SGR sgr) {
+        terminalImplementation.enableSGR(sgr);
+    }
+
+    @Override
+    public void disableSGR(SGR sgr) {
+        terminalImplementation.disableSGR(sgr);
+    }
+
+    @Override
+    public void resetColorAndSGR() {
+        terminalImplementation.resetColorAndSGR();
+    }
+
+    @Override
+    public void setForegroundColor(TextColor color) {
+        terminalImplementation.setForegroundColor(color);
+    }
+
+    @Override
+    public void setBackgroundColor(TextColor color) {
+        terminalImplementation.setBackgroundColor(color);
+    }
+
+    @Override
+    public TerminalSize getTerminalSize() {
+        return terminalImplementation.getTerminalSize();
+    }
+
+    @Override
+    public byte[] enquireTerminal(int timeout, TimeUnit timeoutUnit) {
+        return terminalImplementation.enquireTerminal(timeout, timeoutUnit);
+    }
+
+    @Override
+    public void flush() {
+        terminalImplementation.flush();
+    }
+
+    @Override
+    public KeyStroke pollInput() {
+        return terminalImplementation.pollInput();
+    }
+
+    @Override
+    public KeyStroke readInput() throws IOException {
+        return terminalImplementation.readInput();
+    }
+
+    @Override
+    public TextGraphics newTextGraphics() throws IOException {
+        return terminalImplementation.newTextGraphics();
+    }
+
+    @Override
+    public void addResizeListener(ResizeListener listener) {
+        terminalImplementation.addResizeListener(listener);
+    }
+
+    @Override
+    public void removeResizeListener(ResizeListener listener) {
+        terminalImplementation.removeResizeListener(listener);
     }
 }

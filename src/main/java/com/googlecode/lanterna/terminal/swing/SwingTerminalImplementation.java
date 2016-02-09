@@ -9,6 +9,7 @@ import javax.swing.event.AncestorListener;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.util.Collections;
 
 /**
@@ -19,7 +20,7 @@ class SwingTerminalImplementation extends GraphicalTerminalImplementation {
     private final JComponent component;
     private final SwingTerminalFontConfiguration fontConfiguration;
 
-    public SwingTerminalImplementation(
+    SwingTerminalImplementation(
             JComponent component,
             SwingTerminalFontConfiguration fontConfiguration,
             TerminalSize initialTerminalSize,
@@ -100,13 +101,8 @@ class SwingTerminalImplementation extends GraphicalTerminalImplementation {
     }
 
     @Override
-    protected boolean isEventDispatchThread() {
-        return SwingUtilities.isEventDispatchThread();
-    }
-
-    @Override
     protected void repaint() {
-        if(isEventDispatchThread()) {
+        if(SwingUtilities.isEventDispatchThread()) {
             component.repaint();
         }
         else {
@@ -120,7 +116,10 @@ class SwingTerminalImplementation extends GraphicalTerminalImplementation {
     }
 
     @Override
-    public void flush() {
-
+    public com.googlecode.lanterna.input.KeyStroke readInput() throws IOException {
+        if(SwingUtilities.isEventDispatchThread()) {
+            throw new UnsupportedOperationException("Cannot call SwingTerminal.readInput() on the AWT thread");
+        }
+        return super.readInput();
     }
 }

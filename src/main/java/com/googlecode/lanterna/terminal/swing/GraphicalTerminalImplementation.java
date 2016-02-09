@@ -24,22 +24,19 @@ import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.IOSafeTerminal;
 import com.googlecode.lanterna.terminal.ResizeListener;
-import com.sun.awt.AWTUtilities;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This class provides a Swing implementation of the Terminal interface that is an embeddable component you can put into
@@ -116,7 +113,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
         this.foregroundColor = TextColor.ANSI.DEFAULT;
         this.backgroundColor = TextColor.ANSI.DEFAULT;
         this.cursorIsVisible = true;        //Always start with an activate and visible cursor
-        this.enquiryString = "SwingTerminal";
+        this.enquiryString = "TerminalEmulator";
         this.visualState = new CharacterState[48][160];
         this.backbuffer = null;  // We don't know the dimensions yet
         this.blinkTimer = new Timer();
@@ -145,7 +142,6 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     protected abstract int getHeight();
     protected abstract int getWidth();
     protected abstract Font getFontForCharacter(TextCharacter character);
-    protected abstract boolean isEventDispatchThread();
     protected abstract void repaint();
 
     protected void cancelTimer() {
@@ -449,9 +445,6 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
 
     @Override
     public KeyStroke readInput() throws IOException {
-        if(isEventDispatchThread()) {
-            throw new UnsupportedOperationException("Cannot call SwingTerminal.readInput() on the AWT thread");
-        }
         try {
             return keyQueue.take();
         }
@@ -534,29 +527,12 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     public byte[] enquireTerminal(int timeout, TimeUnit timeoutUnit) {
         return enquiryString.getBytes();
     }
-/*
+
     @Override
     public void flush() {
-        if(SwingUtilities.isEventDispatchThread()) {
-            repaint();
-        }
-        else {
-            try {
-                SwingUtilities.invokeAndWait(new Runnable() {
-                    @Override
-                    public void run() {
-                        repaint();
-                    }
-                });
-            }
-            catch(InvocationTargetException e) {
-                throw new RuntimeException(e);
-            }
-            catch(InterruptedException ignored) {
-            }
-        }
+        repaint();
     }
-*/
+
     @Override
     public void addResizeListener(ResizeListener listener) {
         resizeListeners.add(listener);

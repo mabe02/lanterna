@@ -155,8 +155,8 @@ public class AWTTerminalFrame extends Frame implements IOSafeTerminal {
         this.autoCloseTrigger = autoCloseTrigger;
         this.disposed = false;
 
-        /*getContentPane().*/setLayout(new BorderLayout());
-        /*getContentPane().*/add(awtTerminal, BorderLayout.CENTER);
+        setLayout(new BorderLayout());
+        add(awtTerminal, BorderLayout.CENTER);
         setBackground(Color.BLACK); //This will reduce white flicker when resizing the window
         pack();
 
