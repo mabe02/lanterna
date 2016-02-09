@@ -46,7 +46,7 @@ public class TestTerminalFactory {
         factory.setSwingTerminalFrameAutoCloseTrigger(autoCloseTrigger);
         for(String arg: args) {
             if("--no-swing".equals(arg)) {
-                factory.setSuppressSwingTerminalFrame(true);
+                factory.setForceTextTerminal(true);
             }
             else if("--mouse-click".equals(arg)) {
                 factory.setMouseCaptureMode(MouseCaptureMode.CLICK_RELEASE);

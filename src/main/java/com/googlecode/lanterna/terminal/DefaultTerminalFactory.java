@@ -21,11 +21,9 @@ package com.googlecode.lanterna.terminal;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.terminal.ansi.CygwinTerminal;
 import com.googlecode.lanterna.terminal.ansi.UnixTerminal;
-import com.googlecode.lanterna.terminal.swing.TerminalEmulatorColorConfiguration;
-import com.googlecode.lanterna.terminal.swing.TerminalEmulatorDeviceConfiguration;
-import com.googlecode.lanterna.terminal.swing.SwingTerminalFontConfiguration;
-import com.googlecode.lanterna.terminal.swing.SwingTerminalFrame;
-import java.awt.GraphicsEnvironment;
+import com.googlecode.lanterna.terminal.swing.*;
+
+import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -36,7 +34,7 @@ import java.nio.charset.Charset;
  * implementation to create based on characteristics of the system the program is running on.
  * <p/>
  * Note that for all systems with a graphical environment present, the SwingTerminalFrame will be chosen. You can 
- * suppress this by calling setSuppressSwingTerminalFrame(true) on this factory.
+ * suppress this by calling setForceTextTerminal(true) on this factory.
  * @author martin
  */
 public final class DefaultTerminalFactory implements TerminalFactory {
@@ -49,10 +47,11 @@ public final class DefaultTerminalFactory implements TerminalFactory {
     private final Charset charset;
 
     private TerminalSize initialTerminalSize;
-    private boolean suppressSwingTerminalFrame;
+    private boolean forceTextTerminal;
+    private boolean forceAWTOverSwing;
     private String title;
-    private boolean autoOpenSwingTerminalFrame;
-    private SwingTerminalFrame.AutoCloseTrigger autoCloseTrigger;
+    private boolean autoOpenTerminalFrame;
+    private TerminalEmulatorAutoCloseTrigger autoCloseTrigger;
     private TerminalEmulatorColorConfiguration colorConfiguration;
     private TerminalEmulatorDeviceConfiguration deviceConfiguration;
     private SwingTerminalFontConfiguration fontConfiguration;
@@ -77,10 +76,10 @@ public final class DefaultTerminalFactory implements TerminalFactory {
         this.inputStream = inputStream;
         this.charset = charset;
         
-        this.suppressSwingTerminalFrame = false;
-        this.autoOpenSwingTerminalFrame = true;
+        this.forceTextTerminal = false;
+        this.autoOpenTerminalFrame = true;
         this.title = "SwingTerminalFrame";
-        this.autoCloseTrigger = SwingTerminalFrame.AutoCloseTrigger.CloseOnExitPrivateMode;
+        this.autoCloseTrigger = TerminalEmulatorAutoCloseTrigger.CloseOnExitPrivateMode;
         this.mouseCaptureMode = null;
 
         //SwingTerminal will replace these null values for the default implementation if they are unchanged
@@ -91,7 +90,7 @@ public final class DefaultTerminalFactory implements TerminalFactory {
     
     @Override
     public Terminal createTerminal() throws IOException {
-        if (GraphicsEnvironment.isHeadless() || suppressSwingTerminalFrame || System.console() != null) {
+        if (GraphicsEnvironment.isHeadless() || forceTextTerminal || System.console() != null) {
             if(isOperatingSystemWindows()) {
                 return createCygwinTerminal(outputStream, inputStream, charset);
             }
@@ -100,18 +99,40 @@ public final class DefaultTerminalFactory implements TerminalFactory {
             }
         }
         else {
-            SwingTerminalFrame swingTerminalFrame = new SwingTerminalFrame(
-                    title,
-                    initialTerminalSize,
-                    deviceConfiguration,
-                    fontConfiguration,
-                    colorConfiguration,
-                    autoCloseTrigger);
-
-            if(autoOpenSwingTerminalFrame) {
-                swingTerminalFrame.setVisible(true);
+            Window window;
+            if(hasSwing()) {
+                window = new SwingTerminalFrame(
+                        title,
+                        initialTerminalSize,
+                        deviceConfiguration,
+                        fontConfiguration,
+                        colorConfiguration,
+                        autoCloseTrigger);
             }
-            return swingTerminalFrame;
+            else {
+                window = new AWTTerminalFrame(
+                        title,
+                        initialTerminalSize,
+                        deviceConfiguration,
+                        fontConfiguration,
+                        colorConfiguration,
+                        autoCloseTrigger);
+            }
+
+            if(autoOpenTerminalFrame) {
+                window.setVisible(true);
+            }
+            return (Terminal)window;
+        }
+    }
+
+    private boolean hasSwing() {
+        try {
+            Class.forName("javax.swing.JComponent");
+            return true;
+        }
+        catch(Exception ignore) {
+            return false;
         }
     }
 
@@ -129,11 +150,24 @@ public final class DefaultTerminalFactory implements TerminalFactory {
 
     /**
      * Controls whether a SwingTerminalFrame shall always be created if the system is one with a graphical environment
-     * @param suppressSwingTerminalFrame If true, will always create a text-based Terminal
+     * @param forceTextTerminal If true, will always create a text-based Terminal
      * @return Reference to itself, so multiple .set-calls can be chained
      */
-    public DefaultTerminalFactory setSuppressSwingTerminalFrame(boolean suppressSwingTerminalFrame) {
-        this.suppressSwingTerminalFrame = suppressSwingTerminalFrame;
+    public DefaultTerminalFactory setForceTextTerminal(boolean forceTextTerminal) {
+        this.forceTextTerminal = forceTextTerminal;
+        return this;
+    }
+
+    /**
+     * Normally when a graphical terminal emulator is created by the factory, it will create a
+     * {@link SwingTerminalFrame} unless Swing is not present in the system. Setting this property to {@code true} will
+     * make it create an {@link AWTTerminalFrame} even if Swing is present
+     * @param forceAWTOverSwing If {@code true}, will always create an {@link AWTTerminalFrame} over a
+     * {@link SwingTerminalFrame} if asked to create a graphical terminal emulator
+     * @return Reference to itself, so multiple .set-calls can be chained
+     */
+    public DefaultTerminalFactory setForceAWTOverSwing(boolean forceAWTOverSwing) {
+        this.forceAWTOverSwing = forceAWTOverSwing;
         return this;
     }
 
@@ -141,10 +175,10 @@ public final class DefaultTerminalFactory implements TerminalFactory {
      * Controls whether a SwingTerminalFrame shall be automatically shown (.setVisible(true)) immediately after 
      * creation. If {@code false}, you will manually need to call {@code .setVisible(true)} on the JFrame to actually
      * see the terminal window. Default for this value is {@code true}.
-     * @param autoOpenSwingTerminalFrame Automatically open SwingTerminalFrame after creation
+     * @param autoOpenTerminalFrame Automatically open SwingTerminalFrame after creation
      */
-    public void setAutoOpenSwingTerminalFrame(boolean autoOpenSwingTerminalFrame) {
-        this.autoOpenSwingTerminalFrame = autoOpenSwingTerminalFrame;
+    public void setAutoOpenTerminalFrame(boolean autoOpenTerminalFrame) {
+        this.autoOpenTerminalFrame = autoOpenTerminalFrame;
     }
     
     /**
@@ -162,7 +196,7 @@ public final class DefaultTerminalFactory implements TerminalFactory {
      * @param autoCloseTrigger Auto-close trigger to use on created SwingTerminalFrames created by this factory
      * @return Reference to itself, so multiple .set-calls can be chained
      */
-    public DefaultTerminalFactory setSwingTerminalFrameAutoCloseTrigger(SwingTerminalFrame.AutoCloseTrigger autoCloseTrigger) {
+    public DefaultTerminalFactory setSwingTerminalFrameAutoCloseTrigger(TerminalEmulatorAutoCloseTrigger autoCloseTrigger) {
         this.autoCloseTrigger = autoCloseTrigger;
         return this;
     }
