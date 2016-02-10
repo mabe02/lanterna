@@ -98,4 +98,8 @@ public class TestTerminalFactory {
     public Screen createScreen() throws IOException {
         return new TerminalScreen(createTerminal());
     }
+
+    public Terminal createSwingTerminal() {
+        return factory.createSwingTerminal();
+    }
 }

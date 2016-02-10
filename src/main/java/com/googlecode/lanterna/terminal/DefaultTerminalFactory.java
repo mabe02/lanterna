@@ -111,28 +111,36 @@ public final class DefaultTerminalFactory implements TerminalFactory {
     public Terminal createTerminalEmulator() {
         Window window;
         if(hasSwing()) {
-            window = new SwingTerminalFrame(
-                    title,
-                    initialTerminalSize,
-                    deviceConfiguration,
-                    fontConfiguration,
-                    colorConfiguration,
-                    autoCloseTrigger);
+            window = createSwingTerminal();
         }
         else {
-            window = new AWTTerminalFrame(
-                    title,
-                    initialTerminalSize,
-                    deviceConfiguration,
-                    fontConfiguration,
-                    colorConfiguration,
-                    autoCloseTrigger);
+            window = createAWTTerminal();
         }
 
         if(autoOpenTerminalFrame) {
             window.setVisible(true);
         }
         return (Terminal)window;
+    }
+
+    public AWTTerminalFrame createAWTTerminal() {
+        return new AWTTerminalFrame(
+                title,
+                initialTerminalSize,
+                deviceConfiguration,
+                fontConfiguration,
+                colorConfiguration,
+                autoCloseTrigger);
+    }
+
+    public SwingTerminalFrame createSwingTerminal() {
+        return new SwingTerminalFrame(
+                title,
+                initialTerminalSize,
+                deviceConfiguration,
+                fontConfiguration,
+                colorConfiguration,
+                autoCloseTrigger);
     }
 
     private boolean hasSwing() {

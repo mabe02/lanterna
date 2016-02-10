@@ -21,6 +21,8 @@ package com.googlecode.lanterna.issue;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.swing.SwingTerminalFrame;
+import com.googlecode.lanterna.terminal.swing.TerminalEmulatorAutoCloseTrigger;
+
 import java.io.IOException;
 import javax.swing.WindowConstants;
 
@@ -30,7 +32,7 @@ import javax.swing.WindowConstants;
  */
 public class Issue95 {
     public static void main(String[] args) throws InterruptedException, IOException {
-        SwingTerminalFrame terminal = new SwingTerminalFrame(SwingTerminalFrame.AutoCloseTrigger.CloseOnExitPrivateMode);
+        SwingTerminalFrame terminal = new SwingTerminalFrame(TerminalEmulatorAutoCloseTrigger.CloseOnExitPrivateMode);
         terminal.setCursorVisible(false);
 
         Screen screen = new TerminalScreen(terminal);

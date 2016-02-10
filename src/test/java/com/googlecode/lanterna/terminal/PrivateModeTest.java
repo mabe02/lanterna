@@ -22,6 +22,8 @@ import com.googlecode.lanterna.TestTerminalFactory;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.swing.SwingTerminalFrame;
+import com.googlecode.lanterna.terminal.swing.TerminalEmulatorAutoCloseTrigger;
+
 import java.io.IOException;
 
 /**
@@ -33,7 +35,7 @@ public class PrivateModeTest {
     public static void main(String[] args) throws IOException, InterruptedException {
         Terminal terminal = new TestTerminalFactory(args).createTerminal();
         if(terminal instanceof SwingTerminalFrame) {
-            ((SwingTerminalFrame) terminal).setAutoCloseTrigger(SwingTerminalFrame.AutoCloseTrigger.DoNotAutoClose);
+            ((SwingTerminalFrame) terminal).setAutoCloseTrigger(TerminalEmulatorAutoCloseTrigger.DoNotAutoClose);
         }
         boolean normalTerminal = true;
         printNormalTerminalText(terminal);
