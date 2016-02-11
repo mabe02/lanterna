@@ -145,6 +145,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
             public void run() {
                 blinkOn = !blinkOn;
                 if(hasBlinkingText) {
+                    System.out.println("Requesting repaint");
                     repaint();
                 }
             }
@@ -169,6 +170,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     }
 
     protected synchronized void paintComponent(Graphics componentGraphics) {
+        System.out.print("Repainting...  ");
         //First, resize the buffer width/height if necessary
         int fontWidth = getFontWidth();
         int fontHeight = getFontHeight();
@@ -283,6 +285,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
 
         // Tell anyone waiting on us that drawing is complete
         notifyAll();
+        System.out.println("done!");
     }
 
     private void ensureBackbufferHasRightSize() {
@@ -480,6 +483,20 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     @Override
     public synchronized void clearScreen() {
         virtualTerminal.clear();
+
+        // Manually clear the backbuffer and visual state
+        if(backbuffer != null) {
+            Graphics2D graphics = backbuffer.createGraphics();
+            Color foregroundColor = colorConfiguration.toAWTColor(TextColor.ANSI.DEFAULT, true, false);
+            Color backgroundColor = colorConfiguration.toAWTColor(TextColor.ANSI.DEFAULT, false, false);
+            graphics.setColor(backgroundColor);
+            graphics.fillRect(0, 0, getWidth(), getHeight());
+            graphics.dispose();
+
+            for(CharacterState[] line : visualState) {
+                Arrays.fill(line, new CharacterState(new TextCharacter(' '), foregroundColor, backgroundColor, false));
+            }
+        }
         repaint();
     }
 
