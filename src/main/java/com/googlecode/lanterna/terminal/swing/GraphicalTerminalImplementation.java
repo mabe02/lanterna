@@ -63,6 +63,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     private volatile Timer blinkTimer;
     private volatile boolean hasBlinkingText;
     private volatile boolean blinkOn;
+    private volatile boolean flushed;
 
     // We use two different data structures to optimize drawing
     //  * A map (as a two-dimensional array) of all characters currently visible inside this component
@@ -119,6 +120,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
         this.blinkTimer = null;
         this.hasBlinkingText = false;   // Assume initial content doesn't have any blinking text
         this.blinkOn = true;
+        this.flushed = false;
 
         //Set the initial scrollable size
         //scrollObserver.newScrollableLength(fontConfiguration.getFontHeight() * terminalSize.getRows());
@@ -169,7 +171,6 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     }
 
     protected synchronized void paintComponent(Graphics componentGraphics) {
-        //System.out.print("Repainting...  ");
         //First, resize the buffer width/height if necessary
         int fontWidth = getFontWidth();
         int fontHeight = getFontHeight();
@@ -194,6 +195,24 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
         }
         ensureBackbufferHasRightSize();
 
+        // At this point, if the user hasn't asked for an explicit flush, just paint the backbuffer. It's prone to
+        // problems if the user isn't flushing properly but it reduces flickering when resizing the window and the code
+        // is asynchronously responding to the resize
+        if(flushed) {
+            updateBackBuffer(fontWidth, fontHeight, terminalResized, terminalSize);
+            flushed = false;
+        }
+
+        componentGraphics.drawImage(backbuffer, 0, 0, getWidth(), getHeight(), 0, 0, getWidth(), getHeight(), null);
+
+        // Dispose the graphic objects
+        componentGraphics.dispose();
+
+        // Tell anyone waiting on us that drawing is complete
+        notifyAll();
+    }
+
+    private void updateBackBuffer(int fontWidth, int fontHeight, boolean terminalResized, TerminalSize terminalSize) {
         //Retrieve the position of the cursor, relative to the scrolling state
         TerminalPosition translatedCursorPosition = virtualTerminal.getTranslatedCursorPosition();
 
@@ -275,19 +294,10 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
         if(leftoverHeight > 0) {
             backbufferGraphics.fillRect(0, getHeight() - leftoverHeight, getWidth(), leftoverHeight);
         }
-
-        componentGraphics.drawImage(backbuffer, 0, 0, null);
-
-        // Dispose the graphic objects
         backbufferGraphics.dispose();
-        componentGraphics.dispose();
 
         // Update the blink status according to if there were any blinking characters or not
         this.hasBlinkingText = foundBlinkingCharacters;
-
-        // Tell anyone waiting on us that drawing is complete
-        notifyAll();
-        //System.out.println("done!");
     }
 
     private void ensureBackbufferHasRightSize() {
@@ -499,7 +509,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
                 Arrays.fill(line, new CharacterState(new TextCharacter(' '), foregroundColor, backgroundColor, false));
             }
         }
-        repaint();
+        flush();
     }
 
     @Override
@@ -561,6 +571,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
 
     @Override
     public void flush() {
+        flushed = true;
         repaint();
     }
 
