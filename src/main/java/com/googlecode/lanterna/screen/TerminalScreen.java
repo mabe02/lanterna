@@ -106,12 +106,12 @@ public class TerminalScreen extends AbstractScreen {
         stopScreen(true);
     }
     
-    public synchronized void stopScreen(boolean flush) throws IOException {
+    public synchronized void stopScreen(boolean flushInput) throws IOException {
         if(!isStarted) {
             return;
         }
 
-        if (flush) {
+        if (flushInput) {
             //Drain the input queue
             KeyStroke keyStroke;
             do {
