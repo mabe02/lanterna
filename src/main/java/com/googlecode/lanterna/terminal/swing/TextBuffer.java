@@ -96,6 +96,14 @@ class TextBuffer {
 
     void setCharacter(TerminalSize terminalSize, TerminalPosition currentPosition, TextCharacter terminalCharacter) {
         List<TextCharacter> line = getLine(terminalSize, currentPosition);
+
+        //If we are replacing a CJK character with a non-CJK character, make the following character empty
+        if(TerminalTextUtils.isCharCJK(line.get(currentPosition.getColumn()).getCharacter()) &&
+                !TerminalTextUtils.isCharCJK(terminalCharacter.getCharacter())) {
+            line.set(currentPosition.getColumn() + 1, terminalCharacter.withCharacter(' '));
+        }
+
+        //Set the character in the buffer
         line.set(currentPosition.getColumn(), terminalCharacter);
 
         //Pad CJK character with a trailing space
