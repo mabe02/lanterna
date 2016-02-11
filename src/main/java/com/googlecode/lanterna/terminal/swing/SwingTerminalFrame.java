@@ -130,7 +130,7 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
     }
     
     private SwingTerminalFrame(String title, SwingTerminal swingTerminal, TerminalEmulatorAutoCloseTrigger autoCloseTrigger) {
-        super(title);
+        super(title != null ? title : "SwingTerminalFrame");
         this.swingTerminal = swingTerminal;
         this.autoCloseTrigger = autoCloseTrigger;
         this.disposed = false;

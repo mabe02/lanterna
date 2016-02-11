@@ -5,10 +5,7 @@ import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.input.KeyStroke;
 
 import java.awt.*;
-import java.awt.event.HierarchyEvent;
-import java.awt.event.HierarchyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.io.IOException;
 import java.util.Collections;
 
@@ -50,7 +47,14 @@ class AWTTerminalImplementation extends GraphicalTerminalImplementation {
         component.addHierarchyListener(new HierarchyListener() {
             @Override
             public void hierarchyChanged(HierarchyEvent e) {
-                System.out.println(e.toString());
+                if(e.getChangeFlags() == HierarchyEvent.DISPLAYABILITY_CHANGED) {
+                    if(e.getChanged().isDisplayable()) {
+                        startBlinkTimer();
+                    }
+                    else {
+                        stopBlinkTimer();
+                    }
+                }
             }
         });
     }

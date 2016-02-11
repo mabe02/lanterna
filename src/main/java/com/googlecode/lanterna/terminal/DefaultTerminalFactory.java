@@ -54,7 +54,7 @@ public final class DefaultTerminalFactory implements TerminalFactory {
     private TerminalEmulatorAutoCloseTrigger autoCloseTrigger;
     private TerminalEmulatorColorConfiguration colorConfiguration;
     private TerminalEmulatorDeviceConfiguration deviceConfiguration;
-    private SwingTerminalFontConfiguration fontConfiguration;
+    private AWTTerminalFontConfiguration fontConfiguration;
     private MouseCaptureMode mouseCaptureMode;
     
     /**
@@ -78,7 +78,7 @@ public final class DefaultTerminalFactory implements TerminalFactory {
         
         this.forceTextTerminal = false;
         this.autoOpenTerminalFrame = true;
-        this.title = "SwingTerminalFrame";
+        this.title = null;
         this.autoCloseTrigger = TerminalEmulatorAutoCloseTrigger.CloseOnExitPrivateMode;
         this.mouseCaptureMode = null;
 
@@ -110,7 +110,7 @@ public final class DefaultTerminalFactory implements TerminalFactory {
      */
     public Terminal createTerminalEmulator() {
         Window window;
-        if(hasSwing()) {
+        if(hasSwing() && !forceAWTOverSwing) {
             window = createSwingTerminal();
         }
         else {
@@ -138,7 +138,7 @@ public final class DefaultTerminalFactory implements TerminalFactory {
                 title,
                 initialTerminalSize,
                 deviceConfiguration,
-                fontConfiguration,
+                fontConfiguration instanceof SwingTerminalFontConfiguration ? (SwingTerminalFontConfiguration)fontConfiguration : null,
                 colorConfiguration,
                 autoCloseTrigger);
     }
@@ -194,7 +194,7 @@ public final class DefaultTerminalFactory implements TerminalFactory {
      * see the terminal window. Default for this value is {@code true}.
      * @param autoOpenTerminalFrame Automatically open SwingTerminalFrame after creation
      */
-    public void setAutoOpenTerminalFrame(boolean autoOpenTerminalFrame) {
+    public void setAutoOpenTerminalEmulatorWindow(boolean autoOpenTerminalFrame) {
         this.autoOpenTerminalFrame = autoOpenTerminalFrame;
     }
     
@@ -203,7 +203,7 @@ public final class DefaultTerminalFactory implements TerminalFactory {
      * @param title Title to use on created SwingTerminalFrames created by this factory
      * @return Reference to itself, so multiple .set-calls can be chained
      */
-    public DefaultTerminalFactory setSwingTerminalFrameTitle(String title) {
+    public DefaultTerminalFactory setTerminalEmulatorTitle(String title) {
         this.title = title;
         return this;
     }
@@ -223,7 +223,7 @@ public final class DefaultTerminalFactory implements TerminalFactory {
      * @param colorConfiguration Color configuration to use on created SwingTerminalFrames created by this factory
      * @return Reference to itself, so multiple .set-calls can be chained
      */
-    public DefaultTerminalFactory setSwingTerminalFrameColorConfiguration(TerminalEmulatorColorConfiguration colorConfiguration) {
+    public DefaultTerminalFactory setTerminalEmulatorColorConfiguration(TerminalEmulatorColorConfiguration colorConfiguration) {
         this.colorConfiguration = colorConfiguration;
         return this;
     }
@@ -233,7 +233,7 @@ public final class DefaultTerminalFactory implements TerminalFactory {
      * @param deviceConfiguration Device configuration to use on created SwingTerminalFrames created by this factory
      * @return Reference to itself, so multiple .set-calls can be chained
      */
-    public DefaultTerminalFactory setSwingTerminalFrameDeviceConfiguration(TerminalEmulatorDeviceConfiguration deviceConfiguration) {
+    public DefaultTerminalFactory setTerminalEmulatorDeviceConfiguration(TerminalEmulatorDeviceConfiguration deviceConfiguration) {
         this.deviceConfiguration = deviceConfiguration;
         return this;
     }
@@ -243,7 +243,7 @@ public final class DefaultTerminalFactory implements TerminalFactory {
      * @param fontConfiguration Font configuration to use on created SwingTerminalFrames created by this factory
      * @return Reference to itself, so multiple .set-calls can be chained
      */
-    public DefaultTerminalFactory setSwingTerminalFrameFontConfiguration(SwingTerminalFontConfiguration fontConfiguration) {
+    public DefaultTerminalFactory setTerminalEmulatorFontConfiguration(AWTTerminalFontConfiguration fontConfiguration) {
         this.fontConfiguration = fontConfiguration;
         return this;
     }

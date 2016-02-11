@@ -4,9 +4,9 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextCharacter;
 
 import javax.swing.*;
-import javax.swing.event.AncestorEvent;
-import javax.swing.event.AncestorListener;
 import java.awt.*;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
@@ -50,19 +50,18 @@ class SwingTerminalImplementation extends GraphicalTerminalImplementation {
                 SwingTerminalImplementation.this.component.requestFocusInWindow();
             }
         });
-        component.addAncestorListener(new AncestorListener() {
+        component.addHierarchyListener(new HierarchyListener() {
             @Override
-            public void ancestorAdded(AncestorEvent event) {
-
+            public void hierarchyChanged(HierarchyEvent e) {
+                if(e.getChangeFlags() == HierarchyEvent.DISPLAYABILITY_CHANGED) {
+                    if(e.getChanged().isDisplayable()) {
+                        startBlinkTimer();
+                    }
+                    else {
+                        stopBlinkTimer();
+                    }
+                }
             }
-
-            @Override
-            public void ancestorRemoved(AncestorEvent event) {
-                cancelTimer();
-            }
-
-            @Override
-            public void ancestorMoved(AncestorEvent event) { }
         });
     }
 

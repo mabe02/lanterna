@@ -87,7 +87,7 @@ public class AWTTerminalFrame extends Frame implements IOSafeTerminal {
      */
     public AWTTerminalFrame(String title,
                             TerminalEmulatorDeviceConfiguration deviceConfiguration,
-                            SwingTerminalFontConfiguration fontConfiguration,
+                            AWTTerminalFontConfiguration fontConfiguration,
                             TerminalEmulatorColorConfiguration colorConfiguration) {
         this(title, deviceConfiguration, fontConfiguration, colorConfiguration, TerminalEmulatorAutoCloseTrigger.DoNotAutoClose);
     }
@@ -102,7 +102,7 @@ public class AWTTerminalFrame extends Frame implements IOSafeTerminal {
      */
     public AWTTerminalFrame(String title,
                             TerminalEmulatorDeviceConfiguration deviceConfiguration,
-                            SwingTerminalFontConfiguration fontConfiguration,
+                            AWTTerminalFontConfiguration fontConfiguration,
                             TerminalEmulatorColorConfiguration colorConfiguration,
                             TerminalEmulatorAutoCloseTrigger autoCloseTrigger) {
         this(title, null, deviceConfiguration, fontConfiguration, colorConfiguration, autoCloseTrigger);
@@ -120,7 +120,7 @@ public class AWTTerminalFrame extends Frame implements IOSafeTerminal {
     public AWTTerminalFrame(String title,
                             TerminalSize terminalSize,
                             TerminalEmulatorDeviceConfiguration deviceConfiguration,
-                            SwingTerminalFontConfiguration fontConfiguration,
+                            AWTTerminalFontConfiguration fontConfiguration,
                             TerminalEmulatorColorConfiguration colorConfiguration,
                             TerminalEmulatorAutoCloseTrigger autoCloseTrigger) {
         this(title,
@@ -129,7 +129,7 @@ public class AWTTerminalFrame extends Frame implements IOSafeTerminal {
     }
     
     private AWTTerminalFrame(String title, AWTTerminal awtTerminal, TerminalEmulatorAutoCloseTrigger autoCloseTrigger) {
-        super(title);
+        super(title != null ? title : "AWTTerminalFrame");
         this.awtTerminal = awtTerminal;
         this.autoCloseTrigger = autoCloseTrigger;
         this.disposed = false;

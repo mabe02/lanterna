@@ -53,7 +53,6 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     private final VirtualTerminal virtualTerminal;
     private final BlockingQueue<KeyStroke> keyQueue;
     private final List<ResizeListener> resizeListeners;
-    private final Timer blinkTimer;
 
     private final String enquiryString;
     private final EnumSet<SGR> activeSGRs;
@@ -61,6 +60,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     private TextColor backgroundColor;
 
     private volatile boolean cursorIsVisible;
+    private volatile Timer blinkTimer;
     private volatile boolean hasBlinkingText;
     private volatile boolean blinkOn;
 
@@ -116,19 +116,9 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
         this.enquiryString = "TerminalEmulator";
         this.visualState = new CharacterState[48][160];
         this.backbuffer = null;  // We don't know the dimensions yet
-        this.blinkTimer = new Timer();
+        this.blinkTimer = null;
         this.hasBlinkingText = false;   // Assume initial content doesn't have any blinking text
         this.blinkOn = true;
-
-        this.blinkTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                blinkOn = !blinkOn;
-                if(hasBlinkingText) {
-                    repaint();
-                }
-            }
-        }, deviceConfiguration.getBlinkLengthInMilliSeconds(), deviceConfiguration.getBlinkLengthInMilliSeconds());
 
         //Set the initial scrollable size
         //scrollObserver.newScrollableLength(fontConfiguration.getFontHeight() * terminalSize.getRows());
@@ -144,8 +134,30 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     protected abstract Font getFontForCharacter(TextCharacter character);
     protected abstract void repaint();
 
-    protected void cancelTimer() {
+    protected synchronized void startBlinkTimer() {
+        if(blinkTimer != null) {
+            // Already on!
+            return;
+        }
+        blinkTimer = new Timer("LanternaTerminalBlinkTimer", true);
+        blinkTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                blinkOn = !blinkOn;
+                if(hasBlinkingText) {
+                    repaint();
+                }
+            }
+        }, deviceConfiguration.getBlinkLengthInMilliSeconds(), deviceConfiguration.getBlinkLengthInMilliSeconds());
+    }
+
+    protected synchronized void stopBlinkTimer() {
+        if(blinkTimer == null) {
+            // Already off!
+            return;
+        }
         blinkTimer.cancel();
+        blinkTimer = null;
     }
 
     ///////////
