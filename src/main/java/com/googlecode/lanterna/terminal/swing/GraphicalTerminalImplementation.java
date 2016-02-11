@@ -145,7 +145,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
             public void run() {
                 blinkOn = !blinkOn;
                 if(hasBlinkingText) {
-                    System.out.println("Requesting repaint");
+                    //System.out.println("Requesting repaint");
                     repaint();
                 }
             }
@@ -170,7 +170,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     }
 
     protected synchronized void paintComponent(Graphics componentGraphics) {
-        System.out.print("Repainting...  ");
+        //System.out.print("Repainting...  ");
         //First, resize the buffer width/height if necessary
         int fontWidth = getFontWidth();
         int fontHeight = getFontHeight();
@@ -285,7 +285,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
 
         // Tell anyone waiting on us that drawing is complete
         notifyAll();
-        System.out.println("done!");
+        //System.out.println("done!");
     }
 
     private void ensureBackbufferHasRightSize() {
