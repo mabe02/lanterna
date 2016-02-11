@@ -133,6 +133,15 @@ public interface Window extends BasePane {
     boolean isVisible();
 
     /**
+     * This values is optionally used by the window manager to decide if the windows should be drawn or not. In an
+     * invisible state, the window is still considered active in the TextGUI but just not drawn and not receiving any
+     * input events. Please note that window managers may choose not to implement this.
+     *
+     * @param visible whether the window should be visible or not
+     */
+    void setVisible(boolean visible);
+
+    /**
      * This method is used to determine if the window requires re-drawing. The most common cause for this is the some
      * of its components has changed and we need a re-draw to make these changes visible.
      * @return {@code true} if the window would like to be re-drawn, {@code false} if the window doesn't need

@@ -57,7 +57,7 @@ public abstract class AbstractWindow extends AbstractBasePane implements Window 
         super();
         this.title = title;
         this.textGUI = null;
-        this.visible = false;
+        this.visible = true;
         this.lastKnownPosition = null;
         this.lastKnownSize = null;
         this.lastKnownDecoratedSize = null;
@@ -113,6 +113,10 @@ public abstract class AbstractWindow extends AbstractBasePane implements Window 
         return visible;
     }
 
+    @Override
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
     @Override
     public void draw(TextGUIGraphics graphics) {
         if(!graphics.getSize().equals(lastKnownSize)) {
