@@ -40,7 +40,7 @@ import java.util.concurrent.TimeUnit;
  * @author martin
  */
 @SuppressWarnings("serial")
-public class AWTTerminal extends Component implements IOSafeTerminal {
+public class AWTTerminal extends Panel implements IOSafeTerminal {
 
     private final AWTTerminalImplementation terminalImplementation;
 
@@ -169,6 +169,15 @@ public class AWTTerminal extends Component implements IOSafeTerminal {
 
     @Override
     public synchronized void paint(Graphics componentGraphics) {
+        // Flicker-free AWT!
+        // Extend Panel and do the drawing work in both update(..) and paint(..)
+        terminalImplementation.paintComponent(componentGraphics);
+    }
+
+    @Override
+    public synchronized void update(Graphics componentGraphics) {
+        // Flicker-free AWT!
+        // Extend Panel and do the drawing work in both update(..) and paint(..)
         terminalImplementation.paintComponent(componentGraphics);
     }
 
