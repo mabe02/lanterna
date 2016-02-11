@@ -94,6 +94,11 @@ class AWTTerminalImplementation extends GraphicalTerminalImplementation {
     }
 
     @Override
+    protected boolean isTextAntiAliased() {
+        return fontConfiguration.isAntiAliased();
+    }
+
+    @Override
     protected void repaint() {
         if(EventQueue.isDispatchThread()) {
             component.repaint();

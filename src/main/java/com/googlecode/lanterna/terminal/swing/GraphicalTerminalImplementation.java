@@ -134,6 +134,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     protected abstract int getHeight();
     protected abstract int getWidth();
     protected abstract Font getFontForCharacter(TextCharacter character);
+    protected abstract boolean isTextAntiAliased();
     protected abstract void repaint();
 
     protected synchronized void startBlinkTimer() {
@@ -218,12 +219,11 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
 
         //Setup the graphics object
         Graphics2D backbufferGraphics = backbuffer.createGraphics();
-        /*
-        if(antiAliasing) {
+
+        if(isTextAntiAliased()) {
             backbufferGraphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
             backbufferGraphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         }
-        */
 
         // Draw line by line, character by character
         // Initiate the blink state to whatever the cursor is using, since if the cursor is blinking then we always want

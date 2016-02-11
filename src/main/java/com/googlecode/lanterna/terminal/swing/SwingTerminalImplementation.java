@@ -100,6 +100,11 @@ class SwingTerminalImplementation extends GraphicalTerminalImplementation {
     }
 
     @Override
+    protected boolean isTextAntiAliased() {
+        return fontConfiguration.isAntiAliased();
+    }
+
+    @Override
     protected void repaint() {
         if(SwingUtilities.isEventDispatchThread()) {
             component.repaint();
