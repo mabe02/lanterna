@@ -24,6 +24,7 @@ import com.googlecode.lanterna.graphics.DoublePrintingTextGraphics;
 import com.googlecode.lanterna.graphics.TextGraphics;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
 
 /**
@@ -67,8 +68,8 @@ public class TerminalTextGraphicsTest {
 
         Thread.sleep(4000);
 
-        if(terminal instanceof JFrame) {
-            ((JFrame)terminal).dispose();
+        if(terminal instanceof Window) {
+            ((Window)terminal).dispose();
         }
     }
 }
