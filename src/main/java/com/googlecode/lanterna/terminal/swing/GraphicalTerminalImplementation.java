@@ -483,19 +483,25 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     @Override
     public synchronized void enterPrivateMode() {
         virtualTerminal.switchToPrivateMode();
-        repaint();
+        clearBackBufferAndVisualState();
+        flush();
     }
 
     @Override
     public synchronized void exitPrivateMode() {
         virtualTerminal.switchToNormalMode();
-        repaint();
+        clearBackBufferAndVisualState();
+        flush();
     }
 
     @Override
     public synchronized void clearScreen() {
         virtualTerminal.clear();
+        clearBackBufferAndVisualState();
+        flush();
+    }
 
+    protected void clearBackBufferAndVisualState() {
         // Manually clear the backbuffer and visual state
         if(backbuffer != null) {
             Graphics2D graphics = backbuffer.createGraphics();
@@ -509,7 +515,6 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
                 Arrays.fill(line, new CharacterState(new TextCharacter(' '), foregroundColor, backgroundColor, false));
             }
         }
-        flush();
     }
 
     @Override
