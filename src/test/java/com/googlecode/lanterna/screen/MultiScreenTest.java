@@ -27,6 +27,7 @@ import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.terminal.swing.SwingTerminalFrame;
 import com.googlecode.lanterna.terminal.swing.TerminalEmulatorAutoCloseTrigger;
 
+import java.awt.*;
 import java.io.IOException;
 
 /**
@@ -89,9 +90,8 @@ public class MultiScreenTest {
             greenScreen.stopScreen();
         }
         terminal.clearScreen();
-        if(terminal instanceof SwingTerminalFrame) {
-            ((SwingTerminalFrame)terminal).setVisible(false);
-            ((SwingTerminalFrame)terminal).dispose();
+        if(terminal instanceof Window) {
+            ((Window)terminal).dispose();
         }
     }
 }
