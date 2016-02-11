@@ -145,7 +145,6 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
             public void run() {
                 blinkOn = !blinkOn;
                 if(hasBlinkingText) {
-                    //System.out.println("Requesting repaint");
                     repaint();
                 }
             }
@@ -251,6 +250,9 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
                             characterWidth,
                             drawCursor);
                     visualState[rowIndex][columnIndex] = characterState;
+                    if(TerminalTextUtils.isCharCJK(character.getCharacter())) {
+                        visualState[rowIndex][columnIndex+1] = characterState;
+                    }
                 }
 
                 if(character.getModifiers().contains(SGR.BLINK)) {
@@ -730,6 +732,16 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
             result = 31 * result + backgroundColor.hashCode();
             result = 31 * result + (drawCursor ? 1 : 0);
             return result;
+        }
+
+        @Override
+        public String toString() {
+            return "CharacterState{" +
+                    "textCharacter=" + textCharacter +
+                    ", foregroundColor=" + foregroundColor +
+                    ", backgroundColor=" + backgroundColor +
+                    ", drawCursor=" + drawCursor +
+                    '}';
         }
     }
 }
