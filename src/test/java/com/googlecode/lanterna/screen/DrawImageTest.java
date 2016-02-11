@@ -15,8 +15,7 @@ import java.io.IOException;
 public class DrawImageTest {
     public static void main(String[] args) throws IOException {
         //Setup a standard Screen
-        Terminal terminal = new DefaultTerminalFactory().createTerminal();
-        Screen screen = new TerminalScreen(terminal);
+        Screen screen = new TestTerminalFactory(args).createScreen();
         screen.startScreen();
         screen.setCursorPosition(null);
 
