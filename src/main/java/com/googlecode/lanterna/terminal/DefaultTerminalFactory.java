@@ -110,7 +110,7 @@ public final class DefaultTerminalFactory implements TerminalFactory {
      */
     public Terminal createTerminalEmulator() {
         Window window;
-        if(hasSwing() && !forceAWTOverSwing) {
+        if(!forceAWTOverSwing && hasSwing()) {
             window = createSwingTerminal();
         }
         else {
