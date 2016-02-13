@@ -199,10 +199,10 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
         // At this point, if the user hasn't asked for an explicit flush, just paint the backbuffer. It's prone to
         // problems if the user isn't flushing properly but it reduces flickering when resizing the window and the code
         // is asynchronously responding to the resize
-        if(flushed) {
+        //if(flushed) {
             updateBackBuffer(fontWidth, fontHeight, terminalResized, terminalSize);
             flushed = false;
-        }
+        //}
 
         componentGraphics.drawImage(backbuffer, 0, 0, getWidth(), getHeight(), 0, 0, getWidth(), getHeight(), null);
 
@@ -219,6 +219,8 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
 
         //Setup the graphics object
         Graphics2D backbufferGraphics = backbuffer.createGraphics();
+        backbufferGraphics.setColor(colorConfiguration.toAWTColor(TextColor.ANSI.DEFAULT, false, false));
+        backbufferGraphics.fillRect(0, 0, getWidth(), getHeight());
 
         if(isTextAntiAliased()) {
             backbufferGraphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
@@ -257,7 +259,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
                                 (deviceConfiguration.isCursorBlinking() && blinkOn));    //If the cursor is blinking, only draw when blinkOn is true
 
                 CharacterState characterState = new CharacterState(character, foregroundColor, backgroundColor, drawCursor);
-                if(!characterState.equals(visualState[rowIndex][columnIndex]) || terminalResized) {
+                //if(!characterState.equals(visualState[rowIndex][columnIndex]) || terminalResized) {
                     drawCharacter(backbufferGraphics,
                             character,
                             columnIndex,
@@ -272,7 +274,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
                     if(TerminalTextUtils.isCharCJK(character.getCharacter())) {
                         visualState[rowIndex][columnIndex+1] = characterState;
                     }
-                }
+                //}
 
                 if(character.getModifiers().contains(SGR.BLINK)) {
                     foundBlinkingCharacters = true;
