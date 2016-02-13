@@ -637,14 +637,15 @@ public class GridLayout implements LayoutManager {
 
     private Set<Integer> getExpandableRows(Component[][] table) {
         Set<Integer> expandableRows = new TreeSet<Integer>();
-        for(Component[] row: table) {
-            for (int i = 0; i < row.length; i++) {
-                if(row[i] == null) {
+        for(int rowIndex = 0; rowIndex < table.length; rowIndex++) {
+            Component[] row = table[rowIndex];
+            for (int columnIndex = 0; columnIndex < row.length; columnIndex++) {
+                if(row[columnIndex] == null) {
                     continue;
                 }
-                GridLayoutData layoutData = getLayoutData(row[i]);
+                GridLayoutData layoutData = getLayoutData(row[columnIndex]);
                 if(layoutData.grabExtraVerticalSpace) {
-                    expandableRows.add(i);
+                    expandableRows.add(rowIndex);
                 }
             }
         }
