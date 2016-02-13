@@ -130,7 +130,11 @@ public class InputTest {
     }
 
     private static String formatData(int inByte) {
-        return inByte + " (0x" + Integer.toString(inByte, 16) + ", b" + Integer.toString(inByte, 2) + ", '" + (char) inByte + "')";
+        String charString = Character.toString((char)inByte);
+        if(Character.isISOControl(inByte)) {
+            charString = "<control character>";
+        }
+        return inByte + " (0x" + Integer.toString(inByte, 16) + ", b" + Integer.toString(inByte, 2) + ", '" + charString + "')";
     }
 
     private static void writeCSISequenceToTerminal(byte... bytes) throws IOException {
