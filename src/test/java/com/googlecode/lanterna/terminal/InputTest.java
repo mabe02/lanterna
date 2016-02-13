@@ -26,6 +26,7 @@ import java.io.*;
 public class InputTest {
     public static void main(String[] args) throws IOException {
         boolean useReader = false;
+        boolean privateMode = false;
         for(String parameter: args) {
             if("--mouse-click".equals(parameter)) {
                 writeCSISequenceToTerminal((byte) '?', (byte) '1', (byte) '0', (byte) '0', (byte) '0', (byte) 'h');
@@ -103,10 +104,27 @@ public class InputTest {
                     }
                 });
             }
+            else if("--private".equals(parameter)) {
+                privateMode = true;
+            }
             else {
                 System.err.println("Unknown parameter " + parameter);
                 return;
             }
+        }
+        if(privateMode) {
+            writeCSISequenceToTerminal((byte) '?', (byte) '1', (byte) '0', (byte) '4', (byte) '9', (byte) 'h');
+            Runtime.getRuntime().addShutdownHook(new Thread("RestoreTerminal") {
+                @Override
+                public void run() {
+                    try {
+                        writeCSISequenceToTerminal((byte) '?', (byte) '1', (byte) '0', (byte) '4', (byte) '9', (byte) 'l');
+                    }
+                    catch(IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
         }
         if(useReader) {
             InputStreamReader reader = new InputStreamReader(System.in);
