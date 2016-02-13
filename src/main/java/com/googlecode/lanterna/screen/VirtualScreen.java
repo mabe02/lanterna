@@ -299,7 +299,7 @@ public class VirtualScreen extends AbstractScreen {
             graphics.setForegroundColor(TextColor.ANSI.WHITE);
             graphics.setBackgroundColor(TextColor.ANSI.BLACK);
             graphics.fill(' ');
-            graphics.putString(0, graphics.getSize().getRows() - 1, "Terminal too small, use ctrl+arrows to scroll");
+            graphics.putString(0, graphics.getSize().getRows() - 1, "Terminal too small, use ALT+arrows to scroll");
 
             int horizontalSize = (int)(((double)(viewportSize.getColumns()) / (double)virtualSize.getColumns()) * (viewportSize.getColumns()));
             int scrollable = viewportSize.getColumns() - horizontalSize - 1;
