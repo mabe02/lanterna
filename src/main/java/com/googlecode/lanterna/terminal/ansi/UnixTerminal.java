@@ -26,7 +26,7 @@ import com.googlecode.lanterna.TerminalSize;
 
 /**
  * This class extends UnixLikeTerminal and implements the Unix-specific parts.
- * <p/>
+ * <p>
  * If you need to have Lanterna to call stty at a different location, you'll need to
  * subclass this and override {@code getSTTYCommand()}.
  *
@@ -192,7 +192,7 @@ public class UnixTerminal extends UnixLikeTerminal {
      * interpreted by the shell and affect the program. For example, ctrl+c will send an interrupt that causes the
      * JVM to shut down, but this method will make it pass in ctrl+c as a normal KeyStroke instead (you can still make
      * ctrl+c kill the application, but Lanterna can do this for you after having restored the terminal).
-     * <p/>
+     * <p>
      * Please note that this method is generally called automatically (i.e. it's turned on by default), unless you
      * define a system property "com.googlecode.lanterna.terminal.UnixTerminal.catchSpecialCharacters" and set it to
      * the string "false".

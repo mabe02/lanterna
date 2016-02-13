@@ -1,11 +1,11 @@
 package com.googlecode.lanterna.gui2;
 
 /**
- * This {@code TextGUIThread} implementation is assuming the GUI event thread will be the same as the thread that
- * creates the {@TextGUI} objects. This means on the thread you create the GUI on, when you are done you pass over
+ * This {@link TextGUIThread} implementation is assuming the GUI event thread will be the same as the thread that
+ * creates the {@link TextGUI} objects. This means on the thread you create the GUI on, when you are done you pass over
  * control to lanterna and let it manage the GUI for you. When the GUI is done, you'll get back control again over the
  * thread. This is different from {@code SeparateTextGUIThread} which spawns a new thread that manages the GUI and
- * leaves the current thread for you to handle.<p/>
+ * leaves the current thread for you to handle.<p>
  * Here are two examples of how to use {@code SameTextGUIThread}:
  * <pre>
  *     {@code

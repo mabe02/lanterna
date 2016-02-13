@@ -24,7 +24,7 @@ package com.googlecode.lanterna.input;
  * (detectable) by a terminal environment. For ordinary numbers, letters and symbols, the enum value is <i>Character</i>
  * but please keep in mind that newline and tab, usually represented by \n and \t, are considered their own separate
  * values by this enum (<i>Enter</i> and <i>Tab</i>).
- * <p/>
+ * <p>
  * Previously (before Lanterna 3.0), this enum was embedded inside the Key class.
  *
  * @author Martin
@@ -33,7 +33,7 @@ public enum KeyType {
     /**
      * This value corresponds to a regular character 'typed', usually alphanumeric or a symbol. The one special case
      * here is the enter key which could be expected to be returned as a '\n' character but is actually returned as a
-     * separate {@KeyType} (see below). Tab, backspace and some others works this way too.
+     * separate {@code KeyType} (see below). Tab, backspace and some others works this way too.
      */
     Character,
     Escape,

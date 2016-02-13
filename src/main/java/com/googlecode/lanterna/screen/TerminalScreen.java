@@ -48,7 +48,7 @@ public class TerminalScreen extends AbstractScreen {
      * Creates a new Screen on top of a supplied terminal, will query the terminal for its size. The screen is initially
      * blank. The default character used for unused space (the newly initialized state of the screen and new areas after
      * expanding the terminal size) will be a blank space in 'default' ANSI front- and background color.
-     * <p/>
+     * <p>
      * Before you can display the content of this buffered screen to the real underlying terminal, you must call the
      * {@code startScreen()} method. This will ask the terminal to enter private mode (which is required for Screens to
      * work properly). Similarly, when you are done, you should call {@code stopScreen()} which will exit private mode.
@@ -64,7 +64,7 @@ public class TerminalScreen extends AbstractScreen {
      * Creates a new Screen on top of a supplied terminal, will query the terminal for its size. The screen is initially
      * blank. The default character used for unused space (the newly initialized state of the screen and new areas after
      * expanding the terminal size) will be a blank space in 'default' ANSI front- and background color.
-     * <p/>
+     * <p>
      * Before you can display the content of this buffered screen to the real underlying terminal, you must call the
      * {@code startScreen()} method. This will ask the terminal to enter private mode (which is required for Screens to
      * work properly). Similarly, when you are done, you should call {@code stopScreen()} which will exit private mode.
@@ -307,7 +307,7 @@ public class TerminalScreen extends AbstractScreen {
     
     /**
      * Returns the underlying {@code Terminal} interface that this Screen is using. 
-     * </p>
+     * <p>
      * <b>Be aware:</b> directly modifying the underlying terminal will most likely result in unexpected behaviour if
      * you then go on and try to interact with the Screen. The Screen's back-buffer/front-buffer will not know about
      * the operations you are going on the Terminal and won't be able to properly generate a refresh unless you enforce

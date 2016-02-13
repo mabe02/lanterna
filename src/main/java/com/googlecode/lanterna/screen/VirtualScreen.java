@@ -11,7 +11,7 @@ import java.io.IOException;
  * VirtualScreen wraps a normal screen and presents it as a screen that has a configurable minimum size; if the real
  * screen is smaller than this size, the presented screen will add scrolling to get around it. To anyone using this
  * class, it will appear and behave just as a normal screen. Scrolling is done by using CTRL + arrow keys.
- * <p/>
+ * <p>
  * The use case for this class is to allow you to set a minimum size that you can count on be honored, no matter how
  * small the user makes the terminal. This should make programming GUIs easier.
  * @author Martin
@@ -28,7 +28,7 @@ public class VirtualScreen extends AbstractScreen {
      * that is created on top of the real {@code Terminal}, it will have the correct size and content for what's
      * actually displayed to the user, but this class will present everything as one view with a fixed minimum size,
      * no matter what size the real terminal has.
-     * <p/>
+     * <p>
      * The initial minimum size will be the current size of the screen.
      * @param screen Real screen that will be used when drawing the whole or partial virtual screen
      */

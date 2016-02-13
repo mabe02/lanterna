@@ -32,10 +32,10 @@ import java.util.List;
 public interface WindowManager {
 
     /**
-     * Will be polled by the the {@code WindowBasedTextGUI} to see if the window manager believes an update is required.
+     * Will be polled by the the {@link WindowBasedTextGUI} to see if the window manager believes an update is required.
      * For example, it could be that there is no input, no events and none of the components are invalid, but the window
      * manager decides for some other reason that the GUI needs to be updated, in that case you should return
-     * {@core true} here. Please note that returning {@code false} will not prevent updates from happening, it's just
+     * {@code true} here. Please note that returning {@code false} will not prevent updates from happening, it's just
      * stating that the window manager isn't aware of some internal state change that would require an update.
      * @return {@code true} if the window manager believes the GUI needs to be update, {@code false} otherwise
      */

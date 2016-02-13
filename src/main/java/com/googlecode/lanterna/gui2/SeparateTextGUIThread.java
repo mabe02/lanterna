@@ -27,7 +27,7 @@ import java.util.concurrent.CountDownLatch;
  * needs to be explicitly started in order for the event processing loop to begin, so you must call {@code start()}
  * for this. The GUI thread will stop if {@code stop()} is called, the input stream returns EOF or an exception is
  * thrown from inside the event handling loop.
- * <p/>
+ * <p>
  * Here is an example of how to use this {@code TextGUIThread}:
  * <pre>
  *     {@code

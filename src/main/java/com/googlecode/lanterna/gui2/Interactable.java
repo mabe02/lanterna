@@ -166,12 +166,12 @@ public interface Interactable extends Component {
          */
         LEFT,
         /**
-         * The next interactable component, in layout manager order (usually left->right, up->down). This direction
+         * The next interactable component, in layout manager order (usually left-&gt;right, up-&gt;down). This direction
          * usually comes from the user pressing tab key.
          */
         NEXT,
         /**
-         * The previous interactable component, reversed layout manager order (usually right-left, down->up). This
+         * The previous interactable component, reversed layout manager order (usually right-&gt;left, down-&gt;up). This
          * direction usually comes from the user pressing shift and tab key (reverse tab).
          */
         PREVIOUS,

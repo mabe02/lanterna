@@ -15,11 +15,12 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 /**
- * This class provides an Swing implementation of the {@link Terminal} interface that is an embeddable component you can
- * put into a Swing container. The class has static helper methods for opening a new frame with a {@link SwingTerminal}
- * as its content, similar to how the SwingTerminal used to work in earlier versions of lanterna. This version supports
- * private mode and non-private mode with a scrollback history. You can customize many of the properties by supplying
- * device configuration, font configuration and color configuration when you construct the object.
+ * This class provides an Swing implementation of the {@link com.googlecode.lanterna.terminal.Terminal} interface that
+ * is an embeddable component you can put into a Swing container. The class has static helper methods for opening a new
+ * frame with a {@link SwingTerminal} as its content, similar to how the SwingTerminal used to work in earlier versions
+ * of lanterna. This version supports private mode and non-private mode with a scrollback history. You can customize
+ * many of the properties by supplying device configuration, font configuration and color configuration when you
+ * construct the object.
  * @author martin
  */
 public class SwingTerminal extends JComponent implements IOSafeTerminal {

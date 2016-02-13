@@ -5,8 +5,8 @@ import com.googlecode.lanterna.bundle.LocalizedUIBundle;
 import java.util.Locale;
 
 /**
- * Set of predefined localized string.<br/>
- * All this strings are localized by using {@link LocalizedUIBundle}.<br/>
+ * Set of predefined localized string.<br>
+ * All this strings are localized by using {@link LocalizedUIBundle}.<br>
  * Changing the locale by calling {@link Locale#setDefault(Locale)}.
  * @author silveryocha.
  */

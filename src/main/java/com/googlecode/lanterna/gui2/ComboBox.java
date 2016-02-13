@@ -246,7 +246,7 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
     }
 
     /**
-     * Returns {@core true} if the users input focus is currently on the drop-down button of the combo box, so that
+     * Returns {@code true} if the users input focus is currently on the drop-down button of the combo box, so that
      * pressing enter would trigger the popup window. This is generally used by renderers only and is always true for
      * read-only combo boxes as the component won't allow you to focus on the text in that mode.
      * @return {@code true} if the input focus is on the drop-down "button" of the combo box

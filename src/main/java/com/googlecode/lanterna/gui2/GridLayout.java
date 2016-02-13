@@ -28,7 +28,7 @@ import java.util.*;
  * SWT class itself but due to licensing concerns (the eclipse license is not compatible with LGPL) I was advised not to
  * do that. This is a partial implementation and some of the semantics have changed, but in general it works the same
  * way so the SWT documentation will generally match.
- * <p/>
+ * <p>
  * You use the {@code GridLayout} by specifying a number of columns you want your grid to have and then when you add
  * components, you assign {@code LayoutData} to these components using the different static methods in this class
  * ({@code createLayoutData(..)}). You can set components to span both rows and columns, as well as defining how to

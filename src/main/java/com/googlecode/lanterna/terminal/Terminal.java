@@ -30,12 +30,12 @@ import java.util.concurrent.TimeUnit;
  * This is the main terminal interface, at the lowest level supported by Lanterna. You can write your own
  * implementation of this if you want to target an exotic text terminal specification or another graphical environment
  * (like SWT), but you should probably extend {@code AbstractTerminal} instead of implementing this interface directly.
- * <p/>
+ * <p>
  * The normal way you interact in Java with a terminal is through the standard output (System.out) and standard error
  * (System.err) and it's usually through printing text only. This interface abstracts a terminal at a more fundamental
  * level, expressing methods for not only printing text but also changing colors, moving the cursor new positions,
  * enable special modifiers and get notified when the terminal's size has changed.
- * <p/>
+ * <p>
  * If you want to write an application that has a very precise control of the terminal, this is the
  * interface you should be programming against.
  *
@@ -101,7 +101,7 @@ public interface Terminal extends InputProvider {
      * one column to the right, so multiple calls to {@code putCharacter} will print out a text string without the need
      * to reposition the text cursor. If you reach the end of the line while putting characters using this method, you
      * can expect the text cursor to move to the beginning of the next line.
-     * <p/>
+     * <p>
      * You can output CJK (Chinese, Japanese, Korean) characters (as well as other regional scripts) but remember that
      * the terminal that the user is using might not have the required font to render it. Also worth noticing is that
      * CJK (and some others) characters tend to take up 2 columns per character, simply because they are a square in
@@ -157,11 +157,11 @@ public interface Terminal extends InputProvider {
     /**
      * Changes the foreground color for all the following characters put to the terminal. The foreground color is what
      * color to draw the text in, as opposed to the background color which is the color surrounding the characters.
-     * <p/>
+     * <p>
      * This overload is using the TextColor class to define a color, which is a layer of abstraction above the three
      * different color formats supported (ANSI, indexed and RGB). The other setForegroundColor(..) overloads gives
      * you direct access to set one of those three.
-     * <p/>
+     * <p>
      * Note to implementers of this interface, just make this method call <b>color.applyAsForeground(this);</b>
      *
      * @param color Color to use for foreground
@@ -172,11 +172,11 @@ public interface Terminal extends InputProvider {
     /**
      * Changes the background color for all the following characters put to the terminal. The background color is the
      * color surrounding the text being printed.
-     * <p/>
+     * <p>
      * This overload is using the TextColor class to define a color, which is a layer of abstraction above the three
      * different color formats supported (ANSI, indexed and RGB). The other setBackgroundColor(..) overloads gives
      * you direct access to set one of those three.
-     * <p/>
+     * <p>
      * Note to implementers of this interface, just make this method call <b>color.applyAsBackground(this);</b>
      *
      * @param color Color to use for the background
@@ -189,7 +189,7 @@ public interface Terminal extends InputProvider {
      * listener will really be invoked when the terminal has changed size, at all depends on the terminal emulator
      * implementation. Normally on Unix systems the WINCH signal will be sent to the process and lanterna can intercept
      * this.
-     * <p/>
+     * <p>
      * There are no guarantees on what thread the call will be made on, so please be careful with what kind of operation
      * you perform in this callback. You should probably not take too long to return.
      *

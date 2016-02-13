@@ -34,7 +34,6 @@ public class SwingTerminalFontConfiguration extends AWTTerminalFontConfiguration
      * @param useAntiAliasing If {@code true} then anti-aliasing should be enabled when drawing text
      * @param boldMode Option to control what to do when drawing text with the bold SGR enabled
      * @param fontsInOrderOfPriority Fonts to use when drawing text, in order of priority
-     * @return Font configuration built from the font list
      */
     public SwingTerminalFontConfiguration(boolean useAntiAliasing, BoldMode boldMode, Font... fontsInOrderOfPriority) {
         super(useAntiAliasing, boldMode, fontsInOrderOfPriority);
