@@ -13,13 +13,22 @@ import java.io.IOException;
 import java.util.Collections;
 
 /**
- * Created by martin on 08/02/16.
+ * Concrete implementation of {@link GraphicalTerminalImplementation} that adapts it to Swing
  */
 class SwingTerminalImplementation extends GraphicalTerminalImplementation {
 
     private final JComponent component;
     private final SwingTerminalFontConfiguration fontConfiguration;
 
+    /**
+     * Creates a new {@code SwingTerminalImplementation}
+     * @param component JComponent that is the Swing terminal surface
+     * @param fontConfiguration Font configuration to use
+     * @param initialTerminalSize Initial size of the terminal
+     * @param deviceConfiguration Device configuration
+     * @param colorConfiguration Color configuration
+     * @param scrollController Controller to be used when inspecting scroll status
+     */
     SwingTerminalImplementation(
             JComponent component,
             SwingTerminalFontConfiguration fontConfiguration,

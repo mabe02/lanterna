@@ -32,8 +32,8 @@ import java.util.concurrent.TimeUnit;
 
 
 /**
- * This class provides a Swing implementation of the Terminal interface that is an embeddable component you can put into
- * a Swing container. The class has static helper methods for opening a new frame with a SwingTerminal as its content,
+ * This class provides an AWT implementation of the Terminal interface that is an embeddable component you can put into
+ * an AWT container. The class has static helper methods for opening a new frame with an AWTTerminal as its content,
  * similar to how the SwingTerminal used to work in earlier versions of lanterna. This version supports private mode and
  * non-private mode with a scrollback history. You can customize many of the properties by supplying device
  * configuration, font configuration and color configuration when you construct the object.
@@ -45,7 +45,7 @@ public class AWTTerminal extends Panel implements IOSafeTerminal {
     private final AWTTerminalImplementation terminalImplementation;
 
     /**
-     * Creates a new SwingTerminal with all the defaults set and no scroll controller connected.
+     * Creates a new AWTTerminal with all the defaults set and no scroll controller connected.
      */
     public AWTTerminal() {
         this(new TerminalScrollController.Null());
@@ -53,7 +53,7 @@ public class AWTTerminal extends Panel implements IOSafeTerminal {
 
 
     /**
-     * Creates a new SwingTerminal with a particular scrolling controller that will be notified when the terminals
+     * Creates a new AWTTerminal with a particular scrolling controller that will be notified when the terminals
      * history size grows and will be called when this class needs to figure out the current scrolling position.
      * @param scrollController Controller for scrolling the terminal history
      */
@@ -66,10 +66,10 @@ public class AWTTerminal extends Panel implements IOSafeTerminal {
     }
 
     /**
-     * Creates a new SwingTerminal component using custom settings and no scroll controller.
-     * @param deviceConfiguration Device configuration to use for this SwingTerminal
-     * @param fontConfiguration Font configuration to use for this SwingTerminal
-     * @param colorConfiguration Color configuration to use for this SwingTerminal
+     * Creates a new AWTTerminal component using custom settings and no scroll controller.
+     * @param deviceConfiguration Device configuration to use for this AWTTerminal
+     * @param fontConfiguration Font configuration to use for this AWTTerminal
+     * @param colorConfiguration Color configuration to use for this AWTTerminal
      */
     public AWTTerminal(
             TerminalEmulatorDeviceConfiguration deviceConfiguration,
@@ -80,13 +80,13 @@ public class AWTTerminal extends Panel implements IOSafeTerminal {
     }
 
     /**
-     * Creates a new SwingTerminal component using custom settings and no scroll controller.
+     * Creates a new AWTTerminal component using custom settings and no scroll controller.
      * @param initialTerminalSize Initial size of the terminal, which will be used when calculating the preferred size
      *                            of the component. If null, it will default to 80x25. If the AWT layout manager forces
      *                            the component to a different size, the value of this parameter won't have any meaning
-     * @param deviceConfiguration Device configuration to use for this SwingTerminal
-     * @param fontConfiguration Font configuration to use for this SwingTerminal
-     * @param colorConfiguration Color configuration to use for this SwingTerminal
+     * @param deviceConfiguration Device configuration to use for this AWTTerminal
+     * @param fontConfiguration Font configuration to use for this AWTTerminal
+     * @param colorConfiguration Color configuration to use for this AWTTerminal
      */
     public AWTTerminal(
             TerminalSize initialTerminalSize,
@@ -102,12 +102,12 @@ public class AWTTerminal extends Panel implements IOSafeTerminal {
     }
 
     /**
-     * Creates a new SwingTerminal component using custom settings and a custom scroll controller. The scrolling
+     * Creates a new AWTTerminal component using custom settings and a custom scroll controller. The scrolling
      * controller will be notified when the terminal's history size grows and will be called when this class needs to
      * figure out the current scrolling position.
-     * @param deviceConfiguration Device configuration to use for this SwingTerminal
-     * @param fontConfiguration Font configuration to use for this SwingTerminal
-     * @param colorConfiguration Color configuration to use for this SwingTerminal
+     * @param deviceConfiguration Device configuration to use for this AWTTerminal
+     * @param fontConfiguration Font configuration to use for this AWTTerminal
+     * @param colorConfiguration Color configuration to use for this AWTTerminal
      * @param scrollController Controller to use for scrolling, the object passed in will be notified whenever the
      *                         scrollable area has changed
      */
@@ -123,15 +123,15 @@ public class AWTTerminal extends Panel implements IOSafeTerminal {
 
 
     /**
-     * Creates a new SwingTerminal component using custom settings and a custom scroll controller. The scrolling
+     * Creates a new AWTTerminal component using custom settings and a custom scroll controller. The scrolling
      * controller will be notified when the terminal's history size grows and will be called when this class needs to
      * figure out the current scrolling position.
      * @param initialTerminalSize Initial size of the terminal, which will be used when calculating the preferred size
      *                            of the component. If null, it will default to 80x25. If the AWT layout manager forces
      *                            the component to a different size, the value of this parameter won't have any meaning
-     * @param deviceConfiguration Device configuration to use for this SwingTerminal
-     * @param fontConfiguration Font configuration to use for this SwingTerminal
-     * @param colorConfiguration Color configuration to use for this SwingTerminal
+     * @param deviceConfiguration Device configuration to use for this AWTTerminal
+     * @param fontConfiguration Font configuration to use for this AWTTerminal
+     * @param colorConfiguration Color configuration to use for this AWTTerminal
      * @param scrollController Controller to use for scrolling, the object passed in will be notified whenever the
      *                         scrollable area has changed
      */

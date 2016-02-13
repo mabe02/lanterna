@@ -34,9 +34,10 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 /**
- * This is a Swing JComponent that carries a SwingTerminal with a scrollbar, effectively implementing a pseudo-terminal
- * with scrollback history. You can choose the same parameters are for SwingTerminal, they are forwarded, this class
- * mostly deals with linking the SwingTerminal with the scrollbar and having them update each other.
+ * This is a AWT Container that carries an {@link AWTTerminal} with a scrollbar, effectively implementing a
+ * pseudo-terminal with scrollback history. You can choose the same parameters are for {@link AWTTerminal}, they are
+ * forwarded, this class mostly deals with linking the {@link AWTTerminal} with the scrollbar and having them update
+ * each other.
  * @author Martin
  */
 @SuppressWarnings("serial")
@@ -46,7 +47,7 @@ public class ScrollingAWTTerminal extends Container implements IOSafeTerminal {
     private final Scrollbar scrollBar;
 
     /**
-     * Creates a new ScrollingSwingTerminal with all default options
+     * Creates a new {@code ScrollingAWTTerminal} with all default options
      */
     public ScrollingAWTTerminal() {
         this(TerminalEmulatorDeviceConfiguration.getDefault(),
@@ -55,7 +56,7 @@ public class ScrollingAWTTerminal extends Container implements IOSafeTerminal {
     }
 
     /**
-     * Creates a new ScrollingSwingTerminal with customizable settings.
+     * Creates a new {@code ScrollingAWTTerminal} with customizable settings.
      * @param deviceConfiguration How to configure the terminal virtual device
      * @param fontConfiguration What kind of fonts to use
      * @param colorConfiguration Which color schema to use for ANSI colors

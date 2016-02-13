@@ -39,11 +39,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 /**
- * This class provides a Swing implementation of the Terminal interface that is an embeddable component you can put into
- * a Swing container. The class has static helper methods for opening a new frame with a SwingTerminal as its content,
- * similar to how the SwingTerminal used to work in earlier versions of lanterna. This version supports private mode and
- * non-private mode with a scrollback history. You can customize many of the properties by supplying device
- * configuration, font configuration and color configuration when you construct the object.
+ * This is the class that does the heavy lifting for both {@link AWTTerminal} and {@link SwingTerminal}. It maintains
+ * most of the external terminal state and also the main back buffer that is copied to the components area on draw
+ * operations.
+ *
  * @author martin
  */
 @SuppressWarnings("serial")
@@ -79,9 +78,9 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     private BufferedImage backbuffer;
 
     /**
-     * Creates a new SwingTerminal component using custom settings and a custom scroll controller. The scrolling
-     * controller will be notified when the terminal's history size grows and will be called when this class needs to
-     * figure out the current scrolling position.
+     * Creates a new GraphicalTerminalImplementation component using custom settings and a custom scroll controller. The
+     * scrolling controller will be notified when the terminal's history size grows and will be called when this class
+     * needs to figure out the current scrolling position.
      * @param initialTerminalSize Initial size of the terminal, which will be used when calculating the preferred size
      *                            of the component. If null, it will default to 80x25. If the AWT layout manager forces
      *                            the component to a different size, the value of this parameter won't have any meaning
@@ -129,14 +128,54 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     ///////////
     // First abstract methods that are implemented in AWTTerminalImplementation and SwingTerminalImplementation
     ///////////
+
+    /**
+     * Used to find out the font height, in pixels
+     * @return Terminal font height in pixels
+     */
     protected abstract int getFontHeight();
+
+    /**
+     * Used to find out the font width, in pixels
+     * @return Terminal font width in pixels
+     */
     protected abstract int getFontWidth();
+
+    /**
+     * Used when requiring the total height of the terminal component, in pixels
+     * @return Height of the terminal component, in pixels
+     */
     protected abstract int getHeight();
+
+    /**
+     * Used when requiring the total width of the terminal component, in pixels
+     * @return Width of the terminal component, in pixels
+     */
     protected abstract int getWidth();
+
+    /**
+     * Returning the AWT font to use for the specific character. This might not always be the same, in case a we are
+     * trying to draw an unusual character (probably CJK) which isn't contained in the standard terminal font.
+     * @param character Character to get the font for
+     * @return Font to be used for this character
+     */
     protected abstract Font getFontForCharacter(TextCharacter character);
+
+    /**
+     * Returns {@code true} if anti-aliasing is enabled, {@code false} otherwise
+     * @return {@code true} if anti-aliasing is enabled, {@code false} otherwise
+     */
     protected abstract boolean isTextAntiAliased();
+
+    /**
+     * Called by the {@code GraphicalTerminalImplementation} when it would like the OS to schedule a repaint of the
+     * window
+     */
     protected abstract void repaint();
 
+    /**
+     * Start the timer that triggers blinking
+     */
     protected synchronized void startBlinkTimer() {
         if(blinkTimer != null) {
             // Already on!
@@ -154,6 +193,9 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
         }, deviceConfiguration.getBlinkLengthInMilliSeconds(), deviceConfiguration.getBlinkLengthInMilliSeconds());
     }
 
+    /**
+     * Stops the timer the triggers blinking
+     */
     protected synchronized void stopBlinkTimer() {
         if(blinkTimer == null) {
             // Already off!
@@ -166,11 +208,19 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     ///////////
     // First implement all the Swing-related methods
     ///////////
-    public synchronized Dimension getPreferredSize() {
+    /**
+     * Calculates the preferred size of this terminal
+     * @return Preferred size of this terminal
+     */
+    synchronized Dimension getPreferredSize() {
         return new Dimension(getFontWidth() * virtualTerminal.getSize().getColumns(),
                 getFontHeight() * virtualTerminal.getSize().getRows());
     }
 
+    /**
+     * Updates the back buffer (if necessary) and draws it to the component's surface
+     * @param componentGraphics Object to use when drawing to the component's surface
+     */
     protected synchronized void paintComponent(Graphics componentGraphics) {
         //First, resize the buffer width/height if necessary
         int fontWidth = getFontWidth();
@@ -445,22 +495,6 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
         }
     }
 
-    /**
-     * Returns the current device configuration. Note that it is immutable and cannot be changed.
-     * @return This SwingTerminal's current device configuration
-     */
-    public TerminalEmulatorDeviceConfiguration getDeviceConfiguration() {
-        return deviceConfiguration;
-    }
-
-    /**
-     * Returns the current color configuration. Note that it is immutable and cannot be changed.
-     * @return This SwingTerminal's current color configuration
-     */
-    public TerminalEmulatorColorConfiguration getColorConfiguration() {
-        return colorConfiguration;
-    }
-
     ///////////
     // Then delegate all Terminal interface methods to the virtual terminal implementation
     //
@@ -503,6 +537,10 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
         flush();
     }
 
+    /**
+     * Clears out the back buffer and the resets the visual state so next paint operation will do a full repaint of
+     * everything
+     */
     protected void clearBackBufferAndVisualState() {
         // Manually clear the backbuffer and visual state
         if(backbuffer != null) {
@@ -596,6 +634,10 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     // Remaining are private internal classes used by SwingTerminal
     ///////////
     private static final Set<Character> TYPED_KEYS_TO_IGNORE = new HashSet<Character>(Arrays.asList('\n', '\t', '\r', '\b', '\33', (char)127));
+
+    /**
+     * Class that translates AWT key events into Lanterna {@link KeyStroke}
+     */
     protected class TerminalInputListener extends KeyAdapter {
         @Override
         public void keyTyped(KeyEvent e) {

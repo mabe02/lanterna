@@ -30,8 +30,8 @@ import java.util.*;
 import java.util.List;
 
 /**
- * This class encapsulates the font information used by a SwingTerminal. By customizing this class, you can choose which
- * fonts are going to be used by a {@code SwingTerminal} component and some other related settings.
+ * This class encapsulates the font information used by an {@link AWTTerminal}. By customizing this class, you can
+ * choose which fonts are going to be used by an {@link AWTTerminal} component and some other related settings.
  * @author martin
  */
 public class AWTTerminalFontConfiguration {

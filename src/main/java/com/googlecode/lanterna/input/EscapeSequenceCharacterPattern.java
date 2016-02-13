@@ -142,11 +142,15 @@ public class EscapeSequenceCharacterPattern implements CharacterPattern {
      * @return either null (to report mis-match), or a valid KeyStroke.
      */
     protected KeyStroke getKeyStrokeRaw(char first,int num1,int num2,char last,boolean bEsc) {
-        KeyType kt = null;
+        KeyType kt = null; boolean bPuttyCtrl = false;
         if (last == '~' && stdMap.containsKey(num1)) {
             kt = stdMap.get(num1);
         } else if (finMap.containsKey(last)) {
             kt = finMap.get(last);
+            // Putty sends ^[OA for ctrl arrow-up, ^[[A for plain arrow-up:
+            // but only for A-D -- other ^[O... sequences are just plain keys
+            if (first == 'O' && last >= 'A' && last <= 'D') { bPuttyCtrl = true; }
+            // if we ever stumble into "keypad-mode", then it will end up inverted.
         } else {
             kt = null; // unknown key.
         }
@@ -155,9 +159,13 @@ public class EscapeSequenceCharacterPattern implements CharacterPattern {
             if (mods >= 0) { mods |= ALT; }
             else { mods = ALT; }
         }
+        if (bPuttyCtrl) {
+            if (mods >= 0) { mods |= CTRL; }
+            else { mods = CTRL; }
+        }
         return getKeyStroke( kt, mods );
-
     }
+
     @Override
     public Matching match(List<Character> cur) {
         State state = State.START;

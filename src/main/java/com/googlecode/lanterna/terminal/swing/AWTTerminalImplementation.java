@@ -10,12 +10,22 @@ import java.io.IOException;
 import java.util.Collections;
 
 /**
+ * AWT implementation of {@link GraphicalTerminalImplementation} that contains all the overrides for AWT
  * Created by martin on 08/02/16.
  */
 class AWTTerminalImplementation extends GraphicalTerminalImplementation {
     private final Component component;
     private final AWTTerminalFontConfiguration fontConfiguration;
 
+    /**
+     * Creates a new {@code AWTTerminalImplementation}
+     * @param component Component that is the AWT terminal surface
+     * @param fontConfiguration Font configuration to use
+     * @param initialTerminalSize Initial size of the terminal
+     * @param deviceConfiguration Device configuration
+     * @param colorConfiguration Color configuration
+     * @param scrollController Controller to be used when inspecting scroll status
+     */
     AWTTerminalImplementation(
             Component component,
             AWTTerminalFontConfiguration fontConfiguration,
@@ -62,7 +72,7 @@ class AWTTerminalImplementation extends GraphicalTerminalImplementation {
 
     /**
      * Returns the current font configuration. Note that it is immutable and cannot be changed.
-     * @return This SwingTerminal's current font configuration
+     * @return This {@link AWTTerminal}'s current font configuration
      */
     public AWTTerminalFontConfiguration getFontConfiguration() {
         return fontConfiguration;
