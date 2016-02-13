@@ -75,7 +75,6 @@ public class MultiWindowManagerTest extends TestBase {
 
         public DynamicWindow() {
             super("Window #" + WINDOW_COUNTER.incrementAndGet());
-            Panel contentArea = new Panel();
 
             Panel statsTableContainer = new Panel();
             statsTableContainer.setLayoutManager(new GridLayout(2));
@@ -89,13 +88,17 @@ public class MultiWindowManagerTest extends TestBase {
             this.labelUnlockWindow = new Label("true");
             statsTableContainer.addComponent(labelUnlockWindow);
 
+            Panel contentArea = new Panel();
+            contentArea.setLayoutManager(new GridLayout(1));
             contentArea.addComponent(statsTableContainer);
             contentArea.addComponent(new EmptySpace(TerminalSize.ONE));
             contentArea.addComponent(
                     new Label(
                             "Move window with ALT+Arrow\n" +
-                            "Resize window with CTRL+Arrow"));
-            contentArea.addComponent(new EmptySpace(TerminalSize.ONE));
+                            "Resize window with CTRL+Arrow\n" +
+                            " (need to disabled managed mode to resize)"));
+            contentArea.addComponent(new EmptySpace(TerminalSize.ONE).setLayoutData(
+                    GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.FILL, true, true)));
             contentArea.addComponent(
                     Panels.horizontal(
                             new Button("Toggle managed", new Runnable() {
