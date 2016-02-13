@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
  * This component keeps a text content that is editable by the user. A TextBox can be single line or multiline and lets
  * the user navigate the cursor in the text area by using the arrow keys, page up, page down, home and end. For
  * multi-line {@code TextBox}:es, scrollbars will be automatically displayed if needed.
- * <p/>
+ * <p>
  * Size-wise, a {@code TextBox} should be hard-coded to a particular size, it's not good at guessing how large it should
  * be. You can do this through the constructor.
  */

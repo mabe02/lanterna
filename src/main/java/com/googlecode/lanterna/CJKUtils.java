@@ -109,7 +109,7 @@ public class CJKUtils {
     /**
      * Given a string that may or may not contain CJK characters, returns the substring which will fit inside
      * <code>availableColumnSpace</code> columns. This method does not handle special cases like tab or new-line.
-     * <p/>
+     * <p>
      * Calling this method is the same as calling {@code fitString(string, 0, availableColumnSpace)}.
      * @param string The string to fit inside the availableColumnSpace
      * @param availableColumnSpace Number of columns to fit the string inside
@@ -125,7 +125,7 @@ public class CJKUtils {
     /**
      * Given a string that may or may not contain CJK characters, returns the substring which will fit inside
      * <code>availableColumnSpace</code> columns. This method does not handle special cases like tab or new-line.
-     * <p/>
+     * <p>
      * This overload has a {@code fromColumn} parameter that specified where inside the string to start fitting. Please
      * notice that {@code fromColumn} is not a character index inside the string, but a column index as if the string
      * has been printed from the left-most side of the terminal. So if the string is "日本語", fromColumn set to 1 will

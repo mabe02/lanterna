@@ -55,7 +55,7 @@ public interface TextColor {
      * This class represent classic ANSI colors that are likely to be very compatible with most terminal
      * implementations. It is limited to 8 colors (plus the 'default' color) but as a norm, using bold mode (SGR code)
      * will slightly alter the color, giving it a bit brighter tone, so in total this will give you 16 (+1) colors.
-     * </p>
+     * <p>
      * For more information, see http://en.wikipedia.org/wiki/File:Ansi.png
      */
     enum ANSI implements TextColor {
@@ -98,14 +98,14 @@ public interface TextColor {
      * lookup-table. All in all, there are 256 codes, but in order to know which one to know you either need to have the
      * table at hand, or you can use the two static helper methods which can help you convert from three 8-bit
      * RGB values to the closest approximate indexed color number. If you are interested, the 256 index values are
-     * actually divided like this:</br>
+     * actually divided like this:<br>
      * 0 .. 15 - System colors, same as ANSI, but the actual rendered color depends on the terminal emulators color scheme<br>
      * 16 .. 231 - Forms a 6x6x6 RGB color cube<br>
      * 232 .. 255 - A gray scale ramp (without black and white endpoints)<br>
-     *</p>
+     * <p>
      * Support for indexed colors is somewhat widely adopted, not as much as the ANSI colors (TextColor.ANSI) but more
      * than the RGB (TextColor.RGB).
-     * </p>
+     * <p>
      * For more details on this, please see <a
      * href="https://github.com/robertknight/konsole/blob/master/user-doc/README.moreColors">
      * this</a> commit message to Konsole.

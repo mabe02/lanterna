@@ -24,7 +24,7 @@ import java.io.IOException;
  * This interface is for abstracting the creation of your Terminal object. The bundled implementation is 
  * DefaultTerminalFactory, which will use a simple auto-detection mechanism for figuring out which terminal 
  * implementation to create based on characteristics of the system the program is running on.
- * <p/>
+ * <p>
  * @author martin
  */
 @SuppressWarnings("WeakerAccess")

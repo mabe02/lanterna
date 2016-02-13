@@ -28,7 +28,7 @@ import java.util.Arrays;
  * coming from the system's standard input. Because of this, the class can only represent what can be read and 
  * interpreted from the input stream; for example, certain key-combinations like ctrl+i is indistinguishable from a tab
  * key press.
- * <p/>
+ * <p>
  * Use the <tt>keyType</tt> field to determine what kind of key was pressed. For ordinary letters, numbers and symbols, the 
  * <tt>keyType</tt> will be <tt>KeyType.Character</tt> and the actual character value of the key is in the 
  * <tt>character</tt> field. Please note that return (\n) and tab (\t) are not sorted under type <tt>KeyType.Character</tt>

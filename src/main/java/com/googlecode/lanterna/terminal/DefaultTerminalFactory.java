@@ -32,7 +32,7 @@ import java.nio.charset.Charset;
 /**
  * This TerminalFactory implementation uses a simple auto-detection mechanism for figuring out which terminal 
  * implementation to create based on characteristics of the system the program is running on.
- * <p/>
+ * <p>
  * Note that for all systems with a graphical environment present, the SwingTerminalFrame will be chosen. You can 
  * suppress this by calling setForceTextTerminal(true) on this factory.
  * @author martin

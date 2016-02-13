@@ -25,7 +25,7 @@ import com.googlecode.lanterna.TerminalSize;
  * AbstractComponent provides some good default behaviour for a {@code Component}, all components in Lanterna extends
  * from this class in some way. If you want to write your own component that isn't interactable or theme:able, you
  * probably want to extend from this class.
- * <p/>
+ * <p>
  * The way you want to declare your new {@code Component} is to pass in itself as the generic parameter, like this:
  * <pre>
  * {@code

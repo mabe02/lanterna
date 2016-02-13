@@ -139,7 +139,7 @@ public interface BasePane extends Composite {
      * Lanterna will map arrow down and arrow right to tab, going to the next component, and array up and array left to
      * reverse tab, going to the previous component. If set to true, Lanterna will search for the next component
      * starting at the cursor position in the general direction of the arrow. By default this is enabled.
-     * <p/>
+     * <p>
      * In Lanterna 2, direction based movements were not available.
      * @param enableDirectionBasedMovements Should direction based focus movements be enabled?
      */

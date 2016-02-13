@@ -230,7 +230,7 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
     }
 
     /**
-     * If {@core true}, the user will be able to select and navigate individual cells, otherwise the user can only
+     * If {@code true}, the user will be able to select and navigate individual cells, otherwise the user can only
      * select full rows.
      * @param cellSelection {@code true} if cell selection should be enabled, {@code false} for row selection
      * @return Itself

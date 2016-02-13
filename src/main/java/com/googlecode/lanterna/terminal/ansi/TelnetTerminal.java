@@ -36,8 +36,8 @@ import java.util.List;
  * meta-operations (like echo mode) are communicated using Telnet negotiation language. You can't create objects of this
  * class directly; they are created for you when you are listening for incoming connections using a
  * {@code TelnetTerminalServer} and a client connects.
- * <p/>
- * A good resource on telnet communication is http://www.tcpipguide.com/free/t_TelnetProtocol.htm<br/>
+ * <p>
+ * A good resource on telnet communication is http://www.tcpipguide.com/free/t_TelnetProtocol.htm<br>
  * Also here: http://support.microsoft.com/kb/231866
  * @see TelnetTerminalServer
  * @author martin

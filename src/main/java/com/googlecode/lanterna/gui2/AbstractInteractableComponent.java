@@ -52,7 +52,7 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
 
     /**
      * {@inheritDoc}
-     * <p/>
+     * <p>
      * This method is final in {@code AbstractInteractableComponent}, please override {@code afterEnterFocus} instead
      */
     @Override
@@ -75,7 +75,7 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
 
     /**
      * {@inheritDoc}
-     * <p/>
+     * <p>
      * This method is final in {@code AbstractInteractableComponent}, please override {@code afterLeaveFocus} instead
      */
     @Override

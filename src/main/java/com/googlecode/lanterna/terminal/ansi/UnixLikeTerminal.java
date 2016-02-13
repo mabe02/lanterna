@@ -20,7 +20,7 @@ import com.googlecode.lanterna.input.KeyStroke;
  *  {@code UnixTerminal} and {@code CygwinTerminal}, like setting tty modes; echo, cbreak
  *  and minimum characters for reading as well as a shutdown hook to set the tty back to
  *  original state at the end.
- * <p/>
+ * <p>
  *  If requested, it handles Control-C input to terminate the program, and hooks
  *  into Unix WINCH signal to detect when the user has resized the terminal,
  *  if supported by the JVM.

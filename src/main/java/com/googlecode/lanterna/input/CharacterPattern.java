@@ -32,14 +32,15 @@ public interface CharacterPattern {
     /**
      * Given a list of characters, determine whether it exactly matches
      * any known KeyStroke, and whether a longer sequence can possibly match.
-     * @param List of characters to check
+     * @param seq of characters to check
      * @return see {@code Matching}
      */
     Matching match(List<Character> seq);
 
     /**
      * This immutable class describes a matching result. It wraps two items,
-     * partialMatch and fullMatch.<dl>
+     * partialMatch and fullMatch.
+     * <dl>
      * <dt>fullMatch</dt><dd>
      *   The resulting KeyStroke if the pattern matched, otherwise null.<br>
      *     Example: if the tested sequence is {@code Esc [ A}, and if the
@@ -50,7 +51,7 @@ public interface CharacterPattern {
      *      sequence <i>can</i> produce a match.<br>
      *     Example: if the tested sequence is "Esc [", and the Pattern would match
      *      "Esc [ A", then this field would be set to {@code true}.</dd>
-     * <p> 
+     * </dl>
      * In principle, a sequence can match one KeyStroke, but also say that if 
      * another character is available, then a different KeyStroke might result.
      * This can happen, if (e.g.) a single CharacterPattern-instance matches

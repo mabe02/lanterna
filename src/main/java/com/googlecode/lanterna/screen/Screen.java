@@ -32,7 +32,7 @@ import java.io.IOException;
  * {@code refresh} to have the screen automatically apply the changes in the back-buffer to the real terminal. The 
  * screen tracks what's visible through a front-buffer, but this is completely managed internally and cannot be expected
  * to know what the terminal looks like if it's being modified externally.
- * </p>
+ * <p>
  * If you want to do more complicated drawing operations, please see the class {@code DefaultScreenWriter} which has many
  * utility methods that works on Screens.
  *
@@ -69,7 +69,7 @@ public interface Screen extends InputProvider, Scrollable {
      * Erases all the characters on the screen, effectively giving you a blank area. The default background color will
      * be used. This is effectively the same as calling 
      * <pre>fill(TerminalPosition.TOP_LEFT_CORNER, getSize(), TextColor.ANSI.Default)</pre>.
-     * <p/>
+     * <p>
      * Please note that calling this method will only affect the back buffer, you need to call refresh to make the 
      * change visible.
      */
@@ -195,7 +195,7 @@ public interface Screen extends InputProvider, Scrollable {
      * This method will take the content from the back-buffer and move it into the front-buffer, making the changes
      * visible to the terminal in the process. The graphics workflow with Screen would involve drawing text and text-like
      * graphics on the back buffer and then finally calling refresh(..) to make it visible to the user.
-     * <p/>
+     * <p>
      * Using this method call instead of {@code refresh()} gives you a little bit more control over how the screen will
      * be refreshed.
      * @param refreshType What type of refresh to do

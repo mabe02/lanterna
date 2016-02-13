@@ -46,12 +46,12 @@ public class EscapeSequenceCharacterPattern implements CharacterPattern {
 
     /**
      *  Map of recognized "standard pattern" sequences:<br>
-     *   e.g.: 24 -> F12 : "Esc [ <b>24</b> ~"
+     *   e.g.: 24 -&gt; F12 : "Esc [ <b>24</b> ~"
      */
     protected final Map<Integer, KeyType>   stdMap = new HashMap<Integer, KeyType>();
     /**
      *  Map of recognized "finish pattern" sequences:<br>
-     *   e.g.: 'A' -> ArrowUp : "Esc [ <b>A</b>"
+     *   e.g.: 'A' -&gt; ArrowUp : "Esc [ <b>A</b>"
      */
     protected final Map<Character, KeyType> finMap = new HashMap<Character, KeyType>();
     /**

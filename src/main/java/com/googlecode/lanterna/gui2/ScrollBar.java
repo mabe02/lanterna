@@ -9,12 +9,12 @@ import com.googlecode.lanterna.graphics.ThemeDefinition;
  * is not interactable and needs to be driven externally, meaning you can't focus on the scrollbar itself, you have to
  * update its state as part of another component being modified. {@code ScrollBar}s are either horizontal or vertical,
  * which affects the way they appear and how they are drawn.
- * <p/>
+ * <p>
  * This class works on two concepts, the min-position-max values and the view size. The minimum value is always 0 and
  * cannot be changed. The maximum value is 100 and can be adjusted programmatically. Position value is whever along the
  * axis of 0 to max the scrollbar's tracker currently is placed. The view size is an important concept, it determines
  * how big the tracker should be and limits the position so that it can only reach {@code maximum value - view size}.
- * <p/>
+ * <p>
  * The regular way to use the {@code ScrollBar} class is to tie it to the model-view of another component and set the
  * scrollbar's maximum to the total height (or width, if the scrollbar is horizontal) of the model-view. View size
  * should then be assigned based on the current size of the view, meaning as the terminal and/or the GUI changes and the

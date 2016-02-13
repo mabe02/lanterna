@@ -29,7 +29,7 @@ import java.util.EnumSet;
  * implementation for the different levels, including one for Terminal, one for Screen and one which is used by the
  * TextGUI system to draw components. They are all very similar and has a lot of graphics functionality in
  * AbstractTextGraphics.
- * <p/>
+ * <p>
  * The basic concept behind a TextGraphics implementation is that it keeps a state on four things:
  * <ul>
  *     <li>Foreground color</li>
@@ -39,7 +39,7 @@ import java.util.EnumSet;
  * </ul>
  * These call all be altered through ordinary set* methods, but some will be altered as the result of performing one of
  * the 'drawing' operations. See the documentation to each method for further information (for example, putString).
- * <p/>
+ * <p>
  * Don't hold on to your TextGraphics objects for too long; ideally create them and let them be GC:ed when you are done
  * with them. The reason is that not all implementations will handle the underlying terminal changing size.
  * @author Martin
@@ -276,10 +276,10 @@ public interface TextGraphics {
     /**
      * Draws the outline of a rectangle with a particular character (and the currently active colors and
      * modifiers). The topLeft coordinate is inclusive.
-     * <p/>
+     * <p>
      * For example, calling drawRectangle with size being the size of the terminal and top-left value being the terminal's
      * top-left (0x0) corner will draw a border around the terminal.
-     * <p/>
+     * <p>
      * The current foreground color, background color and modifiers will be applied.
      * @param topLeft Coordinates of the top-left position of the rectangle
      * @param size Size (in columns and rows) of the area to draw
@@ -290,10 +290,10 @@ public interface TextGraphics {
     /**
      * Draws the outline of a rectangle with a particular TextCharacter, ignoring the current colors and modifiers of
      * this TextGraphics.
-     * <p/>
+     * <p>
      * For example, calling drawRectangle with size being the size of the terminal and top-left value being the terminal's
      * top-left (0x0) corner will draw a border around the terminal.
-     * <p/>
+     * <p>
      * The current foreground color, background color and modifiers will not be modified by this call.
      * @param topLeft Coordinates of the top-left position of the rectangle
      * @param size Size (in columns and rows) of the area to draw
@@ -304,10 +304,10 @@ public interface TextGraphics {
     /**
      * Takes a rectangle and fills it with a particular character (and the currently active colors and
      * modifiers). The topLeft coordinate is inclusive.
-     * <p/>
+     * <p>
      * For example, calling fillRectangle with size being the size of the terminal and top-left value being the terminal's
      * top-left (0x0) corner will fill the entire terminal with this character.
-     * <p/>
+     * <p>
      * The current foreground color, background color and modifiers will be applied.
      * @param topLeft Coordinates of the top-left position of the rectangle
      * @param size Size (in columns and rows) of the area to draw
@@ -318,10 +318,10 @@ public interface TextGraphics {
     /**
      * Takes a rectangle and fills it using a particular TextCharacter, ignoring the current colors and modifiers of
      * this TextGraphics. The topLeft coordinate is inclusive.
-     * <p/>
+     * <p>
      * For example, calling fillRectangle with size being the size of the terminal and top-left value being the terminal's
      * top-left (0x0) corner will fill the entire terminal with this character.
-     * <p/>
+     * <p>
      * The current foreground color, background color and modifiers will not be modified by this call.
      * @param topLeft Coordinates of the top-left position of the rectangle
      * @param size Size (in columns and rows) of the area to draw
