@@ -1,4 +1,5 @@
 com.googlecode.lanterna
+com.googlecode.lanterna.bundle
 com.googlecode.lanterna.graphics
 com.googlecode.lanterna.gui2
 com.googlecode.lanterna.gui2.dialogs
