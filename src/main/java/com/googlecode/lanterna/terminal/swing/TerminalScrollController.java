@@ -39,6 +39,9 @@ public interface TerminalScrollController {
      */
     int getScrollingOffset();
 
+    /**
+     * Implementation of {@link TerminalScrollController} that does nothing
+     */
     final class Null implements TerminalScrollController {
         @Override
         public void updateModel(int totalSize, int screenSize) {

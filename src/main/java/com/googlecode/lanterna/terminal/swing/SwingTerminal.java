@@ -145,16 +145,27 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
                 scrollController);
     }
 
+    /**
+     * Overridden method from Swing's {@code JComponent} class that returns the preferred size of the terminal (in
+     * pixels)
+     * @return The terminal's preferred size in pixels
+     */
     @Override
     public synchronized Dimension getPreferredSize() {
         return terminalImplementation.getPreferredSize();
     }
 
+    /**
+     * Overridden method from Swing's {@code JComponent} class that is called by OS window system when the component
+     * needs to be redrawn
+     * @param {@code Graphics} object to use when drawing the component
+     */
     @Override
     protected synchronized void paintComponent(Graphics componentGraphics) {
         terminalImplementation.paintComponent(componentGraphics);
     }
 
+    ////////////////////////////////////////////////////////////////////////////////
     // Terminal methods below here, just forward to the implementation
 
     @Override

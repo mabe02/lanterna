@@ -162,11 +162,20 @@ public class AWTTerminal extends Panel implements IOSafeTerminal {
                 scrollController);
     }
 
+    /**
+     * Overridden method from AWT's {@code Component} class that returns the preferred size of the terminal (in pixels)
+     * @return The terminal's preferred size in pixels
+     */
     @Override
     public synchronized Dimension getPreferredSize() {
         return terminalImplementation.getPreferredSize();
     }
 
+    /**
+     * Overridden method from AWT's {@code Component} class that is called by OS window system when the component needs
+     * to be redrawn
+     * @param {@code Graphics} object to use when drawing the component
+     */
     @Override
     public synchronized void paint(Graphics componentGraphics) {
         // Flicker-free AWT!
@@ -174,6 +183,11 @@ public class AWTTerminal extends Panel implements IOSafeTerminal {
         terminalImplementation.paintComponent(componentGraphics);
     }
 
+    /**
+     * Overridden method from AWT's {@code Component} class that is called by OS window system when the component needs
+     * to be updated (the size has changed) and redrawn
+     * @param {@code Graphics} object to use when drawing the component
+     */
     @Override
     public synchronized void update(Graphics componentGraphics) {
         // Flicker-free AWT!
