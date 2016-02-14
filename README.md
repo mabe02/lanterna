@@ -47,6 +47,6 @@ JavaDoc is available here:
  * http://mabe02.github.io/lanterna/apidocs/3.0/
 
 The JavaDocs for the previous version (2.1) is also available here:
-* 2.1: http://mabe02.github.io/lanterna/apidocs/2.1/
+* http://mabe02.github.io/lanterna/apidocs/2.1/
 
 See wiki for examples and Development Guide: https://code.google.com/p/lanterna/wiki/DevelopmentGuide
