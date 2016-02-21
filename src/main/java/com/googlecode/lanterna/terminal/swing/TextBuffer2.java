@@ -25,6 +25,11 @@ class TextBuffer2 {
         lines.removeFirst();
     }
 
+    synchronized void clear() {
+        lines.clear();
+        newLine();
+    }
+
     synchronized int getLineCount() {
         return lines.size();
     }
