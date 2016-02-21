@@ -203,11 +203,17 @@ public class TerminalTextUtils {
     /**
      * This method will calculate word wrappings given a number of lines of text and how wide the text can be printed.
      * The result is a list of new rows where word-wrapping was applied.
-     * @param maxWidth Maximum number of columns that can be used before word-wrapping is applied
+     * @param maxWidth Maximum number of columns that can be used before word-wrapping is applied, if <= 0 then the
+     *                 lines will be returned unchanged
      * @param lines Input text
      * @return The input text word-wrapped at {@code maxWidth}; this may contain more rows than the input text
      */
     public static List<String> getWordWrappedText(int maxWidth, String... lines) {
+        //Bounds checking
+        if(maxWidth <= 0) {
+            return Arrays.asList(lines);
+        }
+
         List<String> result = new ArrayList<String>();
         LinkedList<String> linesToBeWrapped = new LinkedList<String>(Arrays.asList(lines));
         while(!linesToBeWrapped.isEmpty()) {
