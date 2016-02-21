@@ -25,7 +25,7 @@ package com.googlecode.lanterna;
  *
  * @author Martin
  */
-public class TerminalPosition {
+public class TerminalPosition implements Comparable<TerminalPosition> {
 
     /**
      * Constant for the top-left corner (0x0)
@@ -143,6 +143,22 @@ public class TerminalPosition {
      */
     public TerminalPosition withRelative(int deltaColumn, int deltaRow) {
         return withRelativeRow(deltaRow).withRelativeColumn(deltaColumn);
+    }
+
+    @Override
+    public int compareTo(TerminalPosition o) {
+        if(row < o.row) {
+            return -1;
+        }
+        else if(row == o.row) {
+            if(column < o.column) {
+                return -1;
+            }
+            else if(column == o.column) {
+                return 0;
+            }
+        }
+        return 1;
     }
 
     @Override
