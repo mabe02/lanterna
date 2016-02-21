@@ -74,8 +74,12 @@ public abstract class AbstractTextGUIThread implements TextGUIThread {
             invokeLater(new Runnable() {
                 @Override
                 public void run() {
-                    runnable.run();
-                    countDownLatch.countDown();
+                    try {
+                        runnable.run();
+                    }
+                    finally {
+                        countDownLatch.countDown();
+                    }
                 }
             });
             countDownLatch.await();
