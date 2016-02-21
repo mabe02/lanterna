@@ -34,12 +34,7 @@ public abstract class AbstractTextGUIThread implements TextGUIThread {
 
     @Override
     public void invokeLater(Runnable runnable) throws IllegalStateException {
-        if(Thread.currentThread() == getThread()) {
-            runnable.run();
-        }
-        else {
-            customTasks.add(runnable);
-        }
+        customTasks.add(runnable);
     }
 
     @Override
@@ -71,14 +66,19 @@ public abstract class AbstractTextGUIThread implements TextGUIThread {
 
     @Override
     public void invokeAndWait(final Runnable runnable) throws IllegalStateException, InterruptedException {
-        final CountDownLatch countDownLatch = new CountDownLatch(1);
-        invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                runnable.run();
-                countDownLatch.countDown();
-            }
-        });
-        countDownLatch.await();
+        if(Thread.currentThread() == getThread()) {
+            runnable.run();
+        }
+        else {
+            final CountDownLatch countDownLatch = new CountDownLatch(1);
+            invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    runnable.run();
+                    countDownLatch.countDown();
+                }
+            });
+            countDownLatch.await();
+        }
     }
 }

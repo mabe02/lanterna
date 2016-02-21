@@ -31,8 +31,10 @@ import java.io.IOException;
  */
 public interface TextGUIThread {
     /**
-     * Invokes custom code on the GUI thread. If the caller is already on the GUI thread, the code is executed immediately
-     * @param runnable Code to run
+     * Invokes custom code on the GUI thread. Even if the current thread <b>is</b> the GUI thread, the code will be
+     * executed at a later time when the event processing is done.
+     *
+     * @param runnable Code to run asynchronously
      * @throws java.lang.IllegalStateException If the GUI thread is not running
      */
     void invokeLater(Runnable runnable) throws IllegalStateException;
@@ -51,8 +53,9 @@ public interface TextGUIThread {
 
     /**
      * Schedules custom code to be executed on the GUI thread and waits until the code has been executed before
-     * returning.
-     * @param runnable Code to run
+     * returning. If this is run on the GUI thread, it will immediately run the {@code Runnable} and then return.
+     *
+     * @param runnable Code to be run and waited for completion before this method returns
      * @throws IllegalStateException If the GUI thread is not running
      * @throws InterruptedException If the caller thread was interrupted while waiting for the task to be executed
      */
