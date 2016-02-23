@@ -212,6 +212,10 @@ public class TerminalTextUtilsTest {
                 Arrays.asList("abc   ", "def"),
                 TerminalTextUtils.getWordWrappedText(6, "abc        def"));
 
+        assertEquals("Incorrect word wrapping - don't add a new line for only white space",
+                Arrays.asList("abc "),
+                TerminalTextUtils.getWordWrappedText(4, "abc       "));
+
         assertEquals("Incorrect word wrapping - 1 blank at begin",
               Arrays.asList(" ", "abc", "abc"),
               TerminalTextUtils.getWordWrappedText(3, " abc abc"));
