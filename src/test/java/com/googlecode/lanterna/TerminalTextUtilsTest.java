@@ -161,6 +161,10 @@ public class TerminalTextUtilsTest {
                 Arrays.asList("abc", "abc"),
                 TerminalTextUtils.getWordWrappedText(5, "abc abc"));
 
+        assertEquals("Incorrect word wrapping - 0 width",
+              Arrays.asList("abc abc"),
+              TerminalTextUtils.getWordWrappedText(0, "abc abc"));
+
         assertEquals("Incorrect word wrapping",
                 Arrays.asList("abc", "abc", "abc"),
                 TerminalTextUtils.getWordWrappedText(3, "abc abc abc"));
@@ -207,6 +211,14 @@ public class TerminalTextUtilsTest {
         assertEquals("Didn't skip over all the extra spaces",
                 Arrays.asList("abc   ", "def"),
                 TerminalTextUtils.getWordWrappedText(6, "abc        def"));
+
+        assertEquals("Incorrect word wrapping - 1 blank at begin",
+              Arrays.asList(" ", "abc", "abc"),
+              TerminalTextUtils.getWordWrappedText(3, " abc abc"));
+
+        assertEquals("Incorrect word wrapping - 2 blanks at begin",
+              Arrays.asList(" ", "abc", "abc"),
+              TerminalTextUtils.getWordWrappedText(3, "  abc abc"));
     }
 
     @Test
@@ -220,6 +232,12 @@ public class TerminalTextUtilsTest {
         assertEquals("Incorrect word wrapping",
                 Arrays.asList("あいう", "えお"),
                 TerminalTextUtils.getWordWrappedText(7, "あいうえお"));
+        assertEquals("Incorrect word wrapping - CJK @ 1 col",
+                Arrays.asList("あ","い","う", "え","お"),
+                TerminalTextUtils.getWordWrappedText(1, "あいうえお"));
+        assertEquals("Incorrect word wrapping - break between CJK and latin",
+                Arrays.asList("aあ","bc"),
+                TerminalTextUtils.getWordWrappedText(3, "aあbc"));
     }
 
     // Add a test for traditional Chinese characters here? If someone can contribute a list! The list of simplified

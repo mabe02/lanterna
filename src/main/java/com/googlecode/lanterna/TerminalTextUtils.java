@@ -224,26 +224,41 @@ public class TerminalTextUtils {
             }
             else {
                 //Now search in reverse and find the first possible line-break
-                int characterIndex = getStringCharacterIndex(row, maxWidth);
-                while(!Character.isSpaceChar(row.charAt(characterIndex)) &&
-                        !isCharCJK(row.charAt(characterIndex)) &&
-                        characterIndex > 0) {
+                final int characterIndexMax = getStringCharacterIndex(row, maxWidth);
+                int characterIndex = characterIndexMax;
+                while(characterIndex >= 0 &&
+                        !Character.isSpaceChar(row.charAt(characterIndex)) &&
+                        !isCharCJK(row.charAt(characterIndex))) {
                     characterIndex--;
                 }
+                // right *after* a CJK is also a "nice" spot to break the line!
+                if (characterIndex >= 0 && characterIndex < characterIndexMax &&
+                      isCharCJK(row.charAt(characterIndex))) {
+                    characterIndex++; // with these conditions it fits!
+                }
 
-                if(characterIndex == 0) {
+                if(characterIndex < 0) {
                     //Failed! There was no 'nice' place to cut so just cut it at maxWidth
-                    result.add(row.substring(0, maxWidth));
-                    linesToBeWrapped.addFirst(row.substring(maxWidth));
+                    characterIndex = Math.max(characterIndexMax, 1); // at least 1 char
+                    result.add(row.substring(0, characterIndex));
+                    linesToBeWrapped.addFirst(row.substring(characterIndex));
                 }
                 else {
+                    // characterIndex == 0 only happens, if either
+                    //   - first char is CJK and maxWidth==1   or
+                    //   - first char is whitespace
+                    // either way: put it in row before break to prevent infinite loop.
+                    characterIndex = Math.max( characterIndex, 1); // at least 1 char
+                    
                     //Ok, split the row, add it to the result and continue processing the second half on a new line
                     result.add(row.substring(0, characterIndex));
-                    int spaceCharsToSkip = 0;
-                    while(Character.isSpaceChar(row.charAt(characterIndex)) && characterIndex < row.length()) {
+                    while(characterIndex < row.length() &&
+                          Character.isSpaceChar(row.charAt(characterIndex))) {
                         characterIndex++;
                     };
-                    linesToBeWrapped.addFirst(row.substring(characterIndex));
+                    if (characterIndex < row.length()) { // only if rest contains non-whitespace
+                        linesToBeWrapped.addFirst(row.substring(characterIndex));
+                    }
                 }
             }
         }
