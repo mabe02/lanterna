@@ -30,9 +30,9 @@ import com.googlecode.lanterna.graphics.TextGraphics;
  * @author Martin
  */
 class VirtualTerminalTextGraphics extends AbstractTextGraphics {
-    private final VirtualTerminal virtualTerminal;
+    private final VirtualTerminal2 virtualTerminal;
 
-    VirtualTerminalTextGraphics(VirtualTerminal virtualTerminal) {
+    VirtualTerminalTextGraphics(VirtualTerminal2 virtualTerminal) {
         this.virtualTerminal = virtualTerminal;
     }
 
@@ -59,6 +59,6 @@ class VirtualTerminalTextGraphics extends AbstractTextGraphics {
 
     @Override
     public TerminalSize getSize() {
-        return virtualTerminal.getSize();
+        return virtualTerminal.getTerminalSize();
     }
 }

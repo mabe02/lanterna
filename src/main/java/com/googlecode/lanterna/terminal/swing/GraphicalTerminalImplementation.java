@@ -49,7 +49,7 @@ import java.util.concurrent.TimeUnit;
 abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     private final TerminalEmulatorDeviceConfiguration deviceConfiguration;
     private final TerminalEmulatorColorConfiguration colorConfiguration;
-    private final VirtualTerminal virtualTerminal;
+    private final VirtualTerminal2 virtualTerminal;
     private final BlockingQueue<KeyStroke> keyQueue;
     private final List<ResizeListener> resizeListeners;
 
@@ -100,10 +100,11 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
         if(initialTerminalSize == null) {
             initialTerminalSize = new TerminalSize(80, 24);
         }
-        this.virtualTerminal = new VirtualTerminal(
-                deviceConfiguration.getLineBufferScrollbackSize(),
-                initialTerminalSize,
-                scrollController);
+        this.virtualTerminal = new VirtualTerminal2(
+                //deviceConfiguration.getLineBufferScrollbackSize(),
+                initialTerminalSize//,
+                //scrollController);
+        );
         this.keyQueue = new LinkedBlockingQueue<KeyStroke>();
         this.resizeListeners = new CopyOnWriteArrayList<ResizeListener>();
         this.deviceConfiguration = deviceConfiguration;
@@ -213,8 +214,8 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
      * @return Preferred size of this terminal
      */
     synchronized Dimension getPreferredSize() {
-        return new Dimension(getFontWidth() * virtualTerminal.getSize().getColumns(),
-                getFontHeight() * virtualTerminal.getSize().getRows());
+        return new Dimension(getFontWidth() * virtualTerminal.getTerminalSize().getColumns(),
+                getFontHeight() * virtualTerminal.getTerminalSize().getRows());
     }
 
     /**
@@ -235,9 +236,9 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
         visibleRows = Math.max(1, visibleRows);
 
         //scrollObserver.updateModel(currentBuffer.getNumberOfLines(), visibleRows);
-        TerminalSize terminalSize = virtualTerminal.getSize().withColumns(widthInNumberOfCharacters).withRows(visibleRows);
-        if(!terminalSize.equals(virtualTerminal.getSize())) {
-            virtualTerminal.resize(terminalSize);
+        TerminalSize terminalSize = virtualTerminal.getTerminalSize().withColumns(widthInNumberOfCharacters).withRows(visibleRows);
+        if(!terminalSize.equals(virtualTerminal.getTerminalSize())) {
+            virtualTerminal.setTerminalSize(terminalSize);
             for(ResizeListener listener: resizeListeners) {
                 listener.onResized(this, terminalSize);
             }
@@ -604,7 +605,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
 
     @Override
     public synchronized TerminalSize getTerminalSize() {
-        return virtualTerminal.getSize();
+        return virtualTerminal.getTerminalSize();
     }
 
     @Override

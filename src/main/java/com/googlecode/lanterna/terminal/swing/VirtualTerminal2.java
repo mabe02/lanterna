@@ -6,6 +6,8 @@ import com.googlecode.lanterna.TerminalTextUtils;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.screen.TabBehaviour;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeSet;
 
 /**
@@ -27,7 +29,7 @@ class VirtualTerminal2 {
 
         // Start with regular mode
         this.currentTextBuffer = regularTextBuffer;
-        this.terminalSize = terminalSize;
+        this.terminalSize = initialTerminalSize;
         this.cursorPosition = TerminalPosition.TOP_LEFT_CORNER;
     }
 
@@ -67,8 +69,47 @@ class VirtualTerminal2 {
         }
     }
 
-    private TerminalPosition translateCursorSpaceToGlobalSpace(TerminalPosition terminalPosition) {
+    synchronized TerminalPosition getTranslatedCursorPosition() {
+        //TODO: Implementation
+        return TerminalPosition.TOP_LEFT_CORNER;
+    }
 
+    synchronized void switchToPrivateMode() {
+        //TODO: Implementation
+        currentTextBuffer = privateModeTextBuffer;
+    }
+
+    synchronized void switchToNormalMode() {
+        //TODO: Implementation
+        currentTextBuffer = regularTextBuffer;
+    }
+
+    synchronized void clear() {
+        //TODO: Implementation
+        currentTextBuffer.clear();
+    }
+
+    synchronized void setCursorPosition(TerminalPosition terminalPosition) {
+        //TODO: Implementation
+    }
+
+    synchronized void setCursorAndPutCharacter(TerminalPosition terminalPosition, TextCharacter textCharacter) {
+        //TODO: Implementation
+    }
+
+    synchronized TextCharacter getCharacter(TerminalPosition position) {
+        //TODO: Implementation
+        return TextCharacter.DEFAULT_CHARACTER;
+    }
+
+    synchronized List<TextCharacter>[] getLines() {
+        //TODO: Implementation
+        return new ArrayList[0];
+    }
+
+    private TerminalPosition translateCursorSpaceToGlobalSpace(TerminalPosition terminalPosition) {
+        //TODO: Implementation
+        return terminalPosition;
     }
 
     private void correctCursor() {

@@ -99,7 +99,7 @@ public class TestTerminalFactory {
         return new TerminalScreen(createTerminal());
     }
 
-    public Terminal createSwingTerminal() {
+    public SwingTerminalFrame createSwingTerminal() {
         return factory.createSwingTerminal();
     }
 }
