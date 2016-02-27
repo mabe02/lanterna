@@ -20,6 +20,8 @@ class VirtualTerminal2 {
 
     private TextBuffer2 currentTextBuffer;
     private TerminalSize terminalSize;
+
+    // Position is stored in "global coordinates", where 0x0 is the top-left corner of the scrollback buffer
     private TerminalPosition cursorPosition;
 
     VirtualTerminal2(TerminalSize initialTerminalSize) {
@@ -33,7 +35,7 @@ class VirtualTerminal2 {
         this.cursorPosition = TerminalPosition.TOP_LEFT_CORNER;
     }
 
-    TerminalSize getTerminalSize() {
+    synchronized TerminalSize getTerminalSize() {
         return terminalSize;
     }
 
@@ -57,8 +59,7 @@ class VirtualTerminal2 {
             }
         }
         else {
-            TerminalPosition globalPosition = translateCursorSpaceToGlobalSpace(cursorPosition);
-            currentTextBuffer.setCharacter(globalPosition.getRow(), globalPosition.getColumn(), terminalCharacter);
+            currentTextBuffer.setCharacter(cursorPosition.getRow(), cursorPosition.getColumn(), terminalCharacter);
 
             //Advance cursor
             cursorPosition = cursorPosition.withRelativeColumn(TerminalTextUtils.isCharCJK(terminalCharacter.getCharacter()) ? 2 : 1);
@@ -67,6 +68,13 @@ class VirtualTerminal2 {
             }
             // TODO: ensure there is enough lines here!
         }
+    }
+
+    synchronized TerminalPosition getCursorPosition() {
+        if(terminalSize.getRows() >= currentTextBuffer.getLineCount()) {
+            return cursorPosition;
+        }
+        return cursorPosition.withRelativeRow(-(currentTextBuffer.getLineCount() - terminalSize.getRows()));
     }
 
     synchronized TerminalPosition getTranslatedCursorPosition() {
@@ -89,8 +97,8 @@ class VirtualTerminal2 {
         currentTextBuffer.clear();
     }
 
-    synchronized void setCursorPosition(TerminalPosition terminalPosition) {
-        //TODO: Implementation
+    synchronized void setCursorPosition(TerminalPosition cursorPosition) {
+        this.cursorPosition = translateCursorSpaceToGlobalSpace(cursorPosition);
     }
 
     synchronized void setCursorAndPutCharacter(TerminalPosition terminalPosition, TextCharacter textCharacter) {
@@ -98,8 +106,8 @@ class VirtualTerminal2 {
     }
 
     synchronized TextCharacter getCharacter(TerminalPosition position) {
-        //TODO: Implementation
-        return TextCharacter.DEFAULT_CHARACTER;
+        TerminalPosition globalPosition = translateCursorSpaceToGlobalSpace(position);
+        return currentTextBuffer.getCharacter(globalPosition.getRow(), globalPosition.getColumn());
     }
 
     synchronized List<TextCharacter>[] getLines() {
@@ -107,20 +115,19 @@ class VirtualTerminal2 {
         return new ArrayList[0];
     }
 
-    private TerminalPosition translateCursorSpaceToGlobalSpace(TerminalPosition terminalPosition) {
-        //TODO: Implementation
-        return terminalPosition;
+    private TerminalPosition translateCursorSpaceToGlobalSpace(TerminalPosition cursorSpacePosition) {
+        if(terminalSize.getRows() >= currentTextBuffer.getLineCount()) {
+            return cursorSpacePosition;
+        }
+        return cursorSpacePosition.withRelativeColumn(currentTextBuffer.getLineCount() - terminalSize.getRows());
     }
 
     private void correctCursor() {
         this.cursorPosition =
                 new TerminalPosition(
-                        Math.min(cursorPosition.getColumn(), terminalSize.getColumns() - 1),
-                        Math.min(cursorPosition.getRow(), terminalSize.getRows() - 1));
-        this.cursorPosition =
-                new TerminalPosition(
                         Math.max(cursorPosition.getColumn(), 0),
                         Math.max(cursorPosition.getRow(), 0));
+        this.cursorPosition = cursorPosition.withColumn(Math.min(cursorPosition.getColumn(), terminalSize.getColumns() - 1));
     }
 
     private void moveCursorToNextLine() {
