@@ -59,10 +59,19 @@ class VirtualTerminal {
             }
         }
         else {
+            boolean doubleWidth = TerminalTextUtils.isCharDoubleWidth(terminalCharacter.getCharacter());
+            // If we're at the last column and the user tries to print a double-width character, reset the cell and move
+            // to the next line
+            if(cursorPosition.getColumn() == terminalSize.getColumns() - 1 && doubleWidth) {
+                currentTextBuffer.setCharacter(cursorPosition.getRow(), cursorPosition.getColumn(), TextCharacter.DEFAULT_CHARACTER);
+                moveCursorToNextLine();
+            }
+
+            // Update the buffer
             currentTextBuffer.setCharacter(cursorPosition.getRow(), cursorPosition.getColumn(), terminalCharacter);
 
             //Advance cursor
-            cursorPosition = cursorPosition.withRelativeColumn(TerminalTextUtils.isCharCJK(terminalCharacter.getCharacter()) ? 2 : 1);
+            cursorPosition = cursorPosition.withRelativeColumn(doubleWidth ? 2 : 1);
             if(cursorPosition.getColumn() >= terminalSize.getColumns()) {
                 moveCursorToNextLine();
             }
@@ -95,6 +104,7 @@ class VirtualTerminal {
     synchronized void clear() {
         //TODO: Implementation
         currentTextBuffer.clear();
+        setCursorPosition(TerminalPosition.TOP_LEFT_CORNER);
     }
 
     synchronized void setCursorPosition(TerminalPosition cursorPosition) {

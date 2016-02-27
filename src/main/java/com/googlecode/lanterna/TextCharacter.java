@@ -271,6 +271,10 @@ public class TextCharacter {
         return new TextCharacter(character, foregroundColor, backgroundColor, newSet);
     }
 
+    public boolean isDoubleWidth() {
+        return TerminalTextUtils.isCharDoubleWidth(character);
+    }
+
     @SuppressWarnings("SimplifiableIfStatement")
     @Override
     public boolean equals(Object obj) {

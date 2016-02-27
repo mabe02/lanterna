@@ -1,5 +1,6 @@
 package com.googlecode.lanterna.terminal.swing;
 
+import com.googlecode.lanterna.TerminalTextUtils;
 import com.googlecode.lanterna.TextCharacter;
 
 import java.util.ArrayList;
@@ -10,6 +11,8 @@ import java.util.List;
  * Created by Martin on 2016-02-21.
  */
 class TextBuffer {
+    private static final TextCharacter DOUBLE_WIDTH_CHAR_PADDING = new TextCharacter(' ');
+
     private final LinkedList<List<TextCharacter>> lines;
 
     TextBuffer() {
@@ -49,7 +52,19 @@ class TextBuffer {
         while(line.size() <= columnIndex) {
             line.add(TextCharacter.DEFAULT_CHARACTER);
         }
+
+        // Check if we are overwriting a double-width character, in that case we need to reset the other half
+        if(line.get(columnIndex).isDoubleWidth()) {
+            line.set(columnIndex + 1, TextCharacter.DEFAULT_CHARACTER);
+        }
+        if(line.get(columnIndex) == DOUBLE_WIDTH_CHAR_PADDING) {
+            line.set(columnIndex - 1, TextCharacter.DEFAULT_CHARACTER);
+        }
         line.set(columnIndex, textCharacter);
+
+        if(textCharacter.isDoubleWidth()) {
+            setCharacter(lineNumber, columnIndex + 1, DOUBLE_WIDTH_CHAR_PADDING);
+        }
     }
 
     synchronized TextCharacter getCharacter(int lineNumber, int columnIndex) {
@@ -64,6 +79,10 @@ class TextBuffer {
         if(line.size() <= columnIndex) {
             return TextCharacter.DEFAULT_CHARACTER;
         }
-        return line.get(columnIndex);
+        TextCharacter textCharacter = line.get(columnIndex);
+        if(textCharacter == DOUBLE_WIDTH_CHAR_PADDING) {
+            return line.get(columnIndex - 1);
+        }
+        return textCharacter;
     }
 }
