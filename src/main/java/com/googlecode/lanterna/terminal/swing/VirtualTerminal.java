@@ -6,7 +6,6 @@ import com.googlecode.lanterna.TerminalTextUtils;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.screen.TabBehaviour;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -19,6 +18,7 @@ class VirtualTerminal {
     private final TreeSet<TerminalPosition> dirtyTerminalCells;
 
     private TextBuffer currentTextBuffer;
+    private boolean wholeBufferDirty;
     private TerminalSize terminalSize;
 
     // Position is stored in "global coordinates", where 0x0 is the top-left corner of the scrollback buffer
@@ -31,6 +31,7 @@ class VirtualTerminal {
 
         // Start with regular mode
         this.currentTextBuffer = regularTextBuffer;
+        this.wholeBufferDirty = false;
         this.terminalSize = initialTerminalSize;
         this.cursorPosition = TerminalPosition.TOP_LEFT_CORNER;
     }
@@ -68,7 +69,16 @@ class VirtualTerminal {
             }
 
             // Update the buffer
-            currentTextBuffer.setCharacter(cursorPosition.getRow(), cursorPosition.getColumn(), terminalCharacter);
+            int i = currentTextBuffer.setCharacter(cursorPosition.getRow(), cursorPosition.getColumn(), terminalCharacter);
+            if(!wholeBufferDirty) {
+                dirtyTerminalCells.add(new TerminalPosition(cursorPosition.getColumn(), cursorPosition.getRow()));
+                if(i == 1) {
+                    dirtyTerminalCells.add(new TerminalPosition(cursorPosition.getColumn() + 1, cursorPosition.getRow()));
+                }
+                else if(i == 2) {
+                    dirtyTerminalCells.add(new TerminalPosition(cursorPosition.getColumn() - 1, cursorPosition.getRow()));
+                }
+            }
 
             //Advance cursor
             cursorPosition = cursorPosition.withRelativeColumn(doubleWidth ? 2 : 1);
@@ -84,6 +94,18 @@ class VirtualTerminal {
             return cursorPosition;
         }
         return cursorPosition.withRelativeRow(-(currentTextBuffer.getLineCount() - terminalSize.getRows()));
+    }
+
+    synchronized TreeSet<TerminalPosition> getAndResetDirtyCells() {
+        TreeSet<TerminalPosition> copy = new TreeSet<TerminalPosition>(dirtyTerminalCells);
+        dirtyTerminalCells.clear();
+        return copy;
+    }
+
+    synchronized boolean isWholeBufferDirtyThenReset() {
+        boolean copy = wholeBufferDirty;
+        wholeBufferDirty = false;
+        return copy;
     }
 
     synchronized TerminalPosition getTranslatedCursorPosition() {
@@ -116,9 +138,9 @@ class VirtualTerminal {
         return currentTextBuffer.getCharacter(globalPosition.getRow(), globalPosition.getColumn());
     }
 
-    synchronized List<TextCharacter>[] getLines() {
-        //TODO: Implementation
-        return new ArrayList[0];
+    synchronized Iterable<List<TextCharacter>> getLines() {
+        //TODO: This is just temporary
+        return currentTextBuffer.getLines();
     }
 
     private TerminalPosition translateCursorSpaceToGlobalSpace(TerminalPosition cursorSpacePosition) {

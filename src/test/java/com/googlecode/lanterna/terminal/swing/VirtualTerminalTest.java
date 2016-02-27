@@ -4,6 +4,11 @@ import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextCharacter;
 import org.junit.Test;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.TreeSet;
+
 import static org.junit.Assert.*;
 
 /**
@@ -25,6 +30,18 @@ public class VirtualTerminalTest {
         assertEquals('L', virtualTerminal.getCharacter(new TerminalPosition(2, 0)).getCharacter());
         assertEquals('L', virtualTerminal.getCharacter(new TerminalPosition(3, 0)).getCharacter());
         assertEquals('O', virtualTerminal.getCharacter(new TerminalPosition(4, 0)).getCharacter());
+
+        assertFalse(virtualTerminal.isWholeBufferDirtyThenReset());
+        assertEquals(new TreeSet<TerminalPosition>(Arrays.asList(
+                    new TerminalPosition(0, 0),
+                    new TerminalPosition(1, 0),
+                    new TerminalPosition(2, 0),
+                    new TerminalPosition(3, 0),
+                    new TerminalPosition(4, 0))),
+                virtualTerminal.getAndResetDirtyCells());
+
+        // Make sure it's reset
+        assertEquals(Collections.emptySet(), virtualTerminal.getAndResetDirtyCells());
     }
 
     @Test
