@@ -101,10 +101,6 @@ class VirtualTerminal {
         this.cursorPosition = translateCursorSpaceToGlobalSpace(cursorPosition);
     }
 
-    synchronized void setCursorAndPutCharacter(TerminalPosition terminalPosition, TextCharacter textCharacter) {
-        //TODO: Implementation
-    }
-
     synchronized TextCharacter getCharacter(TerminalPosition position) {
         TerminalPosition globalPosition = translateCursorSpaceToGlobalSpace(position);
         return currentTextBuffer.getCharacter(globalPosition.getRow(), globalPosition.getColumn());
