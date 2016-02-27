@@ -13,20 +13,20 @@ import java.util.TreeSet;
 /**
  * Created by Martin on 2016-02-21.
  */
-class VirtualTerminal2 {
-    private final TextBuffer2 regularTextBuffer;
-    private final TextBuffer2 privateModeTextBuffer;
+class VirtualTerminal {
+    private final TextBuffer regularTextBuffer;
+    private final TextBuffer privateModeTextBuffer;
     private final TreeSet<TerminalPosition> dirtyTerminalCells;
 
-    private TextBuffer2 currentTextBuffer;
+    private TextBuffer currentTextBuffer;
     private TerminalSize terminalSize;
 
     // Position is stored in "global coordinates", where 0x0 is the top-left corner of the scrollback buffer
     private TerminalPosition cursorPosition;
 
-    VirtualTerminal2(TerminalSize initialTerminalSize) {
-        this.regularTextBuffer = new TextBuffer2();
-        this.privateModeTextBuffer = new TextBuffer2();
+    VirtualTerminal(TerminalSize initialTerminalSize) {
+        this.regularTextBuffer = new TextBuffer();
+        this.privateModeTextBuffer = new TextBuffer();
         this.dirtyTerminalCells = new TreeSet<TerminalPosition>();
 
         // Start with regular mode

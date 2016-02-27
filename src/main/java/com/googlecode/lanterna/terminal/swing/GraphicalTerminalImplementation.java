@@ -49,7 +49,7 @@ import java.util.concurrent.TimeUnit;
 abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     private final TerminalEmulatorDeviceConfiguration deviceConfiguration;
     private final TerminalEmulatorColorConfiguration colorConfiguration;
-    private final VirtualTerminal2 virtualTerminal;
+    private final VirtualTerminal virtualTerminal;
     private final BlockingQueue<KeyStroke> keyQueue;
     private final List<ResizeListener> resizeListeners;
 
@@ -100,7 +100,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
         if(initialTerminalSize == null) {
             initialTerminalSize = new TerminalSize(80, 24);
         }
-        this.virtualTerminal = new VirtualTerminal2(
+        this.virtualTerminal = new VirtualTerminal(
                 //deviceConfiguration.getLineBufferScrollbackSize(),
                 initialTerminalSize//,
                 //scrollController);

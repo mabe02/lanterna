@@ -9,10 +9,10 @@ import java.util.List;
 /**
  * Created by Martin on 2016-02-21.
  */
-class TextBuffer2 {
+class TextBuffer {
     private final LinkedList<List<TextCharacter>> lines;
 
-    TextBuffer2() {
+    TextBuffer() {
         this.lines = new LinkedList<List<TextCharacter>>();
         newLine();
     }

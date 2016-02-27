@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
 public class VirtualTerminalTest {
     @Test
     public void singleLineWriteAndReadBackWorks() {
-        VirtualTerminal2 virtualTerminal = new VirtualTerminal2(new TerminalSize(80, 24));
+        VirtualTerminal virtualTerminal = new VirtualTerminal(new TerminalSize(80, 24));
         assertEquals(TerminalPosition.TOP_LEFT_CORNER, virtualTerminal.getTranslatedCursorPosition());
         virtualTerminal.putCharacter(new TextCharacter('H'));
         virtualTerminal.putCharacter(new TextCharacter('E'));

@@ -30,9 +30,9 @@ import com.googlecode.lanterna.graphics.TextGraphics;
  * @author Martin
  */
 class VirtualTerminalTextGraphics extends AbstractTextGraphics {
-    private final VirtualTerminal2 virtualTerminal;
+    private final VirtualTerminal virtualTerminal;
 
-    VirtualTerminalTextGraphics(VirtualTerminal2 virtualTerminal) {
+    VirtualTerminalTextGraphics(VirtualTerminal virtualTerminal) {
         this.virtualTerminal = virtualTerminal;
     }
 
