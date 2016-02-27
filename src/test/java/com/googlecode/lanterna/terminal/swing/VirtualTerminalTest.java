@@ -45,6 +45,51 @@ public class VirtualTerminalTest {
     }
 
     @Test
+    public void clearAllMarksEverythingAsDirtyAndEverythingInTheTerminalIsReplacedWithDefaultCharacter() {
+        VirtualTerminal virtualTerminal = new VirtualTerminal(new TerminalSize(10, 5));
+        assertEquals(TerminalPosition.TOP_LEFT_CORNER, virtualTerminal.getTranslatedCursorPosition());
+        virtualTerminal.putCharacter(new TextCharacter('H'));
+        virtualTerminal.putCharacter(new TextCharacter('E'));
+        virtualTerminal.putCharacter(new TextCharacter('L'));
+        virtualTerminal.putCharacter(new TextCharacter('L'));
+        virtualTerminal.putCharacter(new TextCharacter('O'));
+        virtualTerminal.clear();
+
+        assertTrue(virtualTerminal.isWholeBufferDirtyThenReset());
+        assertEquals(Collections.emptySet(), virtualTerminal.getAndResetDirtyCells());
+
+        assertEquals(TerminalPosition.TOP_LEFT_CORNER, virtualTerminal.getCursorPosition());
+        assertEquals(TextCharacter.DEFAULT_CHARACTER, virtualTerminal.getCharacter(new TerminalPosition(0, 0)));
+        assertEquals(TextCharacter.DEFAULT_CHARACTER, virtualTerminal.getCharacter(new TerminalPosition(1, 0)));
+        assertEquals(TextCharacter.DEFAULT_CHARACTER, virtualTerminal.getCharacter(new TerminalPosition(2, 0)));
+        assertEquals(TextCharacter.DEFAULT_CHARACTER, virtualTerminal.getCharacter(new TerminalPosition(3, 0)));
+        assertEquals(TextCharacter.DEFAULT_CHARACTER, virtualTerminal.getCharacter(new TerminalPosition(4, 0)));
+    }
+
+    @Test
+    public void replacingAllContentTriggersWholeTerminalIsDirty() {
+        VirtualTerminal virtualTerminal = new VirtualTerminal(new TerminalSize(5, 3));
+        assertEquals(TerminalPosition.TOP_LEFT_CORNER, virtualTerminal.getTranslatedCursorPosition());
+        virtualTerminal.putCharacter(new TextCharacter('H'));
+        virtualTerminal.putCharacter(new TextCharacter('E'));
+        virtualTerminal.putCharacter(new TextCharacter('L'));
+        virtualTerminal.putCharacter(new TextCharacter('L'));
+        virtualTerminal.putCharacter(new TextCharacter('O'));
+        virtualTerminal.putCharacter(new TextCharacter('H'));
+        virtualTerminal.putCharacter(new TextCharacter('E'));
+        virtualTerminal.putCharacter(new TextCharacter('L'));
+        virtualTerminal.putCharacter(new TextCharacter('L'));
+        virtualTerminal.putCharacter(new TextCharacter('O'));
+        virtualTerminal.putCharacter(new TextCharacter('B'));
+        virtualTerminal.putCharacter(new TextCharacter('Y'));
+        virtualTerminal.putCharacter(new TextCharacter('E'));
+        virtualTerminal.putCharacter(new TextCharacter('!'));
+
+        assertTrue(virtualTerminal.isWholeBufferDirtyThenReset());
+        assertEquals(Collections.emptySet(), virtualTerminal.getAndResetDirtyCells());
+    }
+
+    @Test
     public void tooLongLinesWrap() {
         VirtualTerminal virtualTerminal = new VirtualTerminal(new TerminalSize(5, 5));
         assertEquals(TerminalPosition.TOP_LEFT_CORNER, virtualTerminal.getTranslatedCursorPosition());

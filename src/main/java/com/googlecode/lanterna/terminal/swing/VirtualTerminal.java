@@ -78,6 +78,9 @@ class VirtualTerminal {
                 else if(i == 2) {
                     dirtyTerminalCells.add(new TerminalPosition(cursorPosition.getColumn() - 1, cursorPosition.getRow()));
                 }
+                if(dirtyTerminalCells.size() > (terminalSize.getColumns() * terminalSize.getRows() * 0.9)) {
+                    invalidateWholeBuffer();
+                }
             }
 
             //Advance cursor
@@ -126,6 +129,7 @@ class VirtualTerminal {
     synchronized void clear() {
         //TODO: Implementation
         currentTextBuffer.clear();
+        invalidateWholeBuffer();
         setCursorPosition(TerminalPosition.TOP_LEFT_CORNER);
     }
 
@@ -141,6 +145,11 @@ class VirtualTerminal {
     synchronized Iterable<List<TextCharacter>> getLines() {
         //TODO: This is just temporary
         return currentTextBuffer.getLines();
+    }
+
+    private void invalidateWholeBuffer() {
+        wholeBufferDirty = true;
+        dirtyTerminalCells.clear();
     }
 
     private TerminalPosition translateCursorSpaceToGlobalSpace(TerminalPosition cursorSpacePosition) {
