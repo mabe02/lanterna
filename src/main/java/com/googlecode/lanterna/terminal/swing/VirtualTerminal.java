@@ -38,6 +38,10 @@ class VirtualTerminal {
         this.backlogSize = 1000;
     }
 
+    synchronized void setBacklogSize(int backlogSize) {
+        this.backlogSize = backlogSize;
+    }
+
     synchronized TerminalSize getViewportSize() {
         return viewportSize;
     }
@@ -90,8 +94,8 @@ class VirtualTerminal {
             if(cursorPosition.getColumn() >= viewportSize.getColumns()) {
                 moveCursorToNextLine();
             }
-            // TODO: ensure there is enough lines here!
         }
+        trimBufferBacklog();
     }
 
     synchronized TerminalPosition getCursorPosition() {
@@ -99,6 +103,10 @@ class VirtualTerminal {
             return cursorPosition;
         }
         return cursorPosition.withRelativeRow(-(currentTextBuffer.getLineCount() - viewportSize.getRows()));
+    }
+
+    synchronized TreeSet<TerminalPosition> getDirtyCells() {
+        return new TreeSet<TerminalPosition>(dirtyTerminalCells);
     }
 
     synchronized TreeSet<TerminalPosition> getAndResetDirtyCells() {
@@ -159,6 +167,33 @@ class VirtualTerminal {
             return cursorSpacePosition;
         }
         return cursorSpacePosition.withRelativeRow(currentTextBuffer.getLineCount() - viewportSize.getRows());
+    }
+
+    private void trimBufferBacklog() {
+        // Now see if we need to discard lines from the backlog
+        int bufferBacklogSize = backlogSize;
+        if(currentTextBuffer == privateModeTextBuffer) {
+            bufferBacklogSize = 0;
+        }
+        int trimBacklogRows = currentTextBuffer.getLineCount() - (bufferBacklogSize + viewportSize.getRows());
+        if(trimBacklogRows > 0) {
+            currentTextBuffer.removeTopLines(trimBacklogRows);
+            // Adjust cursor position
+            cursorPosition = cursorPosition.withRelativeRow(-trimBacklogRows);
+            correctCursor();
+            if(!wholeBufferDirty) {
+                // Adjust all "dirty" positions
+                TreeSet<TerminalPosition> newDirtySet = new TreeSet<TerminalPosition>();
+                for(TerminalPosition dirtyPosition: dirtyTerminalCells) {
+                    TerminalPosition adjustedPosition = dirtyPosition.withRelativeRow(-trimBacklogRows);
+                    if(adjustedPosition.getRow() >= 0) {
+                        newDirtySet.add(adjustedPosition);
+                    }
+                }
+                dirtyTerminalCells.clear();
+                dirtyTerminalCells.addAll(newDirtySet);
+            }
+        }
     }
 
     private void correctCursor() {

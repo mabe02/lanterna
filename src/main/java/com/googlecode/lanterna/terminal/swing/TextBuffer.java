@@ -23,8 +23,10 @@ class TextBuffer {
         lines.add(new ArrayList<TextCharacter>(200));
     }
 
-    synchronized void removeFirstLine() {
-        lines.removeFirst();
+    synchronized void removeTopLines(int numberOfLinesToRemove) {
+        for(int i = 0; i < numberOfLinesToRemove; i++) {
+            lines.removeFirst();
+        }
     }
 
     synchronized void clear() {

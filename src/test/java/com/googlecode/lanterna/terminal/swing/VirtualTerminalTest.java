@@ -184,7 +184,77 @@ public class VirtualTerminalTest {
         assertEquals(new TerminalPosition(0, 4), virtualTerminal.getCursorPosition());
     }
 
+    @Test
+    public void textScrollingOutOfTheBacklogDisappears() {
+        VirtualTerminal virtualTerminal = new VirtualTerminal(new TerminalSize(10, 3));
+        // Backlog of 1, meaning viewport size + 1 row
+        virtualTerminal.setBacklogSize(1);
+        putString(virtualTerminal, "Line 1\n");
+        putString(virtualTerminal, "Line 2\n");
+        putString(virtualTerminal, "Line 3\n");
+        putString(virtualTerminal, "Line 4\n"); // This should knock out "Line 1"
+
+        // Expected content:
+        //(|Line 1    | <- discarded)
+        // ------------
+        // |Line 2    | <- backlog
+        // ------------
+        // |Line 3    | <- viewport
+        // |Line 4    | <- viewport
+        // |          | <- viewport
+
+        // Make terminal bigger
+        virtualTerminal.setViewportSize(new TerminalSize(10, 4));
+
+        // Now line 2 should be the top row
+        assertEquals('2', virtualTerminal.getCharacter(new TerminalPosition(5, 0)).getCharacter());
+
+        // Make it even bigger
+        virtualTerminal.setViewportSize(new TerminalSize(10, 5));
+
+        // Should make no difference, the viewport will add an empty row at the end, because there is nothing in the
+        // backlog to insert at the top
+        assertEquals('2', virtualTerminal.getCharacter(new TerminalPosition(5, 0)).getCharacter());
+    }
+
+    @Test
+    public void backlogTrimmingAdjustsCursorPositionAndDirtyCells() {
+        VirtualTerminal virtualTerminal = new VirtualTerminal(new TerminalSize(80, 3));
+        virtualTerminal.setBacklogSize(0);
+        virtualTerminal.putCharacter(fromChar('A'));
+        virtualTerminal.setCursorPosition(new TerminalPosition(1, 1));
+        virtualTerminal.putCharacter(fromChar('B'));
+        virtualTerminal.setCursorPosition(new TerminalPosition(2, 2));
+        virtualTerminal.putCharacter(fromChar('C'));
+
+        // Dirty positions should now be these
+        assertEquals(new TreeSet<TerminalPosition>(Arrays.asList(
+                new TerminalPosition(0, 0),
+                new TerminalPosition(1, 1),
+                new TerminalPosition(2, 2))), virtualTerminal.getDirtyCells());
+        assertEquals(new TerminalPosition(3, 2), virtualTerminal.getCursorPosition());
+
+        // Add one more row to shift out the first line
+        virtualTerminal.putCharacter(newline());
+
+        // Dirty positions should now be adjusted
+        assertEquals(new TreeSet<TerminalPosition>(Arrays.asList(
+                new TerminalPosition(1, 0),
+                new TerminalPosition(2, 1))), virtualTerminal.getDirtyCells());
+        assertEquals(new TerminalPosition(0, 2), virtualTerminal.getCursorPosition());
+    }
+
+    private void putString(VirtualTerminal virtualTerminal, String string) {
+        for(char c: string.toCharArray()) {
+            virtualTerminal.putCharacter(new TextCharacter(c));
+        }
+    }
+
     private TextCharacter newline() {
         return new TextCharacter('\n');
+    }
+
+    private TextCharacter fromChar(char c) {
+        return new TextCharacter(c);
     }
 }

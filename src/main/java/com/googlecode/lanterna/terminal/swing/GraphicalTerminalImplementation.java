@@ -266,7 +266,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
 
     private void updateBackBuffer(int fontWidth, int fontHeight, boolean terminalResized, TerminalSize terminalSize) {
         //Retrieve the position of the cursor, relative to the scrolling state
-        TerminalPosition translatedCursorPosition = virtualTerminal.getTranslatedCursorPosition();
+        TerminalPosition translatedCursorPosition = virtualTerminal.getCursorPosition();
 
         //Setup the graphics object
         Graphics2D backbufferGraphics = backbuffer.createGraphics();
