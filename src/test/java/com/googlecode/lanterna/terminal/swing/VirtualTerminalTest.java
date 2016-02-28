@@ -151,4 +151,40 @@ public class VirtualTerminalTest {
         assertEquals(TextCharacter.DEFAULT_CHARACTER, virtualTerminal.getCharacter(new TerminalPosition(2, 0)));
         assertEquals('V', virtualTerminal.getCharacter(new TerminalPosition(3, 0)).getCharacter());
     }
+
+    @Test
+    public void testCursorPositionUpdatesWhenTerminalSizeChanges() {
+        VirtualTerminal virtualTerminal = new VirtualTerminal(new TerminalSize(3, 3));
+        virtualTerminal.putCharacter(newline());
+        virtualTerminal.putCharacter(newline());
+        assertEquals(new TerminalPosition(0, 2), virtualTerminal.getCursorPosition());
+        virtualTerminal.putCharacter(newline());
+        assertEquals(new TerminalPosition(0, 2), virtualTerminal.getCursorPosition());
+        virtualTerminal.putCharacter(newline());
+        assertEquals(new TerminalPosition(0, 2), virtualTerminal.getCursorPosition());
+
+        // Shrink viewport
+        virtualTerminal.setViewportSize(new TerminalSize(3, 2));
+        assertEquals(new TerminalPosition(0, 1), virtualTerminal.getCursorPosition());
+
+        // Restore
+        virtualTerminal.setViewportSize(new TerminalSize(3, 3));
+        assertEquals(new TerminalPosition(0, 2), virtualTerminal.getCursorPosition());
+
+        // Enlarge
+        virtualTerminal.setViewportSize(new TerminalSize(3, 4));
+        assertEquals(new TerminalPosition(0, 3), virtualTerminal.getCursorPosition());
+        virtualTerminal.setViewportSize(new TerminalSize(3, 5));
+        assertEquals(new TerminalPosition(0, 4), virtualTerminal.getCursorPosition());
+
+        // We've reached the total size of the buffer, enlarging it further shouldn't affect the cursor position
+        virtualTerminal.setViewportSize(new TerminalSize(3, 6));
+        assertEquals(new TerminalPosition(0, 4), virtualTerminal.getCursorPosition());
+        virtualTerminal.setViewportSize(new TerminalSize(3, 7));
+        assertEquals(new TerminalPosition(0, 4), virtualTerminal.getCursorPosition());
+    }
+
+    private TextCharacter newline() {
+        return new TextCharacter('\n');
+    }
 }

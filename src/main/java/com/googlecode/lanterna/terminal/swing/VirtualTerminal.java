@@ -20,6 +20,7 @@ class VirtualTerminal {
     private TextBuffer currentTextBuffer;
     private boolean wholeBufferDirty;
     private TerminalSize viewportSize;
+    private int backlogSize;
 
     // Position is stored in "global coordinates", where 0x0 is the top-left corner of the scrollback buffer
     private TerminalPosition cursorPosition;
@@ -34,6 +35,7 @@ class VirtualTerminal {
         this.wholeBufferDirty = false;
         this.viewportSize = initialTerminalSize;
         this.cursorPosition = TerminalPosition.TOP_LEFT_CORNER;
+        this.backlogSize = 1000;
     }
 
     synchronized TerminalSize getViewportSize() {
@@ -169,11 +171,8 @@ class VirtualTerminal {
 
     private void moveCursorToNextLine() {
         cursorPosition = cursorPosition.withColumn(0).withRelativeRow(1);
-        if(cursorPosition.getRow() >= viewportSize.getRows()) {
-            cursorPosition = cursorPosition.withRelativeRow(-1);
-            if(currentTextBuffer == regularTextBuffer) {
-                currentTextBuffer.newLine();
-            }
+        if(cursorPosition.getRow() >= currentTextBuffer.getLineCount()) {
+            currentTextBuffer.newLine();
         }
     }
 }
