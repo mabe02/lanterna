@@ -214,8 +214,8 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
      * @return Preferred size of this terminal
      */
     synchronized Dimension getPreferredSize() {
-        return new Dimension(getFontWidth() * virtualTerminal.getTerminalSize().getColumns(),
-                getFontHeight() * virtualTerminal.getTerminalSize().getRows());
+        return new Dimension(getFontWidth() * virtualTerminal.getViewportSize().getColumns(),
+                getFontHeight() * virtualTerminal.getViewportSize().getRows());
     }
 
     /**
@@ -236,9 +236,9 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
         visibleRows = Math.max(1, visibleRows);
 
         //scrollObserver.updateModel(currentBuffer.getNumberOfLines(), visibleRows);
-        TerminalSize terminalSize = virtualTerminal.getTerminalSize().withColumns(widthInNumberOfCharacters).withRows(visibleRows);
-        if(!terminalSize.equals(virtualTerminal.getTerminalSize())) {
-            virtualTerminal.setTerminalSize(terminalSize);
+        TerminalSize terminalSize = virtualTerminal.getViewportSize().withColumns(widthInNumberOfCharacters).withRows(visibleRows);
+        if(!terminalSize.equals(virtualTerminal.getViewportSize())) {
+            virtualTerminal.setViewportSize(terminalSize);
             for(ResizeListener listener: resizeListeners) {
                 listener.onResized(this, terminalSize);
             }
@@ -605,7 +605,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
 
     @Override
     public synchronized TerminalSize getTerminalSize() {
-        return virtualTerminal.getTerminalSize();
+        return virtualTerminal.getViewportSize();
     }
 
     @Override

@@ -19,7 +19,7 @@ class VirtualTerminal {
 
     private TextBuffer currentTextBuffer;
     private boolean wholeBufferDirty;
-    private TerminalSize terminalSize;
+    private TerminalSize viewportSize;
 
     // Position is stored in "global coordinates", where 0x0 is the top-left corner of the scrollback buffer
     private TerminalPosition cursorPosition;
@@ -32,20 +32,20 @@ class VirtualTerminal {
         // Start with regular mode
         this.currentTextBuffer = regularTextBuffer;
         this.wholeBufferDirty = false;
-        this.terminalSize = initialTerminalSize;
+        this.viewportSize = initialTerminalSize;
         this.cursorPosition = TerminalPosition.TOP_LEFT_CORNER;
     }
 
-    synchronized TerminalSize getTerminalSize() {
-        return terminalSize;
+    synchronized TerminalSize getViewportSize() {
+        return viewportSize;
     }
 
-    synchronized void setTerminalSize(TerminalSize newSize) {
+    synchronized void setViewportSize(TerminalSize newSize) {
         // TODO: do we need to do this in the new implementation?
-        //if(terminalSize.getRows() < newSize.getRows()) {
+        //if(viewportSize.getRows() < newSize.getRows()) {
         //    cursorPosition = cursorPosition.withRelativeRow(newSize.getRows() - size.getRows());
         //}
-        this.terminalSize = newSize;
+        this.viewportSize = newSize;
         correctCursor();
     }
 
@@ -55,7 +55,7 @@ class VirtualTerminal {
         }
         else if(terminalCharacter.getCharacter() == '\t') {
             int nrOfSpaces = TabBehaviour.ALIGN_TO_COLUMN_4.getTabReplacement(cursorPosition.getColumn()).length();
-            for(int i = 0; i < nrOfSpaces && cursorPosition.getColumn() < terminalSize.getColumns() - 1; i++) {
+            for(int i = 0; i < nrOfSpaces && cursorPosition.getColumn() < viewportSize.getColumns() - 1; i++) {
                 putCharacter(terminalCharacter.withCharacter(' '));
             }
         }
@@ -63,7 +63,7 @@ class VirtualTerminal {
             boolean doubleWidth = TerminalTextUtils.isCharDoubleWidth(terminalCharacter.getCharacter());
             // If we're at the last column and the user tries to print a double-width character, reset the cell and move
             // to the next line
-            if(cursorPosition.getColumn() == terminalSize.getColumns() - 1 && doubleWidth) {
+            if(cursorPosition.getColumn() == viewportSize.getColumns() - 1 && doubleWidth) {
                 currentTextBuffer.setCharacter(cursorPosition.getRow(), cursorPosition.getColumn(), TextCharacter.DEFAULT_CHARACTER);
                 moveCursorToNextLine();
             }
@@ -78,14 +78,14 @@ class VirtualTerminal {
                 else if(i == 2) {
                     dirtyTerminalCells.add(new TerminalPosition(cursorPosition.getColumn() - 1, cursorPosition.getRow()));
                 }
-                if(dirtyTerminalCells.size() > (terminalSize.getColumns() * terminalSize.getRows() * 0.9)) {
+                if(dirtyTerminalCells.size() > (viewportSize.getColumns() * viewportSize.getRows() * 0.9)) {
                     invalidateWholeBuffer();
                 }
             }
 
             //Advance cursor
             cursorPosition = cursorPosition.withRelativeColumn(doubleWidth ? 2 : 1);
-            if(cursorPosition.getColumn() >= terminalSize.getColumns()) {
+            if(cursorPosition.getColumn() >= viewportSize.getColumns()) {
                 moveCursorToNextLine();
             }
             // TODO: ensure there is enough lines here!
@@ -93,10 +93,10 @@ class VirtualTerminal {
     }
 
     synchronized TerminalPosition getCursorPosition() {
-        if(terminalSize.getRows() >= currentTextBuffer.getLineCount()) {
+        if(viewportSize.getRows() >= currentTextBuffer.getLineCount()) {
             return cursorPosition;
         }
-        return cursorPosition.withRelativeRow(-(currentTextBuffer.getLineCount() - terminalSize.getRows()));
+        return cursorPosition.withRelativeRow(-(currentTextBuffer.getLineCount() - viewportSize.getRows()));
     }
 
     synchronized TreeSet<TerminalPosition> getAndResetDirtyCells() {
@@ -153,10 +153,10 @@ class VirtualTerminal {
     }
 
     private TerminalPosition translateCursorSpaceToGlobalSpace(TerminalPosition cursorSpacePosition) {
-        if(terminalSize.getRows() >= currentTextBuffer.getLineCount()) {
+        if(viewportSize.getRows() >= currentTextBuffer.getLineCount()) {
             return cursorSpacePosition;
         }
-        return cursorSpacePosition.withRelativeColumn(currentTextBuffer.getLineCount() - terminalSize.getRows());
+        return cursorSpacePosition.withRelativeColumn(currentTextBuffer.getLineCount() - viewportSize.getRows());
     }
 
     private void correctCursor() {
@@ -164,12 +164,12 @@ class VirtualTerminal {
                 new TerminalPosition(
                         Math.max(cursorPosition.getColumn(), 0),
                         Math.max(cursorPosition.getRow(), 0));
-        this.cursorPosition = cursorPosition.withColumn(Math.min(cursorPosition.getColumn(), terminalSize.getColumns() - 1));
+        this.cursorPosition = cursorPosition.withColumn(Math.min(cursorPosition.getColumn(), viewportSize.getColumns() - 1));
     }
 
     private void moveCursorToNextLine() {
         cursorPosition = cursorPosition.withColumn(0).withRelativeRow(1);
-        if(cursorPosition.getRow() >= terminalSize.getRows()) {
+        if(cursorPosition.getRow() >= viewportSize.getRows()) {
             cursorPosition = cursorPosition.withRelativeRow(-1);
             if(currentTextBuffer == regularTextBuffer) {
                 currentTextBuffer.newLine();

@@ -62,6 +62,6 @@ class VirtualTerminalTextGraphics extends AbstractTextGraphics {
 
     @Override
     public TerminalSize getSize() {
-        return virtualTerminal.getTerminalSize();
+        return virtualTerminal.getViewportSize();
     }
 }
