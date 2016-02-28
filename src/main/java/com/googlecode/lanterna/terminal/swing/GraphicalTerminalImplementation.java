@@ -73,7 +73,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     // when the component is resized, we always update the whole buffer.
     //
     // DON'T RELY ON THESE FOR SIZE! We make it a big bigger than necessary to make resizing smoother. Use the AWT/Swing
-    // methods to get the correct dimensions or use {@code getTerminalSize()} to get the size in terminal space.
+    // methods to get the correct dimensions or use {@link #getTerminalSize} to get the size in terminal space.
     private CharacterState[][] visualState;
     private BufferedImage backbuffer;
 
