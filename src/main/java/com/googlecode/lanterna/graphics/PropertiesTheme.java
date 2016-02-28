@@ -163,7 +163,8 @@ public final class PropertiesTheme implements Theme {
                     lastElement.backgroundMap.containsKey(name)) {
                 return new StyleImpl(path, name);
             }
-            return null;
+            // If there was no custom style with this name, just return the normal one
+            return getNormal();
         }
 
         @Override
