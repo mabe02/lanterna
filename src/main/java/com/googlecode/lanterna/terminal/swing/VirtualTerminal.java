@@ -7,6 +7,7 @@ import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.screen.TabBehaviour;
 
 import java.util.List;
+import java.util.ListIterator;
 import java.util.TreeSet;
 
 /**
@@ -146,9 +147,30 @@ class VirtualTerminal {
         return currentTextBuffer.getCharacter(globalPosition.getRow(), globalPosition.getColumn());
     }
 
-    synchronized Iterable<List<TextCharacter>> getLines() {
-        //TODO: This is just temporary
-        return currentTextBuffer.getLines();
+    synchronized void forEachLine(int startRow, int endRow, BufferWalker bufferWalker) {
+        final BufferLine emptyLine = new BufferLine() {
+            @Override
+            public TextCharacter getCharacterAt(int column) {
+                return TextCharacter.DEFAULT_CHARACTER;
+            }
+        };
+        ListIterator<List<TextCharacter>> iterator = currentTextBuffer.getLinesFrom(startRow);
+        for(int row = startRow; row < endRow; row++) {
+            BufferLine bufferLine = emptyLine;
+            if(iterator.hasNext()) {
+                final List<TextCharacter> list = iterator.next();
+                bufferLine = new BufferLine() {
+                    @Override
+                    public TextCharacter getCharacterAt(int column) {
+                        if(column >= list.size()) {
+                            return TextCharacter.DEFAULT_CHARACTER;
+                        }
+                        return list.get(column);
+                    }
+                };
+            }
+            bufferWalker.drawLine(row, bufferLine);
+        }
     }
 
     private void invalidateWholeBuffer() {
@@ -203,5 +225,13 @@ class VirtualTerminal {
         if(cursorPosition.getRow() >= currentTextBuffer.getLineCount()) {
             currentTextBuffer.newLine();
         }
+    }
+
+    interface BufferLine {
+        TextCharacter getCharacterAt(int column);
+    }
+
+    interface BufferWalker {
+        void drawLine(int rowNumber, BufferLine bufferLine);
     }
 }

@@ -37,6 +37,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * This is the class that does the heavy lifting for both {@link AWTTerminal} and {@link SwingTerminal}. It maintains
@@ -58,11 +59,11 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     private TextColor foregroundColor;
     private TextColor backgroundColor;
 
-    private volatile boolean cursorIsVisible;
-    private volatile Timer blinkTimer;
-    private volatile boolean hasBlinkingText;
-    private volatile boolean blinkOn;
-    private volatile boolean flushed;
+    private TerminalPosition lastDrawnCursorPosition;
+    private boolean cursorIsVisible;
+    private Timer blinkTimer;
+    private boolean hasBlinkingText;
+    private boolean blinkOn;
 
     // We use two different data structures to optimize drawing
     //  * A map (as a two-dimensional array) of all characters currently visible inside this component
@@ -74,7 +75,6 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     //
     // DON'T RELY ON THESE FOR SIZE! We make it a big bigger than necessary to make resizing smoother. Use the AWT/Swing
     // methods to get the correct dimensions or use {@link #getTerminalSize} to get the size in terminal space.
-    private CharacterState[][] visualState;
     private BufferedImage backbuffer;
 
     /**
@@ -89,7 +89,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
      * @param scrollController Controller to use for scrolling, the object passed in will be notified whenever the
      *                         scrollable area has changed
      */
-    public GraphicalTerminalImplementation(
+    GraphicalTerminalImplementation(
             TerminalSize initialTerminalSize,
             TerminalEmulatorDeviceConfiguration deviceConfiguration,
             TerminalEmulatorColorConfiguration colorConfiguration,
@@ -115,12 +115,11 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
         this.backgroundColor = TextColor.ANSI.DEFAULT;
         this.cursorIsVisible = true;        //Always start with an activate and visible cursor
         this.enquiryString = "TerminalEmulator";
-        this.visualState = new CharacterState[48][160];
+        this.lastDrawnCursorPosition = null;
         this.backbuffer = null;  // We don't know the dimensions yet
         this.blinkTimer = null;
         this.hasBlinkingText = false;   // Assume initial content doesn't have any blinking text
         this.blinkOn = true;
-        this.flushed = false;
 
         //Set the initial scrollable size
         //scrollObserver.newScrollableLength(fontConfiguration.getFontHeight() * terminalSize.getRows());
@@ -134,25 +133,25 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
      * Used to find out the font height, in pixels
      * @return Terminal font height in pixels
      */
-    protected abstract int getFontHeight();
+    abstract int getFontHeight();
 
     /**
      * Used to find out the font width, in pixels
      * @return Terminal font width in pixels
      */
-    protected abstract int getFontWidth();
+    abstract int getFontWidth();
 
     /**
      * Used when requiring the total height of the terminal component, in pixels
      * @return Height of the terminal component, in pixels
      */
-    protected abstract int getHeight();
+    abstract int getHeight();
 
     /**
      * Used when requiring the total width of the terminal component, in pixels
      * @return Width of the terminal component, in pixels
      */
-    protected abstract int getWidth();
+    abstract int getWidth();
 
     /**
      * Returning the AWT font to use for the specific character. This might not always be the same, in case a we are
@@ -160,24 +159,24 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
      * @param character Character to get the font for
      * @return Font to be used for this character
      */
-    protected abstract Font getFontForCharacter(TextCharacter character);
+    abstract Font getFontForCharacter(TextCharacter character);
 
     /**
      * Returns {@code true} if anti-aliasing is enabled, {@code false} otherwise
      * @return {@code true} if anti-aliasing is enabled, {@code false} otherwise
      */
-    protected abstract boolean isTextAntiAliased();
+    abstract boolean isTextAntiAliased();
 
     /**
      * Called by the {@code GraphicalTerminalImplementation} when it would like the OS to schedule a repaint of the
      * window
      */
-    protected abstract void repaint();
+    abstract void repaint();
 
     /**
      * Start the timer that triggers blinking
      */
-    protected synchronized void startBlinkTimer() {
+    synchronized void startBlinkTimer() {
         if(blinkTimer != null) {
             // Already on!
             return;
@@ -197,7 +196,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     /**
      * Stops the timer the triggers blinking
      */
-    protected synchronized void stopBlinkTimer() {
+    synchronized void stopBlinkTimer() {
         if(blinkTimer == null) {
             // Already off!
             return;
@@ -207,7 +206,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     }
 
     ///////////
-    // First implement all the Swing-related methods
+    // Implement all the Swing-related methods
     ///////////
     /**
      * Calculates the preferred size of this terminal
@@ -218,122 +217,109 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
                 getFontHeight() * virtualTerminal.getViewportSize().getRows());
     }
 
-    /**
-     * Updates the back buffer (if necessary) and draws it to the component's surface
-     * @param componentGraphics Object to use when drawing to the component's surface
-     */
-    protected synchronized void paintComponent(Graphics componentGraphics) {
-        //First, resize the buffer width/height if necessary
-        int fontWidth = getFontWidth();
-        int fontHeight = getFontHeight();
-        //boolean antiAliasing = fontConfiguration.isAntiAliased();
-        int widthInNumberOfCharacters = getWidth() / fontWidth;
-        int visibleRows = getHeight() / fontHeight;
-        boolean terminalResized = false;
-
-        //Don't let size be less than 1
-        widthInNumberOfCharacters = Math.max(1, widthInNumberOfCharacters);
-        visibleRows = Math.max(1, visibleRows);
-
-        //scrollObserver.updateModel(currentBuffer.getNumberOfLines(), visibleRows);
-        TerminalSize terminalSize = virtualTerminal.getViewportSize().withColumns(widthInNumberOfCharacters).withRows(visibleRows);
+    synchronized void onResized(int columns, int rows) {
+        TerminalSize terminalSize = virtualTerminal.getViewportSize().withColumns(columns).withRows(rows);
         if(!terminalSize.equals(virtualTerminal.getViewportSize())) {
             virtualTerminal.setViewportSize(terminalSize);
             for(ResizeListener listener: resizeListeners) {
                 listener.onResized(this, terminalSize);
             }
-            terminalResized = true;
-            ensureVisualStateHasRightSize(terminalSize);
         }
+    }
+
+    /**
+     * Updates the back buffer (if necessary) and draws it to the component's surface
+     * @param componentGraphics Object to use when drawing to the component's surface
+     */
+    synchronized void paintComponent(Graphics componentGraphics) {
         ensureBackbufferHasRightSize();
-
-        // At this point, if the user hasn't asked for an explicit flush, just paint the backbuffer. It's prone to
-        // problems if the user isn't flushing properly but it reduces flickering when resizing the window and the code
-        // is asynchronously responding to the resize
-        if(flushed) {
-            updateBackBuffer(fontWidth, fontHeight, terminalResized, terminalSize);
-            flushed = false;
+        Rectangle clipBounds = componentGraphics.getClipBounds();
+        if(clipBounds == null) {
+            clipBounds = new Rectangle(0, 0, getWidth(), getHeight());
         }
+        componentGraphics.drawImage(
+                backbuffer,
+                // Destination coordinates
+                clipBounds.x,
+                clipBounds.y,
+                clipBounds.width,
+                clipBounds.height,
+                // Source coordinates
+                clipBounds.x,
+                clipBounds.y,
+                clipBounds.width,
+                clipBounds.height,
+                null);
 
-        componentGraphics.drawImage(backbuffer, 0, 0, getWidth(), getHeight(), 0, 0, getWidth(), getHeight(), null);
 
-        // Dispose the graphic objects
+        //0, 0, getWidth(), getHeight(), 0, 0, getWidth(), getHeight(), null);
         componentGraphics.dispose();
-
-        // Tell anyone waiting on us that drawing is complete
         notifyAll();
     }
 
-    private void updateBackBuffer(int fontWidth, int fontHeight, boolean terminalResized, TerminalSize terminalSize) {
+    private synchronized void updateBackBuffer() {
+        final int fontWidth = getFontWidth();
+        final int fontHeight = getFontHeight();
+
         //Retrieve the position of the cursor, relative to the scrolling state
-        TerminalPosition translatedCursorPosition = virtualTerminal.getCursorPosition();
+        final TerminalPosition cursorPosition = virtualTerminal.getCursorPosition();
 
         //Setup the graphics object
-        Graphics2D backbufferGraphics = backbuffer.createGraphics();
+        ensureBackbufferHasRightSize();
+        final Graphics2D backbufferGraphics = backbuffer.createGraphics();
 
         if(isTextAntiAliased()) {
             backbufferGraphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
             backbufferGraphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         }
 
-        // Draw line by line, character by character
-        // Initiate the blink state to whatever the cursor is using, since if the cursor is blinking then we always want
-        // to do the blink repaint
-        boolean foundBlinkingCharacters = deviceConfiguration.isCursorBlinking();
-        int rowIndex = 0;
-        for(List<TextCharacter> row: virtualTerminal.getLines()) {
-            for(int columnIndex = 0; columnIndex < row.size(); columnIndex++) {
-                //Any extra characters from the virtual terminal that doesn't fit can be discarded
-                if(columnIndex >= terminalSize.getColumns()) {
-                    continue;
-                }
+        final TerminalSize viewportSize = virtualTerminal.getViewportSize();
+        final AtomicBoolean foundBlinkingCharacters = new AtomicBoolean(deviceConfiguration.isCursorBlinking());
+        final byte dirtyCells[] = buildDirtyCellsLookupTable(virtualTerminal);
 
-                TextCharacter character = row.get(columnIndex);
-                boolean atCursorLocation = translatedCursorPosition.equals(columnIndex, rowIndex);
-                //If next position is the cursor location and this is a CJK character (i.e. cursor is on the padding),
-                //consider this location the cursor position since otherwise the cursor will be skipped
-                if(!atCursorLocation &&
-                        translatedCursorPosition.getColumn() == columnIndex + 1 &&
-                        translatedCursorPosition.getRow() == rowIndex &&
-                        TerminalTextUtils.isCharCJK(character.getCharacter())) {
-                    atCursorLocation = true;
-                }
-                int characterWidth = fontWidth * (TerminalTextUtils.isCharCJK(character.getCharacter()) ? 2 : 1);
+        virtualTerminal.forEachLine(0, viewportSize.getRows(), new VirtualTerminal.BufferWalker() {
+            @Override
+            public void drawLine(int rowNumber, VirtualTerminal.BufferLine bufferLine) {
+                for(int column = 0; column < viewportSize.getColumns(); column++) {
+                    TextCharacter textCharacter = bufferLine.getCharacterAt(column);
+                    boolean atCursorLocation = cursorPosition.equals(column, rowNumber);
+                    //If next position is the cursor location and this is a CJK character (i.e. cursor is on the padding),
+                    //consider this location the cursor position since otherwise the cursor will be skipped
+                    if(!atCursorLocation &&
+                            cursorPosition.getColumn() == column + 1 &&
+                            cursorPosition.getRow() == rowNumber &&
+                            TerminalTextUtils.isCharCJK(textCharacter.getCharacter())) {
+                        atCursorLocation = true;
+                    }
+                    if(dirtyCells == null || dirtyCells[rowNumber * viewportSize.getColumns() + column] == 1) {
+                        int characterWidth = fontWidth * (TerminalTextUtils.isCharCJK(textCharacter.getCharacter()) ? 2 : 1);
+                        Color foregroundColor = deriveTrueForegroundColor(textCharacter, atCursorLocation);
+                        Color backgroundColor = deriveTrueBackgroundColor(textCharacter, atCursorLocation);
+                        boolean drawCursor = atCursorLocation &&
+                                (!deviceConfiguration.isCursorBlinking() ||     //Always draw if the cursor isn't blinking
+                                        (deviceConfiguration.isCursorBlinking() && blinkOn));    //If the cursor is blinking, only draw when blinkOn is true
 
-                Color foregroundColor = deriveTrueForegroundColor(character, atCursorLocation);
-                Color backgroundColor = deriveTrueBackgroundColor(character, atCursorLocation);
+                        drawCharacter(backbufferGraphics,
+                                textCharacter,
+                                column,
+                                rowNumber,
+                                foregroundColor,
+                                backgroundColor,
+                                fontWidth,
+                                fontHeight,
+                                characterWidth,
+                                drawCursor);
+                    }
 
-                boolean drawCursor = atCursorLocation &&
-                        (!deviceConfiguration.isCursorBlinking() ||     //Always draw if the cursor isn't blinking
-                                (deviceConfiguration.isCursorBlinking() && blinkOn));    //If the cursor is blinking, only draw when blinkOn is true
-
-                CharacterState characterState = new CharacterState(character, foregroundColor, backgroundColor, drawCursor);
-                if(!characterState.equals(visualState[rowIndex][columnIndex]) || terminalResized) {
-                    drawCharacter(backbufferGraphics,
-                            character,
-                            columnIndex,
-                            rowIndex,
-                            foregroundColor,
-                            backgroundColor,
-                            fontWidth,
-                            fontHeight,
-                            characterWidth,
-                            drawCursor);
-                    visualState[rowIndex][columnIndex] = characterState;
-                    if(TerminalTextUtils.isCharCJK(character.getCharacter())) {
-                        visualState[rowIndex][columnIndex+1] = characterState;
+                    if(textCharacter.getModifiers().contains(SGR.BLINK)) {
+                        foundBlinkingCharacters.set(true);
+                    }
+                    if(TerminalTextUtils.isCharCJK(textCharacter.getCharacter())) {
+                        column++; //Skip the trailing space after a CJK character
                     }
                 }
-
-                if(character.getModifiers().contains(SGR.BLINK)) {
-                    foundBlinkingCharacters = true;
-                }
-                if(TerminalTextUtils.isCharCJK(character.getCharacter())) {
-                    columnIndex++; //Skip the trailing space after a CJK character
-                }
             }
-            rowIndex++;
-        }
+        });
 
         // Take care of the left-over area at the bottom and right of the component where no character can fit
         int leftoverHeight = getHeight() % fontHeight;
@@ -348,48 +334,43 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
         backbufferGraphics.dispose();
 
         // Update the blink status according to if there were any blinking characters or not
-        this.hasBlinkingText = foundBlinkingCharacters;
+        this.hasBlinkingText = foundBlinkingCharacters.get();
+        this.lastDrawnCursorPosition = cursorPosition;
+    }
+
+    private byte[] buildDirtyCellsLookupTable(VirtualTerminal virtualTerminal) {
+        if(virtualTerminal.isWholeBufferDirtyThenReset()) {
+            return null;
+        }
+        TerminalSize viewportSize = virtualTerminal.getViewportSize();
+        TerminalPosition cursorPosition = virtualTerminal.getCursorPosition();
+        byte[] lookupTable = new byte[viewportSize.getColumns() * viewportSize.getRows()];
+        lookupTable[cursorPosition.getRow() * viewportSize.getColumns() + cursorPosition.getColumn()] = (byte)1;
+        if(lastDrawnCursorPosition != null && !lastDrawnCursorPosition.equals(cursorPosition)) {
+            lookupTable[lastDrawnCursorPosition.getRow() * viewportSize.getColumns() + lastDrawnCursorPosition.getColumn()] = (byte)1;
+        }
+        for(TerminalPosition position: virtualTerminal.getAndResetDirtyCells()) {
+            lookupTable[position.getRow() * viewportSize.getColumns() + position.getColumn()] = (byte)1;
+        }
+        return lookupTable;
     }
 
     private void ensureBackbufferHasRightSize() {
         if(backbuffer == null) {
             backbuffer = new BufferedImage(getWidth() * 2, getHeight() * 2, BufferedImage.TYPE_INT_RGB);
+            Graphics2D graphics = backbuffer.createGraphics();
+            graphics.setColor(colorConfiguration.toAWTColor(TextColor.ANSI.DEFAULT, false, false));
+            graphics.fillRect(0, 0, getWidth() * 2, getHeight() * 2);
+            graphics.dispose();
         }
         if(backbuffer.getWidth() < getWidth() || backbuffer.getWidth() > getWidth() * 4 ||
                 backbuffer.getHeight() < getHeight() || backbuffer.getHeight() > getHeight() * 4) {
             BufferedImage newBackbuffer = new BufferedImage(Math.max(getWidth(), 1) * 2, Math.max(getHeight(), 1) * 2, BufferedImage.TYPE_INT_RGB);
             Graphics2D graphics = newBackbuffer.createGraphics();
+            graphics.fillRect(0, 0, newBackbuffer.getWidth(), newBackbuffer.getHeight());
             graphics.drawImage(backbuffer, 0, 0, null);
             graphics.dispose();
             backbuffer = newBackbuffer;
-        }
-    }
-
-    private void ensureVisualStateHasRightSize(TerminalSize terminalSize) {
-        if(visualState == null) {
-            visualState = new CharacterState[terminalSize.getRows() * 2][terminalSize.getColumns() * 2];
-        }
-        if(visualState.length < terminalSize.getRows() || visualState.length > Math.max(terminalSize.getRows(), 1) * 4) {
-            visualState = Arrays.copyOf(visualState, terminalSize.getRows() * 2);
-        }
-        for(int rowIndex = 0; rowIndex < visualState.length; rowIndex++) {
-            CharacterState[] row = visualState[rowIndex];
-            if(row == null) {
-                row = new CharacterState[terminalSize.getColumns() * 2];
-                visualState[rowIndex] = row;
-            }
-            if(row.length < terminalSize.getColumns() || row.length > Math.max(terminalSize.getColumns(), 1) * 4) {
-                row = Arrays.copyOf(row, terminalSize.getColumns() * 2);
-                visualState[rowIndex] = row;
-            }
-
-            // Make sure all items outside the 'real' terminal size are null
-            if(rowIndex < terminalSize.getRows()) {
-                Arrays.fill(row, terminalSize.getColumns(), row.length, null);
-            }
-            else {
-                Arrays.fill(row, null);
-            }
         }
     }
 
@@ -540,19 +521,14 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
      * Clears out the back buffer and the resets the visual state so next paint operation will do a full repaint of
      * everything
      */
-    protected void clearBackBufferAndVisualState() {
+    void clearBackBufferAndVisualState() {
         // Manually clear the backbuffer and visual state
         if(backbuffer != null) {
             Graphics2D graphics = backbuffer.createGraphics();
-            Color foregroundColor = colorConfiguration.toAWTColor(TextColor.ANSI.DEFAULT, true, false);
             Color backgroundColor = colorConfiguration.toAWTColor(TextColor.ANSI.DEFAULT, false, false);
             graphics.setColor(backgroundColor);
             graphics.fillRect(0, 0, getWidth(), getHeight());
             graphics.dispose();
-
-            for(CharacterState[] line : visualState) {
-                Arrays.fill(line, new CharacterState(new TextCharacter(' '), foregroundColor, backgroundColor, false));
-            }
         }
     }
 
@@ -615,7 +591,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
 
     @Override
     public void flush() {
-        flushed = true;
+        updateBackBuffer();
         repaint();
     }
 

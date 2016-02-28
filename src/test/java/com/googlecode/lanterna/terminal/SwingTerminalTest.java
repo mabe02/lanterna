@@ -109,6 +109,7 @@ public class SwingTerminalTest {
         terminal.putCharacter(Symbols.SINGLE_LINE_HORIZONTAL);
         terminal.resetColorAndSGR();
         terminal.setCursorPosition(0, 0);
+        terminal.flush();
 
         Thread.sleep(5000);
         terminal.exitPrivateMode();

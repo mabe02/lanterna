@@ -5,6 +5,7 @@ import com.googlecode.lanterna.TextCharacter;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 
 /**
  * Created by Martin on 2016-02-21.
@@ -34,9 +35,8 @@ class TextBuffer {
         newLine();
     }
 
-    Iterable<List<TextCharacter>> getLines() {
-        // TODO: Don't do it like this...!
-        return lines;
+    ListIterator<List<TextCharacter>> getLinesFrom(int rowNumber) {
+        return lines.listIterator(rowNumber);
     }
 
     synchronized int getLineCount() {

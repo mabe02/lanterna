@@ -5,10 +5,7 @@ import com.googlecode.lanterna.TextCharacter;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.HierarchyEvent;
-import java.awt.event.HierarchyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.io.IOException;
 import java.util.Collections;
 
@@ -57,6 +54,12 @@ class SwingTerminalImplementation extends GraphicalTerminalImplementation {
             @Override
             public void mouseClicked(MouseEvent e) {
                 SwingTerminalImplementation.this.component.requestFocusInWindow();
+            }
+        });
+        component.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                onResized(getWidth() / getFontWidth(), getHeight() / getFontHeight());
             }
         });
         component.addHierarchyListener(new HierarchyListener() {
