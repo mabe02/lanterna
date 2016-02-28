@@ -158,7 +158,7 @@ class VirtualTerminal {
         if(viewportSize.getRows() >= currentTextBuffer.getLineCount()) {
             return cursorSpacePosition;
         }
-        return cursorSpacePosition.withRelativeColumn(currentTextBuffer.getLineCount() - viewportSize.getRows());
+        return cursorSpacePosition.withRelativeRow(currentTextBuffer.getLineCount() - viewportSize.getRows());
     }
 
     private void correctCursor() {
