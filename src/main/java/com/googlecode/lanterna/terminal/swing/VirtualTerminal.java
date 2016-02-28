@@ -121,23 +121,17 @@ class VirtualTerminal {
         return copy;
     }
 
-    synchronized TerminalPosition getTranslatedCursorPosition() {
-        //TODO: Implementation
-        return TerminalPosition.TOP_LEFT_CORNER;
-    }
-
     synchronized void switchToPrivateMode() {
-        //TODO: Implementation
         currentTextBuffer = privateModeTextBuffer;
+        invalidateWholeBuffer();
     }
 
     synchronized void switchToNormalMode() {
-        //TODO: Implementation
         currentTextBuffer = regularTextBuffer;
+        invalidateWholeBuffer();
     }
 
     synchronized void clear() {
-        //TODO: Implementation
         currentTextBuffer.clear();
         invalidateWholeBuffer();
         setCursorPosition(TerminalPosition.TOP_LEFT_CORNER);

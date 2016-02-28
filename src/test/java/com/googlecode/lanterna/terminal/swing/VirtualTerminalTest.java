@@ -18,7 +18,7 @@ public class VirtualTerminalTest {
     @Test
     public void singleLineWriteAndReadBackWorks() {
         VirtualTerminal virtualTerminal = new VirtualTerminal(new TerminalSize(80, 24));
-        assertEquals(TerminalPosition.TOP_LEFT_CORNER, virtualTerminal.getTranslatedCursorPosition());
+        assertEquals(TerminalPosition.TOP_LEFT_CORNER, virtualTerminal.getCursorPosition());
         virtualTerminal.putCharacter(new TextCharacter('H'));
         virtualTerminal.putCharacter(new TextCharacter('E'));
         virtualTerminal.putCharacter(new TextCharacter('L'));
@@ -47,7 +47,7 @@ public class VirtualTerminalTest {
     @Test
     public void clearAllMarksEverythingAsDirtyAndEverythingInTheTerminalIsReplacedWithDefaultCharacter() {
         VirtualTerminal virtualTerminal = new VirtualTerminal(new TerminalSize(10, 5));
-        assertEquals(TerminalPosition.TOP_LEFT_CORNER, virtualTerminal.getTranslatedCursorPosition());
+        assertEquals(TerminalPosition.TOP_LEFT_CORNER, virtualTerminal.getCursorPosition());
         virtualTerminal.putCharacter(new TextCharacter('H'));
         virtualTerminal.putCharacter(new TextCharacter('E'));
         virtualTerminal.putCharacter(new TextCharacter('L'));
@@ -69,7 +69,7 @@ public class VirtualTerminalTest {
     @Test
     public void replacingAllContentTriggersWholeTerminalIsDirty() {
         VirtualTerminal virtualTerminal = new VirtualTerminal(new TerminalSize(5, 3));
-        assertEquals(TerminalPosition.TOP_LEFT_CORNER, virtualTerminal.getTranslatedCursorPosition());
+        assertEquals(TerminalPosition.TOP_LEFT_CORNER, virtualTerminal.getCursorPosition());
         virtualTerminal.putCharacter(new TextCharacter('H'));
         virtualTerminal.putCharacter(new TextCharacter('E'));
         virtualTerminal.putCharacter(new TextCharacter('L'));
@@ -92,7 +92,7 @@ public class VirtualTerminalTest {
     @Test
     public void tooLongLinesWrap() {
         VirtualTerminal virtualTerminal = new VirtualTerminal(new TerminalSize(5, 5));
-        assertEquals(TerminalPosition.TOP_LEFT_CORNER, virtualTerminal.getTranslatedCursorPosition());
+        assertEquals(TerminalPosition.TOP_LEFT_CORNER, virtualTerminal.getCursorPosition());
         virtualTerminal.putCharacter(new TextCharacter('H'));
         virtualTerminal.putCharacter(new TextCharacter('E'));
         virtualTerminal.putCharacter(new TextCharacter('L'));
@@ -110,7 +110,7 @@ public class VirtualTerminalTest {
     @Test
     public void makeSureDoubleWidthCharactersWrapProperly() {
         VirtualTerminal virtualTerminal = new VirtualTerminal(new TerminalSize(9, 5));
-        assertEquals(TerminalPosition.TOP_LEFT_CORNER, virtualTerminal.getTranslatedCursorPosition());
+        assertEquals(TerminalPosition.TOP_LEFT_CORNER, virtualTerminal.getCursorPosition());
         virtualTerminal.putCharacter(new TextCharacter('こ'));
         virtualTerminal.putCharacter(new TextCharacter('ん'));
         virtualTerminal.putCharacter(new TextCharacter('に'));
