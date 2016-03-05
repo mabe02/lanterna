@@ -776,6 +776,13 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
                     continue;
                 }
                 String line = component.lines.get(rowIndex);
+                if(component.getMask() != null) {
+                    StringBuilder builder = new StringBuilder();
+                    for(int i = 0; i < line.length(); i++) {
+                        builder.append(component.getMask());
+                    }
+                    line = builder.toString();
+                }
                 graphics.putString(0, row, TerminalTextUtils.fitString(line, viewTopLeft.getColumn(), textAreaSize.getColumns()));
             }
         }
