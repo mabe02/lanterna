@@ -56,12 +56,6 @@ class SwingTerminalImplementation extends GraphicalTerminalImplementation {
                 SwingTerminalImplementation.this.component.requestFocusInWindow();
             }
         });
-        component.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                onResized(getWidth() / getFontWidth(), getHeight() / getFontHeight());
-            }
-        });
         component.addHierarchyListener(new HierarchyListener() {
             @Override
             public void hierarchyChanged(HierarchyEvent e) {

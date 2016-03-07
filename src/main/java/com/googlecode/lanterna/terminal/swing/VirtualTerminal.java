@@ -100,10 +100,7 @@ class VirtualTerminal {
     }
 
     synchronized TerminalPosition getCursorPosition() {
-        if(viewportSize.getRows() >= currentTextBuffer.getLineCount()) {
-            return cursorPosition;
-        }
-        return cursorPosition.withRelativeRow(-(currentTextBuffer.getLineCount() - viewportSize.getRows()));
+        return cursorPosition;
     }
 
     synchronized TreeSet<TerminalPosition> getDirtyCells() {
@@ -147,6 +144,10 @@ class VirtualTerminal {
         return currentTextBuffer.getCharacter(globalPosition.getRow(), globalPosition.getColumn());
     }
 
+    synchronized int getBufferLineCount() {
+        return currentTextBuffer.getLineCount();
+    }
+
     synchronized void forEachLine(int startRow, int endRow, BufferWalker bufferWalker) {
         final BufferLine emptyLine = new BufferLine() {
             @Override
@@ -155,7 +156,7 @@ class VirtualTerminal {
             }
         };
         ListIterator<List<TextCharacter>> iterator = currentTextBuffer.getLinesFrom(startRow);
-        for(int row = startRow; row < endRow; row++) {
+        for(int row = startRow; row <= endRow; row++) {
             BufferLine bufferLine = emptyLine;
             if(iterator.hasNext()) {
                 final List<TextCharacter> list = iterator.next();
