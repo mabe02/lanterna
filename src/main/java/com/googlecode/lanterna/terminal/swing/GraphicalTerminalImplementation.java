@@ -452,6 +452,12 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
         dirtyCellsLookupTable.resetAndInitialize(firstRowOffset, lastRowOffset, viewportSize.getColumns());
         dirtyCellsLookupTable.setDirty(cursorPosition);
         if(lastDrawnCursorPosition != null && !lastDrawnCursorPosition.equals(cursorPosition)) {
+            if(virtualTerminal.getCharacter(lastDrawnCursorPosition).isDoubleWidth()) {
+                dirtyCellsLookupTable.setDirty(lastDrawnCursorPosition.withRelativeColumn(1));
+            }
+            if(lastDrawnCursorPosition.getColumn() > 0 && virtualTerminal.getCharacter(lastDrawnCursorPosition.withRelativeColumn(-1)).isDoubleWidth()) {
+                dirtyCellsLookupTable.setDirty(lastDrawnCursorPosition.withRelativeColumn(-1));
+            }
             dirtyCellsLookupTable.setDirty(lastDrawnCursorPosition);
         }
 
