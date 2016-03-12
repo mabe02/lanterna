@@ -126,6 +126,9 @@ public class ScrollingSwingTerminal extends JComponent implements IOSafeTerminal
                     }
                     visibleAmount = screenHeight;
                 }
+                if(value > maximum - visibleAmount) {
+                    value = maximum - visibleAmount;
+                }
 
                 this.scrollValue = value;
 
