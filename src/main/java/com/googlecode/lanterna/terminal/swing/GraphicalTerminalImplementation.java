@@ -254,10 +254,8 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
 
             // Back buffer needs to be updated since the component size has changed
             updateBackBuffer(scrollOffset);
-            if(!virtualTerminal.getViewportSize().equals(terminalSize)) {
-                for(ResizeListener listener : resizeListeners) {
-                    listener.onResized(this, terminalSize);
-                }
+            for(ResizeListener listener : resizeListeners) {
+                listener.onResized(this, terminalSize);
             }
         }
         // Detect scrolling
