@@ -388,45 +388,45 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
         virtualTerminal.forEachLine(firstVisibleRowIndex, lastVisibleRowIndex, new VirtualTerminal.BufferWalker() {
             @Override
             public void drawLine(int rowNumber, VirtualTerminal.BufferLine bufferLine) {
-            for(int column = 0; column < viewportSize.getColumns(); column++) {
-                TextCharacter textCharacter = bufferLine.getCharacterAt(column);
-                boolean atCursorLocation = cursorPosition.equals(column, rowNumber);
-                //If next position is the cursor location and this is a CJK character (i.e. cursor is on the padding),
-                //consider this location the cursor position since otherwise the cursor will be skipped
-                if(!atCursorLocation &&
-                        cursorPosition.getColumn() == column + 1 &&
-                        cursorPosition.getRow() == rowNumber &&
-                        TerminalTextUtils.isCharCJK(textCharacter.getCharacter())) {
-                    atCursorLocation = true;
-                }
-                if(dirtyCellsLookupTable.isAllDirty() || dirtyCellsLookupTable.isDirty(rowNumber, column)) {
-                    int characterWidth = fontWidth * (TerminalTextUtils.isCharCJK(textCharacter.getCharacter()) ? 2 : 1);
-                    Color foregroundColor = deriveTrueForegroundColor(textCharacter, atCursorLocation);
-                    Color backgroundColor = deriveTrueBackgroundColor(textCharacter, atCursorLocation);
-                    boolean drawCursor = atCursorLocation &&
-                            (!deviceConfiguration.isCursorBlinking() ||     //Always draw if the cursor isn't blinking
-                                    (deviceConfiguration.isCursorBlinking() && blinkOn));    //If the cursor is blinking, only draw when blinkOn is true
+                for(int column = 0; column < viewportSize.getColumns(); column++) {
+                    TextCharacter textCharacter = bufferLine.getCharacterAt(column);
+                    boolean atCursorLocation = cursorPosition.equals(column, rowNumber);
+                    //If next position is the cursor location and this is a CJK character (i.e. cursor is on the padding),
+                    //consider this location the cursor position since otherwise the cursor will be skipped
+                    if(!atCursorLocation &&
+                            cursorPosition.getColumn() == column + 1 &&
+                            cursorPosition.getRow() == rowNumber &&
+                            TerminalTextUtils.isCharCJK(textCharacter.getCharacter())) {
+                        atCursorLocation = true;
+                    }
+                    if(dirtyCellsLookupTable.isAllDirty() || dirtyCellsLookupTable.isDirty(rowNumber, column)) {
+                        int characterWidth = fontWidth * (TerminalTextUtils.isCharCJK(textCharacter.getCharacter()) ? 2 : 1);
+                        Color foregroundColor = deriveTrueForegroundColor(textCharacter, atCursorLocation);
+                        Color backgroundColor = deriveTrueBackgroundColor(textCharacter, atCursorLocation);
+                        boolean drawCursor = atCursorLocation &&
+                                (!deviceConfiguration.isCursorBlinking() ||     //Always draw if the cursor isn't blinking
+                                        (deviceConfiguration.isCursorBlinking() && blinkOn));    //If the cursor is blinking, only draw when blinkOn is true
 
-                    drawCharacter(backbufferGraphics,
-                            textCharacter,
-                            column,
-                            rowNumber,
-                            foregroundColor,
-                            backgroundColor,
-                            fontWidth,
-                            fontHeight,
-                            characterWidth,
-                            scrollOffsetFromTopInPixels,
-                            drawCursor);
-                }
+                        drawCharacter(backbufferGraphics,
+                                textCharacter,
+                                column,
+                                rowNumber,
+                                foregroundColor,
+                                backgroundColor,
+                                fontWidth,
+                                fontHeight,
+                                characterWidth,
+                                scrollOffsetFromTopInPixels,
+                                drawCursor);
+                    }
 
-                if(textCharacter.getModifiers().contains(SGR.BLINK)) {
-                    foundBlinkingCharacters.set(true);
+                    if(textCharacter.getModifiers().contains(SGR.BLINK)) {
+                        foundBlinkingCharacters.set(true);
+                    }
+                    if(TerminalTextUtils.isCharCJK(textCharacter.getCharacter())) {
+                        column++; //Skip the trailing space after a CJK character
+                    }
                 }
-                if(TerminalTextUtils.isCharCJK(textCharacter.getCharacter())) {
-                    column++; //Skip the trailing space after a CJK character
-                }
-            }
             }
         });
 
