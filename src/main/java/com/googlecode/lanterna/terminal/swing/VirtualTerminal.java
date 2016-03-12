@@ -55,6 +55,7 @@ class VirtualTerminal {
 
     synchronized void setViewportSize(TerminalSize newSize) {
         this.viewportSize = newSize;
+        trimBufferBacklog();
         correctCursor();
     }
 
