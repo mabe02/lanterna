@@ -62,6 +62,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     private TextColor backgroundColor;
 
     private boolean cursorIsVisible;
+    private boolean enableInput;
     private Timer blinkTimer;
     private boolean hasBlinkingText;
     private boolean blinkOn;
@@ -121,6 +122,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
         this.foregroundColor = TextColor.ANSI.DEFAULT;
         this.backgroundColor = TextColor.ANSI.DEFAULT;
         this.cursorIsVisible = true;        //Always start with an activate and visible cursor
+        this.enableInput = false;           //Start with input disabled and activate it once the window is visible
         this.enquiryString = "TerminalEmulator";
         this.lastDrawnCursorPosition = null;
         this.lastBufferUpdateScrollPosition = 0;
@@ -183,6 +185,22 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
      * window
      */
     abstract void repaint();
+
+    synchronized void onCreated() {
+        startBlinkTimer();
+        enableInput = true;
+
+        // Reset the queue, just be to sure
+        keyQueue.clear();
+    }
+
+    synchronized void onDestroyed() {
+        stopBlinkTimer();
+        enableInput = false;
+
+        // If a thread is blocked, waiting on something in the keyQueue...
+        keyQueue.add(new KeyStroke(KeyType.EOF));
+    }
 
     /**
      * Start the timer that triggers blinking
@@ -603,16 +621,25 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     ///////////
     @Override
     public KeyStroke pollInput() {
+        if(!enableInput) {
+            return new KeyStroke(KeyType.EOF);
+        }
         return keyQueue.poll();
     }
 
     @Override
     public KeyStroke readInput() throws IOException {
-        try {
-            return keyQueue.take();
-        }
-        catch(InterruptedException ignore) {
-            throw new IOException("Blocking input was interrupted");
+        // Synchronize on keyQueue here so only one thread is inside keyQueue.take()
+        synchronized(keyQueue) {
+            if(!enableInput) {
+                return new KeyStroke(KeyType.EOF);
+            }
+            try {
+                return keyQueue.take();
+            }
+            catch(InterruptedException ignore) {
+                throw new IOException("Blocking input was interrupted");
+            }
         }
     }
 

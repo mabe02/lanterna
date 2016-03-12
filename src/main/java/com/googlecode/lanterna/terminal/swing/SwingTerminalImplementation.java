@@ -61,10 +61,10 @@ class SwingTerminalImplementation extends GraphicalTerminalImplementation {
             public void hierarchyChanged(HierarchyEvent e) {
                 if(e.getChangeFlags() == HierarchyEvent.DISPLAYABILITY_CHANGED) {
                     if(e.getChanged().isDisplayable()) {
-                        startBlinkTimer();
+                        onCreated();
                     }
                     else {
-                        stopBlinkTimer();
+                        onDestroyed();
                     }
                 }
             }
