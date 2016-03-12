@@ -125,6 +125,12 @@ public class ScrollingAWTTerminal extends Container implements IOSafeTerminal {
                     }
                     visibleAmount = screenHeight;
                 }
+                if(value > maximum - visibleAmount) {
+                    value = maximum - visibleAmount;
+                }
+                if(value < 0) {
+                    value = 0;
+                }
 
                 this.scrollValue = value;
 
