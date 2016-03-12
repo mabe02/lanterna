@@ -263,6 +263,10 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
             // User has used the scrollbar, we need to update the back buffer to reflect this
             updateBackBuffer(scrollController.getScrollingOffset());
         }
+        else if(hasBlinkingText) {
+            // There is blinking text to update
+            updateBackBuffer(scrollController.getScrollingOffset());
+        }
 
         ensureGraphicBufferHasRightSize();
         Rectangle clipBounds = componentGraphics.getClipBounds();
@@ -399,7 +403,11 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
                             TerminalTextUtils.isCharCJK(textCharacter.getCharacter())) {
                         atCursorLocation = true;
                     }
-                    if(dirtyCellsLookupTable.isAllDirty() || dirtyCellsLookupTable.isDirty(rowNumber, column)) {
+                    boolean isBlinking = textCharacter.getModifiers().contains(SGR.BLINK);
+                    if(isBlinking) {
+                        foundBlinkingCharacters.set(true);
+                    }
+                    if(dirtyCellsLookupTable.isAllDirty() || dirtyCellsLookupTable.isDirty(rowNumber, column) || isBlinking) {
                         int characterWidth = fontWidth * (TerminalTextUtils.isCharCJK(textCharacter.getCharacter()) ? 2 : 1);
                         Color foregroundColor = deriveTrueForegroundColor(textCharacter, atCursorLocation);
                         Color backgroundColor = deriveTrueBackgroundColor(textCharacter, atCursorLocation);
@@ -418,10 +426,6 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
                                 characterWidth,
                                 scrollOffsetFromTopInPixels,
                                 drawCursor);
-                    }
-
-                    if(textCharacter.getModifiers().contains(SGR.BLINK)) {
-                        foundBlinkingCharacters.set(true);
                     }
                     if(TerminalTextUtils.isCharCJK(textCharacter.getCharacter())) {
                         column++; //Skip the trailing space after a CJK character
