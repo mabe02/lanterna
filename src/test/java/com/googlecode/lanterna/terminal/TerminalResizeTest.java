@@ -41,6 +41,7 @@ public class TerminalResizeTest implements ResizeListener {
         terminal.putCharacter('o');
         terminal.putCharacter('!');
         terminal.setCursorPosition(0, 0);
+        terminal.flush();
         terminal.addResizeListener(new TerminalResizeTest());
 
         while(true) {
@@ -64,6 +65,7 @@ public class TerminalResizeTest implements ResizeListener {
             for(char c : chars) {
                 terminal.putCharacter(c);
             }
+            terminal.flush();
         }
         catch(IOException e) {
             throw new RuntimeException(e);

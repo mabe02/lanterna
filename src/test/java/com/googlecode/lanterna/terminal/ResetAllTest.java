@@ -46,6 +46,7 @@ public class ResetAllTest {
         terminal.resetColorAndSGR();
         terminal.putCharacter('!');
         terminal.setCursorPosition(0, 0);
+        terminal.flush();
 
         Thread.sleep(5000);
         terminal.exitPrivateMode();
