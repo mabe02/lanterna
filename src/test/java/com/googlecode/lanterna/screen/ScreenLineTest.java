@@ -56,7 +56,8 @@ public class ScreenLineTest {
         Random random = new Random();
         while(true) {
             KeyStroke keyStroke = screen.pollInput();
-            if(keyStroke != null && keyStroke.getKeyType() == KeyType.Escape) {
+            if(keyStroke != null &&
+                    (keyStroke.getKeyType() == KeyType.Escape || keyStroke.getKeyType() == KeyType.EOF)) {
                 break;
             }
             screen.doResizeIfNecessary();

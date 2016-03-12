@@ -57,7 +57,8 @@ public class ScreenRectangleTest {
         long startTime = System.currentTimeMillis();
         while(System.currentTimeMillis() - startTime < 1000 * 20) {
             KeyStroke keyStroke = screen.pollInput();
-            if(keyStroke != null && keyStroke.getKeyType() == KeyType.Escape) {
+            if(keyStroke != null &&
+                    (keyStroke.getKeyType() == KeyType.Escape || keyStroke.getKeyType() == KeyType.EOF)) {
                 break;
             }
             screen.doResizeIfNecessary();
