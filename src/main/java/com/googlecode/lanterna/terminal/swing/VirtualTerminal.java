@@ -102,8 +102,17 @@ class VirtualTerminal {
         trimBufferBacklog();
     }
 
-    synchronized TerminalPosition getCursorPosition() {
+    synchronized TerminalPosition getGlobalCursorPosition() {
         return cursorPosition;
+    }
+
+    synchronized TerminalPosition getCursorPosition() {
+        if(getBufferLineCount() <= viewportSize.getRows()) {
+            return cursorPosition;
+        }
+        else {
+            return cursorPosition.withRelativeRow(-(getBufferLineCount() - viewportSize.getRows()));
+        }
     }
 
     synchronized TreeSet<TerminalPosition> getDirtyCells() {

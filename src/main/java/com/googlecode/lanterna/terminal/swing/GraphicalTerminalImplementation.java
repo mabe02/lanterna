@@ -322,7 +322,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
         final int fontHeight = getFontHeight();
 
         //Retrieve the position of the cursor, relative to the scrolling state
-        final TerminalPosition cursorPosition = virtualTerminal.getCursorPosition();
+        final TerminalPosition cursorPosition = virtualTerminal.getGlobalCursorPosition();
         final TerminalSize viewportSize = virtualTerminal.getViewportSize();
 
         final int firstVisibleRowIndex = scrollOffsetFromTopInPixels / fontHeight;
@@ -465,7 +465,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
         }
 
         TerminalSize viewportSize = virtualTerminal.getViewportSize();
-        TerminalPosition cursorPosition = virtualTerminal.getCursorPosition();
+        TerminalPosition cursorPosition = virtualTerminal.getGlobalCursorPosition();
 
         dirtyCellsLookupTable.resetAndInitialize(firstRowOffset, lastRowOffset, viewportSize.getColumns());
         dirtyCellsLookupTable.setDirty(cursorPosition);
