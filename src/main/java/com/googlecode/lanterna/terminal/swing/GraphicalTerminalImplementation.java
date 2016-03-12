@@ -680,7 +680,13 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     }
 
     @Override
-    public synchronized void setCursorPosition(final int x, final int y) {
+    public synchronized void setCursorPosition(int x, int y) {
+        if(x < 0) {
+            x = 0;
+        }
+        if(y < 0) {
+            y = 0;
+        }
         virtualTerminal.setCursorPosition(new TerminalPosition(x, y));
     }
 
