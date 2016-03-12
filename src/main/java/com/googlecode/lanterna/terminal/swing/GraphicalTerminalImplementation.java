@@ -67,7 +67,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     private boolean blinkOn;
 
     private TerminalPosition lastDrawnCursorPosition;
-    private int lastScrollPosition;
+    private int lastBufferUpdateScrollPosition;
     private int lastComponentWidth;
     private int lastComponentHeight;
 
@@ -127,7 +127,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
         this.cursorIsVisible = true;        //Always start with an activate and visible cursor
         this.enquiryString = "TerminalEmulator";
         this.lastDrawnCursorPosition = null;
-        this.lastScrollPosition = 0;
+        this.lastBufferUpdateScrollPosition = 0;
         this.lastComponentHeight = 0;
         this.lastComponentWidth = 0;
         this.backbuffer = null;  // We don't know the dimensions yet
@@ -239,15 +239,31 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     synchronized void paintComponent(Graphics componentGraphics) {
         int width = getWidth();
         int height = getHeight();
+
+        this.scrollController.updateModel(
+                virtualTerminal.getBufferLineCount() * getFontHeight(),
+                height);
+
+        // Detect resize
         if(width != lastComponentWidth || height != lastComponentHeight) {
             int columns = width / getFontWidth();
             int rows = height / getFontHeight();
+            int scrollOffset = scrollController.getScrollingOffset();
             TerminalSize terminalSize = virtualTerminal.getViewportSize().withColumns(columns).withRows(rows);
             virtualTerminal.setViewportSize(terminalSize);
-            updateBackBuffer();
-            for(ResizeListener listener : resizeListeners) {
-                listener.onResized(this, terminalSize);
+
+            // Back buffer needs to be updated since the component size has changed
+            updateBackBuffer(scrollOffset);
+            if(!virtualTerminal.getViewportSize().equals(terminalSize)) {
+                for(ResizeListener listener : resizeListeners) {
+                    listener.onResized(this, terminalSize);
+                }
             }
+        }
+        // Detect scrolling
+        else if(lastBufferUpdateScrollPosition != scrollController.getScrollingOffset()) {
+            // User has used the scrollbar, we need to update the back buffer to reflect this
+            updateBackBuffer(scrollController.getScrollingOffset());
         }
 
         ensureGraphicBufferHasRightSize();
@@ -272,17 +288,20 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
         // Take care of the left-over area at the bottom and right of the component where no character can fit
         int leftoverHeight = getHeight() % getFontHeight();
         int leftoverWidth = getWidth() % getFontWidth();
-        componentGraphics.setColor(Color.GREEN);
+        componentGraphics.setColor(Color.BLACK);
         if(leftoverWidth > 0) {
             componentGraphics.fillRect(getWidth() - leftoverWidth, 0, leftoverWidth, getHeight());
         }
 
         //0, 0, getWidth(), getHeight(), 0, 0, getWidth(), getHeight(), null);
+        this.lastComponentWidth = width;
+        this.lastComponentHeight = height;
         componentGraphics.dispose();
         notifyAll();
     }
 
-    private synchronized void updateBackBuffer() {
+    private synchronized void updateBackBuffer(final int scrollOffsetFromTopInPixels) {
+        long startTime = System.currentTimeMillis();
         final int fontWidth = getFontWidth();
         final int fontHeight = getFontHeight();
 
@@ -290,13 +309,8 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
         final TerminalPosition cursorPosition = virtualTerminal.getCursorPosition();
         final TerminalSize viewportSize = virtualTerminal.getViewportSize();
 
-        this.scrollController.updateModel(
-                virtualTerminal.getBufferLineCount() * fontHeight,
-                getHeight());
-
-        final int scrollingOffsetInPixels = scrollController.getScrollingOffset();
-        final int firstVisibleRowIndex = scrollingOffsetInPixels / fontHeight;
-        final int lastVisibleRowIndex = (scrollingOffsetInPixels + getHeight()) / fontHeight;
+        final int firstVisibleRowIndex = scrollOffsetFromTopInPixels / fontHeight;
+        final int lastVisibleRowIndex = (scrollOffsetFromTopInPixels + getHeight()) / fontHeight;
 
         //Setup the graphics object
         ensureGraphicBufferHasRightSize();
@@ -311,8 +325,8 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
         buildDirtyCellsLookupTable(firstVisibleRowIndex, lastVisibleRowIndex);
 
         // Detect scrolling
-        if(lastScrollPosition < scrollingOffsetInPixels) {
-            int gap = scrollingOffsetInPixels - lastScrollPosition;
+        if(lastBufferUpdateScrollPosition < scrollOffsetFromTopInPixels) {
+            int gap = scrollOffsetFromTopInPixels - lastBufferUpdateScrollPosition;
             if(gap / fontHeight < viewportSize.getRows()) {
                 Graphics2D graphics = copybuffer.createGraphics();
                 graphics.setClip(0, 0, getWidth(), getHeight() - gap);
@@ -321,7 +335,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
                 backbufferGraphics.drawImage(copybuffer, 0, 0, getWidth(), getHeight(), 0, 0, getWidth(), getHeight(), null);
                 if(!dirtyCellsLookupTable.isAllDirty()) {
                     //Mark bottom rows as dirty so they are repainted
-                    int previousLastVisibleRowIndex = (lastScrollPosition + getHeight()) / fontHeight;
+                    int previousLastVisibleRowIndex = (lastBufferUpdateScrollPosition + getHeight()) / fontHeight;
                     for(int row = previousLastVisibleRowIndex; row <= lastVisibleRowIndex; row++) {
                         dirtyCellsLookupTable.setRowDirty(row);
                     }
@@ -331,8 +345,8 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
                 dirtyCellsLookupTable.setAllDirty();
             }
         }
-        else if(lastScrollPosition > scrollingOffsetInPixels) {
-            int gap = lastScrollPosition - scrollingOffsetInPixels;
+        else if(lastBufferUpdateScrollPosition > scrollOffsetFromTopInPixels) {
+            int gap = lastBufferUpdateScrollPosition - scrollOffsetFromTopInPixels;
             if(gap / fontHeight < viewportSize.getRows()) {
                 Graphics2D graphics = copybuffer.createGraphics();
                 graphics.setClip(0, 0, getWidth(), getHeight() - gap);
@@ -341,7 +355,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
                 backbufferGraphics.drawImage(copybuffer, 0, gap, getWidth(), getHeight(), 0, 0, getWidth(), getHeight() - gap, null);
                 if(!dirtyCellsLookupTable.isAllDirty()) {
                     //Mark top rows as dirty so they are repainted
-                    int previousFirstVisibleRowIndex = lastScrollPosition / fontHeight;
+                    int previousFirstVisibleRowIndex = lastBufferUpdateScrollPosition / fontHeight;
                     for(int row = firstVisibleRowIndex; row <= previousFirstVisibleRowIndex; row++) {
                         dirtyCellsLookupTable.setRowDirty(row);
                     }
@@ -358,8 +372,6 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
                 //Mark right columns as dirty so they are repainted
                 int lastVisibleColumnIndex = getWidth() / fontWidth;
                 int previousLastVisibleColumnIndex = lastComponentWidth / fontWidth;
-                System.out.println("Marking columns " + previousLastVisibleColumnIndex + " to " + lastVisibleColumnIndex + " as dirty (" +
-                lastComponentWidth + " -> " + getWidth());
                 for(int column = previousLastVisibleColumnIndex; column <= lastVisibleColumnIndex; column++) {
                     dirtyCellsLookupTable.setColumnDirty(column);
                 }
@@ -368,7 +380,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
         if(lastComponentHeight < getHeight()) {
             if(!dirtyCellsLookupTable.isAllDirty()) {
                 //Mark bottom rows as dirty so they are repainted
-                int previousLastVisibleRowIndex = (scrollingOffsetInPixels + lastComponentHeight) / fontHeight;
+                int previousLastVisibleRowIndex = (scrollOffsetFromTopInPixels + lastComponentHeight) / fontHeight;
                 for(int row = previousLastVisibleRowIndex; row <= lastVisibleRowIndex; row++) {
                     dirtyCellsLookupTable.setRowDirty(row);
                 }
@@ -406,7 +418,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
                             fontWidth,
                             fontHeight,
                             characterWidth,
-                            scrollingOffsetInPixels,
+                            scrollOffsetFromTopInPixels,
                             drawCursor);
                 }
 
@@ -425,9 +437,9 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
         // Update the blink status according to if there were any blinking characters or not
         this.hasBlinkingText = foundBlinkingCharacters.get();
         this.lastDrawnCursorPosition = cursorPosition;
-        this.lastScrollPosition = scrollingOffsetInPixels;
-        this.lastComponentWidth = getWidth();
-        this.lastComponentHeight = getHeight();
+        this.lastBufferUpdateScrollPosition = scrollOffsetFromTopInPixels;
+
+        //System.out.println("Updated backbuffer in " + (System.currentTimeMillis() - startTime) + " ms");
     }
 
     private void buildDirtyCellsLookupTable(int firstRowOffset, int lastRowOffset) {
@@ -695,7 +707,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
 
     @Override
     public synchronized void flush() {
-        updateBackBuffer();
+        updateBackBuffer(scrollController.getScrollingOffset());
         repaint();
     }
 

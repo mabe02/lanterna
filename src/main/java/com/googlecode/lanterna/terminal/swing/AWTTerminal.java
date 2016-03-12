@@ -178,8 +178,6 @@ public class AWTTerminal extends Panel implements IOSafeTerminal {
      */
     @Override
     public synchronized void paint(Graphics componentGraphics) {
-        // Flicker-free AWT!
-        // Extend Panel and do the drawing work in both update(..) and paint(..)
         terminalImplementation.paintComponent(componentGraphics);
     }
 
@@ -190,8 +188,7 @@ public class AWTTerminal extends Panel implements IOSafeTerminal {
      */
     @Override
     public synchronized void update(Graphics componentGraphics) {
-        // Flicker-free AWT!
-        // Extend Panel and do the drawing work in both update(..) and paint(..)
+        // This is supposed to solve AWT flickering, but in my testing this method isn't called at all!
         terminalImplementation.paintComponent(componentGraphics);
     }
 

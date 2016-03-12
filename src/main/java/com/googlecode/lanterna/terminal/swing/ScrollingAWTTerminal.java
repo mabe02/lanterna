@@ -25,9 +25,8 @@ import com.googlecode.lanterna.terminal.IOSafeTerminal;
 import com.googlecode.lanterna.terminal.ResizeListener;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.Scrollbar;
+
+import java.awt.*;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.io.IOException;
@@ -45,6 +44,10 @@ public class ScrollingAWTTerminal extends Container implements IOSafeTerminal {
 
     private final AWTTerminal awtTerminal;
     private final Scrollbar scrollBar;
+
+    // Used to prevent unnecessary repaints (the component is re-adjusting the scrollbar as part of the repaint
+    // operation, we don't need the scrollbar listener to trigger another repaint of the terminal when that happens
+    private volatile boolean scrollModelUpdateBySystem;
 
     /**
      * Creates a new {@code ScrollingAWTTerminal} with all default options
@@ -82,38 +85,77 @@ public class ScrollingAWTTerminal extends Container implements IOSafeTerminal {
         this.scrollBar.setValue(0);
         this.scrollBar.setVisibleAmount(20);
         this.scrollBar.addAdjustmentListener(new ScrollbarListener());
+        this.scrollModelUpdateBySystem = false;
     }
 
     private class ScrollController implements TerminalScrollController {
+        private int scrollValue;
+
         @Override
-        public void updateModel(int totalSize, int screenSize) {
-            if(scrollBar.getMaximum() != totalSize) {
-                int lastMaximum = scrollBar.getMaximum();
-                scrollBar.setMaximum(totalSize);
-                if(lastMaximum < totalSize &&
-                        lastMaximum - scrollBar.getVisibleAmount() - scrollBar.getValue() == 0) {
-                    int adjustedValue = scrollBar.getValue() + (totalSize - lastMaximum);
-                    scrollBar.setValue(adjustedValue);
+        public void updateModel(final int totalSize, final int screenHeight) {
+            if(!EventQueue.isDispatchThread()) {
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateModel(totalSize, screenHeight);
+                    }
+                });
+                return;
+            }
+            try {
+                scrollModelUpdateBySystem = true;
+                int value = scrollBar.getValue();
+                int maximum = scrollBar.getMaximum();
+                int visibleAmount = scrollBar.getVisibleAmount();
+
+                if(maximum != totalSize) {
+                    int lastMaximum = maximum;
+                    maximum = totalSize > screenHeight ? totalSize : screenHeight;
+                    if(lastMaximum < maximum &&
+                            lastMaximum - visibleAmount - value == 0) {
+                        value = scrollBar.getValue() + (maximum - lastMaximum);
+                    }
+                }
+                if(value + screenHeight > maximum) {
+                    value = maximum - screenHeight;
+                }
+                if(visibleAmount != screenHeight) {
+                    if(visibleAmount > screenHeight) {
+                        value += visibleAmount - screenHeight;
+                    }
+                    visibleAmount = screenHeight;
+                }
+
+                this.scrollValue = value;
+
+                if(scrollBar.getMaximum() != maximum) {
+                    scrollBar.setMaximum(maximum);
+                }
+                if(scrollBar.getVisibleAmount() != visibleAmount) {
+                    scrollBar.setVisibleAmount(visibleAmount);
+                }
+                if(scrollBar.getValue() != value) {
+                    scrollBar.setValue(value);
                 }
             }
-            if(scrollBar.getVisibleAmount() != screenSize) {
-                if(scrollBar.getValue() + screenSize > scrollBar.getMaximum()) {
-                    scrollBar.setValue(scrollBar.getMaximum() - screenSize);
-                }
-                scrollBar.setVisibleAmount(screenSize);
+            finally {
+                scrollModelUpdateBySystem = false;
             }
         }
 
         @Override
         public int getScrollingOffset() {
-            return scrollBar.getMaximum() - scrollBar.getVisibleAmount() - scrollBar.getValue();
+            return scrollValue;
         }
     }
 
     private class ScrollbarListener implements AdjustmentListener {
         @Override
         public synchronized void adjustmentValueChanged(AdjustmentEvent e) {
-            awtTerminal.repaint();
+            if(!scrollModelUpdateBySystem) {
+                // Only repaint if this was the user adjusting the scrollbar
+                awtTerminal.repaint();
+            }
         }
     }
 

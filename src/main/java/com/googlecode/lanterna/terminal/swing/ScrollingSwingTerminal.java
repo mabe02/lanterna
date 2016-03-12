@@ -25,7 +25,8 @@ import com.googlecode.lanterna.terminal.IOSafeTerminal;
 import com.googlecode.lanterna.terminal.ResizeListener;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
-import java.awt.BorderLayout;
+
+import java.awt.*;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.io.IOException;
@@ -44,6 +45,10 @@ public class ScrollingSwingTerminal extends JComponent implements IOSafeTerminal
 
     private final SwingTerminal swingTerminal;
     private final JScrollBar scrollBar;
+
+    // Used to prevent unnecessary repaints (the component is re-adjusting the scrollbar as part of the repaint
+    // operation, we don't need the scrollbar listener to trigger another repaint of the terminal when that happens
+    private volatile boolean scrollModelUpdateBySystem;
 
     /**
      * Creates a new {@code ScrollingSwingTerminal} with all default options
@@ -81,6 +86,7 @@ public class ScrollingSwingTerminal extends JComponent implements IOSafeTerminal
         this.scrollBar.setValue(0);
         this.scrollBar.setVisibleAmount(20);
         this.scrollBar.addAdjustmentListener(new ScrollbarListener());
+        this.scrollModelUpdateBySystem = false;
     }
 
     private class ScrollController implements TerminalScrollController {
@@ -88,45 +94,54 @@ public class ScrollingSwingTerminal extends JComponent implements IOSafeTerminal
 
         @Override
         public void updateModel(final int totalSize, final int screenHeight) {
-            int value = scrollBar.getValue();
-            int maximum = scrollBar.getMaximum();
-            int visibleAmount = scrollBar.getVisibleAmount();
-
-            if(maximum != totalSize) {
-                int lastMaximum = maximum;
-                maximum = totalSize > screenHeight ? totalSize : screenHeight;
-                if(lastMaximum < maximum &&
-                        lastMaximum - visibleAmount - value == 0) {
-                    value = scrollBar.getValue() + (maximum - lastMaximum);
-                }
-            }
-            if(value + screenHeight > maximum) {
-                value = maximum - screenHeight;
-            }
-            if(visibleAmount != screenHeight) {
-                visibleAmount = screenHeight;
-            }
-
-            final int newMaximumFinal = maximum;
-            final int newValueFinal = value;
-            final int newVisibleValueFinal = visibleAmount;
-
-            this.scrollValue = newValueFinal;
-
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    if(scrollBar.getMaximum() != newMaximumFinal) {
-                        scrollBar.setMaximum(newMaximumFinal);
+            if(!SwingUtilities.isEventDispatchThread()) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateModel(totalSize, screenHeight);
                     }
-                    if(scrollBar.getValue() != newValueFinal) {
-                        scrollBar.setValue(newValueFinal);
-                    }
-                    if(scrollBar.getVisibleAmount() != newVisibleValueFinal) {
-                        scrollBar.setVisibleAmount(newVisibleValueFinal);
+                });
+                return;
+            }
+            try {
+                scrollModelUpdateBySystem = true;
+                int value = scrollBar.getValue();
+                int maximum = scrollBar.getMaximum();
+                int visibleAmount = scrollBar.getVisibleAmount();
+
+                if(maximum != totalSize) {
+                    int lastMaximum = maximum;
+                    maximum = totalSize > screenHeight ? totalSize : screenHeight;
+                    if(lastMaximum < maximum &&
+                            lastMaximum - visibleAmount - value == 0) {
+                        value = scrollBar.getValue() + (maximum - lastMaximum);
                     }
                 }
-            });
+                if(value + screenHeight > maximum) {
+                    value = maximum - screenHeight;
+                }
+                if(visibleAmount != screenHeight) {
+                    if(visibleAmount > screenHeight) {
+                        value += visibleAmount - screenHeight;
+                    }
+                    visibleAmount = screenHeight;
+                }
+
+                this.scrollValue = value;
+
+                if(scrollBar.getMaximum() != maximum) {
+                    scrollBar.setMaximum(maximum);
+                }
+                if(scrollBar.getVisibleAmount() != visibleAmount) {
+                    scrollBar.setVisibleAmount(visibleAmount);
+                }
+                if(scrollBar.getValue() != value) {
+                    scrollBar.setValue(value);
+                }
+            }
+            finally {
+                scrollModelUpdateBySystem = false;
+            }
         }
 
         @Override
@@ -138,7 +153,10 @@ public class ScrollingSwingTerminal extends JComponent implements IOSafeTerminal
     private class ScrollbarListener implements AdjustmentListener {
         @Override
         public synchronized void adjustmentValueChanged(AdjustmentEvent e) {
-            swingTerminal.flush();
+            if(!scrollModelUpdateBySystem) {
+                // Only repaint if this was the user adjusting the scrollbar
+                swingTerminal.repaint();
+            }
         }
     }
 
