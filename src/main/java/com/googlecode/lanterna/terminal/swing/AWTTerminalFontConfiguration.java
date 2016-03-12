@@ -98,6 +98,10 @@ public class AWTTerminalFontConfiguration {
                 new Font("Monospaced", Font.PLAIN, 14)));
     }
 
+    /**
+     * Returns the default font to use depending on the platform
+     * @return Default font to use, system-dependent
+     */
     protected static Font[] selectDefaultFont() {
         String osName = System.getProperty("os.name", "").toLowerCase();
         if(osName.contains("win")) {
@@ -189,6 +193,14 @@ public class AWTTerminalFontConfiguration {
         }
     }
 
+    /**
+     * Given a certain character, return the font to use for drawing it. The method will go through all fonts passed in
+     * to this {@link AWTTerminalFontConfiguration} in the order of priority specified and chose the first font which is
+     * capable of drawing {@code character}. If no such font is found, the normal fonts is returned (and probably won't
+     * be able to draw the character).
+     * @param character Character to find a font for
+     * @return Font which the {@code character} should be drawn using
+     */
     Font getFontForCharacter(TextCharacter character) {
         Font normalFont = getFontForCharacter(character.getCharacter());
         if(boldMode == BoldMode.EVERYTHING || (boldMode == BoldMode.EVERYTHING_BUT_SYMBOLS && isNotASymbol(character.getCharacter()))) {
@@ -209,14 +221,26 @@ public class AWTTerminalFontConfiguration {
         return fontPriority.get(0);
     }
 
+    /**
+     * Returns the horizontal size in pixels of the fonts configured
+     * @return Horizontal size in pixels of the fonts configured
+     */
     int getFontWidth() {
         return fontWidth;
     }
 
+    /**
+     * Returns the vertical size in pixels of the fonts configured
+     * @return Vertical size in pixels of the fonts configured
+     */
     int getFontHeight() {
         return fontHeight;
     }
 
+    /**
+     * Returns {@code true} if anti-aliasing has been enabled, {@code false} otherwise
+     * @return {@code true} if anti-aliasing has been enabled, {@code false} otherwise
+     */
     boolean isAntiAliased() {
         return useAntiAliasing;
     }

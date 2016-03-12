@@ -69,15 +69,6 @@ class AWTTerminalImplementation extends GraphicalTerminalImplementation {
         });
     }
 
-
-    /**
-     * Returns the current font configuration. Note that it is immutable and cannot be changed.
-     * @return This {@link AWTTerminal}'s current font configuration
-     */
-    public AWTTerminalFontConfiguration getFontConfiguration() {
-        return fontConfiguration;
-    }
-
     @Override
     protected int getFontHeight() {
         return fontConfiguration.getFontHeight();

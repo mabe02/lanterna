@@ -72,15 +72,11 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     private int lastComponentHeight;
 
     // We use two different data structures to optimize drawing
-    //  * A map (as a two-dimensional array) of all characters currently visible inside this component
+    //  * A list of modified characters since the last draw (stored in VirtualTerminal)
     //  * A backbuffer with the graphics content
     //
     // The buffer is the most important one as it allows us to re-use what was drawn earlier. It is not reset on every
-    // drawing operation but updates just in those places where the map tells us the character has changed. Note that
-    // when the component is resized, we always update the whole buffer.
-    //
-    // DON'T RELY ON THESE FOR SIZE! We make it a big bigger than necessary to make resizing smoother. Use the AWT/Swing
-    // methods to get the correct dimensions or use {@link #getTerminalSize} to get the size in terminal space.
+    // drawing operation but updates just in those places where the map tells us the character has changed.
     private BufferedImage backbuffer;
 
     // Used as a middle-ground when copying large segments when scrolling
@@ -881,15 +877,15 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
             }
         }
 
-        public void setAllDirty() {
+        void setAllDirty() {
             allDirty = true;
         }
 
-        public boolean isAllDirty() {
+        boolean isAllDirty() {
             return allDirty;
         }
 
-        public void setDirty(TerminalPosition position) {
+        void setDirty(TerminalPosition position) {
             if(position.getRow() < firstRowIndex ||
                     position.getRow() >= firstRowIndex + table.size()) {
                 return;
@@ -900,11 +896,11 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
             }
         }
 
-        public void setRowDirty(int rowNumber) {
+        void setRowDirty(int rowNumber) {
             Arrays.fill(table.get(rowNumber - firstRowIndex), (byte)1);
         }
 
-        public void setColumnDirty(int column) {
+        void setColumnDirty(int column) {
             for(byte[] row: table) {
                 if(column < row.length) {
                     row[column] = (byte)1;
@@ -912,7 +908,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
             }
         }
 
-        public boolean isDirty(int row, int column) {
+        boolean isDirty(int row, int column) {
             if(row < firstRowIndex || row >= firstRowIndex + table.size()) {
                 return false;
             }

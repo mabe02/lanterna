@@ -11,7 +11,9 @@ import java.util.ListIterator;
 import java.util.TreeSet;
 
 /**
- * Created by Martin on 2016-02-21.
+ * This class implements the non-graphical parts of a terminal emulator, including text buffers with history, cursor
+ * position and how to modify these two. When you enter new text, this class takes care of inserting this text into
+ * the right place and making necessary adjustments with new lines as needed.
  */
 class VirtualTerminal {
     private final TextBuffer regularTextBuffer;
@@ -26,6 +28,10 @@ class VirtualTerminal {
     // Position is stored in "global coordinates", where 0x0 is the top-left corner of the scrollback buffer
     private TerminalPosition cursorPosition;
 
+    /**
+     * Creates a new virtual terminal with an initial size set
+     * @param initialTerminalSize Starting size of the virtual terminal
+     */
     VirtualTerminal(TerminalSize initialTerminalSize) {
         this.regularTextBuffer = new TextBuffer();
         this.privateModeTextBuffer = new TextBuffer();
@@ -48,10 +54,6 @@ class VirtualTerminal {
     }
 
     synchronized void setViewportSize(TerminalSize newSize) {
-        // TODO: do we need to do this in the new implementation?
-        //if(viewportSize.getRows() < newSize.getRows()) {
-        //    cursorPosition = cursorPosition.withRelativeRow(newSize.getRows() - size.getRows());
-        //}
         this.viewportSize = newSize;
         correctCursor();
     }

@@ -8,7 +8,8 @@ import java.util.List;
 import java.util.ListIterator;
 
 /**
- * Created by Martin on 2016-02-21.
+ * This class is used to store lines of text inside of a terminal emulator. As used by {@link VirtualTerminal}, it keeps
+ * two {@link TextBuffer}s, one for private mode and one for normal mode and it can switch between them as needed.
  */
 class TextBuffer {
     private static final TextCharacter DOUBLE_WIDTH_CHAR_PADDING = new TextCharacter(' ');
