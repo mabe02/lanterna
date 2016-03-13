@@ -2,6 +2,7 @@ package com.googlecode.lanterna.gui2.table;
 
 import com.googlecode.lanterna.TerminalTextUtils;
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.graphics.ThemeDefinition;
 import com.googlecode.lanterna.gui2.TextGUIGraphics;
 
 /**
@@ -19,7 +20,8 @@ public class DefaultTableHeaderRenderer<V> implements TableHeaderRenderer<V> {
 
     @Override
     public void drawHeader(Table<V> table, String label, int index, TextGUIGraphics textGUIGraphics) {
-        textGUIGraphics.applyThemeStyle(textGUIGraphics.getThemeDefinition(Table.class).getCustom("HEADER"));
+        ThemeDefinition themeDefinition = textGUIGraphics.getThemeDefinition(Table.class);
+        textGUIGraphics.applyThemeStyle(themeDefinition.getCustom("HEADER", themeDefinition.getNormal()));
         textGUIGraphics.putString(0, 0, label);
     }
 }

@@ -37,6 +37,7 @@ import com.googlecode.lanterna.TerminalSize;
 import java.io.ByteArrayOutputStream;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -60,6 +61,7 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
     private final InputDecoder inputDecoder;
     private final Queue<KeyStroke> keyQueue;
     private final Lock readLock;
+    private final Queue<TerminalSize> terminalSizeReportQueue;
     
     @SuppressWarnings("WeakerAccess")
     public StreamBasedTerminal(InputStream terminalInput, OutputStream terminalOutput, Charset terminalCharset) {
@@ -74,6 +76,7 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
         this.inputDecoder = new InputDecoder(new InputStreamReader(this.terminalInput, this.terminalCharset));
         this.keyQueue = new LinkedList<KeyStroke>();
         this.readLock = new ReentrantLock();
+        this.terminalSizeReportQueue = new LinkedBlockingQueue<TerminalSize>();
         //noinspection ConstantConditions
     }
 
@@ -151,40 +154,23 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
         return inputDecoder;
     }
 
-    @SuppressWarnings("ConstantConditions")
-    TerminalSize waitForTerminalSizeReport() throws IOException {
-        long startTime = System.currentTimeMillis();
-        readLock.lock();
-        try {
-            while(true) {
-                KeyStroke key = inputDecoder.getNextCharacter(false);
-                if(key == null) {
-                    if(System.currentTimeMillis() - startTime > 1000) {  //Wait 1 second for the terminal size report to come, is this reasonable?
-                        throw new IOException(
-                                "Timeout while waiting for terminal size report! Your terminal may have refused to go into cbreak mode.");
-                    }
-                    try {
-                        Thread.sleep(1);
-                    }
-                    catch(InterruptedException ignored) {}
-                    continue;
-                }
 
-                // check both: real ScreenInfoActions and F3 keystrokes with modifiers:
-                ScreenInfoAction report = ScreenInfoCharacterPattern.tryToAdopt(key);
-                if (report == null) {
-                    keyQueue.add(key);
-                }
-                else {
-                    TerminalPosition reportedTerminalPosition = report.getPosition();
-                    onResized(reportedTerminalPosition.getColumn(), reportedTerminalPosition.getRow());
-                    return new TerminalSize(reportedTerminalPosition.getColumn(), reportedTerminalPosition.getRow());
-                }
+    synchronized TerminalSize waitForTerminalSizeReport() throws IOException {
+        long startTime = System.currentTimeMillis();
+        TerminalSize newTerminalSize = terminalSizeReportQueue.poll();
+        while(newTerminalSize == null) {
+            KeyStroke keyStroke = pollInput();
+            if(keyStroke != null) {
+                keyQueue.add(keyStroke);
             }
+            else {
+                try { Thread.sleep(1); } catch(InterruptedException e) {}
+            }
+            newTerminalSize = terminalSizeReportQueue.poll();
         }
-        finally {
-            readLock.unlock();
-        }
+
+        onResized(newTerminalSize.getColumns(), newTerminalSize.getRows());
+        return newTerminalSize;
     }
 
     @Override
@@ -198,22 +184,34 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
     }
 
     private KeyStroke readInput(boolean blocking) throws IOException {
-        readLock.lock();
-        try {
-            if(!keyQueue.isEmpty()) {
-                return keyQueue.poll();
+        while(true) {
+            KeyStroke previouslyReadKey = keyQueue.poll();
+            if(previouslyReadKey != null) {
+                return previouslyReadKey;
             }
-            KeyStroke key = inputDecoder.getNextCharacter(blocking);
-            if (key instanceof ScreenInfoAction) {
-                TerminalPosition reportedTerminalPosition = ((ScreenInfoAction)key).getPosition();
-                onResized(reportedTerminalPosition.getColumn(), reportedTerminalPosition.getRow());
-                return pollInput();
-            } else {
-                return key;
+            if(blocking) {
+                readLock.lock();
             }
-        }
-        finally {
-            readLock.unlock();
+            else {
+                // If we are in non-blocking readInput(), don't wait for the lock, just return null right away
+                if(!readLock.tryLock()) {
+                    return null;
+                }
+            }
+            try {
+                KeyStroke key = inputDecoder.getNextCharacter(blocking);
+                ScreenInfoAction report = ScreenInfoCharacterPattern.tryToAdopt(key);
+                if(report != null) {
+                    TerminalPosition reportedTerminalPosition = report.getPosition();
+                    terminalSizeReportQueue.add(new TerminalSize(reportedTerminalPosition.getColumn(), reportedTerminalPosition.getRow()));
+                }
+                else {
+                    return key;
+                }
+            }
+            finally {
+                readLock.unlock();
+            }
         }
     }
 

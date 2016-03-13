@@ -68,6 +68,16 @@ public interface ThemeDefinition {
     ThemeStyle getCustom(String name);
 
     /**
+     * Retrieves a custom {@link ThemeStyle}, if one is available by this name. Will return a supplied default value if
+     * no such style could be found within this {@link ThemeDefinition}. You can use this if you need more categories
+     * than the ones available above.
+     * @param name Name of the style to look up
+     * @param defaultValue What to return if the there is no custom style by the given name
+     * @return The {@link ThemeStyle} associated with the name, or {@code defaultValue} if there was no such style
+     */
+    ThemeStyle getCustom(String name, ThemeStyle defaultValue);
+
+    /**
      * Retrieves a character from this theme definition by the specified name. This method cannot return {@code null} so
      * you need to give a fallback in case the definition didn't have any character by this name.
      * @param name Name of the character to look up

@@ -84,7 +84,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
     }
 
     @Override
-    public TerminalSize getTerminalSize() throws IOException {
+    public synchronized TerminalSize getTerminalSize() throws IOException {
         saveCursorPosition();
         setCursorPosition(5000, 5000);
         reportPosition();
@@ -222,6 +222,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
     public KeyStroke readInput() throws IOException {
         KeyStroke keyStroke;
         do {
+            // KeyStroke may because null by filterMouseEvents, so that's why we have the while(true) loop here
             keyStroke = filterMouseEvents(super.readInput());
         } while(keyStroke == null);
         return keyStroke;

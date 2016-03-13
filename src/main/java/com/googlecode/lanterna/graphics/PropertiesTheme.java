@@ -167,6 +167,15 @@ public final class PropertiesTheme implements Theme {
         }
 
         @Override
+        public ThemeStyle getCustom(String name, ThemeStyle defaultValue) {
+            ThemeStyle customStyle = getCustom(name);
+            if(customStyle == null) {
+                customStyle = defaultValue;
+            }
+            return customStyle;
+        }
+
+        @Override
         public char getCharacter(String name, char fallback) {
             Character character = path.get(path.size() - 1).characterMap.get(name);
             if(character == null) {

@@ -136,6 +136,10 @@ public class InteractableLookupMap {
             }
         }
         startPosition = interactable.toBasePane(startPosition);
+        if(startPosition == null) {
+            // The structure has changed, our interactable is no longer inside the base pane!
+            return null;
+        }
         Set<Interactable> disqualified = getDisqualifiedInteractables(startPosition, true);
         TerminalSize size = getSize();
         int maxShiftLeft = interactable.toBasePane(TerminalPosition.TOP_LEFT_CORNER).getColumn();
@@ -212,6 +216,10 @@ public class InteractableLookupMap {
             }
         }
         startPosition = interactable.toBasePane(startPosition);
+        if(startPosition == null) {
+            // The structure has changed, our interactable is no longer inside the base pane!
+            return null;
+        }
         Set<Interactable> disqualified = getDisqualifiedInteractables(startPosition, false);
         TerminalSize size = getSize();
         int maxShiftUp = interactable.toBasePane(TerminalPosition.TOP_LEFT_CORNER).getRow();

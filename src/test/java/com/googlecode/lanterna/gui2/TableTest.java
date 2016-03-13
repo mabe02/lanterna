@@ -159,7 +159,7 @@ public class TableTest extends TestBase {
         }
         String newLabel = askForAString(textGUI, "Enter new label for the table cell at row " + rowIndexAsText + " column " + columnIndexAsText);
         if(newLabel != null) {
-            model.setCell(Integer.parseInt(rowIndexAsText), Integer.parseInt(columnIndexAsText), newLabel);
+            model.setCell(Integer.parseInt(columnIndexAsText), Integer.parseInt(rowIndexAsText), newLabel);
         }
     }
 
