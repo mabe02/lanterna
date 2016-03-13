@@ -6,6 +6,7 @@ import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 
+import java.awt.*;
 import java.io.IOException;
 
 /**
@@ -121,8 +122,12 @@ public class SimpleTerminalTest {
         }
         terminal.setBackgroundColor(TextColor.ANSI.DEFAULT);
         terminal.setForegroundColor(TextColor.ANSI.DEFAULT);
+        terminal.putCharacter('\n');
         terminal.flush();
-        System.out.println();
+
+        if(terminal instanceof Window) {
+            ((Window) terminal).dispose();
+        }
     }
 
     private static TerminalPosition resetCursorPositionAfterHelp(Terminal terminal) throws IOException {
