@@ -149,6 +149,16 @@ public class IOSafeTerminalAdapter implements IOSafeTerminal {
     }
 
     @Override
+    public void setCursorPosition(TerminalPosition position) {
+        try {
+            backend.setCursorPosition(position);
+        }
+        catch(IOException e) {
+            exceptionHandler.onException(e);
+        }
+    }
+
+    @Override
     public TerminalPosition getCursorPosition() {
         try {
             return backend.getCursorPosition();

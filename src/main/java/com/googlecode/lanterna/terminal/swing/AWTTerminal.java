@@ -216,6 +216,11 @@ public class AWTTerminal extends Panel implements IOSafeTerminal {
     }
 
     @Override
+    public void setCursorPosition(TerminalPosition position) {
+        terminalImplementation.setCursorPosition(position);
+    }
+
+    @Override
     public TerminalPosition getCursorPosition() {
         return terminalImplementation.getCursorPosition();
     }

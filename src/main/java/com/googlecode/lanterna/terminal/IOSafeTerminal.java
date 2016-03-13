@@ -44,6 +44,8 @@ public interface IOSafeTerminal extends Terminal {
     @Override
     void setCursorPosition(int x, int y);
     @Override
+    void setCursorPosition(TerminalPosition position);
+    @Override
     TerminalPosition getCursorPosition();
     @Override
     void setCursorVisible(boolean visible);

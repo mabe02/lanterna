@@ -218,6 +218,11 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
     }
 
     @Override
+    public void setCursorPosition(TerminalPosition position) throws IOException {
+        setCursorPosition(position.getColumn(), position.getRow());
+    }
+
+    @Override
     public synchronized TerminalPosition getCursorPosition() throws IOException {
         resetCursorPositionReportQueue();
         reportPosition();

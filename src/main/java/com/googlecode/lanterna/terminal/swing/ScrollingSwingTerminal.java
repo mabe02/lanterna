@@ -201,6 +201,11 @@ public class ScrollingSwingTerminal extends JComponent implements IOSafeTerminal
     }
 
     @Override
+    public void setCursorPosition(TerminalPosition position) {
+        swingTerminal.setCursorPosition(position);
+    }
+
+    @Override
     public TerminalPosition getCursorPosition() {
         return swingTerminal.getCursorPosition();
     }

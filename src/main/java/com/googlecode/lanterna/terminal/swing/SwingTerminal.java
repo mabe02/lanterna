@@ -189,6 +189,11 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
     }
 
     @Override
+    public void setCursorPosition(TerminalPosition position) {
+        terminalImplementation.setCursorPosition(position);
+    }
+
+    @Override
     public TerminalPosition getCursorPosition() {
         return terminalImplementation.getCursorPosition();
     }

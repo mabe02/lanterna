@@ -213,6 +213,11 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
     }
 
     @Override
+    public void setCursorPosition(TerminalPosition position) {
+        swingTerminal.setCursorPosition(position);
+    }
+
+    @Override
     public TerminalPosition getCursorPosition() {
         return swingTerminal.getCursorPosition();
     }

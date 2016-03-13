@@ -217,6 +217,11 @@ public class AWTTerminalFrame extends Frame implements IOSafeTerminal {
     }
 
     @Override
+    public void setCursorPosition(TerminalPosition position) {
+        awtTerminal.setCursorPosition(position);
+    }
+
+    @Override
     public TerminalPosition getCursorPosition() {
         return awtTerminal.getCursorPosition();
     }

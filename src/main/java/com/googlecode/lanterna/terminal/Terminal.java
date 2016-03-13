@@ -88,6 +88,14 @@ public interface Terminal extends InputProvider {
     void setCursorPosition(int x, int y) throws IOException;
 
     /**
+     * Same as calling {@code setCursorPosition(position.getColumn(), position.getRow())}
+     *
+     * @param position Position to place the cursor at
+     * @throws java.io.IOException If there was an underlying I/O error
+     */
+    void setCursorPosition(TerminalPosition position) throws IOException;
+
+    /**
      * Returns the position of the cursor, as reported by the terminal. The top-left corner has coordinates 0 x 0 and
      * the bottom-right corner has coordinates terminal_width-1 x terminal_height-1.
      * @return Position of the cursor
