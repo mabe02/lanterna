@@ -213,10 +213,6 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
             preferredRowSize++;
         }
 
-
-        // Tell the model that we have refreshed the visual state and it's not modified anymore
-        tableModel.resetModifiedFlag();
-
         cachedSize = new TerminalSize(preferredColumnSize, preferredRowSize);
         return cachedSize;
     }

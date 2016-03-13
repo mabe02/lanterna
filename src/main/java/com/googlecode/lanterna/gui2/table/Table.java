@@ -300,11 +300,6 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
     }
 
     @Override
-    public boolean isInvalid() {
-        return super.isInvalid() || tableModel.isModified();
-    }
-
-    @Override
     public Result handleKeyStroke(KeyStroke keyStroke) {
         switch(keyStroke.getKeyType()) {
             case ArrowUp:
