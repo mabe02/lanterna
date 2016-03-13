@@ -154,6 +154,9 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
         return inputDecoder;
     }
 
+    void resetTerminalSizeReportQueue() {
+        terminalSizeReportQueue.clear();
+    }
 
     synchronized TerminalSize waitForTerminalSizeReport() throws IOException {
         long startTime = System.currentTimeMillis();

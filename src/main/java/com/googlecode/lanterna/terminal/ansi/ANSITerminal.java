@@ -87,6 +87,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
     public synchronized TerminalSize getTerminalSize() throws IOException {
         saveCursorPosition();
         setCursorPosition(5000, 5000);
+        resetTerminalSizeReportQueue();
         reportPosition();
         restoreCursorPosition();
         return waitForTerminalSizeReport();
