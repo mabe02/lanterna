@@ -15,6 +15,7 @@ public class ScrollBarTest extends TestBase {
 
     @Override
     public void init(WindowBasedTextGUI textGUI) {
+        final BasicWindow basicWindow = new BasicWindow("ScrollBar test");
         Panel contentPanel = new Panel();
         contentPanel.setLayoutManager(new GridLayout(2));
 
@@ -42,6 +43,12 @@ public class ScrollBarTest extends TestBase {
                 horizontalScroll.setViewSize(getInteger(textBoxHorizontalSize.getText(), 1));
             }
         });
+        Button closeButton = new Button("Close", new Runnable() {
+            @Override
+            public void run() {
+                basicWindow.close();
+            }
+        });
 
         verticalScroll.setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER, GridLayout.Alignment.FILL, false, true));
         horizontalScroll.setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2));
@@ -63,8 +70,8 @@ public class ScrollBarTest extends TestBase {
         controlPanel.addComponent(new Label("Horizontal scroll max:")).addComponent(textBoxHorizontalMax);
         controlPanel.addComponent(new EmptySpace(TerminalSize.ONE)).addComponent(new EmptySpace(TerminalSize.ONE));
         controlPanel.addComponent(buttonRefresh);
+        contentPanel.addComponent(closeButton);
 
-        BasicWindow basicWindow = new BasicWindow("ScrollBar test");
         basicWindow.setComponent(contentPanel);
         textGUI.addWindow(basicWindow);
     }

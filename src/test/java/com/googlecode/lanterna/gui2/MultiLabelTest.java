@@ -17,7 +17,7 @@ public class MultiLabelTest {
         screen.startScreen();
         WindowBasedTextGUI textGUI = new MultiWindowTextGUI(screen);
         try {
-            BasicWindow window = new BasicWindow("Label test");
+            final BasicWindow window = new BasicWindow("Label test");
             Panel contentArea = new Panel();
             contentArea.setLayoutManager(new LinearLayout(Direction.VERTICAL));
             contentArea.addComponent(new Label("This is a single line label"));
@@ -37,6 +37,13 @@ public class MultiLabelTest {
             contentArea.addComponent(new EmptySpace(new TerminalSize(5, 1)));
             contentArea.addComponent(new Label("Here is an animated label:"));
             contentArea.addComponent(AnimatedLabel.createClassicSpinningLine());
+            contentArea.addComponent(new EmptySpace());
+            contentArea.addComponent(new Button("Close", new Runnable() {
+                @Override
+                public void run() {
+                    window.close();
+                }
+            }).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center)));
 
             window.setComponent(contentArea);
             textGUI.addWindow(window);
