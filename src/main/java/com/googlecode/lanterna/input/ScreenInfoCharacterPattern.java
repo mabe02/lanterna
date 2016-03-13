@@ -43,6 +43,9 @@ public class ScreenInfoCharacterPattern extends EscapeSequenceCharacterPattern {
     }
 
     public static ScreenInfoAction tryToAdopt(KeyStroke ks) {
+        if(ks == null) {
+            return null;
+        }
         switch (ks.getKeyType()) {
         case CursorLocation: return (ScreenInfoAction)ks;
         case F3: // reconstruct position from F3's modifiers.
