@@ -19,6 +19,7 @@
 package com.googlecode.lanterna.terminal;
 
 import com.googlecode.lanterna.SGR;
+import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
@@ -85,6 +86,14 @@ public interface Terminal extends InputProvider {
      * @throws java.io.IOException If there was an underlying I/O error
      */
     void setCursorPosition(int x, int y) throws IOException;
+
+    /**
+     * Returns the position of the cursor, as reported by the terminal. The top-left corner has coordinates 0 x 0 and
+     * the bottom-right corner has coordinates terminal_width-1 x terminal_height-1.
+     * @return Position of the cursor
+     * @throws IOException In there was an underlying I/O error
+     */
+    TerminalPosition getCursorPosition() throws IOException;
 
     /**
      * Hides or shows the text cursor, but not all terminal (-emulators) supports this. The text cursor is normally a

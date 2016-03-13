@@ -19,6 +19,7 @@
 package com.googlecode.lanterna.terminal.ansi;
 
 import com.googlecode.lanterna.SGR;
+import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.input.*;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
@@ -87,10 +88,12 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
     public synchronized TerminalSize getTerminalSize() throws IOException {
         saveCursorPosition();
         setCursorPosition(5000, 5000);
-        resetTerminalSizeReportQueue();
+        resetCursorPositionReportQueue();
         reportPosition();
         restoreCursorPosition();
-        return waitForTerminalSizeReport();
+        TerminalPosition cursorPosition = waitForCursorPositionReport();
+        onResized(cursorPosition.getColumn(), cursorPosition.getRow());
+        return new TerminalSize(cursorPosition.getColumn(), cursorPosition.getRow());
     }
 
     @Override
@@ -212,6 +215,13 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
     @Override
     public void setCursorPosition(int x, int y) throws IOException {
         writeCSISequenceToTerminal(((y + 1) + ";" + (x + 1) + "H").getBytes());
+    }
+
+    @Override
+    public synchronized TerminalPosition getCursorPosition() throws IOException {
+        resetCursorPositionReportQueue();
+        reportPosition();
+        return waitForCursorPositionReport();
     }
 
     @Override

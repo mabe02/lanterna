@@ -19,6 +19,7 @@
 package com.googlecode.lanterna.terminal.swing;
 
 import com.googlecode.lanterna.SGR;
+import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
@@ -215,6 +216,11 @@ public class AWTTerminal extends Panel implements IOSafeTerminal {
     @Override
     public void setCursorPosition(int x, int y) {
         terminalImplementation.setCursorPosition(x, y);
+    }
+
+    @Override
+    public TerminalPosition getCursorPosition() {
+        return terminalImplementation.getCursorPosition();
     }
 
     @Override

@@ -19,6 +19,7 @@
 package com.googlecode.lanterna.terminal.swing;
 
 import com.googlecode.lanterna.SGR;
+import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.terminal.IOSafeTerminal;
@@ -148,6 +149,11 @@ public class ScrollingSwingTerminal extends JComponent implements IOSafeTerminal
     @Override
     public void setCursorPosition(int x, int y) {
         swingTerminal.setCursorPosition(x, y);
+    }
+
+    @Override
+    public TerminalPosition getCursorPosition() {
+        return swingTerminal.getCursorPosition();
     }
 
     @Override

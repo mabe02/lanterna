@@ -19,6 +19,7 @@
 package com.googlecode.lanterna.terminal.swing;
 
 import com.googlecode.lanterna.SGR;
+import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.terminal.IOSafeTerminal;
@@ -148,6 +149,11 @@ public class ScrollingAWTTerminal extends Container implements IOSafeTerminal {
     @Override
     public void setCursorPosition(int x, int y) {
         awtTerminal.setCursorPosition(x, y);
+    }
+
+    @Override
+    public TerminalPosition getCursorPosition() {
+        return awtTerminal.getCursorPosition();
     }
 
     @Override

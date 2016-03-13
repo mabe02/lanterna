@@ -92,6 +92,10 @@ class VirtualTerminal {
         correctCursor();
     }
 
+    TerminalPosition getCursorPosition() {
+        return cursorPosition;
+    }
+
     TerminalPosition getTranslatedCursorPosition() {
         return cursorPosition.withRelativeRow(terminalScrollController.getScrollingOffset());
     }
