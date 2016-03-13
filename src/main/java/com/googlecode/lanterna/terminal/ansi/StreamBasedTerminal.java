@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 
 import com.googlecode.lanterna.Symbols;
@@ -61,7 +60,7 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
     private final InputDecoder inputDecoder;
     private final Queue<KeyStroke> keyQueue;
     private final Lock readLock;
-    private final Queue<TerminalSize> terminalSizeReportQueue;
+    private final Queue<TerminalPosition> cursorPositionReportQueue;
     
     @SuppressWarnings("WeakerAccess")
     public StreamBasedTerminal(InputStream terminalInput, OutputStream terminalOutput, Charset terminalCharset) {
@@ -76,7 +75,7 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
         this.inputDecoder = new InputDecoder(new InputStreamReader(this.terminalInput, this.terminalCharset));
         this.keyQueue = new LinkedList<KeyStroke>();
         this.readLock = new ReentrantLock();
-        this.terminalSizeReportQueue = new LinkedBlockingQueue<TerminalSize>();
+        this.cursorPositionReportQueue = new LinkedBlockingQueue<TerminalPosition>();
         //noinspection ConstantConditions
     }
 
@@ -154,11 +153,17 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
         return inputDecoder;
     }
 
+    void resetCursorPositionReportQueue() {
+        cursorPositionReportQueue.clear();
+    }
 
-    synchronized TerminalSize waitForTerminalSizeReport() throws IOException {
+    synchronized TerminalPosition waitForCursorPositionReport() throws IOException {
         long startTime = System.currentTimeMillis();
-        TerminalSize newTerminalSize = terminalSizeReportQueue.poll();
-        while(newTerminalSize == null) {
+        TerminalPosition cursorPosition = cursorPositionReportQueue.poll();
+        while(cursorPosition == null) {
+            if(System.currentTimeMillis() - startTime > 2000) {
+                throw new IllegalStateException("Terminal didn't send any position report for 2 seconds, please file a bug with a reproduce!");
+            }
             KeyStroke keyStroke = readInput(false, false);
             if(keyStroke != null) {
                 keyQueue.add(keyStroke);
@@ -166,11 +171,9 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
             else {
                 try { Thread.sleep(1); } catch(InterruptedException e) {}
             }
-            newTerminalSize = terminalSizeReportQueue.poll();
+            cursorPosition = cursorPositionReportQueue.poll();
         }
-
-        onResized(newTerminalSize.getColumns(), newTerminalSize.getRows());
-        return newTerminalSize;
+        return cursorPosition;
     }
 
     @Override
@@ -205,7 +208,7 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
                 ScreenInfoAction report = ScreenInfoCharacterPattern.tryToAdopt(key);
                 if(report != null) {
                     TerminalPosition reportedTerminalPosition = report.getPosition();
-                    terminalSizeReportQueue.add(new TerminalSize(reportedTerminalPosition.getColumn(), reportedTerminalPosition.getRow()));
+                    cursorPositionReportQueue.add(new TerminalPosition(reportedTerminalPosition.getColumn(), reportedTerminalPosition.getRow()));
                 }
                 else {
                     return key;

@@ -691,6 +691,11 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     }
 
     @Override
+    public TerminalPosition getCursorPosition() {
+        return virtualTerminal.getCursorPosition();
+    }
+
+    @Override
     public void setCursorVisible(final boolean visible) {
         cursorIsVisible = visible;
     }
