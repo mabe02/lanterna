@@ -12,6 +12,9 @@ public class TableModel<V> {
     private final List<String> columns;
     private final List<List<V>> rows;
 
+    // Keep track of whenever the table model is changed
+    private volatile boolean modified;
+
     /**
      * Default constructor, creates a new model with same number of columns as labels supplied
      * @param columnLabels Labels for the column headers
@@ -19,6 +22,7 @@ public class TableModel<V> {
     public TableModel(String... columnLabels) {
         this.columns = new ArrayList<String>(Arrays.asList(columnLabels));
         this.rows = new ArrayList<List<V>>();
+        this.modified = false;
     }
 
     /**
@@ -96,6 +100,7 @@ public class TableModel<V> {
     public synchronized TableModel<V> insertRow(int index, Collection<V> values) {
         ArrayList<V> list = new ArrayList<V>(values);
         rows.add(index, list);
+        modified = true;
         return this;
     }
 
@@ -106,6 +111,7 @@ public class TableModel<V> {
      */
     public synchronized TableModel<V> removeRow(int index) {
         rows.remove(index);
+        modified = true;
         return this;
     }
 
@@ -167,6 +173,7 @@ public class TableModel<V> {
                 row.add(index, null);
             }
         }
+        modified = true;
         return this;
     }
 
@@ -180,6 +187,7 @@ public class TableModel<V> {
         for(List<V> row : rows) {
             row.remove(index);
         }
+        modified = true;
         return this;
     }
 
@@ -223,6 +231,24 @@ public class TableModel<V> {
             return this;
         }
         row.set(columnIndex, value);
+        modified = true;
         return this;
+    }
+
+    /**
+     * Checks if this table model has been modified since last time {@link #resetModifiedFlag()} was called (or the
+     * table model was created). This field is automatically set whenever you modify the table model.
+     * @return {@code true} if the table model has been modified since the last time the modification flag was reset
+     */
+    public synchronized boolean isModified() {
+        return modified;
+    }
+
+    /**
+     * Marks the internal modification flag as off, meaning we have dealt with the updated table model. You should call
+     * this in a {@link TableRenderer} implementation after the table has been drawn.
+     */
+    public synchronized void resetModifiedFlag() {
+        modified = false;
     }
 }

@@ -213,6 +213,10 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
             preferredRowSize++;
         }
 
+
+        // Tell the model that we have refreshed the visual state and it's not modified anymore
+        tableModel.resetModifiedFlag();
+
         cachedSize = new TerminalSize(preferredColumnSize, preferredRowSize);
         return cachedSize;
     }
@@ -301,11 +305,6 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
         }
         if(visibleRows == 0) {
             visibleRows = tableModel.getRowCount();
-        }
-
-        //Exit if there are no rows
-        if(rows.isEmpty()) {
-            return;
         }
 
         //Draw scrollbars (if needed)
