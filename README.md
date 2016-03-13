@@ -38,6 +38,10 @@ Lanterna is available on [Maven Central](http://search.maven.org/), through [Son
     </dependency>
 ```
 
+Discussions
+---
+There is a [google group](https://groups.google.com/forum/#!forum/lanterna-discuss) for discussions and announcements related to Lanterna.
+
 
 Development Guide
 ---
