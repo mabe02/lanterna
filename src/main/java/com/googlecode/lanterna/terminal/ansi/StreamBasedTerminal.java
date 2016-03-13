@@ -159,6 +159,9 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
         long startTime = System.currentTimeMillis();
         TerminalSize newTerminalSize = terminalSizeReportQueue.poll();
         while(newTerminalSize == null) {
+            if(System.currentTimeMillis() - startTime > 2000) {
+                throw new IllegalStateException("Terminal didn't send any position report for 2 seconds, please file a bug with a reproduce!");
+            }
             KeyStroke keyStroke = readInput(false, false);
             if(keyStroke != null) {
                 keyQueue.add(keyStroke);
