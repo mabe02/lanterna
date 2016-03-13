@@ -5,7 +5,6 @@ import com.googlecode.lanterna.TestTerminalFactory;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.input.KeyType;
 
 import java.io.IOException;
 
@@ -33,8 +32,7 @@ public class SimpleTerminalTest {
         printHelp(textGraphics);
         terminal.putCharacter('\n');
         terminal.setBackgroundColor(COLORS_TO_CYCLE[0]);
-        TerminalPosition cursorPosition = new TerminalPosition(0, 8);
-        terminal.setCursorPosition(cursorPosition.getColumn(), cursorPosition.getRow());
+        TerminalPosition cursorPosition = resetCursorPositionAfterHelp(terminal);
         terminal.flush();
 
         mainLoop:
@@ -75,6 +73,7 @@ public class SimpleTerminalTest {
                         case '?':
                             terminal.putCharacter('\n');
                             printHelp(textGraphics);
+                            cursorPosition = resetCursorPositionAfterHelp(terminal);
                             break;
                         case 'm':
                             if(inPrivateMode) {
@@ -124,6 +123,12 @@ public class SimpleTerminalTest {
         terminal.setForegroundColor(TextColor.ANSI.DEFAULT);
         terminal.flush();
         System.out.println();
+    }
+
+    private static TerminalPosition resetCursorPositionAfterHelp(Terminal terminal) throws IOException {
+        TerminalPosition cursorPosition = new TerminalPosition(0, 8);
+        terminal.setCursorPosition(cursorPosition.getColumn(), cursorPosition.getRow());
+        return cursorPosition;
     }
 
     private static void printHelp(TextGraphics textGraphics) {
