@@ -159,7 +159,7 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
         long startTime = System.currentTimeMillis();
         TerminalSize newTerminalSize = terminalSizeReportQueue.poll();
         while(newTerminalSize == null) {
-            KeyStroke keyStroke = pollInput();
+            KeyStroke keyStroke = readInput(false, false);
             if(keyStroke != null) {
                 keyQueue.add(keyStroke);
             }
@@ -175,19 +175,21 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
 
     @Override
     public KeyStroke pollInput() throws IOException {
-        return readInput(false);
+        return readInput(false, true);
     }
 
     @Override
     public KeyStroke readInput() throws IOException {
-        return readInput(true);
+        return readInput(true, true);
     }
 
-    private KeyStroke readInput(boolean blocking) throws IOException {
+    private KeyStroke readInput(boolean blocking, boolean useKeyQueue) throws IOException {
         while(true) {
-            KeyStroke previouslyReadKey = keyQueue.poll();
-            if(previouslyReadKey != null) {
-                return previouslyReadKey;
+            if(useKeyQueue) {
+                KeyStroke previouslyReadKey = keyQueue.poll();
+                if(previouslyReadKey != null) {
+                    return previouslyReadKey;
+                }
             }
             if(blocking) {
                 readLock.lock();
