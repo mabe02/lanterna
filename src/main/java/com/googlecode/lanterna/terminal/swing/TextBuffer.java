@@ -65,7 +65,7 @@ class TextBuffer {
 
         // Check if we are overwriting a double-width character, in that case we need to reset the other half
         if(line.get(columnIndex).isDoubleWidth()) {
-            line.set(columnIndex + 1, TextCharacter.DEFAULT_CHARACTER);
+            line.set(columnIndex + 1, line.get(columnIndex).withCharacter(' '));
             returnStyle = 1; // this character and the one to the right
         }
         else if(line.get(columnIndex) == DOUBLE_WIDTH_CHAR_PADDING) {

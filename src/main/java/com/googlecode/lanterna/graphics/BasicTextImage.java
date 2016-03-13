@@ -137,8 +137,19 @@ public class BasicTextImage implements TextImage {
         if(column < 0 || row < 0 || row >= buffer.length || column >= buffer[0].length) {
             return;
         }
-        
+
+        // Double width character adjustments
+        if(column > 0 && buffer[row][column - 1].isDoubleWidth()) {
+            buffer[row][column - 1] = buffer[row][column - 1].withCharacter(' ');
+        }
+
+        // Assign the character at location we specified
         buffer[row][column] = character;
+
+        // Double width character adjustments
+        if(character.isDoubleWidth() && column + 1 < buffer[0].length) {
+            buffer[row][column+1] = character.withCharacter(' ');
+        }
     }
 
     @Override
