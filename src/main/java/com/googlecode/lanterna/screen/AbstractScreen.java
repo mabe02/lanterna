@@ -93,13 +93,19 @@ public abstract class AbstractScreen implements Screen {
             this.cursorPosition = null;
             return;
         }
-        if(position.getColumn() >= 0 && position.getColumn() < terminalSize.getColumns()
-                && position.getRow() >= 0 && position.getRow() < terminalSize.getRows()) {
-            this.cursorPosition = position;
+        if(position.getColumn() < 0) {
+            position = position.withColumn(0);
         }
-        else {
-            this.cursorPosition = null;
+        if(position.getRow() < 0) {
+            position = position.withRow(0);
         }
+        if(position.getColumn() >= terminalSize.getColumns()) {
+            position = position.withColumn(terminalSize.getColumns() - 1);
+        }
+        if(position.getRow() >= terminalSize.getRows()) {
+            position = position.withRow(terminalSize.getRows() - 1);
+        }
+        this.cursorPosition = position;
     }
 
     @Override
