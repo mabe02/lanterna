@@ -151,7 +151,11 @@ class VirtualTerminal {
     }
 
     synchronized void setCursorPosition(TerminalPosition cursorPosition) {
-        this.cursorPosition = translateCursorSpaceToGlobalSpace(cursorPosition);
+        TerminalPosition position = translateCursorSpaceToGlobalSpace(cursorPosition);
+        if(position.getColumn() >= viewportSize.getColumns()) {
+            position = position.withRelativeColumn(-1);
+        }
+        this.cursorPosition = position;
     }
 
     synchronized TextCharacter getCharacter(TerminalPosition position) {
