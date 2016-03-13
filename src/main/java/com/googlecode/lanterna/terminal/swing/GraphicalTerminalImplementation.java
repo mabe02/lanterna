@@ -661,7 +661,6 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     public synchronized void clearScreen() {
         virtualTerminal.clear();
         clearBackBufferAndVisualState();
-        flush();
     }
 
     /**
@@ -669,7 +668,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
      * everything
      */
     void clearBackBufferAndVisualState() {
-        // Manually clear the backbuffer and visual state
+        // Manually clear the backbuffer
         if(backbuffer != null) {
             Graphics2D graphics = backbuffer.createGraphics();
             Color backgroundColor = colorConfiguration.toAWTColor(TextColor.ANSI.DEFAULT, false, false);
