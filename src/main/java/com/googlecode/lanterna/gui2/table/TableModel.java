@@ -9,8 +9,56 @@ import java.util.*;
  * @author Martin
  */
 public class TableModel<V> {
+
+    /**
+     * Listener interface for the {@link TableModel} class which can be attached to a {@link TableModel} to be notified
+     * of changes to the table model.
+     * @param <V> Value type stored in the table
+     */
+    public interface Listener<V> {
+        /**
+         * Called when a new row has been added to the model
+         * @param model Model the row was added to
+         * @param index Index of the new row
+         */
+        void onRowAdded(TableModel<V> model, int index);
+        /**
+         * Called when a row has been removed from the model
+         * @param model Model the row was removed from
+         * @param index Index of the removed row
+         * @param oldRow Content of the row that was removed
+         */
+        void onRowRemoved(TableModel<V> model, int index, List<V> oldRow);
+        /**
+         * Called when a new column has been added to the model
+         * @param model Model the column was added to
+         * @param index Index of the new column
+         */
+        void onColumnAdded(TableModel<V> model, int index);
+
+        /**
+         * Called when a column has been removed from the model
+         * @param model Model the column was removed from
+         * @param index Index of the removed column
+         * @param oldHeader Header the removed column had
+         * @param oldColumn Values in the removed column
+         */
+        void onColumnRemoved(TableModel<V> model, int index, String oldHeader, List<V> oldColumn);
+
+        /**
+         * Called when an existing cell had its content updated
+         * @param model Model that was modified
+         * @param row Row index of the modified cell
+         * @param column Column index of the modified cell
+         * @param oldValue Previous value of the cell
+         * @param newValue New value of the cell
+         */
+        void onCellChanged(TableModel<V> model, int row, int column, V oldValue, V newValue);
+    }
+
     private final List<String> columns;
     private final List<List<V>> rows;
+    private final List<Listener<V>> listeners;
 
     /**
      * Default constructor, creates a new model with same number of columns as labels supplied
@@ -19,6 +67,7 @@ public class TableModel<V> {
     public TableModel(String... columnLabels) {
         this.columns = new ArrayList<String>(Arrays.asList(columnLabels));
         this.rows = new ArrayList<List<V>>();
+        this.listeners = new ArrayList<Listener<V>>();
     }
 
     /**
@@ -96,6 +145,9 @@ public class TableModel<V> {
     public synchronized TableModel<V> insertRow(int index, Collection<V> values) {
         ArrayList<V> list = new ArrayList<V>(values);
         rows.add(index, list);
+        for(Listener listener: listeners) {
+            listener.onRowAdded(this, index);
+        }
         return this;
     }
 
@@ -105,7 +157,10 @@ public class TableModel<V> {
      * @return Itself
      */
     public synchronized TableModel<V> removeRow(int index) {
-        rows.remove(index);
+        List<V> removedRow = rows.remove(index);
+        for(Listener listener: listeners) {
+            listener.onRowRemoved(this, index, removedRow);
+        }
         return this;
     }
 
@@ -167,6 +222,10 @@ public class TableModel<V> {
                 row.add(index, null);
             }
         }
+
+        for(Listener listener: listeners) {
+            listener.onColumnAdded(this, index);
+        }
         return this;
     }
 
@@ -176,9 +235,13 @@ public class TableModel<V> {
      * @return Itself
      */
     public synchronized TableModel<V> removeColumn(int index) {
-        columns.remove(index);
+        String removedColumnHeader = columns.remove(index);
+        List<V> removedColumn = new ArrayList<V>();
         for(List<V> row : rows) {
-            row.remove(index);
+            removedColumn.add(row.remove(index));
+        }
+        for(Listener listener: listeners) {
+            listener.onColumnRemoved(this, index, removedColumnHeader, removedColumn);
         }
         return this;
     }
@@ -223,6 +286,29 @@ public class TableModel<V> {
             return this;
         }
         row.set(columnIndex, value);
+        for(Listener listener: listeners) {
+            listener.onCellChanged(this, rowIndex, columnIndex, existingValue, value);
+        }
+        return this;
+    }
+
+    /**
+     * Adds a listener to this table model that will be notified whenever the model changes
+     * @param listener {@link Listener} to register with this model
+     * @return Itself
+     */
+    public TableModel<V> addListener(Listener<V> listener) {
+        listeners.add(listener);
+        return this;
+    }
+
+    /**
+     * Removes a listener from this model so that it will no longer receive any notifications when the model changes
+     * @param listener {@link Listener} to deregister from this model
+     * @return Itself
+     */
+    public TableModel<V> removeListener(Listener<V> listener) {
+        listeners.remove(listener);
         return this;
     }
 }

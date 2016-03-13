@@ -3,6 +3,8 @@ package com.googlecode.lanterna.gui2.table;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.input.KeyStroke;
 
+import java.util.List;
+
 /**
  * The table class is an interactable component that displays a grid of cells containing data along with a header of
  * labels. It supports scrolling when the number of rows and/or columns gets too large to fit and also supports
@@ -13,6 +15,7 @@ import com.googlecode.lanterna.input.KeyStroke;
  */
 public class Table<V> extends AbstractInteractableComponent<Table<V>> {
     private TableModel<V> tableModel;
+    private TableModel.Listener<V> tableModelListener;  // Used to invalidate the table whenever the model changes
     private TableHeaderRenderer<V> tableHeaderRenderer;
     private TableCellRenderer<V> tableCellRenderer;
     private Runnable selectAction;
@@ -45,6 +48,34 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
         this.selectedRow = 0;
         this.selectedColumn = -1;
         this.escapeByArrowKey = true;
+
+        this.tableModelListener = new TableModel.Listener<V>() {
+            @Override
+            public void onRowAdded(TableModel<V> model, int index) {
+                invalidate();
+            }
+
+            @Override
+            public void onRowRemoved(TableModel<V> model, int index, List<V> oldRow) {
+                invalidate();
+            }
+
+            @Override
+            public void onColumnAdded(TableModel<V> model, int index) {
+                invalidate();
+            }
+
+            @Override
+            public void onColumnRemoved(TableModel<V> model, int index, String oldHeader, List<V> oldColumn) {
+                invalidate();
+            }
+
+            @Override
+            public void onCellChanged(TableModel<V> model, int row, int column, V oldValue, V newValue) {
+                invalidate();
+            }
+        };
+        this.tableModel.addListener(tableModelListener);
     }
 
     /**
@@ -64,7 +95,9 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
         if(tableModel == null) {
             throw new IllegalArgumentException("Cannot assign a null TableModel");
         }
+        this.tableModel.removeListener(tableModelListener);
         this.tableModel = tableModel;
+        this.tableModel.addListener(tableModelListener);
         invalidate();
         return this;
     }
