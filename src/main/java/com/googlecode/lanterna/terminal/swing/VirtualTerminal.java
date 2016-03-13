@@ -77,6 +77,9 @@ class VirtualTerminal {
                 currentTextBuffer.setCharacter(cursorPosition.getRow(), cursorPosition.getColumn(), TextCharacter.DEFAULT_CHARACTER);
                 moveCursorToNextLine();
             }
+            if(cursorPosition.getColumn() == viewportSize.getColumns()) {
+                moveCursorToNextLine();
+            }
 
             // Update the buffer
             int i = currentTextBuffer.setCharacter(cursorPosition.getRow(), cursorPosition.getColumn(), terminalCharacter);
@@ -95,7 +98,7 @@ class VirtualTerminal {
 
             //Advance cursor
             cursorPosition = cursorPosition.withRelativeColumn(doubleWidth ? 2 : 1);
-            if(cursorPosition.getColumn() >= viewportSize.getColumns()) {
+            if(cursorPosition.getColumn() > viewportSize.getColumns()) {
                 moveCursorToNextLine();
             }
         }
