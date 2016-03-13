@@ -221,7 +221,9 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
     public synchronized TerminalPosition getCursorPosition() throws IOException {
         resetCursorPositionReportQueue();
         reportPosition();
-        return waitForCursorPositionReport();
+
+        // ANSI terminal positions are 1-indexed so top-left corner is 1x1 instead of 0x0, that's why we need to adjust it here
+        return waitForCursorPositionReport().withRelative(-1, -1);
     }
 
     @Override
