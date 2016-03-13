@@ -97,6 +97,15 @@ public class SimpleTerminalTest {
                             }
                             terminal.setBackgroundColor(COLORS_TO_CYCLE[colorIndex]);
                             break;
+                        case 'p':
+                            TerminalPosition position = terminal.getCursorPosition();
+                            textGraphics.putString(1, terminal.getTerminalSize().getRows() - 1, position.toString() + "                                     ");
+
+                            // Restore the background color which was reset in the call above
+                            terminal.setBackgroundColor(COLORS_TO_CYCLE[colorIndex]);
+
+                            terminal.setCursorPosition(position.getColumn(), position.getRow());
+                            break;
 
                         case '1':
                         case '2':
@@ -109,8 +118,8 @@ public class SimpleTerminalTest {
                         case '9':
                             for(int i = 0; i < Integer.parseInt(Character.toString(keyStroke.getCharacter())); i++) {
                                 terminal.putCharacter(' ');
-                                cursorPosition = cursorPosition.withRelativeColumn(1);
                             }
+                            cursorPosition = terminal.getCursorPosition();
                             break;
                     }
                     break;
@@ -131,7 +140,7 @@ public class SimpleTerminalTest {
     }
 
     private static TerminalPosition resetCursorPositionAfterHelp(Terminal terminal) throws IOException {
-        TerminalPosition cursorPosition = new TerminalPosition(0, 8);
+        TerminalPosition cursorPosition = new TerminalPosition(0, 9);
         terminal.setCursorPosition(cursorPosition.getColumn(), cursorPosition.getRow());
         return cursorPosition;
     }
@@ -144,7 +153,8 @@ public class SimpleTerminalTest {
         textGraphics.putString(1, 2, "m            - Toggle private mode on/off");
         textGraphics.putString(1, 3, "n            - Newline");
         textGraphics.putString(1, 4, "c            - Cycle color");
-        textGraphics.putString(1, 5, "<arrow keys> - Move cursor");
-        textGraphics.putString(1, 6, "1-9          - Print X number of blocks at cursor");
+        textGraphics.putString(1, 5, "p            - Print cursor position");
+        textGraphics.putString(1, 6, "<arrow keys> - Move cursor");
+        textGraphics.putString(1, 7, "1-9          - Print X number of blocks at cursor");
     }
 }
