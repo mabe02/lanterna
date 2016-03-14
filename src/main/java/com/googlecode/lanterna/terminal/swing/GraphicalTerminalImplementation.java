@@ -302,7 +302,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
                 null);
 
         // Take care of the left-over area at the bottom and right of the component where no character can fit
-        int leftoverHeight = getHeight() % getFontHeight();
+        //int leftoverHeight = getHeight() % getFontHeight();
         int leftoverWidth = getWidth() % getFontWidth();
         componentGraphics.setColor(Color.BLACK);
         if(leftoverWidth > 0) {
