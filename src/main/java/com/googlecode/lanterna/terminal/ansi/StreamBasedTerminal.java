@@ -208,7 +208,7 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
                 ScreenInfoAction report = ScreenInfoCharacterPattern.tryToAdopt(key);
                 if(report != null) {
                     TerminalPosition reportedTerminalPosition = report.getPosition();
-                    cursorPositionReportQueue.add(new TerminalPosition(reportedTerminalPosition.getColumn(), reportedTerminalPosition.getRow()));
+                    cursorPositionReportQueue.add(reportedTerminalPosition);
                 }
                 else {
                     return key;
