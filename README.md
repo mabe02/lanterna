@@ -1,5 +1,6 @@
 Lanterna
 ---
+[![Build Status](https://travis-ci.org/mabe02/lanterna.svg?branch=master)](https://travis-ci.org/mabe02/lanterna)
 
 ![Lanterna screenshot](http://wiki.lanterna.googlecode.com/git/images/screenshots/screenshot1.png)
 
