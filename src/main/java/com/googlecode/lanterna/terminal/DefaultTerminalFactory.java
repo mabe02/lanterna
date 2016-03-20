@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.util.EnumSet;
 
 /**
  * This TerminalFactory implementation uses a simple auto-detection mechanism for figuring out which terminal 
@@ -51,7 +52,7 @@ public final class DefaultTerminalFactory implements TerminalFactory {
     private boolean forceAWTOverSwing;
     private String title;
     private boolean autoOpenTerminalFrame;
-    private TerminalEmulatorAutoCloseTrigger autoCloseTrigger;
+    private EnumSet<TerminalEmulatorAutoCloseTrigger> autoCloseTriggers;
     private TerminalEmulatorColorConfiguration colorConfiguration;
     private TerminalEmulatorDeviceConfiguration deviceConfiguration;
     private AWTTerminalFontConfiguration fontConfiguration;
@@ -79,7 +80,7 @@ public final class DefaultTerminalFactory implements TerminalFactory {
         this.forceTextTerminal = false;
         this.autoOpenTerminalFrame = true;
         this.title = null;
-        this.autoCloseTrigger = TerminalEmulatorAutoCloseTrigger.CloseOnExitPrivateMode;
+        this.autoCloseTriggers = EnumSet.of(TerminalEmulatorAutoCloseTrigger.CloseOnExitPrivateMode);
         this.mouseCaptureMode = null;
 
         //SwingTerminal will replace these null values for the default implementation if they are unchanged
@@ -130,7 +131,7 @@ public final class DefaultTerminalFactory implements TerminalFactory {
                 deviceConfiguration,
                 fontConfiguration,
                 colorConfiguration,
-                autoCloseTrigger);
+                autoCloseTriggers.toArray(new TerminalEmulatorAutoCloseTrigger[autoCloseTriggers.size()]));
     }
 
     public SwingTerminalFrame createSwingTerminal() {
@@ -140,7 +141,7 @@ public final class DefaultTerminalFactory implements TerminalFactory {
                 deviceConfiguration,
                 fontConfiguration instanceof SwingTerminalFontConfiguration ? (SwingTerminalFontConfiguration)fontConfiguration : null,
                 colorConfiguration,
-                autoCloseTrigger);
+                autoCloseTriggers.toArray(new TerminalEmulatorAutoCloseTrigger[autoCloseTriggers.size()]));
     }
 
     private boolean hasSwing() {
@@ -209,12 +210,28 @@ public final class DefaultTerminalFactory implements TerminalFactory {
     }
 
     /**
-     * Sets the auto-close trigger to use on created SwingTerminalFrames created by this factory
-     * @param autoCloseTrigger Auto-close trigger to use on created SwingTerminalFrames created by this factory
+     * Sets the auto-close trigger to use on created SwingTerminalFrames created by this factory. This will reset any
+     * previous triggers. If called with {@code null}, all triggers are cleared.
+     * @param autoCloseTrigger Auto-close trigger to use on created SwingTerminalFrames created by this factory, or {@code null} to clear all existing triggers
      * @return Reference to itself, so multiple .set-calls can be chained
      */
     public DefaultTerminalFactory setTerminalEmulatorFrameAutoCloseTrigger(TerminalEmulatorAutoCloseTrigger autoCloseTrigger) {
-        this.autoCloseTrigger = autoCloseTrigger;
+        this.autoCloseTriggers.clear();
+        if(autoCloseTrigger != null) {
+            this.autoCloseTriggers.add(autoCloseTrigger);
+        }
+        return this;
+    }
+
+    /**
+     * Adds an auto-close trigger to use on created SwingTerminalFrames created by this factory
+     * @param autoCloseTrigger Auto-close trigger to add to the created SwingTerminalFrames created by this factory
+     * @return Reference to itself, so multiple calls can be chained
+     */
+    public DefaultTerminalFactory addTerminalEmulatorFrameAutoCloseTrigger(TerminalEmulatorAutoCloseTrigger autoCloseTrigger) {
+        if(autoCloseTrigger != null) {
+            this.autoCloseTriggers.add(autoCloseTrigger);
+        }
         return this;
     }
 

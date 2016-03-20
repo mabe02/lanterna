@@ -30,6 +30,9 @@ import com.googlecode.lanterna.TextColor;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -47,41 +50,27 @@ import java.util.concurrent.TimeUnit;
 @SuppressWarnings("serial")
 public class AWTTerminalFrame extends Frame implements IOSafeTerminal {
     private final AWTTerminal awtTerminal;
-    private TerminalEmulatorAutoCloseTrigger autoCloseTrigger;
+    private final EnumSet<TerminalEmulatorAutoCloseTrigger> autoCloseTriggers;
+
     private boolean disposed;
 
     /**
-     * Creates a new AWTTerminalFrame that doesn't automatically close.
-     */
-    public AWTTerminalFrame() throws HeadlessException {
-        this(TerminalEmulatorAutoCloseTrigger.DoNotAutoClose);
-    }
-
-    /**
-     * Creates a new AWTTerminalFrame with a specified auto-close behaviour
-     * @param autoCloseTrigger What to trigger automatic disposal of the Frame
+     * Creates a new AWTTerminalFrame with an optional list of auto-close triggers
+     * @param autoCloseTriggers What to trigger automatic disposal of the Frame
      */
     @SuppressWarnings({"SameParameterValue", "WeakerAccess"})
-    public AWTTerminalFrame(TerminalEmulatorAutoCloseTrigger autoCloseTrigger) {
-        this("AwtTerminalFrame", autoCloseTrigger);
+    public AWTTerminalFrame(TerminalEmulatorAutoCloseTrigger... autoCloseTriggers) {
+        this("AwtTerminalFrame", autoCloseTriggers);
     }
 
     /**
-     * Creates a new AWTTerminalFrame with a given title and no automatic closing.
+     * Creates a new AWTTerminalFrame with a given window title and an optional list of auto-close triggers
      * @param title Title to use for the window
-     */
-    public AWTTerminalFrame(String title) throws HeadlessException {
-        this(title, TerminalEmulatorAutoCloseTrigger.DoNotAutoClose);
-    }
-
-    /**
-     * Creates a new AWTTerminalFrame with a specified auto-close behaviour and specific title
-     * @param title Title to use for the window
-     * @param autoCloseTrigger What to trigger automatic disposal of the Frame
+     * @param autoCloseTriggers What to trigger automatic disposal of the Frame
      */
     @SuppressWarnings("WeakerAccess")
-    public AWTTerminalFrame(String title, TerminalEmulatorAutoCloseTrigger autoCloseTrigger) throws HeadlessException {
-        this(title, new AWTTerminal(), autoCloseTrigger);
+    public AWTTerminalFrame(String title, TerminalEmulatorAutoCloseTrigger... autoCloseTriggers) throws HeadlessException {
+        this(title, new AWTTerminal(), autoCloseTriggers);
     }
 
     /**
@@ -90,28 +79,14 @@ public class AWTTerminalFrame extends Frame implements IOSafeTerminal {
      * @param deviceConfiguration Device configuration for the embedded AWTTerminal
      * @param fontConfiguration Font configuration for the embedded AWTTerminal
      * @param colorConfiguration Color configuration for the embedded AWTTerminal
-     */
-    public AWTTerminalFrame(String title,
-                            TerminalEmulatorDeviceConfiguration deviceConfiguration,
-                            AWTTerminalFontConfiguration fontConfiguration,
-                            TerminalEmulatorColorConfiguration colorConfiguration) {
-        this(title, deviceConfiguration, fontConfiguration, colorConfiguration, TerminalEmulatorAutoCloseTrigger.DoNotAutoClose);
-    }
-
-    /**
-     * Creates a new AWTTerminalFrame using a specified title and a series of AWT terminal configuration objects
-     * @param title What title to use for the window
-     * @param deviceConfiguration Device configuration for the embedded AWTTerminal
-     * @param fontConfiguration Font configuration for the embedded AWTTerminal
-     * @param colorConfiguration Color configuration for the embedded AWTTerminal
-     * @param autoCloseTrigger What to trigger automatic disposal of the Frame
+     * @param autoCloseTriggers What to trigger automatic disposal of the Frame
      */
     public AWTTerminalFrame(String title,
                             TerminalEmulatorDeviceConfiguration deviceConfiguration,
                             AWTTerminalFontConfiguration fontConfiguration,
                             TerminalEmulatorColorConfiguration colorConfiguration,
-                            TerminalEmulatorAutoCloseTrigger autoCloseTrigger) {
-        this(title, null, deviceConfiguration, fontConfiguration, colorConfiguration, autoCloseTrigger);
+                            TerminalEmulatorAutoCloseTrigger... autoCloseTriggers) {
+        this(title, null, deviceConfiguration, fontConfiguration, colorConfiguration, autoCloseTriggers);
     }
 
     /**
@@ -121,23 +96,23 @@ public class AWTTerminalFrame extends Frame implements IOSafeTerminal {
      * @param deviceConfiguration Device configuration for the embedded AWTTerminal
      * @param fontConfiguration Font configuration for the embedded AWTTerminal
      * @param colorConfiguration Color configuration for the embedded AWTTerminal
-     * @param autoCloseTrigger What to trigger automatic disposal of the Frame
+     * @param autoCloseTriggers What to trigger automatic disposal of the Frame
      */
     public AWTTerminalFrame(String title,
                             TerminalSize terminalSize,
                             TerminalEmulatorDeviceConfiguration deviceConfiguration,
                             AWTTerminalFontConfiguration fontConfiguration,
                             TerminalEmulatorColorConfiguration colorConfiguration,
-                            TerminalEmulatorAutoCloseTrigger autoCloseTrigger) {
+                            TerminalEmulatorAutoCloseTrigger... autoCloseTriggers) {
         this(title,
                 new AWTTerminal(terminalSize, deviceConfiguration, fontConfiguration, colorConfiguration),
-                autoCloseTrigger);
+                autoCloseTriggers);
     }
     
-    private AWTTerminalFrame(String title, AWTTerminal awtTerminal, TerminalEmulatorAutoCloseTrigger autoCloseTrigger) {
+    private AWTTerminalFrame(String title, AWTTerminal awtTerminal, TerminalEmulatorAutoCloseTrigger... autoCloseTrigger) {
         super(title != null ? title : "AWTTerminalFrame");
         this.awtTerminal = awtTerminal;
-        this.autoCloseTrigger = autoCloseTrigger;
+        this.autoCloseTriggers = EnumSet.copyOf(Arrays.asList(autoCloseTrigger));
         this.disposed = false;
 
         setLayout(new BorderLayout());
@@ -150,19 +125,26 @@ public class AWTTerminalFrame extends Frame implements IOSafeTerminal {
     }
 
     /**
-     * Returns the auto-close trigger used by the AWTTerminalFrame
+     * Returns the auto-close triggers used by the AWTTerminalFrame
      * @return Current auto-close trigger
      */
-    public TerminalEmulatorAutoCloseTrigger getAutoCloseTrigger() {
-        return autoCloseTrigger;
+    public Set<TerminalEmulatorAutoCloseTrigger> getAutoCloseTrigger() {
+        return EnumSet.copyOf(autoCloseTriggers);
     }
 
     /**
      * Changes the current auto-close trigger used by this AWTTerminalFrame
      * @param autoCloseTrigger New auto-close trigger to use
+     * @deprecated Use
      */
+    @Deprecated
     public void setAutoCloseTrigger(TerminalEmulatorAutoCloseTrigger autoCloseTrigger) {
-        this.autoCloseTrigger = autoCloseTrigger;
+        this.autoCloseTriggers.clear();
+        this.autoCloseTriggers.add(autoCloseTrigger);
+    }
+
+    public void addAutoCloseTrigger(TerminalEmulatorAutoCloseTrigger autoCloseTrigger) {
+        autoCloseTriggers.add(autoCloseTrigger);
     }
 
     @Override
@@ -180,7 +162,7 @@ public class AWTTerminalFrame extends Frame implements IOSafeTerminal {
             return new KeyStroke(KeyType.EOF);
         }
         KeyStroke keyStroke = awtTerminal.pollInput();
-        if(autoCloseTrigger == TerminalEmulatorAutoCloseTrigger.CloseOnEscape &&
+        if(autoCloseTriggers.contains(TerminalEmulatorAutoCloseTrigger.CloseOnEscape) &&
                 keyStroke != null && 
                 keyStroke.getKeyType() == KeyType.Escape) {
             dispose();
@@ -201,7 +183,7 @@ public class AWTTerminalFrame extends Frame implements IOSafeTerminal {
     @Override
     public void exitPrivateMode() {
         awtTerminal.exitPrivateMode();
-        if(autoCloseTrigger == TerminalEmulatorAutoCloseTrigger.CloseOnExitPrivateMode) {
+        if(autoCloseTriggers.contains(TerminalEmulatorAutoCloseTrigger.CloseOnExitPrivateMode)) {
             dispose();
         }
     }
