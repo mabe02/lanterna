@@ -88,7 +88,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
     public synchronized TerminalSize getTerminalSize() throws IOException {
         saveCursorPosition();
         setCursorPosition(5000, 5000);
-        resetCursorPositionReportQueue();
+        resetMemorizedCursorPosition();
         reportPosition();
         restoreCursorPosition();
         TerminalPosition cursorPosition = waitForCursorPositionReport();
@@ -224,7 +224,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
 
     @Override
     public synchronized TerminalPosition getCursorPosition() throws IOException {
-        resetCursorPositionReportQueue();
+        resetMemorizedCursorPosition();
         reportPosition();
 
         // ANSI terminal positions are 1-indexed so top-left corner is 1x1 instead of 0x0, that's why we need to adjust it here
