@@ -66,6 +66,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     private Timer blinkTimer;
     private boolean hasBlinkingText;
     private boolean blinkOn;
+    private boolean bellOn;
 
     private TerminalPosition lastDrawnCursorPosition;
     private int lastBufferUpdateScrollPosition;
@@ -429,6 +430,13 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
                                 (!deviceConfiguration.isCursorBlinking() ||     //Always draw if the cursor isn't blinking
                                         (deviceConfiguration.isCursorBlinking() && blinkOn));    //If the cursor is blinking, only draw when blinkOn is true
 
+                        // Visualize bell as all colors inverted
+                        if(bellOn) {
+                            Color temp = foregroundColor;
+                            foregroundColor = backgroundColor;
+                            backgroundColor = temp;
+                        }
+
                         drawCharacter(backbufferGraphics,
                                 textCharacter,
                                 column,
@@ -646,28 +654,28 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     @Override
     public synchronized void enterPrivateMode() {
         virtualTerminal.switchToPrivateMode();
-        clearBackBufferAndVisualState();
+        clearBackBuffer();
         flush();
     }
 
     @Override
     public synchronized void exitPrivateMode() {
         virtualTerminal.switchToNormalMode();
-        clearBackBufferAndVisualState();
+        clearBackBuffer();
         flush();
     }
 
     @Override
     public synchronized void clearScreen() {
         virtualTerminal.clear();
-        clearBackBufferAndVisualState();
+        clearBackBuffer();
     }
 
     /**
      * Clears out the back buffer and the resets the visual state so next paint operation will do a full repaint of
      * everything
      */
-    void clearBackBufferAndVisualState() {
+    private void clearBackBuffer() {
         // Manually clear the backbuffer
         if(backbuffer != null) {
             Graphics2D graphics = backbuffer.createGraphics();
@@ -749,6 +757,31 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     @Override
     public byte[] enquireTerminal(int timeout, TimeUnit timeoutUnit) {
         return enquiryString.getBytes();
+    }
+
+    @Override
+    public void bell() {
+        if(bellOn) {
+            return;
+        }
+        bellOn = true;
+        virtualTerminal.setWholeBufferDirty();
+        updateBackBuffer(scrollController.getScrollingOffset());
+        repaint();
+        // Unify this with the blink timer and just do the whole timer logic ourselves?
+        new Thread("BellSilencer") {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(100);
+                }
+                catch(InterruptedException ignore) {}
+                bellOn = false;
+                virtualTerminal.setWholeBufferDirty();
+                updateBackBuffer(scrollController.getScrollingOffset());
+                repaint();
+            }
+        }.start();
     }
 
     @Override

@@ -66,6 +66,8 @@ public interface IOSafeTerminal extends Terminal {
     @Override
     byte[] enquireTerminal(int timeout, TimeUnit timeoutUnit);
     @Override
+    void bell();
+    @Override
     void flush();
     @Override
     KeyStroke pollInput();

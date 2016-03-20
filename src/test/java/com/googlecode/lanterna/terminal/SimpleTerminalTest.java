@@ -90,6 +90,9 @@ public class SimpleTerminalTest {
                             terminal.putCharacter('\n');
                             cursorPosition = cursorPosition.withRelativeRow(1).withColumn(0);
                             break;
+                        case 'b':
+                            terminal.bell();
+                            break;
                         case 'c':
                             colorIndex++;
                             if(colorIndex >= COLORS_TO_CYCLE.length) {
@@ -140,7 +143,7 @@ public class SimpleTerminalTest {
     }
 
     private static TerminalPosition resetCursorPositionAfterHelp(Terminal terminal) throws IOException {
-        TerminalPosition cursorPosition = new TerminalPosition(0, 9);
+        TerminalPosition cursorPosition = new TerminalPosition(0, 10);
         terminal.setCursorPosition(cursorPosition.getColumn(), cursorPosition.getRow());
         return cursorPosition;
     }
@@ -152,9 +155,10 @@ public class SimpleTerminalTest {
         textGraphics.putString(1, 1, "?            - Print this message");
         textGraphics.putString(1, 2, "m            - Toggle private mode on/off");
         textGraphics.putString(1, 3, "n            - Newline");
-        textGraphics.putString(1, 4, "c            - Cycle color");
-        textGraphics.putString(1, 5, "p            - Print cursor position");
-        textGraphics.putString(1, 6, "<arrow keys> - Move cursor");
-        textGraphics.putString(1, 7, "1-9          - Print X number of blocks at cursor");
+        textGraphics.putString(1, 4, "n            - Bell");
+        textGraphics.putString(1, 5, "c            - Cycle color");
+        textGraphics.putString(1, 6, "p            - Print cursor position");
+        textGraphics.putString(1, 7, "<arrow keys> - Move cursor");
+        textGraphics.putString(1, 8, "1-9          - Print X number of blocks at cursor");
     }
 }

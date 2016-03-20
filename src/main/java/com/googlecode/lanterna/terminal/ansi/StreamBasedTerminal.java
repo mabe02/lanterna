@@ -131,7 +131,13 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
         }
         return buffer.toByteArray();
     }
-    
+
+    @Override
+    public void bell() throws IOException {
+        terminalOutput.write((byte)7);
+        terminalOutput.flush();
+    }
+
     /**
      * Adds a KeyDecodingProfile to be used when converting raw user input characters to {@code Key} objects.
      *

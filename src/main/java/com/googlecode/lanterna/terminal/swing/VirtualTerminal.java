@@ -92,7 +92,7 @@ class VirtualTerminal {
                     dirtyTerminalCells.add(new TerminalPosition(cursorPosition.getColumn() - 1, cursorPosition.getRow()));
                 }
                 if(dirtyTerminalCells.size() > (viewportSize.getColumns() * viewportSize.getRows() * 0.9)) {
-                    invalidateWholeBuffer();
+                    setWholeBufferDirty();
                 }
             }
 
@@ -136,17 +136,17 @@ class VirtualTerminal {
 
     synchronized void switchToPrivateMode() {
         currentTextBuffer = privateModeTextBuffer;
-        invalidateWholeBuffer();
+        setWholeBufferDirty();
     }
 
     synchronized void switchToNormalMode() {
         currentTextBuffer = regularTextBuffer;
-        invalidateWholeBuffer();
+        setWholeBufferDirty();
     }
 
     synchronized void clear() {
         currentTextBuffer.clear();
-        invalidateWholeBuffer();
+        setWholeBufferDirty();
         setCursorPosition(TerminalPosition.TOP_LEFT_CORNER);
     }
 
@@ -193,7 +193,11 @@ class VirtualTerminal {
         }
     }
 
-    private void invalidateWholeBuffer() {
+    /**
+     * Marks the whole buffer as dirty so every cell is considered in need to repainting. This is used by methods such
+     * as clear and bell that will affect all content at once.
+     */
+    synchronized void setWholeBufferDirty() {
         wholeBufferDirty = true;
         dirtyTerminalCells.clear();
     }

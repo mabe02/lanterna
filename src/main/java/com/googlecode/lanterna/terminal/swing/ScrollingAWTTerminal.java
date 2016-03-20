@@ -260,6 +260,11 @@ public class ScrollingAWTTerminal extends Container implements IOSafeTerminal {
     }
 
     @Override
+    public void bell() {
+        awtTerminal.bell();
+    }
+
+    @Override
     public void flush() {
         awtTerminal.flush();
     }

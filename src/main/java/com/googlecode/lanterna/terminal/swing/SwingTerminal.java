@@ -244,6 +244,11 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
     }
 
     @Override
+    public void bell() {
+        terminalImplementation.bell();
+    }
+
+    @Override
     public void flush() {
         terminalImplementation.flush();
     }

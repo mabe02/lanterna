@@ -277,6 +277,16 @@ public class IOSafeTerminalAdapter implements IOSafeTerminal {
     }
 
     @Override
+    public void bell() {
+        try {
+            backend.bell();
+        }
+        catch(IOException e) {
+            exceptionHandler.onException(e);
+        }
+    }
+
+    @Override
     public void flush() {
         try {
             backend.flush();

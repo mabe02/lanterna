@@ -274,6 +274,11 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
     }
 
     @Override
+    public void bell() {
+        swingTerminal.bell();
+    }
+
+    @Override
     public void flush() {
         swingTerminal.flush();
     }

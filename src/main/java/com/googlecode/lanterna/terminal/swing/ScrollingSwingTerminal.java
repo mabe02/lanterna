@@ -261,6 +261,11 @@ public class ScrollingSwingTerminal extends JComponent implements IOSafeTerminal
     }
 
     @Override
+    public void bell() {
+        swingTerminal.bell();
+    }
+
+    @Override
     public void flush() {
         swingTerminal.flush();
     }

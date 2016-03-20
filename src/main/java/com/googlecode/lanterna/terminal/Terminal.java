@@ -252,6 +252,13 @@ public interface Terminal extends InputProvider {
     byte[] enquireTerminal(int timeout, TimeUnit timeoutUnit) throws IOException;
 
     /**
+     * Prints 0x7 to the terminal, which will make the terminal (emulator) ring a bell (or more likely beep). Not all
+     * terminals implements this. <a href="https://en.wikipedia.org/wiki/Bell_character">Wikipedia</a> has more details.
+     * @throws IOException If there was an underlying I/O error
+     */
+    void bell() throws IOException;
+
+    /**
      * Calls {@code flush()} on the underlying {@code OutputStream} object, or whatever other implementation this
      * terminal is built around. Some implementing classes of this interface (like SwingTerminal) doesn't do anything
      * as it doesn't really apply to them.
