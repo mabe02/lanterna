@@ -929,12 +929,12 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     }
 
     private static class DirtyCellsLookupTable {
-        private final List<byte[]> table;
+        private final List<BitSet> table;
         private int firstRowIndex;
         private boolean allDirty;
 
         DirtyCellsLookupTable() {
-            table = new ArrayList<byte[]>();
+            table = new ArrayList<BitSet>();
             firstRowIndex = -1;
             allDirty = false;
         }
@@ -944,17 +944,17 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
             this.allDirty = false;
             int rows = lastRowIndex - firstRowIndex + 1;
             while(table.size() < rows) {
-                table.add(new byte[columns]);
+                table.add(new BitSet(columns));
             }
             while(table.size() > rows) {
                 table.remove(table.size() - 1);
             }
             for(int index = 0; index < table.size(); index++) {
-                if(table.get(index).length != columns) {
-                    table.set(index, new byte[columns]);
+                if(table.get(index).size() != columns) {
+                    table.set(index, new BitSet(columns));
                 }
                 else {
-                    Arrays.fill(table.get(index), (byte)0);
+                    table.get(index).clear();
                 }
             }
         }
@@ -972,20 +972,21 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
                     position.getRow() >= firstRowIndex + table.size()) {
                 return;
             }
-            byte[] tableRow = table.get(position.getRow() - firstRowIndex);
-            if(position.getColumn() < tableRow.length) {
-                tableRow[position.getColumn()] = (byte)1;
+            BitSet tableRow = table.get(position.getRow() - firstRowIndex);
+            if(position.getColumn() < tableRow.size()) {
+                tableRow.set(position.getColumn());
             }
         }
 
         void setRowDirty(int rowNumber) {
-            Arrays.fill(table.get(rowNumber - firstRowIndex), (byte)1);
+            BitSet row = table.get(rowNumber - firstRowIndex);
+            row.set(0, row.size());
         }
 
         void setColumnDirty(int column) {
-            for(byte[] row: table) {
-                if(column < row.length) {
-                    row[column] = (byte)1;
+            for(BitSet row: table) {
+                if(column < row.size()) {
+                    row.set(column);
                 }
             }
         }
@@ -994,9 +995,9 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
             if(row < firstRowIndex || row >= firstRowIndex + table.size()) {
                 return false;
             }
-            byte[] tableRow = table.get(row - firstRowIndex);
-            if(column < tableRow.length) {
-                return tableRow[column] == (byte)1;
+            BitSet tableRow = table.get(row - firstRowIndex);
+            if(column < tableRow.size()) {
+                return tableRow.get(column);
             }
             else {
                 return false;
