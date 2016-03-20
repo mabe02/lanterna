@@ -76,6 +76,35 @@ public class TerminalTextUtils {
     }
 
     /**
+     * Checks if a particular character is a control character, in Lanterna this currently means it's 0-31 or 127 in the
+     * ascii table.
+     * @param c character to test
+     * @return {@code true} if the character is a control character, {@code false} otherwise
+     */
+    public static boolean isControlCharacter(char c) {
+        return c < 32 || c == 127;
+    }
+
+    /**
+     * Checks if a particular character is printable. This generally means that the code is not a control character that
+     * isn't able to be printed to the terminal properly. For example, NULL, ENQ, BELL and ESC and all control codes
+     * that has no proper character associated with it so the behaviour is undefined and depends completely on the
+     * terminal what happens if you try to print them. However, certain control characters have a particular meaning to
+     * the terminal and are as such considered printable. In Lanterna, we consider these control characters printable:
+     * <ul>
+     *     <li>Backspace</li>
+     *     <li>Horizontal Tab</li>
+     *     <li>Line feed</li>
+     * </ul>
+     *
+     * @param c character to test
+     * @return {@code true} if the character is considered printable, {@code false} otherwise
+     */
+    public static boolean isPrintableCharacter(char c) {
+        return !isControlCharacter(c) || c == '\t' || c == '\n' || c == '\b';
+    }
+
+    /**
      * @deprecated Call {@code getColumnWidth(s)} instead
      */
     @Deprecated

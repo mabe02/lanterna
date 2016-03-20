@@ -27,7 +27,7 @@ package com.googlecode.lanterna;
  * 
  * @author Martin
  * @see TerminalTextUtils
- * @deprecated Use {@code TerminalTextUtils} instead
+ * @deprecated Use {@link TerminalTextUtils} instead
  */
 public class CJKUtils {    
     private CJKUtils() {

@@ -716,7 +716,12 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
 
     @Override
     public synchronized void putCharacter(final char c) {
-        virtualTerminal.putCharacter(new TextCharacter(c, foregroundColor, backgroundColor, activeSGRs));
+        if(c == '\n') {
+            virtualTerminal.moveCursorToNextLine();
+        }
+        else if(TerminalTextUtils.isPrintableCharacter(c)) {
+            virtualTerminal.putCharacter(new TextCharacter(c, foregroundColor, backgroundColor, activeSGRs));
+        }
     }
 
     @Override

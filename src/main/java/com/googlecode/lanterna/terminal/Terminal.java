@@ -127,6 +127,9 @@ public interface Terminal extends InputProvider {
      * back in the days simply gave up and made each character take 2 column. It causes issues for the random terminal
      * programmer because you can't really trust 1 character = 1 column, but I suppose it's "しょうがない".
      *
+     * If you try to print non-printable control characters, the terminal is likely to ignore them (all {@link Terminal}
+     * implementations bundled with Lanterna will).
+     *
      * @param c Character to place on the terminal
      * @throws java.io.IOException If there was an underlying I/O error
      */

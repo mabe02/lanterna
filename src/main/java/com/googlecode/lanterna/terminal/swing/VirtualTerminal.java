@@ -60,10 +60,7 @@ class VirtualTerminal {
     }
 
     synchronized void putCharacter(TextCharacter terminalCharacter) {
-        if(terminalCharacter.getCharacter() == '\n') {
-            moveCursorToNextLine();
-        }
-        else if(terminalCharacter.getCharacter() == '\t') {
+        if(terminalCharacter.getCharacter() == '\t') {
             int nrOfSpaces = TabBehaviour.ALIGN_TO_COLUMN_4.getTabReplacement(cursorPosition.getColumn()).length();
             for(int i = 0; i < nrOfSpaces && cursorPosition.getColumn() < viewportSize.getColumns() - 1; i++) {
                 putCharacter(terminalCharacter.withCharacter(' '));
@@ -101,6 +98,16 @@ class VirtualTerminal {
             if(cursorPosition.getColumn() > viewportSize.getColumns()) {
                 moveCursorToNextLine();
             }
+        }
+    }
+
+    /**
+     * Moves the text cursor to the first column of the next line and trims the backlog of necessary
+     */
+    void moveCursorToNextLine() {
+        cursorPosition = cursorPosition.withColumn(0).withRelativeRow(1);
+        if(cursorPosition.getRow() >= currentTextBuffer.getLineCount()) {
+            currentTextBuffer.newLine();
         }
         trimBufferBacklog();
     }
@@ -242,13 +249,6 @@ class VirtualTerminal {
                         Math.max(cursorPosition.getColumn(), 0),
                         Math.max(cursorPosition.getRow(), 0));
         this.cursorPosition = cursorPosition.withColumn(Math.min(cursorPosition.getColumn(), viewportSize.getColumns() - 1));
-    }
-
-    private void moveCursorToNextLine() {
-        cursorPosition = cursorPosition.withColumn(0).withRelativeRow(1);
-        if(cursorPosition.getRow() >= currentTextBuffer.getLineCount()) {
-            currentTextBuffer.newLine();
-        }
     }
 
     interface BufferLine {

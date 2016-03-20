@@ -25,6 +25,7 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 
 import com.googlecode.lanterna.Symbols;
+import com.googlecode.lanterna.TerminalTextUtils;
 import com.googlecode.lanterna.input.InputDecoder;
 import com.googlecode.lanterna.input.KeyDecodingProfile;
 import com.googlecode.lanterna.input.KeyStroke;
@@ -32,6 +33,7 @@ import com.googlecode.lanterna.input.ScreenInfoAction;
 import com.googlecode.lanterna.input.ScreenInfoCharacterPattern;
 import com.googlecode.lanterna.terminal.AbstractTerminal;
 import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.terminal.Terminal;
 
 import java.io.ByteArrayOutputStream;
 import java.util.LinkedList;
@@ -87,7 +89,9 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
      */
     @Override
     public void putCharacter(char c) throws IOException {
-        writeToTerminal(translateCharacter(c));
+        if(TerminalTextUtils.isPrintableCharacter(c)) {
+            writeToTerminal(translateCharacter(c));
+        }
     }
 
     /**

@@ -155,12 +155,12 @@ public class VirtualTerminalTest {
     @Test
     public void testCursorPositionUpdatesWhenTerminalSizeChanges() {
         VirtualTerminal virtualTerminal = new VirtualTerminal(new TerminalSize(3, 3));
-        virtualTerminal.putCharacter(newline());
-        virtualTerminal.putCharacter(newline());
+        virtualTerminal.moveCursorToNextLine();
+        virtualTerminal.moveCursorToNextLine();
         assertEquals(new TerminalPosition(0, 2), virtualTerminal.getCursorPosition());
-        virtualTerminal.putCharacter(newline());
+        virtualTerminal.moveCursorToNextLine();
         assertEquals(new TerminalPosition(0, 2), virtualTerminal.getCursorPosition());
-        virtualTerminal.putCharacter(newline());
+        virtualTerminal.moveCursorToNextLine();
         assertEquals(new TerminalPosition(0, 2), virtualTerminal.getCursorPosition());
 
         // Shrink viewport
@@ -235,7 +235,7 @@ public class VirtualTerminalTest {
         assertEquals(new TerminalPosition(3, 2), virtualTerminal.getCursorPosition());
 
         // Add one more row to shift out the first line
-        virtualTerminal.putCharacter(newline());
+        virtualTerminal.moveCursorToNextLine();
 
         // Dirty positions should now be adjusted
         assertEquals(new TreeSet<TerminalPosition>(Arrays.asList(
@@ -246,7 +246,12 @@ public class VirtualTerminalTest {
 
     private void putString(VirtualTerminal virtualTerminal, String string) {
         for(char c: string.toCharArray()) {
-            virtualTerminal.putCharacter(new TextCharacter(c));
+            if(c == '\n') {
+                virtualTerminal.moveCursorToNextLine();
+            }
+            else {
+                virtualTerminal.putCharacter(new TextCharacter(c));
+            }
         }
     }
 
