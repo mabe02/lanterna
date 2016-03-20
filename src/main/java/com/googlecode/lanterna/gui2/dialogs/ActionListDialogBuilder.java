@@ -12,9 +12,10 @@ import java.util.List;
  * @author Martin
  */
 public class ActionListDialogBuilder extends AbstractDialogBuilder<ActionListDialogBuilder, ActionListDialog> {
+
+    private final List<Runnable> actions;
     private TerminalSize listBoxSize;
     private boolean canCancel;
-    private List<Runnable> actions;
 
     /**
      * Default constructor

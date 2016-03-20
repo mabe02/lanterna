@@ -145,7 +145,7 @@ public class TableModel<V> {
     public synchronized TableModel<V> insertRow(int index, Collection<V> values) {
         ArrayList<V> list = new ArrayList<V>(values);
         rows.add(index, list);
-        for(Listener listener: listeners) {
+        for(Listener<V> listener: listeners) {
             listener.onRowAdded(this, index);
         }
         return this;
@@ -158,7 +158,7 @@ public class TableModel<V> {
      */
     public synchronized TableModel<V> removeRow(int index) {
         List<V> removedRow = rows.remove(index);
-        for(Listener listener: listeners) {
+        for(Listener<V> listener: listeners) {
             listener.onRowRemoved(this, index, removedRow);
         }
         return this;
@@ -223,7 +223,7 @@ public class TableModel<V> {
             }
         }
 
-        for(Listener listener: listeners) {
+        for(Listener<V> listener: listeners) {
             listener.onColumnAdded(this, index);
         }
         return this;
@@ -240,7 +240,7 @@ public class TableModel<V> {
         for(List<V> row : rows) {
             removedColumn.add(row.remove(index));
         }
-        for(Listener listener: listeners) {
+        for(Listener<V> listener: listeners) {
             listener.onColumnRemoved(this, index, removedColumnHeader, removedColumn);
         }
         return this;
@@ -286,7 +286,7 @@ public class TableModel<V> {
             return this;
         }
         row.set(columnIndex, value);
-        for(Listener listener: listeners) {
+        for(Listener<V> listener: listeners) {
             listener.onCellChanged(this, rowIndex, columnIndex, existingValue, value);
         }
         return this;

@@ -32,11 +32,10 @@ import com.googlecode.lanterna.input.ScreenInfoAction;
 import com.googlecode.lanterna.input.ScreenInfoCharacterPattern;
 import com.googlecode.lanterna.terminal.AbstractTerminal;
 import com.googlecode.lanterna.TerminalPosition;
-import com.googlecode.lanterna.TerminalSize;
+
 import java.io.ByteArrayOutputStream;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -187,7 +186,7 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
                 keyQueue.add(keyStroke);
             }
             else {
-                try { Thread.sleep(1); } catch(InterruptedException e) {}
+                try { Thread.sleep(1); } catch(InterruptedException ignored) {}
             }
             cursorPosition = lastReportedCursorPosition;
         }
@@ -225,8 +224,7 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
                 KeyStroke key = inputDecoder.getNextCharacter(blocking);
                 ScreenInfoAction report = ScreenInfoCharacterPattern.tryToAdopt(key);
                 if(report != null) {
-                    TerminalPosition reportedTerminalPosition = report.getPosition();
-                    lastReportedCursorPosition = reportedTerminalPosition;
+                    lastReportedCursorPosition = report.getPosition();
                 }
                 else {
                     return key;

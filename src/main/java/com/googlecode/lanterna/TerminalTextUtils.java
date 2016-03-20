@@ -255,7 +255,7 @@ public class TerminalTextUtils {
                     while(characterIndex < row.length() &&
                           Character.isSpaceChar(row.charAt(characterIndex))) {
                         characterIndex++;
-                    };
+                    }
                     if (characterIndex < row.length()) { // only if rest contains non-whitespace
                         linesToBeWrapped.addFirst(row.substring(characterIndex));
                     }

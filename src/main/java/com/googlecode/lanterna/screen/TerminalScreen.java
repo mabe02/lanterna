@@ -362,7 +362,8 @@ public class TerminalScreen extends AbstractScreen {
         if (scrollHint == null) {
             // no scroll hint yet: use the new one:
             scrollHint = newHint;
-        } else if (scrollHint == ScrollHint.INVALID) {
+        } else //noinspection StatementWithEmptyBody
+            if (scrollHint == ScrollHint.INVALID) {
             // scroll ranges already inconsistent since latest refresh!
             // leave at INVALID
         } else if (scrollHint.matches(newHint)) {
@@ -398,7 +399,9 @@ public class TerminalScreen extends AbstractScreen {
 
     private static class ScrollHint {
         public static final ScrollHint INVALID = new ScrollHint(-1,-1,0);
-        public int firstLine, lastLine, distance;
+        public final int firstLine;
+        public final int lastLine;
+        public int distance;
 
         public ScrollHint(int firstLine, int lastLine, int distance) {
             this.firstLine = firstLine;

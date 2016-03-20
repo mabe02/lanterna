@@ -11,7 +11,7 @@ import java.util.List;
 public class MessageDialogBuilder {
     private String title;
     private String text;
-    private List<MessageDialogButton> buttons;
+    private final List<MessageDialogButton> buttons;
 
     /**
      * Default constructor

@@ -61,9 +61,9 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
     private boolean readOnly;
     private boolean horizontalFocusSwitching;
     private boolean verticalFocusSwitching;
-    private int maxLineLength;
+    private final int maxLineLength;
     private int longestRow;
-    private char unusedSpaceCharacter;
+    private final char unusedSpaceCharacter;
     private Character mask;
     private Pattern validationPattern;
 
@@ -384,7 +384,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
      * Returns the line on the specific row. For non-multiline TextBox:es, calling this with index set to 0 will return
      * the same as calling {@code getText()}. If the row index is invalid (less than zero or equals or larger than the
      * number of rows), this method will throw IndexOutOfBoundsException.
-     * @param index
+     * @param index Index of the row to return the contents from
      * @return The line at the specified index, as a String
      * @throws IndexOutOfBoundsException if the row index is less than zero or too large
      */
@@ -613,8 +613,8 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
      */
     public static class DefaultTextBoxRenderer implements TextBoxRenderer {
         private TerminalPosition viewTopLeft;
-        private ScrollBar verticalScrollBar;
-        private ScrollBar horizontalScrollBar;
+        private final ScrollBar verticalScrollBar;
+        private final ScrollBar horizontalScrollBar;
         private boolean hideScrollBars;
 
         /**

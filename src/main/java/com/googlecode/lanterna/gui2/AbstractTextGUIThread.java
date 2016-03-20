@@ -6,7 +6,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
- * Created by martin on 20/06/15.
+ * Abstract implementation of {@link TextGUIThread} with common logic for both available concrete implementations.
  */
 public abstract class AbstractTextGUIThread implements TextGUIThread {
 
@@ -14,6 +14,10 @@ public abstract class AbstractTextGUIThread implements TextGUIThread {
     protected final Queue<Runnable> customTasks;
     protected ExceptionHandler exceptionHandler;
 
+    /**
+     * Sets up this {@link AbstractTextGUIThread} for operations on the supplies {@link TextGUI}
+     * @param textGUI Text GUI this {@link TextGUIThread} implementations will be operating on
+     */
     public AbstractTextGUIThread(TextGUI textGUI) {
         this.exceptionHandler = new ExceptionHandler() {
             @Override

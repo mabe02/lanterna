@@ -12,9 +12,9 @@ import java.util.List;
  * @author Martin
  */
 public class ListSelectDialogBuilder<T> extends AbstractDialogBuilder<ListSelectDialogBuilder<T>, ListSelectDialog<T>> {
+    private final List<T> content;
     private TerminalSize listBoxSize;
     private boolean canCancel;
-    private List<T> content;
 
     /**
      * Default constructor

@@ -142,7 +142,8 @@ public class EscapeSequenceCharacterPattern implements CharacterPattern {
      * @return either null (to report mis-match), or a valid KeyStroke.
      */
     protected KeyStroke getKeyStrokeRaw(char first,int num1,int num2,char last,boolean bEsc) {
-        KeyType kt = null; boolean bPuttyCtrl = false;
+        KeyType kt;
+        boolean bPuttyCtrl = false;
         if (last == '~' && stdMap.containsKey(num1)) {
             kt = stdMap.get(num1);
         } else if (finMap.containsKey(last)) {

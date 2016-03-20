@@ -1,10 +1,7 @@
 package com.googlecode.lanterna.bundle;
 
-import java.security.PrivilegedAction;
 import java.text.MessageFormat;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 /**

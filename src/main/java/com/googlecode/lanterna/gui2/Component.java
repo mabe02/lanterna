@@ -138,8 +138,8 @@ public interface Component extends TextGUIElement {
      * <pre>
      * container.addComponent(new Button("Test").withBorder(Borders.singleLine()));
      * </pre>
-     * @param border
-     * @return 
+     * @param border Border to wrap the component with
+     * @return The border with this component wrapped
      */
     Border withBorder(Border border);
     

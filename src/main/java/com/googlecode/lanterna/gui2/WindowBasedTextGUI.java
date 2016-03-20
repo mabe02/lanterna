@@ -19,7 +19,6 @@
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.screen.Screen;
-import com.googlecode.lanterna.screen.VirtualScreen;
 
 import java.util.Collection;
 

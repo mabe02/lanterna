@@ -46,7 +46,7 @@ import javax.swing.*;
 @SuppressWarnings("serial")
 public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
     private final SwingTerminal swingTerminal;
-    private EnumSet<TerminalEmulatorAutoCloseTrigger> autoCloseTriggers;
+    private final EnumSet<TerminalEmulatorAutoCloseTrigger> autoCloseTriggers;
     private boolean disposed;
 
     /**

@@ -172,11 +172,14 @@ public class InputDecoder {
                     break;
                 } else {
                     // that match, but maybe more
+
+                    //noinspection UnnecessaryContinue
                     continue;
                 }
             }
             // No match found yet, but there's still potential...
             else if ( matching.partialMatch ) {
+                //noinspection UnnecessaryContinue
                 continue;
             }
             // no longer match possible at this point:
@@ -188,6 +191,7 @@ public class InputDecoder {
                     // remove the whole fail and re-try finding a KeyStroke...
                     curSub.clear(); // or just 1 char?  currentMatching.remove(0);
                     curLen = 0;
+                    //noinspection UnnecessaryContinue
                     continue;
                 }
             }

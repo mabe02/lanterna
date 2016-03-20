@@ -25,8 +25,8 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
 
     //So that we don't have to recalculate the size every time. This still isn't optimal but shouganai.
     private TerminalSize cachedSize;
-    private List<Integer> columnSizes;
-    private List<Integer> rowSizes;
+    private final List<Integer> columnSizes;
+    private final List<Integer> rowSizes;
     private int headerSizeInRows;
 
     /**

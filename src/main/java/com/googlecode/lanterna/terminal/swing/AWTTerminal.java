@@ -175,7 +175,7 @@ public class AWTTerminal extends Panel implements IOSafeTerminal {
     /**
      * Overridden method from AWT's {@code Component} class that is called by OS window system when the component needs
      * to be redrawn
-     * @param {@code Graphics} object to use when drawing the component
+     * @param componentGraphics {@code Graphics} object to use when drawing the component
      */
     @Override
     public synchronized void paint(Graphics componentGraphics) {
@@ -185,7 +185,7 @@ public class AWTTerminal extends Panel implements IOSafeTerminal {
     /**
      * Overridden method from AWT's {@code Component} class that is called by OS window system when the component needs
      * to be updated (the size has changed) and redrawn
-     * @param {@code Graphics} object to use when drawing the component
+     * @param componentGraphics {@code Graphics} object to use when drawing the component
      */
     @Override
     public synchronized void update(Graphics componentGraphics) {

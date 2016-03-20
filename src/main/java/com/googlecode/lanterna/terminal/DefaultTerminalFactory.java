@@ -52,7 +52,7 @@ public final class DefaultTerminalFactory implements TerminalFactory {
     private boolean forceAWTOverSwing;
     private String title;
     private boolean autoOpenTerminalFrame;
-    private EnumSet<TerminalEmulatorAutoCloseTrigger> autoCloseTriggers;
+    private final EnumSet<TerminalEmulatorAutoCloseTrigger> autoCloseTriggers;
     private TerminalEmulatorColorConfiguration colorConfiguration;
     private TerminalEmulatorDeviceConfiguration deviceConfiguration;
     private AWTTerminalFontConfiguration fontConfiguration;

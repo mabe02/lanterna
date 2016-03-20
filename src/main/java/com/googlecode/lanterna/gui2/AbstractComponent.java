@@ -223,6 +223,7 @@ public abstract class AbstractComponent<T extends Component> implements Componen
      * {@code TextGUIGraphics} supplied is the same that was fed into the renderer.
      * @param graphics Graphics object you can use to manipulate the appearance of the component
      */
+    @SuppressWarnings("EmptyMethod")
     protected void onAfterDrawing(TextGUIGraphics graphics) {
         //No operation by default
     }

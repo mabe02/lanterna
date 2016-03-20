@@ -17,7 +17,7 @@ public abstract class DialogWindow extends AbstractWindow {
 
     /**
      * Default constructor, takes a title for the dialog and runs code shared for dialogs
-     * @param title
+     * @param title Title of the window
      */
     protected DialogWindow(String title) {
         super(title);

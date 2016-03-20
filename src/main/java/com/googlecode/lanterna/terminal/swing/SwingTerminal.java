@@ -158,7 +158,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
     /**
      * Overridden method from Swing's {@code JComponent} class that is called by OS window system when the component
      * needs to be redrawn
-     * @param {@code Graphics} object to use when drawing the component
+     * @param componentGraphics {@code Graphics} object to use when drawing the component
      */
     @Override
     protected synchronized void paintComponent(Graphics componentGraphics) {

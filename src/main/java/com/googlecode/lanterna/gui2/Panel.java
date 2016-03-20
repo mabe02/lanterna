@@ -140,7 +140,7 @@ public class Panel extends AbstractComponent<Panel> implements Container {
 
     /**
      * Returns the layout manager assigned to this panel
-     * @return
+     * @return Layout manager assigned to this panel
      */
     public LayoutManager getLayoutManager() {
         return layoutManager;

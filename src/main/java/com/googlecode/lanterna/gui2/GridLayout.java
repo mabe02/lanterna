@@ -92,7 +92,7 @@ public class GridLayout implements LayoutManager {
         }
     }
 
-    private static GridLayoutData DEFAULT = new GridLayoutData(
+    private static final GridLayoutData DEFAULT = new GridLayoutData(
             Alignment.BEGINNING,
             Alignment.BEGINNING,
             false,
@@ -568,8 +568,7 @@ public class GridLayout implements LayoutManager {
         //Start by letting all span = 1 rows take what they need
         int rowIndex = 0;
         for(Component[] row: table) {
-            for(int i = 0; i < row.length; i++) {
-                Component component = row[i];
+            for(Component component : row) {
                 if(component == null) {
                     continue;
                 }
@@ -639,11 +638,11 @@ public class GridLayout implements LayoutManager {
         Set<Integer> expandableRows = new TreeSet<Integer>();
         for(int rowIndex = 0; rowIndex < table.length; rowIndex++) {
             Component[] row = table[rowIndex];
-            for (int columnIndex = 0; columnIndex < row.length; columnIndex++) {
-                if(row[columnIndex] == null) {
+            for(Component cell : row) {
+                if(cell == null) {
                     continue;
                 }
-                GridLayoutData layoutData = getLayoutData(row[columnIndex]);
+                GridLayoutData layoutData = getLayoutData(cell);
                 if(layoutData.grabExtraVerticalSpace) {
                     expandableRows.add(rowIndex);
                 }
@@ -780,9 +779,9 @@ public class GridLayout implements LayoutManager {
         //Scan for unnecessary columns
         columnLoop:
         for(int column = tableColumns - 1; column > 0; column--) {
-            for(int row = 0; row < tableRows; row++) {
-                if(table[row][column] != table[row][column - 1]) {
-                   continue columnLoop;
+            for(Component[] row : table) {
+                if(row[column] != row[column - 1]) {
+                    continue columnLoop;
                 }
             }
             columnsToRemove.add(column);
@@ -807,14 +806,14 @@ public class GridLayout implements LayoutManager {
         //Build a new table with rows & columns eliminated
         Component[][] newTable = new Component[tableRows - rowsToRemove.size()][];
         int insertedRowCounter = 0;
-        for(int row = 0; row < tableRows; row++) {
+        for(Component[] row : table) {
             Component[] newColumn = new Component[tableColumns - columnsToRemove.size()];
             int insertedColumnCounter = 0;
             for(int column = 0; column < tableColumns; column++) {
                 if(columnsToRemove.contains(column)) {
                     continue;
                 }
-                newColumn[insertedColumnCounter++] = table[row][column];
+                newColumn[insertedColumnCounter++] = row[column];
             }
             newTable[insertedRowCounter++] = newColumn;
         }

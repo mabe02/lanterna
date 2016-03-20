@@ -87,6 +87,7 @@ public class DefaultWindowManager implements WindowManager {
         TerminalSize expectedDecoratedSize = decorationRenderer.getDecoratedSize(window, window.getPreferredSize());
         window.setDecoratedSize(expectedDecoratedSize);
 
+        //noinspection StatementWithEmptyBody
         if(window.getHints().contains(Window.Hint.FIXED_POSITION)) {
             //Don't place the window, assume the position is already set
         }

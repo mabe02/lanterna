@@ -318,7 +318,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     }
 
     private synchronized void updateBackBuffer(final int scrollOffsetFromTopInPixels) {
-        long startTime = System.currentTimeMillis();
+        //long startTime = System.currentTimeMillis();
         final int fontWidth = getFontWidth();
         final int fontHeight = getFontHeight();
 
@@ -545,12 +545,14 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
         g.drawString(Character.toString(character.getCharacter()), x, y + fontHeight - fontMetrics.getDescent() + 1);
 
         if(character.isCrossedOut()) {
+            //noinspection UnnecessaryLocalVariable
             int lineStartX = x;
             int lineStartY = y + (fontHeight / 2);
             int lineEndX = lineStartX + characterWidth;
             g.drawLine(lineStartX, lineStartY, lineEndX, lineStartY);
         }
         if(character.isUnderlined()) {
+            //noinspection UnnecessaryLocalVariable
             int lineStartX = x;
             int lineStartY = y + fontHeight - fontMetrics.getDescent() + 1;
             int lineEndX = lineStartX + characterWidth;

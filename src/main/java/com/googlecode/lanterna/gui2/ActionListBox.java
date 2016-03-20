@@ -43,7 +43,7 @@ public class ActionListBox extends AbstractListBox<Runnable, ActionListBox> {
      * Creates a new {@code ActionListBox} with a pre-set size. If the items don't fit in within this size, scrollbars
      * will be used to accommodate. Calling {@code new ActionListBox(null)} has the same effect as calling
      * {@code new ActionListBox()}.
-     * @param preferredSize
+     * @param preferredSize Preferred size of this {@link ActionListBox}
      */
     public ActionListBox(TerminalSize preferredSize) {
         super(preferredSize);
