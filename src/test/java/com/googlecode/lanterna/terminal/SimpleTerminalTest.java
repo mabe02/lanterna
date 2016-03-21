@@ -155,7 +155,7 @@ public class SimpleTerminalTest {
         textGraphics.putString(1, 1, "?            - Print this message");
         textGraphics.putString(1, 2, "m            - Toggle private mode on/off");
         textGraphics.putString(1, 3, "n            - Newline");
-        textGraphics.putString(1, 4, "n            - Bell");
+        textGraphics.putString(1, 4, "b            - Bell");
         textGraphics.putString(1, 5, "c            - Cycle color");
         textGraphics.putString(1, 6, "p            - Print cursor position");
         textGraphics.putString(1, 7, "<arrow keys> - Move cursor");
