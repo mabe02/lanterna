@@ -771,6 +771,8 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
         if(bellOn) {
             return;
         }
+
+        // Flash the screen...
         bellOn = true;
         virtualTerminal.setWholeBufferDirty();
         updateBackBuffer(scrollController.getScrollingOffset());
@@ -789,6 +791,9 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
                 repaint();
             }
         }.start();
+
+        // ...and make a sound
+        Toolkit.getDefaultToolkit().beep();
     }
 
     @Override
