@@ -24,9 +24,9 @@ import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.IOSafeTerminal;
-import com.googlecode.lanterna.terminal.ResizeListener;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.terminal.TerminalResizeListener;
 
 import java.awt.*;
 import java.io.IOException;
@@ -171,7 +171,7 @@ public class AWTTerminalFrame extends Frame implements IOSafeTerminal {
     }
 
     @Override
-    public KeyStroke readInput() throws IOException {
+    public KeyStroke readInput() {
         return awtTerminal.readInput();
     }
 
@@ -269,12 +269,12 @@ public class AWTTerminalFrame extends Frame implements IOSafeTerminal {
     }
 
     @Override
-    public void addResizeListener(ResizeListener listener) {
+    public void addResizeListener(TerminalResizeListener listener) {
         awtTerminal.addResizeListener(listener);
     }
 
     @Override
-    public void removeResizeListener(ResizeListener listener) {
+    public void removeResizeListener(TerminalResizeListener listener) {
         awtTerminal.removeResizeListener(listener);
     }
 }

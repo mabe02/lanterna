@@ -23,7 +23,7 @@ import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.IOSafeTerminal;
-import com.googlecode.lanterna.terminal.ResizeListener;
+import com.googlecode.lanterna.terminal.TerminalResizeListener;
 
 import java.awt.*;
 import java.awt.event.InputEvent;
@@ -52,7 +52,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     private final TerminalEmulatorColorConfiguration colorConfiguration;
     private final VirtualTerminal virtualTerminal;
     private final BlockingQueue<KeyStroke> keyQueue;
-    private final List<ResizeListener> resizeListeners;
+    private final List<TerminalResizeListener> resizeListeners;
     private final TerminalScrollController scrollController;
     private final DirtyCellsLookupTable dirtyCellsLookupTable;
 
@@ -113,7 +113,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
                 //scrollController);
         );
         this.keyQueue = new LinkedBlockingQueue<KeyStroke>();
-        this.resizeListeners = new CopyOnWriteArrayList<ResizeListener>();
+        this.resizeListeners = new CopyOnWriteArrayList<TerminalResizeListener>();
         this.deviceConfiguration = deviceConfiguration;
         this.colorConfiguration = colorConfiguration;
         this.scrollController = scrollController;
@@ -269,7 +269,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
 
             // Back buffer needs to be updated since the component size has changed
             updateBackBuffer(scrollOffset);
-            for(ResizeListener listener : resizeListeners) {
+            for(TerminalResizeListener listener : resizeListeners) {
                 listener.onResized(this, terminalSize);
             }
         }
@@ -638,7 +638,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     }
 
     @Override
-    public KeyStroke readInput() throws IOException {
+    public KeyStroke readInput() {
         // Synchronize on keyQueue here so only one thread is inside keyQueue.take()
         synchronized(keyQueue) {
             if(!enableInput) {
@@ -648,7 +648,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
                 return keyQueue.take();
             }
             catch(InterruptedException ignore) {
-                throw new IOException("Blocking input was interrupted");
+                throw new RuntimeException("Blocking input was interrupted");
             }
         }
     }
@@ -803,12 +803,12 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     }
 
     @Override
-    public void addResizeListener(ResizeListener listener) {
+    public void addResizeListener(TerminalResizeListener listener) {
         resizeListeners.add(listener);
     }
 
     @Override
-    public void removeResizeListener(ResizeListener listener) {
+    public void removeResizeListener(TerminalResizeListener listener) {
         resizeListeners.remove(listener);
     }
 

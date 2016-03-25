@@ -28,7 +28,7 @@ import com.googlecode.lanterna.TerminalSize;
  * @author martin
  */
 @SuppressWarnings("WeakerAccess")
-public class SimpleTerminalResizeListener implements ResizeListener {
+public class SimpleTerminalResizeListener implements TerminalResizeListener {
 
     boolean wasResized;
     TerminalSize lastKnownSize;

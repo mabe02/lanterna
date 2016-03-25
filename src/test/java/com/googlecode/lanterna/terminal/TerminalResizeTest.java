@@ -27,7 +27,7 @@ import java.io.IOException;
  *
  * @author Martin
  */
-public class TerminalResizeTest implements ResizeListener {
+public class TerminalResizeTest implements TerminalResizeListener {
 
     public static void main(String[] args) throws InterruptedException, IOException {
         Terminal terminal = new TestTerminalFactory(args).createTerminal();

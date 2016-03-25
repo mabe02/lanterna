@@ -115,7 +115,7 @@ class AWTTerminalImplementation extends GraphicalTerminalImplementation {
     }
 
     @Override
-    public KeyStroke readInput() throws IOException {
+    public KeyStroke readInput() {
         if(EventQueue.isDispatchThread()) {
             throw new UnsupportedOperationException("Cannot call SwingTerminal.readInput() on the AWT thread");
         }

@@ -22,8 +22,8 @@ import com.googlecode.lanterna.*;
 import com.googlecode.lanterna.graphics.Scrollable;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
-import com.googlecode.lanterna.terminal.ResizeListener;
 import com.googlecode.lanterna.terminal.Terminal;
+import com.googlecode.lanterna.terminal.TerminalResizeListener;
 
 import java.io.IOException;
 import java.util.Comparator;
@@ -76,7 +76,7 @@ public class TerminalScreen extends AbstractScreen {
     public TerminalScreen(Terminal terminal, TextCharacter defaultCharacter) throws IOException {
         super(terminal.getTerminalSize(), defaultCharacter);
         this.terminal = terminal;
-        this.terminal.addResizeListener(new TerminalResizeListener());
+        this.terminal.addResizeListener(new TerminalScreenResizeListener());
         this.isStarted = false;
         this.fullRedrawHint = true;
     }
@@ -375,7 +375,7 @@ public class TerminalScreen extends AbstractScreen {
         }
     }
 
-    private class TerminalResizeListener implements ResizeListener {
+    private class TerminalScreenResizeListener implements TerminalResizeListener {
         @Override
         public void onResized(Terminal terminal, TerminalSize newSize) {
             addResizeRequest(newSize);

@@ -205,26 +205,27 @@ public interface Terminal extends InputProvider {
     void setBackgroundColor(TextColor color) throws IOException;
 
     /**
-     * Adds a {@code ResizeListener} to be called when the terminal has changed size. There is no guarantee that this
-     * listener will really be invoked when the terminal has changed size, at all depends on the terminal emulator
+     * Adds a {@link TerminalResizeListener} to be called when the terminal has changed size. There is no guarantee that
+     * this listener will really be invoked when the terminal has changed size, at all depends on the terminal emulator
      * implementation. Normally on Unix systems the WINCH signal will be sent to the process and lanterna can intercept
      * this.
      * <p>
      * There are no guarantees on what thread the call will be made on, so please be careful with what kind of operation
      * you perform in this callback. You should probably not take too long to return.
      *
-     * @see ResizeListener
+     * @see TerminalResizeListener
      * @param listener Listener object to be called when the terminal has been changed
      */
-    void addResizeListener(ResizeListener listener);
+    void addResizeListener(TerminalResizeListener listener);
 
     /**
-     * Removes a {@code ResizeListener} from the list of listeners to be notified when the terminal has changed size
+     * Removes a {@link TerminalResizeListener} from the list of listeners to be notified when the terminal has changed
+     * size
      *
-     * @see ResizeListener
+     * @see TerminalResizeListener
      * @param listener Listener object to remove
      */
-    void removeResizeListener(ResizeListener listener);
+    void removeResizeListener(TerminalResizeListener listener);
 
     /**
      * Returns the size of the terminal, expressed as a {@code TerminalSize} object. Please bear in mind that depending

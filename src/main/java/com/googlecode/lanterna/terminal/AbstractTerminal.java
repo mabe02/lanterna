@@ -33,23 +33,23 @@ import java.util.List;
  */
 public abstract class AbstractTerminal implements Terminal {
 
-    private final List<ResizeListener> resizeListeners;
+    private final List<TerminalResizeListener> resizeListeners;
     private TerminalSize lastKnownSize;
 
     protected AbstractTerminal() {
-        this.resizeListeners = new ArrayList<ResizeListener>();
+        this.resizeListeners = new ArrayList<TerminalResizeListener>();
         this.lastKnownSize = null;
     }
 
     @Override
-    public void addResizeListener(ResizeListener listener) {
+    public void addResizeListener(TerminalResizeListener listener) {
         if (listener != null) {
             resizeListeners.add(listener);
         }
     }
 
     @Override
-    public void removeResizeListener(ResizeListener listener) {
+    public void removeResizeListener(TerminalResizeListener listener) {
         if (listener != null) {
             resizeListeners.remove(listener);
         }
@@ -66,7 +66,7 @@ public abstract class AbstractTerminal implements Terminal {
         TerminalSize newSize = new TerminalSize(columns, rows);
         if (lastKnownSize == null || !lastKnownSize.equals(newSize)) {
             lastKnownSize = newSize;
-            for (ResizeListener resizeListener : resizeListeners) {
+            for (TerminalResizeListener resizeListener : resizeListeners) {
                 resizeListener.onResized(this, lastKnownSize);
             }
         }

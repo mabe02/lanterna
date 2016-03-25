@@ -72,5 +72,5 @@ public interface IOSafeTerminal extends Terminal {
     @Override
     KeyStroke pollInput();
     @Override
-    KeyStroke readInput() throws IOException;
+    KeyStroke readInput();
 }

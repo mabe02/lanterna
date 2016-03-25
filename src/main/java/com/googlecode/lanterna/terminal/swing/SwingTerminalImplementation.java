@@ -126,7 +126,7 @@ class SwingTerminalImplementation extends GraphicalTerminalImplementation {
     }
 
     @Override
-    public com.googlecode.lanterna.input.KeyStroke readInput() throws IOException {
+    public com.googlecode.lanterna.input.KeyStroke readInput() {
         if(SwingUtilities.isEventDispatchThread()) {
             throw new UnsupportedOperationException("Cannot call SwingTerminal.readInput() on the AWT thread");
         }
