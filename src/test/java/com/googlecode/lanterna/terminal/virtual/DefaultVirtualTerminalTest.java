@@ -382,7 +382,7 @@ public class DefaultVirtualTerminalTest {
         }
         virtualTerminal.forEachLine(0, ROWS, new VirtualTerminal.BufferWalker() {
             @Override
-            public void drawLine(int rowNumber, VirtualTerminal.BufferLine bufferLine) {
+            public void onLine(int rowNumber, VirtualTerminal.BufferLine bufferLine) {
                 if(rowNumber == ROWS) {
                     assertLineEquals("", bufferLine);
                 }

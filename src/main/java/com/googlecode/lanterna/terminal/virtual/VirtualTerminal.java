@@ -165,6 +165,6 @@ public interface VirtualTerminal extends IOSafeTerminal {
          * @param rowNumber The row number of this invocation, where 0 means the first line of the backlog
          * @param bufferLine Object the repressents the line and its content on this row
          */
-        void drawLine(int rowNumber, BufferLine bufferLine);
+        void onLine(int rowNumber, BufferLine bufferLine);
     }
 }

@@ -23,7 +23,6 @@ import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.screen.TabBehaviour;
 import com.googlecode.lanterna.terminal.AbstractTerminal;
-import com.googlecode.lanterna.terminal.IOSafeTerminal;
 
 import java.io.IOException;
 import java.util.*;
@@ -338,7 +337,7 @@ public class DefaultVirtualTerminal extends AbstractTerminal implements VirtualT
                     }
                 };
             }
-            bufferWalker.drawLine(row, bufferLine);
+            bufferWalker.onLine(row, bufferLine);
         }
     }
 

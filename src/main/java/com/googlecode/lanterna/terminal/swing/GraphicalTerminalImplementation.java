@@ -397,7 +397,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
 
         virtualTerminal.forEachLine(firstVisibleRowIndex, lastVisibleRowIndex, new VirtualTerminal.BufferWalker() {
             @Override
-            public void drawLine(int rowNumber, VirtualTerminal.BufferLine bufferLine) {
+            public void onLine(int rowNumber, VirtualTerminal.BufferLine bufferLine) {
                 for(int column = 0; column < viewportSize.getColumns(); column++) {
                     TextCharacter textCharacter = bufferLine.getCharacterAt(column);
                     boolean atCursorLocation = cursorPosition.equals(column, rowNumber);
