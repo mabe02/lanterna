@@ -1,4 +1,4 @@
-package com.googlecode.lanterna.terminal.swing;
+package com.googlecode.lanterna.terminal.virtual;
 
 import com.googlecode.lanterna.TextCharacter;
 
@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 /**
- * This class is used to store lines of text inside of a terminal emulator. As used by {@link VirtualTerminal}, it keeps
+ * This class is used to store lines of text inside of a terminal emulator. As used by {@link DefaultVirtualTerminal}, it keeps
  * two {@link TextBuffer}s, one for private mode and one for normal mode and it can switch between them as needed.
  */
 class TextBuffer {

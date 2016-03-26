@@ -16,12 +16,12 @@
  *
  * Copyright (C) 2010-2015 Martin
  */
-package com.googlecode.lanterna.terminal.swing;
+package com.googlecode.lanterna.terminal.virtual;
 
-import com.googlecode.lanterna.graphics.AbstractTextGraphics;
-import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TextCharacter;
+import com.googlecode.lanterna.graphics.AbstractTextGraphics;
 import com.googlecode.lanterna.graphics.TextGraphics;
 
 /**
@@ -30,9 +30,9 @@ import com.googlecode.lanterna.graphics.TextGraphics;
  * @author Martin
  */
 class VirtualTerminalTextGraphics extends AbstractTextGraphics {
-    private final VirtualTerminal virtualTerminal;
+    private final DefaultVirtualTerminal virtualTerminal;
 
-    VirtualTerminalTextGraphics(VirtualTerminal virtualTerminal) {
+    VirtualTerminalTextGraphics(DefaultVirtualTerminal virtualTerminal) {
         this.virtualTerminal = virtualTerminal;
     }
 
@@ -62,6 +62,6 @@ class VirtualTerminalTextGraphics extends AbstractTextGraphics {
 
     @Override
     public TerminalSize getSize() {
-        return virtualTerminal.getViewportSize();
+        return virtualTerminal.getTerminalSize();
     }
 }

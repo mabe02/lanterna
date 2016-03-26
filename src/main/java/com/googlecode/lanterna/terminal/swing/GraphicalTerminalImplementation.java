@@ -24,6 +24,8 @@ import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.IOSafeTerminal;
 import com.googlecode.lanterna.terminal.TerminalResizeListener;
+import com.googlecode.lanterna.terminal.virtual.DefaultVirtualTerminal;
+import com.googlecode.lanterna.terminal.virtual.VirtualTerminal;
 
 import java.awt.*;
 import java.awt.event.InputEvent;
@@ -50,16 +52,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     private final TerminalEmulatorDeviceConfiguration deviceConfiguration;
     private final TerminalEmulatorColorConfiguration colorConfiguration;
-    private final VirtualTerminal virtualTerminal;
+    private final DefaultVirtualTerminal virtualTerminal;
     private final BlockingQueue<KeyStroke> keyQueue;
-    private final List<TerminalResizeListener> resizeListeners;
     private final TerminalScrollController scrollController;
     private final DirtyCellsLookupTable dirtyCellsLookupTable;
 
     private final String enquiryString;
-    private final EnumSet<SGR> activeSGRs;
-    private TextColor foregroundColor;
-    private TextColor backgroundColor;
 
     private boolean cursorIsVisible;
     private boolean enableInput;
@@ -67,6 +65,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     private boolean hasBlinkingText;
     private boolean blinkOn;
     private boolean bellOn;
+    private boolean needFullRedraw;
 
     private TerminalPosition lastDrawnCursorPosition;
     private int lastBufferUpdateScrollPosition;
@@ -107,21 +106,13 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
         if(initialTerminalSize == null) {
             initialTerminalSize = new TerminalSize(80, 24);
         }
-        this.virtualTerminal = new VirtualTerminal(
-                //deviceConfiguration.getLineBufferScrollbackSize(),
-                initialTerminalSize//,
-                //scrollController);
-        );
+        this.virtualTerminal = new DefaultVirtualTerminal(initialTerminalSize);
         this.keyQueue = new LinkedBlockingQueue<KeyStroke>();
-        this.resizeListeners = new CopyOnWriteArrayList<TerminalResizeListener>();
         this.deviceConfiguration = deviceConfiguration;
         this.colorConfiguration = colorConfiguration;
         this.scrollController = scrollController;
         this.dirtyCellsLookupTable = new DirtyCellsLookupTable();
 
-        this.activeSGRs = EnumSet.noneOf(SGR.class);
-        this.foregroundColor = TextColor.ANSI.DEFAULT;
-        this.backgroundColor = TextColor.ANSI.DEFAULT;
         this.cursorIsVisible = true;        //Always start with an activate and visible cursor
         this.enableInput = false;           //Start with input disabled and activate it once the window is visible
         this.enquiryString = "TerminalEmulator";
@@ -134,9 +125,10 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
         this.blinkTimer = null;
         this.hasBlinkingText = false;   // Assume initial content doesn't have any blinking text
         this.blinkOn = true;
+        this.needFullRedraw = false;
 
-        //Set the initial scrollable size
-        //scrollObserver.newScrollableLength(fontConfiguration.getFontHeight() * terminalSize.getRows());
+
+        virtualTerminal.setBacklogSize(deviceConfiguration.getLineBufferScrollbackSize());
     }
 
     ///////////
@@ -243,8 +235,8 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
      * @return Preferred size of this terminal
      */
     synchronized Dimension getPreferredSize() {
-        return new Dimension(getFontWidth() * virtualTerminal.getViewportSize().getColumns(),
-                getFontHeight() * virtualTerminal.getViewportSize().getRows());
+        return new Dimension(getFontWidth() * virtualTerminal.getTerminalSize().getColumns(),
+                getFontHeight() * virtualTerminal.getTerminalSize().getRows());
     }
 
     /**
@@ -259,27 +251,26 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
                 virtualTerminal.getBufferLineCount() * getFontHeight(),
                 height);
 
+        boolean needToUpdateBackBuffer =
+                // User has used the scrollbar, we need to update the back buffer to reflect this
+                lastBufferUpdateScrollPosition != scrollController.getScrollingOffset() ||
+                        // There is blinking text to update
+                        hasBlinkingText ||
+                        // We simply have a hint that we should update everything
+                        needFullRedraw;
+
         // Detect resize
         if(width != lastComponentWidth || height != lastComponentHeight) {
             int columns = width / getFontWidth();
             int rows = height / getFontHeight();
-            int scrollOffset = scrollController.getScrollingOffset();
-            TerminalSize terminalSize = virtualTerminal.getViewportSize().withColumns(columns).withRows(rows);
-            virtualTerminal.setViewportSize(terminalSize);
+            TerminalSize terminalSize = virtualTerminal.getTerminalSize().withColumns(columns).withRows(rows);
+            virtualTerminal.setTerminalSize(terminalSize);
 
             // Back buffer needs to be updated since the component size has changed
-            updateBackBuffer(scrollOffset);
-            for(TerminalResizeListener listener : resizeListeners) {
-                listener.onResized(this, terminalSize);
-            }
+            needToUpdateBackBuffer = true;
         }
-        // Detect scrolling
-        else if(lastBufferUpdateScrollPosition != scrollController.getScrollingOffset()) {
-            // User has used the scrollbar, we need to update the back buffer to reflect this
-            updateBackBuffer(scrollController.getScrollingOffset());
-        }
-        else if(hasBlinkingText) {
-            // There is blinking text to update
+
+        if(needToUpdateBackBuffer) {
             updateBackBuffer(scrollController.getScrollingOffset());
         }
 
@@ -323,8 +314,8 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
         final int fontHeight = getFontHeight();
 
         //Retrieve the position of the cursor, relative to the scrolling state
-        final TerminalPosition cursorPosition = virtualTerminal.getGlobalCursorPosition();
-        final TerminalSize viewportSize = virtualTerminal.getViewportSize();
+        final TerminalPosition cursorPosition = virtualTerminal.getCursorBufferPosition();
+        final TerminalSize viewportSize = virtualTerminal.getTerminalSize();
 
         final int firstVisibleRowIndex = scrollOffsetFromTopInPixels / fontHeight;
         final int lastVisibleRowIndex = (scrollOffsetFromTopInPixels + getHeight()) / fontHeight;
@@ -462,18 +453,19 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
         this.hasBlinkingText = foundBlinkingCharacters.get();
         this.lastDrawnCursorPosition = cursorPosition;
         this.lastBufferUpdateScrollPosition = scrollOffsetFromTopInPixels;
+        this.needFullRedraw = false;
 
         //System.out.println("Updated backbuffer in " + (System.currentTimeMillis() - startTime) + " ms");
     }
 
     private void buildDirtyCellsLookupTable(int firstRowOffset, int lastRowOffset) {
-        if(virtualTerminal.isWholeBufferDirtyThenReset()) {
+        if(virtualTerminal.isWholeBufferDirtyThenReset() || needFullRedraw) {
             dirtyCellsLookupTable.setAllDirty();
             return;
         }
 
-        TerminalSize viewportSize = virtualTerminal.getViewportSize();
-        TerminalPosition cursorPosition = virtualTerminal.getGlobalCursorPosition();
+        TerminalSize viewportSize = virtualTerminal.getTerminalSize();
+        TerminalPosition cursorPosition = virtualTerminal.getCursorBufferPosition();
 
         dirtyCellsLookupTable.resetAndInitialize(firstRowOffset, lastRowOffset, viewportSize.getColumns());
         dirtyCellsLookupTable.setDirty(cursorPosition);
@@ -655,21 +647,21 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
 
     @Override
     public synchronized void enterPrivateMode() {
-        virtualTerminal.switchToPrivateMode();
+        virtualTerminal.enterPrivateMode();
         clearBackBuffer();
         flush();
     }
 
     @Override
     public synchronized void exitPrivateMode() {
-        virtualTerminal.switchToNormalMode();
+        virtualTerminal.exitPrivateMode();
         clearBackBuffer();
         flush();
     }
 
     @Override
     public synchronized void clearScreen() {
-        virtualTerminal.clear();
+        virtualTerminal.clearScreen();
         clearBackBuffer();
     }
 
@@ -716,49 +708,42 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
 
     @Override
     public synchronized void putCharacter(final char c) {
-        if(c == '\n') {
-            virtualTerminal.moveCursorToNextLine();
-        }
-        else if(TerminalTextUtils.isPrintableCharacter(c)) {
-            virtualTerminal.putCharacter(new TextCharacter(c, foregroundColor, backgroundColor, activeSGRs));
-        }
+        virtualTerminal.putCharacter(c);
     }
 
     @Override
     public TextGraphics newTextGraphics() throws IOException {
-        return new VirtualTerminalTextGraphics(virtualTerminal);
+        return virtualTerminal.newTextGraphics();
     }
 
     @Override
     public void enableSGR(final SGR sgr) {
-        activeSGRs.add(sgr);
+        virtualTerminal.enableSGR(sgr);
     }
 
     @Override
     public void disableSGR(final SGR sgr) {
-        activeSGRs.remove(sgr);
+        virtualTerminal.disableSGR(sgr);
     }
 
     @Override
     public void resetColorAndSGR() {
-        foregroundColor = TextColor.ANSI.DEFAULT;
-        backgroundColor = TextColor.ANSI.DEFAULT;
-        activeSGRs.clear();
+        virtualTerminal.resetColorAndSGR();
     }
 
     @Override
     public void setForegroundColor(final TextColor color) {
-        foregroundColor = color;
+        virtualTerminal.setForegroundColor(color);
     }
 
     @Override
     public void setBackgroundColor(final TextColor color) {
-        backgroundColor = color;
+        virtualTerminal.setBackgroundColor(color);
     }
 
     @Override
     public synchronized TerminalSize getTerminalSize() {
-        return virtualTerminal.getViewportSize();
+        return virtualTerminal.getTerminalSize();
     }
 
     @Override
@@ -774,7 +759,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
 
         // Flash the screen...
         bellOn = true;
-        virtualTerminal.setWholeBufferDirty();
+        needFullRedraw = true;
         updateBackBuffer(scrollController.getScrollingOffset());
         repaint();
         // Unify this with the blink timer and just do the whole timer logic ourselves?
@@ -786,7 +771,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
                 }
                 catch(InterruptedException ignore) {}
                 bellOn = false;
-                virtualTerminal.setWholeBufferDirty();
+                needFullRedraw = true;
                 updateBackBuffer(scrollController.getScrollingOffset());
                 repaint();
             }
@@ -804,12 +789,12 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
 
     @Override
     public void addResizeListener(TerminalResizeListener listener) {
-        resizeListeners.add(listener);
+        virtualTerminal.addResizeListener(listener);
     }
 
     @Override
     public void removeResizeListener(TerminalResizeListener listener) {
-        resizeListeners.remove(listener);
+        virtualTerminal.removeResizeListener(listener);
     }
 
     ///////////
