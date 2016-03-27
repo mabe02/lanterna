@@ -44,7 +44,11 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
     private boolean inPrivateMode;
 
     @SuppressWarnings("WeakerAccess")
-    protected ANSITerminal(InputStream terminalInput, OutputStream terminalOutput, Charset terminalCharset) {
+    protected ANSITerminal(
+            InputStream terminalInput,
+            OutputStream terminalOutput,
+            Charset terminalCharset) {
+
         super(terminalInput, terminalOutput, terminalCharset);
         this.inPrivateMode = false;
         this.mouseCaptureMode = null;
@@ -355,27 +359,6 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
         }
     }
 
-    /**
-     * Method to test if the terminal (as far as the library knows) is in private mode.
-     *
-     * @return True if there has been a call to enterPrivateMode() but not yet exitPrivateMode()
-     */
-    boolean isInPrivateMode() {
-        return inPrivateMode;
-    }
-
-    void reportPosition() throws IOException {
-        writeCSISequenceToTerminal("6n".getBytes());
-    }
-
-    void restoreCursorPosition() throws IOException {
-        writeCSISequenceToTerminal("u".getBytes());
-    }
-
-    void saveCursorPosition() throws IOException {
-        writeCSISequenceToTerminal("s".getBytes());
-    }
-
     @Override
     public void scrollLines(int firstLine, int lastLine, int distance) throws IOException {
         final String CSI = "\033[";
@@ -408,5 +391,26 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
 
         // off we go!
         writeToTerminal(sb.toString().getBytes());
+    }
+
+    /**
+     * Method to test if the terminal (as far as the library knows) is in private mode.
+     *
+     * @return True if there has been a call to enterPrivateMode() but not yet exitPrivateMode()
+     */
+    boolean isInPrivateMode() {
+        return inPrivateMode;
+    }
+
+    void reportPosition() throws IOException {
+        writeCSISequenceToTerminal("6n".getBytes());
+    }
+
+    void restoreCursorPosition() throws IOException {
+        writeCSISequenceToTerminal("u".getBytes());
+    }
+
+    void saveCursorPosition() throws IOException {
+        writeCSISequenceToTerminal("s".getBytes());
     }
 }

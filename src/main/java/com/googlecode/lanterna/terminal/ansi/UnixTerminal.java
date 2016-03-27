@@ -105,30 +105,25 @@ public class UnixTerminal extends UnixLikeTerminal {
             Charset terminalCharset,
             UnixTerminalSizeQuerier customSizeQuerier,
             CtrlCBehaviour terminalCtrlCBehaviour) throws IOException {
-        super(terminalInput,
+
+        super(new STTYTerminalDeviceController(new File("/dev/tty")),
+                terminalInput,
                 terminalOutput,
                 terminalCharset,
-                terminalCtrlCBehaviour,
-                new File("/dev/tty"));
+                terminalCtrlCBehaviour);
 
         this.terminalSizeQuerier = customSizeQuerier;
 
         //Make sure to set an initial size
         onResized(80, 24);
-        
-        setupWinResizeHandler();
-        saveSTTY();
-        setCBreak(true);
-        setEcho(false);
-        sttyMinimum1CharacterForRead();
+
         if("false".equals(System.getProperty("com.googlecode.lanterna.terminal.UnixTerminal.catchSpecialCharacters", "").trim().toLowerCase())) {
             catchSpecialCharacters = false;
         }
         else {
             catchSpecialCharacters = true;
-            disableSpecialCharacters();
+            keyStrokeSignalsEnabled(false);
         }
-        setupShutdownHook();
     }
 
     @Override
@@ -140,88 +135,12 @@ public class UnixTerminal extends UnixLikeTerminal {
         return super.getTerminalSize();
     }
 
-    @Override
-    protected void sttyKeyEcho(final boolean enable) throws IOException {
-        exec(getSTTYCommand(), enable ? "echo" : "-echo");
-    }
 
     @Override
-    protected void sttyMinimum1CharacterForRead() throws IOException {
-        exec(getSTTYCommand(), "min", "1");
-    }
-
-    @Override
-    protected void sttyICanon(final boolean enable) throws IOException {
-        exec(getSTTYCommand(), enable ? "icanon" : "-icanon");
-    }
-
-    @Override
-    protected String sttySave() throws IOException {
-        return exec(getSTTYCommand(), "-g").trim();
-    }
-
-    @Override
-    protected void sttyRestore(String tok) throws IOException {
-        exec(getSTTYCommand(), tok);
-    }
-
-    /*
-    //What was the problem with this one? I don't remember... Restoring ctrl+c for now (see below)
-    private void restoreEOFCtrlD() throws IOException {
-        exec(getShellCommand(), "-c", getSTTYCommand() + " eof ^d < /dev/tty");
-    }
-
-    private void disableSpecialCharacters() throws IOException {
-        exec(getShellCommand(), "-c", getSTTYCommand() + " intr undef < /dev/tty");
-        exec(getShellCommand(), "-c", getSTTYCommand() + " start undef < /dev/tty");
-        exec(getShellCommand(), "-c", getSTTYCommand() + " stop undef < /dev/tty");
-        exec(getShellCommand(), "-c", getSTTYCommand() + " susp undef < /dev/tty");
-    }
-
-    private void restoreSpecialCharacters() throws IOException {
-        exec(getShellCommand(), "-c", getSTTYCommand() + " intr ^C < /dev/tty");
-        exec(getShellCommand(), "-c", getSTTYCommand() + " start ^Q < /dev/tty");
-        exec(getShellCommand(), "-c", getSTTYCommand() + " stop ^S < /dev/tty");
-        exec(getShellCommand(), "-c", getSTTYCommand() + " susp ^Z < /dev/tty");
-    }
-    */
-
-
-    /**
-     * This method causes certain keystrokes (at the moment only ctrl+c) to be passed in to the program instead of
-     * interpreted by the shell and affect the program. For example, ctrl+c will send an interrupt that causes the
-     * JVM to shut down, but this method will make it pass in ctrl+c as a normal KeyStroke instead (you can still make
-     * ctrl+c kill the application, but Lanterna can do this for you after having restored the terminal).
-     * <p>
-     * Please note that this method is generally called automatically (i.e. it's turned on by default), unless you
-     * define a system property "com.googlecode.lanterna.terminal.UnixTerminal.catchSpecialCharacters" and set it to
-     * the string "false".
-     * @throws IOException If there was an I/O error when attempting to disable special characters
-     * @see com.googlecode.lanterna.terminal.ansi.UnixLikeTerminal.CtrlCBehaviour
-     */
-    public void disableSpecialCharacters() throws IOException {
-        exec(getSTTYCommand(), "intr", "undef");
-    }
-
-    /**
-     * This method restores the special characters disabled by {@code disableSpecialCharacters()}, if it has been
-     * called.
-     * @throws IOException If there was an I/O error when attempting to restore special characters
-     */
-    public void restoreSpecialCharacters() throws IOException {
-        exec(getSTTYCommand(), "intr", "^C");
-    }
-
-    @Override
-    protected synchronized void restoreSTTY() throws IOException {
-        super.restoreSTTY();
+    void restoreTerminalSettings() throws IOException {
+        super.restoreTerminalSettings();
         if(catchSpecialCharacters) {
-            restoreSpecialCharacters();
+            keyStrokeSignalsEnabled(true);
         }
     }
-
-    protected String getSTTYCommand() {
-        return "/bin/stty";
-    }
-
 }

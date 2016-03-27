@@ -18,13 +18,8 @@
  */
 package com.googlecode.lanterna.terminal.ansi;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -63,9 +58,8 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
         CTRL_C_KILLS_APPLICATION,
     }
 
+    protected final TerminalDeviceControlStrategy deviceControlStrategy;
     protected final CtrlCBehaviour terminalCtrlCBehaviour;
-    protected final File ttyDev;
-    private String sttyStatusToRestore;
 
     /**
      * Creates a UnixTerminal using a specified input stream, output stream and character set, with a custom size
@@ -77,51 +71,28 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
      * @param terminalCharset Character set to use when converting characters to bytes
      * @param terminalCtrlCBehaviour Special settings on how the terminal will behave, see {@code UnixTerminalMode} for more
      * details
-     * @param ttyDev File to redirect standard input from in exec(), if not null.
      */
-    @SuppressWarnings({"SameParameterValue", "WeakerAccess"})
-    public UnixLikeTerminal(
+    protected UnixLikeTerminal(
+            TerminalDeviceControlStrategy deviceControlStrategy,
             InputStream terminalInput,
             OutputStream terminalOutput,
             Charset terminalCharset,
-            CtrlCBehaviour terminalCtrlCBehaviour,
-            File ttyDev) {
-        super(terminalInput, terminalOutput, terminalCharset);
+            CtrlCBehaviour terminalCtrlCBehaviour) throws IOException {
+
+        super(terminalInput,
+                terminalOutput,
+                terminalCharset);
+
+        this.deviceControlStrategy = deviceControlStrategy;
         this.terminalCtrlCBehaviour = terminalCtrlCBehaviour;
-        this.sttyStatusToRestore = null;
-        this.ttyDev = ttyDev;
+
+        saveTerminalSettings();
+        canonicalMode(false);
+        keyEchoEnabled(false);
+        setupShutdownHook();
+        setupWinResizeHandler();
     }
 
-    protected String exec(String... cmd) throws IOException {
-        if (ttyDev != null) {
-            //Here's what we try to do, but that is Java 7+ only:
-            // processBuilder.redirectInput(ProcessBuilder.Redirect.from(ttyDev));
-            //instead, for Java 6, we join the cmd into a scriptlet with redirection
-            //and replace cmd by a call to sh with the scriptlet:
-            StringBuilder sb = new StringBuilder();
-            for (String arg : cmd) { sb.append(arg).append(' '); }
-            sb.append("< ").append(ttyDev);
-            cmd = new String[] { "sh", "-c", sb.toString() };
-        }
-        ProcessBuilder pb = new ProcessBuilder(cmd);
-        Process process = pb.start();
-        ByteArrayOutputStream stdoutBuffer = new ByteArrayOutputStream();
-        InputStream stdout = process.getInputStream();
-        int readByte = stdout.read();
-        while(readByte >= 0) {
-            stdoutBuffer.write(readByte);
-            readByte = stdout.read();
-        }
-        ByteArrayInputStream stdoutBufferInputStream = new ByteArrayInputStream(stdoutBuffer.toByteArray());
-        BufferedReader reader = new BufferedReader(new InputStreamReader(stdoutBufferInputStream));
-        StringBuilder builder = new StringBuilder();
-        String line;
-        while((line = reader.readLine()) != null) {
-            builder.append(line);
-        }
-        reader.close();
-        return builder.toString();
-    }
 
     @Override
     public KeyStroke pollInput() throws IOException {
@@ -150,6 +121,58 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
             exitPrivateMode();
             System.exit(1);
         }
+    }
+
+    /**
+     * Stores the current terminal device settings (the ones that are modified through this interface) so that they can
+     * be restored later using {@link #restoreTerminalSettings()}
+     */
+    void saveTerminalSettings() throws IOException {
+        deviceControlStrategy.saveTerminalSettings();
+    }
+
+    /**
+     * Restores the terminal settings from last time {@link #saveTerminalSettings()} was called
+     */
+    void restoreTerminalSettings() throws IOException {
+        deviceControlStrategy.restoreTerminalSettings();
+    }
+
+    /**
+     * Enables or disable key echo mode, which means when the user press a key, the terminal will immediately print that
+     * key to the terminal. Normally for Lanterna, this should be turned off so the software can take the key as an
+     * input event, put it on the input queue and then depending on the code decide what to do with it.
+     * @param enabled {@code true} if key echo should be enabled, {@code false} otherwise
+     */
+    void keyEchoEnabled(boolean enabled) throws IOException {
+        deviceControlStrategy.keyEchoEnabled(enabled);
+    }
+
+    /**
+     * In canonical mode, data are accumulated in a line editing buffer, and do not become "available for reading" until
+     * line editing has been terminated by the user sending a line delimiter character. This is usually the default mode
+     * for a terminal. Lanterna wants to read each character as they are typed, without waiting for the final newline,
+     * so it will attempt to turn canonical mode off on initialization.
+     * @param enabled {@code true} if canonical input mode should be enabled, {@code false} otherwise
+     */
+    void canonicalMode(boolean enabled) throws IOException {
+        deviceControlStrategy.canonicalMode(enabled);
+    }
+
+    /**
+     * This method causes certain keystrokes (at the moment only ctrl+c) to be passed in to the program as a regular
+     * {@link com.googlecode.lanterna.input.KeyStroke} instead of as a signal to the JVM process. For example,
+     * <i>ctrl+c</i> will normally send an interrupt that causes the JVM to shut down, but this method will make it pass
+     * in <i>ctrl+c</i> as a regular {@link com.googlecode.lanterna.input.KeyStroke} instead. You can of course still
+     * make <i>ctrl+c</i> kill the application through your own input handling if you like.
+     * <p>
+     * Please note that this method is called automatically by lanterna to disable signals unless you define a system
+     * property "com.googlecode.lanterna.terminal.UnixTerminal.catchSpecialCharacters" and set it to the string "false".
+     * @throws IOException If there was an I/O error when attempting to disable special characters
+     * @see com.googlecode.lanterna.terminal.ansi.UnixLikeTerminal.CtrlCBehaviour
+     */
+    void keyStrokeSignalsEnabled(boolean enabled) throws IOException {
+        deviceControlStrategy.keyStrokeSignalsEnabled(enabled);
     }
 
     protected void setupWinResizeHandler() {
@@ -187,56 +210,12 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
                 catch(IllegalStateException ignored) {} // still possible!
 
                 try {
-                    restoreSTTY();
+                    restoreTerminalSettings();
                 }
                 catch(IOException ignored) {}
             }
         });
     }
 
-    /**
-     * Enabling cbreak mode will allow you to read user input immediately as the user enters the characters, as opposed
-     * to reading the data in lines as the user presses enter. If you want your program to respond to user input by the
-     * keyboard, you probably want to enable cbreak mode.
-     *
-     * @see <a href="http://en.wikipedia.org/wiki/POSIX_terminal_interface">POSIX terminal interface</a>
-     * @param cbreakOn Should cbreak be turned on or not
-     * @throws IOException
-     */
-    public void setCBreak(boolean cbreakOn) throws IOException {
-        sttyICanon(!cbreakOn);
-    }
-
-    /**
-     * Enables or disables keyboard echo, meaning the immediate output of the characters you type on your keyboard. If
-     * your users are going to interact with this application through the keyboard, you probably want to disable echo
-     * mode.
-     *
-     * @param echoOn true if keyboard input will immediately echo, false if it's hidden
-     * @throws IOException
-     */
-    public void setEcho(boolean echoOn) throws IOException {
-        sttyKeyEcho(echoOn);
-    }
-
-    protected void saveSTTY() throws IOException {
-        if(sttyStatusToRestore == null) {
-            sttyStatusToRestore = sttySave();
-        }
-    }
-
-    protected synchronized void restoreSTTY() throws IOException {
-        if(sttyStatusToRestore != null) {
-            sttyRestore( sttyStatusToRestore );
-            sttyStatusToRestore = null;
-        }
-    }
-
-    // A couple of system-dependent helpers:
-    protected abstract void sttyKeyEcho(final boolean enable) throws IOException;
-    protected abstract void sttyMinimum1CharacterForRead() throws IOException;
-    protected abstract void sttyICanon(final boolean enable) throws IOException;
-    protected abstract String sttySave() throws IOException;
-    protected abstract void sttyRestore(String tok) throws IOException;
 
 }
