@@ -58,8 +58,9 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
         CTRL_C_KILLS_APPLICATION,
     }
 
-    protected final TerminalDeviceControlStrategy deviceControlStrategy;
-    protected final CtrlCBehaviour terminalCtrlCBehaviour;
+    private final TerminalDeviceControlStrategy deviceControlStrategy;
+    private final CtrlCBehaviour terminalCtrlCBehaviour;
+    private final boolean catchSpecialCharacters;
 
     /**
      * Creates a UnixTerminal using a specified input stream, output stream and character set, with a custom size
@@ -86,9 +87,19 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
         this.deviceControlStrategy = deviceControlStrategy;
         this.terminalCtrlCBehaviour = terminalCtrlCBehaviour;
 
+        //Make sure to set an initial size
+        onResized(80, 24);
+
         saveTerminalSettings();
         canonicalMode(false);
         keyEchoEnabled(false);
+        if("false".equals(System.getProperty("com.googlecode.lanterna.terminal.UnixTerminal.catchSpecialCharacters", "").trim().toLowerCase())) {
+            catchSpecialCharacters = false;
+        }
+        else {
+            catchSpecialCharacters = true;
+            keyStrokeSignalsEnabled(false);
+        }
         setupShutdownHook();
         setupWinResizeHandler();
     }
@@ -110,6 +121,14 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
         return key;
     }
 
+    protected TerminalDeviceControlStrategy getDeviceControlStrategy() {
+        return deviceControlStrategy;
+    }
+
+    protected CtrlCBehaviour getTerminalCtrlCBehaviour() {
+        return terminalCtrlCBehaviour;
+    }
+
     private void isCtrlC(KeyStroke key) throws IOException {
         if(key != null
                 && terminalCtrlCBehaviour == CtrlCBehaviour.CTRL_C_KILLS_APPLICATION
@@ -127,15 +146,18 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
      * Stores the current terminal device settings (the ones that are modified through this interface) so that they can
      * be restored later using {@link #restoreTerminalSettings()}
      */
-    void saveTerminalSettings() throws IOException {
+    private void saveTerminalSettings() throws IOException {
         deviceControlStrategy.saveTerminalSettings();
     }
 
     /**
      * Restores the terminal settings from last time {@link #saveTerminalSettings()} was called
      */
-    void restoreTerminalSettings() throws IOException {
+    private void restoreTerminalSettings() throws IOException {
         deviceControlStrategy.restoreTerminalSettings();
+        if(catchSpecialCharacters) {
+            keyStrokeSignalsEnabled(true);
+        }
     }
 
     /**
@@ -144,7 +166,7 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
      * input event, put it on the input queue and then depending on the code decide what to do with it.
      * @param enabled {@code true} if key echo should be enabled, {@code false} otherwise
      */
-    void keyEchoEnabled(boolean enabled) throws IOException {
+    private void keyEchoEnabled(boolean enabled) throws IOException {
         deviceControlStrategy.keyEchoEnabled(enabled);
     }
 
@@ -155,7 +177,7 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
      * so it will attempt to turn canonical mode off on initialization.
      * @param enabled {@code true} if canonical input mode should be enabled, {@code false} otherwise
      */
-    void canonicalMode(boolean enabled) throws IOException {
+    private void canonicalMode(boolean enabled) throws IOException {
         deviceControlStrategy.canonicalMode(enabled);
     }
 
@@ -171,11 +193,11 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
      * @throws IOException If there was an I/O error when attempting to disable special characters
      * @see com.googlecode.lanterna.terminal.ansi.UnixLikeTerminal.CtrlCBehaviour
      */
-    void keyStrokeSignalsEnabled(boolean enabled) throws IOException {
+    private void keyStrokeSignalsEnabled(boolean enabled) throws IOException {
         deviceControlStrategy.keyStrokeSignalsEnabled(enabled);
     }
 
-    protected void setupWinResizeHandler() {
+    private void setupWinResizeHandler() {
         try {
             Class<?> signalClass = Class.forName("sun.misc.Signal");
             for(Method m : signalClass.getDeclaredMethods()) {
@@ -197,7 +219,7 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
         }
     }
 
-    protected void setupShutdownHook() {
+    private void setupShutdownHook() {
         Runtime.getRuntime().addShutdownHook(new Thread("Lanterna STTY restore") {
             @Override
             public void run() {
@@ -216,6 +238,4 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
             }
         });
     }
-
-
 }
