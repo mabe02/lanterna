@@ -4,4 +4,4 @@
 .idea/
 nb-configuration.xml
 target/
-/lanterna.iml
+*.iml
