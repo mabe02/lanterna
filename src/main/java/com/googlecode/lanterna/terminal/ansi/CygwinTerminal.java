@@ -57,13 +57,5 @@ public class CygwinTerminal extends UnixLikeTerminal {
                 terminalOutput,
                 terminalCharset,
                 CtrlCBehaviour.TRAP);
-
-        //Make sure to set an initial size
-        onResized(80, 24);
-
-        saveTerminalSettings();
-        canonicalMode(false);
-        keyEchoEnabled(false);
-        setupShutdownHook();
     }
 }
