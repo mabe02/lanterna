@@ -475,7 +475,7 @@ public class DefaultVirtualTerminalTest {
             }
 
             @Override
-            public void onBeep() {
+            public void onBell() {
                 bellCounter.incrementAndGet();
             }
 

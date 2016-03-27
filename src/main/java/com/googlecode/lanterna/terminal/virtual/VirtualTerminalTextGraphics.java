@@ -25,8 +25,7 @@ import com.googlecode.lanterna.graphics.AbstractTextGraphics;
 import com.googlecode.lanterna.graphics.TextGraphics;
 
 /**
- * Implementation of TextGraphics for the SwingTerminal, which is able to access directly into the TextBuffer and set
- * values in there directly.
+ * Implementation of {@link TextGraphics} for {@link VirtualTerminal}
  * @author Martin
  */
 class VirtualTerminalTextGraphics extends AbstractTextGraphics {

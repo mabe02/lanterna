@@ -208,7 +208,7 @@ public class DefaultVirtualTerminal extends AbstractTerminal implements VirtualT
     @Override
     public synchronized void bell() {
         for(VirtualTerminalListener listener: listeners) {
-            listener.onBeep();
+            listener.onBell();
         }
     }
 

@@ -18,9 +18,23 @@
  */
 package com.googlecode.lanterna.terminal.virtual;
 
+import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalResizeListener;
 
+/**
+ * Listener class for {@link VirtualTerminal} that allows you to receive callbacks on certain events. Please note that
+ * while this extends {@link TerminalResizeListener} and can be attached to a {@link VirtualTerminal} through
+ * {@link com.googlecode.lanterna.terminal.Terminal#addResizeListener(TerminalResizeListener)}, in that case only the
+ * resize event will fire on the listener.
+ */
 public interface VirtualTerminalListener extends TerminalResizeListener {
+    /**
+     * Called when the {@link Terminal#flush()} method is invoked on the {@link VirtualTerminal}
+     */
     void onFlush();
-    void onBeep();
+
+    /**
+     * Called when the {@link Terminal#bell()} method is invoked on the {@link VirtualTerminal}
+     */
+    void onBell();
 }
