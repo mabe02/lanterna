@@ -100,8 +100,19 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
             catchSpecialCharacters = true;
             keyStrokeSignalsEnabled(false);
         }
+        deviceControlStrategy.registerTerminalResizeListener(new Runnable() {
+            @Override
+            public void run() {
+                // This will trigger a resize notification as the size will be different than before
+                try {
+                    getTerminalSize();
+                }
+                catch(IOException ignore) {
+                    // Not much to do here, we can't re-throw it
+                }
+            }
+        });
         setupShutdownHook();
-        setupWinResizeHandler();
     }
 
 
@@ -195,28 +206,6 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
      */
     private void keyStrokeSignalsEnabled(boolean enabled) throws IOException {
         deviceControlStrategy.keyStrokeSignalsEnabled(enabled);
-    }
-
-    private void setupWinResizeHandler() {
-        try {
-            Class<?> signalClass = Class.forName("sun.misc.Signal");
-            for(Method m : signalClass.getDeclaredMethods()) {
-                if("handle".equals(m.getName())) {
-                    Object windowResizeHandler = Proxy.newProxyInstance(getClass().getClassLoader(), new Class[]{Class.forName("sun.misc.SignalHandler")}, new InvocationHandler() {
-                        @Override
-                        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                            if("handle".equals(method.getName())) {
-                                getTerminalSize();
-                            }
-                            return null;
-                        }
-                    });
-                    m.invoke(null, signalClass.getConstructor(String.class).newInstance("WINCH"), windowResizeHandler);
-                }
-            }
-        } catch(Throwable e) {
-            System.err.println(e.getMessage());
-        }
     }
 
     private void setupShutdownHook() {

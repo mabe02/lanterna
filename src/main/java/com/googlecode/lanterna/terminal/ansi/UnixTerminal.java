@@ -153,8 +153,6 @@ public class UnixTerminal extends UnixLikeTerminal {
      * details
      * @throws java.io.IOException If there was an I/O error initializing the terminal
      */
-    @SuppressWarnings({"SameParameterValue", "WeakerAccess"})
-    @Deprecated
     public UnixTerminal(
             TerminalDeviceControlStrategy deviceController,
             InputStream terminalInput,

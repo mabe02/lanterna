@@ -19,6 +19,7 @@
 package com.googlecode.lanterna.terminal.ansi;
 
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.terminal.Terminal;
 
 import java.io.IOException;
 
@@ -87,4 +88,14 @@ public interface TerminalDeviceControlStrategy {
      */
     TerminalSize getTerminalSize() throws IOException;
 
+    /**
+     * If supported, registers a listener of some sort that will watch for the terminal window changing size. It does
+     * not have to figure out the new size (lanterna will automatically call {@link Terminal#getTerminalSize()} to
+     * find out), just that the size has changed. The supplied {@code Runnable} should be invoked when a change in size
+     * was detected. Usually, the resize listener will be running asynchronously on a separate thread, but be careful
+     * as there is no close method for the control strategy so you'll have to detect for yourself when the thread should
+     * shut down is you manage it yourself.
+     * @throws IOException If there was an I/O error
+     */
+    void registerTerminalResizeListener(Runnable onResize) throws IOException;
 }

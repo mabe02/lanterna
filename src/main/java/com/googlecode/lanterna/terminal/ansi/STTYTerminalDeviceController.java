@@ -3,6 +3,9 @@ package com.googlecode.lanterna.terminal.ansi;
 import com.googlecode.lanterna.TerminalSize;
 
 import java.io.*;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 
 /**
  * Created by martin on 27/03/16.
@@ -53,7 +56,34 @@ public class STTYTerminalDeviceController implements TerminalDeviceControlStrate
 
     @Override
     public TerminalSize getTerminalSize() throws IOException {
+        // We could read the terminal dimensions through stty, but let's not, as it would involve a lot of spawning new
+        // processes. Better to use the ANSI escape code hack
         return null;
+    }
+
+    @Override
+    public void registerTerminalResizeListener(final Runnable onResize) throws IOException {
+        try {
+            Class<?> signalClass = Class.forName("sun.misc.Signal");
+            for(Method m : signalClass.getDeclaredMethods()) {
+                if("handle".equals(m.getName())) {
+                    Object windowResizeHandler = Proxy.newProxyInstance(getClass().getClassLoader(), new Class[]{Class.forName("sun.misc.SignalHandler")}, new InvocationHandler() {
+                        @Override
+                        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                            if("handle".equals(method.getName())) {
+                                onResize.run();
+                            }
+                            return null;
+                        }
+                    });
+                    m.invoke(null, signalClass.getConstructor(String.class).newInstance("WINCH"), windowResizeHandler);
+                }
+            }
+        }
+        catch(Throwable ignore) {
+            // We're probably running on a non-Sun JVM and there's no way to catch signals without resorting to native
+            // code integration
+        }
     }
 
     protected String getSTTYCommand() {

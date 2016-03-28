@@ -3,6 +3,9 @@ package com.googlecode.lanterna.terminal.ansi;
 import com.googlecode.lanterna.TerminalSize;
 
 import java.io.*;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -72,6 +75,31 @@ public class CygwinSTTYTerminalDeviceController implements TerminalDeviceControl
     @Override
     public TerminalSize getTerminalSize() throws IOException {
         return null;
+    }
+
+    @Override
+    public void registerTerminalResizeListener(final Runnable onResize) throws IOException {
+        try {
+            Class<?> signalClass = Class.forName("sun.misc.Signal");
+            for(Method m : signalClass.getDeclaredMethods()) {
+                if("handle".equals(m.getName())) {
+                    Object windowResizeHandler = Proxy.newProxyInstance(getClass().getClassLoader(), new Class[]{Class.forName("sun.misc.SignalHandler")}, new InvocationHandler() {
+                        @Override
+                        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                            if("handle".equals(method.getName())) {
+                                onResize.run();
+                            }
+                            return null;
+                        }
+                    });
+                    m.invoke(null, signalClass.getConstructor(String.class).newInstance("WINCH"), windowResizeHandler);
+                }
+            }
+        }
+        catch(Throwable ignore) {
+            // We're probably running on a non-Sun JVM and there's no way to catch signals without resorting to native
+            // code integration
+        }
     }
 
     private String runSTTYCommand(String... parameters) throws IOException {
