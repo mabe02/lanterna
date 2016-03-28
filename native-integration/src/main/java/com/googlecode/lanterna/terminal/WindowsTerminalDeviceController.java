@@ -88,6 +88,11 @@ public class WindowsTerminalDeviceController implements TerminalDeviceControlStr
         return new TerminalSize(columns, rows);
     }
 
+    @Override
+    public void registerTerminalResizeListener(Runnable runnable) throws IOException {
+        // Not implemented yet
+    }
+
     private int getConsoleMode() {
         IntByReference lpMode = new IntByReference();
         windowsConsole.GetConsoleMode(consoleInputHandle, lpMode);
