@@ -20,6 +20,7 @@ package com.googlecode.lanterna.terminal;
 
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.terminal.ansi.CygwinTerminal;
+import com.googlecode.lanterna.terminal.ansi.UnixLikeTerminal;
 import com.googlecode.lanterna.terminal.ansi.UnixTerminal;
 import com.googlecode.lanterna.terminal.swing.*;
 
@@ -27,6 +28,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Constructor;
 import java.nio.charset.Charset;
 import java.util.EnumSet;
 
@@ -93,7 +95,7 @@ public final class DefaultTerminalFactory implements TerminalFactory {
     public Terminal createTerminal() throws IOException {
         if (GraphicsEnvironment.isHeadless() || forceTextTerminal || System.console() != null) {
             if(isOperatingSystemWindows()) {
-                return createCygwinTerminal(outputStream, inputStream, charset);
+                return createWindowsTerminal();
             }
             else {
                 return createUnixTerminal(outputStream, inputStream, charset);
@@ -275,13 +277,32 @@ public final class DefaultTerminalFactory implements TerminalFactory {
         this.mouseCaptureMode = mouseCaptureMode;
         return this;
     }
+
+    private Terminal createWindowsTerminal() throws IOException {
+        try {
+            Class<?> nativeImplementation = Class.forName("com.googlecode.lanterna.terminal.WindowsTerminal");
+            Constructor<?> constructor = nativeImplementation.getConstructor(InputStream.class, OutputStream.class, Charset.class, UnixLikeTerminal.CtrlCBehaviour.class);
+            return (Terminal)constructor.newInstance(inputStream, outputStream, charset, UnixLikeTerminal.CtrlCBehaviour.CTRL_C_KILLS_APPLICATION);
+        }
+        catch(Exception ignore) {
+            return createCygwinTerminal(outputStream, inputStream, charset);
+        }
+    }
     
     private Terminal createCygwinTerminal(OutputStream outputStream, InputStream inputStream, Charset charset) throws IOException {
         return new CygwinTerminal(inputStream, outputStream, charset);
     }
 
     private Terminal createUnixTerminal(OutputStream outputStream, InputStream inputStream, Charset charset) throws IOException {
-        UnixTerminal unixTerminal = new UnixTerminal(inputStream, outputStream, charset);
+        UnixTerminal unixTerminal;
+        try {
+            Class<?> nativeImplementation = Class.forName("com.googlecode.lanterna.terminal.NativeUnixTerminal");
+            Constructor<?> constructor = nativeImplementation.getConstructor(InputStream.class, OutputStream.class, Charset.class, UnixLikeTerminal.CtrlCBehaviour.class);
+            unixTerminal = (UnixTerminal)constructor.newInstance(inputStream, outputStream, charset, UnixLikeTerminal.CtrlCBehaviour.CTRL_C_KILLS_APPLICATION);
+        }
+        catch(Exception ignore) {
+            unixTerminal = new UnixTerminal(inputStream, outputStream, charset);
+        }
         if(mouseCaptureMode != null) {
             unixTerminal.setMouseCaptureMode(mouseCaptureMode);
         }
