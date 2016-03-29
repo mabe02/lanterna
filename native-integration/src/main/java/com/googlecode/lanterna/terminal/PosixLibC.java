@@ -44,12 +44,8 @@ public interface PosixLibC extends Library {
         public int c_lflag;           // local mode flags
         public byte c_line;           // line discipline
         public byte c_cc[];           // control characters
-
-        /*
-        // Not used so taking these out
         public int c_ispeed;          // input speed
         public int c_ospeed;          // output speed
-        */
 
         public termios() {
             c_cc = new byte[NCCS];
@@ -62,9 +58,9 @@ public interface PosixLibC extends Library {
                     "c_cflag",
                     "c_lflag",
                     "c_line",
-                    "c_cc"
-                    //"c_ispeed",
-                    //"c_ospeed"
+                    "c_cc",
+                    "c_ispeed",
+                    "c_ospeed"
             );
         }
 
@@ -77,8 +73,8 @@ public interface PosixLibC extends Library {
                     ", c_lflag=" + c_lflag +
                     ", c_line=" + c_line +
                     ", c_cc=" + Arrays.toString(c_cc) +
-                  /*", c_ispeed=" + c_ispeed +
-                    ", c_ospeed=" + c_ospeed +*/
+                    ", c_ispeed=" + c_ispeed +
+                    ", c_ospeed=" + c_ospeed +
                     '}';
         }
     }

@@ -66,7 +66,7 @@ public class NativeUnixTerminalDeviceController implements TerminalDeviceControl
 
     public void registerTerminalResizeListener(final Runnable runnable) throws IOException {
         libc.signal(SIGWINCH, new sig_t() {
-            public void invoke(int signal) {
+            public synchronized void invoke(int signal) {
                 runnable.run();
             }
         });

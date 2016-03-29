@@ -18,15 +18,13 @@
  */
 package com.googlecode.lanterna.terminal.ansi;
 
+import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.input.KeyStroke;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.nio.charset.Charset;
-
-import com.googlecode.lanterna.input.KeyStroke;
 
 /**
  * UnixLikeTerminal extends from ANSITerminal and defines functionality that is common to
@@ -115,6 +113,14 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
         setupShutdownHook();
     }
 
+    @Override
+    protected TerminalSize findTerminalSize() throws IOException {
+        TerminalSize terminalSize = deviceControlStrategy.getTerminalSize();
+        if(terminalSize != null) {
+            return terminalSize;
+        }
+        return super.findTerminalSize();
+    }
 
     @Override
     public KeyStroke pollInput() throws IOException {

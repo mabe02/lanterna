@@ -186,7 +186,7 @@ public class UnixTerminal extends UnixLikeTerminal {
     }
 
     @Override
-    public TerminalSize getTerminalSize() throws IOException {
+    public TerminalSize findTerminalSize() throws IOException {
         if(terminalSizeQuerier != null) {
             return terminalSizeQuerier.queryTerminalSize();
         }

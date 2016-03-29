@@ -88,16 +88,22 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
         writeToTerminal(completeSequence);
     }
 
+    // Final because we handle the onResized logic here; extending classes should override #findTerminalSize instead
     @Override
-    public synchronized TerminalSize getTerminalSize() throws IOException {
+    public final synchronized TerminalSize getTerminalSize() throws IOException {
+        TerminalSize size = findTerminalSize();
+        onResized(size);
+        return size;
+    }
+
+    protected TerminalSize findTerminalSize() throws IOException {
         saveCursorPosition();
         setCursorPosition(5000, 5000);
         resetMemorizedCursorPosition();
         reportPosition();
         restoreCursorPosition();
-        TerminalPosition cursorPosition = waitForCursorPositionReport();
-        onResized(cursorPosition.getColumn(), cursorPosition.getRow());
-        return new TerminalSize(cursorPosition.getColumn(), cursorPosition.getRow());
+        TerminalPosition terminalPosition = waitForCursorPositionReport();
+        return new TerminalSize(terminalPosition.getColumn(), terminalPosition.getRow());
     }
 
     @Override
