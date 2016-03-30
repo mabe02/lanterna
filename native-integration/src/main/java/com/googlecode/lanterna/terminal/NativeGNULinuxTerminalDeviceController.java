@@ -11,12 +11,12 @@ import static com.googlecode.lanterna.terminal.PosixLibC.*;
 /**
  * Created by martin on 27/03/16.
  */
-public class NativeUnixTerminalDeviceController implements TerminalDeviceControlStrategy {
+public class NativeGNULinuxTerminalDeviceController implements TerminalDeviceControlStrategy {
 
     private final PosixLibC libc;
     private PosixLibC.termios savedTerminalState;
 
-    public NativeUnixTerminalDeviceController() {
+    public NativeGNULinuxTerminalDeviceController() {
         this.libc = (PosixLibC)Native.loadLibrary("c", PosixLibC.class);
         this.savedTerminalState = null;
     }
