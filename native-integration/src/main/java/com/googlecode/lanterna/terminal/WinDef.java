@@ -1,7 +1,6 @@
 package com.googlecode.lanterna.terminal;
 
-import com.sun.jna.Structure;
-import com.sun.jna.platform.win32.WinDef;
+import com.sun.jna.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -9,7 +8,55 @@ import java.util.List;
 /**
  * Created by Martin on 2016-03-27.
  */
-public class WinDefEx {
+public class WinDef {
+
+    public static final HANDLE INVALID_HANDLE_VALUE = new HANDLE(Pointer.createConstant(Pointer.SIZE == 8?-1L:4294967295L));
+
+    public static class HANDLE extends PointerType {
+        private boolean immutable;
+
+        public HANDLE() {
+        }
+
+        public HANDLE(Pointer p) {
+            this.setPointer(p);
+            this.immutable = true;
+        }
+
+        public Object fromNative(Object nativeValue, FromNativeContext context) {
+            Object o = super.fromNative(nativeValue, context);
+            return INVALID_HANDLE_VALUE.equals(o) ? INVALID_HANDLE_VALUE : o;
+        }
+
+        public void setPointer(Pointer p) {
+            if(this.immutable) {
+                throw new UnsupportedOperationException("immutable reference");
+            } else {
+                super.setPointer(p);
+            }
+        }
+
+        public String toString() {
+            return String.valueOf(this.getPointer());
+        }
+    }
+
+    public static class WORD extends IntegerType implements Comparable<WORD> {
+        public static final int SIZE = 2;
+
+        public WORD() {
+            this(0L);
+        }
+
+        public WORD(long value) {
+            super(2, value, true);
+        }
+
+        public int compareTo(WORD other) {
+            return compare(this, other);
+        }
+    }
+
     public static class COORD extends Structure {
         public short X;
         public short Y;
@@ -53,7 +100,7 @@ public class WinDefEx {
     public static class CONSOLE_SCREEN_BUFFER_INFO extends Structure {
         public COORD      dwSize;
         public COORD      dwCursorPosition;
-        public WinDef.WORD wAttributes;
+        public WORD wAttributes;
         public SMALL_RECT srWindow;
         public COORD      dwMaximumWindowSize;
 
@@ -75,5 +122,5 @@ public class WinDefEx {
         }
     }
 
-    private WinDefEx() {}
+    private WinDef() {}
 }

@@ -3,9 +3,6 @@ package com.googlecode.lanterna.terminal;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.terminal.ansi.TerminalDeviceControlStrategy;
 import com.sun.jna.Native;
-import com.sun.jna.platform.win32.Kernel32;
-import com.sun.jna.platform.win32.WinNT;
-import com.sun.jna.platform.win32.Wincon;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.win32.W32APIOptions;
 
@@ -17,15 +14,13 @@ import java.io.IOException;
 public class WindowsTerminalDeviceController implements TerminalDeviceControlStrategy {
 
     private final Wincon windowsConsole;
-    private final WinconEx extendedConsole;
-    private final WinNT.HANDLE consoleInputHandle;
-    private final WinNT.HANDLE consoleOutputHandle;
+    private final WinDef.HANDLE consoleInputHandle;
+    private final WinDef.HANDLE consoleOutputHandle;
 
     private Integer savedTerminalMode;
 
     public WindowsTerminalDeviceController() {
-        this.windowsConsole = Kernel32.INSTANCE;
-        this.extendedConsole = (WinconEx)Native.loadLibrary("kernel32", WinconEx.class, W32APIOptions.UNICODE_OPTIONS);
+        this.windowsConsole = (Wincon)Native.loadLibrary("kernel32", Wincon.class, W32APIOptions.UNICODE_OPTIONS);
         this.consoleInputHandle = windowsConsole.GetStdHandle(Wincon.STD_INPUT_HANDLE);
         this.consoleOutputHandle = windowsConsole.GetStdHandle(Wincon.STD_OUTPUT_HANDLE);
         this.savedTerminalMode = null;
@@ -81,8 +76,8 @@ public class WindowsTerminalDeviceController implements TerminalDeviceControlStr
 
     @Override
     public synchronized TerminalSize getTerminalSize() throws IOException {
-        WinDefEx.CONSOLE_SCREEN_BUFFER_INFO screenBufferInfo = new WinDefEx.CONSOLE_SCREEN_BUFFER_INFO();
-        extendedConsole.GetConsoleScreenBufferInfo(consoleOutputHandle, screenBufferInfo);
+        WinDef.CONSOLE_SCREEN_BUFFER_INFO screenBufferInfo = new WinDef.CONSOLE_SCREEN_BUFFER_INFO();
+        windowsConsole.GetConsoleScreenBufferInfo(consoleOutputHandle, screenBufferInfo);
         int columns = screenBufferInfo.srWindow.Right - screenBufferInfo.srWindow.Left + 1;
         int rows = screenBufferInfo.srWindow.Bottom - screenBufferInfo.srWindow.Top + 1;
         return new TerminalSize(columns, rows);
