@@ -1,5 +1,6 @@
 package com.googlecode.lanterna.terminal;
 
+import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.terminal.ansi.TerminalDeviceControlStrategy;
 import com.sun.jna.Native;
@@ -86,6 +87,14 @@ public class WindowsTerminalDeviceController implements TerminalDeviceControlStr
     @Override
     public void registerTerminalResizeListener(Runnable runnable) throws IOException {
         // Not implemented yet
+    }
+
+    public TerminalPosition getCursorPosition() {
+        WinDef.CONSOLE_SCREEN_BUFFER_INFO screenBufferInfo = new WinDef.CONSOLE_SCREEN_BUFFER_INFO();
+        windowsConsole.GetConsoleScreenBufferInfo(consoleOutputHandle, screenBufferInfo);
+        int column = screenBufferInfo.dwCursorPosition.X - screenBufferInfo.srWindow.Left;
+        int row = screenBufferInfo.dwCursorPosition.Y - screenBufferInfo.srWindow.Top;
+        return new TerminalPosition(column, row);
     }
 
     private int getConsoleMode() {

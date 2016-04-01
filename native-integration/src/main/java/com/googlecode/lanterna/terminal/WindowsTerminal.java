@@ -1,5 +1,6 @@
 package com.googlecode.lanterna.terminal;
 
+import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.terminal.ansi.TerminalDeviceControlStrategy;
 import com.googlecode.lanterna.terminal.ansi.UnixLikeTerminal;
 
@@ -29,5 +30,15 @@ public class WindowsTerminal extends UnixLikeTerminal {
                 terminalOutput,
                 terminalCharset,
                 terminalCtrlCBehaviour);
+    }
+
+    @Override
+    protected WindowsTerminalDeviceController getDeviceControlStrategy() {
+        return (WindowsTerminalDeviceController)super.getDeviceControlStrategy();
+    }
+
+    @Override
+    public synchronized TerminalPosition getCursorPosition() throws IOException {
+        return getDeviceControlStrategy().getCursorPosition();
     }
 }

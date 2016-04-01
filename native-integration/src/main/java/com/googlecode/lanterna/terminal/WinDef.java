@@ -100,7 +100,7 @@ public class WinDef {
     public static class CONSOLE_SCREEN_BUFFER_INFO extends Structure {
         public COORD      dwSize;
         public COORD      dwCursorPosition;
-        public WORD wAttributes;
+        public WORD       wAttributes;
         public SMALL_RECT srWindow;
         public COORD      dwMaximumWindowSize;
 
