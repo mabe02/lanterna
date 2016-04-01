@@ -79,8 +79,7 @@ public class RadioBoxList<V> extends AbstractListBox<V, RadioBoxList<V>> {
     public synchronized Result handleKeyStroke(KeyStroke keyStroke) {
         if(keyStroke.getKeyType() == KeyType.Enter ||
                 (keyStroke.getKeyType() == KeyType.Character && keyStroke.getCharacter() == ' ')) {
-            checkedIndex = getSelectedIndex();
-            invalidate();
+            setCheckedIndex( getSelectedIndex() );
             return Result.HANDLED;
         }
         return super.handleKeyStroke(keyStroke);
@@ -204,7 +203,7 @@ public class RadioBoxList<V> extends AbstractListBox<V, RadioBoxList<V>> {
             @Override
             public void run() {
                 for(Listener listener: listeners) {
-                    listener.onSelectionChanged(-1, previouslyChecked);
+                    listener.onSelectionChanged(checkedIndex, previouslyChecked);
                 }
             }
         });
