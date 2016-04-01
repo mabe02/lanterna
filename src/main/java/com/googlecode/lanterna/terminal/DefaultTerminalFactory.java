@@ -296,7 +296,7 @@ public final class DefaultTerminalFactory implements TerminalFactory {
     private Terminal createUnixTerminal(OutputStream outputStream, InputStream inputStream, Charset charset) throws IOException {
         UnixTerminal unixTerminal;
         try {
-            Class<?> nativeImplementation = Class.forName("com.googlecode.lanterna.terminal.NativeUnixTerminal");
+            Class<?> nativeImplementation = Class.forName("com.googlecode.lanterna.terminal.NativeGNULinuxTerminal");
             Constructor<?> constructor = nativeImplementation.getConstructor(InputStream.class, OutputStream.class, Charset.class, UnixLikeTerminal.CtrlCBehaviour.class);
             unixTerminal = (UnixTerminal)constructor.newInstance(inputStream, outputStream, charset, UnixLikeTerminal.CtrlCBehaviour.CTRL_C_KILLS_APPLICATION);
         }
