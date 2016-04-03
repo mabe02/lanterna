@@ -18,33 +18,19 @@
  */
 package com.googlecode.lanterna.terminal.ansi;
 
-import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.input.KeyStroke;
 
-import java.io.*;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
- * UnixLikeTerminal extends from ANSITerminal and defines functionality that is common to
- *  {@code UnixTerminal} and {@code CygwinTerminal}, like setting tty modes; echo, cbreak
- *  and minimum characters for reading as well as a shutdown hook to set the tty back to
- *  original state at the end.
- * <p>
- *  If requested, it handles Control-C input to terminate the program, and hooks
- *  into Unix WINCH signal to detect when the user has resized the terminal,
- *  if supported by the JVM.
- *
- * @author Andreas
- * @author Martin
+ * Base class for all terminals that generally behave like Unix terminals. This class defined a number of abstract
+ * methods that needs to be implemented which are all used to setup the terminal environment (turning off echo,
+ * canonical mode, etc) and also a control variable for how to react to CTRL+c keystroke.
  */
 public abstract class UnixLikeTerminal extends ANSITerminal {
-
     /**
      * This enum lets you control how Lanterna will handle a ctrl+c keystroke from the user.
      */
@@ -62,32 +48,13 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
 
     private final CtrlCBehaviour terminalCtrlCBehaviour;
     private final boolean catchSpecialCharacters;
-    private final File ttyDev;
-    private String sttyStatusToRestore;
 
-    /**
-     * Creates a UnixTerminal using a specified input stream, output stream and character set, with a custom size
-     * querier instead of using the default one. This way you can override size detection (if you want to force the
-     * terminal to a fixed size, for example). You also choose how you want ctrl+c key strokes to be handled.
-     *
-     * @param terminalInput Input stream to read terminal input from
-     * @param terminalOutput Output stream to write terminal output to
-     * @param terminalCharset Character set to use when converting characters to bytes
-     * @param terminalCtrlCBehaviour Special settings on how the terminal will behave, see {@code UnixTerminalMode} for more
-     * details
-     */
-    protected UnixLikeTerminal(
-            File ttyDev,
-            InputStream terminalInput,
-            OutputStream terminalOutput,
-            Charset terminalCharset,
-            CtrlCBehaviour terminalCtrlCBehaviour) throws IOException {
+    protected UnixLikeTerminal(InputStream terminalInput,
+                            OutputStream terminalOutput,
+                            Charset terminalCharset,
+                            CtrlCBehaviour terminalCtrlCBehaviour) throws IOException {
 
-        super(terminalInput,
-                terminalOutput,
-                terminalCharset);
-
-        this.ttyDev = ttyDev;
+        super(terminalInput, terminalOutput, terminalCharset);
         this.terminalCtrlCBehaviour = terminalCtrlCBehaviour;
 
         //Make sure to set an initial size
@@ -118,29 +85,6 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
         setupShutdownHook();
     }
 
-    private void registerTerminalResizeListener(final Runnable onResize) throws IOException {
-        try {
-            Class<?> signalClass = Class.forName("sun.misc.Signal");
-            for(Method m : signalClass.getDeclaredMethods()) {
-                if("handle".equals(m.getName())) {
-                    Object windowResizeHandler = Proxy.newProxyInstance(getClass().getClassLoader(), new Class[]{Class.forName("sun.misc.SignalHandler")}, new InvocationHandler() {
-                        @Override
-                        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                            if("handle".equals(method.getName())) {
-                                onResize.run();
-                            }
-                            return null;
-                        }
-                    });
-                    m.invoke(null, signalClass.getConstructor(String.class).newInstance("WINCH"), windowResizeHandler);
-                }
-            }
-        }
-        catch(Throwable ignore) {
-            // We're probably running on a non-Sun JVM and there's no way to catch signals without resorting to native
-            // code integration
-        }
-    }
 
     @Override
     public KeyStroke pollInput() throws IOException {
@@ -162,34 +106,21 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
         return terminalCtrlCBehaviour;
     }
 
-    private void isCtrlC(KeyStroke key) throws IOException {
-        if(key != null
-                && terminalCtrlCBehaviour == CtrlCBehaviour.CTRL_C_KILLS_APPLICATION
-                && key.getCharacter() != null
-                && key.getCharacter() == 'c'
-                && !key.isAltDown()
-                && key.isCtrlDown()) {
-   
-            exitPrivateMode();
-            System.exit(1);
-        }
-    }
+    protected abstract void registerTerminalResizeListener(Runnable onResize) throws IOException;
 
     /**
      * Stores the current terminal device settings (the ones that are modified through this interface) so that they can
      * be restored later using {@link #restoreTerminalSettings()}
      */
-    private void saveTerminalSettings() throws IOException {
-        sttyStatusToRestore = exec(getSTTYCommand(), "-g").trim();
-    }
+    protected abstract void saveTerminalSettings() throws IOException;
 
     /**
      * Restores the terminal settings from last time {@link #saveTerminalSettings()} was called
      */
-    private void restoreTerminalSettings() throws IOException {
-        if(sttyStatusToRestore != null) {
-            exec(getSTTYCommand(), sttyStatusToRestore);
-        }
+    protected abstract void restoreTerminalSettings() throws IOException;
+
+    private void restoreTerminalSettingsAndKeyStrokeSignals() throws IOException {
+        restoreTerminalSettings();
         if(catchSpecialCharacters) {
             keyStrokeSignalsEnabled(true);
         }
@@ -201,9 +132,7 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
      * input event, put it on the input queue and then depending on the code decide what to do with it.
      * @param enabled {@code true} if key echo should be enabled, {@code false} otherwise
      */
-    private void keyEchoEnabled(boolean enabled) throws IOException {
-        exec(getSTTYCommand(), enabled ? "echo" : "-echo");
-    }
+    protected abstract void keyEchoEnabled(boolean enabled) throws IOException;
 
     /**
      * In canonical mode, data are accumulated in a line editing buffer, and do not become "available for reading" until
@@ -212,12 +141,7 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
      * so it will attempt to turn canonical mode off on initialization.
      * @param enabled {@code true} if canonical input mode should be enabled, {@code false} otherwise
      */
-    private void canonicalMode(boolean enabled) throws IOException {
-        exec(getSTTYCommand(), enabled ? "icanon" : "-icanon");
-        if(!enabled) {
-            exec(getSTTYCommand(), "min", "1");
-        }
-    }
+    protected abstract void canonicalMode(boolean enabled) throws IOException;
 
     /**
      * This method causes certain keystrokes (at the moment only ctrl+c) to be passed in to the program as a regular
@@ -229,14 +153,20 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
      * Please note that this method is called automatically by lanterna to disable signals unless you define a system
      * property "com.googlecode.lanterna.terminal.UnixTerminal.catchSpecialCharacters" and set it to the string "false".
      * @throws IOException If there was an I/O error when attempting to disable special characters
-     * @see com.googlecode.lanterna.terminal.ansi.UnixLikeTerminal.CtrlCBehaviour
+     * @see UnixLikeTTYTerminal.CtrlCBehaviour
      */
-    private void keyStrokeSignalsEnabled(boolean enabled) throws IOException {
-        if(enabled) {
-            exec(getSTTYCommand(), "intr", "^C");
-        }
-        else {
-            exec(getSTTYCommand(), "intr", "undef");
+    protected abstract void keyStrokeSignalsEnabled(boolean enabled) throws IOException;
+
+    private void isCtrlC(KeyStroke key) throws IOException {
+        if(key != null
+                && terminalCtrlCBehaviour == CtrlCBehaviour.CTRL_C_KILLS_APPLICATION
+                && key.getCharacter() != null
+                && key.getCharacter() == 'c'
+                && !key.isAltDown()
+                && key.isCtrlDown()) {
+
+            exitPrivateMode();
+            System.exit(1);
         }
     }
 
@@ -253,52 +183,11 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
                 catch(IllegalStateException ignored) {} // still possible!
 
                 try {
-                    restoreTerminalSettings();
+                    restoreTerminalSettingsAndKeyStrokeSignals();
                 }
                 catch(IOException ignored) {}
             }
         });
     }
 
-    protected String runSTTYCommand(String... parameters) throws IOException {
-        List<String> commandLine = new ArrayList<String>(Arrays.asList(
-                getSTTYCommand()));
-        commandLine.addAll(Arrays.asList(parameters));
-        return exec(commandLine.toArray(new String[commandLine.size()]));
-    }
-
-    protected String exec(String... cmd) throws IOException {
-        if (ttyDev != null) {
-            //Here's what we try to do, but that is Java 7+ only:
-            // processBuilder.redirectInput(ProcessBuilder.Redirect.from(ttyDev));
-            //instead, for Java 6, we join the cmd into a scriptlet with redirection
-            //and replace cmd by a call to sh with the scriptlet:
-            StringBuilder sb = new StringBuilder();
-            for (String arg : cmd) { sb.append(arg).append(' '); }
-            sb.append("< ").append(ttyDev);
-            cmd = new String[] { "sh", "-c", sb.toString() };
-        }
-        ProcessBuilder pb = new ProcessBuilder(cmd);
-        Process process = pb.start();
-        ByteArrayOutputStream stdoutBuffer = new ByteArrayOutputStream();
-        InputStream stdout = process.getInputStream();
-        int readByte = stdout.read();
-        while(readByte >= 0) {
-            stdoutBuffer.write(readByte);
-            readByte = stdout.read();
-        }
-        ByteArrayInputStream stdoutBufferInputStream = new ByteArrayInputStream(stdoutBuffer.toByteArray());
-        BufferedReader reader = new BufferedReader(new InputStreamReader(stdoutBufferInputStream));
-        StringBuilder builder = new StringBuilder();
-        String line;
-        while((line = reader.readLine()) != null) {
-            builder.append(line);
-        }
-        reader.close();
-        return builder.toString();
-    }
-
-    private String getSTTYCommand() {
-        return "/bin/stty";
-    }
 }

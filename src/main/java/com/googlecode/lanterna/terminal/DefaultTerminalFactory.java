@@ -20,7 +20,7 @@ package com.googlecode.lanterna.terminal;
 
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.terminal.ansi.CygwinTerminal;
-import com.googlecode.lanterna.terminal.ansi.UnixLikeTerminal;
+import com.googlecode.lanterna.terminal.ansi.UnixLikeTTYTerminal;
 import com.googlecode.lanterna.terminal.ansi.UnixTerminal;
 import com.googlecode.lanterna.terminal.swing.*;
 
@@ -281,8 +281,8 @@ public final class DefaultTerminalFactory implements TerminalFactory {
     private Terminal createWindowsTerminal() throws IOException {
         try {
             Class<?> nativeImplementation = Class.forName("com.googlecode.lanterna.terminal.WindowsTerminal");
-            Constructor<?> constructor = nativeImplementation.getConstructor(InputStream.class, OutputStream.class, Charset.class, UnixLikeTerminal.CtrlCBehaviour.class);
-            return (Terminal)constructor.newInstance(inputStream, outputStream, charset, UnixLikeTerminal.CtrlCBehaviour.CTRL_C_KILLS_APPLICATION);
+            Constructor<?> constructor = nativeImplementation.getConstructor(InputStream.class, OutputStream.class, Charset.class, UnixLikeTTYTerminal.CtrlCBehaviour.class);
+            return (Terminal)constructor.newInstance(inputStream, outputStream, charset, UnixLikeTTYTerminal.CtrlCBehaviour.CTRL_C_KILLS_APPLICATION);
         }
         catch(Exception ignore) {
             return createCygwinTerminal(outputStream, inputStream, charset);
@@ -297,8 +297,8 @@ public final class DefaultTerminalFactory implements TerminalFactory {
         UnixTerminal unixTerminal;
         try {
             Class<?> nativeImplementation = Class.forName("com.googlecode.lanterna.terminal.NativeGNULinuxTerminal");
-            Constructor<?> constructor = nativeImplementation.getConstructor(InputStream.class, OutputStream.class, Charset.class, UnixLikeTerminal.CtrlCBehaviour.class);
-            unixTerminal = (UnixTerminal)constructor.newInstance(inputStream, outputStream, charset, UnixLikeTerminal.CtrlCBehaviour.CTRL_C_KILLS_APPLICATION);
+            Constructor<?> constructor = nativeImplementation.getConstructor(InputStream.class, OutputStream.class, Charset.class, UnixLikeTTYTerminal.CtrlCBehaviour.class);
+            unixTerminal = (UnixTerminal)constructor.newInstance(inputStream, outputStream, charset, UnixLikeTTYTerminal.CtrlCBehaviour.CTRL_C_KILLS_APPLICATION);
         }
         catch(Exception ignore) {
             unixTerminal = new UnixTerminal(inputStream, outputStream, charset);

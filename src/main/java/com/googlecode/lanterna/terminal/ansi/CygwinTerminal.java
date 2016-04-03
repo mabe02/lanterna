@@ -40,7 +40,7 @@ import java.util.regex.Pattern;
  * @author Martin
  * @author Andreas
  */
-public class CygwinTerminal extends UnixLikeTerminal {
+public class CygwinTerminal extends UnixLikeTTYTerminal {
 
     private static final String STTY_LOCATION = findProgram("stty.exe");
     private static final Pattern STTY_SIZE_PATTERN = Pattern.compile(".*rows ([0-9]+);.*columns ([0-9]+);.*");
