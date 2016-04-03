@@ -24,11 +24,28 @@ import com.googlecode.lanterna.TextColor;
 import java.util.EnumSet;
 
 /**
- * ThemeStyle is the lowest entry in the theme hierarchy, containing the actual colors and SGRs to use.
+ * ThemeStyle is the lowest entry in the theme hierarchy, containing the actual colors and SGRs to use. When drawing a
+ * component, you would pick out a {@link ThemeDefinition} that applies to the whole component and then choose to
+ * activate individual {@link ThemeStyle}s when drawing the different parts of the component.
  * @author Martin
  */
 public interface ThemeStyle {
+    /**
+     * Returns the foreground color associated with this style
+     * @return foreground color associated with this style
+     */
     TextColor getForeground();
+
+    /**
+     * Returns the background color associated with this style
+     * @return background color associated with this style
+     */
     TextColor getBackground();
+
+    /**
+     * Returns the set of SGR flags associated with this style. This {@code EnumSet} is either unmodifiable or a copy so
+     * altering it will not change the theme in any way.
+     * @return SGR flags associated with this style
+     */
     EnumSet<SGR> getSGRs();
 }

@@ -235,11 +235,11 @@ public final class PropertiesTheme implements Theme {
             while(iterator.hasPrevious()) {
                 ThemeTreeNode node = iterator.previous();
                 if(node.sgrMap.containsKey(name)) {
-                    return node.sgrMap.get(name);
+                    return EnumSet.copyOf(node.sgrMap.get(name));
                 }
             }
             if(!name.equals(STYLE_NORMAL)) {
-                return new StyleImpl(path, STYLE_NORMAL).getSGRs();
+                return EnumSet.copyOf(new StyleImpl(path, STYLE_NORMAL).getSGRs());
             }
             return EnumSet.noneOf(SGR.class);
         }
