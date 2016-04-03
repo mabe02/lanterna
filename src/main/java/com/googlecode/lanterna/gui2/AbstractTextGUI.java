@@ -109,10 +109,7 @@ public abstract class AbstractTextGUI implements TextGUI {
         }
     }
 
-    /**
-     * Returns the theme currently assigned to this {@link TextGUI}
-     * @return Currently active {@link Theme}
-     */
+    @Override
     public Theme getTheme() {
         return guiTheme;
     }

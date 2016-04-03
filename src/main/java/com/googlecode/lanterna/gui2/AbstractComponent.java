@@ -97,9 +97,12 @@ public abstract class AbstractComponent<T extends Component> implements Componen
     @Override
     public synchronized ComponentRenderer<T> getRenderer() {
         if(renderer == null) {
-            renderer = createDefaultRenderer();
+            renderer = getTextGUI().getTheme().getDefinition(getClass()).getRenderer(selfClass());
             if(renderer == null) {
-                throw new IllegalStateException(getClass() + " returns a null default renderer");
+                renderer = createDefaultRenderer();
+                if(renderer == null) {
+                    throw new IllegalStateException(getClass() + " returned a null default renderer");
+                }
             }
         }
         return renderer;
@@ -164,16 +167,6 @@ public abstract class AbstractComponent<T extends Component> implements Componen
 
     @Override
     public final synchronized void draw(final TextGUIGraphics graphics) {
-        if(getRenderer() == null) {
-            ComponentRenderer<T> renderer = graphics.getThemeDefinition(getClass()).getRenderer(selfClass());
-            if(renderer == null) {
-                renderer = createDefaultRenderer();
-                if(renderer == null) {
-                    throw new IllegalStateException(getClass() + " returned a null default renderer");
-                }
-            }
-            setRenderer(renderer);
-        }
         //Delegate drawing the component to the renderer
         setSize(graphics.getSize());
         onBeforeDrawing();
