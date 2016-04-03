@@ -191,6 +191,6 @@ public class UnixTerminal extends UnixLikeTerminal {
             return terminalSizeQuerier.queryTerminalSize();
         }
         
-        return super.getTerminalSize();
+        return super.findTerminalSize();
     }
 }
