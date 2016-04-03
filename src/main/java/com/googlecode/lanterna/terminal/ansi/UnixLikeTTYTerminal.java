@@ -69,6 +69,18 @@ public abstract class UnixLikeTTYTerminal extends UnixLikeTerminal {
                 terminalCtrlCBehaviour);
 
         this.ttyDev = ttyDev;
+
+        // Take ownership of the terminal
+        realAquire();
+    }
+
+    @Override
+    protected void aquire() throws IOException {
+        // Hack!
+    }
+
+    private void realAquire() throws IOException {
+        super.aquire();
     }
 
     @Override

@@ -55,19 +55,31 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
                             CtrlCBehaviour terminalCtrlCBehaviour) throws IOException {
 
         super(terminalInput, terminalOutput, terminalCharset);
-        this.terminalCtrlCBehaviour = terminalCtrlCBehaviour;
 
+        if("false".equals(System.getProperty("com.googlecode.lanterna.terminal.UnixTerminal.catchSpecialCharacters", "").trim().toLowerCase())) {
+            catchSpecialCharacters = false;
+        }
+        else {
+            catchSpecialCharacters = true;
+        }
+        this.terminalCtrlCBehaviour = terminalCtrlCBehaviour;
+        aquire();
+    }
+
+    /**
+     * Effectively taking over the terminal and enabling it for Lanterna to use, by turning off echo and canonical mode,
+     * adding resize listeners and optionally trap unix signals. This should be called automatically by the constructor
+     * of any end-user class extending from {@link UnixLikeTerminal}
+     * @throws IOException If there was an I/O error
+     */
+    protected void aquire() throws IOException {
         //Make sure to set an initial size
         onResized(80, 24);
 
         saveTerminalSettings();
         canonicalMode(false);
         keyEchoEnabled(false);
-        if("false".equals(System.getProperty("com.googlecode.lanterna.terminal.UnixTerminal.catchSpecialCharacters", "").trim().toLowerCase())) {
-            catchSpecialCharacters = false;
-        }
-        else {
-            catchSpecialCharacters = true;
+        if(catchSpecialCharacters) {
             keyStrokeSignalsEnabled(false);
         }
         registerTerminalResizeListener(new Runnable() {
