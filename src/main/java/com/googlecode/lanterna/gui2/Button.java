@@ -18,6 +18,7 @@
  */
 package com.googlecode.lanterna.gui2;
 
+import com.googlecode.lanterna.Symbols;
 import com.googlecode.lanterna.TerminalTextUtils;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
@@ -201,6 +202,47 @@ public class Button extends AbstractInteractableComponent<Button> {
                 graphics.applyThemeStyle(getThemeDefinition(graphics).getNormal());
             }
             graphics.putString(0, 0, button.getLabel());
+        }
+    }
+
+    public static class BorderedButtonRenderer implements ButtonRenderer {
+        @Override
+        public TerminalPosition getCursorLocation(Button component) {
+            return null;
+        }
+
+        @Override
+        public TerminalSize getPreferredSize(Button component) {
+            return new TerminalSize(TerminalTextUtils.getColumnWidth(component.getLabel()) + 5, 4);
+        }
+
+        @Override
+        public void drawComponent(TextGUIGraphics graphics, Button button) {
+            ThemeDefinition themeDefinition = getThemeDefinition(graphics);
+            graphics.applyThemeStyle(themeDefinition.getNormal());
+            TerminalSize size = graphics.getSize();
+            graphics.drawLine(1, 0, size.getColumns() - 3, 0, Symbols.SINGLE_LINE_HORIZONTAL);
+            graphics.drawLine(1, size.getRows() - 2, size.getColumns() - 3, size.getRows() - 2, Symbols.SINGLE_LINE_HORIZONTAL);
+            graphics.drawLine(0, 1, 0, size.getRows() - 3, Symbols.SINGLE_LINE_VERTICAL);
+            graphics.drawLine(size.getColumns() - 2, 1, size.getColumns() - 2, size.getRows() - 3, Symbols.SINGLE_LINE_VERTICAL);
+            graphics.setCharacter(0, 0, Symbols.SINGLE_LINE_TOP_LEFT_CORNER);
+            graphics.setCharacter(size.getColumns() - 2, 0, Symbols.SINGLE_LINE_TOP_RIGHT_CORNER);
+            graphics.setCharacter(size.getColumns() - 2, size.getRows() - 2, Symbols.SINGLE_LINE_BOTTOM_RIGHT_CORNER);
+            graphics.setCharacter(0, size.getRows() - 2, Symbols.SINGLE_LINE_BOTTOM_LEFT_CORNER);
+
+            // Fill the inner part of the box
+            graphics.drawLine(1, 1, size.getColumns() - 3, 1, ' ');
+
+            // Draw the text inside the button
+            if(button.isFocused()) {
+                graphics.applyThemeStyle(themeDefinition.getActive());
+            }
+            graphics.putString(2, 1, TerminalTextUtils.fitString(button.getLabel(), size.getColumns() - 5));
+
+            // Draw the shadow
+            graphics.applyThemeStyle(themeDefinition.getInsensitive());
+            graphics.drawLine(1, size.getRows() - 1, size.getColumns() - 1, size.getRows() - 1, ' ');
+            graphics.drawLine(size.getColumns() - 1, 1, size.getColumns() - 1, size.getRows() - 2, ' ');
         }
     }
 
