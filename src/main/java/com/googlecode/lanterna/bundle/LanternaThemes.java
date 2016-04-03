@@ -64,7 +64,8 @@ public class LanternaThemes {
         else if(name.isEmpty()) {
             throw new IllegalArgumentException("Name cannot be empty");
         }
-        if(REGISTERED_THEMES.putIfAbsent(name, theme) != theme) {
+        Theme result = REGISTERED_THEMES.putIfAbsent(name, theme);
+        if(result != null && result != theme) {
             throw new IllegalArgumentException("There is already a theme registered with the name '" + name + "'");
         }
     }
