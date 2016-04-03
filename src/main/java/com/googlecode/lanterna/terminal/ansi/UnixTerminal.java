@@ -132,7 +132,7 @@ public class UnixTerminal extends UnixLikeTerminal {
             UnixTerminalSizeQuerier customSizeQuerier,
             CtrlCBehaviour terminalCtrlCBehaviour) throws IOException {
 
-        this(new STTYTerminalDeviceController(new File("/dev/tty")),
+        this(new File("/dev/tty"),
                 terminalInput,
                 terminalOutput,
                 terminalCharset,
@@ -140,43 +140,15 @@ public class UnixTerminal extends UnixLikeTerminal {
                 terminalCtrlCBehaviour);
     }
 
-    /**
-     * Creates a UnixTerminal using a specified input stream, output stream and character set, with a custom size
-     * querier instead of using the default one. This way you can override size detection (if you want to force the
-     * terminal to a fixed size, for example). You also choose how you want ctrl+c key strokes to be handled.
-     *
-     * @param deviceController Terminal device controller to use instead of the default one
-     * @param terminalInput Input stream to read terminal input from
-     * @param terminalOutput Output stream to write terminal output to
-     * @param terminalCharset Character set to use when converting characters to bytes
-     * @param terminalCtrlCBehaviour Special settings on how the terminal will behave, see {@code UnixTerminalMode} for more
-     * details
-     * @throws java.io.IOException If there was an I/O error initializing the terminal
-     */
-    public UnixTerminal(
-            TerminalDeviceControlStrategy deviceController,
-            InputStream terminalInput,
-            OutputStream terminalOutput,
-            Charset terminalCharset,
-            CtrlCBehaviour terminalCtrlCBehaviour) throws IOException {
-
-        this(deviceController,
-                terminalInput,
-                terminalOutput,
-                terminalCharset,
-                null,
-                terminalCtrlCBehaviour);
-    }
-
     private UnixTerminal(
-            TerminalDeviceControlStrategy deviceController,
+            File terminalDevice,
             InputStream terminalInput,
             OutputStream terminalOutput,
             Charset terminalCharset,
             UnixTerminalSizeQuerier customSizeQuerier,
             CtrlCBehaviour terminalCtrlCBehaviour) throws IOException {
 
-        super(deviceController,
+        super(terminalDevice,
                 terminalInput,
                 terminalOutput,
                 terminalCharset,

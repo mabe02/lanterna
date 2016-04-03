@@ -21,10 +21,14 @@ package com.googlecode.lanterna.terminal.ansi;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.input.KeyStroke;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * UnixLikeTerminal extends from ANSITerminal and defines functionality that is common to
@@ -56,9 +60,10 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
         CTRL_C_KILLS_APPLICATION,
     }
 
-    private final TerminalDeviceControlStrategy deviceControlStrategy;
     private final CtrlCBehaviour terminalCtrlCBehaviour;
     private final boolean catchSpecialCharacters;
+    private final File ttyDev;
+    private String sttyStatusToRestore;
 
     /**
      * Creates a UnixTerminal using a specified input stream, output stream and character set, with a custom size
@@ -72,7 +77,7 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
      * details
      */
     protected UnixLikeTerminal(
-            TerminalDeviceControlStrategy deviceControlStrategy,
+            File ttyDev,
             InputStream terminalInput,
             OutputStream terminalOutput,
             Charset terminalCharset,
@@ -82,7 +87,7 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
                 terminalOutput,
                 terminalCharset);
 
-        this.deviceControlStrategy = deviceControlStrategy;
+        this.ttyDev = ttyDev;
         this.terminalCtrlCBehaviour = terminalCtrlCBehaviour;
 
         //Make sure to set an initial size
@@ -98,7 +103,7 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
             catchSpecialCharacters = true;
             keyStrokeSignalsEnabled(false);
         }
-        deviceControlStrategy.registerTerminalResizeListener(new Runnable() {
+        registerTerminalResizeListener(new Runnable() {
             @Override
             public void run() {
                 // This will trigger a resize notification as the size will be different than before
@@ -113,13 +118,28 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
         setupShutdownHook();
     }
 
-    @Override
-    protected TerminalSize findTerminalSize() throws IOException {
-        TerminalSize terminalSize = deviceControlStrategy.getTerminalSize();
-        if(terminalSize != null) {
-            return terminalSize;
+    private void registerTerminalResizeListener(final Runnable onResize) throws IOException {
+        try {
+            Class<?> signalClass = Class.forName("sun.misc.Signal");
+            for(Method m : signalClass.getDeclaredMethods()) {
+                if("handle".equals(m.getName())) {
+                    Object windowResizeHandler = Proxy.newProxyInstance(getClass().getClassLoader(), new Class[]{Class.forName("sun.misc.SignalHandler")}, new InvocationHandler() {
+                        @Override
+                        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                            if("handle".equals(method.getName())) {
+                                onResize.run();
+                            }
+                            return null;
+                        }
+                    });
+                    m.invoke(null, signalClass.getConstructor(String.class).newInstance("WINCH"), windowResizeHandler);
+                }
+            }
         }
-        return super.findTerminalSize();
+        catch(Throwable ignore) {
+            // We're probably running on a non-Sun JVM and there's no way to catch signals without resorting to native
+            // code integration
+        }
     }
 
     @Override
@@ -136,10 +156,6 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
         KeyStroke key = super.readInput();
         isCtrlC(key);
         return key;
-    }
-
-    protected TerminalDeviceControlStrategy getDeviceControlStrategy() {
-        return deviceControlStrategy;
     }
 
     protected CtrlCBehaviour getTerminalCtrlCBehaviour() {
@@ -164,14 +180,16 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
      * be restored later using {@link #restoreTerminalSettings()}
      */
     private void saveTerminalSettings() throws IOException {
-        deviceControlStrategy.saveTerminalSettings();
+        sttyStatusToRestore = exec(getSTTYCommand(), "-g").trim();
     }
 
     /**
      * Restores the terminal settings from last time {@link #saveTerminalSettings()} was called
      */
     private void restoreTerminalSettings() throws IOException {
-        deviceControlStrategy.restoreTerminalSettings();
+        if(sttyStatusToRestore != null) {
+            exec(getSTTYCommand(), sttyStatusToRestore);
+        }
         if(catchSpecialCharacters) {
             keyStrokeSignalsEnabled(true);
         }
@@ -184,7 +202,7 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
      * @param enabled {@code true} if key echo should be enabled, {@code false} otherwise
      */
     private void keyEchoEnabled(boolean enabled) throws IOException {
-        deviceControlStrategy.keyEchoEnabled(enabled);
+        exec(getSTTYCommand(), enabled ? "echo" : "-echo");
     }
 
     /**
@@ -195,7 +213,10 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
      * @param enabled {@code true} if canonical input mode should be enabled, {@code false} otherwise
      */
     private void canonicalMode(boolean enabled) throws IOException {
-        deviceControlStrategy.canonicalMode(enabled);
+        exec(getSTTYCommand(), enabled ? "icanon" : "-icanon");
+        if(!enabled) {
+            exec(getSTTYCommand(), "min", "1");
+        }
     }
 
     /**
@@ -211,7 +232,12 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
      * @see com.googlecode.lanterna.terminal.ansi.UnixLikeTerminal.CtrlCBehaviour
      */
     private void keyStrokeSignalsEnabled(boolean enabled) throws IOException {
-        deviceControlStrategy.keyStrokeSignalsEnabled(enabled);
+        if(enabled) {
+            exec(getSTTYCommand(), "intr", "^C");
+        }
+        else {
+            exec(getSTTYCommand(), "intr", "undef");
+        }
     }
 
     private void setupShutdownHook() {
@@ -232,5 +258,47 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
                 catch(IOException ignored) {}
             }
         });
+    }
+
+    protected String runSTTYCommand(String... parameters) throws IOException {
+        List<String> commandLine = new ArrayList<String>(Arrays.asList(
+                getSTTYCommand()));
+        commandLine.addAll(Arrays.asList(parameters));
+        return exec(commandLine.toArray(new String[commandLine.size()]));
+    }
+
+    protected String exec(String... cmd) throws IOException {
+        if (ttyDev != null) {
+            //Here's what we try to do, but that is Java 7+ only:
+            // processBuilder.redirectInput(ProcessBuilder.Redirect.from(ttyDev));
+            //instead, for Java 6, we join the cmd into a scriptlet with redirection
+            //and replace cmd by a call to sh with the scriptlet:
+            StringBuilder sb = new StringBuilder();
+            for (String arg : cmd) { sb.append(arg).append(' '); }
+            sb.append("< ").append(ttyDev);
+            cmd = new String[] { "sh", "-c", sb.toString() };
+        }
+        ProcessBuilder pb = new ProcessBuilder(cmd);
+        Process process = pb.start();
+        ByteArrayOutputStream stdoutBuffer = new ByteArrayOutputStream();
+        InputStream stdout = process.getInputStream();
+        int readByte = stdout.read();
+        while(readByte >= 0) {
+            stdoutBuffer.write(readByte);
+            readByte = stdout.read();
+        }
+        ByteArrayInputStream stdoutBufferInputStream = new ByteArrayInputStream(stdoutBuffer.toByteArray());
+        BufferedReader reader = new BufferedReader(new InputStreamReader(stdoutBufferInputStream));
+        StringBuilder builder = new StringBuilder();
+        String line;
+        while((line = reader.readLine()) != null) {
+            builder.append(line);
+        }
+        reader.close();
+        return builder.toString();
+    }
+
+    private String getSTTYCommand() {
+        return "/bin/stty";
     }
 }
