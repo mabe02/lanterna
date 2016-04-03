@@ -20,6 +20,9 @@ package com.googlecode.lanterna.graphics;
 
 import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.gui2.Component;
+import com.googlecode.lanterna.gui2.ComponentRenderer;
+import com.googlecode.lanterna.gui2.WindowPostRenderer;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -41,6 +44,7 @@ public final class PropertiesTheme implements Theme {
     private static final Pattern RGB_COLOR = Pattern.compile("#[0-9a-fA-F]{6}");
 
     private final ThemeTreeNode rootNode;
+    private final WindowPostRenderer windowPostRenderer;
 
     /**
      * Creates a new {@code PropertiesTheme} that is initialized by the properties value
@@ -50,6 +54,7 @@ public final class PropertiesTheme implements Theme {
         rootNode = new ThemeTreeNode();
         rootNode.foregroundMap.put(STYLE_NORMAL, TextColor.ANSI.WHITE);
         rootNode.backgroundMap.put(STYLE_NORMAL, TextColor.ANSI.BLACK);
+        windowPostRenderer = stringToClass(properties.getProperty("postrenderer", ""), WindowPostRenderer.class);
 
         for(String key: properties.stringPropertyNames()) {
             String definition = getDefinition(key);
@@ -122,6 +127,25 @@ public final class PropertiesTheme implements Theme {
         return new DefinitionImpl(path);
     }
 
+    @Override
+    public WindowPostRenderer getDefaultPostRenderer() {
+        return windowPostRenderer;
+    }
+
+    private static <T> T stringToClass(String className, Class<T> type) {
+        if(className == null || className.trim().isEmpty()) {
+            return null;
+        }
+        try {
+            return (T)Class.forName(className).newInstance();
+        } catch (InstantiationException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     private class DefinitionImpl implements ThemeDefinition {
         final List<ThemeTreeNode> path;
@@ -185,8 +209,8 @@ public final class PropertiesTheme implements Theme {
         }
 
         @Override
-        public String getRenderer() {
-            return path.get(path.size() - 1).renderer;
+        public <T extends Component> ComponentRenderer<T> getRenderer(Class<T> type) {
+            return stringToClass(path.get(path.size() - 1).renderer, ComponentRenderer.class);
         }
     }
 
@@ -284,6 +308,9 @@ public final class PropertiesTheme implements Theme {
             }
             else if(styleComponent.toLowerCase().trim().equals("renderer")) {
                 renderer = value.trim().isEmpty() ? null : value.trim();
+            }
+            else if(styleComponent.toLowerCase().trim().equals("postrenderer")) {
+                // Don't do anything with this now, we might use it later
             }
             else {
                 throw new IllegalArgumentException("Unknown style component \"" + styleComponent + "\" in style \"" + style + "\"");

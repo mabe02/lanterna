@@ -71,31 +71,6 @@ public abstract class AbstractComponent<T extends Component> implements Componen
     protected abstract ComponentRenderer<T> createDefaultRenderer();
 
     /**
-     * This will attempt to dynamically construct a {@code ComponentRenderer} class from a string, assumed to be passed
-     * in from a theme. This makes it possible to create themes that supplies their own {@code ComponentRenderers} that
-     * can even replace the ones built into lanterna and used for the bundled components.
-     *
-     * @param className Fully qualified name of the {@code ComponentRenderer} we want to instatiate
-     * @return {@code null} if {@code className} was null, otherwise the {@code ComponentRenderer} instance
-     * @throws RuntimeException If there were any problems instatiating the class
-     */
-    @SuppressWarnings("unchecked")
-    protected ComponentRenderer<T> getRendererFromTheme(String className) {
-        if(className == null) {
-            return null;
-        }
-        try {
-            return (ComponentRenderer<T>)Class.forName(className).newInstance();
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
      * Takes a {@code Runnable} and immediately executes it if this is called on the designated GUI thread, otherwise
      * schedules it for later invocation.
      * @param runnable {@code Runnable} to execute on the GUI thread
@@ -190,7 +165,7 @@ public abstract class AbstractComponent<T extends Component> implements Componen
     @Override
     public final synchronized void draw(final TextGUIGraphics graphics) {
         if(getRenderer() == null) {
-            ComponentRenderer<T> renderer = getRendererFromTheme(graphics.getThemeDefinition(getClass()).getRenderer());
+            ComponentRenderer<T> renderer = graphics.getThemeDefinition(getClass()).getRenderer(selfClass());
             if(renderer == null) {
                 renderer = createDefaultRenderer();
                 if(renderer == null) {
@@ -338,5 +313,10 @@ public abstract class AbstractComponent<T extends Component> implements Componen
     @SuppressWarnings("unchecked")
     protected T self() {
         return (T)this;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Class<T> selfClass() {
+        return (Class<T>)getClass();
     }
 }

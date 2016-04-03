@@ -40,6 +40,7 @@ public abstract class AbstractWindow extends AbstractBasePane implements Window 
     private TerminalPosition lastKnownPosition;
     private TerminalPosition contentOffset;
     private Set<Hint> hints;
+    private WindowPostRenderer windowPostRenderer;
     private boolean closeWindowWithEscape;
 
     /**
@@ -168,6 +169,20 @@ public abstract class AbstractWindow extends AbstractBasePane implements Window 
     @Override
     public Set<Hint> getHints() {
         return Collections.unmodifiableSet(hints);
+    }
+
+    @Override
+    public WindowPostRenderer getPostRenderer() {
+        return  windowPostRenderer;
+    }
+
+    /**
+     * Sets the post-renderer to use for this window. This will override the default from the GUI system (if there is
+     * one set, otherwise from the theme).
+     * @param windowPostRenderer Window post-renderer to assign to this window
+     */
+    public void setWindowPostRenderer(WindowPostRenderer windowPostRenderer) {
+        this.windowPostRenderer = windowPostRenderer;
     }
 
     @Override

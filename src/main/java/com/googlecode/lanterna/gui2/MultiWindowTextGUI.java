@@ -71,8 +71,8 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
         this(guiThreadFactory,
                 screen,
                 new DefaultWindowManager(),
-                new WindowShadowRenderer(),
-                new EmptySpace(TextColor.ANSI.BLUE));
+                null,
+                new GUIBackdrop());
     }
 
     /**
@@ -104,7 +104,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
             WindowManager windowManager,
             Component background) {
 
-        this(screen, windowManager, new WindowShadowRenderer(), background);
+        this(screen, windowManager, null, background);
     }
 
     /**
@@ -261,8 +261,16 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
 
                 graphics.drawImage(window.getPosition(), textImage);
 
-                if (postRenderer != null && !window.getHints().contains(Window.Hint.NO_POST_RENDERING)) {
-                    postRenderer.postRender(graphics, this, window);
+                if(!window.getHints().contains(Window.Hint.NO_POST_RENDERING)) {
+                    if (window.getPostRenderer() != null) {
+                        window.getPostRenderer().postRender(graphics, this, window);
+                    }
+                    else if (postRenderer != null) {
+                        postRenderer.postRender(graphics, this, window);
+                    }
+                    else if (getTheme().getDefaultPostRenderer() != null) {
+                        getTheme().getDefaultPostRenderer().postRender(graphics, this, window);
+                    }
                 }
             }
         }

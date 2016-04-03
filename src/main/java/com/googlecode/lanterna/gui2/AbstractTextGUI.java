@@ -19,19 +19,15 @@
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.TerminalPosition;
-import com.googlecode.lanterna.graphics.PropertiesTheme;
+import com.googlecode.lanterna.bundle.LanternaThemes;
 import com.googlecode.lanterna.graphics.Theme;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
 
 import java.io.EOFException;
-import java.io.FileInputStream;
-
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
-import java.util.Properties;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -61,25 +57,8 @@ public abstract class AbstractTextGUI implements TextGUI {
         this.listeners = new CopyOnWriteArrayList<Listener>();
         this.blockingIO = false;
         this.dirty = false;
-        this.guiTheme = new PropertiesTheme(loadDefaultThemeProperties());
+        this.guiTheme = LanternaThemes.getDefaultTheme();
         this.textGUIThread = textGUIThreadFactory.createTextGUIThread(this);
-    }
-
-    private static Properties loadDefaultThemeProperties() {
-        Properties properties = new Properties();
-        try {
-            ClassLoader classLoader = AbstractTextGUI.class.getClassLoader();
-            InputStream resourceAsStream = classLoader.getResourceAsStream("default-theme.properties");
-            if(resourceAsStream == null) {
-                resourceAsStream = new FileInputStream("src/main/resources/default-theme.properties");
-            }
-            properties.load(resourceAsStream);
-            resourceAsStream.close();
-            return properties;
-        }
-        catch(IOException e) {
-            return properties;
-        }
     }
 
     /**
@@ -125,7 +104,17 @@ public abstract class AbstractTextGUI implements TextGUI {
 
     @Override
     public void setTheme(Theme theme) {
-        this.guiTheme = theme;
+        if(theme != null) {
+            this.guiTheme = theme;
+        }
+    }
+
+    /**
+     * Returns the theme currently assigned to this {@link TextGUI}
+     * @return Currently active {@link Theme}
+     */
+    public Theme getTheme() {
+        return guiTheme;
     }
 
     @Override

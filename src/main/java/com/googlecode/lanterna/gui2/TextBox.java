@@ -21,6 +21,7 @@ package com.googlecode.lanterna.gui2;
 import com.googlecode.lanterna.TerminalTextUtils;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.graphics.ThemeDefinition;
 import com.googlecode.lanterna.input.KeyStroke;
 
 import java.util.ArrayList;
@@ -63,7 +64,6 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
     private boolean verticalFocusSwitching;
     private final int maxLineLength;
     private int longestRow;
-    private final char unusedSpaceCharacter;
     private Character mask;
     private Pattern validationPattern;
 
@@ -136,7 +136,6 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
         this.caretPosition = TerminalPosition.TOP_LEFT_CORNER;
         this.maxLineLength = -1;
         this.longestRow = 1;    //To fit the cursor
-        this.unusedSpaceCharacter = ' ';
         this.mask = null;
         this.validationPattern = null;
         setText(initialContent);
@@ -616,6 +615,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
         private final ScrollBar verticalScrollBar;
         private final ScrollBar horizontalScrollBar;
         private boolean hideScrollBars;
+        private Character unusedSpaceCharacter;
 
         /**
          * Default constructor
@@ -625,6 +625,20 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
             verticalScrollBar = new ScrollBar(Direction.VERTICAL);
             horizontalScrollBar = new ScrollBar(Direction.HORIZONTAL);
             hideScrollBars = false;
+            unusedSpaceCharacter = null;
+        }
+
+        /**
+         * Sets the character to represent an empty untyped space in the text box. This will be an empty space by
+         * default but you can override it to anything that isn't double-width.
+         * @param unusedSpaceCharacter Character to draw in unused space of the {@link TextBox}
+         * @throws IllegalArgumentException If unusedSpaceCharacter is a double-width character
+         */
+        public void setUnusedSpaceCharacter(char unusedSpaceCharacter) {
+            if(TerminalTextUtils.isCharDoubleWidth(unusedSpaceCharacter)) {
+                throw new IllegalArgumentException("Cannot use a double-width character as the unused space character in a TextBox");
+            }
+            this.unusedSpaceCharacter = unusedSpaceCharacter;
         }
 
         @Override
@@ -732,13 +746,19 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
                     viewTopLeft = viewTopLeft.withRow(0);
                 }
             }
+            ThemeDefinition themeDefinition = graphics.getThemeDefinition(TextBox.class);
             if (component.isFocused()) {
-                graphics.applyThemeStyle(graphics.getThemeDefinition(TextBox.class).getActive());
+                graphics.applyThemeStyle(themeDefinition.getActive());
             }
             else {
-                graphics.applyThemeStyle(graphics.getThemeDefinition(TextBox.class).getNormal());
+                graphics.applyThemeStyle(themeDefinition.getNormal());
             }
-            graphics.fill(component.unusedSpaceCharacter);
+
+            Character fillCharacter = unusedSpaceCharacter;
+            if(fillCharacter == null) {
+                fillCharacter = themeDefinition.getCharacter("FILL", ' ');
+            }
+            graphics.fill(fillCharacter);
 
             if(!component.isReadOnly()) {
                 //Adjust caret position if necessary

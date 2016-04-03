@@ -18,6 +18,9 @@
  */
 package com.googlecode.lanterna.graphics;
 
+import com.googlecode.lanterna.gui2.Component;
+import com.googlecode.lanterna.gui2.ComponentRenderer;
+
 /**
  * A ThemeDefinition contains a collection of ThemeStyle:s, which defines on a lower level which colors and SGRs to
  * apply if you want to draw according to the theme. The different style names are directly inspired from GTK 2. You can
@@ -88,9 +91,11 @@ public interface ThemeDefinition {
     char getCharacter(String name, char fallback);
 
     /**
-     * Returns the class name of the ComponentRenderer attached to this definition. If none is declared, it will return
-     * {@code null} instead of going up in the hierarchy, unlike the other methods of this interface.
-     * @return Full name of the renderer class or {@code null}
+     * Returns a {@link ComponentRenderer} attached to this definition for the specified type. Generally one theme
+     * definition is linked to only one component type so it wouldn't need the type parameter to figure out what to
+     * return. unlike the other methods of this interface, it will not traverse up in the theme hierarchy if this field
+     * is not defined, instead the component will use its default component renderer.
+     * @return Renderer to use for the {@code type} component or {@code null} to use the default
      */
-    String getRenderer();
+    <T extends Component> ComponentRenderer<T> getRenderer(Class<T> type);
 }

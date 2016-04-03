@@ -18,6 +18,8 @@
  */
 package com.googlecode.lanterna.graphics;
 
+import com.googlecode.lanterna.gui2.WindowPostRenderer;
+
 /**
  * The main theme interface, from which you can retrieve theme definitions
  * @author Martin
@@ -37,4 +39,13 @@ public interface Theme {
      * @return The ThemeDefinition for the class passed in
      */
     ThemeDefinition getDefinition(Class<?> clazz);
+
+    /**
+     * Returns a post-renderer to invoke after drawing each window, unless the GUI system or individual windows has
+     * their own renderers set. If {@code null}, no post-renderer will be done (unless the GUI system or the windows
+     * has a post-renderer).
+     * @return A {@link com.googlecode.lanterna.gui2.WindowPostRenderer} to invoke after drawing each window unless
+     * overridden, or {@code null} if none
+     */
+    WindowPostRenderer getDefaultPostRenderer();
 }
