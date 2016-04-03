@@ -19,6 +19,7 @@
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.*;
+import com.googlecode.lanterna.graphics.ThemeDefinition;
 import com.googlecode.lanterna.input.KeyStroke;
 
 import java.util.ArrayList;
@@ -570,11 +571,12 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
 
         @Override
         public void drawComponent(TextGUIGraphics graphics, ComboBox<V> comboBox) {
-            graphics.setForegroundColor(TextColor.ANSI.WHITE);
-            graphics.setBackgroundColor(TextColor.ANSI.BLUE);
+            ThemeDefinition themeDefinition = graphics.getThemeDefinition(ComboBox.class);
             if(comboBox.isFocused()) {
-                graphics.setForegroundColor(TextColor.ANSI.YELLOW);
-                graphics.enableModifiers(SGR.BOLD);
+                graphics.applyThemeStyle(themeDefinition.getActive());
+            }
+            else {
+                graphics.applyThemeStyle(themeDefinition.getNormal());
             }
             graphics.fill(' ');
             int editableArea = graphics.getSize().getColumns() - 2; //This is exclusing the 'drop-down arrow'
@@ -594,11 +596,7 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
 
             String textToDraw = TerminalTextUtils.fitString(comboBox.getText(), textVisibleLeftPosition, editableArea);
             graphics.putString(0, 0, textToDraw);
-            if(comboBox.isFocused()) {
-                graphics.disableModifiers(SGR.BOLD);
-            }
-            graphics.setForegroundColor(TextColor.ANSI.BLACK);
-            graphics.setBackgroundColor(TextColor.ANSI.WHITE);
+            graphics.applyThemeStyle(themeDefinition.getInsensitive());
             graphics.putString(editableArea, 0, "|" + Symbols.ARROW_DOWN);
         }
     }
