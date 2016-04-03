@@ -38,10 +38,7 @@ public final class PropertiesTheme implements Theme {
     private static final String STYLE_SELECTED = "SELECTED";
     private static final String STYLE_ACTIVE = "ACTIVE";
     private static final String STYLE_INSENSITIVE = "INSENSITIVE";
-
     private static final Pattern STYLE_FORMAT = Pattern.compile("([a-zA-Z]+)(\\[([a-zA-Z0-9-_]+)\\])?");
-    private static final Pattern INDEXED_COLOR = Pattern.compile("#[0-9]{1,3}");
-    private static final Pattern RGB_COLOR = Pattern.compile("#[0-9a-fA-F]{6}");
 
     private final ThemeTreeNode rootNode;
     private final WindowPostRenderer windowPostRenderer;
@@ -318,23 +315,7 @@ public final class PropertiesTheme implements Theme {
         }
 
         private TextColor parseValue(String value) {
-            value = value.trim();
-            if(RGB_COLOR.matcher(value).matches()) {
-                int r = Integer.parseInt(value.substring(1, 3), 16);
-                int g = Integer.parseInt(value.substring(3, 5), 16);
-                int b = Integer.parseInt(value.substring(5, 7), 16);
-                return new TextColor.RGB(r, g, b);
-            }
-            else if(INDEXED_COLOR.matcher(value).matches()) {
-                int index = Integer.parseInt(value.substring(1));
-                return new TextColor.Indexed(index);
-            }
-            try {
-                return TextColor.ANSI.valueOf(value.toUpperCase());
-            }
-            catch(IllegalArgumentException e) {
-                throw new IllegalArgumentException("Unknown color definition \"" + value + "\"", e);
-            }
+            return TextColor.Factory.fromString(value);
         }
 
         private EnumSet<SGR> parseSGR(String value) {

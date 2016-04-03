@@ -20,6 +20,7 @@ package com.googlecode.lanterna;
 
 
 import java.awt.*;
+import java.util.regex.Pattern;
 
 /**
  * This is an abstract base class for terminal color definitions. Since there are different ways of specifying terminal
@@ -580,6 +581,52 @@ public interface TextColor {
             }
             final RGB other = (RGB) obj;
             return color.equals(other.color);
+        }
+    }
+
+    /**
+     * Utility class to instantiate colors from other types and definitions
+     */
+    class Factory {
+        private static final Pattern INDEXED_COLOR = Pattern.compile("#[0-9]{1,3}");
+        private static final Pattern RGB_COLOR = Pattern.compile("#[0-9a-fA-F]{6}");
+
+        private Factory() {}
+
+        /**
+         * Parses a string into a color. The string can have one of three formats:
+         * <ul>
+         *     <li><i>blue</i> - Constant value from the {@link ANSI} enum</li>
+         *     <li><i>#17</i> - Hash character followed by one to three numbers; picks the color with that index from
+         *     the 256 color palette</li>
+         *     <li><i>#1a1a1a</i> - Hash character followed by three hex-decimal tuples; creates an RGB color entry by
+         *     parsing the tuples as Red, Green and Blue</li>
+         * </ul>
+         * @param value The string value to parse
+         * @return A {@link TextColor} that is either an {@link ANSI}, an {@link Indexed} or an {@link RGB} depending on
+         * the format of the string, or {@code null} if {@code value} is {@code null}.
+         */
+        public static TextColor fromString(String value) {
+            if(value == null) {
+                return null;
+            }
+            value = value.trim();
+            if(RGB_COLOR.matcher(value).matches()) {
+                int r = Integer.parseInt(value.substring(1, 3), 16);
+                int g = Integer.parseInt(value.substring(3, 5), 16);
+                int b = Integer.parseInt(value.substring(5, 7), 16);
+                return new TextColor.RGB(r, g, b);
+            }
+            else if(INDEXED_COLOR.matcher(value).matches()) {
+                int index = Integer.parseInt(value.substring(1));
+                return new TextColor.Indexed(index);
+            }
+            try {
+                return TextColor.ANSI.valueOf(value.toUpperCase());
+            }
+            catch(IllegalArgumentException e) {
+                throw new IllegalArgumentException("Unknown color definition \"" + value + "\"", e);
+            }
         }
     }
 }
