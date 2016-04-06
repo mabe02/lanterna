@@ -715,6 +715,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
 
             //Draw scrollbars, if any
             if(drawVerticalScrollBar) {
+                verticalScrollBar.onAdded(component.getParent());
                 verticalScrollBar.setViewSize(realTextArea.getRows());
                 verticalScrollBar.setScrollMaximum(textBoxLineCount);
                 verticalScrollBar.setScrollPosition(viewTopLeft.getRow());
@@ -723,6 +724,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
                         new TerminalSize(1, graphics.getSize().getRows() - 1)));
             }
             if(drawHorizontalScrollBar) {
+                horizontalScrollBar.onAdded(component.getParent());
                 horizontalScrollBar.setViewSize(realTextArea.getColumns());
                 horizontalScrollBar.setScrollMaximum(component.longestRow - 1);
                 horizontalScrollBar.setScrollPosition(viewTopLeft.getColumn());
