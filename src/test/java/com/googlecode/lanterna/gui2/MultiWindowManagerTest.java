@@ -206,22 +206,21 @@ public class MultiWindowManagerTest extends TestBase {
         }
     }
 
-    private class BackgroundComponent extends AbstractComponent<BackgroundComponent> {
+    private class BackgroundComponent extends GUIBackdrop {
         @Override
-        protected ComponentRenderer<BackgroundComponent> createDefaultRenderer() {
-            return new ComponentRenderer<BackgroundComponent>() {
+        protected ComponentRenderer<EmptySpace> createDefaultRenderer() {
+            return new ComponentRenderer<EmptySpace>() {
                 @Override
-                public TerminalSize getPreferredSize(BackgroundComponent component) {
+                public TerminalSize getPreferredSize(EmptySpace component) {
                     return TerminalSize.ONE;
                 }
 
                 @Override
-                public void drawComponent(TextGUIGraphics graphics, BackgroundComponent component) {
-                    graphics.setForegroundColor(TextColor.ANSI.CYAN);
-                    graphics.setBackgroundColor(TextColor.ANSI.BLUE);
+                public void drawComponent(TextGUIGraphics graphics, EmptySpace component) {
+                    graphics.applyThemeStyle(graphics.getThemeDefinition(GUIBackdrop.class).getNormal());
                     graphics.fill(' ');
                     String text = "Press <CTRL+Tab> and <CTRL+Shift+Tab> to cycle active window";
-                    graphics.putString(graphics.getSize().getColumns() - text.length() - 4, graphics.getSize().getRows() - 1, text, SGR.BOLD);
+                    graphics.putString(graphics.getSize().getColumns() - text.length() - 4, graphics.getSize().getRows() - 1, text);
                 }
             };
         }

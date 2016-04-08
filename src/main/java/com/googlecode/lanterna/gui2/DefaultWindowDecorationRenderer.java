@@ -66,6 +66,7 @@ public class DefaultWindowDecorationRenderer implements WindowDecorationRenderer
         graphics.setCharacter(drawableArea.getColumns() - 1, drawableArea.getRows() - 1, bottomRightCorner);
 
         if(!title.isEmpty()) {
+            graphics.applyThemeStyle(themeDefinition.getActive());
             graphics.putString(2, 0, TerminalTextUtils.fitString(title, drawableArea.getColumns() - 3));
         }
 
