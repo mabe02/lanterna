@@ -19,16 +19,14 @@
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.SGR;
-import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
-import com.googlecode.lanterna.gui2.table.Table;
+import com.googlecode.lanterna.bundle.LanternaThemes;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -80,8 +78,16 @@ public class MultiWindowManagerTest extends TestBase {
         textGUI.addWindow(mainWindow);
     }
 
+    private static int nextTheme = 0;
+
     private void onNewWindow(WindowBasedTextGUI textGUI) {
         DynamicWindow window = new DynamicWindow();
+        List<String> availableThemes = new ArrayList<String>(LanternaThemes.getRegisteredThemes());
+        String themeName = availableThemes.get(nextTheme++);
+        if(nextTheme == availableThemes.size()) {
+            nextTheme = 0;
+        }
+        window.setTheme(LanternaThemes.getRegisteredTheme(themeName));
         textGUI.addWindow(window);
     }
 

@@ -97,7 +97,10 @@ public abstract class AbstractComponent<T extends Component> implements Componen
     @Override
     public synchronized ComponentRenderer<T> getRenderer() {
         if(renderer == null) {
-            renderer = getTextGUI().getTheme().getDefinition(getClass()).getRenderer(selfClass());
+            BasePane basePane = getBasePane();
+            if(basePane != null) {
+                renderer = basePane.getTheme().getDefinition(getClass()).getRenderer(selfClass());
+            }
             if(renderer == null) {
                 renderer = createDefaultRenderer();
                 if(renderer == null) {

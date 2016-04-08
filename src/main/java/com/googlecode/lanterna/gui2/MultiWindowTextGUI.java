@@ -20,6 +20,7 @@ package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.graphics.BasicTextImage;
 import com.googlecode.lanterna.graphics.TextImage;
+import com.googlecode.lanterna.graphics.Theme;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
@@ -235,7 +236,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
 
     @Override
     protected synchronized void drawGUI(TextGUIGraphics graphics) {
-        backgroundPane.draw(graphics);
+        drawBackgroundPane(graphics);
         getWindowManager().prepareWindows(this, Collections.unmodifiableList(windows), graphics.getSize());
         for(Window window: windows) {
             if (window.isVisible()) {
@@ -246,7 +247,10 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
                     textImage = new BasicTextImage(window.getDecoratedSize());
                     windowRenderBufferCache.put(window, textImage);
                 }
-                TextGUIGraphics windowGraphics = new TextGUIGraphics(this, textImage.newTextGraphics(), graphics.getTheme());
+                TextGUIGraphics windowGraphics = new TextGUIGraphics(
+                        this,
+                        textImage.newTextGraphics(),
+                        getThemeForBasePane(window, graphics));
 
                 TerminalPosition contentOffset = TerminalPosition.TOP_LEFT_CORNER;
                 if (!window.getHints().contains(Window.Hint.NO_DECORATIONS)) {
@@ -277,6 +281,19 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
 
         // Purge the render buffer cache from windows that have been removed
         windowRenderBufferCache.keySet().retainAll(windows);
+    }
+
+    private void drawBackgroundPane(TextGUIGraphics graphics) {
+        Theme theme = getThemeForBasePane(backgroundPane, graphics);
+        backgroundPane.draw(new TextGUIGraphics(this, graphics, theme));
+    }
+
+    private Theme getThemeForBasePane(BasePane window, TextGUIGraphics graphics) {
+        Theme theme = window.getTheme();
+        if(theme == null) {
+            theme = graphics.getTheme();
+        }
+        return theme;
     }
 
     @Override

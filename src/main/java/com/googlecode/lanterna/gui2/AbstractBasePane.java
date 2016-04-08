@@ -20,6 +20,7 @@ package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.graphics.Theme;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.input.MouseAction;
@@ -35,6 +36,7 @@ public abstract class AbstractBasePane implements BasePane {
     private boolean invalid;
     private boolean strictFocusChange;
     private boolean enableDirectionBasedMovements;
+    private Theme theme;
 
     protected AbstractBasePane() {
         this.contentHolder = new ContentHolder();
@@ -42,6 +44,7 @@ public abstract class AbstractBasePane implements BasePane {
         this.invalid = false;
         this.strictFocusChange = false;
         this.enableDirectionBasedMovements = true;
+        this.theme = null;
     }
 
     @Override
@@ -218,6 +221,22 @@ public abstract class AbstractBasePane implements BasePane {
     @Override
     public void setEnableDirectionBasedMovements(boolean enableDirectionBasedMovements) {
         this.enableDirectionBasedMovements = enableDirectionBasedMovements;
+    }
+
+    @Override
+    public synchronized Theme getTheme() {
+        if(theme != null) {
+            return theme;
+        }
+        else if(getTextGUI() != null) {
+            return getTextGUI().getTheme();
+        }
+        return null;
+    }
+
+    @Override
+    public synchronized void setTheme(Theme theme) {
+        this.theme = theme;
     }
 
     protected class ContentHolder extends AbstractComposite<Container> {
