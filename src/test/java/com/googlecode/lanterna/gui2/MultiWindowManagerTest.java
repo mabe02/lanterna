@@ -63,10 +63,12 @@ public class MultiWindowManagerTest extends TestBase {
         textGUI.addListener(new TextGUI.Listener() {
             @Override
             public boolean onUnhandledKeyStroke(TextGUI textGUI, KeyStroke keyStroke) {
-                if(keyStroke.isCtrlDown() && keyStroke.getKeyType() == KeyType.Tab) {
+                if((keyStroke.isCtrlDown() && keyStroke.getKeyType() == KeyType.Tab) ||
+                        keyStroke.getKeyType() == KeyType.F6) {
                     ((WindowBasedTextGUI)textGUI).cycleActiveWindow(false);
                 }
-                else if(keyStroke.isCtrlDown() && keyStroke.getKeyType() == KeyType.ReverseTab) {
+                else if((keyStroke.isCtrlDown() && keyStroke.getKeyType() == KeyType.ReverseTab) ||
+                            keyStroke.getKeyType() == KeyType.F7) {
                     ((WindowBasedTextGUI)textGUI).cycleActiveWindow(true);
                 }
                 else {
@@ -219,7 +221,7 @@ public class MultiWindowManagerTest extends TestBase {
                 public void drawComponent(TextGUIGraphics graphics, EmptySpace component) {
                     graphics.applyThemeStyle(graphics.getThemeDefinition(GUIBackdrop.class).getNormal());
                     graphics.fill(' ');
-                    String text = "Press <CTRL+Tab> and <CTRL+Shift+Tab> to cycle active window";
+                    String text = "Press <CTRL+Tab>/F6 and <CTRL+Shift+Tab>/F7 to cycle active window";
                     graphics.putString(graphics.getSize().getColumns() - text.length() - 4, graphics.getSize().getRows() - 1, text);
                 }
             };
