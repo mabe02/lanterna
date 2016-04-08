@@ -243,6 +243,16 @@ public interface Window extends BasePane {
      */
     void waitUntilClosed();
 
+    /**
+     * Returns a post-renderer the GUI system should invoke after the window has been drawn. This can be used to
+     * creating effects like shadows, overlays, etc. If this returns {@code null}, the GUI system will fall back to
+     * it's own global override and after that to the current theme. If these are all {@code null}, no post-rendering
+     * is done.
+     * @return {@link WindowPostRenderer} to invoke after this window is drawn, or {@code null} fallback to the GUI
+     * system's default.
+     */
+    WindowPostRenderer getPostRenderer();
+
     ///////////////////////////////////////////////////////////////
     //// Below here are methods from BasePane                  ////
     //// We duplicate them here to make the JavaDoc more clear ////
@@ -323,14 +333,4 @@ public interface Window extends BasePane {
      * @return The global coordinates expressed as local coordinates
      */
     TerminalPosition fromGlobal(TerminalPosition position);
-
-    /**
-     * Returns a post-renderer the GUI system should invoke after the window has been drawn. This can be used to
-     * creating effects like shadows, overlays, etc. If this returns {@code null}, the GUI system will fall back to
-     * it's own global override and after that to the current theme. If these are all {@code null}, no post-rendering
-     * is done.
-     * @return {@link WindowPostRenderer} to invoke after this window is drawn, or {@code null} fallback to the GUI
-     * system's default.
-     */
-    WindowPostRenderer getPostRenderer();
 }
