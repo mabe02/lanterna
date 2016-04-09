@@ -200,14 +200,23 @@ public class CheckBox extends AbstractInteractableComponent<CheckBox> {
             graphics.fill(' ');
             graphics.putString(4, 0, component.label);
 
-            String head = "[" + (component.isChecked() ? themeDefinition.getCharacter("MARKER", 'x') : " ") + "]";
             if(component.isFocused()) {
                 graphics.applyThemeStyle(themeDefinition.getPreLight());
             }
             else {
+                graphics.applyThemeStyle(themeDefinition.getInsensitive());
+            }
+            graphics.setCharacter(0, 0, themeDefinition.getCharacter("LEFT_BRACKET", '['));
+            graphics.setCharacter(2, 0, themeDefinition.getCharacter("RIGHT_BRACKET", ']'));
+            graphics.setCharacter(3, 0, ' ');
+
+            if(component.isFocused()) {
+                graphics.applyThemeStyle(themeDefinition.getSelected());
+            }
+            else {
                 graphics.applyThemeStyle(themeDefinition.getNormal());
             }
-            graphics.putString(0, 0, head);
+            graphics.setCharacter(1, 0, (component.isChecked() ? themeDefinition.getCharacter("MARKER", 'x') : ' '));
         }
     }
 }

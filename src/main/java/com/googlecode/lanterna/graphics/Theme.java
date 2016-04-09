@@ -18,6 +18,7 @@
  */
 package com.googlecode.lanterna.graphics;
 
+import com.googlecode.lanterna.gui2.WindowDecorationRenderer;
 import com.googlecode.lanterna.gui2.WindowPostRenderer;
 
 /**
@@ -48,4 +49,12 @@ public interface Theme {
      * overridden, or {@code null} if none
      */
     WindowPostRenderer getWindowPostRenderer();
+
+    /**
+     * Returns the {@link WindowDecorationRenderer} to use for windows drawn in this theme. If {@code null} then
+     * lanterna will fall back to use {@link com.googlecode.lanterna.gui2.DefaultWindowDecorationRenderer}.
+     *
+     * @return The decoration renderer to use for this theme, or {@code null} to use system default
+     */
+    WindowDecorationRenderer getWindowDecorationRenderer();
 }

@@ -22,6 +22,7 @@ import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.Component;
 import com.googlecode.lanterna.gui2.ComponentRenderer;
+import com.googlecode.lanterna.gui2.WindowDecorationRenderer;
 import com.googlecode.lanterna.gui2.WindowPostRenderer;
 
 import java.util.*;
@@ -42,6 +43,7 @@ public final class PropertiesTheme implements Theme {
 
     private final ThemeTreeNode rootNode;
     private final WindowPostRenderer windowPostRenderer;
+    private final WindowDecorationRenderer windowDecorationRenderer;
 
     /**
      * Creates a new {@code PropertiesTheme} that is initialized by the properties value
@@ -52,6 +54,7 @@ public final class PropertiesTheme implements Theme {
         rootNode.foregroundMap.put(STYLE_NORMAL, TextColor.ANSI.WHITE);
         rootNode.backgroundMap.put(STYLE_NORMAL, TextColor.ANSI.BLACK);
         windowPostRenderer = stringToClass(properties.getProperty("postrenderer", ""), WindowPostRenderer.class);
+        windowDecorationRenderer = stringToClass(properties.getProperty("windowdecoration", ""), WindowDecorationRenderer.class);
 
         for(String key: properties.stringPropertyNames()) {
             String definition = getDefinition(key);
@@ -127,6 +130,11 @@ public final class PropertiesTheme implements Theme {
     @Override
     public WindowPostRenderer getWindowPostRenderer() {
         return windowPostRenderer;
+    }
+
+    @Override
+    public WindowDecorationRenderer getWindowDecorationRenderer() {
+        return windowDecorationRenderer;
     }
 
     private static <T> T stringToClass(String className, Class<T> type) {
@@ -306,7 +314,8 @@ public final class PropertiesTheme implements Theme {
             else if(styleComponent.toLowerCase().trim().equals("renderer")) {
                 renderer = value.trim().isEmpty() ? null : value.trim();
             }
-            else if(styleComponent.toLowerCase().trim().equals("postrenderer")) {
+            else if(styleComponent.toLowerCase().trim().equals("postrenderer") ||
+                    styleComponent.toLowerCase().trim().equals("windowdecoration")) {
                 // Don't do anything with this now, we might use it later
             }
             else {

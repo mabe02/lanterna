@@ -1,6 +1,7 @@
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.graphics.ThemeDefinition;
 
 /**
  * Special component that is by default displayed as the background of a text gui unless you override it with something
@@ -18,8 +19,9 @@ public class GUIBackdrop extends EmptySpace {
 
             @Override
             public void drawComponent(TextGUIGraphics graphics, EmptySpace component) {
-                graphics.applyThemeStyle(graphics.getThemeDefinition(GUIBackdrop.class).getNormal());
-                graphics.fill(' ');
+                ThemeDefinition themeDefinition = graphics.getThemeDefinition(GUIBackdrop.class);
+                graphics.applyThemeStyle(themeDefinition.getNormal());
+                graphics.fill(themeDefinition.getCharacter("BACKGROUND", ' '));
             }
         };
     }

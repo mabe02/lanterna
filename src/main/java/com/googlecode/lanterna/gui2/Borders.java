@@ -255,6 +255,7 @@ public class Borders {
                         horizontalLine);
             }
 
+            graphics.applyThemeStyle(graphics.getThemeDefinition(StandardBorder.class).getActive());
             if(drawableArea.getColumns() >= TerminalTextUtils.getColumnWidth(border.getTitle()) + 4) {
                 graphics.putString(2, 0, border.getTitle());
             }
