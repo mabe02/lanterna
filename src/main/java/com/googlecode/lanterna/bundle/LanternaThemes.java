@@ -29,6 +29,7 @@ public class LanternaThemes {
         registerPropTheme("businessmachine", loadPropTheme("businessmachine-theme.properties"));
         registerPropTheme("conqueror", loadPropTheme("conqueror-theme.properties"));
         registerPropTheme("defrost", loadPropTheme("defrost-theme.properties"));
+        registerPropTheme("blaster", loadPropTheme("blaster-theme.properties"));
     }
 
     /**
