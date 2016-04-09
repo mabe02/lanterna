@@ -47,5 +47,5 @@ public interface Theme {
      * @return A {@link com.googlecode.lanterna.gui2.WindowPostRenderer} to invoke after drawing each window unless
      * overridden, or {@code null} if none
      */
-    WindowPostRenderer getDefaultPostRenderer();
+    WindowPostRenderer getWindowPostRenderer();
 }

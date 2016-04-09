@@ -125,7 +125,7 @@ public final class PropertiesTheme implements Theme {
     }
 
     @Override
-    public WindowPostRenderer getDefaultPostRenderer() {
+    public WindowPostRenderer getWindowPostRenderer() {
         return windowPostRenderer;
     }
 

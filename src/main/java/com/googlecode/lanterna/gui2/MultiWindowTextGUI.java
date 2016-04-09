@@ -272,8 +272,8 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
                     else if (postRenderer != null) {
                         postRenderer.postRender(graphics, this, window);
                     }
-                    else if (getTheme().getDefaultPostRenderer() != null) {
-                        getTheme().getDefaultPostRenderer().postRender(graphics, this, window);
+                    else if (getTheme().getWindowPostRenderer() != null) {
+                        getTheme().getWindowPostRenderer().postRender(graphics, this, window);
                     }
                 }
             }
