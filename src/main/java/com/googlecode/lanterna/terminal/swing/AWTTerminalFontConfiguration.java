@@ -71,31 +71,60 @@ public class AWTTerminalFontConfiguration {
 
     private static List<Font> getDefaultWindowsFonts() {
         return Collections.unmodifiableList(Arrays.asList(
-                new Font("Courier New", Font.PLAIN, 14), //Monospaced can look pretty bad on Windows, so let's override it
-                new Font("Monospaced", Font.PLAIN, 14)));
+                new Font("Courier New", Font.PLAIN, getFontSize()), //Monospaced can look pretty bad on Windows, so let's override it
+                new Font("Monospaced", Font.PLAIN, getFontSize())));
     }
 
     private static List<Font> getDefaultLinuxFonts() {
         return Collections.unmodifiableList(Arrays.asList(
-                new Font("DejaVu Sans Mono", Font.PLAIN, 14),
-                new Font("Monospaced", Font.PLAIN, 14),
+                new Font("DejaVu Sans Mono", Font.PLAIN, getFontSize()),
+                new Font("Monospaced", Font.PLAIN, getFontSize()),
                 //Below, these should be redundant (Monospaced is supposed to catch-all)
                 // but Java 6 seems to have issues with finding monospaced fonts sometimes
-                new Font("Ubuntu Mono", Font.PLAIN, 14),
-                new Font("FreeMono", Font.PLAIN, 14),
-                new Font("Liberation Mono", Font.PLAIN, 14),
-                new Font("VL Gothic Regular", Font.PLAIN, 14),
-                new Font("NanumGothic", Font.PLAIN, 14),
-                new Font("WenQuanYi Zen Hei Mono", Font.PLAIN, 14),
-                new Font("WenQuanYi Zen Hei", Font.PLAIN, 14),
-                new Font("AR PL UMing TW", Font.PLAIN, 14),
-                new Font("AR PL UMing HK", Font.PLAIN, 14),
-                new Font("AR PL UMing CN", Font.PLAIN, 14)));
+                new Font("Ubuntu Mono", Font.PLAIN, getFontSize()),
+                new Font("FreeMono", Font.PLAIN, getFontSize()),
+                new Font("Liberation Mono", Font.PLAIN, getFontSize()),
+                new Font("VL Gothic Regular", Font.PLAIN, getFontSize()),
+                new Font("NanumGothic", Font.PLAIN, getFontSize()),
+                new Font("WenQuanYi Zen Hei Mono", Font.PLAIN, getFontSize()),
+                new Font("WenQuanYi Zen Hei", Font.PLAIN, getFontSize()),
+                new Font("AR PL UMing TW", Font.PLAIN, getFontSize()),
+                new Font("AR PL UMing HK", Font.PLAIN, getFontSize()),
+                new Font("AR PL UMing CN", Font.PLAIN, getFontSize())));
     }
 
     private static List<Font> getDefaultFonts() {
         return Collections.unmodifiableList(Collections.singletonList(
-                new Font("Monospaced", Font.PLAIN, 14)));
+                new Font("Monospaced", Font.PLAIN, getFontSize())));
+    }
+
+    // Here we check the screen resolution on the primary monitor and make a guess at if it's high-DPI or not
+    private static Integer CHOSEN_FONT_SIZE = null;
+    private synchronized static int getFontSize() {
+        if(CHOSEN_FONT_SIZE != null) {
+            return CHOSEN_FONT_SIZE;
+        }
+        // Source: http://stackoverflow.com/questions/3680221/how-can-i-get-the-monitor-size-in-java
+        GraphicsEnvironment ge      = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice[]    gs      = ge.getScreenDevices();
+
+        // Assume the first GraphicsDevice is the primary screen (this isn't always correct but what to do?)
+        // Warning, there could be printers coming back here according to JavaDoc! Hopefully Java is reasonable and
+        // passes them in after the real monitor(s).
+        if (gs.length > 0) {
+            int primaryMonitorWidth = gs[0].getDisplayMode().getWidth();
+
+            // If the width is wider than Full HD (1080p, or 1920x1080), then assume it's high-DPI
+            if (primaryMonitorWidth > 2000) {
+                CHOSEN_FONT_SIZE = 28;
+            }
+        }
+
+        // If no size was picked, default to 14
+        if(CHOSEN_FONT_SIZE == null) {
+            CHOSEN_FONT_SIZE = 14;
+        }
+        return CHOSEN_FONT_SIZE;
     }
 
     /**
