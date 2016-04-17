@@ -404,7 +404,7 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
                 }
                 else {
                     popupWindow = new PopupWindow();
-                    popupWindow.setPosition(toGlobal(getPosition().withRelativeRow(1)));
+                    popupWindow.setPosition(toGlobal(new TerminalPosition(0, 1)));
                     ((WindowBasedTextGUI) getTextGUI()).addWindow(popupWindow);
                 }
                 break;
