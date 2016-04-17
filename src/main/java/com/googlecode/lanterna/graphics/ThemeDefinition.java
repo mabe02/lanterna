@@ -21,6 +21,8 @@ package com.googlecode.lanterna.graphics;
 import com.googlecode.lanterna.gui2.Component;
 import com.googlecode.lanterna.gui2.ComponentRenderer;
 
+import java.util.IllegalFormatException;
+
 /**
  * A ThemeDefinition contains a collection of ThemeStyle:s, which defines on a lower level which colors and SGRs to
  * apply if you want to draw according to the theme. The different style names are directly inspired from GTK 2. You can
@@ -79,6 +81,15 @@ public interface ThemeDefinition {
      * @return The {@link ThemeStyle} associated with the name, or {@code defaultValue} if there was no such style
      */
     ThemeStyle getCustom(String name, ThemeStyle defaultValue);
+
+    /**
+     * Retrieves a custom boolean property, if one is available by this name. Will return a supplied default value if
+     * no such property could be found within this {@link ThemeDefinition}.
+     * @param name Name of the boolean property to look up
+     * @param defaultValue What to return if the there is no property with this name
+     * @return The property value stored in this theme definition, parsed as a boolean
+     */
+    boolean getBooleanProperty(String name, boolean defaultValue);
 
     /**
      * Retrieves a character from this theme definition by the specified name. This method cannot return {@code null} so

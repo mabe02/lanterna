@@ -214,6 +214,15 @@ public final class PropertiesTheme implements Theme {
         }
 
         @Override
+        public boolean getBooleanProperty(String name, boolean defaultValue) {
+            String propertyValue = path.get(path.size() - 1).propertyMap.get(name);
+            if(propertyValue == null) {
+                return defaultValue;
+            }
+            return Boolean.parseBoolean(propertyValue);
+        }
+
+        @Override
         public <T extends Component> ComponentRenderer<T> getRenderer(Class<T> type) {
             return stringToClass(path.get(path.size() - 1).renderer, ComponentRenderer.class);
         }
@@ -280,6 +289,7 @@ public final class PropertiesTheme implements Theme {
         private final Map<String, TextColor> backgroundMap;
         private final Map<String, EnumSet<SGR>> sgrMap;
         private final Map<String, Character> characterMap;
+        private final Map<String, String> propertyMap;
         private String renderer;
 
         private ThemeTreeNode() {
@@ -288,6 +298,7 @@ public final class PropertiesTheme implements Theme {
             backgroundMap = new HashMap<String, TextColor>();
             sgrMap = new HashMap<String, EnumSet<SGR>>();
             characterMap = new HashMap<String, Character>();
+            propertyMap = new HashMap<String, String>();
             renderer = null;
         }
 
@@ -310,6 +321,9 @@ public final class PropertiesTheme implements Theme {
             }
             else if(styleComponent.toLowerCase().trim().equals("char")) {
                 characterMap.put(getCategory(group), value.isEmpty() ? null : value.charAt(0));
+            }
+            else if(styleComponent.toLowerCase().trim().equals("property")) {
+                propertyMap.put(getCategory(group), value.isEmpty() ? null : value.trim());
             }
             else if(styleComponent.toLowerCase().trim().equals("renderer")) {
                 renderer = value.trim().isEmpty() ? null : value.trim();
