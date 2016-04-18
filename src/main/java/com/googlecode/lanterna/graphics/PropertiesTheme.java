@@ -214,6 +214,11 @@ public final class PropertiesTheme implements Theme {
         }
 
         @Override
+        public boolean isCursorVisible() {
+            return path.get(path.size() - 1).cursorVisible;
+        }
+
+        @Override
         public boolean getBooleanProperty(String name, boolean defaultValue) {
             String propertyValue = path.get(path.size() - 1).propertyMap.get(name);
             if(propertyValue == null) {
@@ -290,6 +295,7 @@ public final class PropertiesTheme implements Theme {
         private final Map<String, EnumSet<SGR>> sgrMap;
         private final Map<String, Character> characterMap;
         private final Map<String, String> propertyMap;
+        private boolean cursorVisible;
         private String renderer;
 
         private ThemeTreeNode() {
@@ -299,6 +305,7 @@ public final class PropertiesTheme implements Theme {
             sgrMap = new HashMap<String, EnumSet<SGR>>();
             characterMap = new HashMap<String, Character>();
             propertyMap = new HashMap<String, String>();
+            cursorVisible = true;
             renderer = null;
         }
 
@@ -321,6 +328,9 @@ public final class PropertiesTheme implements Theme {
             }
             else if(styleComponent.toLowerCase().trim().equals("char")) {
                 characterMap.put(getCategory(group), value.isEmpty() ? null : value.charAt(0));
+            }
+            else if(styleComponent.toLowerCase().trim().equals("cursor")) {
+                cursorVisible = Boolean.parseBoolean(value);
             }
             else if(styleComponent.toLowerCase().trim().equals("property")) {
                 propertyMap.put(getCategory(group), value.isEmpty() ? null : value.trim());

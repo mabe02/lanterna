@@ -92,6 +92,16 @@ public interface ThemeDefinition {
     boolean getBooleanProperty(String name, boolean defaultValue);
 
     /**
+     * Asks the theme definition for this component if the theme thinks that the text cursor should be visible or not.
+     * Note that certain components might have a visible state depending on the context and the current data set, in
+     * those cases it can use {@link #getBooleanProperty(String, boolean)} to allow themes more fine-grained control
+     * over when cursor should be visible or not.
+     * @return A hint to the renderer as to if this theme thinks the cursor should be visible (returns {@code true}) or
+     * not (returns {@code false})
+     */
+    boolean isCursorVisible();
+
+    /**
      * Retrieves a character from this theme definition by the specified name. This method cannot return {@code null} so
      * you need to give a fallback in case the definition didn't have any character by this name.
      * @param name Name of the character to look up
