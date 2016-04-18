@@ -597,7 +597,7 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
             String textToDraw = TerminalTextUtils.fitString(comboBox.getText(), textVisibleLeftPosition, editableArea);
             graphics.putString(0, 0, textToDraw);
             graphics.applyThemeStyle(themeDefinition.getInsensitive());
-            graphics.putString(editableArea, 0, "|" + Symbols.ARROW_DOWN);
+            graphics.putString(editableArea, 0, "|" + themeDefinition.getCharacter("POPUP", Symbols.ARROW_DOWN));
         }
     }
 }
