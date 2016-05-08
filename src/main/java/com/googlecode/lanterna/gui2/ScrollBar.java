@@ -194,7 +194,7 @@ public class ScrollBar extends AbstractComponent<ScrollBar> {
                 component.setScrollPosition(position);
             }
 
-            ThemeDefinition themeDefinition = graphics.getThemeDefinition(ScrollBar.class);
+            ThemeDefinition themeDefinition = component.getThemeDefinition();
             graphics.applyThemeStyle(themeDefinition.getNormal());
 
             if(direction == Direction.VERTICAL) {

@@ -62,7 +62,7 @@ public abstract class AbstractBasePane implements BasePane {
 
     @Override
     public void draw(TextGUIGraphics graphics) {
-        graphics.applyThemeStyle(graphics.getThemeDefinition(Window.class).getNormal());
+        graphics.applyThemeStyle(getTheme().getDefinition(Window.class).getNormal());
         graphics.fill(' ');
         contentHolder.draw(graphics);
 

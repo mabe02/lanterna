@@ -18,7 +18,7 @@ public class FatWindowDecorationRenderer implements WindowDecorationRenderer {
         }
         title = " " + title.trim() + " ";
 
-        ThemeDefinition themeDefinition = graphics.getThemeDefinition(FatWindowDecorationRenderer.class);
+        ThemeDefinition themeDefinition = window.getTheme().getDefinition(FatWindowDecorationRenderer.class);
         char horizontalLine = themeDefinition.getCharacter("HORIZONTAL_LINE", Symbols.SINGLE_LINE_HORIZONTAL);
         char verticalLine = themeDefinition.getCharacter("VERTICAL_LINE", Symbols.SINGLE_LINE_VERTICAL);
         char bottomLeftCorner = themeDefinition.getCharacter("BOTTOM_LEFT_CORNER", Symbols.SINGLE_LINE_BOTTOM_LEFT_CORNER);

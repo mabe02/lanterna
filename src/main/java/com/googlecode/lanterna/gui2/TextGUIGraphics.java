@@ -31,25 +31,33 @@ import java.util.EnumSet;
  */
 public final class TextGUIGraphics implements ThemedTextGraphics, TextGraphics {
     private final TextGUI textGUI;
-    private final ImmutableThemedTextGraphics backend;
+    private final TextGraphics backend;
 
+    @Deprecated
     TextGUIGraphics(TextGUI textGUI, TextGraphics backend, Theme theme) {
-        this.backend = new ImmutableThemedTextGraphics(backend, theme);
+        this(textGUI, backend);
+    }
+
+    TextGUIGraphics(TextGUI textGUI, TextGraphics backend) {
+        this.backend = backend;
         this.textGUI = textGUI;
     }
 
     @Override
+    @Deprecated
     public Theme getTheme() {
-        return backend.getTheme();
+        return textGUI.getTheme();
     }
 
     /**
      * Returns a new {@code TextGUIGraphics} object that has another theme attached to it
      * @param theme Theme to be used with the new {@code TextGUIGraphics}
      * @return New {@code TextGUIGraphics} that has the specified theme
+     * @deprecated Now this method does nothing
      */
+    @Deprecated
     public TextGUIGraphics withTheme(Theme theme) {
-        return new TextGUIGraphics(textGUI, backend.getUnderlyingTextGraphics(), theme);
+        return this;
     }
 
     /**
@@ -62,18 +70,21 @@ public final class TextGUIGraphics implements ThemedTextGraphics, TextGraphics {
 
     @Override
     public TextGUIGraphics newTextGraphics(TerminalPosition topLeftCorner, TerminalSize size) throws IllegalArgumentException {
-        return new TextGUIGraphics(textGUI, backend.getUnderlyingTextGraphics().newTextGraphics(topLeftCorner, size), backend.getTheme());
+        return new TextGUIGraphics(textGUI, backend.newTextGraphics(topLeftCorner, size));
     }
 
     @Override
     public TextGUIGraphics applyThemeStyle(ThemeStyle themeStyle) {
-        backend.applyThemeStyle(themeStyle);
+        setForegroundColor(themeStyle.getForeground());
+        setBackgroundColor(themeStyle.getBackground());
+        setModifiers(themeStyle.getSGRs());
         return this;
     }
 
+    @Deprecated
     @Override
     public ThemeDefinition getThemeDefinition(Class<?> clazz) {
-        return backend.getThemeDefinition(clazz);
+        return getTheme().getDefinition(clazz);
     }
 
     @Override

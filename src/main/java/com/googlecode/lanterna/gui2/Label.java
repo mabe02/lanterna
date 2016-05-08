@@ -239,7 +239,7 @@ public class Label extends AbstractComponent<Label> {
 
             @Override
             public void drawComponent(TextGUIGraphics graphics, Label component) {
-                ThemeDefinition themeDefinition = graphics.getThemeDefinition(Label.class);
+                ThemeDefinition themeDefinition = component.getThemeDefinition();
                 graphics.applyThemeStyle(themeDefinition.getNormal());
                 if(foregroundColor != null) {
                     graphics.setForegroundColor(foregroundColor);

@@ -36,7 +36,7 @@ public class DefaultWindowDecorationRenderer implements WindowDecorationRenderer
             title = "";
         }
 
-        ThemeDefinition themeDefinition = graphics.getThemeDefinition(DefaultWindowDecorationRenderer.class);
+        ThemeDefinition themeDefinition = window.getTheme().getDefinition(DefaultWindowDecorationRenderer.class);
         char horizontalLine = themeDefinition.getCharacter("HORIZONTAL_LINE", Symbols.SINGLE_LINE_HORIZONTAL);
         char verticalLine = themeDefinition.getCharacter("VERTICAL_LINE", Symbols.SINGLE_LINE_VERTICAL);
         char bottomLeftCorner = themeDefinition.getCharacter("BOTTOM_LEFT_CORNER", Symbols.SINGLE_LINE_BOTTOM_LEFT_CORNER);

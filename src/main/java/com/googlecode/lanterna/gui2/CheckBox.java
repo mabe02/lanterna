@@ -189,7 +189,7 @@ public class CheckBox extends AbstractInteractableComponent<CheckBox> {
 
         @Override
         public void drawComponent(TextGUIGraphics graphics, CheckBox component) {
-            ThemeDefinition themeDefinition = graphics.getThemeDefinition(CheckBox.class);
+            ThemeDefinition themeDefinition = component.getThemeDefinition();
             if(component.isFocused()) {
                 graphics.applyThemeStyle(themeDefinition.getActive());
             }

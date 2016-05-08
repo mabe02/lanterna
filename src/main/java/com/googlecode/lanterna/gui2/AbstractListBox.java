@@ -22,6 +22,7 @@ import com.googlecode.lanterna.TerminalTextUtils;
 import com.googlecode.lanterna.Symbols;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.graphics.ThemeDefinition;
 import com.googlecode.lanterna.input.KeyStroke;
 
 import java.util.ArrayList;
@@ -330,6 +331,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
         @Override
         public void drawComponent(TextGUIGraphics graphics, T listBox) {
             //update the page size, used for page up and page down keys
+            ThemeDefinition themeDefinition = listBox.getTheme().getDefinition(AbstractListBox.class);
             int componentHeight = graphics.getSize().getRows();
             int componentWidth = graphics.getSize().getColumns();
             int selectedIndex = listBox.getSelectedIndex();
@@ -351,7 +353,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
                 scrollTopIndex = items.size() - componentHeight;
             }
 
-            graphics.applyThemeStyle(graphics.getThemeDefinition(AbstractListBox.class).getNormal());
+            graphics.applyThemeStyle(themeDefinition.getNormal());
             graphics.fill(' ');
 
             TerminalSize itemSize = graphics.getSize().withRows(1);
@@ -368,22 +370,22 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
                         listBox.isFocused());
             }
 
-            graphics.applyThemeStyle(graphics.getThemeDefinition(AbstractListBox.class).getNormal());
+            graphics.applyThemeStyle(themeDefinition.getNormal());
             if(items.size() > componentHeight) {
                 graphics.putString(componentWidth - 1, 0, Symbols.ARROW_UP + "");
 
-                graphics.applyThemeStyle(graphics.getThemeDefinition(AbstractListBox.class).getInsensitive());
+                graphics.applyThemeStyle(themeDefinition.getInsensitive());
                 for(int i = 1; i < componentHeight - 1; i++)
                     graphics.putString(componentWidth - 1, i, Symbols.BLOCK_MIDDLE + "");
 
-                graphics.applyThemeStyle(graphics.getThemeDefinition(AbstractListBox.class).getNormal());
+                graphics.applyThemeStyle(themeDefinition.getNormal());
                 graphics.putString(componentWidth - 1, componentHeight - 1, Symbols.ARROW_DOWN + "");
 
                 //Finally print the 'tick'
                 int scrollableSize = items.size() - componentHeight;
                 double position = (double)scrollTopIndex / ((double)scrollableSize);
                 int tickPosition = (int)(((double) componentHeight - 3.0) * position);
-                graphics.applyThemeStyle(graphics.getThemeDefinition(AbstractListBox.class).getInsensitive());
+                graphics.applyThemeStyle(themeDefinition.getInsensitive());
                 graphics.putString(componentWidth - 1, 1 + tickPosition, " ");
             }
         }
@@ -434,14 +436,18 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
          * @param focused Will be set to {@code true} if the list box currently has input focus, otherwise {@code false}
          */
         public void drawItem(TextGUIGraphics graphics, T listBox, int index, V item, boolean selected, boolean focused) {
+            ThemeDefinition themeDefinition = listBox.getTheme().getDefinition(AbstractListBox.class);
             if(selected && focused) {
-                graphics.applyThemeStyle(graphics.getThemeDefinition(AbstractListBox.class).getSelected());
+                graphics.applyThemeStyle(themeDefinition.getSelected());
             }
             else {
-                graphics.applyThemeStyle(graphics.getThemeDefinition(AbstractListBox.class).getNormal());
+                graphics.applyThemeStyle(themeDefinition.getNormal());
             }
             String label = getLabel(listBox, index, item);
             label = TerminalTextUtils.fitString(label, graphics.getSize().getColumns());
+            while(TerminalTextUtils.getColumnWidth(label) < graphics.getSize().getColumns()) {
+                label += " ";
+            }
             graphics.putString(0, 0, label);
         }
     }

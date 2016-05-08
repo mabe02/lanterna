@@ -20,6 +20,8 @@ package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.graphics.Theme;
+import com.googlecode.lanterna.graphics.ThemeDefinition;
 
 /**
  * This is the main interface defining a component in Lanterna, although you will probably not implement this directly
@@ -109,6 +111,36 @@ public interface Component extends TextGUIElement {
      * @return The TextGUI that this component belongs to, or null if none
      */
     TextGUI getTextGUI();
+
+    /**
+     * Returns the {@link Theme} this component should be rendered using. The default implementation through
+     * {@link AbstractComponent} will retrieve this from the {@link Window} the component belongs to, or return the
+     * default theme if the component has not been added to a window yet. You can override the theme this component is
+     * assigned to by calling {@link #setTheme(Theme)}.
+     * @return The currently active {@link Theme} for this component
+     */
+    Theme getTheme();
+
+    /**
+     * Returns the {@link ThemeDefinition} defined in the current {@link Theme} for this component class. The is the
+     * same as calling:
+     * <pre>
+     *     component.getTheme().getThemeDefinition(ComponentClassType.class);
+     *     // i.e button.getTheme().getThemeDefinition(Button.class);
+     * </pre>
+     * @return
+     */
+    ThemeDefinition getThemeDefinition();
+
+    /**
+     * Overrides the {@link Theme} this component will use so rather than deriving the theme from either the window or
+     * the GUI system, it will always return this theme. If you call this with {@code null}, it remove the override and
+     * the next call to {@link #getTheme()} will again try to derive the theme by looking at the window or the GUI
+     * system.
+     * @param theme {@link Theme} to assign to this component, or {@code null} to use whatever the window uses
+     * @return Itself
+     */
+    Component setTheme(Theme theme);
     
     /**
      * Returns true if this component is inside of the specified Container. It might be a direct child or not, this 

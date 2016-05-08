@@ -748,7 +748,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
                     viewTopLeft = viewTopLeft.withRow(0);
                 }
             }
-            ThemeDefinition themeDefinition = graphics.getThemeDefinition(TextBox.class);
+            ThemeDefinition themeDefinition = component.getThemeDefinition();
             if (component.isFocused()) {
                 graphics.applyThemeStyle(themeDefinition.getActive());
             }

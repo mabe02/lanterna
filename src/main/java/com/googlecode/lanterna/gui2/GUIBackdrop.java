@@ -19,7 +19,7 @@ public class GUIBackdrop extends EmptySpace {
 
             @Override
             public void drawComponent(TextGUIGraphics graphics, EmptySpace component) {
-                ThemeDefinition themeDefinition = graphics.getThemeDefinition(GUIBackdrop.class);
+                ThemeDefinition themeDefinition = component.getTheme().getDefinition(GUIBackdrop.class);
                 graphics.applyThemeStyle(themeDefinition.getNormal());
                 graphics.fill(themeDefinition.getCharacter("BACKGROUND", ' '));
             }

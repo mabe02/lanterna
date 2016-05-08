@@ -571,7 +571,7 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
 
         @Override
         public void drawComponent(TextGUIGraphics graphics, ComboBox<V> comboBox) {
-            ThemeDefinition themeDefinition = graphics.getThemeDefinition(ComboBox.class);
+            ThemeDefinition themeDefinition = comboBox.getThemeDefinition();
             if(comboBox.isFocused()) {
                 graphics.applyThemeStyle(themeDefinition.getActive());
             }

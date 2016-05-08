@@ -219,7 +219,7 @@ public class MultiWindowManagerTest extends TestBase {
 
                 @Override
                 public void drawComponent(TextGUIGraphics graphics, EmptySpace component) {
-                    graphics.applyThemeStyle(graphics.getThemeDefinition(GUIBackdrop.class).getNormal());
+                    graphics.applyThemeStyle(component.getTheme().getDefinition(GUIBackdrop.class).getNormal());
                     graphics.fill(' ');
                     String text = "Press <CTRL+Tab>/F6 and <CTRL+Shift+Tab>/F7 to cycle active window";
                     graphics.putString(graphics.getSize().getColumns() - text.length() - 4, graphics.getSize().getRows() - 1, text);

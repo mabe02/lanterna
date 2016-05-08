@@ -44,7 +44,7 @@ public class DefaultTableCellRenderer<V> implements TableCellRenderer<V> {
 
     @Override
     public void drawCell(Table<V> table, V cell, int columnIndex, int rowIndex, TextGUIGraphics textGUIGraphics) {
-        ThemeDefinition themeDefinition = textGUIGraphics.getThemeDefinition(Table.class);
+        ThemeDefinition themeDefinition = table.getThemeDefinition();
         if((table.getSelectedColumn() == columnIndex && table.getSelectedRow() == rowIndex) ||
                 (table.getSelectedRow() == rowIndex && !table.isCellSelection())) {
             if(table.isFocused()) {

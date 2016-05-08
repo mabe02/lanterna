@@ -78,7 +78,7 @@ public class Separator extends AbstractComponent<Separator> {
 
         @Override
         public void drawComponent(TextGUIGraphics graphics, Separator component) {
-            ThemeDefinition themeDefinition = graphics.getThemeDefinition(Separator.class);
+            ThemeDefinition themeDefinition = component.getThemeDefinition();
             graphics.applyThemeStyle(themeDefinition.getNormal());
             char character = themeDefinition.getCharacter(component.getDirection().name().toUpperCase(),
                     component.getDirection() == Direction.HORIZONTAL ? Symbols.SINGLE_LINE_HORIZONTAL : Symbols.SINGLE_LINE_VERTICAL);

@@ -20,6 +20,7 @@ package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.*;
 import com.googlecode.lanterna.graphics.TextGraphics;
+import com.googlecode.lanterna.graphics.Theme;
 
 import java.util.Arrays;
 import java.util.List;
@@ -214,18 +215,18 @@ public class Borders {
             }
             TerminalSize drawableArea = graphics.getSize();
 
-            char horizontalLine = getHorizontalLine(graphics);
-            char verticalLine = getVerticalLine(graphics);
-            char bottomLeftCorner = getBottomLeftCorner(graphics);
-            char topLeftCorner = getTopLeftCorner(graphics);
-            char bottomRightCorner = getBottomRightCorner(graphics);
-            char topRightCorner = getTopRightCorner(graphics);
+            char horizontalLine = getHorizontalLine(component.getTheme());
+            char verticalLine = getVerticalLine(component.getTheme());
+            char bottomLeftCorner = getBottomLeftCorner(component.getTheme());
+            char topLeftCorner = getTopLeftCorner(component.getTheme());
+            char bottomRightCorner = getBottomRightCorner(component.getTheme());
+            char topRightCorner = getTopRightCorner(component.getTheme());
 
             if(borderStyle == BorderStyle.Bevel) {
-                graphics.applyThemeStyle(graphics.getThemeDefinition(StandardBorder.class).getPreLight());
+                graphics.applyThemeStyle(component.getTheme().getDefinition(StandardBorder.class).getPreLight());
             }
             else {
-                graphics.applyThemeStyle(graphics.getThemeDefinition(StandardBorder.class).getNormal());
+                graphics.applyThemeStyle(component.getTheme().getDefinition(StandardBorder.class).getNormal());
             }
             graphics.setCharacter(0, drawableArea.getRows() - 1, bottomLeftCorner);
             if(drawableArea.getRows() > 2) {
@@ -237,10 +238,10 @@ public class Borders {
             }
 
             if(borderStyle == BorderStyle.ReverseBevel) {
-                graphics.applyThemeStyle(graphics.getThemeDefinition(StandardBorder.class).getPreLight());
+                graphics.applyThemeStyle(component.getTheme().getDefinition(StandardBorder.class).getPreLight());
             }
             else {
-                graphics.applyThemeStyle(graphics.getThemeDefinition(StandardBorder.class).getNormal());
+                graphics.applyThemeStyle(component.getTheme().getDefinition(StandardBorder.class).getNormal());
             }
             graphics.setCharacter(drawableArea.getColumns() - 1, 0, topRightCorner);
             if(drawableArea.getRows() > 2) {
@@ -255,7 +256,7 @@ public class Borders {
                         horizontalLine);
             }
 
-            graphics.applyThemeStyle(graphics.getThemeDefinition(StandardBorder.class).getActive());
+            graphics.applyThemeStyle(component.getTheme().getDefinition(StandardBorder.class).getActive());
             if(drawableArea.getColumns() >= TerminalTextUtils.getColumnWidth(border.getTitle()) + 4) {
                 graphics.putString(2, 0, border.getTitle());
             }
@@ -266,12 +267,12 @@ public class Borders {
             joinLinesWithFrame(graphics);
         }
 
-        protected abstract char getHorizontalLine(TextGUIGraphics graphics);
-        protected abstract char getVerticalLine(TextGUIGraphics graphics);
-        protected abstract char getBottomLeftCorner(TextGUIGraphics graphics);
-        protected abstract char getTopLeftCorner(TextGUIGraphics graphics);
-        protected abstract char getBottomRightCorner(TextGUIGraphics graphics);
-        protected abstract char getTopRightCorner(TextGUIGraphics graphics);
+        protected abstract char getHorizontalLine(Theme theme);
+        protected abstract char getVerticalLine(Theme theme);
+        protected abstract char getBottomLeftCorner(Theme theme);
+        protected abstract char getTopLeftCorner(Theme theme);
+        protected abstract char getBottomRightCorner(Theme theme);
+        protected abstract char getTopRightCorner(Theme theme);
     }
 
     /**
@@ -522,33 +523,33 @@ public class Borders {
         }
 
         @Override
-        protected char getTopRightCorner(TextGUIGraphics graphics) {
-            return graphics.getThemeDefinition(SingleLineRenderer.class).getCharacter("TOP_RIGHT_CORNER", Symbols.SINGLE_LINE_TOP_RIGHT_CORNER);
+        protected char getTopRightCorner(Theme theme) {
+            return theme.getDefinition(SingleLineRenderer.class).getCharacter("TOP_RIGHT_CORNER", Symbols.SINGLE_LINE_TOP_RIGHT_CORNER);
         }
 
         @Override
-        protected char getBottomRightCorner(TextGUIGraphics graphics) {
-            return graphics.getThemeDefinition(SingleLineRenderer.class).getCharacter("BOTTOM_RIGHT_CORNER", Symbols.SINGLE_LINE_BOTTOM_RIGHT_CORNER);
+        protected char getBottomRightCorner(Theme theme) {
+            return theme.getDefinition(SingleLineRenderer.class).getCharacter("BOTTOM_RIGHT_CORNER", Symbols.SINGLE_LINE_BOTTOM_RIGHT_CORNER);
         }
 
         @Override
-        protected char getTopLeftCorner(TextGUIGraphics graphics) {
-            return graphics.getThemeDefinition(SingleLineRenderer.class).getCharacter("TOP_LEFT_CORNER", Symbols.SINGLE_LINE_TOP_LEFT_CORNER);
+        protected char getTopLeftCorner(Theme theme) {
+            return theme.getDefinition(SingleLineRenderer.class).getCharacter("TOP_LEFT_CORNER", Symbols.SINGLE_LINE_TOP_LEFT_CORNER);
         }
 
         @Override
-        protected char getBottomLeftCorner(TextGUIGraphics graphics) {
-            return graphics.getThemeDefinition(SingleLineRenderer.class).getCharacter("BOTTOM_LEFT_CORNER", Symbols.SINGLE_LINE_BOTTOM_LEFT_CORNER);
+        protected char getBottomLeftCorner(Theme theme) {
+            return theme.getDefinition(SingleLineRenderer.class).getCharacter("BOTTOM_LEFT_CORNER", Symbols.SINGLE_LINE_BOTTOM_LEFT_CORNER);
         }
 
         @Override
-        protected char getVerticalLine(TextGUIGraphics graphics) {
-            return graphics.getThemeDefinition(SingleLineRenderer.class).getCharacter("VERTICAL_LINE", Symbols.SINGLE_LINE_VERTICAL);
+        protected char getVerticalLine(Theme theme) {
+            return theme.getDefinition(SingleLineRenderer.class).getCharacter("VERTICAL_LINE", Symbols.SINGLE_LINE_VERTICAL);
         }
 
         @Override
-        protected char getHorizontalLine(TextGUIGraphics graphics) {
-            return graphics.getThemeDefinition(SingleLineRenderer.class).getCharacter("HORIZONTAL_LINE", Symbols.SINGLE_LINE_HORIZONTAL);
+        protected char getHorizontalLine(Theme theme) {
+            return theme.getDefinition(SingleLineRenderer.class).getCharacter("HORIZONTAL_LINE", Symbols.SINGLE_LINE_HORIZONTAL);
         }
     }
 
@@ -569,33 +570,33 @@ public class Borders {
         }
 
         @Override
-        protected char getTopRightCorner(TextGUIGraphics graphics) {
-            return graphics.getThemeDefinition(DoubleLine.class).getCharacter("TOP_RIGHT_CORNER", Symbols.DOUBLE_LINE_TOP_RIGHT_CORNER);
+        protected char getTopRightCorner(Theme theme) {
+            return theme.getDefinition(DoubleLine.class).getCharacter("TOP_RIGHT_CORNER", Symbols.DOUBLE_LINE_TOP_RIGHT_CORNER);
         }
 
         @Override
-        protected char getBottomRightCorner(TextGUIGraphics graphics) {
-            return graphics.getThemeDefinition(DoubleLine.class).getCharacter("BOTTOM_RIGHT_CORNER", Symbols.DOUBLE_LINE_BOTTOM_RIGHT_CORNER);
+        protected char getBottomRightCorner(Theme theme) {
+            return theme.getDefinition(DoubleLine.class).getCharacter("BOTTOM_RIGHT_CORNER", Symbols.DOUBLE_LINE_BOTTOM_RIGHT_CORNER);
         }
 
         @Override
-        protected char getTopLeftCorner(TextGUIGraphics graphics) {
-            return graphics.getThemeDefinition(DoubleLine.class).getCharacter("TOP_LEFT_CORNER", Symbols.DOUBLE_LINE_TOP_LEFT_CORNER);
+        protected char getTopLeftCorner(Theme theme) {
+            return theme.getDefinition(DoubleLine.class).getCharacter("TOP_LEFT_CORNER", Symbols.DOUBLE_LINE_TOP_LEFT_CORNER);
         }
 
         @Override
-        protected char getBottomLeftCorner(TextGUIGraphics graphics) {
-            return graphics.getThemeDefinition(DoubleLine.class).getCharacter("BOTTOM_LEFT_CORNER", Symbols.DOUBLE_LINE_BOTTOM_LEFT_CORNER);
+        protected char getBottomLeftCorner(Theme theme) {
+            return theme.getDefinition(DoubleLine.class).getCharacter("BOTTOM_LEFT_CORNER", Symbols.DOUBLE_LINE_BOTTOM_LEFT_CORNER);
         }
 
         @Override
-        protected char getVerticalLine(TextGUIGraphics graphics) {
-            return graphics.getThemeDefinition(DoubleLine.class).getCharacter("VERTICAL_LINE", Symbols.DOUBLE_LINE_VERTICAL);
+        protected char getVerticalLine(Theme theme) {
+            return theme.getDefinition(DoubleLine.class).getCharacter("VERTICAL_LINE", Symbols.DOUBLE_LINE_VERTICAL);
         }
 
         @Override
-        protected char getHorizontalLine(TextGUIGraphics graphics) {
-            return graphics.getThemeDefinition(DoubleLine.class).getCharacter("HORIZONTAL_LINE", Symbols.DOUBLE_LINE_HORIZONTAL);
+        protected char getHorizontalLine(Theme theme) {
+            return theme.getDefinition(DoubleLine.class).getCharacter("HORIZONTAL_LINE", Symbols.DOUBLE_LINE_HORIZONTAL);
         }
     }
 }

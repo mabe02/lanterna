@@ -19,6 +19,7 @@
 package com.googlecode.lanterna.gui2.table;
 
 import com.googlecode.lanterna.*;
+import com.googlecode.lanterna.graphics.Theme;
 import com.googlecode.lanterna.gui2.Direction;
 import com.googlecode.lanterna.gui2.ScrollBar;
 import com.googlecode.lanterna.gui2.TextGUIGraphics;
@@ -255,6 +256,7 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
     }
 
     private int drawHeader(TextGUIGraphics graphics, Table<V> table) {
+        Theme theme = table.getTheme();
         TableHeaderRenderer<V> tableHeaderRenderer = table.getTableHeaderRenderer();
         List<String> headers = table.getTableModel().getColumnLabels();
         int viewLeftColumn = table.getViewLeftColumn();
@@ -271,7 +273,7 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
             tableHeaderRenderer.drawHeader(table, label, index, graphics.newTextGraphics(new TerminalPosition(leftPosition, 0), size));
             leftPosition += size.getColumns();
             if(headerHorizontalBorderStyle != TableCellBorderStyle.None && index < (endColumnIndex - 1)) {
-                graphics.applyThemeStyle(graphics.getThemeDefinition(Table.class).getNormal());
+                graphics.applyThemeStyle(theme.getDefinition(Table.class).getNormal());
                 graphics.setCharacter(leftPosition, 0, getVerticalCharacter(headerHorizontalBorderStyle));
                 leftPosition++;
             }
@@ -280,7 +282,7 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
 
         if(headerVerticalBorderStyle != TableCellBorderStyle.None) {
             leftPosition = 0;
-            graphics.applyThemeStyle(graphics.getThemeDefinition(Table.class).getNormal());
+            graphics.applyThemeStyle(theme.getDefinition(Table.class).getNormal());
             for(int i = 0; i < columnSizes.size(); i++) {
                 if(i > 0) {
                     graphics.setCharacter(
@@ -306,6 +308,7 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
     }
 
     private void drawRows(TextGUIGraphics graphics, Table<V> table, int topPosition) {
+        Theme theme = table.getTheme();
         TerminalSize area = graphics.getSize();
         TableCellRenderer<V> tableCellRenderer = table.getTableCellRenderer();
         TableModel<V> tableModel = table.getTableModel();
@@ -356,14 +359,14 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
                 if(columnIndex > viewLeftColumn) {
                     if(table.getSelectedRow() == rowIndex && !table.isCellSelection()) {
                         if(table.isFocused()) {
-                            graphics.applyThemeStyle(graphics.getThemeDefinition(Table.class).getActive());
+                            graphics.applyThemeStyle(theme.getDefinition(Table.class).getActive());
                         }
                         else {
-                            graphics.applyThemeStyle(graphics.getThemeDefinition(Table.class).getSelected());
+                            graphics.applyThemeStyle(theme.getDefinition(Table.class).getSelected());
                         }
                     }
                     else {
-                        graphics.applyThemeStyle(graphics.getThemeDefinition(Table.class).getNormal());
+                        graphics.applyThemeStyle(theme.getDefinition(Table.class).getNormal());
                     }
                     graphics.setCharacter(leftPosition, topPosition, getVerticalCharacter(cellHorizontalBorderStyle));
                     leftPosition++;
@@ -380,7 +383,7 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
             topPosition += rowSizes.get(rowIndex - viewTopRow);
             if(cellVerticalBorderStyle != TableCellBorderStyle.None) {
                 leftPosition = 0;
-                graphics.applyThemeStyle(graphics.getThemeDefinition(Table.class).getNormal());
+                graphics.applyThemeStyle(theme.getDefinition(Table.class).getNormal());
                 for(int i = 0; i < columnSizes.size(); i++) {
                     if(i > 0) {
                         graphics.setCharacter(

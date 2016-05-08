@@ -127,21 +127,22 @@ public class Button extends AbstractInteractableComponent<Button> {
 
         @Override
         public void drawComponent(TextGUIGraphics graphics, Button button) {
+            ThemeDefinition themeDefinition = button.getThemeDefinition();
             if(button.isFocused()) {
-                graphics.applyThemeStyle(getThemeDefinition(graphics).getActive());
+                graphics.applyThemeStyle(themeDefinition.getActive());
             }
             else {
-                graphics.applyThemeStyle(getThemeDefinition(graphics).getInsensitive());
+                graphics.applyThemeStyle(themeDefinition.getInsensitive());
             }
             graphics.fill(' ');
-            graphics.setCharacter(0, 0, getThemeDefinition(graphics).getCharacter("LEFT_BORDER", '<'));
-            graphics.setCharacter(graphics.getSize().getColumns() - 1, 0, getThemeDefinition(graphics).getCharacter("RIGHT_BORDER", '>'));
+            graphics.setCharacter(0, 0, themeDefinition.getCharacter("LEFT_BORDER", '<'));
+            graphics.setCharacter(graphics.getSize().getColumns() - 1, 0, themeDefinition.getCharacter("RIGHT_BORDER", '>'));
 
             if(button.isFocused()) {
-                graphics.applyThemeStyle(getThemeDefinition(graphics).getActive());
+                graphics.applyThemeStyle(themeDefinition.getActive());
             }
             else {
-                graphics.applyThemeStyle(getThemeDefinition(graphics).getPreLight());
+                graphics.applyThemeStyle(themeDefinition.getPreLight());
             }
             int labelShift = getLabelShift(button, graphics.getSize());
             graphics.setCharacter(1 + labelShift, 0, button.getLabel().charAt(0));
@@ -150,10 +151,10 @@ public class Button extends AbstractInteractableComponent<Button> {
                 return;
             }
             if(button.isFocused()) {
-                graphics.applyThemeStyle(getThemeDefinition(graphics).getSelected());
+                graphics.applyThemeStyle(themeDefinition.getSelected());
             }
             else {
-                graphics.applyThemeStyle(getThemeDefinition(graphics).getNormal());
+                graphics.applyThemeStyle(themeDefinition.getNormal());
             }
             graphics.putString(1 + labelShift + 1, 0, button.getLabel().substring(1));
         }
@@ -188,18 +189,19 @@ public class Button extends AbstractInteractableComponent<Button> {
 
         @Override
         public void drawComponent(TextGUIGraphics graphics, Button button) {
+            ThemeDefinition themeDefinition = button.getThemeDefinition();
             if(button.isFocused()) {
-                graphics.applyThemeStyle(getThemeDefinition(graphics).getActive());
+                graphics.applyThemeStyle(themeDefinition.getActive());
             }
             else {
-                graphics.applyThemeStyle(getThemeDefinition(graphics).getInsensitive());
+                graphics.applyThemeStyle(themeDefinition.getInsensitive());
             }
             graphics.fill(' ');
             if(button.isFocused()) {
-                graphics.applyThemeStyle(getThemeDefinition(graphics).getSelected());
+                graphics.applyThemeStyle(themeDefinition.getSelected());
             }
             else {
-                graphics.applyThemeStyle(getThemeDefinition(graphics).getNormal());
+                graphics.applyThemeStyle(themeDefinition.getNormal());
             }
             graphics.putString(0, 0, button.getLabel());
         }
@@ -218,7 +220,7 @@ public class Button extends AbstractInteractableComponent<Button> {
 
         @Override
         public void drawComponent(TextGUIGraphics graphics, Button button) {
-            ThemeDefinition themeDefinition = getThemeDefinition(graphics);
+            ThemeDefinition themeDefinition = button.getThemeDefinition();
             graphics.applyThemeStyle(themeDefinition.getNormal());
             TerminalSize size = graphics.getSize();
             graphics.drawLine(1, 0, size.getColumns() - 3, 0, Symbols.SINGLE_LINE_HORIZONTAL);
@@ -244,9 +246,5 @@ public class Button extends AbstractInteractableComponent<Button> {
             graphics.drawLine(1, size.getRows() - 1, size.getColumns() - 1, size.getRows() - 1, ' ');
             graphics.drawLine(size.getColumns() - 1, 1, size.getColumns() - 1, size.getRows() - 2, ' ');
         }
-    }
-
-    private static ThemeDefinition getThemeDefinition(TextGUIGraphics graphics) {
-        return graphics.getThemeDefinition(Button.class);
     }
 }

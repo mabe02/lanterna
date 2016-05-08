@@ -20,6 +20,9 @@ package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.bundle.LanternaThemes;
+import com.googlecode.lanterna.graphics.Theme;
+import com.googlecode.lanterna.graphics.ThemeDefinition;
 
 /**
  * AbstractComponent provides some good default behaviour for a {@code Component}, all components in Lanterna extends
@@ -41,11 +44,24 @@ import com.googlecode.lanterna.TerminalSize;
  * @param <T> Should always be itself, this value will be used for the {@code ComponentRenderer} declaration
  */
 public abstract class AbstractComponent<T extends Component> implements Component {
-    private ComponentRenderer<T> renderer;
+    /**
+     * Manually set renderer
+     */
+    private ComponentRenderer<T> overrideRenderer;
+    /**
+     * If overrideRenderer is not set, this is used instead if not null, set by the theme
+     */
+    private ComponentRenderer<T> themeRenderer;
+    /**
+     * If the theme had nothing for this component and no override is set, this is the third fallback
+     */
+    private ComponentRenderer<T> defaultRenderer;
+
     private Container parent;
     private TerminalSize size;
     private TerminalSize explicitPreferredSize;   //This is keeping the value set by the user (if setPreferredSize() is used)
     private TerminalPosition position;
+    private Theme themeOverride;
     private LayoutData layoutData;
     private boolean invalid;
 
@@ -59,7 +75,9 @@ public abstract class AbstractComponent<T extends Component> implements Componen
         layoutData = null;
         invalid = true;
         parent = null;
-        renderer = null; //Will be set on the first call to getRenderer()
+        overrideRenderer = null;
+        themeRenderer = null;
+        defaultRenderer = null;
     }
     
     /**
@@ -85,30 +103,40 @@ public abstract class AbstractComponent<T extends Component> implements Componen
     }
 
     /**
-     * Explicitly sets the {@code ComponentRenderer} to be used when drawing this component.
+     * Explicitly sets the {@code ComponentRenderer} to be used when drawing this component. This will override whatever
+     * the current theme is suggesting or what the default renderer is. If you call this with {@code null}, the override
+     * is cleared.
      * @param renderer {@code ComponentRenderer} to be used when drawing this component
      * @return Itself
      */
     public T setRenderer(ComponentRenderer<T> renderer) {
-        this.renderer = renderer;
+        this.overrideRenderer = renderer;
         return self();
     }
 
     @Override
     public synchronized ComponentRenderer<T> getRenderer() {
-        if(renderer == null) {
-            BasePane basePane = getBasePane();
-            if(basePane != null) {
-                renderer = basePane.getTheme().getDefinition(getClass()).getRenderer(selfClass());
-            }
-            if(renderer == null) {
-                renderer = createDefaultRenderer();
-                if(renderer == null) {
-                    throw new IllegalStateException(getClass() + " returned a null default renderer");
-                }
+        // First try the override
+        if(overrideRenderer != null) {
+            return overrideRenderer;
+        }
+
+        // Then try to create and return a renderer from the theme
+        if(themeRenderer == null && getBasePane() != null) {
+            themeRenderer = getTheme().getDefinition(getClass()).getRenderer(selfClass());
+        }
+        if(themeRenderer != null) {
+            return themeRenderer;
+        }
+
+        // Finally, fallback to the default renderer
+        if(defaultRenderer == null) {
+            defaultRenderer = createDefaultRenderer();
+            if(defaultRenderer == null) {
+                throw new IllegalStateException(getClass() + " returned a null default renderer");
             }
         }
-        return renderer;
+        return defaultRenderer;
     }
 
     @Override
@@ -240,7 +268,31 @@ public abstract class AbstractComponent<T extends Component> implements Componen
         }
         return parent.getTextGUI();
     }
-    
+
+    @Override
+    public synchronized Theme getTheme() {
+        if(themeOverride != null) {
+            return themeOverride;
+        }
+        else if(getBasePane() != null) {
+            return getBasePane().getTheme();
+        }
+        else {
+            return LanternaThemes.getDefaultTheme();
+        }
+    }
+
+    @Override
+    public ThemeDefinition getThemeDefinition() {
+        return getTheme().getDefinition(getClass());
+    }
+
+    @Override
+    public synchronized Component setTheme(Theme theme) {
+        themeOverride = theme;
+        return this;
+    }
+
     @Override
     public boolean isInside(Container container) {
         Component test = this;
@@ -299,6 +351,7 @@ public abstract class AbstractComponent<T extends Component> implements Componen
     @Override
     public synchronized void onRemoved(Container container) {
         parent = null;
+        themeRenderer = null;
     }
 
     /**
