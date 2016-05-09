@@ -21,9 +21,14 @@ package com.googlecode.lanterna.gui2;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.bundle.LanternaThemes;
+import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by Martin on 2016-05-08.
@@ -56,15 +61,17 @@ public class ThemeTest extends TestBase {
     }
 
     private void runMultiThemeTest(final WindowBasedTextGUI textGUI) {
-        final BasicWindow window1 = new BasicWindow("Theme: Bigsnake");
+        final List<String> themes = new ArrayList<String>(LanternaThemes.getRegisteredThemes());
+        final int[] windowThemeIndex = new int[] { themes.indexOf("bigsnake"), themes.indexOf("conqueror") };
+        final BasicWindow window1 = new BasicWindow("Theme: bigsnake");
         window1.setHints(Arrays.asList(Window.Hint.FIXED_POSITION, Window.Hint.FIXED_SIZE));
-        window1.setTheme(LanternaThemes.getRegisteredTheme("bigsnake"));
+        window1.setTheme(LanternaThemes.getRegisteredTheme(themes.get(windowThemeIndex[0])));
         window1.setPosition(new TerminalPosition(2, 1));
         window1.setSize(new TerminalSize(24, 9));
 
-        final BasicWindow window2 = new BasicWindow("Theme: Conqueror");
+        final BasicWindow window2 = new BasicWindow("Theme: conqueror");
         window2.setHints(Arrays.asList(Window.Hint.FIXED_POSITION, Window.Hint.FIXED_SIZE));
-        window2.setTheme(LanternaThemes.getRegisteredTheme("conqueror"));
+        window2.setTheme(LanternaThemes.getRegisteredTheme(themes.get(windowThemeIndex[1])));
         window2.setPosition(new TerminalPosition(30, 1));
         window2.setSize(new TerminalSize(24, 9));
 
@@ -85,6 +92,40 @@ public class ThemeTest extends TestBase {
                         // TODO: Figure out why we need to remove the button first; it should be automatic!
                         leftHolder.removeComponent(exampleButton);
                         rightHolder.addComponent(exampleButton);
+                    }
+                })
+                .addItem("Override button theme", new Runnable() {
+                    @Override
+                    public void run() {
+                        ActionListDialogBuilder actionListDialogBuilder = new ActionListDialogBuilder();
+                        actionListDialogBuilder.setTitle("Choose theme for the button");
+                        for(final String theme: themes) {
+                            actionListDialogBuilder.addAction(theme, new Runnable() {
+                                @Override
+                                public void run() {
+                                    exampleButton.setTheme(LanternaThemes.getRegisteredTheme(theme));
+                                }
+                            });
+                        }
+                        actionListDialogBuilder.addAction("Clear override", new Runnable() {
+                            @Override
+                            public void run() {
+                                exampleButton.setTheme(null);
+                            }
+                        });
+                        actionListDialogBuilder.build().showDialog(textGUI);
+                    }
+                })
+                .addItem("Cycle window theme", new Runnable() {
+                    @Override
+                    public void run() {
+                        windowThemeIndex[0]++;
+                        if(windowThemeIndex[0] >= themes.size()) {
+                            windowThemeIndex[0] = 0;
+                        }
+                        String themeName = themes.get(windowThemeIndex[0]);
+                        window1.setTheme(LanternaThemes.getRegisteredTheme(themeName));
+                        window1.setTitle("Theme: " + themeName);
                     }
                 })
                 .addItem("Switch active window", new Runnable() {
@@ -111,6 +152,40 @@ public class ThemeTest extends TestBase {
                     public void run() {
                         rightHolder.removeComponent(exampleButton);
                         leftHolder.addComponent(exampleButton);
+                    }
+                })
+                .addItem("Override button theme", new Runnable() {
+                    @Override
+                    public void run() {
+                        ActionListDialogBuilder actionListDialogBuilder = new ActionListDialogBuilder();
+                        actionListDialogBuilder.setTitle("Choose theme for the button");
+                        for(final String theme: themes) {
+                            actionListDialogBuilder.addAction(theme, new Runnable() {
+                                @Override
+                                public void run() {
+                                    exampleButton.setTheme(LanternaThemes.getRegisteredTheme(theme));
+                                }
+                            });
+                        }
+                        actionListDialogBuilder.addAction("Clear override", new Runnable() {
+                            @Override
+                            public void run() {
+                                exampleButton.setTheme(null);
+                            }
+                        });
+                        actionListDialogBuilder.build().showDialog(textGUI);
+                    }
+                })
+                .addItem("Cycle window theme", new Runnable() {
+                    @Override
+                    public void run() {
+                        windowThemeIndex[1]++;
+                        if(windowThemeIndex[1] >= themes.size()) {
+                            windowThemeIndex[1] = 0;
+                        }
+                        String themeName = themes.get(windowThemeIndex[0]);
+                        window2.setTheme(LanternaThemes.getRegisteredTheme(themeName));
+                        window2.setTitle("Theme: " + themeName);
                     }
                 })
                 .addItem("Switch active window", new Runnable() {
