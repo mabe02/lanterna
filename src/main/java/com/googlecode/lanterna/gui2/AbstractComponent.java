@@ -52,6 +52,12 @@ public abstract class AbstractComponent<T extends Component> implements Componen
      * If overrideRenderer is not set, this is used instead if not null, set by the theme
      */
     private ComponentRenderer<T> themeRenderer;
+
+    /**
+     * To keep track of the theme that created the themeRenderer, so we can reset it if the theme changes
+     */
+    private Theme themeRenderersTheme;
+
     /**
      * If the theme had nothing for this component and no override is set, this is the third fallback
      */
@@ -77,6 +83,7 @@ public abstract class AbstractComponent<T extends Component> implements Componen
         parent = null;
         overrideRenderer = null;
         themeRenderer = null;
+        themeRenderersTheme = null;
         defaultRenderer = null;
     }
     
@@ -122,8 +129,15 @@ public abstract class AbstractComponent<T extends Component> implements Componen
         }
 
         // Then try to create and return a renderer from the theme
-        if(themeRenderer == null && getBasePane() != null) {
-            themeRenderer = getTheme().getDefinition(getClass()).getRenderer(selfClass());
+        Theme currentTheme = getTheme();
+        if((themeRenderer == null && getBasePane() != null) ||
+                // Check if the theme has changed
+                themeRenderer != null && currentTheme != themeRenderersTheme) {
+
+            themeRenderer = currentTheme.getDefinition(getClass()).getRenderer(selfClass());
+            if(themeRenderer != null) {
+                themeRenderersTheme = currentTheme;
+            }
         }
         if(themeRenderer != null) {
             return themeRenderer;
@@ -290,6 +304,7 @@ public abstract class AbstractComponent<T extends Component> implements Componen
     @Override
     public synchronized Component setTheme(Theme theme) {
         themeOverride = theme;
+        invalidate();
         return this;
     }
 

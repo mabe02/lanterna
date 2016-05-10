@@ -64,16 +64,14 @@ public class ThemeTest extends TestBase {
         final List<String> themes = new ArrayList<String>(LanternaThemes.getRegisteredThemes());
         final int[] windowThemeIndex = new int[] { themes.indexOf("bigsnake"), themes.indexOf("conqueror") };
         final BasicWindow window1 = new BasicWindow("Theme: bigsnake");
-        window1.setHints(Arrays.asList(Window.Hint.FIXED_POSITION, Window.Hint.FIXED_SIZE));
+        window1.setHints(Arrays.asList(Window.Hint.FIXED_POSITION));
         window1.setTheme(LanternaThemes.getRegisteredTheme(themes.get(windowThemeIndex[0])));
         window1.setPosition(new TerminalPosition(2, 1));
-        window1.setSize(new TerminalSize(24, 9));
 
         final BasicWindow window2 = new BasicWindow("Theme: conqueror");
-        window2.setHints(Arrays.asList(Window.Hint.FIXED_POSITION, Window.Hint.FIXED_SIZE));
+        window2.setHints(Arrays.asList(Window.Hint.FIXED_POSITION));
         window2.setTheme(LanternaThemes.getRegisteredTheme(themes.get(windowThemeIndex[1])));
         window2.setPosition(new TerminalPosition(30, 1));
-        window2.setSize(new TerminalSize(24, 9));
 
         final Panel leftHolder = new Panel().setPreferredSize(new TerminalSize(15, 4));
         final Panel rightHolder = new Panel().setPreferredSize(new TerminalSize(15, 4));
@@ -183,7 +181,7 @@ public class ThemeTest extends TestBase {
                         if(windowThemeIndex[1] >= themes.size()) {
                             windowThemeIndex[1] = 0;
                         }
-                        String themeName = themes.get(windowThemeIndex[0]);
+                        String themeName = themes.get(windowThemeIndex[1]);
                         window2.setTheme(LanternaThemes.getRegisteredTheme(themeName));
                         window2.setTitle("Theme: " + themeName);
                     }
