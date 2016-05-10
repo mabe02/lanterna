@@ -87,8 +87,6 @@ public class ThemeTest extends TestBase {
                 .addItem("Move button to right", new Runnable() {
                     @Override
                     public void run() {
-                        // TODO: Figure out why we need to remove the button first; it should be automatic!
-                        leftHolder.removeComponent(exampleButton);
                         rightHolder.addComponent(exampleButton);
                     }
                 })
@@ -148,7 +146,6 @@ public class ThemeTest extends TestBase {
                 .addItem("Move button to left", new Runnable() {
                     @Override
                     public void run() {
-                        rightHolder.removeComponent(exampleButton);
                         leftHolder.addComponent(exampleButton);
                     }
                 })

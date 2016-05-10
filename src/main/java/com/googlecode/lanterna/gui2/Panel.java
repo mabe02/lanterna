@@ -51,7 +51,8 @@ public class Panel extends AbstractComponent<Panel> implements Container {
 
     /**
      * Adds a new child component to the panel. Where within the panel the child will be displayed is up to the layout
-     * manager assigned to this panel.
+     * manager assigned to this panel. If the component has already been added to another panel, it will first be
+     * removed from that panel before added to this one.
      * @param component Child component to add to this panel
      * @return Itself
      */
@@ -61,6 +62,9 @@ public class Panel extends AbstractComponent<Panel> implements Container {
         }
         if(components.contains(component)) {
             return this;
+        }
+        if(component.getParent() != null) {
+            component.getParent().removeComponent(component);
         }
         components.add(component);
         component.onAdded(this);
