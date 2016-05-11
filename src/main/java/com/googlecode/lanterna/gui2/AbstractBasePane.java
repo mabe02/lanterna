@@ -25,12 +25,17 @@ import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.input.MouseAction;
 
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 /**
  * This abstract implementation of {@code BasePane} has the common code shared by all different concrete
  * implementations.
  */
 public abstract class AbstractBasePane implements BasePane {
     protected final ContentHolder contentHolder;
+    private final CopyOnWriteArrayList<BasePaneListener> listeners;
     protected InteractableLookupMap interactableLookupMap;
     private Interactable focusedInteractable;
     private boolean invalid;
@@ -40,6 +45,7 @@ public abstract class AbstractBasePane implements BasePane {
 
     protected AbstractBasePane() {
         this.contentHolder = new ContentHolder();
+        this.listeners = new CopyOnWriteArrayList<BasePaneListener>();
         this.interactableLookupMap = new InteractableLookupMap(new TerminalSize(80, 25));
         this.invalid = false;
         this.strictFocusChange = false;
@@ -78,6 +84,30 @@ public abstract class AbstractBasePane implements BasePane {
 
     @Override
     public boolean handleInput(KeyStroke key) {
+        // Fire events first and decide if the event should be sent to the focused component or not
+        AtomicBoolean deliverEvent = new AtomicBoolean(true);
+        for (BasePaneListener listener : listeners) {
+            listener.onInput(this, key, deliverEvent);
+        }
+        if (!deliverEvent.get()) {
+            return true;
+        }
+
+        // Now try to deliver the event to the focused component
+        boolean handled = doHandleInput(key);
+
+        // If it wasn't handled, fire the listeners and decide what to report to the TextGUI
+        if(!handled) {
+            AtomicBoolean hasBeenHandled = new AtomicBoolean(false);
+            for(BasePaneListener listener: listeners) {
+                listener.onUnhandledInput(this, key, hasBeenHandled);
+            }
+            handled = hasBeenHandled.get();
+        }
+        return handled;
+    }
+
+    private boolean doHandleInput(KeyStroke key) {
         if(key.getKeyType() == KeyType.MouseEvent) {
             MouseAction mouseAction = (MouseAction)key;
             TerminalPosition localCoordinates = fromGlobal(mouseAction.getPosition());
@@ -237,6 +267,18 @@ public abstract class AbstractBasePane implements BasePane {
     @Override
     public synchronized void setTheme(Theme theme) {
         this.theme = theme;
+    }
+
+    protected void addBasePaneListener(BasePaneListener basePaneListener) {
+        listeners.addIfAbsent(basePaneListener);
+    }
+
+    protected void removeBasePaneListener(BasePaneListener basePaneListener) {
+        listeners.remove(basePaneListener);
+    }
+
+    protected List<BasePaneListener> getBasePaneListeners() {
+        return listeners;
     }
 
     protected class ContentHolder extends AbstractComposite<Container> {

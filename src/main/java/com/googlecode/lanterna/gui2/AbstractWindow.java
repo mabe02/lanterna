@@ -176,6 +176,16 @@ public abstract class AbstractWindow extends AbstractBasePane implements Window 
         return  windowPostRenderer;
     }
 
+    @Override
+    public void addWindowListener(WindowListener windowListener) {
+        addBasePaneListener(windowListener);
+    }
+
+    @Override
+    public void removeWindowListener(WindowListener windowListener) {
+        removeBasePaneListener(windowListener);
+    }
+
     /**
      * Sets the post-renderer to use for this window. This will override the default from the GUI system (if there is
      * one set, otherwise from the theme).
@@ -192,7 +202,15 @@ public abstract class AbstractWindow extends AbstractBasePane implements Window 
 
     @Override
     public final void setPosition(TerminalPosition topLeft) {
+        TerminalPosition oldPosition = this.lastKnownPosition;
         this.lastKnownPosition = topLeft;
+
+        // Fire listeners
+        for(BasePaneListener listener: getBasePaneListeners()) {
+            if(listener instanceof WindowListener) {
+                ((WindowListener)listener).onMoved(this, oldPosition, topLeft);
+            }
+        }
     }
 
     @Override
@@ -206,9 +224,17 @@ public abstract class AbstractWindow extends AbstractBasePane implements Window 
     }
 
     private void setSize(TerminalSize size, boolean invalidate) {
+        TerminalSize oldSize = this.lastKnownSize;
         this.lastKnownSize = size;
         if(invalidate) {
             invalidate();
+        }
+
+        // Fire listeners
+        for(BasePaneListener listener: getBasePaneListeners()) {
+            if(listener instanceof WindowListener) {
+                ((WindowListener)listener).onResized(this, oldSize, size);
+            }
         }
     }
 

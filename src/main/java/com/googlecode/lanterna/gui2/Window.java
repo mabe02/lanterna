@@ -253,6 +253,19 @@ public interface Window extends BasePane {
      */
     WindowPostRenderer getPostRenderer();
 
+    /**
+     * Adds a {@link WindowListener} to this {@link Window}. If it has already been added, the call will do nothing.
+     * @param windowListener Listener to attach to this {@link Window}
+     */
+    void addWindowListener(WindowListener windowListener);
+
+    /**
+     * Removes a {@link WindowListener} from this {@link Window}. If the listener isn't in the list of listeners, this
+     * call does nothing.
+     * @param windowListener Listener to remove from this {@link Window}
+     */
+    void removeWindowListener(WindowListener windowListener);
+
     ///////////////////////////////////////////////////////////////
     //// Below here are methods from BasePane                  ////
     //// We duplicate them here to make the JavaDoc more clear ////
