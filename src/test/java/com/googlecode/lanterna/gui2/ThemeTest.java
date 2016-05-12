@@ -22,12 +22,15 @@ import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.bundle.LanternaThemes;
 import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -141,6 +144,16 @@ public class ThemeTest extends TestBase {
                 Panels.vertical(
                     leftHolder.withBorder(Borders.singleLine()),
                     leftWindowActionBox));
+        window1.addWindowListener(new WindowListenerAdapter() {
+            @Override
+            public void onInput(Window basePane, KeyStroke keyStroke, AtomicBoolean deliverEvent) {
+                if(keyStroke.getKeyType() == KeyType.Tab ||
+                        keyStroke.getKeyType() == KeyType.ReverseTab) {
+                    textGUI.setActiveWindow(window2);
+                    deliverEvent.set(false);
+                }
+            }
+        });
 
         ActionListBox rightWindowActionBox = new ActionListBox()
                 .addItem("Move button to left", new Runnable() {
@@ -200,6 +213,16 @@ public class ThemeTest extends TestBase {
                 Panels.vertical(
                     rightHolder.withBorder(Borders.singleLine()),
                     rightWindowActionBox));
+        window2.addWindowListener(new WindowListenerAdapter() {
+            @Override
+            public void onInput(Window basePane, KeyStroke keyStroke, AtomicBoolean deliverEvent) {
+                if(keyStroke.getKeyType() == KeyType.Tab ||
+                        keyStroke.getKeyType() == KeyType.ReverseTab) {
+                    textGUI.setActiveWindow(window1);
+                    deliverEvent.set(false);
+                }
+            }
+        });
 
         window1.setFocusedInteractable(leftWindowActionBox);
         window2.setFocusedInteractable(rightWindowActionBox);

@@ -19,6 +19,7 @@
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.SGR;
+import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.bundle.LanternaThemes;
@@ -114,6 +115,18 @@ public class MultiWindowManagerTest extends TestBase {
             this.labelUnlockWindow = new Label("true");
             statsTableContainer.addComponent(labelUnlockWindow);
 
+            addWindowListener(new WindowListenerAdapter() {
+                @Override
+                public void onResized(Window window, TerminalSize oldSize, TerminalSize newSize) {
+                    labelWindowSize.setText(newSize.toString());
+                }
+
+                @Override
+                public void onMoved(Window window, TerminalPosition oldPosition, TerminalPosition newPosition) {
+                    labelWindowPosition.setText(newPosition.toString());
+                }
+            });
+
             Panel contentArea = new Panel();
             contentArea.setLayoutManager(new GridLayout(1));
             contentArea.addComponent(statsTableContainer);
@@ -198,13 +211,6 @@ public class MultiWindowManagerTest extends TestBase {
                 }
             }
             return handled;
-        }
-
-        @Override
-        public void draw(TextGUIGraphics graphics) {
-            this.labelWindowPosition.setText(getPosition().toString());
-            this.labelWindowSize.setText(graphics.getSize().toString());
-            super.draw(graphics);
         }
     }
 
