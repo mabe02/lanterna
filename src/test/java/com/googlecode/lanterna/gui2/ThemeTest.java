@@ -74,7 +74,7 @@ public class ThemeTest extends TestBase {
         componentTestChooser.setHints(Arrays.asList(Window.Hint.CENTERED));
 
         Panel mainPanel = new Panel();
-        mainPanel.addComponent(new Label("Choose borderedComponent:                     "));
+        mainPanel.addComponent(new Label("Choose component:                     "));
         mainPanel.addComponent(new EmptySpace());
         ThemedComponentTestDialog[] componentTestDialogs = new ThemedComponentTestDialog[]{
                 new ThemedComponentTestDialog(textGUI, "ActionListBox",
@@ -134,8 +134,8 @@ public class ThemeTest extends TestBase {
                 new ThemedComponentTestDialog(textGUI, "ScrollBar",
                         new Panel()
                                 .setLayoutManager(new GridLayout(2))
-                                .addComponent(new ScrollBar(Direction.HORIZONTAL))
-                                .addComponent(new ScrollBar(Direction.VERTICAL))),
+                                .addComponent(new ScrollBar(Direction.HORIZONTAL).setPreferredSize(new TerminalSize(6, 1)))
+                                .addComponent(new ScrollBar(Direction.VERTICAL).setPreferredSize(new TerminalSize(1, 6)))),
                 new ThemedComponentTestDialog(textGUI, "Separator",
                         new Panel()
                                 .setLayoutManager(new GridLayout(2))
