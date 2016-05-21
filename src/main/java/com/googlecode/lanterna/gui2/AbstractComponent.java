@@ -288,6 +288,9 @@ public abstract class AbstractComponent<T extends Component> implements Componen
         if(themeOverride != null) {
             return themeOverride;
         }
+        else if(parent != null) {
+            return parent.getTheme();
+        }
         else if(getBasePane() != null) {
             return getBasePane().getTheme();
         }
