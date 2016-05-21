@@ -721,7 +721,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
                 verticalScrollBar.setScrollPosition(viewTopLeft.getRow());
                 verticalScrollBar.draw(graphics.newTextGraphics(
                         new TerminalPosition(graphics.getSize().getColumns() - 1, 0),
-                        new TerminalSize(1, graphics.getSize().getRows() - 1)));
+                        new TerminalSize(1, graphics.getSize().getRows() - (drawHorizontalScrollBar ? 1 : 0))));
             }
             if(drawHorizontalScrollBar) {
                 horizontalScrollBar.onAdded(component.getParent());
@@ -730,7 +730,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
                 horizontalScrollBar.setScrollPosition(viewTopLeft.getColumn());
                 horizontalScrollBar.draw(graphics.newTextGraphics(
                         new TerminalPosition(0, graphics.getSize().getRows() - 1),
-                        new TerminalSize(graphics.getSize().getColumns() - 1, 1)));
+                        new TerminalSize(graphics.getSize().getColumns() - (drawVerticalScrollBar ? 1 : 0), 1)));
             }
         }
 
