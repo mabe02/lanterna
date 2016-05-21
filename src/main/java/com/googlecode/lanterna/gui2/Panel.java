@@ -179,6 +179,11 @@ public class Panel extends AbstractComponent<Panel> implements Container {
                 if(isInvalid()) {
                     layout(graphics.getSize());
                 }
+
+                // Reset the area
+                graphics.applyThemeStyle(getThemeDefinition().getNormal());
+                graphics.fill(' ');
+
                 for(Component child: components) {
                     TextGUIGraphics componentGraphics = graphics.newTextGraphics(child.getPosition(), child.getSize());
                     child.draw(componentGraphics);
