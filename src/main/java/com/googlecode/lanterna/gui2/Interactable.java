@@ -54,7 +54,8 @@ public interface Interactable extends Component {
 
     /**
      * Moves focus in the {@code BasePane} to this component. If the component has not been added to a {@code BasePane}
-     * (i.e. a {@code Window} most of the time), does nothing.
+     * (i.e. a {@code Window} most of the time), does nothing. If the component has been disabled through a call to
+     * {@link Interactable#setEnabled(boolean)}, this call also does nothing.
      * @return Itself
      */
     Interactable takeFocus();
@@ -93,6 +94,24 @@ public interface Interactable extends Component {
      * @return Input filter currently assigned to the interactable component
      */
     InputFilter getInputFilter();
+
+    /**
+     * Prevents the component from receiving input focus if this is called with a {@code false} value. The component
+     * will then behave as a mainly non-interactable component. Input focus can be re-enabled by calling this with
+     * {@code true}. If the component already has input focus when calling this method, it will release focus and no
+     * component is focused until there is user action or code that chooses a new focus.
+     * @param enabled If called with {@code false}, this interactable won't receive input focus until it's called again
+     *                with {@code true}.
+     * @return Itself
+     */
+    Interactable setEnabled(boolean enabled);
+
+    /**
+     * Returns {@code true} if this component is able to receive input as a regular interactable component. This will
+     * return {@code false} if input focus has been disabled through calling {@link Interactable#setEnabled(boolean)}.
+     * @return {@code true} if this component can receive input focus, {@code false} otherwise
+     */
+    boolean isEnabled();
 
     /**
      * Enum to represent the various results coming out of the handleKeyStroke method

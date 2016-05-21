@@ -84,6 +84,7 @@ public class ThemeTest extends TestBase {
 
         final Button exampleButton = new Button("Example");
         exampleButton.setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER, GridLayout.Alignment.CENTER, true, true));
+        exampleButton.setEnabled(false);
         leftHolder.addComponent(exampleButton);
 
         ActionListBox leftWindowActionBox = new ActionListBox()

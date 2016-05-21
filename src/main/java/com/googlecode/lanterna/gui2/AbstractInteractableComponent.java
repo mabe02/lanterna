@@ -32,6 +32,7 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
 
     private InputFilter inputFilter;
     private boolean inFocus;
+    private boolean enabled;
 
     /**
      * Default constructor
@@ -39,10 +40,14 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
     protected AbstractInteractableComponent() {
         inputFilter = null;
         inFocus = false;
+        enabled = true;
     }
 
     @Override
-    public T takeFocus() {
+    public synchronized T takeFocus() {
+        if(!isEnabled()) {
+            return self();
+        }
         BasePane basePane = getBasePane();
         if(basePane != null) {
             basePane.setFocusedInteractable(this);
@@ -56,7 +61,7 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
      * This method is final in {@code AbstractInteractableComponent}, please override {@code afterEnterFocus} instead
      */
     @Override
-    public final void onEnterFocus(FocusChangeDirection direction, Interactable previouslyInFocus) {
+    public final synchronized void onEnterFocus(FocusChangeDirection direction, Interactable previouslyInFocus) {
         inFocus = true;
         afterEnterFocus(direction, previouslyInFocus);
     }
@@ -79,7 +84,7 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
      * This method is final in {@code AbstractInteractableComponent}, please override {@code afterLeaveFocus} instead
      */
     @Override
-    public final void onLeaveFocus(FocusChangeDirection direction, Interactable nextInFocus) {
+    public final synchronized void onLeaveFocus(FocusChangeDirection direction, Interactable nextInFocus) {
         inFocus = false;
         afterLeaveFocus(direction, nextInFocus);
     }
@@ -107,6 +112,23 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
     @Override
     public boolean isFocused() {
         return inFocus;
+    }
+
+    @Override
+    public synchronized T setEnabled(boolean enabled) {
+        this.enabled = enabled;
+        if(!enabled && isFocused()) {
+            BasePane basePane = getBasePane();
+            if(basePane != null) {
+                basePane.setFocusedInteractable(null);
+            }
+        }
+        return self();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
     }
 
     @Override

@@ -232,6 +232,9 @@ public abstract class AbstractBasePane implements BasePane {
         if(focusedInteractable == toFocus) {
             return;
         }
+        if(toFocus != null && !toFocus.isEnabled()) {
+            return;
+        }
         if(focusedInteractable != null) {
             focusedInteractable.onLeaveFocus(direction, focusedInteractable);
         }
