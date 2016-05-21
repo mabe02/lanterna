@@ -327,7 +327,7 @@ public final class PropertiesTheme implements Theme {
                 sgrMap.put(getCategory(group), parseSGR(value));
             }
             else if(styleComponent.toLowerCase().trim().equals("char")) {
-                characterMap.put(getCategory(group), value.isEmpty() ? null : value.charAt(0));
+                characterMap.put(getCategory(group), value.isEmpty() ? ' ' : value.charAt(0));
             }
             else if(styleComponent.toLowerCase().trim().equals("cursor")) {
                 cursorVisible = Boolean.parseBoolean(value);
