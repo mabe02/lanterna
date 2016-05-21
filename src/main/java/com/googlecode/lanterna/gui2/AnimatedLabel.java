@@ -78,11 +78,13 @@ public class AnimatedLabel extends Label {
     /**
      * Adds one more frame at the end of the list of frames
      * @param text Text to use for the label at this frame
+     * @return Itself
      */
-    public synchronized void addFrame(String text) {
+    public synchronized AnimatedLabel addFrame(String text) {
         String[] lines = splitIntoMultipleLines(text);
         frames.add(lines);
         ensurePreferredSize(lines);
+        return this;
     }
 
     private void ensurePreferredSize(String[] lines) {
@@ -112,22 +114,26 @@ public class AnimatedLabel extends Label {
      * {@code millisecondsPerFrame} parameter. After all frames have been cycled through, it will start over from the
      * first frame again.
      * @param millisecondsPerFrame The interval in between every frame
+     * @return Itself
      */
-    public synchronized void startAnimation(long millisecondsPerFrame) {
+    public synchronized AnimatedLabel startAnimation(long millisecondsPerFrame) {
         if(TIMER == null) {
             TIMER = new Timer("AnimatedLabel");
         }
         AnimationTimerTask animationTimerTask = new AnimationTimerTask(this);
         SCHEDULED_TASKS.put(this, animationTimerTask);
         TIMER.scheduleAtFixedRate(animationTimerTask, millisecondsPerFrame, millisecondsPerFrame);
+        return this;
     }
 
     /**
      * Halts the animation thread and the label will stop at whatever was the current frame at the time when this was
      * called
+     * @return Itself
      */
-    public synchronized void stopAnimation() {
+    public synchronized AnimatedLabel stopAnimation() {
         removeTaskFromTimer(this);
+        return this;
     }
 
     private static synchronized void removeTaskFromTimer(AnimatedLabel animatedLabel) {
