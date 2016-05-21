@@ -19,6 +19,7 @@
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.*;
+import com.googlecode.lanterna.graphics.Theme;
 import com.googlecode.lanterna.graphics.ThemeDefinition;
 import com.googlecode.lanterna.input.KeyStroke;
 
@@ -518,6 +519,11 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
             }
             listBox.setSelectedIndex(getSelectedIndex());
             setComponent(listBox);
+        }
+
+        @Override
+        public synchronized Theme getTheme() {
+            return ComboBox.this.getTheme();
         }
     }
 
