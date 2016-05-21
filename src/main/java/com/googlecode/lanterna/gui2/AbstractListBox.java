@@ -295,12 +295,14 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
      * @param <T> Type of list box
      */
     public static class DefaultListBoxRenderer<V, T extends AbstractListBox<V, T>> implements InteractableRenderer<T> {
+        private final ScrollBar verticalScrollBar;
         private int scrollTopIndex;
 
         /**
          * Default constructor
          */
         public DefaultListBoxRenderer() {
+            this.verticalScrollBar = new ScrollBar(Direction.VERTICAL);
             this.scrollTopIndex = 0;
         }
 
@@ -372,6 +374,14 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
 
             graphics.applyThemeStyle(themeDefinition.getNormal());
             if(items.size() > componentHeight) {
+                verticalScrollBar.onAdded(listBox.getParent());
+                verticalScrollBar.setViewSize(componentHeight);
+                verticalScrollBar.setScrollMaximum(items.size());
+                verticalScrollBar.setScrollPosition(scrollTopIndex);
+                verticalScrollBar.draw(graphics.newTextGraphics(
+                        new TerminalPosition(graphics.getSize().getColumns() - 1, 0),
+                        new TerminalSize(1, graphics.getSize().getRows())));
+                /*
                 graphics.putString(componentWidth - 1, 0, Symbols.ARROW_UP + "");
 
                 graphics.applyThemeStyle(themeDefinition.getInsensitive());
@@ -387,6 +397,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
                 int tickPosition = (int)(((double) componentHeight - 3.0) * position);
                 graphics.applyThemeStyle(themeDefinition.getInsensitive());
                 graphics.putString(componentWidth - 1, 1 + tickPosition, " ");
+                */
             }
         }
     }
