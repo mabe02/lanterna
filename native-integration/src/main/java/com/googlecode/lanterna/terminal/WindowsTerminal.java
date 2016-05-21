@@ -13,13 +13,14 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 
 /**
- * Created by Martin on 2016-03-27.
+ * Terminal implementation for the regular Windows cmd.exe terminal emulator, using native invocations through jna to
+ * interact with it.
  */
 public class WindowsTerminal extends UnixLikeTerminal {
 
-    private final Wincon windowsConsole;
-    private final WinDef.HANDLE consoleInputHandle;
-    private final WinDef.HANDLE consoleOutputHandle;
+    private static final Wincon WINDOWS_CONSOLE = (Wincon) Native.loadLibrary("kernel32", Wincon.class, W32APIOptions.UNICODE_OPTIONS);
+    private static final WinDef.HANDLE CONSOLE_INPUT_HANDLE = WINDOWS_CONSOLE.GetStdHandle(Wincon.STD_INPUT_HANDLE);
+    private static final WinDef.HANDLE CONSOLE_OUTPUT_HANDLE = WINDOWS_CONSOLE.GetStdHandle(Wincon.STD_OUTPUT_HANDLE);
 
     private Integer savedTerminalMode;
 
@@ -37,11 +38,6 @@ public class WindowsTerminal extends UnixLikeTerminal {
                 terminalOutput,
                 terminalCharset,
                 terminalCtrlCBehaviour);
-
-        this.windowsConsole = (Wincon) Native.loadLibrary("kernel32", Wincon.class, W32APIOptions.UNICODE_OPTIONS);
-        this.consoleInputHandle = windowsConsole.GetStdHandle(Wincon.STD_INPUT_HANDLE);
-        this.consoleOutputHandle = windowsConsole.GetStdHandle(Wincon.STD_OUTPUT_HANDLE);
-        this.savedTerminalMode = null;
     }
 
     @Override
@@ -52,7 +48,7 @@ public class WindowsTerminal extends UnixLikeTerminal {
     @Override
     public synchronized void restoreTerminalSettings() throws IOException {
         if(savedTerminalMode != null) {
-            windowsConsole.SetConsoleMode(consoleInputHandle, savedTerminalMode);
+            WINDOWS_CONSOLE.SetConsoleMode(CONSOLE_INPUT_HANDLE, savedTerminalMode);
         }
     }
 
@@ -65,7 +61,7 @@ public class WindowsTerminal extends UnixLikeTerminal {
         else {
             mode &= ~Wincon.ENABLE_ECHO_INPUT;
         }
-        windowsConsole.SetConsoleMode(consoleInputHandle, mode);
+        WINDOWS_CONSOLE.SetConsoleMode(CONSOLE_INPUT_HANDLE, mode);
     }
 
     @Override
@@ -77,7 +73,7 @@ public class WindowsTerminal extends UnixLikeTerminal {
         else {
             mode &= ~Wincon.ENABLE_LINE_INPUT;
         }
-        windowsConsole.SetConsoleMode(consoleInputHandle, mode);
+        WINDOWS_CONSOLE.SetConsoleMode(CONSOLE_INPUT_HANDLE, mode);
     }
 
     @Override
@@ -89,14 +85,14 @@ public class WindowsTerminal extends UnixLikeTerminal {
         else {
             mode &= ~Wincon.ENABLE_PROCESSED_INPUT;
         }
-        windowsConsole.SetConsoleMode(consoleInputHandle, mode);
+        WINDOWS_CONSOLE.SetConsoleMode(CONSOLE_INPUT_HANDLE, mode);
     }
 
 
     @Override
     protected TerminalSize findTerminalSize() throws IOException {
         WinDef.CONSOLE_SCREEN_BUFFER_INFO screenBufferInfo = new WinDef.CONSOLE_SCREEN_BUFFER_INFO();
-        windowsConsole.GetConsoleScreenBufferInfo(consoleOutputHandle, screenBufferInfo);
+        WINDOWS_CONSOLE.GetConsoleScreenBufferInfo(CONSOLE_OUTPUT_HANDLE, screenBufferInfo);
         int columns = screenBufferInfo.srWindow.Right - screenBufferInfo.srWindow.Left + 1;
         int rows = screenBufferInfo.srWindow.Bottom - screenBufferInfo.srWindow.Top + 1;
         return new TerminalSize(columns, rows);
@@ -109,7 +105,7 @@ public class WindowsTerminal extends UnixLikeTerminal {
 
     public synchronized TerminalPosition getCursorPosition() {
         WinDef.CONSOLE_SCREEN_BUFFER_INFO screenBufferInfo = new WinDef.CONSOLE_SCREEN_BUFFER_INFO();
-        windowsConsole.GetConsoleScreenBufferInfo(consoleOutputHandle, screenBufferInfo);
+        WINDOWS_CONSOLE.GetConsoleScreenBufferInfo(CONSOLE_OUTPUT_HANDLE, screenBufferInfo);
         int column = screenBufferInfo.dwCursorPosition.X - screenBufferInfo.srWindow.Left;
         int row = screenBufferInfo.dwCursorPosition.Y - screenBufferInfo.srWindow.Top;
         return new TerminalPosition(column, row);
@@ -117,7 +113,7 @@ public class WindowsTerminal extends UnixLikeTerminal {
 
     private int getConsoleMode() {
         IntByReference lpMode = new IntByReference();
-        windowsConsole.GetConsoleMode(consoleInputHandle, lpMode);
+        WINDOWS_CONSOLE.GetConsoleMode(CONSOLE_INPUT_HANDLE, lpMode);
         return lpMode.getValue();
     }
 }
