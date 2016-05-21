@@ -22,16 +22,16 @@ import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.bundle.LanternaThemes;
 import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
+import com.googlecode.lanterna.gui2.table.Table;
+import com.googlecode.lanterna.gui2.table.TableModel;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by Martin on 2016-05-08.
@@ -45,6 +45,12 @@ public class ThemeTest extends TestBase {
     public void init(final WindowBasedTextGUI textGUI) {
         final BasicWindow mainSelectionWindow = new BasicWindow("Theme Tests");
         ActionListBox mainSelector = new ActionListBox();
+        mainSelector.addItem("Component test", new Runnable() {
+            @Override
+            public void run() {
+                runComponentTest(textGUI);
+            }
+        });
         mainSelector.addItem("Multi-theme test", new Runnable() {
             @Override
             public void run() {
@@ -61,6 +67,200 @@ public class ThemeTest extends TestBase {
         mainSelectionWindow.setHints(Arrays.asList(Window.Hint.CENTERED));
 
         textGUI.addWindow(mainSelectionWindow);
+    }
+
+    private void runComponentTest(WindowBasedTextGUI textGUI) {
+        final BasicWindow componentTestChooser = new BasicWindow("Component test");
+        componentTestChooser.setHints(Arrays.asList(Window.Hint.CENTERED));
+
+        Panel mainPanel = new Panel();
+        mainPanel.addComponent(new Label("Choose borderedComponent:                     "));
+        mainPanel.addComponent(new EmptySpace());
+        ThemedComponentTestDialog[] componentTestDialogs = new ThemedComponentTestDialog[]{
+                new ThemedComponentTestDialog(textGUI, "ActionListBox",
+                        new ActionListBox(new TerminalSize(15, 5))
+                                .addItem(new NullRunnable("Item #1"))
+                                .addItem(new NullRunnable("Item #2"))
+                                .addItem(new NullRunnable("Item #3"))
+                                .addItem(new NullRunnable("Item #4"))
+                                .addItem(new NullRunnable("Item #5"))
+                                .addItem(new NullRunnable("Item #6"))
+                                .addItem(new NullRunnable("Item #7"))
+                                .addItem(new NullRunnable("Item #8"))),
+                new ThemedComponentTestDialog(textGUI, "AnimatedLabel",
+                        new AnimatedLabel("First Frame")
+                                .addFrame("Second Frame")
+                                .addFrame("Third Frame")
+                                .addFrame("Last Frame")),
+                new ThemedComponentTestDialog(textGUI, "Borders",
+                        new Panel()
+                                .setLayoutManager(new GridLayout(2))
+                                .addComponent(new EmptySpace(new TerminalSize(3, 2)).withBorder(Borders.singleLine()))
+                                .addComponent(new EmptySpace(new TerminalSize(3, 2)).withBorder(Borders.singleLineBevel()))
+                                .addComponent(new EmptySpace(new TerminalSize(3, 2)).withBorder(Borders.doubleLine()))
+                                .addComponent(new EmptySpace(new TerminalSize(3, 2)).withBorder(Borders.doubleLineBevel()))),
+                new ThemedComponentTestDialog(textGUI, "Button",
+                        new Button("This is a button")),
+                new ThemedComponentTestDialog(textGUI, "CheckBox",
+                        new CheckBox("This is a checkbox")),
+                new ThemedComponentTestDialog(textGUI, "CheckBoxList",
+                        new CheckBoxList<String>(new TerminalSize(15, 5))
+                                .addItem("Item #1")
+                                .addItem("Item #2")
+                                .addItem("Item #3")
+                                .addItem("Item #4")
+                                .addItem("Item #5")
+                                .addItem("Item #6")
+                                .addItem("Item #7")
+                                .addItem("Item #8")),
+                new ThemedComponentTestDialog(textGUI, "ComboBox",
+                        new Panel()
+                                .addComponent(new ComboBox<String>("Editable", "Item #2", "Item #3", "Item #4", "Item #5", "Item #6", "Item #7")
+                                        .setReadOnly(false))
+                                .addComponent(new ComboBox<String>("Read-only", "Item #2", "Item #3", "Item #4", "Item #5", "Item #6", "Item #7")
+                                        .setReadOnly(true))),
+                new ThemedComponentTestDialog(textGUI, "Label",
+                        new Label("This is a label")),
+                new ThemedComponentTestDialog(textGUI, "RadioBoxList",
+                        new RadioBoxList<String>(new TerminalSize(15, 5))
+                                .addItem("Item #1")
+                                .addItem("Item #2")
+                                .addItem("Item #3")
+                                .addItem("Item #4")
+                                .addItem("Item #5")
+                                .addItem("Item #6")
+                                .addItem("Item #7")
+                                .addItem("Item #8")),
+                new ThemedComponentTestDialog(textGUI, "ScrollBar",
+                        new Panel()
+                                .setLayoutManager(new GridLayout(2))
+                                .addComponent(new ScrollBar(Direction.HORIZONTAL))
+                                .addComponent(new ScrollBar(Direction.VERTICAL))),
+                new ThemedComponentTestDialog(textGUI, "Separator",
+                        new Panel()
+                                .setLayoutManager(new GridLayout(2))
+                                .addComponent(new Separator(Direction.HORIZONTAL).setPreferredSize(new TerminalSize(6, 1)))
+                                .addComponent(new Separator(Direction.VERTICAL).setPreferredSize(new TerminalSize(1, 6)))),
+                new ThemedComponentTestDialog(textGUI, "Table",
+                        new Table<String>("Column #1", "Column #2", "Column #3")
+                                .setTableModel(
+                                        new TableModel<String>("Column #1", "Column #2", "Column #3")
+                                                .addRow("Row #1", "Row #2", "Row #3")
+                                                .addRow("Row #1", "Row #2", "Row #3")
+                                                .addRow("Row #1", "Row #2", "Row #3")
+                                                .addRow("Row #1", "Row #2", "Row #3")
+                                                .addRow("Row #1", "Row #2", "Row #3")
+                                                .addRow("Row #1", "Row #2", "Row #3")
+                                                .addRow("Row #1", "Row #2", "Row #3"))),
+                new ThemedComponentTestDialog(textGUI, "TextBox",
+                        new Panel()
+                                .addComponent(new TextBox("Single-line text box"))
+                                .addComponent(new EmptySpace())
+                                .addComponent(new TextBox(new TerminalSize(15, 3), "Multi\nline\ntext\nbox").setVerticalFocusSwitching(false)))
+        };
+        ActionListBox listBox = new ActionListBox(new TerminalSize(15, 7)).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        for(ThemedComponentTestDialog themedComponentTestDialog: componentTestDialogs) {
+            listBox.addItem(themedComponentTestDialog);
+        }
+        mainPanel.addComponent(listBox);
+        mainPanel.addComponent(new EmptySpace());
+        mainPanel.addComponent(new Button(LocalizedString.Close.toString(), new Runnable() {
+            @Override
+            public void run() {
+                componentTestChooser.close();
+            }
+        }).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.End)));
+
+        componentTestChooser.setComponent(mainPanel);
+        textGUI.addWindowAndWait(componentTestChooser);
+    }
+
+    private static class ThemedComponentTestDialog implements Runnable {
+        private final WindowBasedTextGUI textGUI;
+        private final String label;
+        private final Component borderedComponent;
+        private final Component embeddedComponent;
+
+        public ThemedComponentTestDialog(WindowBasedTextGUI textGUI, String label, Component component) {
+            this.textGUI = textGUI;
+            this.label = label;
+
+
+            Panel componentPanel = new Panel();
+            componentPanel.setLayoutManager(new GridLayout(1)
+                    .setBottomMarginSize(1)
+                    .setTopMarginSize(1)
+                    .setLeftMarginSize(2)
+                    .setRightMarginSize(2));
+            componentPanel.addComponent(component.setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER, GridLayout.Alignment.CENTER)));
+
+            this.embeddedComponent = component;
+            this.borderedComponent = componentPanel.withBorder(Borders.singleLine(label));
+        }
+
+        @Override
+        public void run() {
+            final BasicWindow componentWindow = new BasicWindow();
+            componentWindow.setHints(Arrays.asList(Window.Hint.CENTERED));
+            componentWindow.setTitle("Themed Component");
+
+            Panel mainPanel = new Panel();
+            mainPanel.addComponent(borderedComponent);
+
+            mainPanel.addComponent(new EmptySpace());
+            ActionListBox actionListBox = new ActionListBox();
+            for(final String themeName: LanternaThemes.getRegisteredThemes()) {
+                actionListBox.addItem(themeName, new Runnable() {
+                    @Override
+                    public void run() {
+                        borderedComponent.setTheme(LanternaThemes.getRegisteredTheme(themeName));
+                    }
+                });
+            }
+            mainPanel.addComponent(actionListBox
+                    .withBorder(Borders.doubleLine("Change theme:"))
+                    .setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center)));
+
+            mainPanel.addComponent(new EmptySpace());
+            Button closeButton = new Button(LocalizedString.Close.toString(), new Runnable() {
+                @Override
+                public void run() {
+                    componentWindow.close();
+                }
+            }).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.End));
+            mainPanel.addComponent(closeButton);
+
+            componentWindow.setComponent(mainPanel);
+            closeButton.takeFocus();
+
+            if(embeddedComponent instanceof AnimatedLabel) {
+                ((AnimatedLabel)embeddedComponent).startAnimation(917);
+            }
+
+            textGUI.addWindowAndWait(componentWindow);
+        }
+
+        @Override
+        public String toString() {
+            return label;
+        }
+    }
+
+    private static class NullRunnable implements Runnable {
+        private final String label;
+
+        public NullRunnable(String label) {
+            this.label = label;
+        }
+
+        @Override
+        public void run() {
+        }
+
+        @Override
+        public String toString() {
+            return label;
+        }
     }
 
     private void runMultiThemeTest(final WindowBasedTextGUI textGUI) {
