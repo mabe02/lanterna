@@ -116,9 +116,12 @@ public class ThemeTest extends TestBase {
                 new ThemedComponentTestDialog(textGUI, "ComboBox",
                         new Panel()
                                 .addComponent(new ComboBox<String>("Editable", "Item #2", "Item #3", "Item #4", "Item #5", "Item #6", "Item #7")
-                                        .setReadOnly(false))
+                                        .setReadOnly(false)
+                                        .setPreferredSize(new TerminalSize(12, 1)))
+                                .addComponent(new EmptySpace())
                                 .addComponent(new ComboBox<String>("Read-only", "Item #2", "Item #3", "Item #4", "Item #5", "Item #6", "Item #7")
-                                        .setReadOnly(true))),
+                                        .setReadOnly(true)
+                                        .setPreferredSize(new TerminalSize(12, 1)))),
                 new ThemedComponentTestDialog(textGUI, "Label",
                         new Label("This is a label")),
                 new ThemedComponentTestDialog(textGUI, "RadioBoxList",
