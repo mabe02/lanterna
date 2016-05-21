@@ -117,7 +117,12 @@ public class Button extends AbstractInteractableComponent<Button> {
     public static class DefaultButtonRenderer implements ButtonRenderer {
         @Override
         public TerminalPosition getCursorLocation(Button button) {
-            return new TerminalPosition(1 + getLabelShift(button, button.getSize()), 0);
+            if(button.getThemeDefinition().isCursorVisible()) {
+                return new TerminalPosition(1 + getLabelShift(button, button.getSize()), 0);
+            }
+            else {
+                return null;
+            }
         }
 
         @Override
