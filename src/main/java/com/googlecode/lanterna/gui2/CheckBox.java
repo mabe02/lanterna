@@ -175,7 +175,12 @@ public class CheckBox extends AbstractInteractableComponent<CheckBox> {
         private static final TerminalPosition CURSOR_LOCATION = new TerminalPosition(1, 0);
         @Override
         public TerminalPosition getCursorLocation(CheckBox component) {
-            return CURSOR_LOCATION;
+            if(component.getThemeDefinition().isCursorVisible()) {
+                return CURSOR_LOCATION;
+            }
+            else {
+                return null;
+            }
         }
 
         @Override
