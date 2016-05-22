@@ -582,7 +582,12 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
                 graphics.applyThemeStyle(themeDefinition.getNormal());
             }
             else {
-                graphics.applyThemeStyle(themeDefinition.getPreLight());
+                if(comboBox.isFocused()) {
+                    graphics.applyThemeStyle(themeDefinition.getActive());
+                }
+                else {
+                    graphics.applyThemeStyle(themeDefinition.getPreLight());
+                }
             }
             graphics.fill(' ');
             int editableArea = graphics.getSize().getColumns() - 2; //This is exclusing the 'drop-down arrow'

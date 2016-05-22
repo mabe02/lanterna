@@ -20,6 +20,7 @@ package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.graphics.ThemeDefinition;
+import com.googlecode.lanterna.graphics.ThemeStyle;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 
@@ -222,33 +223,37 @@ public class CheckBoxList<V> extends AbstractListBox<V, CheckBoxList<V>> {
         @Override
         public void drawItem(TextGUIGraphics graphics, CheckBoxList<V> listBox, int index, V item, boolean selected, boolean focused) {
             ThemeDefinition themeDefinition = listBox.getTheme().getDefinition(CheckBoxList.class);
-            if(selected && focused) {
-                graphics.applyThemeStyle(themeDefinition.getActive());
+            ThemeStyle itemStyle;
+            if(selected && !focused) {
+                itemStyle = themeDefinition.getSelected();
+            }
+            else if(selected && focused) {
+                itemStyle = themeDefinition.getActive();
+            }
+            else if(!selected && focused) {
+                itemStyle = themeDefinition.getInsensitive();
             }
             else {
-                graphics.applyThemeStyle(themeDefinition.getNormal());
+                itemStyle = themeDefinition.getNormal();
             }
 
+            graphics.applyThemeStyle(itemStyle);
             graphics.fill(' ');
+
+            String brackets = themeDefinition.getCharacter("LEFT_BRACKET", '[') +
+                    " " +
+                    themeDefinition.getCharacter("RIGHT_BRACKET", ']');
+            if(themeDefinition.getBooleanProperty("FIXED_BRACKET_COLOR", false)) {
+                graphics.applyThemeStyle(themeDefinition.getPreLight());
+                graphics.putString(0, 0, brackets);
+                graphics.applyThemeStyle(itemStyle);
+            }
+            else {
+                graphics.putString(0, 0, brackets);
+            }
+
             String text = (item != null ? item : "<null>").toString();
             graphics.putString(4, 0, text);
-
-            if(focused) {
-                graphics.applyThemeStyle(themeDefinition.getPreLight());
-            }
-            else {
-                graphics.applyThemeStyle(themeDefinition.getInsensitive());
-            }
-            graphics.setCharacter(0, 0, themeDefinition.getCharacter("LEFT_BRACKET", '['));
-            graphics.setCharacter(2, 0, themeDefinition.getCharacter("RIGHT_BRACKET", ']'));
-            graphics.setCharacter(3, 0, ' ');
-
-            if(focused) {
-                graphics.applyThemeStyle(themeDefinition.getSelected());
-            }
-            else {
-                graphics.applyThemeStyle(themeDefinition.getNormal());
-            }
             graphics.setCharacter(1, 0, (listBox.getCheckedItems().contains(item) ? themeDefinition.getCharacter("MARKER", 'x') : ' '));
         }
     }
