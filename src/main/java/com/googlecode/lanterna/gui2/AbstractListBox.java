@@ -308,6 +308,9 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
 
         @Override
         public TerminalPosition getCursorLocation(T listBox) {
+            if(!listBox.getThemeDefinition().isCursorVisible()) {
+                return null;
+            }
             int selectedIndex = listBox.getSelectedIndex();
             int columnAccordingToRenderer = listBox.getListItemRenderer().getHotSpotPositionOnLine(selectedIndex);
             if(columnAccordingToRenderer == -1) {
