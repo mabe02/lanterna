@@ -250,8 +250,15 @@ public class RadioBoxList<V> extends AbstractListBox<V, RadioBoxList<V>> {
                 itemStyle = themeDefinition.getNormal();
             }
 
-            graphics.applyThemeStyle(itemStyle);
-            graphics.fill(' ');
+            if(themeDefinition.getBooleanProperty("CLEAR_WITH_NORMAL", false)) {
+                graphics.applyThemeStyle(themeDefinition.getNormal());
+                graphics.fill(' ');
+                graphics.applyThemeStyle(itemStyle);
+            }
+            else {
+                graphics.applyThemeStyle(itemStyle);
+                graphics.fill(' ');
+            }
 
             String brackets = themeDefinition.getCharacter("LEFT_BRACKET", '<') +
                     " " +
@@ -267,7 +274,16 @@ public class RadioBoxList<V> extends AbstractListBox<V, RadioBoxList<V>> {
 
             String text = (item != null ? item : "<null>").toString();
             graphics.putString(4, 0, text);
-            graphics.setCharacter(1, 0, (listBox.checkedIndex == index ? themeDefinition.getCharacter("MARKER", 'o') : ' '));
+
+            boolean itemChecked = listBox.checkedIndex == index;
+            char marker = themeDefinition.getCharacter("MARKER", 'o');
+            if(themeDefinition.getBooleanProperty("MARKER_WITH_NORMAL", false)) {
+                graphics.applyThemeStyle(themeDefinition.getNormal());
+                graphics.setCharacter(1, 0, (itemChecked ? marker : ' '));
+            }
+            else {
+                graphics.setCharacter(1, 0, (itemChecked ? marker : ' '));
+            }
         }
     }
 

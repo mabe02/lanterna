@@ -237,8 +237,15 @@ public class CheckBoxList<V> extends AbstractListBox<V, CheckBoxList<V>> {
                 itemStyle = themeDefinition.getNormal();
             }
 
-            graphics.applyThemeStyle(itemStyle);
-            graphics.fill(' ');
+            if(themeDefinition.getBooleanProperty("CLEAR_WITH_NORMAL", false)) {
+                graphics.applyThemeStyle(themeDefinition.getNormal());
+                graphics.fill(' ');
+                graphics.applyThemeStyle(itemStyle);
+            }
+            else {
+                graphics.applyThemeStyle(itemStyle);
+                graphics.fill(' ');
+            }
 
             String brackets = themeDefinition.getCharacter("LEFT_BRACKET", '[') +
                     " " +
@@ -254,7 +261,16 @@ public class CheckBoxList<V> extends AbstractListBox<V, CheckBoxList<V>> {
 
             String text = (item != null ? item : "<null>").toString();
             graphics.putString(4, 0, text);
-            graphics.setCharacter(1, 0, (listBox.getCheckedItems().contains(item) ? themeDefinition.getCharacter("MARKER", 'x') : ' '));
+
+            boolean itemChecked = listBox.isChecked(index);
+            char marker = themeDefinition.getCharacter("MARKER", 'x');
+            if(themeDefinition.getBooleanProperty("MARKER_WITH_NORMAL", false)) {
+                graphics.applyThemeStyle(themeDefinition.getNormal());
+                graphics.setCharacter(1, 0, (itemChecked ? marker : ' '));
+            }
+            else {
+                graphics.setCharacter(1, 0, (itemChecked ? marker : ' '));
+            }
         }
     }
 }
