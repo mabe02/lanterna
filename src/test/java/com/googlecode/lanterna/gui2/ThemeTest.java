@@ -94,11 +94,11 @@ public class ThemeTest extends TestBase {
                                 .addFrame("Last Frame")),
                 new ThemedComponentTestDialog(textGUI, "Borders",
                         new Panel()
-                                .setLayoutManager(new GridLayout(2))
-                                .addComponent(new EmptySpace(new TerminalSize(3, 2)).withBorder(Borders.singleLine()))
-                                .addComponent(new EmptySpace(new TerminalSize(3, 2)).withBorder(Borders.singleLineBevel()))
-                                .addComponent(new EmptySpace(new TerminalSize(3, 2)).withBorder(Borders.doubleLine()))
-                                .addComponent(new EmptySpace(new TerminalSize(3, 2)).withBorder(Borders.doubleLineBevel()))),
+                                .setLayoutManager(new GridLayout(4))
+                                .addComponent(new EmptySpace(new TerminalSize(4, 2)).withBorder(Borders.singleLine()))
+                                .addComponent(new EmptySpace(new TerminalSize(4, 2)).withBorder(Borders.singleLineBevel()))
+                                .addComponent(new EmptySpace(new TerminalSize(4, 2)).withBorder(Borders.doubleLine()))
+                                .addComponent(new EmptySpace(new TerminalSize(4, 2)).withBorder(Borders.doubleLineBevel()))),
                 new ThemedComponentTestDialog(textGUI, "Button",
                         new Button("This is a button")),
                 new ThemedComponentTestDialog(textGUI, "CheckBox",
