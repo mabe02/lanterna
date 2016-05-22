@@ -130,6 +130,23 @@ public class Symbols {
     public static final char BLOCK_SPARSE = 0x2591;
 
     /**
+     * ►
+     */
+    public static final char TRIANGLE_RIGHT_POINTING_BLACK = 0x25BA;
+    /**
+     * ◄
+     */
+    public static final char TRIANGLE_LEFT_POINTING_BLACK = 0x25C4;
+    /**
+     * ▲
+     */
+    public static final char TRIANGLE_UP_POINTING_BLACK = 0x25B2;
+    /**
+     * ▼
+     */
+    public static final char TRIANGLE_DOWN_POINTING_BLACK = 0x25BC;
+
+    /**
      * ⏴
      */
     public static final char TRIANGLE_RIGHT_POINTING_MEDIUM_BLACK = 0x23F4;
