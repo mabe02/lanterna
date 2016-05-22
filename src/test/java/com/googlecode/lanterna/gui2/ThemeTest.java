@@ -148,13 +148,10 @@ public class ThemeTest extends TestBase {
                         new Table<String>("Column #1", "Column #2", "Column #3")
                                 .setTableModel(
                                         new TableModel<String>("Column #1", "Column #2", "Column #3")
-                                                .addRow("Row #1", "Row #2", "Row #3")
-                                                .addRow("Row #1", "Row #2", "Row #3")
-                                                .addRow("Row #1", "Row #2", "Row #3")
-                                                .addRow("Row #1", "Row #2", "Row #3")
-                                                .addRow("Row #1", "Row #2", "Row #3")
-                                                .addRow("Row #1", "Row #2", "Row #3")
-                                                .addRow("Row #1", "Row #2", "Row #3"))),
+                                                .addRow("Row #1", "Row #1", "Row #1")
+                                                .addRow("Row #2", "Row #2", "Row #2")
+                                                .addRow("Row #3", "Row #3", "Row #3")
+                                                .addRow("Row #4", "Row #4", "Row #4"))),
                 new ThemedComponentTestDialog(textGUI, "TextBox",
                         new Panel()
                                 .addComponent(new TextBox("Single-line text box"))
