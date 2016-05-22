@@ -27,7 +27,7 @@ import com.googlecode.lanterna.TerminalSize;
  */
 public class EmptyWindowDecorationRenderer implements WindowDecorationRenderer {
     @Override
-    public TextGUIGraphics draw(TextGUI textGUI, TextGUIGraphics graphics, Window window) {
+    public TextGUIGraphics draw(WindowBasedTextGUI textGUI, TextGUIGraphics graphics, Window window) {
         return graphics;
     }
 

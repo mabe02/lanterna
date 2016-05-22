@@ -11,7 +11,7 @@ import com.googlecode.lanterna.graphics.ThemeDefinition;
  */
 public class FatWindowDecorationRenderer implements WindowDecorationRenderer {
     @Override
-    public TextGUIGraphics draw(TextGUI textGUI, TextGUIGraphics graphics, Window window) {
+    public TextGUIGraphics draw(WindowBasedTextGUI textGUI, TextGUIGraphics graphics, Window window) {
         String title = window.getTitle();
         if(title == null) {
             title = "";

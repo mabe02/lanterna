@@ -30,7 +30,7 @@ import com.googlecode.lanterna.graphics.ThemeDefinition;
  */
 public class DefaultWindowDecorationRenderer implements WindowDecorationRenderer {
     @Override
-    public TextGUIGraphics draw(TextGUI textGUI, TextGUIGraphics graphics, Window window) {
+    public TextGUIGraphics draw(WindowBasedTextGUI textGUI, TextGUIGraphics graphics, Window window) {
         String title = window.getTitle();
         if(title == null) {
             title = "";
@@ -66,7 +66,12 @@ public class DefaultWindowDecorationRenderer implements WindowDecorationRenderer
         graphics.setCharacter(drawableArea.getColumns() - 1, drawableArea.getRows() - 1, bottomRightCorner);
 
         if(!title.isEmpty()) {
-            graphics.applyThemeStyle(themeDefinition.getActive());
+            if(textGUI.getActiveWindow() == window) {
+                graphics.applyThemeStyle(themeDefinition.getActive());
+            }
+            else {
+                graphics.applyThemeStyle(themeDefinition.getInsensitive());
+            }
             graphics.putString(2, 0, TerminalTextUtils.fitString(title, drawableArea.getColumns() - 3));
         }
 

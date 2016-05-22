@@ -36,7 +36,7 @@ public interface WindowDecorationRenderer {
      * @param window Window to draw
      * @return A new TextGraphics that is limited to the area inside the decorations just drawn
      */
-    TextGUIGraphics draw(TextGUI textGUI, TextGUIGraphics graphics, Window window);
+    TextGUIGraphics draw(WindowBasedTextGUI textGUI, TextGUIGraphics graphics, Window window);
 
     /**
      * Retrieves the full size of the window, including all window decorations, given all components inside the window.
