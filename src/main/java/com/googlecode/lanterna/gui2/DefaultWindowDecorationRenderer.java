@@ -36,6 +36,7 @@ public class DefaultWindowDecorationRenderer implements WindowDecorationRenderer
             title = "";
         }
 
+        TerminalSize drawableArea = graphics.getSize();
         ThemeDefinition themeDefinition = window.getTheme().getDefinition(DefaultWindowDecorationRenderer.class);
         char horizontalLine = themeDefinition.getCharacter("HORIZONTAL_LINE", Symbols.SINGLE_LINE_HORIZONTAL);
         char verticalLine = themeDefinition.getCharacter("VERTICAL_LINE", Symbols.SINGLE_LINE_VERTICAL);
@@ -43,16 +44,38 @@ public class DefaultWindowDecorationRenderer implements WindowDecorationRenderer
         char topLeftCorner = themeDefinition.getCharacter("TOP_LEFT_CORNER", Symbols.SINGLE_LINE_TOP_LEFT_CORNER);
         char bottomRightCorner = themeDefinition.getCharacter("BOTTOM_RIGHT_CORNER", Symbols.SINGLE_LINE_BOTTOM_RIGHT_CORNER);
         char topRightCorner = themeDefinition.getCharacter("TOP_RIGHT_CORNER", Symbols.SINGLE_LINE_TOP_RIGHT_CORNER);
+        char titleSeparatorLeft = themeDefinition.getCharacter("TITLE_SEPARATOR_LEFT", Symbols.SINGLE_LINE_HORIZONTAL);
+        char titleSeparatorRight = themeDefinition.getCharacter("TITLE_SEPARATOR_RIGHT", Symbols.SINGLE_LINE_HORIZONTAL);
+        boolean useTitlePadding = themeDefinition.getBooleanProperty("TITLE_PADDING", false);
+        boolean centerTitle = themeDefinition.getBooleanProperty("CENTER_TITLE", false);
 
-        TerminalSize drawableArea = graphics.getSize();
+        int titleHorizontalPosition = useTitlePadding ? 4 : 3;
+        int titleMaxColumns = drawableArea.getColumns() - titleHorizontalPosition * 2;
+        if(centerTitle) {
+            titleHorizontalPosition = (drawableArea.getColumns() / 2) - (TerminalTextUtils.getColumnWidth(title) / 2);
+            titleHorizontalPosition = Math.max(titleHorizontalPosition, useTitlePadding ? 4 : 3);
+        }
+        String actualTitle = TerminalTextUtils.fitString(title, titleMaxColumns);
+        int titleActualColumns = TerminalTextUtils.getColumnWidth(actualTitle);
+
         graphics.applyThemeStyle(themeDefinition.getPreLight());
         graphics.drawLine(new TerminalPosition(0, drawableArea.getRows() - 2), new TerminalPosition(0, 1), verticalLine);
         graphics.drawLine(new TerminalPosition(1, 0), new TerminalPosition(drawableArea.getColumns() - 2, 0), horizontalLine);
         graphics.setCharacter(0, 0, topLeftCorner);
         graphics.setCharacter(0, drawableArea.getRows() - 1, bottomLeftCorner);
 
-        graphics.applyThemeStyle(themeDefinition.getNormal());
+        if(!actualTitle.isEmpty() && drawableArea.getColumns() > 8) {
+            int separatorOffset = 1;
+            if(useTitlePadding) {
+                graphics.setCharacter(titleHorizontalPosition - 1, 0, ' ');
+                graphics.setCharacter(titleHorizontalPosition + titleActualColumns, 0, ' ');
+                separatorOffset = 2;
+            }
+            graphics.setCharacter(titleHorizontalPosition - separatorOffset, 0, titleSeparatorLeft);
+            graphics.setCharacter(titleHorizontalPosition + titleActualColumns + separatorOffset - 1, 0, titleSeparatorRight);
+        }
 
+        graphics.applyThemeStyle(themeDefinition.getNormal());
         graphics.drawLine(
                 new TerminalPosition(drawableArea.getColumns() - 1, 1),
                 new TerminalPosition(drawableArea.getColumns() - 1, drawableArea.getRows() - 2),
@@ -65,14 +88,14 @@ public class DefaultWindowDecorationRenderer implements WindowDecorationRenderer
         graphics.setCharacter(drawableArea.getColumns() - 1, 0, topRightCorner);
         graphics.setCharacter(drawableArea.getColumns() - 1, drawableArea.getRows() - 1, bottomRightCorner);
 
-        if(!title.isEmpty()) {
+        if(!actualTitle.isEmpty()) {
             if(textGUI.getActiveWindow() == window) {
                 graphics.applyThemeStyle(themeDefinition.getActive());
             }
             else {
                 graphics.applyThemeStyle(themeDefinition.getInsensitive());
             }
-            graphics.putString(2, 0, TerminalTextUtils.fitString(title, drawableArea.getColumns() - 3));
+            graphics.putString(titleHorizontalPosition, 0, actualTitle);
         }
 
         return graphics.newTextGraphics(new TerminalPosition(1, 1), graphics.getSize().withRelativeColumns(-2).withRelativeRows(-2));
@@ -80,10 +103,19 @@ public class DefaultWindowDecorationRenderer implements WindowDecorationRenderer
 
     @Override
     public TerminalSize getDecoratedSize(Window window, TerminalSize contentAreaSize) {
+        ThemeDefinition themeDefinition = window.getTheme().getDefinition(DefaultWindowDecorationRenderer.class);
+        boolean useTitlePadding = themeDefinition.getBooleanProperty("TITLE_PADDING", false);
+
+        int titleWidth = TerminalTextUtils.getColumnWidth(window.getTitle());
+        int minPadding = 4;
+        if(useTitlePadding) {
+            minPadding = 6;
+        }
+
         return contentAreaSize
                 .withRelativeColumns(2)
                 .withRelativeRows(2)
-                .max(new TerminalSize(TerminalTextUtils.getColumnWidth(window.getTitle()) + 4, 1));  //Make sure the title fits!
+                .max(new TerminalSize(titleWidth + minPadding, 1));  //Make sure the title fits!
     }
 
     private static final TerminalPosition OFFSET = new TerminalPosition(1, 1);
