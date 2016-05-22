@@ -259,7 +259,8 @@ public class Borders {
             }
 
 
-            if(drawableArea.getColumns() >= TerminalTextUtils.getColumnWidth(border.getTitle()) + 4) {
+            if(border.getTitle() != null && !border.getTitle().isEmpty() &&
+                    drawableArea.getColumns() >= TerminalTextUtils.getColumnWidth(border.getTitle()) + 4) {
                 graphics.applyThemeStyle(component.getTheme().getDefinition(StandardBorder.class).getActive());
                 graphics.putString(2, 0, border.getTitle());
 
