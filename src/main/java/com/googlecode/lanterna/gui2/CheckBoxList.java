@@ -266,11 +266,11 @@ public class CheckBoxList<V> extends AbstractListBox<V, CheckBoxList<V>> {
             char marker = themeDefinition.getCharacter("MARKER", 'x');
             if(themeDefinition.getBooleanProperty("MARKER_WITH_NORMAL", false)) {
                 graphics.applyThemeStyle(themeDefinition.getNormal());
-                graphics.setCharacter(1, 0, (itemChecked ? marker : ' '));
             }
-            else {
-                graphics.setCharacter(1, 0, (itemChecked ? marker : ' '));
+            if(selected && focused && themeDefinition.getBooleanProperty("HOTSPOT_PRELIGHT", false)) {
+                graphics.applyThemeStyle(themeDefinition.getPreLight());
             }
+            graphics.setCharacter(1, 0, (itemChecked ? marker : ' '));
         }
     }
 }

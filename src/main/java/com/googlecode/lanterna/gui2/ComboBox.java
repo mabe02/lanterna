@@ -552,7 +552,12 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
         @Override
         public TerminalPosition getCursorLocation(ComboBox<V> comboBox) {
             if(comboBox.isDropDownFocused()) {
-                return new TerminalPosition(comboBox.getSize().getColumns() - 1, 0);
+                if(comboBox.getThemeDefinition().isCursorVisible()) {
+                    return new TerminalPosition(comboBox.getSize().getColumns() - 1, 0);
+                }
+                else {
+                    return null;
+                }
             }
             else {
                 int textInputPosition = comboBox.getTextInputPosition();
@@ -607,16 +612,12 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
 
             String textToDraw = TerminalTextUtils.fitString(comboBox.getText(), textVisibleLeftPosition, editableArea);
             graphics.putString(0, 0, textToDraw);
-            if(comboBox.isFocused()) {
+            graphics.applyThemeStyle(themeDefinition.getInsensitive());
+            graphics.setCharacter(editableArea, 0, themeDefinition.getCharacter("POPUP_SEPARATOR", Symbols.SINGLE_LINE_VERTICAL));
+            if(comboBox.isFocused() && comboBox.isDropDownFocused()) {
                 graphics.applyThemeStyle(themeDefinition.getSelected());
             }
-            else {
-                graphics.applyThemeStyle(themeDefinition.getInsensitive());
-            }
-            String trailingDropDown = "" +
-                    themeDefinition.getCharacter("POPUP_SEPARATOR", Symbols.SINGLE_LINE_VERTICAL) +
-                    themeDefinition.getCharacter("POPUP", Symbols.TRIANGLE_DOWN_POINTING_BLACK);
-            graphics.putString(editableArea, 0,  trailingDropDown);
+            graphics.setCharacter(editableArea + 1, 0, themeDefinition.getCharacter("POPUP", Symbols.TRIANGLE_DOWN_POINTING_BLACK));
         }
     }
 }
