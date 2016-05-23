@@ -750,10 +750,20 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
             }
             ThemeDefinition themeDefinition = component.getThemeDefinition();
             if (component.isFocused()) {
-                graphics.applyThemeStyle(themeDefinition.getActive());
+                if(component.isReadOnly()) {
+                    graphics.applyThemeStyle(themeDefinition.getSelected());
+                }
+                else {
+                    graphics.applyThemeStyle(themeDefinition.getActive());
+                }
             }
             else {
-                graphics.applyThemeStyle(themeDefinition.getNormal());
+                if(component.isReadOnly()) {
+                    graphics.applyThemeStyle(themeDefinition.getInsensitive());
+                }
+                else {
+                    graphics.applyThemeStyle(themeDefinition.getNormal());
+                }
             }
 
             Character fillCharacter = unusedSpaceCharacter;
