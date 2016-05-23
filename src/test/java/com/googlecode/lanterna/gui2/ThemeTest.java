@@ -154,9 +154,21 @@ public class ThemeTest extends TestBase {
                                                 .addRow("Row #4", "Row #4", "Row #4"))),
                 new ThemedComponentTestDialog(textGUI, "TextBox",
                         new Panel()
-                                .addComponent(new TextBox("Single-line text box"))
+                                .addComponent(
+                                        Panels.horizontal(
+                                                new TextBox("Single-line text box")
+                                                        .setPreferredSize(new TerminalSize(15, 1)),
+                                                new TextBox("Single-line read-only")
+                                                        .setPreferredSize(new TerminalSize(15, 1))
+                                                        .setReadOnly(true)))
                                 .addComponent(new EmptySpace())
-                                .addComponent(new TextBox(new TerminalSize(15, 3), "Multi\nline\ntext\nbox").setVerticalFocusSwitching(false)))
+                                .addComponent(
+                                        Panels.horizontal(
+                                            new TextBox(new TerminalSize(15, 5), "Multi\nline\ntext\nbox\nHere is a very long line that doesn't fit")
+                                                    .setVerticalFocusSwitching(false),
+                                            new TextBox(new TerminalSize(15, 5), "Multi\nline\nread-only\ntext\nbox\n" +
+                                                    "Here is a very long line that doesn't fit")
+                                                    .setReadOnly(true))))
         };
         ActionListBox listBox = new ActionListBox(new TerminalSize(15, 7)).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
         for(ThemedComponentTestDialog themedComponentTestDialog: componentTestDialogs) {
@@ -205,9 +217,9 @@ public class ThemeTest extends TestBase {
             componentWindow.setTitle("Themed Component");
 
             Panel mainPanel = new Panel();
-            mainPanel.addComponent(borderedComponent);
+            mainPanel.setLayoutManager(new GridLayout(2));
+            mainPanel.addComponent(borderedComponent.setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2)));
 
-            mainPanel.addComponent(new EmptySpace());
             ActionListBox actionListBox = new ActionListBox();
             for(final String themeName: LanternaThemes.getRegisteredThemes()) {
                 actionListBox.addItem(themeName, new Runnable() {
@@ -219,15 +231,14 @@ public class ThemeTest extends TestBase {
             }
             mainPanel.addComponent(actionListBox
                     .withBorder(Borders.doubleLine("Change theme:"))
-                    .setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center)));
+                    .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER, GridLayout.Alignment.CENTER)));
 
-            mainPanel.addComponent(new EmptySpace());
             Button closeButton = new Button(LocalizedString.Close.toString(), new Runnable() {
                 @Override
                 public void run() {
                     componentWindow.close();
                 }
-            }).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.End));
+            }).setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.END, GridLayout.Alignment.END));
             mainPanel.addComponent(closeButton);
 
             componentWindow.setComponent(mainPanel);
