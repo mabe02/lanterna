@@ -143,6 +143,22 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
             return TerminalSize.ZERO;
         }
 
+        // If there are no rows, base the column sizes off of the column labels
+        if(rows.size() == 0) {
+            for(int columnIndex = viewLeftColumn; columnIndex < viewLeftColumn + visibleColumns; columnIndex++) {
+                int columnSize = tableHeaderRenderer.getPreferredSize(table, columnHeaders.get(columnIndex), columnIndex).getColumns();
+                int listOffset = columnIndex - viewLeftColumn;
+                if(columnSizes.size() == listOffset) {
+                    columnSizes.add(columnSize);
+                }
+                else {
+                    if(columnSizes.get(listOffset) < columnSize) {
+                        columnSizes.set(listOffset, columnSize);
+                    }
+                }
+            }
+        }
+
         for(int rowIndex = 0; rowIndex < rows.size(); rowIndex++) {
             List<V> row = rows.get(rowIndex);
             for(int columnIndex = viewLeftColumn; columnIndex < Math.min(row.size(), viewLeftColumn + visibleColumns); columnIndex++) {
