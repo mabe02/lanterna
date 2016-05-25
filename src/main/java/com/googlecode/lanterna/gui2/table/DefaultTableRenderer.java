@@ -251,6 +251,9 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
             return;
         }
 
+        // Get preferred size if the table model has changed
+        if(table.isInvalid()) getPreferredSize(table);
+
         int topPosition = drawHeader(graphics, table);
         drawRows(graphics, table, topPosition);
     }
