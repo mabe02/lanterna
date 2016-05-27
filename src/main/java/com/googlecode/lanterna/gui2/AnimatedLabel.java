@@ -75,6 +75,11 @@ public class AnimatedLabel extends Label {
         ensurePreferredSize(lines);
     }
 
+    @Override
+    protected synchronized TerminalSize calculatePreferredSize() {
+        return super.calculatePreferredSize().max(combinedMaximumPreferredSize);
+    }
+
     /**
      * Adds one more frame at the end of the list of frames
      * @param text Text to use for the label at this frame
