@@ -44,9 +44,16 @@ public class Panel extends AbstractComponent<Panel> implements Container {
      * {@code LinearLayout} layout manager.
      */
     public Panel() {
-        components = new ArrayList<Component>();
-        layoutManager = new LinearLayout();
-        cachedPreferredSize = null;
+        this(new LinearLayout());
+    }
+
+    public Panel(LayoutManager layoutManager) {
+        if(layoutManager == null) {
+            layoutManager = new AbsoluteLayout();
+        }
+        this.components = new ArrayList<Component>();
+        this.layoutManager = layoutManager;
+        this.cachedPreferredSize = null;
     }
 
     /**
