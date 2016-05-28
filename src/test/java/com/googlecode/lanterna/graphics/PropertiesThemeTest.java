@@ -62,7 +62,7 @@ public class PropertiesThemeTest {
         assertEquals(TextColor.ANSI.WHITE, defaultDefinition.getNormal().getForeground());
         assertEquals(TextColor.ANSI.BLACK, defaultDefinition.getNormal().getBackground());
         assertEquals(0, defaultDefinition.getNormal().getSGRs().size());
-        assertEquals(TextColor.ANSI.YELLOW, defaultDefinition.getSelected().getForeground());
+        assertEquals(TextColor.ANSI.WHITE, defaultDefinition.getSelected().getForeground());
         assertEquals(TextColor.ANSI.BLUE, defaultDefinition.getSelected().getBackground());
         assertEquals(Collections.singletonList(SGR.BOLD), new ArrayList<SGR>(defaultDefinition.getSelected().getSGRs()));
     }
