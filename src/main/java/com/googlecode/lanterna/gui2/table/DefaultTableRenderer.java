@@ -20,6 +20,7 @@ package com.googlecode.lanterna.gui2.table;
 
 import com.googlecode.lanterna.*;
 import com.googlecode.lanterna.graphics.Theme;
+import com.googlecode.lanterna.graphics.ThemeDefinition;
 import com.googlecode.lanterna.gui2.Direction;
 import com.googlecode.lanterna.gui2.ScrollBar;
 import com.googlecode.lanterna.gui2.TextGUIGraphics;
@@ -309,6 +310,7 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
 
     private void drawRows(TextGUIGraphics graphics, Table<V> table, int topPosition) {
         Theme theme = table.getTheme();
+        ThemeDefinition themeDefinition = theme.getDefinition(Table.class);
         TerminalSize area = graphics.getSize();
         TableCellRenderer<V> tableCellRenderer = table.getTableCellRenderer();
         TableModel<V> tableModel = table.getTableModel();
@@ -359,14 +361,14 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
                 if(columnIndex > viewLeftColumn) {
                     if(table.getSelectedRow() == rowIndex && !table.isCellSelection()) {
                         if(table.isFocused()) {
-                            graphics.applyThemeStyle(theme.getDefinition(Table.class).getActive());
+                            graphics.applyThemeStyle(themeDefinition.getActive());
                         }
                         else {
-                            graphics.applyThemeStyle(theme.getDefinition(Table.class).getSelected());
+                            graphics.applyThemeStyle(themeDefinition.getSelected());
                         }
                     }
                     else {
-                        graphics.applyThemeStyle(theme.getDefinition(Table.class).getNormal());
+                        graphics.applyThemeStyle(themeDefinition.getNormal());
                     }
                     graphics.setCharacter(leftPosition, topPosition, getVerticalCharacter(cellHorizontalBorderStyle));
                     leftPosition++;
@@ -383,7 +385,7 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
             topPosition += rowSizes.get(rowIndex - viewTopRow);
             if(cellVerticalBorderStyle != TableCellBorderStyle.None) {
                 leftPosition = 0;
-                graphics.applyThemeStyle(theme.getDefinition(Table.class).getNormal());
+                graphics.applyThemeStyle(themeDefinition.getNormal());
                 for(int i = 0; i < columnSizes.size(); i++) {
                     if(i > 0) {
                         graphics.setCharacter(
