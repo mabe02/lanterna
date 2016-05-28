@@ -328,6 +328,17 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
     }
 
     /**
+     * Returns the item at the selected index, this is the same as calling:
+     * <pre>
+     *     comboBox.getItem(comboBox.getSelectedIndex());
+     * </pre>
+     * @return The item at the selected index
+     */
+    public synchronized V getSelectedItem() {
+        return getItem(getSelectedIndex());
+    }
+
+    /**
      * Adds a new listener to the {@code ComboBox} that will be called on certain user actions
      * @param listener Listener to attach to this {@code ComboBox}
      * @return Itself
