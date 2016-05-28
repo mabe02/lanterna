@@ -21,6 +21,7 @@ package com.googlecode.lanterna.gui2;
 import com.googlecode.lanterna.*;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.graphics.Theme;
+import com.googlecode.lanterna.graphics.ThemeDefinition;
 
 import java.util.Arrays;
 import java.util.List;
@@ -224,11 +225,12 @@ public class Borders {
             char titleLeft = getTitleLeft(component.getTheme());
             char titleRight = getTitleRight(component.getTheme());
 
+            ThemeDefinition themeDefinition = component.getTheme().getDefinition(AbstractBorder.class);
             if(borderStyle == BorderStyle.Bevel) {
-                graphics.applyThemeStyle(component.getTheme().getDefinition(StandardBorder.class).getPreLight());
+                graphics.applyThemeStyle(themeDefinition.getPreLight());
             }
             else {
-                graphics.applyThemeStyle(component.getTheme().getDefinition(StandardBorder.class).getNormal());
+                graphics.applyThemeStyle(themeDefinition.getNormal());
             }
             graphics.setCharacter(0, drawableArea.getRows() - 1, bottomLeftCorner);
             if(drawableArea.getRows() > 2) {
@@ -240,10 +242,10 @@ public class Borders {
             }
 
             if(borderStyle == BorderStyle.ReverseBevel) {
-                graphics.applyThemeStyle(component.getTheme().getDefinition(StandardBorder.class).getPreLight());
+                graphics.applyThemeStyle(themeDefinition.getPreLight());
             }
             else {
-                graphics.applyThemeStyle(component.getTheme().getDefinition(StandardBorder.class).getNormal());
+                graphics.applyThemeStyle(themeDefinition.getNormal());
             }
             graphics.setCharacter(drawableArea.getColumns() - 1, 0, topRightCorner);
             if(drawableArea.getRows() > 2) {
@@ -261,14 +263,14 @@ public class Borders {
 
             if(border.getTitle() != null && !border.getTitle().isEmpty() &&
                     drawableArea.getColumns() >= TerminalTextUtils.getColumnWidth(border.getTitle()) + 4) {
-                graphics.applyThemeStyle(component.getTheme().getDefinition(StandardBorder.class).getActive());
+                graphics.applyThemeStyle(themeDefinition.getActive());
                 graphics.putString(2, 0, border.getTitle());
 
                 if(borderStyle == BorderStyle.Bevel) {
-                    graphics.applyThemeStyle(component.getTheme().getDefinition(StandardBorder.class).getPreLight());
+                    graphics.applyThemeStyle(themeDefinition.getPreLight());
                 }
                 else {
-                    graphics.applyThemeStyle(component.getTheme().getDefinition(StandardBorder.class).getNormal());
+                    graphics.applyThemeStyle(themeDefinition.getNormal());
                 }
                 graphics.setCharacter(1, 0, titleLeft);
                 graphics.setCharacter(2 + TerminalTextUtils.getColumnWidth(border.getTitle()), 0, titleRight);
