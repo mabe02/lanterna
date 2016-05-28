@@ -20,7 +20,9 @@ package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.bundle.LanternaThemes;
+import com.googlecode.lanterna.graphics.SimpleTheme;
 import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
 import com.googlecode.lanterna.gui2.table.Table;
 import com.googlecode.lanterna.gui2.table.TableModel;
@@ -55,6 +57,12 @@ public class ThemeTest extends TestBase {
             @Override
             public void run() {
                 runMultiThemeTest(textGUI);
+            }
+        });
+        mainSelector.addItem("Make custom theme", new Runnable() {
+            @Override
+            public void run() {
+                runCustomTheme(textGUI);
             }
         });
         mainSelector.addItem("Exit", new Runnable() {
@@ -442,5 +450,79 @@ public class ThemeTest extends TestBase {
         textGUI.addWindow(window1);
         textGUI.addWindow(window2);
         textGUI.setActiveWindow(window1);
+    }
+
+    private void runCustomTheme(final WindowBasedTextGUI textGUI) {
+        final BasicWindow customThemeCreator = new BasicWindow("Custom Theme");
+        customThemeCreator.setHints(Arrays.asList(Window.Hint.CENTERED));
+
+        Panel mainPanel = new Panel();
+        mainPanel.addComponent(new Label("Choose colors:"));
+
+        Panel colorTable = new Panel(new GridLayout(2));
+        colorTable.addComponent(new Label("Base foreground:"));
+        final ComboBox<TextColor.ANSI> baseForeground = new ComboBox<TextColor.ANSI>(TextColor.ANSI.values());
+        colorTable.addComponent(baseForeground);
+        colorTable.addComponent(new Label("Base background:"));
+        final ComboBox<TextColor.ANSI> baseBackground = new ComboBox<TextColor.ANSI>(TextColor.ANSI.values());
+        baseBackground.setSelectedIndex(7);
+        colorTable.addComponent(baseBackground);
+        colorTable.addComponent(new Label("Editable foreground:"));
+        final ComboBox<TextColor.ANSI> editableForeground = new ComboBox<TextColor.ANSI>(TextColor.ANSI.values());
+        editableForeground.setSelectedIndex(7);
+        colorTable.addComponent(editableForeground);
+        colorTable.addComponent(new Label("Editable background:"));
+        final ComboBox<TextColor.ANSI> editableBackground = new ComboBox<TextColor.ANSI>(TextColor.ANSI.values());
+        editableBackground.setSelectedIndex(4);
+        colorTable.addComponent(editableBackground);
+        colorTable.addComponent(new Label("Selected foreground:"));
+        final ComboBox<TextColor.ANSI> selectedForeground = new ComboBox<TextColor.ANSI>(TextColor.ANSI.values());
+        selectedForeground.setSelectedIndex(7);
+        colorTable.addComponent(selectedForeground);
+        colorTable.addComponent(new Label("Selected background:"));
+        final ComboBox<TextColor.ANSI> selectedBackground = new ComboBox<TextColor.ANSI>(TextColor.ANSI.values());
+        selectedBackground.setSelectedIndex(4);
+        colorTable.addComponent(selectedBackground);
+        colorTable.addComponent(new Label("GUI background:"));
+        final ComboBox<TextColor.ANSI> guiBackground = new ComboBox<TextColor.ANSI>(TextColor.ANSI.values());
+        guiBackground.setSelectedIndex(4);
+        colorTable.addComponent(guiBackground);
+        final CheckBox activeIsBoxCheck = new CheckBox("Active content is bold").setChecked(true);
+
+        mainPanel.addComponent(new EmptySpace());
+        mainPanel.addComponent(colorTable);
+        mainPanel.addComponent(activeIsBoxCheck);
+        mainPanel.addComponent(new EmptySpace());
+
+        Button okButton = new Button(LocalizedString.OK.toString(), new Runnable() {
+            @Override
+            public void run() {
+                SimpleTheme theme = SimpleTheme.makeTheme(
+                        activeIsBoxCheck.isChecked(),
+                        baseForeground.getSelectedItem(),
+                        baseBackground.getSelectedItem(),
+                        editableForeground.getSelectedItem(),
+                        editableBackground.getSelectedItem(),
+                        selectedForeground.getSelectedItem(),
+                        selectedBackground.getSelectedItem(),
+                        guiBackground.getSelectedItem());
+                textGUI.setTheme(theme);
+                customThemeCreator.close();
+            }
+        });
+        Button cancelButton = new Button(LocalizedString.Cancel.toString(), new Runnable() {
+            @Override
+            public void run() {
+                customThemeCreator.close();
+            }
+        });
+        mainPanel.addComponent(Panels.horizontal(
+                okButton,
+                cancelButton
+        ).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.End)));
+
+        customThemeCreator.setComponent(mainPanel);
+        okButton.takeFocus();
+        textGUI.addWindowAndWait(customThemeCreator);
     }
 }
