@@ -22,6 +22,8 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TestUtils;
 
 import java.io.*;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by martin on 19/10/14.
@@ -34,9 +36,7 @@ public class MiscComponentTest extends TestBase {
     @Override
     public void init(WindowBasedTextGUI textGUI) {
         final BasicWindow window = new BasicWindow("Grid layout test");
-
         final Panel leftPanel = new Panel();
-
         Panel checkBoxPanel = new Panel();
         for(int i = 0; i < 4; i++) {
             CheckBox checkBox = new CheckBox("Checkbox #" + (i+1));
@@ -67,7 +67,25 @@ public class MiscComponentTest extends TestBase {
         readOnlyTextArea.setText(TestUtils.downloadGPL());
         textBoxPanel.addComponent(readOnlyTextArea);
         rightPanel.addComponent(textBoxPanel.withBorder(Borders.singleLine("Read-only")));
+        final ProgressBar progressBar = new ProgressBar(0, 100, 16);
+        progressBar.setRenderer(new ProgressBar.LargeProgressBarRenderer());
+        progressBar.setLabelFormat("%2.0f%%");
+        String.format("");
+        rightPanel.addComponent(progressBar.withBorder(Borders.singleLine("ProgressBar")));
         rightPanel.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Fill));
+
+        final Timer timer = new Timer("ProgressBar-timer", true);
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if(progressBar.getValue() == progressBar.getMax()) {
+                    progressBar.setValue(0);
+                }
+                else {
+                    progressBar.setValue(progressBar.getValue() + 1);
+                }
+            }
+        }, 250, 250);
 
         Panel contentArea = new Panel();
         contentArea.setLayoutManager(new LinearLayout(Direction.VERTICAL));
@@ -75,15 +93,16 @@ public class MiscComponentTest extends TestBase {
         contentArea.addComponent(
                 new Separator(Direction.HORIZONTAL).setLayoutData(
                         LinearLayout.createLayoutData(LinearLayout.Alignment.Fill)));
-        contentArea.addComponent(
-                new Button("OK", new Runnable() {
+        Button okButton = new Button("OK", new Runnable() {
             @Override
             public void run() {
                 window.close();
+                timer.cancel();
             }
-        }).setLayoutData(
-                        LinearLayout.createLayoutData(LinearLayout.Alignment.Center)));
+        }).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        contentArea.addComponent(okButton);
         window.setComponent(contentArea);
+        window.setFocusedInteractable(okButton);
         textGUI.addWindow(window);
     }
 }

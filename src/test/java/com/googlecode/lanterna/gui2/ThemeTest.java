@@ -142,6 +142,10 @@ public class ThemeTest extends TestBase {
                                 .addItem("Item #6")
                                 .addItem("Item #7")
                                 .addItem("Item #8")),
+                new ThemedComponentTestDialog(textGUI, "ProgressBar",
+                        new ProgressBar(0, 100, 24)
+                                .setLabelFormat("%2.0f%%")
+                                .setValue(26)),
                 new ThemedComponentTestDialog(textGUI, "ScrollBar",
                         new Panel()
                                 .setLayoutManager(new GridLayout(2))
@@ -216,6 +220,36 @@ public class ThemeTest extends TestBase {
 
             this.embeddedComponent = component;
             this.borderedComponent = componentPanel.withBorder(Borders.singleLine(label));
+
+            if(embeddedComponent instanceof AnimatedLabel) {
+                ((AnimatedLabel)embeddedComponent).startAnimation(917);
+            }
+            else if(embeddedComponent instanceof ProgressBar) {
+                Thread progressBarAdvanceTimer = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ProgressBar progressBar = (ProgressBar)embeddedComponent;
+                        while(true) {
+                            try {
+                                Thread.sleep(100);
+                                if(progressBar.getValue() == progressBar.getMax()) {
+                                    Thread.sleep(1000);
+                                    progressBar.setValue(0);
+                                }
+                                if(progressBar.getValue() == 0) {
+                                    Thread.sleep(1000);
+                                }
+                                progressBar.setValue(progressBar.getValue() + 1);
+                            }
+                            catch(InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    }
+                }, "ProgressBar #" + System.identityHashCode(embeddedComponent));
+                progressBarAdvanceTimer.setDaemon(true);
+                progressBarAdvanceTimer.start();
+            }
         }
 
         @Override
@@ -251,11 +285,6 @@ public class ThemeTest extends TestBase {
 
             componentWindow.setComponent(mainPanel);
             closeButton.takeFocus();
-
-            if(embeddedComponent instanceof AnimatedLabel) {
-                ((AnimatedLabel)embeddedComponent).startAnimation(917);
-            }
-
             textGUI.addWindowAndWait(componentWindow);
         }
 
