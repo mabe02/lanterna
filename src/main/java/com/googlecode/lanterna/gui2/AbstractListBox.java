@@ -201,6 +201,15 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
         return self();
     }
 
+    @Override
+    public boolean isFocusable() {
+        if(isEmpty()) {
+            // These dialog boxes are quite weird when they are empty and receive input focus, so try to avoid that
+            return false;
+        }
+        return super.isFocusable();
+    }
+
     /**
      * Looks for the particular item in the list and returns the index within the list (starting from zero) of that item
      * if it is found, or -1 otherwise

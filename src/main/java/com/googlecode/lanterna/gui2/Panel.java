@@ -223,7 +223,7 @@ public class Panel extends AbstractComponent<Panel> implements Container {
 
         for (Component component : components) {
             if (chooseNextAvailable) {
-                if (component instanceof Interactable && ((Interactable)component).isEnabled()) {
+                if (component instanceof Interactable && ((Interactable)component).isEnabled() && ((Interactable)component).isFocusable()) {
                     return (Interactable) component;
                 }
                 else if (component instanceof Container) {
@@ -264,7 +264,7 @@ public class Panel extends AbstractComponent<Panel> implements Container {
 
         for (Component component : revComponents) {
             if (chooseNextAvailable) {
-                if (component instanceof Interactable && ((Interactable)component).isEnabled()) {
+                if (component instanceof Interactable && ((Interactable)component).isEnabled() && ((Interactable)component).isFocusable()) {
                     return (Interactable) component;
                 }
                 if (component instanceof Container) {
@@ -307,7 +307,7 @@ public class Panel extends AbstractComponent<Panel> implements Container {
             if(component instanceof Container) {
                 ((Container)component).updateLookupMap(interactableLookupMap);
             }
-            else if(component instanceof Interactable && ((Interactable)component).isEnabled()) {
+            else if(component instanceof Interactable && ((Interactable)component).isEnabled() && ((Interactable)component).isFocusable()) {
                 interactableLookupMap.add((Interactable)component);
             }
         }

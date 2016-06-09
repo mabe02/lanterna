@@ -132,6 +132,11 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
     }
 
     @Override
+    public boolean isFocusable() {
+        return true;
+    }
+
+    @Override
     public final synchronized Result handleInput(KeyStroke keyStroke) {
         if(inputFilter == null || inputFilter.onInput(this, keyStroke)) {
             return handleKeyStroke(keyStroke);
