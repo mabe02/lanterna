@@ -262,6 +262,43 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
     }
 
     /**
+     * Moves the text caret position horizontally to a new position in the {@link TextBox}. For multi-line
+     * {@link TextBox}:es, this will move the cursor within the current line. If the position is out of bounds, it is
+     * automatically set back into range.
+     * @param column Position, in characters, within the {@link TextBox} (on the current line for multi-line
+     * {@link TextBox}:es) to where the text cursor should be moved
+     * @return Itself
+     */
+    public synchronized TextBox setCaretPosition(int column) {
+        return setCaretPosition(getCaretPosition().getRow(), column);
+    }
+
+    /**
+     * Moves the text caret position to a new position in the {@link TextBox}. For single-line {@link TextBox}:es, the
+     * line component is not used. If one of the positions are out of bounds, it is automatically set back into range.
+     * @param line Which line inside the {@link TextBox} to move the caret to (0 being the first line), ignored if the
+     *             {@link TextBox} is single-line
+     * @param column  What column on the specified line to move the text caret to (0 being the first column)
+     * @return Itself
+     */
+    public synchronized TextBox setCaretPosition(int line, int column) {
+        if(line < 0) {
+            line = 0;
+        }
+        else if(line >= lines.size()) {
+            line = lines.size() - 1;
+        }
+        if(column < 0) {
+            column = 0;
+        }
+        else if(column > lines.get(line).length()) {
+            column = lines.get(line).length();
+        }
+        caretPosition = caretPosition.withRow(line).withColumn(column);
+        return this;
+    }
+
+    /**
      * Returns the text in this {@code TextBox}, for multi-line mode all lines will be concatenated together with \n as
      * separator.
      * @return The text inside this {@code TextBox}
