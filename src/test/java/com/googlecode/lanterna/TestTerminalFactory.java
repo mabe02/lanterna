@@ -26,6 +26,8 @@ import com.googlecode.lanterna.terminal.MouseCaptureMode;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.swing.SwingTerminalFrame;
 import com.googlecode.lanterna.terminal.swing.TerminalEmulatorAutoCloseTrigger;
+import com.googlecode.lanterna.terminal.swing.TerminalEmulatorColorConfiguration;
+import com.googlecode.lanterna.terminal.swing.TerminalEmulatorPalette;
 
 import java.awt.*;
 import java.io.IOException;
@@ -47,6 +49,7 @@ public class TestTerminalFactory {
     
     public TestTerminalFactory(String[] args, TerminalEmulatorAutoCloseTrigger autoCloseTrigger) {
         factory = new DefaultTerminalFactory();
+        //factory.setTerminalEmulatorColorConfiguration(TerminalEmulatorColorConfiguration.newInstance(TerminalEmulatorPalette.GNOME_TERMINAL));
         factory.setTerminalEmulatorFrameAutoCloseTrigger(autoCloseTrigger);
         for(String arg: args) {
             if("--text-terminal".equals(arg) || "--no-swing".equals(arg)) {

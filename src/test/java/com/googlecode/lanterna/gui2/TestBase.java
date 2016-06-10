@@ -45,6 +45,7 @@ public abstract class TestBase {
             init(textGUI);
             AsynchronousTextGUIThread guiThread = (AsynchronousTextGUIThread)textGUI.getGUIThread();
             guiThread.start();
+            afterGUIThreadStarted(textGUI);
             guiThread.waitForStop();
         }
         finally {
@@ -66,4 +67,7 @@ public abstract class TestBase {
     }
 
     public abstract void init(WindowBasedTextGUI textGUI);
+    public void afterGUIThreadStarted(WindowBasedTextGUI textGUI) {
+        // By default do nothing
+    }
 }
