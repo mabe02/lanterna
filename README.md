@@ -1,7 +1,7 @@
 Lanterna
 ---
 
-![Lanterna screenshot](http://wiki.lanterna.googlecode.com/git/images/screenshots/screenshot1.png)
+![Lanterna screenshot](http://mabe02.github.io/lanterna/resources/lanterna.png)
 
 Lanterna is a Java library allowing you to write easy semi-graphical user interfaces in a text-only environment,
 very similar to the C library [curses](http://en.wikipedia.org/wiki/Curses_(programming_library)) but with more functionality.
