@@ -18,8 +18,12 @@
  */
 package com.googlecode.lanterna.gui2.dialogs;
 
+import com.googlecode.lanterna.gui2.Window;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Dialog builder for the {@code MessageDialog} class, use this to create instances of that class and to customize
@@ -30,6 +34,7 @@ public class MessageDialogBuilder {
     private String title;
     private String text;
     private final List<MessageDialogButton> buttons;
+    private final Set<Window.Hint> extraWindowHints;
 
     /**
      * Default constructor
@@ -38,6 +43,7 @@ public class MessageDialogBuilder {
         this.title = "MessageDialog";
         this.text = "Text";
         this.buttons = new ArrayList<MessageDialogButton>();
+        this.extraWindowHints = Collections.singleton(Window.Hint.CENTERED);
     }
 
     /**
@@ -45,10 +51,12 @@ public class MessageDialogBuilder {
      * @return Newly build {@code MessageDialog}
      */
     public MessageDialog build() {
-        return new MessageDialog(
+        MessageDialog messageDialog = new MessageDialog(
                 title,
                 text,
                 buttons.toArray(new MessageDialogButton[buttons.size()]));
+        messageDialog.setHints(extraWindowHints);
+        return messageDialog;
     }
 
     /**
@@ -74,6 +82,17 @@ public class MessageDialogBuilder {
             text = "";
         }
         this.text = text;
+        return this;
+    }
+
+    /**
+     * Assigns a set of extra window hints that you want the built dialog to have
+     * @param extraWindowHints Window hints to assign to the window in addition to the ones the builder will put
+     * @return Itself
+     */
+    public MessageDialogBuilder setExtraWindowHints(Set<Window.Hint> extraWindowHints) {
+        this.extraWindowHints.clear();
+        this.extraWindowHints.addAll(extraWindowHints);
         return this;
     }
 
