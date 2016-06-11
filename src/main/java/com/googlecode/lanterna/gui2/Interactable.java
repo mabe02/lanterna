@@ -115,8 +115,8 @@ public interface Interactable extends Component {
 
     /**
      * Returns {@code true} if this interactable component is currently able to receive input focus. This is similar but
-     * different from {@link #isEnabled()} as that suggests the entire component is not currently disabled when
-     * returning {@code false}, as opposed to this method which simply claims that the component is currently not ready
+     * different from {@link #isEnabled()}, which tells lanterna that the entire component is disabled when it is
+     * returning {@code false}, compared to this method which simply claims that the component is currently not ready
      * to handle input. The {@link AbstractInteractableComponent} implementation always return {@code true} here but
      * for example the list box components will override and return {@code false} here if they are empty. Note that you
      * can still programmatically force input focus onto the component, returning {@code false} here won't prevent that.
