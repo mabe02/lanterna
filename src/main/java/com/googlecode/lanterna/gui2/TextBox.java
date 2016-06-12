@@ -133,12 +133,16 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
         this.caretWarp = false;
         this.verticalFocusSwitching = true;
         this.horizontalFocusSwitching = (style == Style.SINGLE_LINE);
+        this.caretPosition = TerminalPosition.TOP_LEFT_CORNER;
         this.maxLineLength = -1;
         this.longestRow = 1;    //To fit the cursor
         this.mask = null;
         this.validationPattern = null;
         setText(initialContent);
+
+        // Re-adjust caret position
         this.caretPosition = TerminalPosition.TOP_LEFT_CORNER.withColumn(getLine(0).length());
+
         if (preferredSize == null) {
             preferredSize = new TerminalSize(Math.max(10, longestRow), lines.size());
         }
