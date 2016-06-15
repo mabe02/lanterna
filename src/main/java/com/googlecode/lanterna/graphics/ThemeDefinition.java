@@ -65,10 +65,10 @@ public interface ThemeDefinition {
     ThemeStyle getInsensitive();
 
     /**
-     * Retrieves a custom ThemeStyle, if one is available by this name. Will return null if no such style could be found
-     * within this ThemeDefinition. You can use this if you need more categories than the ones available above.
+     * Retrieves a custom ThemeStyle, if one is available by this name. You can use this if you need more categories
+     * than the ones available above.
      * @param name Name of the style to look up
-     * @return The ThemeStyle associated with the name, or {@code null} if there was no such style
+     * @return The ThemeStyle associated with the name
      */
     ThemeStyle getCustom(String name);
 

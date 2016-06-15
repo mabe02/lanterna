@@ -1,6 +1,8 @@
 package com.googlecode.lanterna.bundle;
 
+import com.googlecode.lanterna.graphics.AbstractTheme;
 import com.googlecode.lanterna.graphics.PropertiesTheme;
+import com.googlecode.lanterna.graphics.PropertyTheme;
 import com.googlecode.lanterna.graphics.Theme;
 import com.googlecode.lanterna.gui2.AbstractTextGUI;
 
@@ -81,7 +83,12 @@ public class LanternaThemes {
 
     private static void registerPropTheme(String name, Properties properties) {
         if(properties != null) {
-            registerTheme(name, new PropertiesTheme(properties));
+            if(System.getProperty("oldTheme", "0").equals("1")) {
+                registerTheme(name, new PropertiesTheme(properties));
+            }
+            else {
+                registerTheme(name, new PropertyTheme(properties, false));
+            }
         }
     }
 

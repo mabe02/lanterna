@@ -1,21 +1,3 @@
-/*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
- *
- * lanterna is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright (C) 2010-2016 Martin
- */
 package com.googlecode.lanterna.graphics;
 
 import com.googlecode.lanterna.SGR;
@@ -30,12 +12,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * This implementation of Theme reads its definitions from a {@code Properties} object.
- * @deprecated Use {@link PropertyTheme} instead, is behaves more like you would expect
- * @author Martin
+ * Abstract {@link Theme} implementation that manages a hierarchical tree of theme nodes ties to Class objects.
+ * Sub-classes will inherit their theme properties from super-class definitions, the java.lang.Object class is
+ * considered the root of the tree and as such is the fallback for all other classes.
+ * <p/>
+ * You normally use this class through {@link PropertyTheme}, which is the default implementation bundled with Lanterna.
  */
-@Deprecated
-public final class PropertiesTheme implements Theme {
+public abstract class AbstractTheme implements Theme {
     private static final String STYLE_NORMAL = "";
     private static final String STYLE_PRELIGHT = "PRELIGHT";
     private static final String STYLE_SELECTED = "SELECTED";
@@ -47,86 +30,77 @@ public final class PropertiesTheme implements Theme {
     private final WindowPostRenderer windowPostRenderer;
     private final WindowDecorationRenderer windowDecorationRenderer;
 
-    /**
-     * Creates a new {@code PropertiesTheme} that is initialized by the properties value
-     * @param properties Properties to initialize this theme with
-     */
-    public PropertiesTheme(Properties properties) {
-        rootNode = new ThemeTreeNode(null);
+    protected AbstractTheme(WindowPostRenderer postRenderer,
+                            WindowDecorationRenderer decorationRenderer) {
+
+        this.rootNode = new ThemeTreeNode(Object.class, null);
+        this.windowPostRenderer = postRenderer;
+        this.windowDecorationRenderer = decorationRenderer;
+
         rootNode.foregroundMap.put(STYLE_NORMAL, TextColor.ANSI.WHITE);
         rootNode.backgroundMap.put(STYLE_NORMAL, TextColor.ANSI.BLACK);
-        windowPostRenderer = stringToClass(properties.getProperty("postrenderer", ""), WindowPostRenderer.class);
-        windowDecorationRenderer = stringToClass(properties.getProperty("windowdecoration", ""), WindowDecorationRenderer.class);
+    }
 
-        for(String key: properties.stringPropertyNames()) {
-            String definition = getDefinition(key);
-            ThemeTreeNode node = getNode(definition);
-            node.apply(getStyle(key), properties.getProperty(key));
+    protected boolean addStyle(String definition, String style, String value) {
+        ThemeTreeNode node = getNode(definition);
+        if(node == null) {
+            return false;
         }
+        node.apply(style, value);
+        return true;
     }
 
     private ThemeTreeNode getNode(String definition) {
-        ThemeTreeNode parentNode;
-        if(definition.equals("")) {
+        try {
+            if(definition == null || definition.trim().isEmpty()) {
+                return getNode(Object.class);
+            }
+            else {
+                return getNode(Class.forName(definition));
+            }
+        }
+        catch(ClassNotFoundException e) {
+            return null;
+        }
+    }
+
+    private ThemeTreeNode getNode(Class<?> definition) {
+        if(definition == Object.class) {
             return rootNode;
         }
-        else if(definition.contains(".")) {
-            String parent = definition.substring(0, definition.lastIndexOf("."));
-            parentNode = getNode(parent);
-            definition = definition.substring(definition.lastIndexOf(".") + 1);
+        ThemeTreeNode parent = getNode(definition.getSuperclass());
+        if(parent.childMap.containsKey(definition)) {
+            return parent.childMap.get(definition);
         }
-        else {
-            parentNode = rootNode;
-        }
-        if(!parentNode.childMap.containsKey(definition)) {
-            parentNode.childMap.put(definition, new ThemeTreeNode(parentNode));
-        }
-        return parentNode.childMap.get(definition);
-    }
 
-    private String getDefinition(String propertyName) {
-        if(!propertyName.contains(".")) {
-            return "";
-        }
-        else {
-            return propertyName.substring(0, propertyName.lastIndexOf("."));
-        }
-    }
-
-    private String getStyle(String propertyName) {
-        if(!propertyName.contains(".")) {
-            return propertyName;
-        }
-        else {
-            return propertyName.substring(propertyName.lastIndexOf(".") + 1);
-        }
+        ThemeTreeNode node = new ThemeTreeNode(definition, parent);
+        parent.childMap.put(definition, node);
+        return node;
     }
 
     @Override
     public ThemeDefinition getDefaultDefinition() {
-        return new DefinitionImpl(Collections.singletonList(rootNode));
+        return new DefinitionImpl(rootNode);
     }
 
     @Override
     public ThemeDefinition getDefinition(Class<?> clazz) {
-        String name = clazz.getName();
-        List<ThemeTreeNode> path = new ArrayList<ThemeTreeNode>();
-        ThemeTreeNode currentNode = rootNode;
-        while(!name.equals("")) {
-            path.add(currentNode);
-            String nextNodeName = name;
-            if(nextNodeName.contains(".")) {
-                nextNodeName = nextNodeName.substring(0, name.indexOf("."));
-                name = name.substring(name.indexOf(".") + 1);
-            }
-            if(currentNode.childMap.containsKey(nextNodeName)) {
-                currentNode = currentNode.childMap.get(nextNodeName);
+        LinkedList<Class<?>> hierarchy = new LinkedList<Class<?>>();
+        while(clazz != null && clazz != Object.class) {
+            hierarchy.addFirst(clazz);
+            clazz = clazz.getSuperclass();
+        }
+
+        ThemeTreeNode node = rootNode;
+        for(Class<?> aClass : hierarchy) {
+            if(node.childMap.containsKey(aClass)) {
+                node = node.childMap.get(aClass);
             }
             else {
                 break;
             }
         }
-        return new DefinitionImpl(path);
+        return new DefinitionImpl(node);
     }
 
     @Override
@@ -139,7 +113,7 @@ public final class PropertiesTheme implements Theme {
         return windowDecorationRenderer;
     }
 
-    private static <T> T stringToClass(String className, Class<T> type) {
+    protected static <T> T stringToClass(String className, Class<T> type) {
         if(className == null || className.trim().isEmpty()) {
             return null;
         }
@@ -154,47 +128,83 @@ public final class PropertiesTheme implements Theme {
         }
     }
 
-    private class DefinitionImpl implements ThemeDefinition {
-        final List<ThemeTreeNode> path;
+    /**
+     * Returns a list of redundant theme entries in this theme. A redundant entry means that it doesn't need to be
+     * specified because there is a parent node in the hierarchy which has the same property so if the redundant entry
+     * wasn't there, the parent node would be picked up and the end result would be the same.
+     * @return List of redundant theme entries
+     */
+    public List<String> findRedundantDeclarations() {
+        List<String> result = new ArrayList<String>();
+        for(ThemeTreeNode node: rootNode.childMap.values()) {
+            findRedundantDeclarations(result, node);
+        }
+        return result;
+    }
 
-        DefinitionImpl(List<ThemeTreeNode> path) {
-            this.path = path;
+    private void findRedundantDeclarations(List<String> result, ThemeTreeNode node) {
+        for(String style: node.foregroundMap.keySet()) {
+            TextColor color = node.foregroundMap.get(style);
+            TextColor colorFromParent = new StyleImpl(node.parent, style).getForeground();
+            if(color.equals(colorFromParent)) {
+                result.add(node.clazz.getName() + ".foreground[" + style + "]");
+            }
+        }
+        for(String style: node.backgroundMap.keySet()) {
+            TextColor color = node.backgroundMap.get(style);
+            TextColor colorFromParent = new StyleImpl(node.parent, style).getBackground();
+            if(color.equals(colorFromParent)) {
+                result.add(node.clazz.getName() + ".background[" + style + "]");
+            }
+        }
+        for(String style: node.sgrMap.keySet()) {
+            EnumSet<SGR> sgrs = node.sgrMap.get(style);
+            EnumSet<SGR> sgrsFromParent = new StyleImpl(node.parent, style).getSGRs();
+            if(sgrs.equals(sgrsFromParent)) {
+                result.add(node.clazz.getName() + ".sgr[" + style + "]");
+            }
+        }
+
+        for(ThemeTreeNode childNode: node.childMap.values()) {
+            findRedundantDeclarations(result, childNode);
+        }
+    }
+
+    private class DefinitionImpl implements ThemeDefinition {
+        final ThemeTreeNode node;
+
+        public DefinitionImpl(ThemeTreeNode node) {
+            this.node = node;
         }
 
         @Override
         public ThemeStyle getNormal() {
-            return new StyleImpl(path, STYLE_NORMAL);
+            return new StyleImpl(node, STYLE_NORMAL);
         }
 
         @Override
         public ThemeStyle getPreLight() {
-            return new StyleImpl(path, STYLE_PRELIGHT);
+            return new StyleImpl(node, STYLE_PRELIGHT);
         }
 
         @Override
         public ThemeStyle getSelected() {
-            return new StyleImpl(path, STYLE_SELECTED);
+            return new StyleImpl(node, STYLE_SELECTED);
         }
 
         @Override
         public ThemeStyle getActive() {
-            return new StyleImpl(path, STYLE_ACTIVE);
+            return new StyleImpl(node, STYLE_ACTIVE);
         }
 
         @Override
         public ThemeStyle getInsensitive() {
-            return new StyleImpl(path, STYLE_INSENSITIVE);
+            return new StyleImpl(node, STYLE_INSENSITIVE);
         }
 
         @Override
         public ThemeStyle getCustom(String name) {
-            ThemeTreeNode lastElement = path.get(path.size() - 1);
-            if(lastElement.sgrMap.containsKey(name) ||
-                    lastElement.foregroundMap.containsKey(name) ||
-                    lastElement.backgroundMap.containsKey(name)) {
-                return new StyleImpl(path, name);
-            }
-            return null;
+            return new StyleImpl(node, name);
         }
 
         @Override
@@ -208,112 +218,145 @@ public final class PropertiesTheme implements Theme {
 
         @Override
         public char getCharacter(String name, char fallback) {
-            Character character = path.get(path.size() - 1).characterMap.get(name);
+            Character character = node.characterMap.get(name);
             if(character == null) {
-                return fallback;
+                if(node == rootNode) {
+                    return fallback;
+                }
+                else {
+                    return new DefinitionImpl(node.parent).getCharacter(name, fallback);
+                }
             }
             return character;
         }
 
         @Override
         public boolean isCursorVisible() {
-            return path.get(path.size() - 1).cursorVisible;
+            Boolean cursorVisible = node.cursorVisible;
+            if(cursorVisible == null) {
+                if(node == rootNode) {
+                    return true;
+                }
+                else {
+                    return new DefinitionImpl(node.parent).isCursorVisible();
+                }
+            }
+            return cursorVisible;
         }
 
         @Override
         public boolean getBooleanProperty(String name, boolean defaultValue) {
-            String propertyValue = path.get(path.size() - 1).propertyMap.get(name);
+            String propertyValue = node.propertyMap.get(name);
             if(propertyValue == null) {
-                return defaultValue;
+                if(node == rootNode) {
+                    return defaultValue;
+                }
+                else {
+                    return new DefinitionImpl(node.parent).getBooleanProperty(name, defaultValue);
+                }
             }
             return Boolean.parseBoolean(propertyValue);
         }
 
         @Override
         public <T extends Component> ComponentRenderer<T> getRenderer(Class<T> type) {
-            return stringToClass(path.get(path.size() - 1).renderer, ComponentRenderer.class);
+            String rendererClass = node.renderer;
+            if(rendererClass == null) {
+                if(node == rootNode) {
+                    return null;
+                }
+                else {
+                    return new DefinitionImpl(node.parent).getRenderer(type);
+                }
+            }
+            return stringToClass(rendererClass, ComponentRenderer.class);
         }
     }
 
     private class StyleImpl implements ThemeStyle {
-        private final List<ThemeTreeNode> path;
+        private final ThemeTreeNode styleNode;
         private final String name;
 
-        private StyleImpl(List<ThemeTreeNode> path, String name) {
-            this.path = path;
+        private StyleImpl(ThemeTreeNode node, String name) {
+            this.styleNode = node;
             this.name = name;
         }
 
         @Override
         public TextColor getForeground() {
-            ListIterator<ThemeTreeNode> iterator = path.listIterator(path.size());
-            while(iterator.hasPrevious()) {
-                ThemeTreeNode node = iterator.previous();
+            ThemeTreeNode node = styleNode;
+            while(node != null) {
                 if(node.foregroundMap.containsKey(name)) {
                     return node.foregroundMap.get(name);
                 }
+                node = node.parent;
             }
-            if(!name.equals(STYLE_NORMAL)) {
-                return new StyleImpl(path, STYLE_NORMAL).getForeground();
+            TextColor fallback = rootNode.foregroundMap.get(STYLE_NORMAL);
+            if(fallback == null) {
+                fallback = TextColor.ANSI.WHITE;
             }
-            return TextColor.ANSI.WHITE;
+            return fallback;
         }
 
         @Override
         public TextColor getBackground() {
-            ListIterator<ThemeTreeNode> iterator = path.listIterator(path.size());
-            while(iterator.hasPrevious()) {
-                ThemeTreeNode node = iterator.previous();
+            ThemeTreeNode node = styleNode;
+            while(node != null) {
                 if(node.backgroundMap.containsKey(name)) {
                     return node.backgroundMap.get(name);
                 }
+                node = node.parent;
             }
-            if(!name.equals(STYLE_NORMAL)) {
-                return new StyleImpl(path, STYLE_NORMAL).getBackground();
+            TextColor fallback = rootNode.backgroundMap.get(STYLE_NORMAL);
+            if(fallback == null) {
+                fallback = TextColor.ANSI.BLACK;
             }
-            return TextColor.ANSI.BLACK;
+            return fallback;
         }
 
         @Override
         public EnumSet<SGR> getSGRs() {
-            ListIterator<ThemeTreeNode> iterator = path.listIterator(path.size());
-            while(iterator.hasPrevious()) {
-                ThemeTreeNode node = iterator.previous();
+            ThemeTreeNode node = styleNode;
+            while(node != null) {
                 if(node.sgrMap.containsKey(name)) {
                     return EnumSet.copyOf(node.sgrMap.get(name));
                 }
+                node = node.parent;
             }
-            if(!name.equals(STYLE_NORMAL)) {
-                return EnumSet.copyOf(new StyleImpl(path, STYLE_NORMAL).getSGRs());
+            EnumSet<SGR> fallback = rootNode.sgrMap.get(STYLE_NORMAL);
+            if(fallback == null) {
+                fallback = EnumSet.noneOf(SGR.class);
             }
-            return EnumSet.noneOf(SGR.class);
+            return EnumSet.copyOf(fallback);
         }
     }
 
     private static class ThemeTreeNode {
+        private final Class<?> clazz;
         private final ThemeTreeNode parent;
-        private final Map<String, ThemeTreeNode> childMap;
+        private final Map<Class, ThemeTreeNode> childMap;
         private final Map<String, TextColor> foregroundMap;
         private final Map<String, TextColor> backgroundMap;
         private final Map<String, EnumSet<SGR>> sgrMap;
         private final Map<String, Character> characterMap;
         private final Map<String, String> propertyMap;
-        private boolean cursorVisible;
+        private Boolean cursorVisible;
         private String renderer;
 
-        private ThemeTreeNode(ThemeTreeNode parent) {
+        private ThemeTreeNode(Class<?> clazz, ThemeTreeNode parent) {
+            this.clazz = clazz;
             this.parent = parent;
-            childMap = new HashMap<String, ThemeTreeNode>();
-            foregroundMap = new HashMap<String, TextColor>();
-            backgroundMap = new HashMap<String, TextColor>();
-            sgrMap = new HashMap<String, EnumSet<SGR>>();
-            characterMap = new HashMap<String, Character>();
-            propertyMap = new HashMap<String, String>();
-            cursorVisible = true;
-            renderer = null;
+            this.childMap = new HashMap<Class, ThemeTreeNode>();
+            this.foregroundMap = new HashMap<String, TextColor>();
+            this.backgroundMap = new HashMap<String, TextColor>();
+            this.sgrMap = new HashMap<String, EnumSet<SGR>>();
+            this.characterMap = new HashMap<String, Character>();
+            this.propertyMap = new HashMap<String, String>();
+            this.cursorVisible = true;
+            this.renderer = null;
         }
 
-        public void apply(String style, String value) {
+        private void apply(String style, String value) {
             value = value.trim();
             Matcher matcher = STYLE_FORMAT.matcher(style);
             if(!matcher.matches()) {
