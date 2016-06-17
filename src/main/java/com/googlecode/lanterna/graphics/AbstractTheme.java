@@ -158,29 +158,42 @@ public abstract class AbstractTheme implements Theme {
         for(ThemeTreeNode node: rootNode.childMap.values()) {
             findRedundantDeclarations(result, node);
         }
+        Collections.sort(result);
         return result;
     }
 
     private void findRedundantDeclarations(List<String> result, ThemeTreeNode node) {
         for(String style: node.foregroundMap.keySet()) {
+            String formattedStyle = "[" + style + "]";
+            if(formattedStyle.length() == 2) {
+                formattedStyle = "";
+            }
             TextColor color = node.foregroundMap.get(style);
             TextColor colorFromParent = new StyleImpl(node.parent, style).getForeground();
             if(color.equals(colorFromParent)) {
-                result.add(node.clazz.getName() + ".foreground[" + style + "]");
+                result.add(node.clazz.getName() + ".foreground" + formattedStyle);
             }
         }
         for(String style: node.backgroundMap.keySet()) {
+            String formattedStyle = "[" + style + "]";
+            if(formattedStyle.length() == 2) {
+                formattedStyle = "";
+            }
             TextColor color = node.backgroundMap.get(style);
             TextColor colorFromParent = new StyleImpl(node.parent, style).getBackground();
             if(color.equals(colorFromParent)) {
-                result.add(node.clazz.getName() + ".background[" + style + "]");
+                result.add(node.clazz.getName() + ".background" + formattedStyle);
             }
         }
         for(String style: node.sgrMap.keySet()) {
+            String formattedStyle = "[" + style + "]";
+            if(formattedStyle.length() == 2) {
+                formattedStyle = "";
+            }
             EnumSet<SGR> sgrs = node.sgrMap.get(style);
             EnumSet<SGR> sgrsFromParent = new StyleImpl(node.parent, style).getSGRs();
             if(sgrs.equals(sgrsFromParent)) {
-                result.add(node.clazz.getName() + ".sgr[" + style + "]");
+                result.add(node.clazz.getName() + ".sgr" + formattedStyle);
             }
         }
 
