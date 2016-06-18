@@ -190,6 +190,9 @@ public class FileDialog extends DialogWindow {
     private void reloadViews(final File directory) {
         directoryListBox.clearItems();
         fileListBox.clearItems();
+        if(directory == null) {
+            return;
+        }
         File []entries = directory.listFiles();
         if(entries == null) {
             return;
@@ -244,6 +247,9 @@ public class FileDialog extends DialogWindow {
         @Override
         public void onBeforeDrawing() {
             TerminalSize area = getSize();
+            if (directory == null) {
+                return;
+            }
             String absolutePath = directory.getAbsolutePath();
             int absolutePathLengthInColumns = TerminalTextUtils.getColumnWidth(absolutePath);
             if(area.getColumns() < absolutePathLengthInColumns) {
