@@ -282,7 +282,7 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
     }
 
     @Override
-    public TextGraphics newTextGraphics() throws IOException {
+    public TextGraphics newTextGraphics() {
         return terminalImplementation.newTextGraphics();
     }
 

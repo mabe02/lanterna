@@ -711,7 +711,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     }
 
     @Override
-    public TextGraphics newTextGraphics() throws IOException {
+    public TextGraphics newTextGraphics() {
         return virtualTerminal.newTextGraphics();
     }
 

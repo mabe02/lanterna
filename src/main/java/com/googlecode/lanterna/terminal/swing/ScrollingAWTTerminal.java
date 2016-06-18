@@ -220,7 +220,7 @@ public class ScrollingAWTTerminal extends Container implements IOSafeTerminal {
     }
 
     @Override
-    public TextGraphics newTextGraphics() throws IOException {
+    public TextGraphics newTextGraphics() {
         return awtTerminal.newTextGraphics();
     }
 

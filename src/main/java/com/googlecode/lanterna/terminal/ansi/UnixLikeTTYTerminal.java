@@ -51,11 +51,14 @@ public abstract class UnixLikeTTYTerminal extends UnixLikeTerminal {
      * querier instead of using the default one. This way you can override size detection (if you want to force the
      * terminal to a fixed size, for example). You also choose how you want ctrl+c key strokes to be handled.
      *
+     * @param ttyDev TTY device file that is representing this terminal session, will be used when calling stty to make
+     *               it operate on this session
      * @param terminalInput Input stream to read terminal input from
      * @param terminalOutput Output stream to write terminal output to
      * @param terminalCharset Character set to use when converting characters to bytes
-     * @param terminalCtrlCBehaviour Special settings on how the terminal will behave, see {@code UnixTerminalMode} for more
-     * details
+     * @param terminalCtrlCBehaviour Special settings on how the terminal will behave, see {@code UnixTerminalMode} for
+     *                               more details
+     * @throws IOException If there was an I/O error while setting up the terminal
      */
     protected UnixLikeTTYTerminal(
             File ttyDev,

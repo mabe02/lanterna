@@ -291,7 +291,7 @@ public class AWTTerminal extends Panel implements IOSafeTerminal {
     }
 
     @Override
-    public TextGraphics newTextGraphics() throws IOException {
+    public TextGraphics newTextGraphics() {
         return terminalImplementation.newTextGraphics();
     }
 

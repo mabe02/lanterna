@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
  * Abstract {@link Theme} implementation that manages a hierarchical tree of theme nodes ties to Class objects.
  * Sub-classes will inherit their theme properties from super-class definitions, the java.lang.Object class is
  * considered the root of the tree and as such is the fallback for all other classes.
- * <p/>
+ * <p>
  * You normally use this class through {@link PropertyTheme}, which is the default implementation bundled with Lanterna.
  * @author Martin
  */

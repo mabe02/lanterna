@@ -30,6 +30,7 @@ public class TerminalEmulatorDeviceConfiguration {
 
     /**
      * This is a static reference to the default terminal device configuration. Use this one if you are unsure.
+     * @return A terminal device configuration object with all settings set to default
      */
     public static TerminalEmulatorDeviceConfiguration getDefault() {
         return new TerminalEmulatorDeviceConfiguration();

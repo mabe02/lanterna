@@ -36,6 +36,8 @@ public interface ExtendedTerminal extends Terminal, Scrollable {
     /**
      * Attempts to resize the terminal through dtterm extensions "CSI 8 ; rows ; columns ; t". This isn't widely
      * supported, which is why the method is not exposed through the common Terminal interface.
+     * @param columns New size (columns)
+     * @param rows New size (rows)
      * @throws java.io.IOException If the was an underlying I/O error
      */
     void setTerminalSize(int columns, int rows) throws IOException;

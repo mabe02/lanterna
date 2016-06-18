@@ -219,7 +219,7 @@ public class AWTTerminalFrame extends Frame implements IOSafeTerminal {
     }
 
     @Override
-    public TextGraphics newTextGraphics() throws IOException {
+    public TextGraphics newTextGraphics() {
         return awtTerminal.newTextGraphics();
     }
 

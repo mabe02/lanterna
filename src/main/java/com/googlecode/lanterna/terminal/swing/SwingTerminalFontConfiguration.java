@@ -26,6 +26,7 @@ import java.awt.*;
 public class SwingTerminalFontConfiguration extends AWTTerminalFontConfiguration {
     /**
      * This is the default font settings that will be used if you don't specify anything
+     * @return A {@link SwingTerminal} font configuration object with default values set up
      */
     public static SwingTerminalFontConfiguration getDefault() {
         return newInstance(filterMonospaced(selectDefaultFont()));

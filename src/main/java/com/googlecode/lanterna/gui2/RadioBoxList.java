@@ -214,7 +214,7 @@ public class RadioBoxList<V> extends AbstractListBox<V, RadioBoxList<V>> {
     /**
      * Default renderer for this component which is used unless overridden. The selected state is drawn on the left side
      * of the item label using a "&lt; &gt;" block filled with an "o" if the item is the selected one
-     * @param <V>
+     * @param <V> Type of items in the {@link RadioBoxList}
      */
     public static class RadioBoxListItemRenderer<V> extends ListItemRenderer<V,RadioBoxList<V>> {
         @Override

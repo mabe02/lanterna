@@ -140,6 +140,7 @@ public interface Terminal extends InputProvider {
      * probably better off to switch to a Screen to make advanced text graphics more efficient. Also, this TextGraphics
      * implementation will not call {@code .flush()} after any operation, so you'll need to do that on your own.
      * @return TextGraphics implementation that draws directly using this Terminal interface
+     * @throws IOException If there was an I/O error when setting up the {@link TextGraphics} object
      */
     TextGraphics newTextGraphics() throws IOException;
 

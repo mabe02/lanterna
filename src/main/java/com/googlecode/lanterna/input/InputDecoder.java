@@ -91,6 +91,7 @@ public class InputDecoder {
      * 
      * Negative numbers are mapped to 0 (no wait at all), and unreasonably high
      * values are mapped to a maximum of 240 (1 minute).
+     * @param units New timeout to use, in 250ms units
      */
     public void setTimeoutUnits(int units) {
         timeoutUnits = (units < 0) ? 0 :
@@ -107,6 +108,7 @@ public class InputDecoder {
 
     /**
      * Reads and decodes the next key stroke from the input stream
+     * @param blockingIO If set to {@code true}, the call will not return until it has read at least one {@link KeyStroke}
      * @return Key stroke read from the input stream, or {@code null} if none
      * @throws IOException If there was an I/O error when reading from the input stream
      */

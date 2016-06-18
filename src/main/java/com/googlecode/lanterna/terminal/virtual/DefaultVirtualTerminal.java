@@ -235,7 +235,7 @@ public class DefaultVirtualTerminal extends AbstractTerminal implements VirtualT
     }
 
     @Override
-    public TextGraphics newTextGraphics() throws IOException {
+    public TextGraphics newTextGraphics() {
         return new VirtualTerminalTextGraphics(this);
     }
 

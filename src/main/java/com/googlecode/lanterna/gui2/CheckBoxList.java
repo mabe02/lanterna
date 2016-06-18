@@ -201,7 +201,7 @@ public class CheckBoxList<V> extends AbstractListBox<V, CheckBoxList<V>> {
     /**
      * Default renderer for this component which is used unless overridden. The checked state is drawn on the left side
      * of the item label using a "[ ]" block filled with an X if the item has checked state on
-     * @param <V>
+     * @param <V> Type of items in the {@link CheckBoxList}
      */
     public static class CheckBoxListItemRenderer<V> extends ListItemRenderer<V,CheckBoxList<V>> {
         @Override

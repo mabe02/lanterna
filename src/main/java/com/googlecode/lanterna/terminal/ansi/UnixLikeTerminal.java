@@ -123,11 +123,13 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
     /**
      * Stores the current terminal device settings (the ones that are modified through this interface) so that they can
      * be restored later using {@link #restoreTerminalSettings()}
+     * @throws IOException If there was an I/O error when altering the terminal environment
      */
     protected abstract void saveTerminalSettings() throws IOException;
 
     /**
      * Restores the terminal settings from last time {@link #saveTerminalSettings()} was called
+     * @throws IOException If there was an I/O error when altering the terminal environment
      */
     protected abstract void restoreTerminalSettings() throws IOException;
 
@@ -143,6 +145,7 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
      * key to the terminal. Normally for Lanterna, this should be turned off so the software can take the key as an
      * input event, put it on the input queue and then depending on the code decide what to do with it.
      * @param enabled {@code true} if key echo should be enabled, {@code false} otherwise
+     * @throws IOException If there was an I/O error when altering the terminal environment
      */
     protected abstract void keyEchoEnabled(boolean enabled) throws IOException;
 
@@ -152,6 +155,7 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
      * for a terminal. Lanterna wants to read each character as they are typed, without waiting for the final newline,
      * so it will attempt to turn canonical mode off on initialization.
      * @param enabled {@code true} if canonical input mode should be enabled, {@code false} otherwise
+     * @throws IOException If there was an I/O error when altering the terminal environment
      */
     protected abstract void canonicalMode(boolean enabled) throws IOException;
 
@@ -164,6 +168,8 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
      * <p>
      * Please note that this method is called automatically by lanterna to disable signals unless you define a system
      * property "com.googlecode.lanterna.terminal.UnixTerminal.catchSpecialCharacters" and set it to the string "false".
+     * @param enabled Pass in {@code true} if you want keystrokes to generate system signals (like process interrupt),
+     *                {@code false} if you want lanterna to catch and interpret these keystrokes are regular keystrokes
      * @throws IOException If there was an I/O error when attempting to disable special characters
      * @see UnixLikeTTYTerminal.CtrlCBehaviour
      */

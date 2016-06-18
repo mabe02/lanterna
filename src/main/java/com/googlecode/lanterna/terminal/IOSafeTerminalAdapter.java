@@ -190,8 +190,14 @@ public class IOSafeTerminalAdapter implements IOSafeTerminal {
     }
 
     @Override
-    public TextGraphics newTextGraphics() throws IOException {
-        return backend.newTextGraphics();
+    public TextGraphics newTextGraphics() {
+        try {
+            return backend.newTextGraphics();
+        }
+        catch(IOException e) {
+            exceptionHandler.onException(e);
+        }
+        return null;
     }
 
     @Override

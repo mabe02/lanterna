@@ -31,7 +31,7 @@ import com.googlecode.lanterna.graphics.ThemeDefinition;
  * same as the <i>maximum</i>, the progress indication is filled, at 100%. Any <i>value</i> in between the
  * <i>minimum</i> and the <i>maximum</i> will be indicated proportionally to where on this range between <i>minimum</i>
  * and <i>maximum</i> it is.
- * <p/>
+ * <p>
  * In order to add a label to the progress bar, for example to print the % completed, this class supports adding a
  * format specification. This label format, before drawing, will be passed in through a {@code String.format(..)} with
  * the current progress of <i>value</i> from <i>minimum</i> to <i>maximum</i> expressed as a {@code float} passed in as

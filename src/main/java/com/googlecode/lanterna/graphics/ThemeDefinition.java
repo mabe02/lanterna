@@ -114,7 +114,9 @@ public interface ThemeDefinition {
      * definition is linked to only one component type so it wouldn't need the type parameter to figure out what to
      * return. unlike the other methods of this interface, it will not traverse up in the theme hierarchy if this field
      * is not defined, instead the component will use its default component renderer.
+     * @param type Component class to get the theme's renderer for
      * @return Renderer to use for the {@code type} component or {@code null} to use the default
+     * @param <T> Type of component
      */
     <T extends Component> ComponentRenderer<T> getRenderer(Class<T> type);
 }

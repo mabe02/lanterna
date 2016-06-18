@@ -105,6 +105,8 @@ public class TerminalTextUtils {
     }
 
     /**
+     * @param s String to measure
+     * @return Returns the width (in columns) the string will take up when printed on the screen
      * @deprecated Call {@code getColumnWidth(s)} instead
      */
     @Deprecated
@@ -232,7 +234,7 @@ public class TerminalTextUtils {
     /**
      * This method will calculate word wrappings given a number of lines of text and how wide the text can be printed.
      * The result is a list of new rows where word-wrapping was applied.
-     * @param maxWidth Maximum number of columns that can be used before word-wrapping is applied, if <= 0 then the
+     * @param maxWidth Maximum number of columns that can be used before word-wrapping is applied, if &lt;= 0 then the
      *                 lines will be returned unchanged
      * @param lines Input text
      * @return The input text word-wrapped at {@code maxWidth}; this may contain more rows than the input text

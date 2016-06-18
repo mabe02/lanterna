@@ -149,6 +149,7 @@ public class AWTTerminalFontConfiguration {
 
     /**
      * This is the default font settings that will be used if you don't specify anything
+     * @return An {@link AWTTerminal} font configuration object with default values set up
      */
     public static AWTTerminalFontConfiguration getDefault() {
         return newInstance(filterMonospaced(selectDefaultFont()));

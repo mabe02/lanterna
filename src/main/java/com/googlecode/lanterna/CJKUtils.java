@@ -49,6 +49,8 @@ public class CJKUtils {
     }
 
     /**
+     * @param s String to measure
+     * @return Returns the width (in columns) the string will take up when printed on the screen
      * @deprecated Call {@code getColumnWidth(s)} instead
      */
     @Deprecated

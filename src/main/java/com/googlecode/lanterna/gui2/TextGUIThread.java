@@ -46,7 +46,7 @@ public interface TextGUIThread {
      * must either call this method directly to make the GUI update or use one of the methods on
      * {@code WindowBasedTextGUI} that blocks until a particular window has closed.
      * @return {@code true} if there was anything to process or the GUI was updated, otherwise {@code false}
-     * @throws IOException
+     * @throws IOException If there was an I/O error when processing and updating the GUI
      */
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     boolean processEventsAndUpdate() throws IOException;

@@ -41,6 +41,7 @@ public interface Scrollable {
      * @param firstLine first line of the range to be scrolled (top line is 0)
      * @param lastLine last (inclusive) line of the range to be scrolled
      * @param distance if &gt; 0: move lines up, else if &lt; 0: move lines down.
+     * @throws IOException If there was an I/O error when running the operation
      */
     void scrollLines(int firstLine, int lastLine, int distance) throws IOException;
 }
