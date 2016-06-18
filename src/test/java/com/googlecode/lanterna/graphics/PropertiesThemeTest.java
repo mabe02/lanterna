@@ -59,8 +59,8 @@ public class PropertiesThemeTest {
 
         PropertiesTheme theme = new PropertiesTheme(properties);
         ThemeDefinition defaultDefinition = theme.getDefaultDefinition();
-        assertEquals(TextColor.ANSI.WHITE, defaultDefinition.getNormal().getForeground());
-        assertEquals(TextColor.ANSI.BLACK, defaultDefinition.getNormal().getBackground());
+        assertEquals(TextColor.ANSI.BLACK, defaultDefinition.getNormal().getForeground());
+        assertEquals(TextColor.ANSI.WHITE, defaultDefinition.getNormal().getBackground());
         assertEquals(0, defaultDefinition.getNormal().getSGRs().size());
         assertEquals(TextColor.ANSI.WHITE, defaultDefinition.getSelected().getForeground());
         assertEquals(TextColor.ANSI.BLUE, defaultDefinition.getSelected().getBackground());
