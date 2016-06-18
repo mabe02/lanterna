@@ -6,7 +6,7 @@
     <packaging>jar</packaging>
     <name>Lanterna</name>
     <description>Java library for creating text-based terminal GUIs</description>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>3.0.0-beta3</version>
     <url>https://github.com/mabe02/lanterna</url>
   
     <licenses>
@@ -26,7 +26,8 @@
         <connection>scm:git:https://github.com/mabe02/lanterna.git</connection>
         <developerConnection>scm:git:https://github.com/mabe02/lanterna.git</developerConnection>
         <url>https://github.com/mabe02/lanterna</url>
-    </scm>
+      <tag>HEAD</tag>
+  </scm>
     
     <dependencies>
         <dependency>
