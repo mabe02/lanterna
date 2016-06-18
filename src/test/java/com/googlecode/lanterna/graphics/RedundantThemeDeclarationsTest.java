@@ -13,17 +13,15 @@ import java.util.List;
  */
 public class RedundantThemeDeclarationsTest {
     @Test
-    @Ignore
     public void noThemeDeclarationsAreRedundant() {
         for(String theme: LanternaThemes.getRegisteredThemes()) {
             Theme registeredTheme = LanternaThemes.getRegisteredTheme(theme);
-            System.out.println("Checking theme '" + theme + "' for redundant declarations...");
             List<String> redundantDeclarations = ((PropertyTheme) registeredTheme).findRedundantDeclarations();
             try {
                 Assert.assertEquals(Collections.EMPTY_LIST, redundantDeclarations);
             }
             catch(AssertionError e) {
-                System.out.println("Redundant definitions:");
+                System.out.println("Redundant definitions in theme '" + theme + "':");
                 for(String declaration: redundantDeclarations) {
                     System.out.println(declaration);
                 }
