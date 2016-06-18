@@ -31,13 +31,10 @@ import com.googlecode.lanterna.input.KeyType;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-/**
- * Created by Martin on 2016-05-08.
- */
 public class ThemeTest extends TestBase {
     public static void main(String[] args) throws IOException, InterruptedException {
         new ThemeTest().run(args);
@@ -72,14 +69,14 @@ public class ThemeTest extends TestBase {
             }
         });
         mainSelectionWindow.setComponent(mainSelector);
-        mainSelectionWindow.setHints(Arrays.asList(Window.Hint.CENTERED));
+        mainSelectionWindow.setHints(Collections.singletonList(Window.Hint.CENTERED));
 
         textGUI.addWindow(mainSelectionWindow);
     }
 
     private void runComponentTest(WindowBasedTextGUI textGUI) {
         final BasicWindow componentTestChooser = new BasicWindow("Component test");
-        componentTestChooser.setHints(Arrays.asList(Window.Hint.CENTERED));
+        componentTestChooser.setHints(Collections.singletonList(Window.Hint.CENTERED));
 
         Panel mainPanel = new Panel();
         mainPanel.addComponent(new Label("Choose component:                     "));
@@ -229,6 +226,7 @@ public class ThemeTest extends TestBase {
                     @Override
                     public void run() {
                         ProgressBar progressBar = (ProgressBar)embeddedComponent;
+                        //noinspection InfiniteLoopStatement
                         while(true) {
                             try {
                                 Thread.sleep(100);
@@ -255,7 +253,7 @@ public class ThemeTest extends TestBase {
         @Override
         public void run() {
             final BasicWindow componentWindow = new BasicWindow();
-            componentWindow.setHints(Arrays.asList(Window.Hint.CENTERED));
+            componentWindow.setHints(Collections.singletonList(Window.Hint.CENTERED));
             componentWindow.setTitle("Themed Component");
 
             Panel mainPanel = new Panel();
@@ -315,12 +313,12 @@ public class ThemeTest extends TestBase {
         final List<String> themes = new ArrayList<String>(LanternaThemes.getRegisteredThemes());
         final int[] windowThemeIndex = new int[] { themes.indexOf("bigsnake"), themes.indexOf("conqueror") };
         final BasicWindow window1 = new BasicWindow("Theme: bigsnake");
-        window1.setHints(Arrays.asList(Window.Hint.FIXED_POSITION));
+        window1.setHints(Collections.singletonList(Window.Hint.FIXED_POSITION));
         window1.setTheme(LanternaThemes.getRegisteredTheme(themes.get(windowThemeIndex[0])));
         window1.setPosition(new TerminalPosition(2, 1));
 
         final BasicWindow window2 = new BasicWindow("Theme: conqueror");
-        window2.setHints(Arrays.asList(Window.Hint.FIXED_POSITION));
+        window2.setHints(Collections.singletonList(Window.Hint.FIXED_POSITION));
         window2.setTheme(LanternaThemes.getRegisteredTheme(themes.get(windowThemeIndex[1])));
         window2.setPosition(new TerminalPosition(30, 1));
 
@@ -483,7 +481,7 @@ public class ThemeTest extends TestBase {
 
     private void runCustomTheme(final WindowBasedTextGUI textGUI) {
         final BasicWindow customThemeCreator = new BasicWindow("Custom Theme");
-        customThemeCreator.setHints(Arrays.asList(Window.Hint.CENTERED));
+        customThemeCreator.setHints(Collections.singletonList(Window.Hint.CENTERED));
 
         Panel mainPanel = new Panel();
         mainPanel.addComponent(new Label("Choose colors:"));

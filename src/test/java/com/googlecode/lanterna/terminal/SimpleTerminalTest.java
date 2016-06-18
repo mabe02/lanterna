@@ -27,9 +27,6 @@ import com.googlecode.lanterna.input.KeyStroke;
 import java.awt.*;
 import java.io.IOException;
 
-/**
- * Created by martin on 12/03/16.
- */
 public class SimpleTerminalTest {
 
     private static final TextColor[] COLORS_TO_CYCLE = new TextColor[] {

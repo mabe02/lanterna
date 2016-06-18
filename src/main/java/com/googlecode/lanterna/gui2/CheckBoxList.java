@@ -227,10 +227,10 @@ public class CheckBoxList<V> extends AbstractListBox<V, CheckBoxList<V>> {
             if(selected && !focused) {
                 itemStyle = themeDefinition.getSelected();
             }
-            else if(selected && focused) {
+            else if(selected) {
                 itemStyle = themeDefinition.getActive();
             }
-            else if(!selected && focused) {
+            else if(focused) {
                 itemStyle = themeDefinition.getInsensitive();
             }
             else {

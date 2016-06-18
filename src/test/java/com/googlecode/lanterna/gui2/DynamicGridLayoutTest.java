@@ -30,9 +30,6 @@ import java.math.BigInteger;
 import java.util.Random;
 import java.util.regex.Pattern;
 
-/**
- * Created by martin on 05/06/15.
- */
 public class DynamicGridLayoutTest extends TestBase {
     public static void main(String[] args) throws IOException, InterruptedException {
         new DynamicGridLayoutTest().run(args);
@@ -140,9 +137,7 @@ public class DynamicGridLayoutTest extends TestBase {
                 component = new Label(text);
                 break;
         }
-        if(component != null) {
-            gridPanel.addComponent(component);
-        }
+        gridPanel.addComponent(component);
     }
 
 
@@ -169,6 +164,7 @@ public class DynamicGridLayoutTest extends TestBase {
                 columns.toString());
         gridPanel.removeAllComponents();
         gridPanel.setLayoutManager(newGridLayout(columns.intValue()));
+        //noinspection ConstantConditions
         for(int i = 0; i < prepopulate.intValue(); i++) {
             gridPanel.addComponent(new EmptySpace(getRandomColor(), new TerminalSize(4, 1)));
         }

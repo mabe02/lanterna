@@ -294,7 +294,7 @@ public class ProgressBar extends AbstractComponent<ProgressBar> {
                     if(column == columnOfProgress) {
                         graphics.applyThemeStyle(themeDefinition.getNormal());
                     }
-                    if(column >= labelStartPosition && column < labelStartPosition + labelWidth) {
+                    if(row == labelRow && column >= labelStartPosition && column < labelStartPosition + labelWidth) {
                         char character = label.charAt(TerminalTextUtils.getStringCharacterIndex(label, column - labelStartPosition));
                         graphics.setCharacter(column, row, character);
                         if(TerminalTextUtils.isCharDoubleWidth(character)) {

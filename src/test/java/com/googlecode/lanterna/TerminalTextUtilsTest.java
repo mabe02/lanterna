@@ -22,10 +22,8 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 
-/**
- * Created by martin on 02/11/15.
- */
 public class TerminalTextUtilsTest {
     @Test
     public void japaneseCharactersAreDetectedAsCJK() {
@@ -172,7 +170,7 @@ public class TerminalTextUtilsTest {
     @Test
     public void testWordWrapping() {
         assertEquals("Incorrect word wrapping",
-                Arrays.asList("abc abc"),
+                Collections.singletonList("abc abc"),
                 TerminalTextUtils.getWordWrappedText(80, "abc abc"));
 
         assertEquals("Incorrect word wrapping",
@@ -180,7 +178,7 @@ public class TerminalTextUtilsTest {
                 TerminalTextUtils.getWordWrappedText(5, "abc abc"));
 
         assertEquals("Incorrect word wrapping - 0 width",
-              Arrays.asList("abc abc"),
+                Collections.singletonList("abc abc"),
               TerminalTextUtils.getWordWrappedText(0, "abc abc"));
 
         assertEquals("Incorrect word wrapping",
@@ -208,7 +206,7 @@ public class TerminalTextUtilsTest {
                 Arrays.asList("abc abc", "abc"),
                 TerminalTextUtils.getWordWrappedText(10, "abc abc abc"));
         assertEquals("Incorrect word wrapping",
-                Arrays.asList("abc abc abc"),
+                Collections.singletonList("abc abc abc"),
                 TerminalTextUtils.getWordWrappedText(11, "abc abc abc"));
 
         assertEquals("Incorrect word wrapping",
@@ -231,7 +229,7 @@ public class TerminalTextUtilsTest {
                 TerminalTextUtils.getWordWrappedText(6, "abc        def"));
 
         assertEquals("Incorrect word wrapping - don't add a new line for only white space",
-                Arrays.asList("abc "),
+                Collections.singletonList("abc "),
                 TerminalTextUtils.getWordWrappedText(4, "abc       "));
 
         assertEquals("Incorrect word wrapping - 1 blank at begin",
@@ -246,7 +244,7 @@ public class TerminalTextUtilsTest {
     @Test
     public void testWordWrappingWithCJK() {
         assertEquals("Incorrect word wrapping",
-                Arrays.asList("あいうえお"),
+                Collections.singletonList("あいうえお"),
                 TerminalTextUtils.getWordWrappedText(80, "あいうえお"));
         assertEquals("Incorrect word wrapping",
                 Arrays.asList("あいうえ", "お"),

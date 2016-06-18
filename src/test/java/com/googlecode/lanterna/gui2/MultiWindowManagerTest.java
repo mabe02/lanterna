@@ -18,10 +18,8 @@
  */
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.bundle.LanternaThemes;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
@@ -30,9 +28,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * Created by martin on 29/11/15.
- */
 public class MultiWindowManagerTest extends TestBase {
 
     private static final AtomicInteger WINDOW_COUNTER = new AtomicInteger(0);
@@ -162,7 +157,7 @@ public class MultiWindowManagerTest extends TestBase {
                 setHints(Collections.EMPTY_LIST);
             }
             else {
-                setHints(Arrays.asList(Hint.FIXED_SIZE));
+                setHints(Collections.singletonList(Hint.FIXED_SIZE));
             }
             labelUnlockWindow.setText(Boolean.toString(isManaged));
         }

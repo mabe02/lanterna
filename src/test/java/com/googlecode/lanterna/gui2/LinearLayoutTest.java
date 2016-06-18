@@ -20,9 +20,6 @@ package com.googlecode.lanterna.gui2;
 
 import java.io.IOException;
 
-/**
- * Created by martin on 22/06/15.
- */
 public class LinearLayoutTest extends TestBase {
     public static void main(String[] args) throws InterruptedException, IOException {
         new LinearLayoutTest().run(args);

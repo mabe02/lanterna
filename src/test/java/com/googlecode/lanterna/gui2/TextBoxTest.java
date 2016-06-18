@@ -22,9 +22,6 @@ import com.googlecode.lanterna.TerminalSize;
 
 import java.io.IOException;
 
-/**
- * Created by martin on 05/10/14.
- */
 public class TextBoxTest extends TestBase {
     public static void main(String[] args) throws IOException, InterruptedException {
         new TextBoxTest().run(args);

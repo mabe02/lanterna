@@ -26,9 +26,6 @@ import com.googlecode.lanterna.screen.Screen;
 
 import java.io.IOException;
 
-/**
- * Created by martin on 13/09/14.
- */
 public class MultiLabelTest {
     public static void main(String[] args) throws IOException, InterruptedException {
         Screen screen = new TestTerminalFactory(args).createScreen();

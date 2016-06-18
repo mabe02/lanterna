@@ -33,7 +33,6 @@ import com.googlecode.lanterna.input.ScreenInfoAction;
 import com.googlecode.lanterna.input.ScreenInfoCharacterPattern;
 import com.googlecode.lanterna.terminal.AbstractTerminal;
 import com.googlecode.lanterna.TerminalPosition;
-import com.googlecode.lanterna.terminal.Terminal;
 
 import java.io.ByteArrayOutputStream;
 import java.util.LinkedList;

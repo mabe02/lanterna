@@ -19,7 +19,6 @@
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.TerminalTextUtils;
 import com.googlecode.lanterna.graphics.ThemeDefinition;
 import com.googlecode.lanterna.graphics.ThemeStyle;
 import com.googlecode.lanterna.input.KeyStroke;
@@ -240,10 +239,10 @@ public class RadioBoxList<V> extends AbstractListBox<V, RadioBoxList<V>> {
             if(selected && !focused) {
                 itemStyle = themeDefinition.getSelected();
             }
-            else if(selected && focused) {
+            else if(selected) {
                 itemStyle = themeDefinition.getActive();
             }
-            else if(!selected && focused) {
+            else if(focused) {
                 itemStyle = themeDefinition.getInsensitive();
             }
             else {

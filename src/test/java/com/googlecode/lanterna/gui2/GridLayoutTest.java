@@ -23,9 +23,6 @@ import com.googlecode.lanterna.TextColor;
 
 import java.io.IOException;
 
-/**
- * Created by martin on 20/09/14.
- */
 public class GridLayoutTest extends TestBase {
     public static void main(String[] args) throws IOException, InterruptedException {
         new GridLayoutTest().run(args);

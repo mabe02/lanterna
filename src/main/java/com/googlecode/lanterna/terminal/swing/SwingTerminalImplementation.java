@@ -24,7 +24,6 @@ import com.googlecode.lanterna.TextCharacter;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.IOException;
 import java.util.Collections;
 
 /**

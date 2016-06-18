@@ -67,7 +67,7 @@ public class ScreenTriangleTest {
 
         TextGraphics graphics = new ScreenTextGraphics(screen);
         if(square) {
-            graphics = new DoublePrintingTextGraphics((AbstractTextGraphics)graphics);
+            graphics = new DoublePrintingTextGraphics(graphics);
         }
         Random random = new Random();
 

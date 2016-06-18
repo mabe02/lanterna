@@ -31,9 +31,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by martin on 11/10/14.
- */
 public class GUIOverTelnet {
     public static void main(String[] args) throws IOException {
         TelnetTerminalServer telnetTerminalServer = new TelnetTerminalServer(1024);

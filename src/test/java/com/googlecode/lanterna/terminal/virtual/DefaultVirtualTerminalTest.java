@@ -20,7 +20,6 @@ package com.googlecode.lanterna.terminal.virtual;
 
 import com.googlecode.lanterna.*;
 import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.Terminal;
 import org.junit.Test;
 
@@ -31,9 +30,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.Assert.*;
 
-/**
- * Created by martin on 25/03/16.
- */
 public class DefaultVirtualTerminalTest {
     private static final TextCharacter DEFAULT_CHARACTER = TextCharacter.DEFAULT_CHARACTER;
     private final DefaultVirtualTerminal virtualTerminal;

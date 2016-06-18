@@ -128,7 +128,7 @@ public interface Component extends TextGUIElement {
      *     component.getTheme().getThemeDefinition(ComponentClassType.class);
      *     // i.e button.getTheme().getThemeDefinition(Button.class);
      * </pre>
-     * @return
+     * @return {@link ThemeDefinition} defined in the current {@link Theme} for this component class
      */
     ThemeDefinition getThemeDefinition();
 

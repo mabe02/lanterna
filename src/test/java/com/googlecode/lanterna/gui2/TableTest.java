@@ -151,16 +151,16 @@ public class TableTest extends TestBase {
         if(choice == null) {
             return;
         }
-        else if(choice == dialogChoices[0]) {
+        else if(choice.equals(dialogChoices[0])) {
             onModifyContent(textGUI, table);
         }
-        else if(choice == dialogChoices[1]) {
+        else if(choice.equals(dialogChoices[1])) {
             onModifyStyle(textGUI, table);
         }
-        else if(choice == dialogChoices[2]) {
+        else if(choice.equals(dialogChoices[2])) {
             onModifyViewSize(textGUI, table);
         }
-        else if(choice == dialogChoices[3]) {
+        else if(choice.equals(dialogChoices[3])) {
             table.invalidate();
         }
     }
@@ -194,7 +194,7 @@ public class TableTest extends TestBase {
         if(choice == null) {
             return;
         }
-        else if(choice == dialogChoices[4]) {
+        else if(choice.equals(dialogChoices[4])) {
             table.setCellSelection(!table.isCellSelection());
         }
         else {
@@ -204,16 +204,16 @@ public class TableTest extends TestBase {
                     .build()
                     .showDialog(textGUI);
             if(newStyle != null) {
-                if(choice == dialogChoices[0]) {
+                if(choice.equals(dialogChoices[0])) {
                     renderer.setHeaderVerticalBorderStyle(newStyle);
                 }
-                else if(choice == dialogChoices[1]) {
+                else if(choice.equals(dialogChoices[1])) {
                     renderer.setHeaderHorizontalBorderStyle(newStyle);
                 }
-                else if(choice == dialogChoices[2]) {
+                else if(choice.equals(dialogChoices[2])) {
                     renderer.setCellVerticalBorderStyle(newStyle);
                 }
-                else if(choice == dialogChoices[3]) {
+                else if(choice.equals(dialogChoices[3])) {
                     renderer.setCellHorizontalBorderStyle(newStyle);
                 }
             }

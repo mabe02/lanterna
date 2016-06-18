@@ -25,10 +25,8 @@ import com.googlecode.lanterna.TerminalSize;
  * the terminal. You can implement this interface and pass it to the 
  * UnixTerminal constructor in order to use it.
  * @author martin
- * @deprecated Use a custom {@link TerminalDeviceControlStrategy} instead
  */
 @SuppressWarnings("WeakerAccess")
-@Deprecated
 public interface UnixTerminalSizeQuerier {
     /**
      * Checks what the size of the terminal is, measured in number of rows and columns. The implementer of this
@@ -37,6 +35,5 @@ public interface UnixTerminalSizeQuerier {
      * a static size at all times.
      * @return Size of the terminal at this point in time
      */
-    @Deprecated
     TerminalSize queryTerminalSize();
 }

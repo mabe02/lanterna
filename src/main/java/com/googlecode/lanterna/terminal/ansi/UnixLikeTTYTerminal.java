@@ -25,6 +25,7 @@ import java.lang.reflect.Proxy;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -144,7 +145,7 @@ public abstract class UnixLikeTTYTerminal extends UnixLikeTerminal {
     }
 
     protected String runSTTYCommand(String... parameters) throws IOException {
-        List<String> commandLine = new ArrayList<String>(Arrays.asList(
+        List<String> commandLine = new ArrayList<String>(Collections.singletonList(
                 getSTTYCommand()));
         commandLine.addAll(Arrays.asList(parameters));
         return exec(commandLine.toArray(new String[commandLine.size()]));

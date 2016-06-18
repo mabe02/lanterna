@@ -25,9 +25,6 @@ import java.io.*;
 import java.util.Timer;
 import java.util.TimerTask;
 
-/**
- * Created by martin on 19/10/14.
- */
 public class MiscComponentTest extends TestBase {
     public static void main(String[] args) throws IOException, InterruptedException {
         new MiscComponentTest().run(args);
@@ -70,7 +67,6 @@ public class MiscComponentTest extends TestBase {
         final ProgressBar progressBar = new ProgressBar(0, 100, 16);
         progressBar.setRenderer(new ProgressBar.LargeProgressBarRenderer());
         progressBar.setLabelFormat("%2.0f%%");
-        String.format("");
         rightPanel.addComponent(progressBar.withBorder(Borders.singleLine("ProgressBar")));
         rightPanel.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Fill));
 

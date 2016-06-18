@@ -24,9 +24,6 @@ import com.googlecode.lanterna.screen.Screen;
 
 import java.io.IOException;
 
-/**
- * Created by martin on 17/09/14.
- */
 public class MultiButtonTest {
     public static void main(String[] args) throws IOException, InterruptedException {
         Screen screen = new TestTerminalFactory(args).createScreen();

@@ -23,7 +23,6 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.terminal.IOSafeTerminal;
-import com.googlecode.lanterna.terminal.Terminal;
 
 /**
  * A virtual terminal is a kind of terminal emulator implemented inside of Lanterna that exposes the Terminal interface
@@ -60,7 +59,7 @@ public interface VirtualTerminal extends IOSafeTerminal {
      * Sets the number of rows to allow in the non-private buffer above the viewport. The total size of the text buffer
      * will be {@code backlogSize + terminalSize.getRows()}. If set to 0, there is no scrollback. Please note that
      * private mode is unaffected by this and will always have no backlog.
-     * @param backlogSize
+     * @param backlogSize Number of rows of backlog
      */
     void setBacklogSize(int backlogSize);
 

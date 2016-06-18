@@ -24,9 +24,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
 
-/**
- * Created by martin on 28/07/15.
- */
 public class TestUtils {
     private TestUtils() {}
 

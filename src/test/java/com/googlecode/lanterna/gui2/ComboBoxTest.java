@@ -23,9 +23,6 @@ import com.googlecode.lanterna.TerminalSize;
 import java.io.IOException;
 import java.util.Arrays;
 
-/**
- * Created by martin on 21/09/15.
- */
 public class ComboBoxTest extends TestBase {
     public static void main(String[] args) throws IOException, InterruptedException {
         new ComboBoxTest().run(args);

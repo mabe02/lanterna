@@ -20,9 +20,6 @@ package com.googlecode.lanterna.gui2;
 
 import java.io.IOException;
 
-/**
- * Created by martin on 21/09/14.
- */
 public class PanelTest extends TestBase {
     public static void main(String[] args) throws IOException, InterruptedException {
         new PanelTest().run(args);

@@ -27,9 +27,6 @@ import com.googlecode.lanterna.terminal.*;
 import java.io.IOException;
 import java.util.Arrays;
 
-/**
- * Created by martin on 19/12/15.
- */
 public class Issue190 {
     public static void main(String[] args) throws IOException {
         DefaultTerminalFactory factory = new DefaultTerminalFactory();

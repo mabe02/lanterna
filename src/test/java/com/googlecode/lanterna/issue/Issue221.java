@@ -9,9 +9,6 @@ import com.googlecode.lanterna.terminal.Terminal;
 
 import java.io.IOException;
 
-/**
- * Created by @boekhold on 31/03/16.
- */
 public class Issue221 {
     public static void main(String[] args) throws IOException {
 

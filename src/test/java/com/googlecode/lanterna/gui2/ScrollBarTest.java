@@ -23,9 +23,6 @@ import com.googlecode.lanterna.TerminalSize;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
-/**
- * Created by martin on 08/08/15.
- */
 public class ScrollBarTest extends TestBase {
     public static void main(String[] args) throws IOException, InterruptedException {
         new ScrollBarTest().run(args);

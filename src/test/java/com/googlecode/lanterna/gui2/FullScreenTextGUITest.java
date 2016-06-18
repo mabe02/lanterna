@@ -31,9 +31,6 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-/**
- * Created by martin on 27/10/14.
- */
 public class FullScreenTextGUITest {
     public static void main(String[] args) throws IOException, InterruptedException {
         Screen screen = new TestTerminalFactory(args).withInitialTerminalSize(new TerminalSize(80, 25)).createScreen();

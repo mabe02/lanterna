@@ -21,8 +21,6 @@ package com.googlecode.lanterna.graphics;
 import com.googlecode.lanterna.gui2.Component;
 import com.googlecode.lanterna.gui2.ComponentRenderer;
 
-import java.util.IllegalFormatException;
-
 /**
  * A ThemeDefinition contains a collection of ThemeStyle:s, which defines on a lower level which colors and SGRs to
  * apply if you want to draw according to the theme. The different style names are directly inspired from GTK 2. You can

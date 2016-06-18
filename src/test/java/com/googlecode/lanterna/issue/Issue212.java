@@ -29,9 +29,6 @@ import com.googlecode.lanterna.terminal.Terminal;
 import java.io.IOException;
 import java.util.List;
 
-/**
- * Created by martin on 28/02/16.
- */
 public class Issue212 {
     public static void main(String[] args) throws IOException {
         final Table<String> table = new Table<String>("Column 1", "Column 2",
@@ -46,8 +43,8 @@ public class Issue212 {
             public void run() {
                 List<String> data = table.getTableModel().getRow(
                         table.getSelectedRow());
-                for (int i = 0; i < data.size(); i++) {
-                    System.out.println(data.get(i));
+                for (String aData : data) {
+                    System.out.println(aData);
                 }
             }
         });

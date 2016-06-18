@@ -24,7 +24,6 @@ import com.googlecode.lanterna.input.KeyStroke;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.IOException;
 import java.util.Collections;
 
 /**
