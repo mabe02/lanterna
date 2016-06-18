@@ -190,9 +190,6 @@ public class FileDialog extends DialogWindow {
     private void reloadViews(final File directory) {
         directoryListBox.clearItems();
         fileListBox.clearItems();
-        if(directory == null) {
-            return;
-        }
         File []entries = directory.listFiles();
         if(entries == null) {
             return;
@@ -203,13 +200,15 @@ public class FileDialog extends DialogWindow {
                 return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
             }
         });
-        directoryListBox.addItem("..", new Runnable() {
-            @Override
-            public void run() {
-                FileDialog.this.directory = directory.getAbsoluteFile().getParentFile();
-                reloadViews(directory.getAbsoluteFile().getParentFile());
-            }
-        });
+        if (directory.getAbsoluteFile().getParentFile() !=null){
+            directoryListBox.addItem("..", new Runnable() {
+                @Override
+                public void run() {
+                    FileDialog.this.directory = directory.getAbsoluteFile().getParentFile();
+                    reloadViews(directory.getAbsoluteFile().getParentFile());
+                }
+            });
+        }
         for(final File entry: entries) {
             if(entry.isHidden() && !showHiddenFilesAndDirs) {
                 continue;
@@ -247,9 +246,6 @@ public class FileDialog extends DialogWindow {
         @Override
         public void onBeforeDrawing() {
             TerminalSize area = getSize();
-            if (directory == null) {
-                return;
-            }
             String absolutePath = directory.getAbsolutePath();
             int absolutePathLengthInColumns = TerminalTextUtils.getColumnWidth(absolutePath);
             if(area.getColumns() < absolutePathLengthInColumns) {
