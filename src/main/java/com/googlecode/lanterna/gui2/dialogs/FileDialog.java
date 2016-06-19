@@ -208,6 +208,19 @@ public class FileDialog extends DialogWindow {
                     reloadViews(directory.getAbsoluteFile().getParentFile());
                 }
             });
+        } else {
+            File[] roots = File.listRoots();
+            for (final File entry : roots) {
+                if (entry.canRead()) {
+                    directoryListBox.addItem('[' + entry.getPath() + ']', new Runnable() {
+                        @Override
+                        public void run() {
+                            FileDialog.this.directory = entry;
+                            reloadViews(entry);
+                        }
+                    });
+                }
+            }
         }
         for(final File entry: entries) {
             if(entry.isHidden() && !showHiddenFilesAndDirs) {
