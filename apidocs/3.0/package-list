@@ -9,3 +9,4 @@ com.googlecode.lanterna.screen
 com.googlecode.lanterna.terminal
 com.googlecode.lanterna.terminal.ansi
 com.googlecode.lanterna.terminal.swing
+com.googlecode.lanterna.terminal.virtual
