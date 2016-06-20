@@ -18,7 +18,7 @@
  */
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.graphics.TextGraphics;
+import com.googlecode.lanterna.graphics.ThemedTextGraphics;
 
 /**
  * Classes implementing this interface can be used along with DefaultWindowManagerTextGUI to put some extra processing
@@ -36,7 +36,7 @@ public interface WindowPostRenderer {
      * @param window Window that was just rendered
      */
     void postRender(
-            TextGraphics textGraphics,
+            ThemedTextGraphics textGraphics,
             TextGUI textGUI,
             Window window);
 }

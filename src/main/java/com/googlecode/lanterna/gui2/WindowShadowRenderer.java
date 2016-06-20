@@ -18,11 +18,10 @@
  */
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.SGR;
-import com.googlecode.lanterna.TerminalPosition;
-import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.*;
 import com.googlecode.lanterna.graphics.TextGraphics;
+import com.googlecode.lanterna.graphics.ThemeDefinition;
+import com.googlecode.lanterna.graphics.ThemedTextGraphics;
 
 /**
  * This WindowPostRenderer implementation draws a shadow under the window
@@ -32,25 +31,48 @@ import com.googlecode.lanterna.graphics.TextGraphics;
 public class WindowShadowRenderer implements WindowPostRenderer {
     @Override
     public void postRender(
-            TextGraphics textGraphics,
+            ThemedTextGraphics textGraphics,
             TextGUI textGUI,
             Window window) {
 
         TerminalPosition windowPosition = window.getPosition();
         TerminalSize decoratedWindowSize = window.getDecoratedSize();
-        textGraphics.setForegroundColor(TextColor.ANSI.BLACK);
-        textGraphics.setBackgroundColor(TextColor.ANSI.BLACK);
-        textGraphics.enableModifiers(SGR.BOLD);
-        TerminalPosition lowerLeft = windowPosition.withRelativeColumn(2).withRelativeRow(decoratedWindowSize.getRows());
-        TerminalPosition lowerRight = lowerLeft.withRelativeColumn(decoratedWindowSize.getColumns() - 1);
-        textGraphics.drawLine(lowerLeft, lowerRight, ' ');
+        ThemeDefinition themeDefinition = window.getTheme().getDefinition(WindowShadowRenderer.class);
+        textGraphics.applyThemeStyle(themeDefinition.getNormal());
+        char filler = themeDefinition.getCharacter("FILLER", Symbols.BLOCK_SOLID);
+        boolean useDoubleWidth = themeDefinition.getBooleanProperty("DOUBLE_WIDTH", true);
+        boolean useTransparency = themeDefinition.getBooleanProperty("TRANSPARENT", false);
+
+        TerminalPosition lowerLeft = windowPosition.withRelativeColumn(useDoubleWidth ? 2 : 1).withRelativeRow(decoratedWindowSize.getRows());
+        TerminalPosition lowerRight = lowerLeft.withRelativeColumn(decoratedWindowSize.getColumns() - (useDoubleWidth ? 3 : 2));
+        for(int column = lowerLeft.getColumn(); column <= lowerRight.getColumn(); column++) {
+            char characterToDraw = filler;
+            if(useTransparency) {
+                characterToDraw = textGraphics.getCharacter(column, lowerLeft.getRow()).getCharacter();
+            }
+            textGraphics.setCharacter(column, lowerLeft.getRow(), characterToDraw);
+        }
+
+        lowerRight = lowerRight.withRelativeColumn(1);
         TerminalPosition upperRight = lowerRight.withRelativeRow(-decoratedWindowSize.getRows() + 1);
-        textGraphics.drawLine(lowerRight, upperRight, ' ');
+        for(int row = upperRight.getRow(); row <= lowerRight.getRow(); row++) {
+            char characterToDraw = filler;
+            if(useTransparency) {
+                characterToDraw = textGraphics.getCharacter(upperRight.getColumn(), row).getCharacter();
+            }
+            textGraphics.setCharacter(upperRight.getColumn(), row, characterToDraw);
+        }
 
-        //Fill the remaining hole
-        upperRight = upperRight.withRelativeColumn(-1);
-        lowerRight = lowerRight.withRelativeColumn(-1);
-        textGraphics.drawLine(upperRight, lowerRight, ' ');
-
+        if(useDoubleWidth) {
+            //Fill the remaining hole
+            upperRight = upperRight.withRelativeColumn(1);
+            for(int row = upperRight.getRow(); row <= lowerRight.getRow(); row++) {
+                char characterToDraw = filler;
+                if(useTransparency) {
+                    characterToDraw = textGraphics.getCharacter(upperRight.getColumn(), row).getCharacter();
+                }
+                textGraphics.setCharacter(upperRight.getColumn(), row, characterToDraw);
+            }
+        }
     }
 }
