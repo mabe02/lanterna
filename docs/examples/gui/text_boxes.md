@@ -14,10 +14,10 @@ You can pass in the (size)[examples/gui/component_sizing.md] of the textbox via 
 	new TextBox(new TerminalSize(30,1));
 ```
 
-If you want to create a multi-line textbox, simple increase the row size:
+If you want to create a multi-line textbox, simply increase the row size:
 
 ```
-	// Creates a textbox 30 columns long, 1 column high
+	// Creates a textbox 30 columns long, 5 column high
 	new TextBox(new TerminalSize(30,5));
 ```
 
