@@ -273,8 +273,21 @@ public abstract class AbstractTextGraphics implements TextGraphics {
         }
         string = tabBehaviour.replaceTabs(string, column);
         int offset = 0;
+
+
+        EnumSet<SGR> localModifiers = activeModifiers.clone();
         for(int i = 0; i < string.length(); i++) {
             char character = string.charAt(i);
+
+            String controlSequence = TerminalTextUtils.getANSIControlSequenceAt(string, i);
+            if(controlSequence != null) {
+                localModifiers = updateLocalModifiers(controlSequence, localModifiers);
+
+                // Skip the control sequence, leaving one extra, since we'll add it when we loop
+                i += controlSequence.length() - 1;
+                continue;
+            }
+
             setCharacter(
                     column + offset,
                     row,
@@ -282,7 +295,7 @@ public abstract class AbstractTextGraphics implements TextGraphics {
                             character,
                             foregroundColor,
                             backgroundColor,
-                            activeModifiers.clone()));
+                            localModifiers.clone()));
             
             if(TerminalTextUtils.isCharCJK(character)) {
                 //CJK characters are twice the normal characters in width, so next character position is two columns forward
@@ -343,5 +356,32 @@ public abstract class AbstractTextGraphics implements TextGraphics {
 
     private TextCharacter newTextCharacter(char character) {
         return new TextCharacter(character, foregroundColor, backgroundColor, activeModifiers);
+    }
+
+    private EnumSet<SGR> updateLocalModifiers(String controlSequence, EnumSet<SGR> localModifiers) {
+        char controlCodeType = controlSequence.charAt(controlSequence.length() - 1);
+        controlSequence = controlSequence.substring(0, controlSequence.length() - 1);
+        controlSequence = controlSequence.replace((char) 0x1b, '[');
+        controlSequence = controlSequence.replaceAll("\\[", "");
+        String[] codes = controlSequence.split("\\;");
+
+        EnumSet<SGR> newModifiers = localModifiers.clone();
+
+        if(controlCodeType == 'm') { // SGRs
+            if(codes.length == 0) { // Reset to default
+                newModifiers = activeModifiers.clone();
+            }
+            else {
+                for (String s : codes) {
+                    if (s.equals("4")) {
+                        newModifiers.add(SGR.UNDERLINE);
+                    } else if (s.equals("24")) {
+                        newModifiers.remove(SGR.UNDERLINE);
+                    }
+                }
+            }
+        }
+
+        return newModifiers;
     }
 }

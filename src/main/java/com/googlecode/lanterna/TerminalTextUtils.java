@@ -36,6 +36,54 @@ public class TerminalTextUtils {
     private TerminalTextUtils() {
     }
 
+    public static String getANSIControlSequenceAt(String string, int i) {
+        String controlSequence = null;
+
+        char character = string.charAt(i);
+        if (character == 0x1B) { // escape
+            if (string.length() > i + 2) { // Control sequences require a minimum of two characters
+                char possibleCSI = string.charAt(i + 1);
+                if (possibleCSI == 0x5b) { // left bracket opens a control sequence
+                    for (int j = i; j < string.length(); j++) {
+                        char controlChar = string.charAt(j);
+                        if (isCharCSITerminator(controlChar)) {
+                            controlSequence = string.substring(i, j + 1);
+                            break;
+                        }
+                        else if (j > i && controlChar == 0x1b) {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        return controlSequence;
+    }
+
+    public static boolean isCharCSITerminator(final char c) {
+        return c == 'A'
+                || c == 'B'
+                || c == 'C'
+                || c == 'D'
+                || c == 'E'
+                || c == 'F'
+                || c == 'G'
+                || c == 'H'
+                || c == 'J'
+                || c == 'K'
+                || c == 'S'
+                || c == 'T'
+                || c == 'f'
+                || c == 'm'
+                || c == 'i'
+                || c == 'n'
+                || c == 's'
+                || c == 'u'
+                || c == 'l'
+                || c == 'h';
+    }
+
     /**
      * Given a character, is this character considered to be a CJK character?
      * Shamelessly stolen from
