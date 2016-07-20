@@ -37,7 +37,7 @@ import java.util.EnumSet;
  *     <li>Modifiers</li>
  *     <li>Tab-expanding behaviour</li>
  * </ul>
- * These call all be altered through ordinary set* methods, but some will be altered as the result of performing one of
+ * These can all be altered through ordinary set* methods, but some will be altered as the result of performing one of
  * the 'drawing' operations. See the documentation to each method for further information (for example, putString).
  * <p>
  * Don't hold on to your TextGraphics objects for too long; ideally create them and let them be GC:ed when you are done
