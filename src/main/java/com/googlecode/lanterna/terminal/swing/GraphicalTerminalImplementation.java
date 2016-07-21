@@ -810,13 +810,17 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
             char character = e.getKeyChar();
             boolean altDown = (e.getModifiersEx() & InputEvent.ALT_DOWN_MASK) != 0;
             boolean ctrlDown = (e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0;
+            boolean shiftDown = (e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0;
 
             if(!TYPED_KEYS_TO_IGNORE.contains(character)) {
-                if(ctrlDown) {
-                    //We need to re-adjust the character if ctrl is pressed, just like for the AnsiTerminal
+                //We need to re-adjust alphabet characters if ctrl was pressed, just like for the AnsiTerminal
+                if(ctrlDown && character > 0 && character < 0x1a) {
                     character = (char) ('a' - 1 + character);
+                    if(shiftDown) {
+                        character = Character.toUpperCase(character);
+                    }
                 }
-                keyQueue.add(new KeyStroke(character, ctrlDown, altDown));
+                keyQueue.add(new KeyStroke(character, ctrlDown, altDown, shiftDown));
             }
         }
 
@@ -824,94 +828,98 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
         public void keyPressed(KeyEvent e) {
             boolean altDown = (e.getModifiersEx() & InputEvent.ALT_DOWN_MASK) != 0;
             boolean ctrlDown = (e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0;
+            boolean shiftDown = (e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0;
             if(e.getKeyCode() == KeyEvent.VK_ENTER) {
-                keyQueue.add(new KeyStroke(KeyType.Enter, ctrlDown, altDown));
+                keyQueue.add(new KeyStroke(KeyType.Enter, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                keyQueue.add(new KeyStroke(KeyType.Escape, ctrlDown, altDown));
+                keyQueue.add(new KeyStroke(KeyType.Escape, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
-                keyQueue.add(new KeyStroke(KeyType.Backspace, ctrlDown, altDown));
+                keyQueue.add(new KeyStroke(KeyType.Backspace, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_LEFT) {
-                keyQueue.add(new KeyStroke(KeyType.ArrowLeft, ctrlDown, altDown));
+                keyQueue.add(new KeyStroke(KeyType.ArrowLeft, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                keyQueue.add(new KeyStroke(KeyType.ArrowRight, ctrlDown, altDown));
+                keyQueue.add(new KeyStroke(KeyType.ArrowRight, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_UP) {
-                keyQueue.add(new KeyStroke(KeyType.ArrowUp, ctrlDown, altDown));
+                keyQueue.add(new KeyStroke(KeyType.ArrowUp, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_DOWN) {
-                keyQueue.add(new KeyStroke(KeyType.ArrowDown, ctrlDown, altDown));
+                keyQueue.add(new KeyStroke(KeyType.ArrowDown, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_INSERT) {
-                keyQueue.add(new KeyStroke(KeyType.Insert, ctrlDown, altDown));
+                keyQueue.add(new KeyStroke(KeyType.Insert, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_DELETE) {
-                keyQueue.add(new KeyStroke(KeyType.Delete, ctrlDown, altDown));
+                keyQueue.add(new KeyStroke(KeyType.Delete, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_HOME) {
-                keyQueue.add(new KeyStroke(KeyType.Home, ctrlDown, altDown));
+                keyQueue.add(new KeyStroke(KeyType.Home, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_END) {
-                keyQueue.add(new KeyStroke(KeyType.End, ctrlDown, altDown));
+                keyQueue.add(new KeyStroke(KeyType.End, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_PAGE_UP) {
-                keyQueue.add(new KeyStroke(KeyType.PageUp, ctrlDown, altDown));
+                keyQueue.add(new KeyStroke(KeyType.PageUp, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_PAGE_DOWN) {
-                keyQueue.add(new KeyStroke(KeyType.PageDown, ctrlDown, altDown));
+                keyQueue.add(new KeyStroke(KeyType.PageDown, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_F1) {
-                keyQueue.add(new KeyStroke(KeyType.F1, ctrlDown, altDown));
+                keyQueue.add(new KeyStroke(KeyType.F1, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_F2) {
-                keyQueue.add(new KeyStroke(KeyType.F2, ctrlDown, altDown));
+                keyQueue.add(new KeyStroke(KeyType.F2, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_F3) {
-                keyQueue.add(new KeyStroke(KeyType.F3, ctrlDown, altDown));
+                keyQueue.add(new KeyStroke(KeyType.F3, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_F4) {
-                keyQueue.add(new KeyStroke(KeyType.F4, ctrlDown, altDown));
+                keyQueue.add(new KeyStroke(KeyType.F4, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_F5) {
-                keyQueue.add(new KeyStroke(KeyType.F5, ctrlDown, altDown));
+                keyQueue.add(new KeyStroke(KeyType.F5, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_F6) {
-                keyQueue.add(new KeyStroke(KeyType.F6, ctrlDown, altDown));
+                keyQueue.add(new KeyStroke(KeyType.F6, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_F7) {
-                keyQueue.add(new KeyStroke(KeyType.F7, ctrlDown, altDown));
+                keyQueue.add(new KeyStroke(KeyType.F7, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_F8) {
-                keyQueue.add(new KeyStroke(KeyType.F8, ctrlDown, altDown));
+                keyQueue.add(new KeyStroke(KeyType.F8, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_F9) {
-                keyQueue.add(new KeyStroke(KeyType.F9, ctrlDown, altDown));
+                keyQueue.add(new KeyStroke(KeyType.F9, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_F10) {
-                keyQueue.add(new KeyStroke(KeyType.F10, ctrlDown, altDown));
+                keyQueue.add(new KeyStroke(KeyType.F10, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_F11) {
-                keyQueue.add(new KeyStroke(KeyType.F11, ctrlDown, altDown));
+                keyQueue.add(new KeyStroke(KeyType.F11, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_F12) {
-                keyQueue.add(new KeyStroke(KeyType.F12, ctrlDown, altDown));
+                keyQueue.add(new KeyStroke(KeyType.F12, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_TAB) {
                 if(e.isShiftDown()) {
-                    keyQueue.add(new KeyStroke(KeyType.ReverseTab, ctrlDown, altDown));
+                    keyQueue.add(new KeyStroke(KeyType.ReverseTab, ctrlDown, altDown, shiftDown));
                 }
                 else {
-                    keyQueue.add(new KeyStroke(KeyType.Tab, ctrlDown, altDown));
+                    keyQueue.add(new KeyStroke(KeyType.Tab, ctrlDown, altDown, shiftDown));
                 }
             }
             else {
                 //keyTyped doesn't catch this scenario (for whatever reason...) so we have to do it here
                 if(altDown && ctrlDown && e.getKeyCode() >= 'A' && e.getKeyCode() <= 'Z') {
-                    char asLowerCase = Character.toLowerCase((char) e.getKeyCode());
-                    keyQueue.add(new KeyStroke(asLowerCase, true, true));
+                    char character = (char) e.getKeyCode();
+                    if(!shiftDown) {
+                        character = Character.toLowerCase(character);
+                    }
+                    keyQueue.add(new KeyStroke(character, ctrlDown, altDown, shiftDown));
                 }
             }
         }

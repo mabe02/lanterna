@@ -90,6 +90,20 @@ public class KeyStroke {
     public KeyStroke(Character character, boolean ctrlDown, boolean altDown) {
         this(KeyType.Character, character, ctrlDown, altDown, false);
     }
+
+    /**
+     * Constructs a KeyStroke based on a supplied character, keyType is implicitly KeyType.Character.
+     * <p>
+     * A character-based KeyStroke does not support the shiftDown flag, as the shift state has
+     * already been accounted for in the character itself, depending on user's keyboard layout.
+     * @param character Character that was typed on the keyboard
+     * @param ctrlDown Was ctrl held down when the main key was pressed?
+     * @param altDown Was alt held down when the main key was pressed?
+     * @param shiftDown Was shift held down when the main key was pressed?
+     */
+    public KeyStroke(Character character, boolean ctrlDown, boolean altDown, boolean shiftDown) {
+        this(KeyType.Character, character, ctrlDown, altDown, shiftDown);
+    }
     
     private KeyStroke(KeyType keyType, Character character, boolean ctrlDown, boolean altDown, boolean shiftDown) {
         if(keyType == KeyType.Character && character == null) {
