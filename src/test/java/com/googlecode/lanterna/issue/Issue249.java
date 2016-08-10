@@ -33,14 +33,7 @@ public class Issue249 {
         // Setup terminal and screen layers
         Terminal terminal = new DefaultTerminalFactory().createTerminal();
         Screen screen = new TerminalScreen(terminal);
-
-        // Issue 249 showed up only without startScreen(), because through 
-        //   startScreen() the VirtualScreen would grow as needed for the 
-        //   window to be entirely contained, which voids the preconditions
-        //   of the issue. As a result, this demo will only produce a black
-        //   empty screen, but with the fix in WindowShadowRenderer it at 
-        //   least doesn't crash with an NPE.
-        //screen.startScreen();
+        screen.startScreen();
 
         TerminalSize screenSize = screen.getTerminalSize();
 
