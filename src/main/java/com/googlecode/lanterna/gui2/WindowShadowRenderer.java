@@ -48,7 +48,8 @@ public class WindowShadowRenderer implements WindowPostRenderer {
         for(int column = lowerLeft.getColumn(); column <= lowerRight.getColumn(); column++) {
             char characterToDraw = filler;
             if(useTransparency) {
-                characterToDraw = textGraphics.getCharacter(column, lowerLeft.getRow()).getCharacter();
+                TextCharacter tc = textGraphics.getCharacter(column, lowerLeft.getRow());
+                if (tc != null) { characterToDraw = tc.getCharacter(); }
             }
             textGraphics.setCharacter(column, lowerLeft.getRow(), characterToDraw);
         }
@@ -58,7 +59,8 @@ public class WindowShadowRenderer implements WindowPostRenderer {
         for(int row = upperRight.getRow(); row <= lowerRight.getRow(); row++) {
             char characterToDraw = filler;
             if(useTransparency) {
-                characterToDraw = textGraphics.getCharacter(upperRight.getColumn(), row).getCharacter();
+                TextCharacter tc = textGraphics.getCharacter(upperRight.getColumn(), row);
+                if (tc != null) { characterToDraw = tc.getCharacter(); }
             }
             textGraphics.setCharacter(upperRight.getColumn(), row, characterToDraw);
         }
@@ -69,7 +71,8 @@ public class WindowShadowRenderer implements WindowPostRenderer {
             for(int row = upperRight.getRow(); row <= lowerRight.getRow(); row++) {
                 char characterToDraw = filler;
                 if(useTransparency) {
-                    characterToDraw = textGraphics.getCharacter(upperRight.getColumn(), row).getCharacter();
+                    TextCharacter tc = textGraphics.getCharacter(upperRight.getColumn(), row);
+                    if (tc != null) { characterToDraw = tc.getCharacter(); }
                 }
                 textGraphics.setCharacter(upperRight.getColumn(), row, characterToDraw);
             }
