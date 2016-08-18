@@ -41,13 +41,14 @@ public class TerminalEmulatorDeviceConfiguration {
     private final CursorStyle cursorStyle;
     private final TextColor cursorColor;
     private final boolean cursorBlinking;
+    private final boolean clipboardAvailable;
 
     /**
      * Creates a new terminal device configuration object with all the defaults set
      */
     @SuppressWarnings("WeakerAccess")
     public TerminalEmulatorDeviceConfiguration() {
-        this(2000, 500, CursorStyle.REVERSED, new TextColor.RGB(255, 255, 255), false);
+        this(2000, 500, CursorStyle.REVERSED, new TextColor.RGB(255, 255, 255), false, true);
     }
 
     /**
@@ -59,12 +60,39 @@ public class TerminalEmulatorDeviceConfiguration {
      * @param cursorBlinking Should the terminal text cursor blink?
      */
     @SuppressWarnings("WeakerAccess")
-    public TerminalEmulatorDeviceConfiguration(int lineBufferScrollbackSize, int blinkLengthInMilliSeconds, CursorStyle cursorStyle, TextColor cursorColor, boolean cursorBlinking) {
+    public TerminalEmulatorDeviceConfiguration(
+            int lineBufferScrollbackSize,
+            int blinkLengthInMilliSeconds,
+            CursorStyle cursorStyle,
+            TextColor cursorColor,
+            boolean cursorBlinking) {
+
+        this(lineBufferScrollbackSize, blinkLengthInMilliSeconds, cursorStyle, cursorColor, cursorBlinking, true);
+    }
+
+    /**
+     * Creates a new terminal device configuration object with all configurable values specified.
+     * @param lineBufferScrollbackSize How many lines of scrollback buffer should the terminal save?
+     * @param blinkLengthInMilliSeconds How many milliseconds does a 'blink' last
+     * @param cursorStyle Style of the terminal text cursor
+     * @param cursorColor Color of the terminal text cursor
+     * @param cursorBlinking Should the terminal text cursor blink?
+     */
+    @SuppressWarnings("WeakerAccess")
+    public TerminalEmulatorDeviceConfiguration(
+            int lineBufferScrollbackSize,
+            int blinkLengthInMilliSeconds,
+            CursorStyle cursorStyle,
+            TextColor cursorColor,
+            boolean cursorBlinking,
+            boolean clipboardAvailable) {
+
         this.lineBufferScrollbackSize = lineBufferScrollbackSize;
         this.blinkLengthInMilliSeconds = blinkLengthInMilliSeconds;
         this.cursorStyle = cursorStyle;
         this.cursorColor = cursorColor;
         this.cursorBlinking = cursorBlinking;
+        this.clipboardAvailable = clipboardAvailable;
     }
 
     /**
@@ -108,6 +136,10 @@ public class TerminalEmulatorDeviceConfiguration {
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isCursorBlinking() {
         return cursorBlinking;
+    }
+
+    public boolean isClipboardAvailable() {
+        return clipboardAvailable;
     }
 
     /**

@@ -20,6 +20,8 @@ package com.googlecode.lanterna.terminal.swing;
 
 import com.googlecode.lanterna.*;
 import com.googlecode.lanterna.graphics.TextGraphics;
+import com.googlecode.lanterna.input.DefaultKeyDecodingProfile;
+import com.googlecode.lanterna.input.InputDecoder;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.IOSafeTerminal;
@@ -28,11 +30,12 @@ import com.googlecode.lanterna.terminal.virtual.DefaultVirtualTerminal;
 import com.googlecode.lanterna.terminal.virtual.VirtualTerminal;
 
 import java.awt.*;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -820,7 +823,15 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
                         character = Character.toUpperCase(character);
                     }
                 }
-                keyQueue.add(new KeyStroke(character, ctrlDown, altDown, shiftDown));
+
+                // Check if clipboard is avavilable and this was a paste (ctrl + shift + v) before
+                // adding the key to the input queue
+                if(!altDown && ctrlDown && shiftDown && character == 'V' && deviceConfiguration.isClipboardAvailable()) {
+                    pasteClipboardContent();
+                }
+                else {
+                    keyQueue.add(new KeyStroke(character, ctrlDown, altDown, shiftDown));
+                }
             }
         }
 
@@ -851,7 +862,13 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
                 keyQueue.add(new KeyStroke(KeyType.ArrowDown, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_INSERT) {
-                keyQueue.add(new KeyStroke(KeyType.Insert, ctrlDown, altDown, shiftDown));
+                // This could be a paste (shift+insert) if the clipboard is available
+                if(!altDown && !ctrlDown && shiftDown && deviceConfiguration.isClipboardAvailable()) {
+                    pasteClipboardContent();
+                }
+                else {
+                    keyQueue.add(new KeyStroke(KeyType.Insert, ctrlDown, altDown, shiftDown));
+                }
             }
             else if(e.getKeyCode() == KeyEvent.VK_DELETE) {
                 keyQueue.add(new KeyStroke(KeyType.Delete, ctrlDown, altDown, shiftDown));
@@ -922,6 +939,55 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
                     keyQueue.add(new KeyStroke(character, ctrlDown, altDown, shiftDown));
                 }
             }
+        }
+    }
+
+    // This is mostly unimplemented, we could hook more of this into ExtendedTerminal's mouse functions
+    protected class TerminalMouseListener extends MouseAdapter {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if(MouseInfo.getNumberOfButtons() > 2 &&
+                    e.getButton() == MouseEvent.BUTTON2 &&
+                    deviceConfiguration.isClipboardAvailable()) {
+                pasteSelectionContent();
+            }
+        }
+    }
+
+    private void pasteClipboardContent() {
+        try {
+            Clipboard systemClipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            if(systemClipboard != null) {
+                injectStringAsKeyStrokes((String) systemClipboard.getData(DataFlavor.stringFlavor));
+            }
+        }
+        catch(Exception ignore) {
+        }
+    }
+
+    private void pasteSelectionContent() {
+        try {
+            Clipboard systemSelection = Toolkit.getDefaultToolkit().getSystemSelection();
+            if(systemSelection != null) {
+                injectStringAsKeyStrokes((String) systemSelection.getData(DataFlavor.stringFlavor));
+            }
+        }
+        catch(Exception ignore) {
+        }
+    }
+
+    private void injectStringAsKeyStrokes(String string) {
+        StringReader stringReader = new StringReader(string);
+        InputDecoder inputDecoder = new InputDecoder(stringReader);
+        inputDecoder.addProfile(new DefaultKeyDecodingProfile());
+        try {
+            KeyStroke keyStroke = inputDecoder.getNextCharacter(false);
+            while (keyStroke != null && keyStroke.getKeyType() != KeyType.EOF) {
+                keyQueue.add(keyStroke);
+                keyStroke = inputDecoder.getNextCharacter(false);
+            }
+        }
+        catch(IOException ignore) {
         }
     }
 

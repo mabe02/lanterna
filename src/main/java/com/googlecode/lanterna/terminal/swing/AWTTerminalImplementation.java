@@ -64,9 +64,10 @@ class AWTTerminalImplementation extends GraphicalTerminalImplementation {
         component.setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, Collections.<AWTKeyStroke>emptySet());
 
         component.addKeyListener(new TerminalInputListener());
-        component.addMouseListener(new MouseAdapter() {
+        component.addMouseListener(new TerminalMouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
                 AWTTerminalImplementation.this.component.requestFocusInWindow();
             }
         });
