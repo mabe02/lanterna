@@ -96,7 +96,7 @@ public class Button extends AbstractInteractableComponent<Button> {
         return super.handleKeyStroke(keyStroke);
     }
 
-    private synchronized void triggerActions() {
+    protected synchronized void triggerActions() {
         for(Listener listener: listeners) {
             listener.onTriggered(this);
         }
