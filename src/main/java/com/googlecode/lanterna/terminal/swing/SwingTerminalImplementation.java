@@ -67,9 +67,10 @@ class SwingTerminalImplementation extends GraphicalTerminalImplementation {
         component.setDoubleBuffered(true);
 
         component.addKeyListener(new TerminalInputListener());
-        component.addMouseListener(new MouseAdapter() {
+        component.addMouseListener(new TerminalMouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
                 SwingTerminalImplementation.this.component.requestFocusInWindow();
             }
         });

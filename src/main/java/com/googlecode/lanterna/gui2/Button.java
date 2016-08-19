@@ -26,35 +26,54 @@ import com.googlecode.lanterna.graphics.ThemeDefinition;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 /**
- * Simple labeled button with an optional action attached to it, you trigger the action by pressing the Enter key on the
- * keyboard when the component is in focus.
+ * Simple labeled button that the user can trigger by pressing the Enter or the Spacebar key on the keyboard when the
+ * component is in focus. You can specify an initial action through one of the constructors and you can also add
+ * additional actions to the button using {@link #addListener(Listener)}. To remove a previously attached action, use
+ * {@link #removeListener(Listener)}.
  * @author Martin
  */
 public class Button extends AbstractInteractableComponent<Button> {
-    private final Runnable action;
+
+    /**
+     * Listener interface that can be used to catch user events on the button
+     */
+    public interface Listener {
+        /**
+         * This is called when the user has triggered the button
+         * @param button Button which was triggered
+         */
+        void onTriggered(Button button);
+    }
+
+    private final List<Listener> listeners;
     private String label;
 
     /**
-     * Creates a new button with a specific label and no attached action. Why would you need this? I have no idea.
+     * Creates a new button with a specific label and no initially attached action.
      * @param label Label to put on the button
      */
     public Button(String label) {
-        this(label, new Runnable() {
-            @Override
-            public void run() {
-            }
-        });
+        this.listeners = new CopyOnWriteArrayList<Listener>();
+        setLabel(label);
     }
 
     /**
      * Creates a new button with a label and an associated action to fire when triggered by the user
      * @param label Label to put on the button
-     * @param action What action to fire when the user triggers the button by pressing the enter key
+     * @param action Action to fire when the user triggers the button by pressing the enter or the space key
      */
-    public Button(String label, Runnable action) {
-        this.action = action;
-        setLabel(label);
+    public Button(String label, final Runnable action) {
+        this(label);
+        listeners.add(new Listener() {
+            @Override
+            public void onTriggered(Button button) {
+                action.run();
+            }
+        });
     }
 
     @Override
@@ -69,11 +88,18 @@ public class Button extends AbstractInteractableComponent<Button> {
 
     @Override
     public synchronized Result handleKeyStroke(KeyStroke keyStroke) {
-        if(keyStroke.getKeyType() == KeyType.Enter) {
-            action.run();
+        if(keyStroke.getKeyType() == KeyType.Enter ||
+                (keyStroke.getKeyType() == KeyType.Character && keyStroke.getCharacter() == ' ')) {
+            triggerActions();
             return Result.HANDLED;
         }
         return super.handleKeyStroke(keyStroke);
+    }
+
+    protected synchronized void triggerActions() {
+        for(Listener listener: listeners) {
+            listener.onTriggered(this);
+        }
     }
 
     /**
@@ -89,6 +115,28 @@ public class Button extends AbstractInteractableComponent<Button> {
         }
         this.label = label;
         invalidate();
+    }
+
+    /**
+     * Adds a listener to notify when the button is triggered; the listeners will be called serially in the order they
+     * were added
+     * @param listener Listener to call when the button is triggered
+     */
+    public void addListener(Listener listener) {
+        if(listener == null) {
+            throw new IllegalArgumentException("null listener to a button is not allowed");
+        }
+        listeners.add(listener);
+    }
+
+    /**
+     * Removes a listener from the button's list of listeners to call when the button is triggered. If the listener list
+     * doesn't contain the listener specified, this call do with do nothing.
+     * @param listener Listener to remove from this button's listener list
+     * @return {@code true} if this button contained the specified listener
+     */
+    public boolean removeListener(Listener listener) {
+        return listeners.remove(listener);
     }
 
     /**
