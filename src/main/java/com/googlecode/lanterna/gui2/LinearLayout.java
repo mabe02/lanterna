@@ -177,10 +177,10 @@ public class LinearLayout implements LayoutManager {
                 component.setSize(TerminalSize.ZERO);
             }
             else {
-                LinearLayoutData layoutData = (LinearLayoutData)component.getLayoutData();
                 Alignment alignment = Alignment.Beginning;
-                if(layoutData != null) {
-                    alignment = layoutData.alignment;
+                LayoutData layoutData = component.getLayoutData();
+                if (layoutData instanceof LinearLayoutData) {
+                    alignment = ((LinearLayoutData)layoutData).alignment;
                 }
 
                 TerminalSize preferredSize = component.getPreferredSize();
@@ -222,11 +222,12 @@ public class LinearLayout implements LayoutManager {
                 component.setSize(TerminalSize.ZERO);
             }
             else {
-                LinearLayoutData layoutData = (LinearLayoutData)component.getLayoutData();
                 Alignment alignment = Alignment.Beginning;
-                if(layoutData != null) {
-                    alignment = layoutData.alignment;
+                LayoutData layoutData = component.getLayoutData();
+                if (layoutData instanceof LinearLayoutData) {
+                    alignment = ((LinearLayoutData)layoutData).alignment;
                 }
+
                 TerminalSize preferredSize = component.getPreferredSize();
                 TerminalSize decidedSize = new TerminalSize(
                         Math.min(remainingHorizontalSpace, preferredSize.getColumns()),

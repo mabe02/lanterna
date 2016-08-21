@@ -822,11 +822,11 @@ public class GridLayout implements LayoutManager {
 
     private GridLayoutData getLayoutData(Component component) {
         LayoutData layoutData = component.getLayoutData();
-        if(layoutData == null || !(layoutData instanceof GridLayoutData)) {
-            return DEFAULT;
+        if(layoutData instanceof GridLayoutData) {
+            return (GridLayoutData)layoutData;
         }
         else {
-            return (GridLayoutData)layoutData;
+            return DEFAULT;
         }
     }
 }
