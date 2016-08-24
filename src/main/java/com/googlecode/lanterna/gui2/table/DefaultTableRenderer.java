@@ -357,6 +357,7 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
             verticalScrollBar.setScrollMaximum(rows.size());
             verticalScrollBar.setViewSize(visibleRows);
             verticalScrollBar.setScrollPosition(viewTopRow);
+            verticalScrollBar.onAdded(table.getParent());
             verticalScrollBar.draw(graphics.newTextGraphics(verticalScrollBar.getPosition(), verticalScrollBar.getSize()));
             graphics = graphics.newTextGraphics(TerminalPosition.TOP_LEFT_CORNER, graphics.getSize().withRelativeColumns(-verticalScrollBarPreferredSize.getColumns()));
         }
@@ -368,6 +369,7 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
             horizontalScrollBar.setScrollMaximum(tableModel.getColumnCount());
             horizontalScrollBar.setViewSize(visibleColumns);
             horizontalScrollBar.setScrollPosition(viewLeftColumn);
+            horizontalScrollBar.onAdded(table.getParent());
             horizontalScrollBar.draw(graphics.newTextGraphics(horizontalScrollBar.getPosition(), horizontalScrollBar.getSize()));
             graphics = graphics.newTextGraphics(TerminalPosition.TOP_LEFT_CORNER, graphics.getSize().withRelativeRows(-horizontalScrollBarPreferredSize.getRows()));
         }
