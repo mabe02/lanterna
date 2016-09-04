@@ -299,6 +299,18 @@ public final class TextGUIGraphics implements ThemedTextGraphics, TextGraphics {
     }
 
     @Override
+    public TextGraphics putCSIStyledString(int column, int row, String string) {
+        backend.putCSIStyledString(column, row, string);
+        return this;
+    }
+
+    @Override
+    public TextGraphics putCSIStyledString(TerminalPosition position, String string) {
+        backend.putCSIStyledString(position, string);
+        return this;
+    }
+
+    @Override
     public TextCharacter getCharacter(int column, int row) {
         return backend.getCharacter(column, row);
     }

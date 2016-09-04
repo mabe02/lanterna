@@ -426,6 +426,59 @@ public interface TextGraphics {
     TextGraphics putString(int column, int row, String string, Collection<SGR> extraModifiers);
 
     /**
+     * Puts a string on the screen at the specified position with the current colors and modifiers. If the string
+     * contains newlines (\r and/or \n), the method will stop at the character before that; you have to manage
+     * multi-line strings yourself!
+     * <p>
+     * This method has an additional functionality to the regular {@link TextGraphics#putString(int, int, String)};
+     * if you embed ANSI CSI-style control sequences (like modifying text color or controlling SGR status), they will be
+     * interpreted as the string is printed and mutates the {@link TextGraphics} object. In this version of Lanterna,
+     * the following sequences are supported:
+     * <ul>
+     *     <li>Set foreground color</li>
+     *     <li>Set background color</li>
+     *     <li>Set/Clear bold style</li>
+     *     <li>Set/Clear underline style</li>
+     *     <li>Set/Clear blink style</li>
+     *     <li>Set/Clear reverse style</li>
+     *     <li>Clear all styles and colors (notice that this will return the state to what it was at the start of the method)</li>
+     * </ul>
+     * When the call is complete, the {@link TextGraphics} object will return to the color/style state it was in at the
+     * start of the call.
+     * @param column What column to put the string at
+     * @param row What row to put the string at
+     * @param string String to put on the screen
+     * @return Itself
+     */
+    TextGraphics putCSIStyledString(int column, int row, String string);
+
+    /**
+     * Puts a string on the screen at the specified position with the current colors and modifiers. If the string
+     * contains newlines (\r and/or \n), the method will stop at the character before that; you have to manage
+     * multi-line strings yourself!
+     * <p>
+     * This method has an additional functionality to the regular {@link TextGraphics#putString(int, int, String)};
+     * if you embed ANSI CSI-style control sequences (like modifying text color or controlling SGR status), they will be
+     * interpreted as the string is printed and mutates the {@link TextGraphics} object. In this version of Lanterna,
+     * the following sequences are supported:
+     * <ul>
+     *     <li>Set foreground color</li>
+     *     <li>Set background color</li>
+     *     <li>Set/Clear bold style</li>
+     *     <li>Set/Clear underline style</li>
+     *     <li>Set/Clear blink style</li>
+     *     <li>Set/Clear reverse style</li>
+     *     <li>Clear all styles and colors (notice that this will return the state to what it was at the start of the method)</li>
+     * </ul>
+     * When the call is complete, the {@link TextGraphics} object will return to the color/style state it was in at the
+     * start of the call.
+     * @param position Position to put the string at
+     * @param string String to put on the screen
+     * @return Itself
+     */
+    TextGraphics putCSIStyledString(TerminalPosition position, String string);
+
+    /**
      * Returns the character at the specific position in the terminal. May return {@code null} if the TextGraphics
      * implementation doesn't support it or doesn't know what the character is.
      * @param position Position to return the character for
