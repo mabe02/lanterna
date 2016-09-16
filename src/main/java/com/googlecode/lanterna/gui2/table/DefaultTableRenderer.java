@@ -357,7 +357,21 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
             verticalScrollBar.setScrollMaximum(rows.size());
             verticalScrollBar.setViewSize(visibleRows);
             verticalScrollBar.setScrollPosition(viewTopRow);
+
+            // Ensure the parent is correct
+            if(table.getParent() != verticalScrollBar.getParent()) {
+                if(verticalScrollBar.getParent() != null) {
+                    verticalScrollBar.onRemoved(verticalScrollBar.getParent());
+                }
+                if(table.getParent() != null) {
+                    verticalScrollBar.onAdded(table.getParent());
+                }
+            }
+
+            // Finally draw the thing
             verticalScrollBar.draw(graphics.newTextGraphics(verticalScrollBar.getPosition(), verticalScrollBar.getSize()));
+
+            // Adjust graphics object to the remaining area when the vertical scrollbar is subtracted
             graphics = graphics.newTextGraphics(TerminalPosition.TOP_LEFT_CORNER, graphics.getSize().withRelativeColumns(-verticalScrollBarPreferredSize.getColumns()));
         }
         if(visibleColumns < tableModel.getColumnCount()) {
@@ -368,7 +382,21 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
             horizontalScrollBar.setScrollMaximum(tableModel.getColumnCount());
             horizontalScrollBar.setViewSize(visibleColumns);
             horizontalScrollBar.setScrollPosition(viewLeftColumn);
+
+            // Ensure the parent is correct
+            if(table.getParent() != horizontalScrollBar.getParent()) {
+                if(horizontalScrollBar.getParent() != null) {
+                    horizontalScrollBar.onRemoved(horizontalScrollBar.getParent());
+                }
+                if(table.getParent() != null) {
+                    horizontalScrollBar.onAdded(table.getParent());
+                }
+            }
+
+            // Finally draw the thing
             horizontalScrollBar.draw(graphics.newTextGraphics(horizontalScrollBar.getPosition(), horizontalScrollBar.getSize()));
+
+            // Adjust graphics object to the remaining area when the horizontal scrollbar is subtracted
             graphics = graphics.newTextGraphics(TerminalPosition.TOP_LEFT_CORNER, graphics.getSize().withRelativeRows(-horizontalScrollBarPreferredSize.getRows()));
         }
 

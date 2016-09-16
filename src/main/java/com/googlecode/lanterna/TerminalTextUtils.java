@@ -36,21 +36,30 @@ public class TerminalTextUtils {
     private TerminalTextUtils() {
     }
 
-    public static String getANSIControlSequenceAt(String string, int i) {
+    /**
+     * Given a string and an index in that string, returns the ANSI control sequence beginning on this index. If there
+     * is no control sequence starting there, the method will return null. The returned value is the complete escape
+     * sequence including the ESC prefix.
+     * @param string String to scan for control sequences
+     * @param index Index in the string where the control sequence begins
+     * @return {@code null} if there was no control sequence starting at the specified index, otherwise the entire
+     * control sequence
+     */
+    public static String getANSIControlSequenceAt(String string, int index) {
         String controlSequence = null;
 
-        char character = string.charAt(i);
+        char character = string.charAt(index);
         if (character == 0x1B) { // escape
-            if (string.length() > i + 2) { // Control sequences require a minimum of two characters
-                char possibleCSI = string.charAt(i + 1);
+            if (string.length() > index + 2) { // Control sequences require a minimum of two characters
+                char possibleCSI = string.charAt(index + 1);
                 if (possibleCSI == 0x5b) { // left bracket opens a control sequence
-                    for (int j = i; j < string.length(); j++) {
+                    for (int j = index; j < string.length(); j++) {
                         char controlChar = string.charAt(j);
                         if (isCharCSITerminator(controlChar)) {
-                            controlSequence = string.substring(i, j + 1);
+                            controlSequence = string.substring(index, j + 1);
                             break;
                         }
-                        else if (j > i && controlChar == 0x1b) {
+                        else if (j > index && controlChar == 0x1b) {
                             break;
                         }
                     }
@@ -61,7 +70,7 @@ public class TerminalTextUtils {
         return controlSequence;
     }
 
-    public static boolean isCharCSITerminator(final char c) {
+    private static boolean isCharCSITerminator(final char c) {
         return c == 'A'
                 || c == 'B'
                 || c == 'C'

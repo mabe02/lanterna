@@ -7,7 +7,7 @@ Text boxes allow users to enter information. To create a text box:
 	TextBox textBox = new TextBox();
 ```
 
-You can pass in the (size)[examples/gui/component_sizing.md] of the textbox via the constructor:
+You can pass in the [size](component_sizing.md) of the textbox via the constructor:
 
 ```
 	// Creates a textbox 30 columns long, 1 column high
