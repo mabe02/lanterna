@@ -453,7 +453,7 @@ public abstract class AbstractTextGraphics implements TextGraphics {
                         foregroundColor = palette[code - 30];
                     }
                     else if (code >= 40 && code <= 49 && code != 48) {
-                        backgroundColor = palette[code - 30];
+                        backgroundColor = palette[code - 40];
                     }
                 }
             }
