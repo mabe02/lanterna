@@ -319,4 +319,13 @@ public final class TextGUIGraphics implements ThemedTextGraphics, TextGraphics {
     public TextCharacter getCharacter(TerminalPosition position) {
         return backend.getCharacter(position);
     }
+
+    @Override
+    public TextGraphics setStyleFrom(StyleSet<?> source) {
+        setBackgroundColor(source.getBackgroundColor());
+        setForegroundColor(source.getForegroundColor());
+        setModifiers(source.getActiveModifiers());
+        return this;
+    }
+
 }

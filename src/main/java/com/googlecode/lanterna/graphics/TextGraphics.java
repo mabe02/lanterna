@@ -22,7 +22,6 @@ import com.googlecode.lanterna.*;
 import com.googlecode.lanterna.screen.TabBehaviour;
 
 import java.util.Collection;
-import java.util.EnumSet;
 
 /**
  * This interface exposes functionality to 'draw' text graphics on a section of the terminal. It has several
@@ -44,7 +43,7 @@ import java.util.EnumSet;
  * with them. The reason is that not all implementations will handle the underlying terminal changing size.
  * @author Martin
  */
-public interface TextGraphics {
+public interface TextGraphics extends StyleSet<TextGraphics> {
     /**
      * Returns the size of the area that this text graphic can write to. Any attempts of placing characters outside of
      * this area will be silently ignored.
@@ -67,66 +66,6 @@ public interface TextGraphics {
      * TextGraphics in any way.
      */
     TextGraphics newTextGraphics(TerminalPosition topLeftCorner, TerminalSize size) throws IllegalArgumentException;
-
-    /**
-     * Returns the current background color
-     * @return Current background color
-     */
-    TextColor getBackgroundColor();
-
-    /**
-     * Updates the current background color
-     * @param backgroundColor New background color
-     * @return Itself
-     */
-    TextGraphics setBackgroundColor(TextColor backgroundColor);
-
-    /**
-     * Returns the current foreground color
-     * @return Current foreground color
-     */
-    TextColor getForegroundColor();
-
-    /**
-     * Updates the current foreground color
-     * @param foregroundColor New foreground color
-     * @return Itself
-     */
-    TextGraphics setForegroundColor(TextColor foregroundColor);
-
-    /**
-     * Adds zero or more modifiers to the set of currently active modifiers
-     * @param modifiers Modifiers to add to the set of currently active modifiers
-     * @return Itself
-     */
-    TextGraphics enableModifiers(SGR... modifiers);
-
-    /**
-     * Removes zero or more modifiers from the set of currently active modifiers
-     * @param modifiers Modifiers to remove from the set of currently active modifiers
-     * @return Itself
-     */
-    TextGraphics disableModifiers(SGR... modifiers);
-
-    /**
-     * Sets the active modifiers to exactly the set passed in to this method. Any previous state of which modifiers are
-     * enabled doesn't matter.
-     * @param modifiers Modifiers to set as active
-     * @return Itself
-     */
-    TextGraphics setModifiers(EnumSet<SGR> modifiers);
-
-    /**
-     * Removes all active modifiers
-     * @return Itself
-     */
-    TextGraphics clearModifiers();
-
-    /**
-     * Returns all the SGR codes that are currently active in the TextGraphic
-     * @return Currently active SGR modifiers
-     */
-    EnumSet<SGR> getActiveModifiers();
 
     /**
      * Retrieves the current tab behaviour, which is what the TextGraphics will use when expanding \t characters to

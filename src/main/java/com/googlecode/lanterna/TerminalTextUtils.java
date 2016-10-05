@@ -23,6 +23,9 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.googlecode.lanterna.TextColor.ANSI;
+import com.googlecode.lanterna.graphics.StyleSet;
+
 /**
  * This class contains a number of utility methods for analyzing characters and strings in a terminal context. The main
  * purpose is to make it easier to work with text that may or may not contain double-width text characters, such as CJK
@@ -351,5 +354,77 @@ public class TerminalTextUtils {
             }
         }
         return result;
+    }
+
+    public static void updateModifiersFromCSICode(
+            String controlSequence,
+            StyleSet<?> target,
+            StyleSet<?> original) {
+    
+        char controlCodeType = controlSequence.charAt(controlSequence.length() - 1);
+        controlSequence = controlSequence.substring(2, controlSequence.length() - 1);
+        String[] codes = controlSequence.split(";");
+    
+        TextColor[] palette = new TextColor[] {
+                TextColor.ANSI.BLACK,
+                TextColor.ANSI.RED,
+                TextColor.ANSI.GREEN,
+                TextColor.ANSI.YELLOW,
+                TextColor.ANSI.BLUE,
+                TextColor.ANSI.MAGENTA,
+                TextColor.ANSI.CYAN,
+                TextColor.ANSI.WHITE,
+                null,
+                TextColor.ANSI.DEFAULT
+        };
+    
+        if(controlCodeType == 'm') { // SGRs
+            if(codes.length == 0) { // Reset to default
+                target.setStyleFrom(original);
+            }
+            else {
+                for (String s : codes) {
+                    // If someone passes in invalid CSI codes, should we fail gracefully? Probably better to throw something.
+                    int code = Integer.parseInt(s);
+                    switch (code) {
+                    case 0:
+                        target.setStyleFrom(original);
+                        break;
+                    case 1:
+                        target.enableModifiers(SGR.BOLD);
+                        break;
+                    case 4:
+                        target.enableModifiers(SGR.UNDERLINE);
+                        break;
+                    case 5:
+                        target.enableModifiers(SGR.BLINK);
+                        break;
+                    case 7:
+                        target.enableModifiers(SGR.REVERSE);
+                        break;
+                    case 22:
+                        target.disableModifiers(SGR.BOLD);
+                        break;
+                    case 24:
+                        target.disableModifiers(SGR.UNDERLINE);
+                        break;
+                    case 25:
+                        target.disableModifiers(SGR.BLINK);
+                        break;
+                    case 27:
+                        target.disableModifiers(SGR.REVERSE);
+                        break;
+                    case 38: case 48: break; // nothing?
+                    default:
+                        if (code >= 30 && code <= 39) {
+                            target.setForegroundColor( palette[code - 30] );
+                        }
+                        else if (code >= 40 && code <= 49) {
+                            target.setBackgroundColor( palette[code - 40] );
+                        }
+                    }
+                }
+            }
+        }
     }
 }

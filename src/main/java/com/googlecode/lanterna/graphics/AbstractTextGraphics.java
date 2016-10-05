@@ -304,17 +304,14 @@ public abstract class AbstractTextGraphics implements TextGraphics {
 
     @Override
     public synchronized TextGraphics putCSIStyledString(int column, int row, String string) {
-        TextColor entryPointForegroundColor = foregroundColor;
-        TextColor entryPointBackgroundColor = backgroundColor;
-        EnumSet<SGR> entryPointSGRs = activeModifiers.clone();
-
+        StyleSet.Set original = new StyleSet.Set(this);
         string = prepareStringForPut(column, string);
         int offset = 0;
         for(int i = 0; i < string.length(); i++) {
             char character = string.charAt(i);
             String controlSequence = TerminalTextUtils.getANSIControlSequenceAt(string, i);
             if(controlSequence != null) {
-                updateModifiersFromCSICode(controlSequence, entryPointForegroundColor, entryPointBackgroundColor, entryPointSGRs);
+                TerminalTextUtils.updateModifiersFromCSICode(controlSequence, this, original);
 
                 // Skip the control sequence, leaving one extra, since we'll add it when we loop
                 i += controlSequence.length() - 1;
@@ -325,10 +322,7 @@ public abstract class AbstractTextGraphics implements TextGraphics {
             offset += getOffsetToNextCharacter(character);
         }
 
-        foregroundColor = entryPointForegroundColor;
-        backgroundColor = entryPointBackgroundColor;
-        activeModifiers.clear();
-        activeModifiers.addAll(entryPointSGRs);
+        setStyleFrom(original);
         return this;
     }
 
@@ -382,81 +376,12 @@ public abstract class AbstractTextGraphics implements TextGraphics {
         }
     }
 
-
-    private void updateModifiersFromCSICode(
-            String controlSequence,
-            TextColor defaultForeground,
-            TextColor defaultBackground,
-            EnumSet<SGR> defaultSGR) {
-
-        char controlCodeType = controlSequence.charAt(controlSequence.length() - 1);
-        controlSequence = controlSequence.substring(0, controlSequence.length() - 1);
-        controlSequence = controlSequence.replace((char) 0x1b, '[');
-        controlSequence = controlSequence.replaceAll("\\[", "");
-        String[] codes = controlSequence.split(";");
-
-        TextColor[] palette = new TextColor[] {
-                TextColor.ANSI.BLACK,
-                TextColor.ANSI.RED,
-                TextColor.ANSI.GREEN,
-                TextColor.ANSI.YELLOW,
-                TextColor.ANSI.BLUE,
-                TextColor.ANSI.MAGENTA,
-                TextColor.ANSI.CYAN,
-                TextColor.ANSI.WHITE,
-                null,
-                TextColor.ANSI.DEFAULT
-        };
-
-        if(controlCodeType == 'm') { // SGRs
-            if(codes.length == 0) { // Reset to default
-                foregroundColor = defaultForeground;
-                backgroundColor = defaultBackground;
-                activeModifiers.clear();
-                activeModifiers.addAll(defaultSGR);
-            }
-            else {
-                for (String s : codes) {
-                    // If someone passes in invalid CSI codes, should we fail gracefully? Probably better to throw something.
-                    int code = Integer.parseInt(s);
-                    if (code == 0) {
-                        foregroundColor = defaultForeground;
-                        backgroundColor = defaultBackground;
-                        activeModifiers.clear();
-                        activeModifiers.addAll(defaultSGR);
-                    }
-                    else if (code == 1) {
-                        activeModifiers.add(SGR.BOLD);
-                    }
-                    else if (code == 4) {
-                        activeModifiers.add(SGR.UNDERLINE);
-                    }
-                    else if (code == 5) {
-                        activeModifiers.add(SGR.BLINK);
-                    }
-                    else if (code == 7) {
-                        activeModifiers.add(SGR.REVERSE);
-                    }
-                    else if (code == 22) {
-                        activeModifiers.remove(SGR.BOLD);
-                    }
-                    else if (code == 24) {
-                        activeModifiers.remove(SGR.UNDERLINE);
-                    }
-                    else if (code == 25) {
-                        activeModifiers.remove(SGR.BLINK);
-                    }
-                    else if (code == 27) {
-                        activeModifiers.remove(SGR.REVERSE);
-                    }
-                    else if (code >= 30 && code <= 39 && code != 38) {
-                        foregroundColor = palette[code - 30];
-                    }
-                    else if (code >= 40 && code <= 49 && code != 48) {
-                        backgroundColor = palette[code - 40];
-                    }
-                }
-            }
-        }
+    @Override
+    public TextGraphics setStyleFrom(StyleSet<?> source) {
+        setBackgroundColor(source.getBackgroundColor());
+        setForegroundColor(source.getForegroundColor());
+        setModifiers(source.getActiveModifiers());
+        return this;
     }
+
 }
