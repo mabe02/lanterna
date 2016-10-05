@@ -152,18 +152,6 @@ public abstract class AbstractScreen implements Screen {
             //This is the normal case, no special character
             backBuffer.setCharacterAt(column, row, screenCharacter);
         }
-
-        //Pad CJK character with a trailing space
-        if(TerminalTextUtils.isCharCJK(screenCharacter.getCharacter())) {
-            backBuffer.setCharacterAt(column + 1, row, screenCharacter.withCharacter(' '));
-        }
-        //If there's a CJK character immediately to our left, reset it
-        if(column > 0) {
-            TextCharacter cjkTest = backBuffer.getCharacterAt(column - 1, row);
-            if(cjkTest != null && TerminalTextUtils.isCharCJK(cjkTest.getCharacter())) {
-                backBuffer.setCharacterAt(column - 1, row, backBuffer.getCharacterAt(column - 1, row).withCharacter(' '));
-            }
-        }
     }
 
     @Override
