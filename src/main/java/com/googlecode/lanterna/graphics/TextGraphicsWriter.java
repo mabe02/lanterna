@@ -77,8 +77,9 @@ public class TextGraphicsWriter implements StyleSet<TextGraphicsWriter> {
         return this;
     }
     private void linefeed(int lenToFit) {
-        int spaceLeft = backend.getSize().getColumns() - cursorPosition.getColumn();
-        if (lenToFit < 0 || lenToFit > spaceLeft) {
+        int curCol = cursorPosition.getColumn();
+        int spaceLeft = backend.getSize().getColumns() - curCol;
+        if (curCol > 0 && ( lenToFit < 0 || lenToFit > spaceLeft ) ) {
             // TODO: clear to end of current line?
             cursorPosition = cursorPosition.withColumn(0).withRelativeRow(1);
         }
