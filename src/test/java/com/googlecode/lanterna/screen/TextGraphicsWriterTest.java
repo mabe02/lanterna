@@ -27,7 +27,7 @@ public class TextGraphicsWriterTest {
                      "                      \t沙羅双樹の花の色、盛者必衰の理をあらはす\n" +
                      "  \033[33m(katakana)\033[39m          \tランターナ バージョンアップ！\n" +
                      "  \033[33m(half-width)\033[39m        \tﾗﾝﾀｰﾅ ﾊﾞｰｼﾞｮﾝｱｯﾌﾟ\n" +
-                     "Korean:               \t내 벗이 몇인가하니 수석과 송죽이라\n" +
+                     "Ko\033[45mrean:       \033[49m        \t내 벗이 몇인가하니 수석과 송죽이라\n" +
                      "                      \t동산에 달오르니 그 더욱 반갑도다\n" +
                      "                      \t두어라, 이 다섯 밖에 또 더해야 무엇하리\n");
         tw.putString("still underlined, \033[31mbut now red\033[0m - reset.");

@@ -15,17 +15,18 @@ public class TextGraphicsWriter implements StyleSet<TextGraphicsWriter> {
     private TerminalPosition cursorPosition;
     private TextColor foregroundColor, backgroundColor;
     private EnumSet<SGR> style = EnumSet.noneOf(SGR.class);
-    private StyleSet.Set originalStyle;
     
     public TextGraphicsWriter(TextGraphics backend) {
         this.backend = backend;
         setStyleFrom( backend );
-        originalStyle = new StyleSet.Set(backend);
         cursorPosition = new TerminalPosition(0, 0);
     }
 
     public TextGraphicsWriter putString(String string) {
         StringBuilder wordpart = new StringBuilder();
+        StyleSet.Set originalStyle = new StyleSet.Set(backend);
+        backend.setStyleFrom(this);
+
         int wordlen = 0; // the whole column-length of the word.
         for (int i = 0; i < string.length(); i++) {
             char ch = string.charAt(i);
@@ -52,6 +53,7 @@ public class TextGraphicsWriter implements StyleSet<TextGraphicsWriter> {
                 stash(wordpart,wordlen);
                 String seq = TerminalTextUtils.getANSIControlSequenceAt(string, i);
                 TerminalTextUtils.updateModifiersFromCSICode(seq, this, originalStyle);
+                backend.setStyleFrom(this);
                 i += seq.length() - 1;
                 break;
             default:
@@ -67,6 +69,7 @@ public class TextGraphicsWriter implements StyleSet<TextGraphicsWriter> {
             linefeed(wordlen);
         }
         flush(wordpart,wordlen);
+        backend.setStyleFrom(originalStyle);
         return this;
     }
     private void linefeed(int lenToFit) {
