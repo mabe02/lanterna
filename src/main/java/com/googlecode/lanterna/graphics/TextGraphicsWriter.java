@@ -57,7 +57,11 @@ public class TextGraphicsWriter implements StyleSet<TextGraphicsWriter> {
                 i += seq.length() - 1;
                 break;
             default:
-                if (TerminalTextUtils.isCharCJK(ch)) {
+                if (Character.isWhitespace(ch)) {
+                    flush(wordpart,wordlen); wordlen = 0;
+                    backend.setCharacter(cursorPosition, ch);
+                    cursorPosition = cursorPosition.withRelativeColumn(1);
+                } else if (TerminalTextUtils.isCharCJK(ch)) {
                     flush(wordpart, wordlen); wordlen = 0;
                     linefeed(2);
                     backend.setCharacter(cursorPosition, ch);
