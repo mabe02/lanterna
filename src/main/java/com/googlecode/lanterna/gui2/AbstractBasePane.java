@@ -112,7 +112,9 @@ public abstract class AbstractBasePane implements BasePane {
             MouseAction mouseAction = (MouseAction)key;
             TerminalPosition localCoordinates = fromGlobal(mouseAction.getPosition());
             Interactable interactable = interactableLookupMap.getInteractableAt(localCoordinates);
-            interactable.handleInput(key);
+            if (interactable != null) {
+                interactable.handleInput(key);
+            }
         }
         else if(focusedInteractable != null) {
             Interactable next = null;
