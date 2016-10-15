@@ -79,6 +79,9 @@ public class InteractableLookupMap {
      * @return The {@code Interactable} component at the specified location or {@code null} if there's nothing there
      */
     public synchronized Interactable getInteractableAt(TerminalPosition position) {
+        if (position.getRow() < 0 || position.getColumn() < 0) {
+            return null;
+        }
         if(position.getRow() >= lookupMap.length) {
             return null;
         }
