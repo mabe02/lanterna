@@ -358,55 +358,51 @@ public class TerminalTextUtils {
         TextColor[] palette = TextColor.ANSI.values();
     
         if(controlCodeType == 'm') { // SGRs
-            if(codes.length == 0) { // Reset to default
-                target.setStyleFrom(original);
-            }
-            else {
-                for (String s : codes) {
-                    if (s.isEmpty()) { continue; }
-                    // If someone passes in invalid CSI codes, should we fail gracefully? Probably better to throw something.
-                    int code = Integer.parseInt(s);
-                    switch (code) {
-                    case 0:
-                        target.setStyleFrom(original);
-                        break;
-                    case 1:
-                        target.enableModifiers(SGR.BOLD);
-                        break;
-                    case 4:
-                        target.enableModifiers(SGR.UNDERLINE);
-                        break;
-                    case 5:
-                        target.enableModifiers(SGR.BLINK);
-                        break;
-                    case 7:
-                        target.enableModifiers(SGR.REVERSE);
-                        break;
-                    case 22:
-                        target.disableModifiers(SGR.BOLD);
-                        break;
-                    case 24:
-                        target.disableModifiers(SGR.UNDERLINE);
-                        break;
-                    case 25:
-                        target.disableModifiers(SGR.BLINK);
-                        break;
-                    case 27:
-                        target.disableModifiers(SGR.REVERSE);
-                        break;
-                    case 39:
-                        target.setForegroundColor(original.getForegroundColor());
-                        break;
-                    case 49:
-                        target.setBackgroundColor(original.getBackgroundColor());
-                        break;
-                    default:
-                        if (code >= 30 && code <= 37) {
-                            target.setForegroundColor( palette[code - 30] );
-                        }
-                        else if (code >= 40 && code <= 47) {
-                            target.setBackgroundColor( palette[code - 40] );
-                        }
+            for (String s : codes) {
+                // An empty string is equivalent to 0.
+                // Warning: too large values could throw an Exception!
+                int code = s.isEmpty() ? 0 : Integer.parseInt(s);
+                switch (code) {
+                case 0:
+                    target.setStyleFrom(original);
+                    break;
+                case 1:
+                    target.enableModifiers(SGR.BOLD);
+                    break;
+                case 4:
+                    target.enableModifiers(SGR.UNDERLINE);
+                    break;
+                case 5:
+                    target.enableModifiers(SGR.BLINK);
+                    break;
+                case 7:
+                    target.enableModifiers(SGR.REVERSE);
+                    break;
+                case 21: // both do. 21 seems more straightforward.
+                case 22:
+                    target.disableModifiers(SGR.BOLD);
+                    break;
+                case 24:
+                    target.disableModifiers(SGR.UNDERLINE);
+                    break;
+                case 25:
+                    target.disableModifiers(SGR.BLINK);
+                    break;
+                case 27:
+                    target.disableModifiers(SGR.REVERSE);
+                    break;
+                case 39:
+                    target.setForegroundColor(original.getForegroundColor());
+                    break;
+                case 49:
+                    target.setBackgroundColor(original.getBackgroundColor());
+                    break;
+                default:
+                    if (code >= 30 && code <= 37) {
+                        target.setForegroundColor( palette[code - 30] );
+                    }
+                    else if (code >= 40 && code <= 47) {
+                        target.setBackgroundColor( palette[code - 40] );
                     }
                 }
             }
