@@ -13,26 +13,55 @@ public class TextGraphicsWriterTest {
         screen.startScreen();
 
         TextGraphics writer = new ScreenTextGraphics(screen);
-        writer.setForegroundColor(TextColor.ANSI.DEFAULT);
+        writer.setForegroundColor(TextColor.ANSI.WHITE);
         writer.setBackgroundColor(TextColor.ANSI.BLUE);
         writer.fill(' ');
         TextGraphicsWriter tw = new TextGraphicsWriter(writer);
 
-        tw.putString("\n\033[4;1m");
-        tw.putString("Chinese \033[33m(simplified)\033[39m: \t石室诗士施氏，嗜狮，誓食十狮。\n" +
-                     "                      \t氏时时适市视狮。\n" +
-                     "Chinese \033[33m(traditional)\033[39m:\t石室詩士施氏，嗜獅，誓食十獅。 \n" +
-                     "                      \t氏時時適市視獅。\n");
-        tw.putString("Japanese:             \t祇園精舎の鐘の声、諸行無常の響あり。\n" +
-                     "                      \t沙羅双樹の花の色、盛者必衰の理をあらはす\n" +
-                     "  \033[33m(katakana)\033[39m          \tランターナ バージョンアップ！\n" +
-                     "  \033[33m(half-width)\033[39m        \tﾗﾝﾀｰﾅ ﾊﾞｰｼﾞｮﾝｱｯﾌﾟ\n" +
-                     "Ko\033[45mrean:       \033[49m        \t내 벗이 몇인가하니 수석과 송죽이라\n" +
-                     "                      \t동산에 달오르니 그 더욱 반갑도다\n" +
-                     "                      \t두어라, 이 다섯 밖에 또 더해야 무엇하리\n");
-        tw.putString("still underlined, \033[31mbut now red\033[0m - reset.");
-        screen.refresh();
+        String loremIpsum =
+                "  Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod" +
+                " tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim" +
+                " veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid" +
+                " ex ea commodi consequat. Quis aute iure reprehenderit in voluptate" +
+                " velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint" +
+                " obcaecat cupiditat non proident, sunt in culpa qui officia deserunt" +
+                " mollit anim id est laborum.\n";
+        // change all blanks behind full-stops or commas to underlined tabs:
+        loremIpsum = loremIpsum.replaceAll("([.,]) ", "$1\033[4m\t\033[24m");
+        // each occurrence of "dolor" gets its own background:
+        loremIpsum = loremIpsum.replaceAll("(dolor)", "\033[45m$1\033[49m");
+        // each 'o' is turned yellow.
+        loremIpsum = loremIpsum.replaceAll("([o])", "\033[1;33m$1\033[22;39m");
 
+        tw.putString("\033[m");
+        tw.setWrapBehaviour(WrapBehaviour.SINGLE_LINE);
+        writer.setTabBehaviour(TabBehaviour.ALIGN_TO_COLUMN_4);
+        tw.putString("\n"+tw.getWrapBehaviour()+":\n");
+        tw.putString(loremIpsum);
+
+        tw.setWrapBehaviour(WrapBehaviour.CLIP);
+        tw.putString("\n"+tw.getWrapBehaviour()+":\n");
+        tw.putString(loremIpsum);
+
+        tw.setWrapBehaviour(WrapBehaviour.CHAR);
+        tw.putString("\n"+tw.getWrapBehaviour()+":\n");
+        tw.putString(loremIpsum);
+
+        tw.setWrapBehaviour(WrapBehaviour.WORD);
+        tw.putString("\n"+tw.getWrapBehaviour()+":\n");
+        tw.putString(loremIpsum);
+
+        tw.setWrapBehaviour(WrapBehaviour.CLIP);
+        writer.setTabBehaviour(TabBehaviour.IGNORE);
+        tw.putString("\n"+tw.getWrapBehaviour()+" + TabBehaviour.IGNORE:\n");
+        tw.putString(loremIpsum);
+
+        tw.putString("\033[m");
+        tw.setStyleable(false);
+        tw.putString(tw.getWrapBehaviour()+" + Styleable turned off, so esc-sequences are visible:\n");
+        tw.putString(loremIpsum);
+
+        screen.refresh();
         screen.readInput();
         screen.stopScreen();
     }

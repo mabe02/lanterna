@@ -8,13 +8,18 @@ import java.util.List;
 import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalTextUtils;
+import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.screen.TabBehaviour;
+import com.googlecode.lanterna.screen.WrapBehaviour;
 
 public class TextGraphicsWriter implements StyleSet<TextGraphicsWriter> {
     private final TextGraphics backend;
     private TerminalPosition cursorPosition;
     private TextColor foregroundColor, backgroundColor;
     private EnumSet<SGR> style = EnumSet.noneOf(SGR.class);
+    private WrapBehaviour wrapBehaviour = WrapBehaviour.WORD;
+    private boolean styleable = true;
     
     public TextGraphicsWriter(TextGraphics backend) {
         this.backend = backend;
@@ -33,31 +38,38 @@ public class TextGraphicsWriter implements StyleSet<TextGraphicsWriter> {
             switch (ch) {
             case '\n':
                 flush(wordpart,wordlen); wordlen = 0;
-                linefeed(-1);
+                linefeed(-1); // -1 means explicit.
                 break;
             case '\t':
                 flush(wordpart,wordlen); wordlen = 0;
-                String repl = backend.getTabBehaviour()
-                        .getTabReplacement(cursorPosition.getColumn());
-                for(int j = 0; j < repl.length(); j++) {
-                    backend.setCharacter(cursorPosition.withRelativeColumn(j), repl.charAt(j));
+                if (backend.getTabBehaviour() != TabBehaviour.IGNORE) {
+                    String repl = backend.getTabBehaviour()
+                            .getTabReplacement(cursorPosition.getColumn());
+                    for(int j = 0; j < repl.length(); j++) {
+                        backend.setCharacter(cursorPosition.withRelativeColumn(j), repl.charAt(j));
+                    }
+                    cursorPosition = cursorPosition.withRelativeColumn(repl.length());
+                } else {
+                    linefeed(2); putControlChar(ch);
                 }
-                cursorPosition = cursorPosition.withRelativeColumn(repl.length());
-                break;
-            case ' ':
-                flush(wordpart,wordlen); wordlen = 0;
-                backend.setCharacter(cursorPosition, ch);
-                cursorPosition = cursorPosition.withRelativeColumn(1);
                 break;
             case '\033':
-                stash(wordpart,wordlen);
-                String seq = TerminalTextUtils.getANSIControlSequenceAt(string, i);
-                TerminalTextUtils.updateModifiersFromCSICode(seq, this, originalStyle);
-                backend.setStyleFrom(this);
-                i += seq.length() - 1;
+                if (isStyleable()) {
+                    stash(wordpart,wordlen);
+                    String seq = TerminalTextUtils.getANSIControlSequenceAt(string, i);
+                    TerminalTextUtils.updateModifiersFromCSICode(seq, this, originalStyle);
+                    backend.setStyleFrom(this);
+                    i += seq.length() - 1;
+                } else {
+                    flush(wordpart,wordlen); wordlen = 0;
+                    linefeed(2); putControlChar(ch);
+                }
                 break;
             default:
-                if (Character.isWhitespace(ch)) {
+                if (Character.isISOControl(ch)) {
+                    flush(wordpart,wordlen); wordlen = 0;
+                    linefeed(1); putControlChar(ch);
+                } else if (Character.isWhitespace(ch)) {
                     flush(wordpart,wordlen); wordlen = 0;
                     backend.setCharacter(cursorPosition, ch);
                     cursorPosition = cursorPosition.withRelativeColumn(1);
@@ -67,7 +79,14 @@ public class TextGraphicsWriter implements StyleSet<TextGraphicsWriter> {
                     backend.setCharacter(cursorPosition, ch);
                     cursorPosition = cursorPosition.withRelativeColumn(2);
                 } else {
-                    wordpart.append(ch); wordlen++;
+                    if (wrapBehaviour.keepWords()) {
+                        // TODO: if at end of line despite starting at col 0, then split word.
+                        wordpart.append(ch); wordlen++;
+                    } else {
+                        linefeed(1);
+                        backend.setCharacter(cursorPosition, ch);
+                        cursorPosition = cursorPosition.withRelativeColumn(1);
+                    }
                 }
             }
             linefeed(wordlen);
@@ -79,12 +98,51 @@ public class TextGraphicsWriter implements StyleSet<TextGraphicsWriter> {
     private void linefeed(int lenToFit) {
         int curCol = cursorPosition.getColumn();
         int spaceLeft = backend.getSize().getColumns() - curCol;
-        if (lenToFit < 0 || ( curCol > 0 && lenToFit > spaceLeft ) ) {
-            // TODO: clear to end of current line?
-            cursorPosition = cursorPosition.withColumn(0).withRelativeRow(1);
+        if (wrapBehaviour.allowLineFeed()) {
+            boolean wantWrap = curCol > 0 && lenToFit > spaceLeft;
+            if (lenToFit < 0 || ( wantWrap && wrapBehaviour.autoWrap() ) ) {
+                // TODO: clear to end of current line?
+                cursorPosition = cursorPosition.withColumn(0).withRelativeRow(1);
+            }
+        } else {
+            if (lenToFit < 0) { // encode explicit line feed
+                putControlChar('\n');
+            }
         }
     }
-
+    public void putControlChar(char ch) {
+        char subst;
+        switch (ch) {
+        case '\033': subst = '['; break;
+        case '\034': subst = '\\'; break;
+        case '\035': subst = ']'; break;
+        case '\036': subst = '^'; break;
+        case '\037': subst = '_'; break;
+        case '\177': subst = '?'; break;
+        default:
+            if (ch <= 26) {
+                subst = (char)(ch + '@');
+            } else { // normal character - or 0x80-0x9F
+                // just write it out, anyway:
+                backend.setCharacter(cursorPosition, ch);
+                cursorPosition = cursorPosition.withRelativeColumn(1);
+                return;
+            }
+        }
+        EnumSet<SGR> style = getActiveModifiers();
+        if (style.contains(SGR.REVERSE)) {
+            style.remove(SGR.REVERSE);
+        } else {
+            style.add(SGR.REVERSE);
+        }
+        TextCharacter tc = new TextCharacter('^',
+                getForegroundColor(), getBackgroundColor(), style);
+        backend.setCharacter(cursorPosition, tc);
+        cursorPosition = cursorPosition.withRelativeColumn(1);
+        tc = tc.withCharacter(subst);
+        backend.setCharacter(cursorPosition, tc);
+        cursorPosition = cursorPosition.withRelativeColumn(1);
+    }
     // A word (a sequence of characters that is kept together when word-wrapping)
     // may consist of differently styled parts. This class describes one such
     // part.
@@ -138,32 +196,32 @@ public class TextGraphicsWriter implements StyleSet<TextGraphicsWriter> {
     }
 
     /**
-     * @return the fg color
+     * @return the foreground color
      */
     public TextColor getForegroundColor() {
         return foregroundColor;
     }
 
     /**
-     * @param fg the fg color to set
+     * @param foreground the foreground color to set
      */
-    public TextGraphicsWriter setForegroundColor(TextColor fg) {
-        this.foregroundColor = fg;
+    public TextGraphicsWriter setForegroundColor(TextColor foreground) {
+        this.foregroundColor = foreground;
         return this;
     }
 
     /**
-     * @return the bg color
+     * @return the background color
      */
     public TextColor getBackgroundColor() {
         return backgroundColor;
     }
 
     /**
-     * @param bg the bg color to set
+     * @param background the background color to set
      */
-    public TextGraphicsWriter setBackgroundColor(TextColor bg) {
-        this.backgroundColor = bg;
+    public TextGraphicsWriter setBackgroundColor(TextColor background) {
+        this.backgroundColor = background;
         return this;
     }
     
@@ -202,5 +260,33 @@ public class TextGraphicsWriter implements StyleSet<TextGraphicsWriter> {
         setForegroundColor(source.getForegroundColor());
         setModifiers(source.getActiveModifiers());
         return this;
+    }
+
+    /**
+     * @return the wrapBehaviour
+     */
+    public WrapBehaviour getWrapBehaviour() {
+        return wrapBehaviour;
+    }
+
+    /**
+     * @param wrapBehaviour the wrapBehaviour to set
+     */
+    public void setWrapBehaviour(WrapBehaviour wrapBehaviour) {
+        this.wrapBehaviour = wrapBehaviour;
+    }
+
+    /**
+     * @return whether styles in strings are handled.
+     */
+    public boolean isStyleable() {
+        return styleable;
+    }
+
+    /**
+     * @param styleable whether styles in strings should be handled.
+     */
+    public void setStyleable(boolean styleable) {
+        this.styleable = styleable;
     }
 }
