@@ -432,12 +432,12 @@ public class DefaultVirtualTerminal extends AbstractTerminal implements VirtualT
     }
 
     private void correctCursor() {
+        this.cursorPosition = cursorPosition.withColumn(Math.min(cursorPosition.getColumn(), terminalSize.getColumns() - 1));
+        this.cursorPosition = cursorPosition.withRow(Math.min(cursorPosition.getRow(), Math.max(terminalSize.getRows(), getBufferLineCount()) - 1));
         this.cursorPosition =
                 new TerminalPosition(
                         Math.max(cursorPosition.getColumn(), 0),
                         Math.max(cursorPosition.getRow(), 0));
-        this.cursorPosition = cursorPosition.withColumn(Math.min(cursorPosition.getColumn(), terminalSize.getColumns() - 1));
-        this.cursorPosition = cursorPosition.withRow(Math.min(cursorPosition.getRow(), Math.max(terminalSize.getRows(), getBufferLineCount()) - 1));
     }
 
 }
