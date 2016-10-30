@@ -260,4 +260,13 @@ class NullTextGraphics implements TextGraphics {
     public TextCharacter getCharacter(TerminalPosition position) {
         return null;
     }
+
+    @Override
+    public TextGraphics setStyleFrom(StyleSet<?> source) {
+        setBackgroundColor(source.getBackgroundColor());
+        setForegroundColor(source.getForegroundColor());
+        setModifiers(source.getActiveModifiers());
+        return this;
+    }
+
 }

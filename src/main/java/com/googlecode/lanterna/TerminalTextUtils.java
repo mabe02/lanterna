@@ -23,6 +23,8 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.googlecode.lanterna.graphics.StyleSet;
+
 /**
  * This class contains a number of utility methods for analyzing characters and strings in a terminal context. The main
  * purpose is to make it easier to work with text that may or may not contain double-width text characters, such as CJK
@@ -46,51 +48,42 @@ public class TerminalTextUtils {
      * control sequence
      */
     public static String getANSIControlSequenceAt(String string, int index) {
-        String controlSequence = null;
+        int len = getANSIControlSequenceLength(string, index);
+        return len == 0 ? null : string.substring(index,index+len);
+    }
 
-        char character = string.charAt(index);
-        if (character == 0x1B) { // escape
-            if (string.length() > index + 2) { // Control sequences require a minimum of two characters
-                char possibleCSI = string.charAt(index + 1);
-                if (possibleCSI == 0x5b) { // left bracket opens a control sequence
-                    for (int j = index; j < string.length(); j++) {
-                        char controlChar = string.charAt(j);
-                        if (isCharCSITerminator(controlChar)) {
-                            controlSequence = string.substring(index, j + 1);
-                            break;
-                        }
-                        else if (j > index && controlChar == 0x1b) {
-                            break;
-                        }
+    /**
+     * Given a string and an index in that string, returns the number of characters starting at index that make up
+     * a complete ANSI control sequence. If there is no control sequence starting there, the method will return 0.
+     * @param string String to scan for control sequences
+     * @param index Index in the string where the control sequence begins
+     * @return {@code 0} if there was no control sequence starting at the specified index, otherwise the length
+     * of the entire control sequence
+     */
+    public static int getANSIControlSequenceLength(String string, int index) {
+        int len = 0, restlen = string.length() - index;
+        if (restlen >= 3) { // Control sequences require a minimum of three characters
+            char esc = string.charAt(index),
+                 bracket = string.charAt(index+1);
+            if (esc == 0x1B && bracket == '[') { // escape & open bracket
+                len = 3; // esc,bracket and (later)terminator.
+                //  digits or semicolons can still precede the terminator:
+                for (int i = 2; i < restlen; i++) {
+                    char ch = string.charAt(i + index);
+                    // only ascii-digits or semicolons allowed here:
+                    if ( (ch >= '0' && ch <= '9') || ch == ';') {
+                        len++;
+                    } else {
+                        break;
                     }
+                }
+                // if string ends in digits/semicolons, then it's not a sequence.
+                if (len > restlen) {
+                    len = 0;
                 }
             }
         }
-
-        return controlSequence;
-    }
-
-    private static boolean isCharCSITerminator(final char c) {
-        return c == 'A'
-                || c == 'B'
-                || c == 'C'
-                || c == 'D'
-                || c == 'E'
-                || c == 'F'
-                || c == 'G'
-                || c == 'H'
-                || c == 'J'
-                || c == 'K'
-                || c == 'S'
-                || c == 'T'
-                || c == 'f'
-                || c == 'm'
-                || c == 'i'
-                || c == 'n'
-                || c == 's'
-                || c == 'u'
-                || c == 'l'
-                || c == 'h';
+        return len;
     }
 
     /**
@@ -351,5 +344,68 @@ public class TerminalTextUtils {
             }
         }
         return result;
+    }
+
+    public static void updateModifiersFromCSICode(
+            String controlSequence,
+            StyleSet<?> target,
+            StyleSet<?> original) {
+    
+        char controlCodeType = controlSequence.charAt(controlSequence.length() - 1);
+        controlSequence = controlSequence.substring(2, controlSequence.length() - 1);
+        String[] codes = controlSequence.split(";");
+    
+        TextColor[] palette = TextColor.ANSI.values();
+    
+        if(controlCodeType == 'm') { // SGRs
+            for (String s : codes) {
+                // An empty string is equivalent to 0.
+                // Warning: too large values could throw an Exception!
+                int code = s.isEmpty() ? 0 : Integer.parseInt(s);
+                switch (code) {
+                case 0:
+                    target.setStyleFrom(original);
+                    break;
+                case 1:
+                    target.enableModifiers(SGR.BOLD);
+                    break;
+                case 4:
+                    target.enableModifiers(SGR.UNDERLINE);
+                    break;
+                case 5:
+                    target.enableModifiers(SGR.BLINK);
+                    break;
+                case 7:
+                    target.enableModifiers(SGR.REVERSE);
+                    break;
+                case 21: // both do. 21 seems more straightforward.
+                case 22:
+                    target.disableModifiers(SGR.BOLD);
+                    break;
+                case 24:
+                    target.disableModifiers(SGR.UNDERLINE);
+                    break;
+                case 25:
+                    target.disableModifiers(SGR.BLINK);
+                    break;
+                case 27:
+                    target.disableModifiers(SGR.REVERSE);
+                    break;
+                case 39:
+                    target.setForegroundColor(original.getForegroundColor());
+                    break;
+                case 49:
+                    target.setBackgroundColor(original.getBackgroundColor());
+                    break;
+                default:
+                    if (code >= 30 && code <= 37) {
+                        target.setForegroundColor( palette[code - 30] );
+                    }
+                    else if (code >= 40 && code <= 47) {
+                        target.setBackgroundColor( palette[code - 40] );
+                    }
+                }
+            }
+        }
     }
 }
