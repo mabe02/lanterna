@@ -65,7 +65,7 @@ public class MouseCharacterPattern implements CharacterPattern {
                     actionType = MouseActionType.CLICK_RELEASE;
                 }
                 break;
-            case(2):
+            case(2): case(0):
                 if(button == 0) {
                     actionType = MouseActionType.MOVE;
                 }
