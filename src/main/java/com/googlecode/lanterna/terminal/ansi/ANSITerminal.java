@@ -40,6 +40,7 @@ import java.nio.charset.Charset;
  */
 public abstract class ANSITerminal extends StreamBasedTerminal implements ExtendedTerminal {
 
+    private MouseCaptureMode requestedMouseCaptureMode;
     private MouseCaptureMode mouseCaptureMode;
     private boolean inPrivateMode;
 
@@ -51,6 +52,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
 
         super(terminalInput, terminalOutput, terminalCharset);
         this.inPrivateMode = false;
+        this.requestedMouseCaptureMode = null;
         this.mouseCaptureMode = null;
         getInputDecoder().addProfile(getDefaultKeyDecodingProfile());
     }
@@ -211,6 +213,10 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
             throw new IllegalStateException("Cannot call enterPrivateMode() when already in private mode");
         }
         writeCSISequenceToTerminal((byte) '?', (byte) '1', (byte) '0', (byte) '4', (byte) '9', (byte) 'h');
+        if (requestedMouseCaptureMode != null) {
+            this.mouseCaptureMode = requestedMouseCaptureMode;
+            updateMouseCaptureMode(this.mouseCaptureMode, 'h');
+        }
         inPrivateMode = true;
     }
 
@@ -222,6 +228,10 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
         resetColorAndSGR();
         setCursorVisible(true);
         writeCSISequenceToTerminal((byte) '?', (byte) '1', (byte) '0', (byte) '4', (byte) '9', (byte) 'l');
+        if (null != mouseCaptureMode) {
+            updateMouseCaptureMode(this.mouseCaptureMode, 'l');
+            this.mouseCaptureMode = null;
+        }
         inPrivateMode = false;
     }
 
@@ -329,46 +339,35 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
         writeCSISequenceToTerminal((byte)'9', (byte)';', (byte)'0', (byte)'t');
     }
 
+    private void updateMouseCaptureMode(MouseCaptureMode mouseCaptureMode, char l_or_h) throws IOException {
+        if (mouseCaptureMode == null) { return; }
+
+        switch(mouseCaptureMode) {
+        case CLICK:
+            writeCSISequenceToTerminal((byte)'?', (byte)'9', (byte)l_or_h);
+            break;
+        case CLICK_RELEASE:
+            writeCSISequenceToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'0', (byte)'0', (byte)l_or_h);
+            break;
+        case CLICK_RELEASE_DRAG:
+            writeCSISequenceToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'0', (byte)'2', (byte)l_or_h);
+            break;
+        case CLICK_RELEASE_DRAG_MOVE:
+            writeCSISequenceToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'0', (byte)'3', (byte)l_or_h);
+            break;
+        }
+        if(getCharset().equals(Charset.forName("UTF-8"))) {
+            writeCSISequenceToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'0', (byte)'5', (byte)l_or_h);
+        }
+    }
+
     @Override
     public void setMouseCaptureMode(MouseCaptureMode mouseCaptureMode) throws IOException {
-        if(this.mouseCaptureMode != null) {
-            switch(this.mouseCaptureMode) {
-                case CLICK:
-                    writeCSISequenceToTerminal((byte)'?', (byte)'9', (byte)'l');
-                    break;
-                case CLICK_RELEASE:
-                    writeCSISequenceToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'0', (byte)'0', (byte)'l');
-                    break;
-                case CLICK_RELEASE_DRAG:
-                    writeCSISequenceToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'0', (byte)'2', (byte)'l');
-                    break;
-                case CLICK_RELEASE_DRAG_MOVE:
-                    writeCSISequenceToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'0', (byte)'3', (byte)'l');
-                    break;
-            }
-            if(getCharset().equals(Charset.forName("UTF-8"))) {
-                writeCSISequenceToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'0', (byte)'5', (byte)'l');
-            }
-        }
-        this.mouseCaptureMode = mouseCaptureMode;
-        if(this.mouseCaptureMode != null) {
-            switch(this.mouseCaptureMode) {
-                case CLICK:
-                    writeCSISequenceToTerminal((byte)'?', (byte)'9', (byte)'h');
-                    break;
-                case CLICK_RELEASE:
-                    writeCSISequenceToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'0', (byte)'0', (byte)'h');
-                    break;
-                case CLICK_RELEASE_DRAG:
-                    writeCSISequenceToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'0', (byte)'2', (byte)'h');
-                    break;
-                case CLICK_RELEASE_DRAG_MOVE:
-                    writeCSISequenceToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'0', (byte)'3', (byte)'h');
-                    break;
-            }
-            if(getCharset().equals(Charset.forName("UTF-8"))) {
-                writeCSISequenceToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'0', (byte)'5', (byte)'h');
-            }
+        requestedMouseCaptureMode = mouseCaptureMode;
+        if (inPrivateMode && requestedMouseCaptureMode != this.mouseCaptureMode) {
+            updateMouseCaptureMode(this.mouseCaptureMode, 'l');
+            this.mouseCaptureMode = requestedMouseCaptureMode;
+            updateMouseCaptureMode(this.mouseCaptureMode, 'h');
         }
     }
 
