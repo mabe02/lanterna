@@ -30,7 +30,6 @@ import com.googlecode.lanterna.terminal.TerminalResizeListener;
 import java.awt.*;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import javax.swing.*;
 

@@ -206,7 +206,7 @@ public abstract class AbstractWindow extends AbstractBasePane implements Window 
         this.lastKnownPosition = topLeft;
 
         // Fire listeners
-        for(BasePaneListener listener: getBasePaneListeners()) {
+        for(BasePaneListener<?> listener: getBasePaneListeners()) {
             if(listener instanceof WindowListener) {
                 ((WindowListener)listener).onMoved(this, oldPosition, topLeft);
             }
@@ -231,7 +231,7 @@ public abstract class AbstractWindow extends AbstractBasePane implements Window 
         }
 
         // Fire listeners
-        for(BasePaneListener listener: getBasePaneListeners()) {
+        for(BasePaneListener<?> listener: getBasePaneListeners()) {
             if(listener instanceof WindowListener) {
                 ((WindowListener)listener).onResized(this, oldSize, size);
             }

@@ -29,7 +29,6 @@ import com.googlecode.lanterna.terminal.TerminalResizeListener;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -41,6 +40,7 @@ import java.util.concurrent.TimeUnit;
  * construct the object.
  * @author martin
  */
+@SuppressWarnings("serial")
 public class SwingTerminal extends JComponent implements IOSafeTerminal {
 
     private final SwingTerminalImplementation terminalImplementation;

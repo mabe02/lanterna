@@ -99,6 +99,7 @@ public class LineWrappingLabelTest extends TestBase {
                         case ArrowRight:
                             windowSize = windowSize.withRelativeColumns(1);
                             return true;
+                        default:
                     }
                 }
                 return false;

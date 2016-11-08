@@ -154,7 +154,7 @@ public class MultiWindowManagerTest extends TestBase {
             boolean isManaged = labelUnlockWindow.getText().equals("true");
             isManaged = !isManaged;
             if(isManaged) {
-                setHints(Collections.EMPTY_LIST);
+                setHints(Collections.<Hint> emptyList());
             }
             else {
                 setHints(Collections.singletonList(Hint.FIXED_SIZE));
@@ -203,6 +203,7 @@ public class MultiWindowManagerTest extends TestBase {
                         }
                         handled = true;
                         break;
+                    default:
                 }
             }
             return handled;

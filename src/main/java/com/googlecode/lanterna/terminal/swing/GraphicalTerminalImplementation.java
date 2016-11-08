@@ -50,7 +50,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * @author martin
  */
-@SuppressWarnings("serial")
 abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     private final TerminalEmulatorDeviceConfiguration deviceConfiguration;
     private final TerminalEmulatorColorConfiguration colorConfiguration;
