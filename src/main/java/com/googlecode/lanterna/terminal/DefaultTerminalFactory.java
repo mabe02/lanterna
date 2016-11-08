@@ -19,7 +19,10 @@
 package com.googlecode.lanterna.terminal;
 
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.ansi.CygwinTerminal;
+import com.googlecode.lanterna.terminal.ansi.TelnetTerminal;
+import com.googlecode.lanterna.terminal.ansi.TelnetTerminalServer;
 import com.googlecode.lanterna.terminal.ansi.UnixLikeTTYTerminal;
 import com.googlecode.lanterna.terminal.ansi.UnixTerminal;
 import com.googlecode.lanterna.terminal.swing.*;
@@ -40,7 +43,7 @@ import java.util.EnumSet;
  * suppress this by calling setForceTextTerminal(true) on this factory.
  * @author martin
  */
-public final class DefaultTerminalFactory implements TerminalFactory {
+public class DefaultTerminalFactory implements TerminalFactory {
     private static final OutputStream DEFAULT_OUTPUT_STREAM = System.out;
     private static final InputStream DEFAULT_INPUT_STREAM = System.in;
     private static final Charset DEFAULT_CHARSET = Charset.forName(System.getProperty("file.encoding"));
@@ -51,7 +54,10 @@ public final class DefaultTerminalFactory implements TerminalFactory {
 
     private TerminalSize initialTerminalSize;
     private boolean forceTextTerminal;
+    private boolean preferTerminalEmulator;
     private boolean forceAWTOverSwing;
+    private int telnetPort;
+    private int inputTimeout;
     private String title;
     private boolean autoOpenTerminalFrame;
     private final EnumSet<TerminalEmulatorAutoCloseTrigger> autoCloseTriggers;
@@ -80,6 +86,11 @@ public final class DefaultTerminalFactory implements TerminalFactory {
         this.charset = charset;
         
         this.forceTextTerminal = false;
+        this.preferTerminalEmulator = false;
+        this.forceAWTOverSwing = false;
+
+        this.telnetPort = -1;
+        this.inputTimeout = -1;
         this.autoOpenTerminalFrame = true;
         this.title = null;
         this.autoCloseTriggers = EnumSet.of(TerminalEmulatorAutoCloseTrigger.CloseOnExitPrivateMode);
@@ -93,7 +104,15 @@ public final class DefaultTerminalFactory implements TerminalFactory {
     
     @Override
     public Terminal createTerminal() throws IOException {
-        if (GraphicsEnvironment.isHeadless() || forceTextTerminal || System.console() != null) {
+        // 3 different reasons for tty-based terminal:
+        //   "explicit preference", "no alternative",
+        //       ("because we can" - unless "rather not")
+        if (forceTextTerminal || GraphicsEnvironment.isHeadless() ||
+                (System.console() != null && !preferTerminalEmulator) ) {
+            // if tty but have no tty, but do have a port, then go telnet:
+            if( telnetPort > 0 && System.console() == null) {
+                return createTelnetTerminal();
+            }
             if(isOperatingSystemWindows()) {
                 return createWindowsTerminal();
             }
@@ -102,7 +121,14 @@ public final class DefaultTerminalFactory implements TerminalFactory {
             }
         }
         else {
-            return createTerminalEmulator();
+            // while Lanterna's TerminalEmulator lacks mouse support:
+            // if user wanted mouse AND set a telnetPort, and didn't
+            //   explicitly ask for a graphical Terminal, then go telnet:
+            if (!preferTerminalEmulator && mouseCaptureMode != null && telnetPort > 0) {
+                return createTelnetTerminal();
+            } else {
+                return createTerminalEmulator();
+            }
         }
     }
 
@@ -146,6 +172,37 @@ public final class DefaultTerminalFactory implements TerminalFactory {
                 autoCloseTriggers.toArray(new TerminalEmulatorAutoCloseTrigger[autoCloseTriggers.size()]));
     }
 
+    /**
+     * Creates a new TelnetTerminal
+     *
+     * Note: a telnetPort should have been set with setTelnetPort(),
+     * otherwise creation of TelnetTerminal will most likely fail.
+     *
+     * @return New terminal emulator exposed as a {@link Terminal} interface
+     */
+    public TelnetTerminal createTelnetTerminal() {
+        try {
+            System.err.print("Waiting for incoming telnet connection on port "+telnetPort+" ... ");
+            System.err.flush();
+
+            TelnetTerminalServer tts = new TelnetTerminalServer(telnetPort);
+            TelnetTerminal rawTerminal = tts.acceptConnection();
+            tts.close(); // Just for single-shot: free up the port!
+
+            System.err.println("Ok, got it!");
+
+            if(mouseCaptureMode != null) {
+                rawTerminal.setMouseCaptureMode(mouseCaptureMode);
+            }
+            if(inputTimeout >= 0) {
+                rawTerminal.getInputDecoder().setTimeoutUnits(inputTimeout);
+            }
+            return rawTerminal;
+        } catch(IOException ioe) {
+            throw new RuntimeException(ioe);
+        }
+    }
+
     private boolean hasSwing() {
         try {
             Class.forName("javax.swing.JComponent");
@@ -169,12 +226,61 @@ public final class DefaultTerminalFactory implements TerminalFactory {
     }
 
     /**
-     * Controls whether a SwingTerminalFrame shall always be created if the system is one with a graphical environment
+     * Controls whether a text-based Terminal shall be created even if the system
+     *    supports a graphical environment
      * @param forceTextTerminal If true, will always create a text-based Terminal
      * @return Reference to itself, so multiple .set-calls can be chained
      */
     public DefaultTerminalFactory setForceTextTerminal(boolean forceTextTerminal) {
         this.forceTextTerminal = forceTextTerminal;
+        return this;
+    }
+
+    /**
+     * Controls whether a Swing or AWT TerminalFrame shall be preferred if the system
+     *    has both a Console and a graphical environment
+     * @param preferTerminalEmulator If true, will prefer creating a graphical terminal emulator
+     * @return Reference to itself, so multiple .set-calls can be chained
+     */
+    public DefaultTerminalFactory setPreferTerminalEmulator(boolean preferTerminalEmulator) {
+        this.preferTerminalEmulator = preferTerminalEmulator;
+        return this;
+    }
+
+    /**
+     * Primarily for debugging applications with mouse interactions:
+     * If no Console is available (e.g. from within an IDE), then fall
+     * back to TelnetTerminal on specified port.
+     *
+     * If both a non-null mouseCapture mode and a positive telnetPort
+     * are specified, then as long as Swing/AWT Terminal emulators do
+     * not support MouseCapturing, a TelnetTerminal will be preferred
+     * over the graphical Emulators.
+     *
+     * @param telnetPort the TCP/IP port on which to eventually wait for a connection.
+     *         A value less or equal 0 disables creation of a TelnetTerminal.
+     *         Note, that ports less than 1024 typically require system
+     *         privileges to listen on.
+     * @return Reference to itself, so multiple .set-calls can be chained
+     */
+    public DefaultTerminalFactory setTelnetPort(int telnetPort) {
+        this.telnetPort = telnetPort;
+        return this;
+    }
+
+    /**
+     * Only for StreamBasedTerminals: After seeing e.g. an Escape (but nothing
+     *         else yet), wait up to the specified number of time units for more
+     *         bytes to make up a complete sequence. This may be necessary on
+     *         slow channels, or if some client terminal sends each byte of a
+     *         sequence in its own TCP packet.
+     *
+     * @param inputTimeout how long to wait for possible completions of sequences.
+     *         units are of a 1/4 second, so e.g. 12 would wait up to 3 seconds.
+     * @return Reference to itself, so multiple .set-calls can be chained
+     */
+    public DefaultTerminalFactory setInputTimeout(int inputTimeout) {
+        this.inputTimeout = inputTimeout;
         return this;
     }
 
@@ -270,12 +376,25 @@ public final class DefaultTerminalFactory implements TerminalFactory {
     /**
      * Sets the mouse capture mode the terminal should use. Please note that this is an extension which isn't widely
      * supported!
+     *
+     * If both a non-null mouseCapture mode and a positive telnetPort
+     * are specified, then as long as Swing/AWT Terminal emulators do
+     * not support MouseCapturing, a TelnetTerminal will be preferred
+     * over the graphical Emulators.
+     *
      * @param mouseCaptureMode Capture mode for mouse interactions
      * @return Itself
      */
     public DefaultTerminalFactory setMouseCaptureMode(MouseCaptureMode mouseCaptureMode) {
         this.mouseCaptureMode = mouseCaptureMode;
         return this;
+    }
+
+    /**
+     * create a Terminal and immediately wrap it up in a TerminalScreen
+     */
+    public TerminalScreen createScreen() throws IOException {
+        return new TerminalScreen(createTerminal());
     }
 
     private Terminal createWindowsTerminal() throws IOException {
@@ -290,7 +409,11 @@ public final class DefaultTerminalFactory implements TerminalFactory {
     }
     
     private Terminal createCygwinTerminal(OutputStream outputStream, InputStream inputStream, Charset charset) throws IOException {
-        return new CygwinTerminal(inputStream, outputStream, charset);
+        CygwinTerminal cygTerminal = new CygwinTerminal(inputStream, outputStream, charset);
+        if(inputTimeout >= 0) {
+            cygTerminal.getInputDecoder().setTimeoutUnits(inputTimeout);
+        }
+        return cygTerminal;
     }
 
     private Terminal createUnixTerminal(OutputStream outputStream, InputStream inputStream, Charset charset) throws IOException {
@@ -305,6 +428,9 @@ public final class DefaultTerminalFactory implements TerminalFactory {
         }
         if(mouseCaptureMode != null) {
             unixTerminal.setMouseCaptureMode(mouseCaptureMode);
+        }
+        if(inputTimeout >= 0) {
+            unixTerminal.getInputDecoder().setTimeoutUnits(inputTimeout);
         }
         return unixTerminal;
     }
