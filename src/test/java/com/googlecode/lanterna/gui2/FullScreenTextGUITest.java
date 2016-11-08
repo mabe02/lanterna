@@ -33,7 +33,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class FullScreenTextGUITest {
     public static void main(String[] args) throws IOException, InterruptedException {
-        Screen screen = new TestTerminalFactory(args).withInitialTerminalSize(new TerminalSize(80, 25)).createScreen();
+        Screen screen = new TestTerminalFactory(args).setInitialTerminalSize(new TerminalSize(80, 25)).createScreen();
         screen.startScreen();
 
         final AtomicBoolean stop = new AtomicBoolean(false);

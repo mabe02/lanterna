@@ -24,10 +24,11 @@ public class Issue274 {
 
     public static void main(String[] args) throws IOException, InterruptedException {
 
-        final Terminal ter = new DefaultTerminalFactory().setForceTextTerminal(true).createTerminal();
-        if (ter instanceof ExtendedTerminal) {
-            ((ExtendedTerminal)ter).setMouseCaptureMode(MouseCaptureMode.CLICK);
-        }
+        final Terminal ter = new DefaultTerminalFactory()
+                .setForceTextTerminal(true)
+                .setMouseCaptureMode(MouseCaptureMode.CLICK)
+                .setTelnetPort(1024)
+                .createTerminal();
 
         final Screen screen = new TerminalScreen(ter);
         screen.startScreen();
@@ -57,12 +58,7 @@ public class Issue274 {
 
         menubar.addComponent(new Button("Exit", new Runnable(){
             public void run(){
-                try {
-                    gui.getActiveWindow().close();
-                    exitHelper(screen,ter);
-                } catch (IOException e) {
-                    System.out.println("Error exit");
-                }
+                gui.getActiveWindow().close();
             }
         }));
 
@@ -72,13 +68,7 @@ public class Issue274 {
             gui.addWindowAndWait(main);
         }
         finally {
-            exitHelper(screen,ter);
-        }
-    }
-    private static void exitHelper(Screen screen, Terminal ter) throws IOException {
-        screen.stopScreen();
-        if (ter instanceof ExtendedTerminal) {
-            ((ExtendedTerminal)ter).setMouseCaptureMode(null);
+            screen.stopScreen();
         }
     }
 }

@@ -25,7 +25,6 @@ import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.terminal.swing.SwingTerminalFrame;
-import com.googlecode.lanterna.terminal.swing.TerminalEmulatorAutoCloseTrigger;
 
 import java.awt.*;
 import java.io.IOException;
@@ -36,7 +35,9 @@ import java.io.IOException;
  */
 public class MultiScreenTest {
     public static void main(String[] args) throws IOException, InterruptedException {
-        Terminal terminal = new TestTerminalFactory(args, TerminalEmulatorAutoCloseTrigger.DoNotAutoClose).createTerminal();
+        Terminal terminal = new TestTerminalFactory(args)
+                                .setTerminalEmulatorFrameAutoCloseTrigger(null)
+                                .createTerminal();
         Screen redScreen = new TerminalScreen(terminal);
         Screen greenScreen = new TerminalScreen(terminal);
         

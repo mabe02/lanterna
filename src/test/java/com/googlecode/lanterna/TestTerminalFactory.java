@@ -19,88 +19,65 @@
 
 package com.googlecode.lanterna;
 
-import com.googlecode.lanterna.screen.TerminalScreen;
-import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.MouseCaptureMode;
-import com.googlecode.lanterna.terminal.Terminal;
-import com.googlecode.lanterna.terminal.swing.SwingTerminalFrame;
-import com.googlecode.lanterna.terminal.swing.TerminalEmulatorAutoCloseTrigger;
-
-import java.awt.*;
-import java.io.IOException;
-import javax.swing.JFrame;
 
 /**
  * This class provides a unified way for the test program to get their terminal
  * objects
  * @author Martin
  */
-public class TestTerminalFactory {
+public class TestTerminalFactory extends DefaultTerminalFactory {
 
-    private final DefaultTerminalFactory factory;
-    private boolean forceTerminalEmulator;
+    public TestTerminalFactory() {
+    }
 
     public TestTerminalFactory(String[] args) {
-        this(args, TerminalEmulatorAutoCloseTrigger.CloseOnExitPrivateMode);
+        parseArgs(args);
     }
-    
-    public TestTerminalFactory(String[] args, TerminalEmulatorAutoCloseTrigger autoCloseTrigger) {
-        factory = new DefaultTerminalFactory();
-        //factory.setTerminalEmulatorColorConfiguration(TerminalEmulatorColorConfiguration.newInstance(TerminalEmulatorPalette.GNOME_TERMINAL));
-        factory.setTerminalEmulatorFrameAutoCloseTrigger(autoCloseTrigger);
+
+    public void parseArgs(String[] args) {
+        if (args == null) { return; }
         for(String arg: args) {
+            if (arg == null) { continue; }
+            String tok[] = arg.split("=", 2);
+            arg = tok[0]; // only the part before "="
+            String par = tok.length > 1 ? tok[1] : "";
             if("--text-terminal".equals(arg) || "--no-swing".equals(arg)) {
-                factory.setForceTextTerminal(true);
+                setPreferTerminalEmulator(false);
+                setForceTextTerminal(true);
             }
             else if("--awt".equals(arg)) {
-                factory.setForceAWTOverSwing(true);
-                forceTerminalEmulator = true;
+                setForceTextTerminal(false);
+                setPreferTerminalEmulator(true);
+                setForceAWTOverSwing(true);
             }
             else if("--swing".equals(arg)) {
-                factory.setForceAWTOverSwing(false);
-                forceTerminalEmulator = true;
+                setForceTextTerminal(false);
+                setPreferTerminalEmulator(true);
+                setForceAWTOverSwing(false);
             }
             else if("--mouse-click".equals(arg)) {
-                factory.setMouseCaptureMode(MouseCaptureMode.CLICK_RELEASE);
+                setMouseCaptureMode(MouseCaptureMode.CLICK_RELEASE);
             }
             else if("--mouse-drag".equals(arg)) {
-                factory.setMouseCaptureMode(MouseCaptureMode.CLICK_RELEASE_DRAG);
+                setMouseCaptureMode(MouseCaptureMode.CLICK_RELEASE_DRAG);
             }
             else if("--mouse-move".equals(arg)) {
-                factory.setMouseCaptureMode(MouseCaptureMode.CLICK_RELEASE_DRAG_MOVE);
+                setMouseCaptureMode(MouseCaptureMode.CLICK_RELEASE_DRAG_MOVE);
+            }
+            else if("--telnet-port".equals(arg)) {
+                int port = 1024; // default for option w/o param
+                try { port = Integer.valueOf(par); }
+                catch (NumberFormatException e) {}
+                setTelnetPort(port);
+            }
+            else if("--with-timeout".equals(arg)) {
+                int inputTimeout = 40; // default for option w/o param
+                try { inputTimeout = Integer.valueOf(par); }
+                catch (NumberFormatException e) {}
+                setInputTimeout(inputTimeout);
             }
         }
-
-    }
-
-    public TestTerminalFactory withInitialTerminalSize(TerminalSize initialTerminalSize) {
-        factory.setInitialTerminalSize(initialTerminalSize);
-        return this;
-    }
-
-    public Terminal createTerminal() throws IOException {
-        Terminal terminal;
-        if(forceTerminalEmulator) {
-            terminal = factory.createTerminalEmulator();
-        }
-        else {
-            terminal = factory.createTerminal();
-        }
-        if(terminal instanceof Window) {
-            ((Window) terminal).setVisible(true);
-        }
-        if(terminal instanceof JFrame) {
-            ((JFrame)terminal).setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        }
-        return terminal;
-    }
-
-    public Screen createScreen() throws IOException {
-        return new TerminalScreen(createTerminal());
-    }
-
-    public SwingTerminalFrame createSwingTerminal() {
-        return factory.createSwingTerminal();
     }
 }
