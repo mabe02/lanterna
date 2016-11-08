@@ -55,8 +55,8 @@ public final class PropertiesTheme implements Theme {
         rootNode = new ThemeTreeNode(null);
         rootNode.foregroundMap.put(STYLE_NORMAL, TextColor.ANSI.WHITE);
         rootNode.backgroundMap.put(STYLE_NORMAL, TextColor.ANSI.BLACK);
-        windowPostRenderer = stringToClass(properties.getProperty("postrenderer", ""), WindowPostRenderer.class);
-        windowDecorationRenderer = stringToClass(properties.getProperty("windowdecoration", ""), WindowDecorationRenderer.class);
+        windowPostRenderer = (WindowPostRenderer)instanceByClassName(properties.getProperty("postrenderer", ""));
+        windowDecorationRenderer = (WindowDecorationRenderer)instanceByClassName(properties.getProperty("windowdecoration", ""));
 
         for(String key: properties.stringPropertyNames()) {
             String definition = getDefinition(key);
@@ -139,12 +139,12 @@ public final class PropertiesTheme implements Theme {
         return windowDecorationRenderer;
     }
 
-    private static <T> T stringToClass(String className, Class<T> type) {
+    private static Object instanceByClassName(String className) {
         if(className == null || className.trim().isEmpty()) {
             return null;
         }
         try {
-            return (T)Class.forName(className).newInstance();
+            return Class.forName(className).newInstance();
         } catch (InstantiationException e) {
             throw new RuntimeException(e);
         } catch (IllegalAccessException e) {
@@ -229,9 +229,10 @@ public final class PropertiesTheme implements Theme {
             return Boolean.parseBoolean(propertyValue);
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public <T extends Component> ComponentRenderer<T> getRenderer(Class<T> type) {
-            return stringToClass(path.get(path.size() - 1).renderer, ComponentRenderer.class);
+            return (ComponentRenderer<T>)instanceByClassName(path.get(path.size() - 1).renderer);
         }
     }
 
@@ -291,7 +292,7 @@ public final class PropertiesTheme implements Theme {
     }
 
     private static class ThemeTreeNode {
-        private final ThemeTreeNode parent;
+        //private final ThemeTreeNode parent;
         private final Map<String, ThemeTreeNode> childMap;
         private final Map<String, TextColor> foregroundMap;
         private final Map<String, TextColor> backgroundMap;
@@ -302,7 +303,7 @@ public final class PropertiesTheme implements Theme {
         private String renderer;
 
         private ThemeTreeNode(ThemeTreeNode parent) {
-            this.parent = parent;
+            //this.parent = parent;
             childMap = new HashMap<String, ThemeTreeNode>();
             foregroundMap = new HashMap<String, TextColor>();
             backgroundMap = new HashMap<String, TextColor>();

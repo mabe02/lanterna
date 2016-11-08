@@ -19,7 +19,6 @@
 package com.googlecode.lanterna.terminal;
 
 import com.googlecode.lanterna.*;
-import com.googlecode.lanterna.graphics.AbstractTextGraphics;
 import com.googlecode.lanterna.graphics.DoublePrintingTextGraphics;
 import com.googlecode.lanterna.graphics.TextGraphics;
 

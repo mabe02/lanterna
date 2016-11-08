@@ -141,6 +141,7 @@ public class SimpleTerminalTest {
                             break;
                     }
                     break;
+                default:
             }
             terminal.flush();
         }

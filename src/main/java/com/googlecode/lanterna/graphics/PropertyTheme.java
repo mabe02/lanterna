@@ -63,8 +63,8 @@ public class PropertyTheme extends AbstractTheme {
      */
     public PropertyTheme(Properties properties, boolean ignoreUnknownClasses) {
 
-        super(stringToClass(properties.getProperty("postrenderer", ""), WindowPostRenderer.class),
-                stringToClass(properties.getProperty("windowdecoration", ""), WindowDecorationRenderer.class));
+        super( (WindowPostRenderer)instanceByClassName(properties.getProperty("postrenderer", "")),
+               (WindowDecorationRenderer)instanceByClassName(properties.getProperty("windowdecoration", "")));
 
         for(String key: properties.stringPropertyNames()) {
             String definition = getDefinition(key);

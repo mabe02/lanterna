@@ -33,9 +33,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * This abstract implementation of {@code BasePane} has the common code shared by all different concrete
  * implementations.
  */
-public abstract class AbstractBasePane implements BasePane {
+public abstract class AbstractBasePane<T extends BasePane> implements BasePane {
     protected final ContentHolder contentHolder;
-    private final CopyOnWriteArrayList<BasePaneListener> listeners;
+    private final CopyOnWriteArrayList<BasePaneListener<T>> listeners;
     protected InteractableLookupMap interactableLookupMap;
     private Interactable focusedInteractable;
     private boolean invalid;
@@ -45,7 +45,7 @@ public abstract class AbstractBasePane implements BasePane {
 
     protected AbstractBasePane() {
         this.contentHolder = new ContentHolder();
-        this.listeners = new CopyOnWriteArrayList<BasePaneListener>();
+        this.listeners = new CopyOnWriteArrayList<BasePaneListener<T>>();
         this.interactableLookupMap = new InteractableLookupMap(new TerminalSize(80, 25));
         this.invalid = false;
         this.strictFocusChange = false;
@@ -86,8 +86,8 @@ public abstract class AbstractBasePane implements BasePane {
     public boolean handleInput(KeyStroke key) {
         // Fire events first and decide if the event should be sent to the focused component or not
         AtomicBoolean deliverEvent = new AtomicBoolean(true);
-        for (BasePaneListener listener : listeners) {
-            listener.onInput(this, key, deliverEvent);
+        for (BasePaneListener<T> listener : listeners) {
+            listener.onInput(self(), key, deliverEvent);
         }
         if (!deliverEvent.get()) {
             return true;
@@ -99,13 +99,15 @@ public abstract class AbstractBasePane implements BasePane {
         // If it wasn't handled, fire the listeners and decide what to report to the TextGUI
         if(!handled) {
             AtomicBoolean hasBeenHandled = new AtomicBoolean(false);
-            for(BasePaneListener listener: listeners) {
-                listener.onUnhandledInput(this, key, hasBeenHandled);
+            for(BasePaneListener<T> listener: listeners) {
+                listener.onUnhandledInput(self(), key, hasBeenHandled);
             }
             handled = hasBeenHandled.get();
         }
         return handled;
     }
+
+    abstract T self();
 
     private boolean doHandleInput(KeyStroke key) {
         if(key.getKeyType() == KeyType.MouseEvent) {
@@ -274,15 +276,15 @@ public abstract class AbstractBasePane implements BasePane {
         this.theme = theme;
     }
 
-    protected void addBasePaneListener(BasePaneListener basePaneListener) {
+    protected void addBasePaneListener(BasePaneListener<T> basePaneListener) {
         listeners.addIfAbsent(basePaneListener);
     }
 
-    protected void removeBasePaneListener(BasePaneListener basePaneListener) {
+    protected void removeBasePaneListener(BasePaneListener<T> basePaneListener) {
         listeners.remove(basePaneListener);
     }
 
-    protected List<BasePaneListener> getBasePaneListeners() {
+    protected List<BasePaneListener<T>> getBasePaneListeners() {
         return listeners;
     }
 

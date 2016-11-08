@@ -132,12 +132,12 @@ public abstract class AbstractTheme implements Theme {
         return windowDecorationRenderer;
     }
 
-    protected static <T> T stringToClass(String className, Class<T> type) {
+    protected static Object instanceByClassName(String className) {
         if(className == null || className.trim().isEmpty()) {
             return null;
         }
         try {
-            return (T)Class.forName(className).newInstance();
+            return Class.forName(className).newInstance();
         } catch (InstantiationException e) {
             throw new RuntimeException(e);
         } catch (IllegalAccessException e) {
@@ -290,6 +290,7 @@ public abstract class AbstractTheme implements Theme {
             return Boolean.parseBoolean(propertyValue);
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public <T extends Component> ComponentRenderer<T> getRenderer(Class<T> type) {
             String rendererClass = node.renderer;
@@ -301,7 +302,7 @@ public abstract class AbstractTheme implements Theme {
                     return new DefinitionImpl(node.parent).getRenderer(type);
                 }
             }
-            return stringToClass(rendererClass, ComponentRenderer.class);
+            return (ComponentRenderer<T>)instanceByClassName(rendererClass);
         }
     }
 
@@ -366,7 +367,7 @@ public abstract class AbstractTheme implements Theme {
     private static class ThemeTreeNode {
         private final Class<?> clazz;
         private final ThemeTreeNode parent;
-        private final Map<Class, ThemeTreeNode> childMap;
+        private final Map<Class<?>, ThemeTreeNode> childMap;
         private final Map<String, TextColor> foregroundMap;
         private final Map<String, TextColor> backgroundMap;
         private final Map<String, EnumSet<SGR>> sgrMap;
@@ -378,7 +379,7 @@ public abstract class AbstractTheme implements Theme {
         private ThemeTreeNode(Class<?> clazz, ThemeTreeNode parent) {
             this.clazz = clazz;
             this.parent = parent;
-            this.childMap = new HashMap<Class, ThemeTreeNode>();
+            this.childMap = new HashMap<Class<?>, ThemeTreeNode>();
             this.foregroundMap = new HashMap<String, TextColor>();
             this.backgroundMap = new HashMap<String, TextColor>();
             this.sgrMap = new HashMap<String, EnumSet<SGR>>();
