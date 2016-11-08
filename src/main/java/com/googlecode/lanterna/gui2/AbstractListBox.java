@@ -150,7 +150,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
                     return Result.HANDLED;
                     
                 case Delete:
-                	if (allowRemovesWithDelete) {
+                	if (allowRemovesWithDelete && selectedIndex > -1) {
                 		removeItem(getSelectedIndex());
                 		return Result.HANDLED;
                 	}
@@ -312,7 +312,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
 	 *             equals/greater than the number of items in the list
 	 */
 	public synchronized T removeItem(int index) {
-		if (selectedIndex > -1 && !items.isEmpty()) {
+		if (index >= 0 && index < items.size()) {
 			items.remove(index);
 			if (selectedIndex >= items.size()) {
 				selectedIndex--;
