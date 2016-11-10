@@ -164,7 +164,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
         }
         this.virtualScreen = screen;
         this.windowManager = windowManager;
-        this.backgroundPane = new AbstractBasePane() {
+        this.backgroundPane = new AbstractBasePane<BasePane>() {
             @Override
             public TextGUI getTextGUI() {
                 return MultiWindowTextGUI.this;
@@ -178,6 +178,8 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
             public TerminalPosition fromGlobal(TerminalPosition globalPosition) {
                 return globalPosition;
             }
+
+            BasePane self() { return this; }
         };
         this.backgroundPane.setComponent(background);
         this.windows = new LinkedList<Window>();

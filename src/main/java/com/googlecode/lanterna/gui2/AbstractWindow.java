@@ -31,7 +31,7 @@ import java.util.*;
  * up the GUI externally by constructing a {@code BasicWindow} and adding components to it.
  * @author Martin
  */
-public abstract class AbstractWindow extends AbstractBasePane implements Window {
+public abstract class AbstractWindow extends AbstractBasePane<Window> implements Window {
     private String title;
     private WindowBasedTextGUI textGUI;
     private boolean visible;
@@ -206,7 +206,7 @@ public abstract class AbstractWindow extends AbstractBasePane implements Window 
         this.lastKnownPosition = topLeft;
 
         // Fire listeners
-        for(BasePaneListener listener: getBasePaneListeners()) {
+        for(BasePaneListener<?> listener: getBasePaneListeners()) {
             if(listener instanceof WindowListener) {
                 ((WindowListener)listener).onMoved(this, oldPosition, topLeft);
             }
@@ -231,7 +231,7 @@ public abstract class AbstractWindow extends AbstractBasePane implements Window 
         }
 
         // Fire listeners
-        for(BasePaneListener listener: getBasePaneListeners()) {
+        for(BasePaneListener<?> listener: getBasePaneListeners()) {
             if(listener instanceof WindowListener) {
                 ((WindowListener)listener).onResized(this, oldSize, size);
             }
@@ -268,4 +268,6 @@ public abstract class AbstractWindow extends AbstractBasePane implements Window 
             textGUI.waitForWindowToClose(this);
         }
     }
+
+    Window self() { return this; }
 }

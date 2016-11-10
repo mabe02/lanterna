@@ -346,7 +346,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
             //update the page size, used for page up and page down keys
             ThemeDefinition themeDefinition = listBox.getTheme().getDefinition(AbstractListBox.class);
             int componentHeight = graphics.getSize().getRows();
-            int componentWidth = graphics.getSize().getColumns();
+            //int componentWidth = graphics.getSize().getColumns();
             int selectedIndex = listBox.getSelectedIndex();
             List<V> items = listBox.getItems();
             ListItemRenderer<V,T> listItemRenderer = listBox.getListItemRenderer();

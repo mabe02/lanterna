@@ -19,7 +19,6 @@
 package com.googlecode.lanterna.screen;
 
 import com.googlecode.lanterna.TestTerminalFactory;
-import com.googlecode.lanterna.graphics.AbstractTextGraphics;
 import com.googlecode.lanterna.graphics.DoublePrintingTextGraphics;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;

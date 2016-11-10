@@ -19,7 +19,6 @@
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.*;
-import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.graphics.ThemeDefinition;
 import com.googlecode.lanterna.graphics.ThemedTextGraphics;
 

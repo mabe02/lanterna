@@ -47,7 +47,7 @@ public class Issue216 {
         panel.addComponent(new TextBox());
 
         panel.addComponent(new Label("Table"));
-        final Table table = new Table<String>("Test");
+        final Table<String> table = new Table<String>("Test");
         final TableModel<String> tableModel = table.getTableModel();
         tableModel.addRow("hi");
         panel.addComponent(table);

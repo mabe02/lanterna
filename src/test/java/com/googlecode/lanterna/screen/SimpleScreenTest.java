@@ -120,6 +120,7 @@ public class SimpleScreenTest {
                         screen.setCursorPosition(screen.getCursorPosition().withRelativeColumn(1));
                         break;
                     }
+                default:
             }
 
             screen.refresh();

@@ -96,7 +96,7 @@ public class SimpleTheme implements Theme {
     }
 
     private final Definition defaultDefinition;
-    private final Map<Class, Definition> overrideDefinitions;
+    private final Map<Class<?>, Definition> overrideDefinitions;
     private WindowPostRenderer windowPostRenderer;
     private WindowDecorationRenderer windowDecorationRenderer;
 
@@ -108,7 +108,7 @@ public class SimpleTheme implements Theme {
      */
     public SimpleTheme(TextColor foreground, TextColor background, SGR... styles) {
         this.defaultDefinition = new Definition(new Style(foreground, background, styles));
-        this.overrideDefinitions = new HashMap<Class, Definition>();
+        this.overrideDefinitions = new HashMap<Class<?>, Definition>();
         this.windowPostRenderer = null;
         this.windowDecorationRenderer = null;
     }
@@ -135,7 +135,7 @@ public class SimpleTheme implements Theme {
      * @param styles SGR styles to apply for this override
      * @return The newly created {@link Definition} that corresponds to this override.
      */
-    public synchronized Definition addOverride(Class clazz, TextColor foreground, TextColor background, SGR... styles) {
+    public synchronized Definition addOverride(Class<?> clazz, TextColor foreground, TextColor background, SGR... styles) {
         Definition definition = new Definition(new Style(foreground, background, styles));
         overrideDefinitions.put(clazz, definition);
         return definition;
@@ -190,7 +190,7 @@ public class SimpleTheme implements Theme {
         private final Map<String, ThemeStyle> customStyles;
         private final Properties properties;
         private final Map<String, Character> characterMap;
-        private final Map<Class, RendererProvider> componentRendererMap;
+        private final Map<Class<?>, RendererProvider<?>> componentRendererMap;
         private boolean cursorVisible;
 
         private Definition(ThemeStyle normal) {
@@ -202,7 +202,7 @@ public class SimpleTheme implements Theme {
             this.customStyles = new HashMap<String, ThemeStyle>();
             this.properties = new Properties();
             this.characterMap = new HashMap<String, Character>();
-            this.componentRendererMap = new HashMap<Class, RendererProvider>();
+            this.componentRendererMap = new HashMap<Class<?>, RendererProvider<?>>();
             this.cursorVisible = true;
         }
 
@@ -375,9 +375,10 @@ public class SimpleTheme implements Theme {
             return this;
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public synchronized <T extends Component> ComponentRenderer<T> getRenderer(Class<T> type) {
-            RendererProvider rendererProvider = componentRendererMap.get(type);
+            RendererProvider<T> rendererProvider = (RendererProvider<T>)componentRendererMap.get(type);
             if(rendererProvider == null) {
                 return null;
             }

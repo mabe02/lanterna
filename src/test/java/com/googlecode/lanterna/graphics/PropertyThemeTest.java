@@ -30,12 +30,12 @@ import java.util.Collections;
 import java.util.Properties;
 import static org.junit.Assert.*;
 
-public class PropertiesThemeTest {
+public class PropertyThemeTest {
 
     @Test
     public void emptyPropertiesGivesValidResults() {
         Properties properties = new Properties();
-        PropertiesTheme theme = new PropertiesTheme(properties);
+        PropertyTheme theme = new PropertyTheme(properties);
         ThemeDefinition definition = theme.getDefaultDefinition();
         assertNotNull(definition.getNormal());
         assertNotNull(definition.getActive());
@@ -57,7 +57,7 @@ public class PropertiesThemeTest {
         properties.load(inputStream);
         inputStream.close();
 
-        PropertiesTheme theme = new PropertiesTheme(properties);
+        PropertyTheme theme = new PropertyTheme(properties);
         ThemeDefinition defaultDefinition = theme.getDefaultDefinition();
         assertEquals(TextColor.ANSI.BLACK, defaultDefinition.getNormal().getForeground());
         assertEquals(TextColor.ANSI.WHITE, defaultDefinition.getNormal().getBackground());
@@ -71,8 +71,8 @@ public class PropertiesThemeTest {
     public void classWithoutThemePicksUpParentPackagesTheme() {
         Properties properties = new Properties();
         properties.setProperty("com.googlecode.lanterna.foreground", "yellow");
-        PropertiesTheme theme = new PropertiesTheme(properties);
-        ThemeDefinition definition = theme.getDefinition(PropertiesThemeTest.class);
+        PropertyTheme theme = new PropertyTheme(properties);
+        ThemeDefinition definition = theme.getDefinition(PropertyThemeTest.class);
         assertEquals(TextColor.ANSI.YELLOW, definition.getNormal().getForeground());
     }
 }
