@@ -20,7 +20,6 @@ package com.googlecode.lanterna.terminal;
 
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
-import com.googlecode.lanterna.terminal.ansi.StreamBasedTerminal;
 import com.googlecode.lanterna.TestTerminalFactory;
 import java.io.IOException;
 
@@ -31,27 +30,11 @@ import java.io.IOException;
 public class TerminalInputTest {
 
     public static void main(String[] args) throws InterruptedException, IOException {
+        // For IDE users: either set runtime arguments or uncomment this line:
+        //args = new String[] { "--mouse-move", "--telnet-port=1024", "--with-timeout=12" };
+
         final Terminal rawTerminal = new TestTerminalFactory(args).createTerminal();
         rawTerminal.enterPrivateMode();
-
-        for(String arg: args) {
-            if("--mouse-click".equals(arg)) {
-                if (rawTerminal instanceof ExtendedTerminal)
-                    ((ExtendedTerminal)rawTerminal).setMouseCaptureMode(MouseCaptureMode.CLICK_RELEASE);
-            }
-            else if("--mouse-drag".equals(arg)) {
-                if (rawTerminal instanceof ExtendedTerminal)
-                    ((ExtendedTerminal)rawTerminal).setMouseCaptureMode(MouseCaptureMode.CLICK_RELEASE_DRAG);
-            }
-            else if("--mouse-move".equals(arg)) {
-                if (rawTerminal instanceof ExtendedTerminal)
-                    ((ExtendedTerminal)rawTerminal).setMouseCaptureMode(MouseCaptureMode.CLICK_RELEASE_DRAG_MOVE);
-            }
-            else if("--with-timeout".equals(arg)) {
-                if (rawTerminal instanceof StreamBasedTerminal)
-                    ((StreamBasedTerminal)rawTerminal).getInputDecoder().setTimeoutUnits(40); // 10s
-            }
-        }
 
         int currentRow = 0;
         rawTerminal.setCursorPosition(0, 0);
@@ -71,15 +54,12 @@ public class TerminalInputTest {
             }
 
             rawTerminal.setCursorPosition(0, currentRow++);
-            putString(rawTerminal, key.toString());
+            putString(rawTerminal, key.toString().replaceAll("\n", "\\\\n"));
 
             if(currentRow >= rawTerminal.getTerminalSize().getRows()) {
                 currentRow = 0;
             }
         }
-
-        if (rawTerminal instanceof ExtendedTerminal)
-            ((ExtendedTerminal)rawTerminal).setMouseCaptureMode(null);
 
         rawTerminal.exitPrivateMode();
     }

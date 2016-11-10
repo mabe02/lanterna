@@ -33,7 +33,9 @@ import java.io.IOException;
 public class PrivateModeTest {
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        Terminal terminal = new TestTerminalFactory(args, TerminalEmulatorAutoCloseTrigger.DoNotAutoClose).createTerminal();
+        Terminal terminal = new TestTerminalFactory(args)
+                                .setTerminalEmulatorFrameAutoCloseTrigger(null)
+                                .createTerminal();
         boolean normalTerminal = true;
         printNormalTerminalText(terminal);
         KeyStroke keyStroke = null;
