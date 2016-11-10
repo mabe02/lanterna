@@ -66,5 +66,10 @@ public enum SGR {
      * Draws a circle around the text. Rarely supported.
      */
     CIRCLED,
+
+    /**
+     * Italic (cursive) text mode. Some Terminal seem to support it.
+     */
+    ITALIC,
     ;
 }

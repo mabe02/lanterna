@@ -238,6 +238,9 @@ public class AWTTerminalFontConfiguration {
                 normalFont = normalFont.deriveFont(Font.BOLD);
             }
         }
+        if (character.isItalic() ) {
+            normalFont = normalFont.deriveFont(Font.ITALIC);
+        }
         return normalFont;
     }
 

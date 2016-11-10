@@ -159,6 +159,9 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
             case UNDERLINE:
                 writeCSISequenceToTerminal((byte) '4', (byte) 'm');
                 break;
+            case ITALIC:
+                writeCSISequenceToTerminal((byte) '3', (byte) 'm');
+                break;
         }
     }
 
@@ -188,6 +191,9 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
                 break;
             case UNDERLINE:
                 writeCSISequenceToTerminal((byte) '2', (byte) '4', (byte) 'm');
+                break;
+            case ITALIC:
+                writeCSISequenceToTerminal((byte) '2', (byte) '3', (byte) 'm');
                 break;
         }
     }

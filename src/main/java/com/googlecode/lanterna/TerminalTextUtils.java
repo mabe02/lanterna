@@ -369,6 +369,9 @@ public class TerminalTextUtils {
                 case 1:
                     target.enableModifiers(SGR.BOLD);
                     break;
+                case 3:
+                    target.enableModifiers(SGR.ITALIC);
+                    break;
                 case 4:
                     target.enableModifiers(SGR.UNDERLINE);
                     break;
@@ -381,6 +384,9 @@ public class TerminalTextUtils {
                 case 21: // both do. 21 seems more straightforward.
                 case 22:
                     target.disableModifiers(SGR.BOLD);
+                    break;
+                case 23:
+                    target.disableModifiers(SGR.ITALIC);
                     break;
                 case 24:
                     target.disableModifiers(SGR.UNDERLINE);

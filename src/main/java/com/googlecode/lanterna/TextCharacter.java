@@ -197,6 +197,14 @@ public class TextCharacter {
     }
 
     /**
+     * Returns true if this TextCharacter has the italic modifier active
+     * @return {@code true} if this TextCharacter has the italic modifier active
+     */
+    public boolean isItalic() {
+        return modifiers.contains(SGR.ITALIC);
+    }
+
+    /**
      * Returns a new TextCharacter with the same colors and modifiers but a different underlying character
      * @param character Character the copy should have
      * @return Copy of this TextCharacter with different underlying character
