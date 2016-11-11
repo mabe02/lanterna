@@ -37,7 +37,7 @@ public class CtrlAltAndCharacterPattern implements CharacterPattern {
             return Matching.NOT_YET; // maybe later
         }
         char ch = seq.get(1);
-        if (ch < 32) {
+        if (ch < 32 && ch != 0x08) {
             // Control-chars: exclude Esc(^[), but still include ^\, ^], ^^ and ^_
             char ctrlCode;
             switch (ch) {
@@ -50,6 +50,9 @@ public class CtrlAltAndCharacterPattern implements CharacterPattern {
             default: ctrlCode = (char)('a' - 1 + ch);
             }
             KeyStroke ks = new KeyStroke( ctrlCode, true, true);
+            return new Matching( ks ); // yep
+        } else if (ch == 0x7f || ch == 0x08) {
+            KeyStroke ks = new KeyStroke( KeyType.Backspace, false, true);
             return new Matching( ks ); // yep
         } else {
             return null; // nope
