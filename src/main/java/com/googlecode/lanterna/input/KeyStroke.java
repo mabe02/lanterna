@@ -181,10 +181,38 @@ public class KeyStroke {
 
     @Override
     public String toString() {
-        return "KeyStroke{" + "keyType=" + keyType + ", character=" + character + 
-                ", ctrlDown=" + ctrlDown + 
-                ", altDown=" + altDown + 
-                ", shiftDown=" + shiftDown + '}';
+        StringBuilder sb = new StringBuilder();
+        sb.append("KeyStroke{keytype=").append(keyType);
+        if (character != null) {
+            char ch = character;
+            sb.append(", character='");
+            switch (ch) {
+            // many of these cases can only happen through user code:
+            case 0x00: sb.append("^@"); break;
+            case 0x08: sb.append("\\b"); break;
+            case 0x09: sb.append("\\t"); break;
+            case 0x0a: sb.append("\\n"); break;
+            case 0x0d: sb.append("\\r"); break;
+            case 0x1b: sb.append("^["); break;
+            case 0x1c: sb.append("^\\"); break;
+            case 0x1d: sb.append("^]"); break;
+            case 0x1e: sb.append("^^"); break;
+            case 0x1f: sb.append("^_"); break;
+            default:
+                if (ch <= 26) {
+                    sb.append('^').append((char)(ch+64));
+                } else { sb.append(ch); }
+            }
+            sb.append('\'');
+        }
+        if (ctrlDown || altDown || shiftDown) {
+            String sep=""; sb.append(", modifiers=[");
+            if (ctrlDown) {  sb.append(sep).append("ctrl"); sep=","; }
+            if (altDown) {   sb.append(sep).append("alt"); sep=","; }
+            if (shiftDown) { sb.append(sep).append("shift"); sep=","; }
+            sb.append("]");
+        }
+        return sb.append('}').toString();
     }
 
     @Override

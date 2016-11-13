@@ -227,7 +227,7 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
             try {
                 KeyStroke key = inputDecoder.getNextCharacter(blocking);
                 ScreenInfoAction report = ScreenInfoCharacterPattern.tryToAdopt(key);
-                if(report != null) {
+                if (lastReportedCursorPosition == null && report != null) {
                     lastReportedCursorPosition = report.getPosition();
                 }
                 else {

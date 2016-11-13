@@ -36,7 +36,7 @@ public class CtrlAndCharacterPattern implements CharacterPattern {
             // Control-chars: exclude lf,cr,Tab,Esc(^[), but still include ^\, ^], ^^ and ^_
             char ctrlCode;
             switch (ch) {
-            case '\n': case '\r': case '\t':
+            case '\n': case '\r': case '\t': case 0x08:
             case KeyDecodingProfile.ESC_CODE: return null; // nope
             case 0:  /* ^@ */ ctrlCode = ' '; break;
             case 28: /* ^\ */ ctrlCode = '\\'; break;

@@ -54,7 +54,7 @@ public class TerminalInputTest {
             }
 
             rawTerminal.setCursorPosition(0, currentRow++);
-            putString(rawTerminal, key.toString().replaceAll("\n", "\\\\n"));
+            putString(rawTerminal, key.toString());
 
             if(currentRow >= rawTerminal.getTerminalSize().getRows()) {
                 currentRow = 0;
