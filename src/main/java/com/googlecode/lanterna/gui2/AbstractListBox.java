@@ -190,6 +190,25 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
     }
 
     /**
+     * Removes an item from the list box by its index. The current selection in the list box will be adjusted
+     * accordingly.
+     * @param index Index of the item to remove
+     * @return The item that was removed
+     * @throws IndexOutOfBoundsException if the index is out of bounds in regards to the list of items
+     */
+    public synchronized V remoteItem(int index) {
+        V existing = items.remove(index);
+        if(index < selectedIndex) {
+            selectedIndex--;
+        }
+        while(selectedIndex >= items.size()) {
+            selectedIndex--;
+        }
+        invalidate();
+        return existing;
+    }
+
+    /**
      * Removes all items from the list box
      * @return Itself
      */

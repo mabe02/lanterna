@@ -88,6 +88,18 @@ public class RadioBoxList<V> extends AbstractListBox<V, RadioBoxList<V>> {
     }
 
     @Override
+    public synchronized V remoteItem(int index) {
+        V item = super.remoteItem(index);
+        if(index < checkedIndex) {
+            checkedIndex--;
+        }
+        while(checkedIndex >= getItemCount()) {
+            checkedIndex--;
+        }
+        return item;
+    }
+
+    @Override
     public synchronized RadioBoxList<V> clearItems() {
         setCheckedIndex(-1);
         return super.clearItems();
