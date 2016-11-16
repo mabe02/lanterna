@@ -135,7 +135,7 @@ public class LinearLayout implements LayoutManager {
             height += preferredSize.getRows();
         }
         height += spacing * (components.size() - 1);
-        return new TerminalSize(maxWidth, height);
+        return new TerminalSize(maxWidth, Math.max(0, height));
     }
 
     private TerminalSize getPreferredSizeHorizontally(List<Component> components) {
@@ -149,7 +149,7 @@ public class LinearLayout implements LayoutManager {
             width += preferredSize.getColumns();
         }
         width += spacing * (components.size() - 1);
-        return new TerminalSize(width, maxHeight);
+        return new TerminalSize(Math.max(0,width), maxHeight);
     }
 
     @Override
