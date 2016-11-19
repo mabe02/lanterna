@@ -196,7 +196,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
      * @return The item that was removed
      * @throws IndexOutOfBoundsException if the index is out of bounds in regards to the list of items
      */
-    public synchronized V remoteItem(int index) {
+    public synchronized V removeItem(int index) {
         V existing = items.remove(index);
         if(index < selectedIndex) {
             selectedIndex--;

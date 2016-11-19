@@ -84,8 +84,8 @@ public class CheckBoxList<V> extends AbstractListBox<V, CheckBoxList<V>> {
     }
 
     @Override
-    public synchronized V remoteItem(int index) {
-        V item = super.remoteItem(index);
+    public synchronized V removeItem(int index) {
+        V item = super.removeItem(index);
         itemStatus.remove(index);
         return item;
     }
