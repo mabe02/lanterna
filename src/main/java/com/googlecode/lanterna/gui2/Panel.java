@@ -63,17 +63,19 @@ public class Panel extends AbstractComponent<Panel> implements Container {
      * @param component Child component to add to this panel
      * @return Itself
      */
-    public synchronized Panel addComponent(Component component) {
+    public Panel addComponent(Component component) {
         if(component == null) {
             throw new IllegalArgumentException("Cannot add null component");
         }
-        if(components.contains(component)) {
-            return this;
+        synchronized(components) {
+            if(components.contains(component)) {
+                return this;
+            }
+            if(component.getParent() != null) {
+                component.getParent().removeComponent(component);
+            }
+            components.add(component);
         }
-        if(component.getParent() != null) {
-            component.getParent().removeComponent(component);
-        }
-        components.add(component);
         component.onAdded(this);
         invalidate();
         return this;
@@ -105,18 +107,20 @@ public class Panel extends AbstractComponent<Panel> implements Container {
     }
 
     @Override
-    public synchronized boolean removeComponent(Component component) {
+    public boolean removeComponent(Component component) {
         if(component == null) {
             throw new IllegalArgumentException("Cannot remove null component");
         }
-        int index = components.indexOf(component);
-        if(index == -1) {
-            return false;
+        synchronized(components) {
+            int index = components.indexOf(component);
+            if(index == -1) {
+                return false;
+            }
+            if(getBasePane() != null && getBasePane().getFocusedInteractable() == component) {
+                getBasePane().setFocusedInteractable(null);
+            }
+            components.remove(index);
         }
-        if(getBasePane() != null && getBasePane().getFocusedInteractable() == component) {
-            getBasePane().setFocusedInteractable(null);
-        }
-        components.remove(index);
         component.onRemoved(this);
         invalidate();
         return true;
@@ -126,9 +130,11 @@ public class Panel extends AbstractComponent<Panel> implements Container {
      * Removes all child components from this panel
      * @return Itself
      */
-    public synchronized Panel removeAllComponents() {
-        for(Component component: new ArrayList<Component>(components)) {
-            removeComponent(component);
+    public Panel removeAllComponents() {
+        synchronized(components) {
+            for(Component component : new ArrayList<Component>(components)) {
+                removeComponent(component);
+            }
         }
         return this;
     }
@@ -177,7 +183,9 @@ public class Panel extends AbstractComponent<Panel> implements Container {
 
             @Override
             public TerminalSize getPreferredSize(Panel component) {
-                cachedPreferredSize = layoutManager.getPreferredSize(components);
+                synchronized(components) {
+                    cachedPreferredSize = layoutManager.getPreferredSize(components);
+                }
                 return cachedPreferredSize;
             }
 
@@ -191,9 +199,11 @@ public class Panel extends AbstractComponent<Panel> implements Container {
                 graphics.applyThemeStyle(getThemeDefinition().getNormal());
                 graphics.fill(' ');
 
-                for(Component child: components) {
-                    TextGUIGraphics componentGraphics = graphics.newTextGraphics(child.getPosition(), child.getSize());
-                    child.draw(componentGraphics);
+                synchronized(components) {
+                    for(Component child: components) {
+                        TextGUIGraphics componentGraphics = graphics.newTextGraphics(child.getPosition(), child.getSize());
+                        child.draw(componentGraphics);
+                    }
                 }
             }
         };
@@ -209,9 +219,11 @@ public class Panel extends AbstractComponent<Panel> implements Container {
 
     @Override
     public boolean isInvalid() {
-        for(Component component: components) {
-            if(component.isInvalid()) {
-                return true;
+        synchronized(components) {
+            for(Component component: components) {
+                if(component.isInvalid()) {
+                    return true;
+                }
             }
         }
         return super.isInvalid() || layoutManager.hasChanged();
@@ -221,45 +233,51 @@ public class Panel extends AbstractComponent<Panel> implements Container {
     public Interactable nextFocus(Interactable fromThis) {
         boolean chooseNextAvailable = (fromThis == null);
 
-        for (Component component : components) {
-            if (chooseNextAvailable) {
-                if (component instanceof Interactable && ((Interactable)component).isEnabled() && ((Interactable)component).isFocusable()) {
-                    return (Interactable) component;
+        synchronized(components) {
+            for(Component component : components) {
+                if(chooseNextAvailable) {
+                    if(component instanceof Interactable && ((Interactable) component).isEnabled() && ((Interactable) component).isFocusable()) {
+                        return (Interactable) component;
+                    }
+                    else if(component instanceof Container) {
+                        Interactable firstInteractable = ((Container) (component)).nextFocus(null);
+                        if(firstInteractable != null) {
+                            return firstInteractable;
+                        }
+                    }
+                    continue;
                 }
-                else if (component instanceof Container) {
-                    Interactable firstInteractable = ((Container)(component)).nextFocus(null);
-                    if (firstInteractable != null) {
-                        return firstInteractable;
+
+                if(component == fromThis) {
+                    chooseNextAvailable = true;
+                    continue;
+                }
+
+                if(component instanceof Container) {
+                    Container container = (Container) component;
+                    if(fromThis.isInside(container)) {
+                        Interactable next = container.nextFocus(fromThis);
+                        if(next == null) {
+                            chooseNextAvailable = true;
+                        }
+                        else {
+                            return next;
+                        }
                     }
                 }
-                continue;
             }
-
-            if (component == fromThis) {
-                chooseNextAvailable = true;
-                continue;
-            }
-
-            if (component instanceof Container) {
-                Container container = (Container) component;
-                if (fromThis.isInside(container)) {
-                    Interactable next = container.nextFocus(fromThis);
-                    if (next == null) {
-                        chooseNextAvailable = true;
-                    } else {
-                        return next;
-                    }
-                }
-            }
+            return null;
         }
-        return null;
     }
 
     @Override
     public Interactable previousFocus(Interactable fromThis) {
         boolean chooseNextAvailable = (fromThis == null);
 
-        List<Component> revComponents = new ArrayList<Component>(components);
+        List<Component> revComponents = new ArrayList<Component>();
+        synchronized(components) {
+            revComponents.addAll(components);
+        }
         Collections.reverse(revComponents);
 
         for (Component component : revComponents) {
@@ -303,12 +321,14 @@ public class Panel extends AbstractComponent<Panel> implements Container {
     
     @Override
     public void updateLookupMap(InteractableLookupMap interactableLookupMap) {
-        for(Component component: components) {
-            if(component instanceof Container) {
-                ((Container)component).updateLookupMap(interactableLookupMap);
-            }
-            else if(component instanceof Interactable && ((Interactable)component).isEnabled() && ((Interactable)component).isFocusable()) {
-                interactableLookupMap.add((Interactable)component);
+        synchronized(components) {
+            for(Component component: components) {
+                if(component instanceof Container) {
+                    ((Container)component).updateLookupMap(interactableLookupMap);
+                }
+                else if(component instanceof Interactable && ((Interactable)component).isEnabled() && ((Interactable)component).isFocusable()) {
+                    interactableLookupMap.add((Interactable)component);
+                }
             }
         }
     }
@@ -317,13 +337,17 @@ public class Panel extends AbstractComponent<Panel> implements Container {
     public void invalidate() {
         super.invalidate();
 
-        //Propagate
-        for(Component component: components) {
-            component.invalidate();
+        synchronized(components) {
+            //Propagate
+            for(Component component: components) {
+                component.invalidate();
+            }
         }
     }
 
     private void layout(TerminalSize size) {
-        layoutManager.doLayout(size, components);
+        synchronized(components) {
+            layoutManager.doLayout(size, components);
+        }
     }
 }
