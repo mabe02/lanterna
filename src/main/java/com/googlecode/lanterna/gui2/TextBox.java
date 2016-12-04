@@ -746,7 +746,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
             if(!hideScrollBars && component.longestRow > realTextArea.getColumns() && realTextArea.getRows() > 1) {
                 realTextArea = realTextArea.withRelativeRows(-1);
                 drawHorizontalScrollBar = true;
-                if(textBoxLineCount > realTextArea.getRows() && realTextArea.getRows() == graphics.getSize().getRows()) {
+                if(textBoxLineCount > realTextArea.getRows() && !drawVerticalScrollBar) {
                     realTextArea = realTextArea.withRelativeColumns(-1);
                     drawVerticalScrollBar = true;
                 }
