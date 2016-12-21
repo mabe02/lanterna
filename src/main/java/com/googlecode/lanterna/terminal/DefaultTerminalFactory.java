@@ -46,7 +46,7 @@ import java.util.EnumSet;
 public class DefaultTerminalFactory implements TerminalFactory {
     private static final OutputStream DEFAULT_OUTPUT_STREAM = System.out;
     private static final InputStream DEFAULT_INPUT_STREAM = System.in;
-    private static final Charset DEFAULT_CHARSET = Charset.forName(System.getProperty("file.encoding"));
+    private static final Charset DEFAULT_CHARSET = Charset.defaultCharset();
 
     private final OutputStream outputStream;
     private final InputStream inputStream;
