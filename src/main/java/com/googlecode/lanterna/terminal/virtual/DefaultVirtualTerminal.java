@@ -219,6 +219,13 @@ public class DefaultVirtualTerminal extends AbstractTerminal implements VirtualT
     }
 
     @Override
+    public void close() {
+        for(VirtualTerminalListener listener: listeners) {
+            listener.onClose();
+        }
+    }
+
+    @Override
     public synchronized KeyStroke pollInput() {
         return inputQueue.poll();
     }

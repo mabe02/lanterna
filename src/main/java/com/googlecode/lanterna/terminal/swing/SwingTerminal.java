@@ -272,6 +272,11 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
     }
 
     @Override
+    public void close() {
+        terminalImplementation.close();
+    }
+
+    @Override
     public KeyStroke pollInput() {
         return terminalImplementation.pollInput();
     }

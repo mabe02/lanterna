@@ -789,6 +789,11 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     }
 
     @Override
+    public void close() {
+        // No action
+    }
+
+    @Override
     public void addResizeListener(TerminalResizeListener listener) {
         virtualTerminal.addResizeListener(listener);
     }

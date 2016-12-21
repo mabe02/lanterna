@@ -37,4 +37,9 @@ public interface VirtualTerminalListener extends TerminalResizeListener {
      * Called when the {@link Terminal#bell()} method is invoked on the {@link VirtualTerminal}
      */
     void onBell();
+
+    /**
+     * Called when the {@link Terminal#close()} method is invoked on the {@link VirtualTerminal}
+     */
+    void onClose();
 }

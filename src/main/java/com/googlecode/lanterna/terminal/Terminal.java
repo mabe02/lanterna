@@ -24,6 +24,8 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.InputProvider;
+
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
@@ -42,7 +44,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Martin
  */
-public interface Terminal extends InputProvider {
+public interface Terminal extends InputProvider, Closeable {
 
     /**
      * Calling this method will, where supported, give your terminal a private area to use, separate from what was there
@@ -270,4 +272,12 @@ public interface Terminal extends InputProvider {
      * @throws java.io.IOException If there was an underlying I/O error
      */
     void flush() throws IOException;
+
+    /**
+     * Closes the terminal, if applicable. If the implementation doesn't support closing the terminal, this will do
+     * nothing. The Swing/AWT emulator implementations will translate this into a dispose() call on the UI resources,
+     * the telnet implementation will hang out the connection.
+     * @throws IOException
+     */
+    void close() throws IOException;
 }

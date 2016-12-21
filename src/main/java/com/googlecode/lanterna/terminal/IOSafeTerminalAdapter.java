@@ -303,6 +303,16 @@ public class IOSafeTerminalAdapter implements IOSafeTerminal {
     }
 
     @Override
+    public void close() {
+        try {
+            backend.close();
+        }
+        catch(IOException e) {
+            exceptionHandler.onException(e);
+        }
+    }
+
+    @Override
     public KeyStroke pollInput() {
         try {
             return backend.pollInput();

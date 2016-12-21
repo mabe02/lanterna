@@ -151,7 +151,12 @@ public class AWTTerminalFrame extends Frame implements IOSafeTerminal {
         super.dispose();
         disposed = true;
     }
-    
+
+    @Override
+    public void close() {
+        dispose();
+    }
+
     ///////////
     // Delegate all Terminal interface implementations to AWTTerminal
     ///////////

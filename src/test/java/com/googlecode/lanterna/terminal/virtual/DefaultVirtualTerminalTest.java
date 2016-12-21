@@ -463,6 +463,7 @@ public class DefaultVirtualTerminalTest {
         final AtomicInteger flushCounter = new AtomicInteger(0);
         final AtomicInteger bellCounter = new AtomicInteger(0);
         final AtomicInteger resizeCounter = new AtomicInteger(0);
+        final AtomicInteger closeCounter = new AtomicInteger(0);
 
         VirtualTerminalListener listener = new VirtualTerminalListener() {
             @Override
@@ -479,6 +480,11 @@ public class DefaultVirtualTerminalTest {
             public void onResized(Terminal terminal, TerminalSize newSize) {
                 resizeCounter.incrementAndGet();
             }
+
+            @Override
+            public void onClose() {
+                closeCounter.incrementAndGet();
+            }
         };
 
         virtualTerminal.flush();
@@ -487,6 +493,7 @@ public class DefaultVirtualTerminalTest {
         assertEquals(0, flushCounter.get());
         assertEquals(0, bellCounter.get());
         assertEquals(0, resizeCounter.get());
+        assertEquals(0, closeCounter.get());
 
         virtualTerminal.addVirtualTerminalListener(listener);
         virtualTerminal.flush();
@@ -495,14 +502,20 @@ public class DefaultVirtualTerminalTest {
         assertEquals(1, flushCounter.get());
         assertEquals(1, bellCounter.get());
         assertEquals(1, resizeCounter.get());
+        assertEquals(0, closeCounter.get());
+
+        virtualTerminal.close();
+        assertEquals(1, closeCounter.get());
 
         virtualTerminal.removeVirtualTerminalListener(listener);
         virtualTerminal.flush();
         virtualTerminal.bell();
         virtualTerminal.setTerminalSize(new TerminalSize(40, 10));
+        virtualTerminal.close();
         assertEquals(1, flushCounter.get());
         assertEquals(1, bellCounter.get());
         assertEquals(1, resizeCounter.get());
+        assertEquals(1, closeCounter.get());
     }
 
     @Test

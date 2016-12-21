@@ -269,6 +269,11 @@ public class ScrollingAWTTerminal extends Container implements IOSafeTerminal {
     }
 
     @Override
+    public void close() {
+        awtTerminal.close();
+    }
+
+    @Override
     public void addResizeListener(TerminalResizeListener listener) {
         awtTerminal.addResizeListener(listener);
     }

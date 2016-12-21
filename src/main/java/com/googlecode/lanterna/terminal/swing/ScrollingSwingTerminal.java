@@ -270,6 +270,11 @@ public class ScrollingSwingTerminal extends JComponent implements IOSafeTerminal
     }
 
     @Override
+    public void close() {
+        swingTerminal.close();
+    }
+
+    @Override
     public void addResizeListener(TerminalResizeListener listener) {
         swingTerminal.addResizeListener(listener);
     }

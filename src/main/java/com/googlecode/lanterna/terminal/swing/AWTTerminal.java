@@ -280,6 +280,11 @@ public class AWTTerminal extends Panel implements IOSafeTerminal {
     }
 
     @Override
+    public void close() {
+        terminalImplementation.close();
+    }
+
+    @Override
     public KeyStroke pollInput() {
         return terminalImplementation.pollInput();
     }

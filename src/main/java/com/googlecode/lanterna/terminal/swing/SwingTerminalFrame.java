@@ -158,7 +158,12 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
         super.dispose();
         disposed = true;
     }
-    
+
+    @Override
+    public void close() {
+        dispose();
+    }
+
     ///////////
     // Delegate all Terminal interface implementations to SwingTerminal
     ///////////

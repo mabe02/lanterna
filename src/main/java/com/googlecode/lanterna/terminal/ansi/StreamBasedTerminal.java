@@ -247,6 +247,13 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
         }
     }
 
+    @Override
+    public void close() throws IOException {
+        // Should we close the input/output streams here?
+        // If someone uses lanterna just temporarily and want to switch back to using System.out/System.in manually,
+        // they won't be too happy if we closed the streams
+    }
+
     protected Charset getCharset() {
         return terminalCharset;
     }
