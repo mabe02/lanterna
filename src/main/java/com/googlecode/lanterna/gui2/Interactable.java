@@ -47,6 +47,10 @@ public interface Interactable extends Component {
      * key-stroke. Furthermore, if the component understood the key-stroke and would like to move focus to a different
      * component, there are the {@code Result.MOVE_FOCUS_*} values. This method should be invoking the input filter, if
      * it is set, to see if the input should be processed or not.
+     * <p/>
+     * Notice that most of the built-in components in Lanterna extends from {@link AbstractInteractableComponent} which
+     * has a final implementation of this method. The method to override to handle input in that case is
+     * {@link AbstractInteractableComponent#handleKeyStroke(KeyStroke)}.
      * @param keyStroke What input was entered by the user
      * @return Result of processing the key-stroke
      */
