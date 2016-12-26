@@ -223,6 +223,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
             this.mouseCaptureMode = requestedMouseCaptureMode;
             updateMouseCaptureMode(this.mouseCaptureMode, 'h');
         }
+        flush();
         inPrivateMode = true;
     }
 
@@ -238,7 +239,16 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
             updateMouseCaptureMode(this.mouseCaptureMode, 'l');
             this.mouseCaptureMode = null;
         }
+        flush();
         inPrivateMode = false;
+    }
+
+    @Override
+    public void close() throws IOException {
+        if(isInPrivateMode()) {
+            exitPrivateMode();
+        }
+        super.close();
     }
 
     @Override
