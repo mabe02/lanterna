@@ -61,15 +61,35 @@ public class Tutorial02 {
              */
             final TextGraphics textGraphics = terminal.newTextGraphics();
 
+            /*
+            The TextGraphics object keeps its own state of the current colors, separate from the terminal. You can use
+            the foreground and background set methods to specify it and it will take effect on all operations until
+            further modified.
+             */
             textGraphics.setForegroundColor(TextColor.ANSI.WHITE);
             textGraphics.setBackgroundColor(TextColor.ANSI.BLACK);
+            /*
+            putString(..) exists in a couple of different flavors but it generally works by taking a string and
+            outputting it somewhere in terminal window. Notice that it doesn't take the current position of the text
+            cursor when doing this.
+             */
             textGraphics.putString(2, 1, "Lanterna Tutorial 2 - Press ESC to exit", SGR.BOLD);
             textGraphics.setForegroundColor(TextColor.ANSI.DEFAULT);
             textGraphics.setBackgroundColor(TextColor.ANSI.DEFAULT);
             textGraphics.putString(5, 3, "Terminal Size: ", SGR.BOLD);
             textGraphics.putString(5 + "Terminal Size: ".length(), 3, terminal.getTerminalSize().toString());
+
+            /*
+            You still need to flush for changes to become visible
+             */
             terminal.flush();
 
+            /*
+            You can attach a resize listener to your Terminal object, which will invoke a callback method (usually on a
+            separate thread) when it is informed of the terminal emulator window changing size. Notice that maybe not
+            all implementations supports this. The UnixTerminal, for example, relies on the WINCH signal being sent to
+            the java process, which might not make it though if you remote shell isn't forwarding the signal properly.
+             */
             terminal.addResizeListener(new TerminalResizeListener() {
                 @Override
                 public void onResized(Terminal terminal, TerminalSize newSize) {
@@ -89,7 +109,19 @@ public class Tutorial02 {
             textGraphics.putString(5, 4, "Last Keystroke: ", SGR.BOLD);
             textGraphics.putString(5 + "Last Keystroke: ".length(), 4, "<Pending>");
             terminal.flush();
+
+            /*
+            Now let's try reading some input. There are two methods for this, pollInput() and readInput(). One is
+            blocking (readInput) and one isn't (pollInput), returning null if there was nothing to read.
+             */
             KeyStroke keyStroke = terminal.readInput();
+            /*
+            The KeyStroke class has a couple of different methods for getting details on the particular input that was
+            read. Notice that some keys, like CTRL and ALT, cannot be individually distinguished as the standard input
+            stream doesn't report these as individual keys. Generally special keys are categorized with a special
+            KeyType, while regular alphanumeric and symbol keys are all under KeyType.Character. Notice that tab and
+            enter are not considered KeyType.Character but special types (KeyType.Tab and KeyType.Enter respectively)
+             */
             while(keyStroke.getKeyType() != KeyType.Escape) {
                 textGraphics.drawLine(5, 4, terminal.getTerminalSize().getColumns() - 1, 4, ' ');
                 textGraphics.putString(5, 4, "Last Keystroke: ", SGR.BOLD);
