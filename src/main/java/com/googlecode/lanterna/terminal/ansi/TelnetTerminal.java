@@ -113,6 +113,7 @@ public class TelnetTerminal extends ANSITerminal {
      */
     @Override
     public void close() throws IOException {
+        super.close();
         socket.close();
     }
 
