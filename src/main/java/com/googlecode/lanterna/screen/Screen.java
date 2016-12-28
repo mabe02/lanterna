@@ -24,6 +24,8 @@ import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.InputProvider;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
+
+import java.io.Closeable;
 import java.io.IOException;
 
 /**
@@ -38,7 +40,7 @@ import java.io.IOException;
  *
  * @author Martin
  */
-public interface Screen extends InputProvider, Scrollable {
+public interface Screen extends InputProvider, Scrollable, Closeable {
     /**
      * This is the character Screen implementations should use as a filler is there are areas not set to any particular
      * character.
@@ -55,6 +57,14 @@ public interface Screen extends InputProvider, Scrollable {
      * @throws IOException if there was an underlying IO error when exiting from private mode
      */
     void startScreen() throws IOException;
+
+    /**
+     * Same as calling {@link #stopScreen()}
+     *
+     * @throws IOException if there was an underlying IO error when exiting from private mode
+     */
+    @Override
+    void close() throws IOException;
 
     /**
      * Calling this method will make the underlying terminal leave private mode, effectively going back to whatever

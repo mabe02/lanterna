@@ -180,6 +180,11 @@ public abstract class AbstractScreen implements Screen {
     }
 
     @Override
+    public void close() throws IOException {
+        stopScreen();
+    }
+
+    @Override
     public synchronized void clear() {
         backBuffer.setAll(defaultCharacter);
     }
