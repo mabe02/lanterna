@@ -43,4 +43,6 @@ public interface InputProvider {
      * @throws java.io.IOException Propagated error if the underlying stream gave errors
      */
     KeyStroke readInput() throws IOException;
+
+    //TODO: Add a version of readInput() that takes a timeout specification, in a future version of lanterna
 }
