@@ -165,7 +165,6 @@ on a UnixTerminal will not have any affect.
         }
     }
 
-You can see the full code here: 
-https://github.com/mabe02/lanterna/blob/master/src/test/java/com/googlecode/lanterna/tutorial/Tutorial01.java
+The full code to this tutorial is available in the [test section of the source code](https://github.com/mabe02/lanterna/blob/master/src/test/java/com/googlecode/lanterna/tutorial/Tutorial01.java)
 
 [Move on to tutorial 2](Tutorial02.md)
