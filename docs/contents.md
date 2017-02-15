@@ -7,14 +7,11 @@ Many parts have been completely rewritten and the parts not rewritten have been 
 The reason for this major overhaul is to finally get it 'right' and fix up all of those API mistakes that have been highlighted
 over the years, since lanterna was first published.
 
-### Terminal Layer
-1. [Terminal Overview](examples/terminal/overview.md)
-
-### Screen Layer
-TODO
-
-### GUI Layer
-TODO
+## Development Guide
+1. [Introduction](introduction.md)
+2. [Direct terminal access](using-terminal.md)
+3. [Buffered screen API](using-screen.md)
+4. [Text GUI](using-gui.md)
 
 ## Tutorials
 1. [Tutorial 1](tutorial/Tutorial01.md) - Basic usage
@@ -22,6 +19,10 @@ TODO
 3. [Tutorial 3](tutorial/Tutorial02.md) - Using the Screen layer
 
 ## Examples
+### Terminal
+1. [Terminal Overview](examples/terminal/overview.md)
+
+### GUI
 1. [Hello World](examples/gui/hello_world.md)
 2. [A basic form with submission](examples/gui/basic_form_submission.md)
 3. [Windows](examples/gui/windows.md)
@@ -40,3 +41,22 @@ TODO
 16. [File dialogs](examples/gui/file_dialogs.md)
 17. [Action list dialogs](examples/gui/action_list_dialogs.md)
 18. [Tables](examples/gui/tables.md)
+
+## Changes
+1. [2.0.0](ChangesFrom1to2.md)
+    1. [2.0.1](ChangesFrom200to201.md)
+    1. [2.0.3](ChangesFrom201to203.md)
+    1. [2.0.4](ChangesFrom203to204.md)
+1. [2.1.0](ChangesFrom20Xto210.md)
+    1. [2.1.1](ChangesFrom210to211.md)
+    1. [2.1.2](ChangesFrom211to212.md)
+    1. [2.1.3](ChangesFrom212to213.md)
+    1. [2.1.5](ChangesFrom213to215.md)
+    1. [2.1.6](ChangesFrom215to216.md)
+    1. [2.1.7](ChangesFrom216to217.md)
+    1. [2.1.8](ChangesFrom217to218.md)
+    1. [2.1.9](ChangesFrom218to219.md)
+1. [3.0.0](ChangesFrom2to3.md)
+
+## About the name ##
+Originally named "lantern", Google code didn't allow the project to be registered under this name since [there is already a project on SourceForce with this name](http://sourceforge.net/projects/lantern). That project hasn't been updated since 2003 though...
