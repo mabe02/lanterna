@@ -277,7 +277,7 @@ public interface Terminal extends InputProvider, Closeable {
      * Closes the terminal, if applicable. If the implementation doesn't support closing the terminal, this will do
      * nothing. The Swing/AWT emulator implementations will translate this into a dispose() call on the UI resources,
      * the telnet implementation will hang out the connection.
-     * @throws IOException
+     * @throws IOException If there was an underlying I/O error
      */
     void close() throws IOException;
 }

@@ -391,7 +391,9 @@ public class DefaultTerminalFactory implements TerminalFactory {
     }
 
     /**
-     * create a Terminal and immediately wrap it up in a TerminalScreen
+     * Create a {@link Terminal} and immediately wrap it up in a {@link TerminalScreen}
+     * @return New {@link TerminalScreen} created with a terminal from {@link #createTerminal()}
+     * @throws IOException In case there was an I/O error
      */
     public TerminalScreen createScreen() throws IOException {
         return new TerminalScreen(createTerminal());

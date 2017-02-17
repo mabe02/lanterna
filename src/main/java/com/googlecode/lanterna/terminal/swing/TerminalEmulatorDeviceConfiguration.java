@@ -77,6 +77,7 @@ public class TerminalEmulatorDeviceConfiguration {
      * @param cursorStyle Style of the terminal text cursor
      * @param cursorColor Color of the terminal text cursor
      * @param cursorBlinking Should the terminal text cursor blink?
+     * @param clipboardAvailable Should the terminal support pasting text from the clipboard?
      */
     @SuppressWarnings("WeakerAccess")
     public TerminalEmulatorDeviceConfiguration(

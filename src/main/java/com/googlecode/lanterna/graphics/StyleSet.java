@@ -70,7 +70,7 @@ public interface StyleSet<T extends StyleSet<T>> {
 
     /**
      * copy colors and set of SGR codes
-     * @param modifiers Modifiers to set as active
+     * @param source Modifiers to set as active
      * @return Itself
      */
     T setStyleFrom(StyleSet<?> source);
