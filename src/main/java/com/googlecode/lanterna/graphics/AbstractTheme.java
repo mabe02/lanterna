@@ -43,7 +43,7 @@ public abstract class AbstractTheme implements Theme {
     private static final String STYLE_SELECTED = "SELECTED";
     private static final String STYLE_ACTIVE = "ACTIVE";
     private static final String STYLE_INSENSITIVE = "INSENSITIVE";
-    private static final Pattern STYLE_FORMAT = Pattern.compile("([a-zA-Z]+)(\\[([a-zA-Z0-9-_]+)\\])?");
+    private static final Pattern STYLE_FORMAT = Pattern.compile("([a-zA-Z]+)(\\[([a-zA-Z0-9-_]+)])?");
 
     private final ThemeTreeNode rootNode;
     private final WindowPostRenderer windowPostRenderer;

@@ -56,12 +56,10 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
 
         super(terminalInput, terminalOutput, terminalCharset);
 
-        if("false".equals(System.getProperty("com.googlecode.lanterna.terminal.UnixTerminal.catchSpecialCharacters", "").trim().toLowerCase())) {
-            catchSpecialCharacters = false;
-        }
-        else {
-            catchSpecialCharacters = true;
-        }
+        String catchSpecialCharactersPropValue = System.getProperty(
+                "com.googlecode.lanterna.terminal.UnixTerminal.catchSpecialCharacters",
+                "");
+        this.catchSpecialCharacters = !"false".equals(catchSpecialCharactersPropValue.trim().toLowerCase());
         this.terminalCtrlCBehaviour = terminalCtrlCBehaviour;
         aquire();
     }

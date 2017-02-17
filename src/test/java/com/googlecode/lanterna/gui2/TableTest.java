@@ -149,7 +149,6 @@ public class TableTest extends TestBase {
         };
         String choice = chooseAString(textGUI, "Modify what?", dialogChoices);
         if(choice == null) {
-            return;
         }
         else if(choice.equals(dialogChoices[0])) {
             onModifyContent(textGUI, table);
