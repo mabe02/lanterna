@@ -181,7 +181,9 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
                 && !key.isAltDown()
                 && key.isCtrlDown()) {
 
-            exitPrivateMode();
+            if (isInPrivateMode()) {
+                exitPrivateMode();
+            }
             System.exit(1);
         }
     }
