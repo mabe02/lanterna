@@ -43,7 +43,7 @@ Before you can print any text or start to move the cursor around, you should ent
 ### Moving the cursor ###
 When you start your GUI, you can never make any assumptions on where the text cursor is. Since text printing will always appear at the text cursor position, it is very important to be able to move this around. Here is how you do it:
 ```
-   terminal.moveCursor(10, 5);
+   terminal.setCursorPosition(10, 5);
 ```
 The first parameter is to which column (the first is 0) and the record to which row (again, first row is 0).
 
@@ -53,20 +53,20 @@ In order to be able to make good decisions on moving the cursor, you might want 
     TerminalSize screenSize = terminal.getTerminalSize();
 
     //Place the cursor in the bottom right corner
-    terminal.moveCursor(screenSize.getColumns() - 1, screenSize.getRows() - 1);
+    terminal.setCursorPosition(screenSize.getColumns() - 1, screenSize.getRows() - 1);
 ```
 
 ### Printing text ###
 Printing text is another very useful operation, it's simple enough but a bit limited as you have to print character by character.
 ```
-    terminal.moveCursor(10, 5);
+    terminal.setCursorPosition(10, 5);
     terminal.putCharacter('H');
     terminal.putCharacter('e');
     terminal.putCharacter('l');
     terminal.putCharacter('l');
     terminal.putCharacter('o');
     terminal.putCharacter('!');
-    terminal.moveCursor(0, 0);
+    terminal.setCursorPosition(0, 0);
 ```
 Notice that just like when you type in text manually, the cursor position will move one column to the right for every character you put. What happens after you put a character on the last column is undefined and may differ between different terminal emulators. You should always use the moveCursor method to place the cursor somewhere else after writing something to the end of the row.
 
