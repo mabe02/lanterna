@@ -370,7 +370,7 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
     }
 
     @Override
-    protected void afterLeaveFocus(FocusChangeDirection direction, Interactable nextInFocus) {
+    protected synchronized void afterLeaveFocus(FocusChangeDirection direction, Interactable nextInFocus) {
         if(popupWindow != null) {
             popupWindow.close();
             popupWindow = null;

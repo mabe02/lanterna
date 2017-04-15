@@ -44,7 +44,7 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
     }
 
     @Override
-    public synchronized T takeFocus() {
+    public T takeFocus() {
         if(!isEnabled()) {
             return self();
         }
@@ -61,7 +61,7 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
      * This method is final in {@code AbstractInteractableComponent}, please override {@code afterEnterFocus} instead
      */
     @Override
-    public final synchronized void onEnterFocus(FocusChangeDirection direction, Interactable previouslyInFocus) {
+    public final void onEnterFocus(FocusChangeDirection direction, Interactable previouslyInFocus) {
         inFocus = true;
         afterEnterFocus(direction, previouslyInFocus);
     }
@@ -84,7 +84,7 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
      * This method is final in {@code AbstractInteractableComponent}, please override {@code afterLeaveFocus} instead
      */
     @Override
-    public final synchronized void onLeaveFocus(FocusChangeDirection direction, Interactable nextInFocus) {
+    public final void onLeaveFocus(FocusChangeDirection direction, Interactable nextInFocus) {
         inFocus = false;
         afterLeaveFocus(direction, nextInFocus);
     }
