@@ -48,6 +48,8 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
 
     private final CtrlCBehaviour terminalCtrlCBehaviour;
     private final boolean catchSpecialCharacters;
+    private final Thread shutdownHook;
+    private boolean acquired;
 
     protected UnixLikeTerminal(InputStream terminalInput,
                             OutputStream terminalOutput,
@@ -55,13 +57,20 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
                             CtrlCBehaviour terminalCtrlCBehaviour) throws IOException {
 
         super(terminalInput, terminalOutput, terminalCharset);
+        this.acquired = false;
 
         String catchSpecialCharactersPropValue = System.getProperty(
                 "com.googlecode.lanterna.terminal.UnixTerminal.catchSpecialCharacters",
                 "");
         this.catchSpecialCharacters = !"false".equals(catchSpecialCharactersPropValue.trim().toLowerCase());
         this.terminalCtrlCBehaviour = terminalCtrlCBehaviour;
-        aquire();
+        shutdownHook = new Thread("Lanterna STTY restore") {
+            @Override
+            public void run() {
+                exitPrivateModeAndRestoreState();
+            }
+        };
+        acquire();
     }
 
     /**
@@ -70,7 +79,7 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
      * of any end-user class extending from {@link UnixLikeTerminal}
      * @throws IOException If there was an I/O error
      */
-    protected void aquire() throws IOException {
+    protected void acquire() throws IOException {
         //Make sure to set an initial size
         onResized(80, 24);
 
@@ -92,9 +101,17 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
                 }
             }
         });
-        setupShutdownHook();
+        Runtime.getRuntime().addShutdownHook(shutdownHook);
+        acquired = true;
     }
 
+    @Override
+    public void close() throws IOException {
+        exitPrivateModeAndRestoreState();
+        Runtime.getRuntime().removeShutdownHook(shutdownHook);
+        acquired = false;
+        super.close();
+    }
 
     @Override
     public KeyStroke pollInput() throws IOException {
@@ -188,24 +205,21 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
         }
     }
 
-    private void setupShutdownHook() {
-        Runtime.getRuntime().addShutdownHook(new Thread("Lanterna STTY restore") {
-            @Override
-            public void run() {
-                try {
-                    if (isInPrivateMode()) {
-                        exitPrivateMode();
-                    }
-                }
-                catch(IOException ignored) {}
-                catch(IllegalStateException ignored) {} // still possible!
-
-                try {
-                    restoreTerminalSettingsAndKeyStrokeSignals();
-                }
-                catch(IOException ignored) {}
+    private void exitPrivateModeAndRestoreState() {
+        if(!acquired) {
+            return;
+        }
+        try {
+            if (isInPrivateMode()) {
+                exitPrivateMode();
             }
-        });
-    }
+        }
+        catch(IOException ignored) {}
+        catch(IllegalStateException ignored) {} // still possible!
 
+        try {
+            restoreTerminalSettingsAndKeyStrokeSignals();
+        }
+        catch(IOException ignored) {}
+    }
 }
