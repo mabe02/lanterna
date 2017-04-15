@@ -379,15 +379,18 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
         }
         window.setTextGUI(null);
         windowManager.onRemoved(this, window, windows);
-        if(activeWindow == window) {
+        changeWindow: if(activeWindow == window) {
             //Go backward in reverse and find the first suitable window
             for(int index = windows.size() - 1; index >= 0; index--) {
                 Window candidate = windows.get(index);
                 if(!candidate.getHints().contains(Window.Hint.NO_FOCUS)) {
                     setActiveWindow(candidate);
-                    break;
+                    break changeWindow;
                 }
             }
+            // No suitable window was found, so pass control back
+            // to the background pane
+            setActiveWindow(null);
         }
         invalidate();
         return this;
@@ -427,7 +430,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
     @Override
     public synchronized MultiWindowTextGUI setActiveWindow(Window activeWindow) {
         this.activeWindow = activeWindow;
-        moveToTop(activeWindow);
+        if (activeWindow != null) moveToTop(activeWindow);
         return this;
     }
 
@@ -471,11 +474,11 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
      * @return Itself
      */
     public synchronized WindowBasedTextGUI cycleActiveWindow(boolean reverse) {
-        if(windows.isEmpty() || windows.size() == 1 || activeWindow.getHints().contains(Window.Hint.MODAL)) {
+        if(windows.isEmpty() || windows.size() == 1 || (activeWindow != null && activeWindow.getHints().contains(Window.Hint.MODAL))) {
             return this;
         }
         Window originalActiveWindow = activeWindow;
-        Window nextWindow = getNextWindow(reverse, originalActiveWindow);
+        Window nextWindow = activeWindow == null  ? windows.get(0) : getNextWindow(reverse, activeWindow);
         while(nextWindow.getHints().contains(Window.Hint.NO_FOCUS)) {
             nextWindow = getNextWindow(reverse, nextWindow);
             if(nextWindow == originalActiveWindow) {
@@ -486,7 +489,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
         if(reverse) {
             moveToTop(nextWindow);
         }
-        else {
+        else if (originalActiveWindow != null) {
             windows.remove(originalActiveWindow);
             windows.add(0, originalActiveWindow);
         }
