@@ -302,9 +302,11 @@ public class DefaultTerminalFactory implements TerminalFactory {
      * creation. If {@code false}, you will manually need to call {@code .setVisible(true)} on the JFrame to actually
      * see the terminal window. Default for this value is {@code true}.
      * @param autoOpenTerminalFrame Automatically open SwingTerminalFrame after creation
+     * @return Itself
      */
-    public void setAutoOpenTerminalEmulatorWindow(boolean autoOpenTerminalFrame) {
+    public DefaultTerminalFactory setAutoOpenTerminalEmulatorWindow(boolean autoOpenTerminalFrame) {
         this.autoOpenTerminalFrame = autoOpenTerminalFrame;
+        return this;
     }
     
     /**
