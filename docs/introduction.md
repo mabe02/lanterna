@@ -62,3 +62,6 @@ There is a special Unix signal to notify an application that the terminal has be
 is currently implemented using `sun.misc.SignalHandler` which is SUN JRE specific code and probably not portable. Still, 
 catching signals without invoking native code seems difficult and relying on JNI calls is something we don't want to do. 
 This will probably be changed to be done through Java reflections through auto-detection by the JVM.
+
+## Learn more
+To learn more about how to code against the Lanterna API, continue reading at [Direct terminal access](using-terminal.md)

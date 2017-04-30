@@ -1,3 +1,4 @@
+# Direct terminal access
 ## Introduction
 The `Terminal` layer is the lowest level available in Lanterna, giving you very precise control of what data is sent to 
 the client. You will find these classes in the `com.googlecode.lanterna.terminal` package.
@@ -216,3 +217,7 @@ happened, by using the `isAltDown()` and `isCtrlDown()` methods on `KeyStroke` (
 can be detected because of ambiguities that sometimes occur; if you want to use special key combinations in your 
 program, please test with multiple terminals to make sure it's working as you intend). Unfortunately, you cannot detect 
 CTRL or ALT as individual keystrokes due to how the terminal is designed to work
+
+## Learn more
+To learn about how to use an abstraction API in Lanterna built on top of the terminal API described in this page, 
+continue reading at [Buffered screen API](using-screen.md).
