@@ -93,6 +93,9 @@ public class Tutorial02 {
             terminal.addResizeListener(new TerminalResizeListener() {
                 @Override
                 public void onResized(Terminal terminal, TerminalSize newSize) {
+                    // Be careful here though, this is likely running on a separate thread. Lanterna is threadsafe in
+                    // a best-effort way so while it shouldn't blow up if you call terminal methods on multiple threads,
+                    // it might have unexpected behavior if you don't do any external synchronization
                     textGraphics.drawLine(5, 3, newSize.getColumns() - 1, 3, ' ');
                     textGraphics.putString(5, 3, "Terminal Size: ", SGR.BOLD);
                     textGraphics.putString(5 + "Terminal Size: ".length(), 3, newSize.toString());

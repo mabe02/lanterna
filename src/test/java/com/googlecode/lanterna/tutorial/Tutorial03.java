@@ -34,7 +34,7 @@ public class Tutorial03 {
         try {
             /*
             You can use the DefaultTerminalFactory to create a Screen, this will generally give you the TerminalScreen
-            implementation that is probably what you want to do. Please see VirtualScreen for more details on a separate
+            implementation that is probably what you want to use. Please see VirtualScreen for more details on a separate
             implementation that allows you to create a terminal surface that is bigger than the physical size of the
             terminal emulator the software is running in. Just to demonstrate that a Screen sits on top of a Terminal,
             we are going to create one manually instead of using DefaultTerminalFactory.
