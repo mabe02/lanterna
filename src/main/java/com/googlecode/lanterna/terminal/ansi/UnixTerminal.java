@@ -165,4 +165,12 @@ public class UnixTerminal extends UnixLikeTTYTerminal {
         
         return super.findTerminalSize();
     }
+    
+    @Override
+    public void close() throws IOException{
+        super.close();
+        restoreTerminalSettings();
+        keyEchoEnabled(true);
+        keyStrokeSignalsEnabled(true);
+    }
 }
