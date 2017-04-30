@@ -1,29 +1,37 @@
-### Getting the `GUIScreen` object ###
-In order to use the text GUI system at all, you'll need a `GUIScreen` object. You can manually instantiate it if you have a `Screen` object available (please see the [Screen layer guide](using-screen.md)):
-```
-    GUIScreen gui = new GUIScreen(screen);
-```
+# Start the GUI
+## Getting the `WindowBasedTextGUI` object ###
+Lanterna has a basic `TextGUI` interface and a slightly more extended `WindowBasedTextGUI` interface you will be using
+when working with the GUI system built-in. In reality though, there is only one concrete implementation at this point,
+`MultiWindowTextGUI` so there isn't really case where you would use `TextGUI` over `WindowBasedTextGUI`.
 
-Alternatively, you can use the `TerminalFacade`:
-```
-    GUIScreen gui = TerminalFacade.createGUIScreen(); //Multiple overloads exist
-```
+To instantiate, you need a `Screen` object that the GUI will render too:
 
-Please note that there are no start/stop methods in the GUIScreen class, so you'll need to use the underlying `Screen` to do such operations.
+    WindowBasedTextGUI gui = new MultiWindowTextGUI(screen);
 
-Example:
-```
-    GUIScreen textGUI = TerminalFacade.createGUIScreen();
-    if(textGUI == null) {
-        System.err.println("Couldn't allocate a terminal!");
-        return;
-    }
-    textGUI.getScreen().startScreen();
-    textGUI.setTitle("GUI Test");
+## Threading concerns
+Usually GUI APIs have threading issues of some sort, many simply give up and declare that all modifications had to be
+done on a designated "GUI thread". This generally a reasonably approach and while Lanterna doesn't enforce it 
+(internal API is synchronized on a best-effort basis), it's recommended. When you create the text GUI on your code,
+you can make a decision about if you want Lanterna to create its own GUI thread will be responsible for all the drawing
+operations or if you want your own thread to do this. The managed GUI thread is slightly more complicated so in this
+guide we are going to use the latter. While most of the API remains the same (the separate GUI thread approach will
+require manually starting and stopping), whenever there are differences these will be pointed out.
+ 
+By default, when you create a `MultiWindowTextGUI` like in the previous section, Lanterna will use the same-thread 
+strategy.
 
-    //Do GUI logic here
+## Starting the GUI
+Unlike `Screen`, the `TextGUI` interface doesn't have start or stop methods. It will simply use the `Screen` object you
+pass in as-is. Because of this, you'll want to start the screen before attempting to draw anything with the GUI.
 
-    textGUI.getScreen().stopScreen();
-```
-
-Please note that you can start the screen (enter private mode) anytime, it doesn't have to be after the `GUIScreen` in initialized. The `GUIScreen` class doesn't necessarily know that it is ultimately drawing to a `Terminal`; all it's actions go through the `Screen`. This is why you can at any time create a `GUIScreen` on top of a `Screen` and start using it, then exit from the GUI and continue using the `Screen` as you like.
+    Terminal term = new DefaultTerminalFactory().createTerminal();
+    Screen screen = new TerminalScreen(term);
+    WindowBasedTextGUI gui = new MultiWindowTextGUI(screen);
+    screen.startScreen();
+    
+    // use GUI here until the GUI wants to exit
+    
+    screen.stopScreen();
+    
+## Next
+Continue to [Basic windows](GUIGuideWindows.md)

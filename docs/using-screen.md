@@ -1,5 +1,5 @@
 # Buffered screen API
-_Please note: You should read the UsingTerminal guide before you start reading this guide_
+_Please note: You should read the [Direct terminal access](using-terminal.md) guide before you start reading this guide_
 
 ## About the Screen layer
 When creating text-based GUIs using low-level operations, it's very likely that the advantages of buffering screen data 
