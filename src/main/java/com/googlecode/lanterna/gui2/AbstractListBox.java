@@ -36,6 +36,7 @@ import java.util.List;
 public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extends AbstractInteractableComponent<T> {
     private final List<V> items;
     private int selectedIndex;
+    private boolean allowRemovesWithDelete = false;
     private ListItemRenderer<V,T> listItemRenderer;
 
     /**
@@ -147,7 +148,12 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
                         setSelectedIndex(getSelectedIndex() + getSize().getRows());
                     }
                     return Result.HANDLED;
-
+                    
+                case Delete:
+                	if (allowRemovesWithDelete && selectedIndex > -1) {
+                		removeItem(getSelectedIndex());
+                		return Result.HANDLED;
+                	}
                 default:
             }
             return Result.UNHANDLED;
@@ -316,6 +322,44 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
         }
     }
 
+	/**
+	 * Removes the item with the selected index from the list.
+	 * 
+	 * @param index the Index of the item to delete
+	 * @return Itself
+	 * @throws IndexOutOfBoundsException If the index is less than zero or
+	 *             equals/greater than the number of items in the list
+	 */
+	public synchronized T removeItem(int index) {
+		if (index >= 0 && index < items.size()) {
+			items.remove(index);
+			if (selectedIndex >= items.size()) {
+				selectedIndex--;
+			}
+			invalidate();
+		}
+		return self();
+	}
+
+	/**
+	 * Changes status of whether items can be removed from the list by selecting
+	 * them and pressing delete.
+	 * 
+	 * @param allowRemoves true to allow removes with delete, false to disallow
+	 */
+	public void setAllowRemovesWithDelete(boolean allowRemoves) {
+		this.allowRemovesWithDelete = allowRemoves;
+	}
+
+	/**
+	 * Returns whether allowing removes with the delete key is enabled.
+	 * 
+	 * @return true if removes can be performed with Delete key, false otherwise
+	 */
+	public boolean isAllowRemovesWithDelete() {
+		return this.allowRemovesWithDelete;
+	}
+    
     /**
      * The default renderer for {@code AbstractListBox} and all its subclasses.
      * @param <V> Type of the items the list box this renderer is for

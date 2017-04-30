@@ -53,6 +53,7 @@ public class ListBoxTest extends TestBase {
                 }
             });
         }
+        actionListBox.setAllowRemovesWithDelete(true);
         horizontalPanel.addComponent(checkBoxList.withBorder(Borders.singleLine("CheckBoxList")));
         horizontalPanel.addComponent(radioBoxList.withBorder(Borders.singleLine("RadioBoxList")));
         horizontalPanel.addComponent(actionListBox.withBorder(Borders.singleLine("ActionListBox")));
