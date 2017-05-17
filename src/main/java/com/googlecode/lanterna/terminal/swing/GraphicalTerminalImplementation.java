@@ -459,6 +459,15 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
         //System.out.println("Updated backbuffer in " + (System.currentTimeMillis() - startTime) + " ms");
     }
 
+    void setComponentBounds(int x, int y, int width, int height) {
+    	if (width >= 0 && height >= 0) {
+	        int columns = width / getFontWidth();
+	        int rows = height / getFontHeight();
+	        TerminalSize terminalSize = virtualTerminal.getTerminalSize().withColumns(columns).withRows(rows);
+	        virtualTerminal.setTerminalSize(terminalSize);
+    	}
+    }
+
     private void buildDirtyCellsLookupTable(int firstRowOffset, int lastRowOffset) {
         if(virtualTerminal.isWholeBufferDirtyThenReset() || needFullRedraw) {
             dirtyCellsLookupTable.setAllDirty();

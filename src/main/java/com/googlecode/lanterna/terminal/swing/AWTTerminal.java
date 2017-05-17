@@ -192,6 +192,12 @@ public class AWTTerminal extends Panel implements IOSafeTerminal {
         terminalImplementation.paintComponent(componentGraphics);
     }
 
+    @Override
+    public void setBounds(int x, int y, int width, int height) {
+        super.setBounds(x, y, width, height);
+        terminalImplementation.setComponentBounds(x, y, width, height);
+    }
+
     // Terminal methods below here, just forward to the implementation
 
     @Override
