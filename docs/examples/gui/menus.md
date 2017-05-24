@@ -19,7 +19,7 @@ item and the action to execute when clicked.
 
 To create a menu, you'll need to create and pass in a `WindowBasedTextGUI`:
 
-```
+```java
     Terminal terminal = new DefaultTerminalFactory().createTerminal();
     Screen screen = new TerminalScreen(terminal);
     screen.startScreen();
@@ -31,7 +31,7 @@ To create a menu, you'll need to create and pass in a `WindowBasedTextGUI`:
 In the following example, a menu bar with two menus, *File* and *Help*, is 
 created, each containing two menu items:
 
-```
+```java
         MenuBar menubar = new MenuBar();
         
         // "File" menu
