@@ -88,7 +88,8 @@ public abstract class AbstractTextGUIThread implements TextGUIThread {
 
     @Override
     public void invokeAndWait(final Runnable runnable) throws IllegalStateException, InterruptedException {
-        if(Thread.currentThread() == getThread()) {
+        Thread guiThread = getThread();
+        if(guiThread == null || Thread.currentThread() == guiThread) {
             runnable.run();
         }
         else {

@@ -64,14 +64,6 @@ public class SameTextGUIThread extends AbstractTextGUIThread {
         return guiThread;
     }
 
-    @Override
-    public void invokeAndWait(Runnable runnable) throws IllegalStateException, InterruptedException {
-        if(guiThread == null || guiThread == Thread.currentThread()) {
-            runnable.run();
-        }
-        super.invokeAndWait(runnable);
-    }
-
     /**
      * Default factory class for {@code SameTextGUIThread}, you need to pass this to the {@code TextGUI} constructor if
      * you want it to use this class
