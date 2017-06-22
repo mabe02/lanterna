@@ -478,8 +478,23 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
             return this;
         }
         Window originalActiveWindow = activeWindow;
-        Window nextWindow = activeWindow == null  ? windows.get(0) : getNextWindow(reverse, activeWindow);
+        Window nextWindow;
+        if(activeWindow == null) {
+            // Cycling out of active background pane
+            nextWindow = reverse ? windows.get(windows.size() - 1) : windows.get(0);
+        }
+        else {
+            // Switch to the next window
+            nextWindow = getNextWindow(reverse, activeWindow);
+        }
+
+        int noFocusWindows = 0;
         while(nextWindow.getHints().contains(Window.Hint.NO_FOCUS)) {
+            ++noFocusWindows;
+            if(noFocusWindows == windows.size()) {
+                // All windows are NO_FOCUS, so give up
+                return this;
+            }
             nextWindow = getNextWindow(reverse, nextWindow);
             if(nextWindow == originalActiveWindow) {
                 return this;
