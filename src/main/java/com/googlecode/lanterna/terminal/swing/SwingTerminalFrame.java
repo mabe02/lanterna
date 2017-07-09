@@ -164,6 +164,15 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
         dispose();
     }
 
+    /**
+     * Takes a KeyStroke and puts it on the input queue of the terminal emulator. This way you can insert synthetic
+     * input events to be processed as if they came from the user typing on the keyboard.
+     * @param keyStroke Key stroke input event to put on the queue
+     */
+    public void addInput(KeyStroke keyStroke) {
+        swingTerminal.addInput(keyStroke);
+    }
+
     ///////////
     // Delegate all Terminal interface implementations to SwingTerminal
     ///////////

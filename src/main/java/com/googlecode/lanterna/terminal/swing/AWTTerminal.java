@@ -192,6 +192,15 @@ public class AWTTerminal extends Panel implements IOSafeTerminal {
         terminalImplementation.paintComponent(componentGraphics);
     }
 
+    /**
+     * Takes a KeyStroke and puts it on the input queue of the terminal emulator. This way you can insert synthetic
+     * input events to be processed as if they came from the user typing on the keyboard.
+     * @param keyStroke Key stroke input event to put on the queue
+     */
+    public void addInput(KeyStroke keyStroke) {
+        terminalImplementation.addInput(keyStroke);
+    }
+
     // Terminal methods below here, just forward to the implementation
 
     @Override

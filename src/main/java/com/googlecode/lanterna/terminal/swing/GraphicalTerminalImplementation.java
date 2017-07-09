@@ -616,6 +616,10 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
         }
     }
 
+    void addInput(KeyStroke keyStroke) {
+        keyQueue.add(keyStroke);
+    }
+
     ///////////
     // Then delegate all Terminal interface methods to the virtual terminal implementation
     //
