@@ -83,6 +83,14 @@ public class VirtualScreen extends AbstractScreen {
         return minimumSize;
     }
 
+    /**
+     * Returns the current size of the viewport. This will generally match the dimensions of the underlying terminal.
+     * @return Viewport size for this {@link VirtualScreen}
+     */
+    public TerminalSize getViewportSize() {
+        return viewportSize;
+    }
+
     @Override
     public void startScreen() throws IOException {
         realScreen.startScreen();
