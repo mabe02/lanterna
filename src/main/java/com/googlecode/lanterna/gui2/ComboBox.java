@@ -408,6 +408,16 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
                 }
                 return Result.MOVE_FOCUS_UP;
 
+            case PageUp:
+            case PageDown:
+            case Home:
+            case End:
+                if(popupWindow != null) {
+                    popupWindow.listBox.handleKeyStroke(keyStroke);
+                    return Result.HANDLED;
+                }
+                break;
+
             case Enter:
                 if(popupWindow != null) {
                     popupWindow.listBox.handleKeyStroke(keyStroke);
