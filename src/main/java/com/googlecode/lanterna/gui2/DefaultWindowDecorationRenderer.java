@@ -98,7 +98,12 @@ public class DefaultWindowDecorationRenderer implements WindowDecorationRenderer
             graphics.putString(titleHorizontalPosition, 0, actualTitle);
         }
 
-        return graphics.newTextGraphics(new TerminalPosition(1, 1), graphics.getSize().withRelativeColumns(-2).withRelativeRows(-2));
+        return graphics.newTextGraphics(
+                new TerminalPosition(1, 1),
+                drawableArea
+                        // Make sure we don't make the new graphic's area smaller than 0
+                        .withRelativeColumns(-(Math.min(2, drawableArea.getColumns())))
+                        .withRelativeRows(-(Math.min(2, drawableArea.getRows()))));
     }
 
     @Override
