@@ -29,6 +29,10 @@ import com.googlecode.lanterna.graphics.ThemeDefinition;
  * @author Martin
  */
 public class DefaultWindowDecorationRenderer implements WindowDecorationRenderer {
+
+    private static final int TITLE_POSITION_WITH_PADDING = 4;
+    private static final int TITLE_POSITION_WITHOUT_PADDING = 3;
+
     @Override
     public TextGUIGraphics draw(WindowBasedTextGUI textGUI, TextGUIGraphics graphics, Window window) {
         String title = window.getTitle();
@@ -49,11 +53,11 @@ public class DefaultWindowDecorationRenderer implements WindowDecorationRenderer
         boolean useTitlePadding = themeDefinition.getBooleanProperty("TITLE_PADDING", false);
         boolean centerTitle = themeDefinition.getBooleanProperty("CENTER_TITLE", false);
 
-        int titleHorizontalPosition = useTitlePadding ? 4 : 3;
+        int titleHorizontalPosition = useTitlePadding ? TITLE_POSITION_WITH_PADDING : TITLE_POSITION_WITHOUT_PADDING;
         int titleMaxColumns = drawableArea.getColumns() - titleHorizontalPosition * 2;
         if(centerTitle) {
             titleHorizontalPosition = (drawableArea.getColumns() / 2) - (TerminalTextUtils.getColumnWidth(title) / 2);
-            titleHorizontalPosition = Math.max(titleHorizontalPosition, useTitlePadding ? 4 : 3);
+            titleHorizontalPosition = Math.max(titleHorizontalPosition, useTitlePadding ? TITLE_POSITION_WITH_PADDING : TITLE_POSITION_WITHOUT_PADDING);
         }
         String actualTitle = TerminalTextUtils.fitString(title, titleMaxColumns);
         int titleActualColumns = TerminalTextUtils.getColumnWidth(actualTitle);
@@ -112,9 +116,9 @@ public class DefaultWindowDecorationRenderer implements WindowDecorationRenderer
         boolean useTitlePadding = themeDefinition.getBooleanProperty("TITLE_PADDING", false);
 
         int titleWidth = TerminalTextUtils.getColumnWidth(window.getTitle());
-        int minPadding = 4;
+        int minPadding = TITLE_POSITION_WITHOUT_PADDING * 2;
         if(useTitlePadding) {
-            minPadding = 6;
+            minPadding = TITLE_POSITION_WITH_PADDING * 2;
         }
 
         return contentAreaSize
