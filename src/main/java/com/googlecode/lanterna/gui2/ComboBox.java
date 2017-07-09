@@ -60,10 +60,12 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
     private boolean readOnly;
     private boolean dropDownFocused;
     private int textInputPosition;
+    private int dropDownNumberOfRows;
 
     /**
      * Creates a new {@code ComboBox} initialized with N number of items supplied through the varargs parameter. If at
-     * least one item is given, the first one in the array will be initially selected
+     * least one item is given, the first one in the array will be initially selected. By default 10 items will be
+     * displayed at once, more than that and there will be a scroll bar.
      * @param items Items to populate the new combo box with
      */
     public ComboBox(V... items) {
@@ -72,7 +74,8 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
 
     /**
      * Creates a new {@code ComboBox} initialized with N number of items supplied through the items parameter. If at
-     * least one item is given, the first one in the collection will be initially selected
+     * least one item is given, the first one in the collection will be initially selected. By default 10 items will be
+     * displayed at once, more than that and there will be a scroll bar.
      * @param items Items to populate the new combo box with
      */
     public ComboBox(Collection<V> items) {
@@ -84,7 +87,7 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
      * initial text in the combo box is set to a specific value passed in through the {@code initialText} parameter, it
      * can be a text which is not contained within the items and the selection state of the combo box will be
      * "no selection" (so {@code getSelectedIndex()} will return -1) until the user interacts with the combo box and
-     * manually changes it
+     * manually changes it. By default 10 items will be displayed at once, more than that and there will be a scroll bar.
      *
      * @param initialText Text to put in the combo box initially
      * @param items Items to populate the new combo box with
@@ -96,7 +99,8 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
 
     /**
      * Creates a new {@code ComboBox} initialized with N number of items supplied through the items parameter. The
-     * initially selected item is specified through the {@code selectedIndex} parameter.
+     * initially selected item is specified through the {@code selectedIndex} parameter. By default 10 items will be
+     * displayed at once, more than that and there will be a scroll bar.
      * @param items Items to populate the new combo box with
      * @param selectedIndex Index of the item which should be initially selected
      */
@@ -113,6 +117,7 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
         this.readOnly = true;
         this.dropDownFocused = true;
         this.textInputPosition = 0;
+        this.dropDownNumberOfRows = 10;
         if(selectedIndex != -1) {
             this.text = this.items.get(selectedIndex).toString();
         }
@@ -285,6 +290,28 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
      */
     public int getTextInputPosition() {
         return textInputPosition;
+    }
+
+    /**
+     * Returns the number of items to display in drop down at one time, if there are more items in the model there will
+     * be a scrollbar to help the user navigate. If this returns 0, the combo box will always grow to show all items in
+     * the list, which might cause undesired effects if you put really a lot of items into the combo box.
+     *
+     * @return Number of items (rows) that will be displayed in the combo box, or 0 if the combo box will always grow to
+     * accommodate
+     */
+    public int getDropDownNumberOfRows() {
+        return dropDownNumberOfRows;
+    }
+
+    /**
+     * Sets the number of items to display in drop down at one time, if there are more items in the model there will
+     * be a scrollbar to help the user navigate. Use this method if your combo boxes have large models that fills up
+     * the whole screen. Set it to 0 if you don't want to limit the number.
+     * @param dropDownNumberOfRows Max number of items (rows) to display at one time in the combo box
+     */
+    public void setDropDownNumberOfRows(int dropDownNumberOfRows) {
+        this.dropDownNumberOfRows = dropDownNumberOfRows;
     }
 
     /**
@@ -539,6 +566,11 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
                 });
             }
             listBox.setSelectedIndex(getSelectedIndex());
+            TerminalSize dropDownListPreferedSize = listBox.getPreferredSize();
+            if(dropDownNumberOfRows > 0) {
+                listBox.setPreferredSize(dropDownListPreferedSize.withRows(
+                        Math.min(dropDownNumberOfRows, dropDownListPreferedSize.getRows())));
+            }
             setComponent(listBox);
         }
 

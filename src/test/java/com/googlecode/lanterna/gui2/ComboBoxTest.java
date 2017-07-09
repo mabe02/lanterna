@@ -22,6 +22,7 @@ import com.googlecode.lanterna.TerminalSize;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.TimeZone;
 
 public class ComboBoxTest extends TestBase {
     public static void main(String[] args) throws IOException, InterruptedException {
@@ -36,10 +37,14 @@ public class ComboBoxTest extends TestBase {
         final ComboBox<String> comboBoxReadOnly = new ComboBox<String>();
         final ComboBox<String> comboBoxEditable = new ComboBox<String>().setReadOnly(false);
         final ComboBox<String> comboBoxCJK = new ComboBox<String>().setReadOnly(false);
+        final ComboBox<String> comboBoxTimeZones = new ComboBox<String>().setReadOnly(true);
 
         for(String item: Arrays.asList("Berlin", "London", "Paris", "Stockholm", "Tokyo")) {
             comboBoxEditable.addItem(item);
             comboBoxReadOnly.addItem(item);
+        }
+        for(String id: TimeZone.getAvailableIDs()) {
+            comboBoxTimeZones.addItem(id);
         }
         comboBoxCJK.addItem("维基百科人人可編輯的自由百科全書");
         comboBoxCJK.addItem("ウィキペディアは誰でも編集できるフリー百科事典です");
@@ -65,6 +70,8 @@ public class ComboBoxTest extends TestBase {
         });
         mainPanel.addComponent(Panels.horizontal(textBoxNewItem, buttonAddItem));
 
+        mainPanel.addComponent(new EmptySpace(TerminalSize.ONE));
+        mainPanel.addComponent(comboBoxTimeZones.withBorder(Borders.singleLine("Large ComboBox")));
         mainPanel.addComponent(new EmptySpace(TerminalSize.ONE));
         mainPanel.addComponent(new Separator(Direction.HORIZONTAL).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Fill)));
         mainPanel.addComponent(new Button("OK", new Runnable() {
