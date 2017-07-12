@@ -42,7 +42,7 @@ public class LanternaThemes {
     private static final ConcurrentHashMap<String, Theme> REGISTERED_THEMES = new ConcurrentHashMap<String, Theme>();
 
     static {
-        registerPropTheme("default", loadPropTheme("default-theme.properties"));
+        registerTheme("default", new DefaultTheme());
         registerPropTheme("bigsnake", loadPropTheme("bigsnake-theme.properties"));
         registerPropTheme("businessmachine", loadPropTheme("businessmachine-theme.properties"));
         registerPropTheme("conqueror", loadPropTheme("conqueror-theme.properties"));
