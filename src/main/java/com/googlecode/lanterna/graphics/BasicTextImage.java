@@ -191,8 +191,8 @@ public class BasicTextImage implements TextImage {
             startColumnIndex = 0;
         }
         if(startRowIndex < 0) {
-            startRowIndex += -startRowIndex;
-            rows = startRowIndex;
+            destinationRowOffset += -startRowIndex;
+            rows += startRowIndex;
             startRowIndex = 0;
         }
 
