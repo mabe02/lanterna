@@ -20,6 +20,7 @@ package com.googlecode.lanterna.bundle;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
@@ -97,6 +98,9 @@ public abstract class BundleLocator {
                 }
             } else {
                 stream = loader.getResourceAsStream(resourceName);
+                if(stream == null) {
+                    stream = new FileInputStream("src/main/resources/" + resourceName);
+                }
             }
             if (stream != null) {
                 try {
