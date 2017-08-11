@@ -248,7 +248,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
                     textImage = new BasicTextImage(window.getDecoratedSize());
                     windowRenderBufferCache.put(window, textImage);
                 }
-                TextGUIGraphics windowGraphics = new TextGUIGraphics(this, textImage.newTextGraphics());
+                TextGUIGraphics windowGraphics = new DefaultTextGUIGraphics(this, textImage.newTextGraphics());
                 TerminalPosition contentOffset = TerminalPosition.TOP_LEFT_CORNER;
                 if (!window.getHints().contains(Window.Hint.NO_DECORATIONS)) {
                     WindowDecorationRenderer decorationRenderer = getWindowManager().getWindowDecorationRenderer(window);
@@ -281,7 +281,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
     }
 
     private void drawBackgroundPane(TextGUIGraphics graphics) {
-        backgroundPane.draw(new TextGUIGraphics(this, graphics));
+        backgroundPane.draw(new DefaultTextGUIGraphics(this, graphics));
     }
 
     @Override

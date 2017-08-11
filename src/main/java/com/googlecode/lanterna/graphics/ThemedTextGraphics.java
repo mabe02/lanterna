@@ -24,25 +24,6 @@ package com.googlecode.lanterna.graphics;
  */
 public interface ThemedTextGraphics extends TextGraphics {
     /**
-     * Returns the {@code Theme} object active on this {@code ThemedTextGraphics}
-     * @return Active {@code Theme} object
-     * @deprecated Use the {@link Theme} attached to each component instead
-     */
-    @Deprecated
-    Theme getTheme();
-
-    /**
-     * Retrieves the ThemeDefinition associated with the class parameter passed in. The implementation should make sure
-     * that there is always a fallback available if there's no direct definition for this class; the method should never
-     * return null.
-     * @param clazz Class to search ThemeDefinition for
-     * @return ThemeDefinition that was resolved for this class
-     * @deprecated Use the {@link Theme} attached to each component instead
-     */
-    @Deprecated
-    ThemeDefinition getThemeDefinition(Class<?> clazz);
-
-    /**
      * Takes a ThemeStyle as applies it to this TextGraphics. This will effectively set the foreground color, the
      * background color and all the SGRs.
      * @param themeStyle ThemeStyle to apply
