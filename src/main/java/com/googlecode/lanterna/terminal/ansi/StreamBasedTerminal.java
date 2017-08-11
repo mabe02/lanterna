@@ -141,19 +141,6 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
     }
 
     /**
-     * Adds a KeyDecodingProfile to be used when converting raw user input characters to {@code Key} objects.
-     *
-     * @see KeyDecodingProfile
-     * @param profile Decoding profile to add
-     * @deprecated Use {@code getInputDecoder().addProfile(profile)} instead
-     */
-    @Deprecated
-    @SuppressWarnings("WeakerAccess")
-    public void addKeyDecodingProfile(KeyDecodingProfile profile) {
-        inputDecoder.addProfile(profile);
-    }
-
-    /**
      * Returns the {@code InputDecoder} attached to this {@code StreamBasedTerminal}. Can be used to add additional
      * character patterns to recognize and tune the way input is turned in {@code KeyStroke}:s.
      * @return {@code InputDecoder} attached to this {@code StreamBasedTerminal}

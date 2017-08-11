@@ -155,16 +155,6 @@ public class TerminalTextUtils {
     }
 
     /**
-     * @param s String to measure
-     * @return Returns the width (in columns) the string will take up when printed on the screen
-     * @deprecated Call {@code getColumnWidth(s)} instead
-     */
-    @Deprecated
-    public static int getTrueWidth(String s) {
-        return getColumnWidth(s);
-    }
-
-    /**
      * Given a string, returns how many columns this string would need to occupy in a terminal, taking into account that
      * CJK characters takes up two columns.
      * @param s String to check length

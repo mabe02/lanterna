@@ -24,11 +24,6 @@ package com.googlecode.lanterna.terminal.swing;
  */
 public enum TerminalEmulatorAutoCloseTrigger {
     /**
-     * Not used anymore
-     */
-    @Deprecated
-    DoNotAutoClose,
-    /**
      * Close the frame when exiting from private mode
      */
     CloseOnExitPrivateMode,

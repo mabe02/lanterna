@@ -131,17 +131,6 @@ public class AWTTerminalFrame extends Frame implements IOSafeTerminal {
         return EnumSet.copyOf(autoCloseTriggers);
     }
 
-    /**
-     * Changes the current auto-close trigger used by this AWTTerminalFrame
-     * @param autoCloseTrigger New auto-close trigger to use
-     * @deprecated Use
-     */
-    @Deprecated
-    public void setAutoCloseTrigger(TerminalEmulatorAutoCloseTrigger autoCloseTrigger) {
-        this.autoCloseTriggers.clear();
-        this.autoCloseTriggers.add(autoCloseTrigger);
-    }
-
     public void addAutoCloseTrigger(TerminalEmulatorAutoCloseTrigger autoCloseTrigger) {
         autoCloseTriggers.add(autoCloseTrigger);
     }

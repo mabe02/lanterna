@@ -35,9 +35,6 @@ import com.googlecode.lanterna.TerminalSize;
 @SuppressWarnings("WeakerAccess")
 public class UnixTerminal extends UnixLikeTTYTerminal {
 
-    @Deprecated
-    protected final UnixTerminalSizeQuerier terminalSizeQuerier;
-
     /**
      * Creates a UnixTerminal with default settings, using System.in and System.out for input/output, using the default
      * character set on the system as the encoding and trap ctrl+c signal instead of killing the application.
@@ -66,29 +63,6 @@ public class UnixTerminal extends UnixLikeTTYTerminal {
     /**
      * Creates a UnixTerminal using a specified input stream, output stream and character set, with a custom size
      * querier instead of using the default one. This way you can override size detection (if you want to force the
-     * terminal to a fixed size, for example). Ctrl+c signal will be trapped instead of killing the application.
-     *
-     * @param terminalInput Input stream to read terminal input from
-     * @param terminalOutput Output stream to write terminal output to
-     * @param terminalCharset Character set to use when converting characters to bytes
-     * @param customSizeQuerier Object to use for looking up the size of the terminal, or null to use the built-in
-     * method
-     * @throws java.io.IOException If there was an I/O error initializing the terminal
-     * @deprecated Use an overload that doesn't take a {@link UnixTerminalSizeQuerier}
-     */
-    @SuppressWarnings({"SameParameterValue", "WeakerAccess"})
-    @Deprecated
-    public UnixTerminal(
-            InputStream terminalInput,
-            OutputStream terminalOutput,
-            Charset terminalCharset,
-            UnixTerminalSizeQuerier customSizeQuerier) throws IOException {
-        this(terminalInput, terminalOutput, terminalCharset, customSizeQuerier, CtrlCBehaviour.CTRL_C_KILLS_APPLICATION);
-    }
-
-    /**
-     * Creates a UnixTerminal using a specified input stream, output stream and character set, with a custom size
-     * querier instead of using the default one. This way you can override size detection (if you want to force the
      * terminal to a fixed size, for example). You also choose how you want ctrl+c key strokes to be handled.
      *
      * @param terminalInput Input stream to read terminal input from
@@ -105,39 +79,7 @@ public class UnixTerminal extends UnixLikeTTYTerminal {
             Charset terminalCharset,
             CtrlCBehaviour terminalCtrlCBehaviour) throws IOException {
 
-        this(terminalInput, terminalOutput, terminalCharset, null, terminalCtrlCBehaviour);
-    }
-
-    /**
-     * Creates a UnixTerminal using a specified input stream, output stream and character set, with a custom size
-     * querier instead of using the default one. This way you can override size detection (if you want to force the
-     * terminal to a fixed size, for example). You also choose how you want ctrl+c key strokes to be handled.
-     *
-     * @param terminalInput Input stream to read terminal input from
-     * @param terminalOutput Output stream to write terminal output to
-     * @param terminalCharset Character set to use when converting characters to bytes
-     * @param customSizeQuerier Object to use for looking up the size of the terminal, or null to use the built-in
-     * method
-     * @param terminalCtrlCBehaviour Special settings on how the terminal will behave, see {@code UnixTerminalMode} for more
-     * details
-     * @throws java.io.IOException If there was an I/O error initializing the terminal
-     * @deprecated Use an overload that doesn't take a {@link UnixTerminalSizeQuerier}
-     */
-    @SuppressWarnings({"SameParameterValue", "WeakerAccess"})
-    @Deprecated
-    public UnixTerminal(
-            InputStream terminalInput,
-            OutputStream terminalOutput,
-            Charset terminalCharset,
-            UnixTerminalSizeQuerier customSizeQuerier,
-            CtrlCBehaviour terminalCtrlCBehaviour) throws IOException {
-
-        this(new File("/dev/tty"),
-                terminalInput,
-                terminalOutput,
-                terminalCharset,
-                customSizeQuerier,
-                terminalCtrlCBehaviour);
+        this(new File("/dev/tty"), terminalInput, terminalOutput, terminalCharset, terminalCtrlCBehaviour);
     }
 
     private UnixTerminal(
@@ -145,7 +87,6 @@ public class UnixTerminal extends UnixLikeTTYTerminal {
             InputStream terminalInput,
             OutputStream terminalOutput,
             Charset terminalCharset,
-            UnixTerminalSizeQuerier customSizeQuerier,
             CtrlCBehaviour terminalCtrlCBehaviour) throws IOException {
 
         super(terminalDevice,
@@ -153,16 +94,5 @@ public class UnixTerminal extends UnixLikeTTYTerminal {
                 terminalOutput,
                 terminalCharset,
                 terminalCtrlCBehaviour);
-
-        this.terminalSizeQuerier = customSizeQuerier;
-    }
-
-    @Override
-    public TerminalSize findTerminalSize() throws IOException {
-        if(terminalSizeQuerier != null) {
-            return terminalSizeQuerier.queryTerminalSize();
-        }
-        
-        return super.findTerminalSize();
     }
 }
