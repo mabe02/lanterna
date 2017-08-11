@@ -38,7 +38,12 @@ public class DefaultThemeTest {
 
             // https://stackoverflow.com/questions/309424/read-convert-an-inputstream-to-a-string
             Scanner s = new Scanner(resourceAsStream).useDelimiter("\\A");
-            return s.hasNext() ? s.next() : "";
+            String definition = s.hasNext() ? s.next() : "";
+
+            // Normalize line endings to LF
+            definition = definition.replace("\r\n", "\n");
+
+            return definition;
         }
         finally {
             if(resourceAsStream != null) {
