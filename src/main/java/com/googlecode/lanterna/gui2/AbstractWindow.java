@@ -59,6 +59,7 @@ public abstract class AbstractWindow extends AbstractBasePane<Window> implements
         this.title = title;
         this.textGUI = null;
         this.visible = true;
+        this.contentOffset = TerminalPosition.TOP_LEFT_CORNER;
         this.lastKnownPosition = null;
         this.lastKnownSize = null;
         this.lastKnownDecoratedSize = null;
@@ -147,7 +148,7 @@ public abstract class AbstractWindow extends AbstractBasePane<Window> implements
 
     @Override
     public TerminalPosition fromGlobal(TerminalPosition globalPosition) {
-        if(globalPosition == null) {
+        if(globalPosition == null || lastKnownPosition == null) {
             return null;
         }
         return globalPosition.withRelative(
