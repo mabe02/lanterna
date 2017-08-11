@@ -22,7 +22,8 @@ public class WindowsTerminal extends UnixLikeTerminal {
     private static final WinDef.HANDLE CONSOLE_INPUT_HANDLE = WINDOWS_CONSOLE.GetStdHandle(Wincon.STD_INPUT_HANDLE);
     private static final WinDef.HANDLE CONSOLE_OUTPUT_HANDLE = WINDOWS_CONSOLE.GetStdHandle(Wincon.STD_OUTPUT_HANDLE);
 
-    private Integer savedTerminalMode;
+    private Integer savedTerminalInputMode;
+    private Integer savedTerminalOutputMode;
 
     public WindowsTerminal() throws IOException {
         this(System.in, System.out, Charset.defaultCharset(), CtrlCBehaviour.CTRL_C_KILLS_APPLICATION);
@@ -41,20 +42,31 @@ public class WindowsTerminal extends UnixLikeTerminal {
     }
 
     @Override
+    protected void acquire() throws IOException {
+        super.acquire();
+        int terminalOutputMode = getConsoleOutputMode();
+        terminalOutputMode |= Wincon.ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+        terminalOutputMode |= Wincon.DISABLE_NEWLINE_AUTO_RETURN;
+        WINDOWS_CONSOLE.SetConsoleMode(CONSOLE_OUTPUT_HANDLE, terminalOutputMode);
+    }
+
+    @Override
     public synchronized void saveTerminalSettings() throws IOException {
-        this.savedTerminalMode = getConsoleMode();
+        this.savedTerminalInputMode = getConsoleInputMode();
+        this.savedTerminalOutputMode = getConsoleOutputMode();
     }
 
     @Override
     public synchronized void restoreTerminalSettings() throws IOException {
-        if(savedTerminalMode != null) {
-            WINDOWS_CONSOLE.SetConsoleMode(CONSOLE_INPUT_HANDLE, savedTerminalMode);
+        if(savedTerminalInputMode != null) {
+            WINDOWS_CONSOLE.SetConsoleMode(CONSOLE_INPUT_HANDLE, savedTerminalInputMode);
+            WINDOWS_CONSOLE.SetConsoleMode(CONSOLE_OUTPUT_HANDLE, savedTerminalOutputMode);
         }
     }
 
     @Override
     public synchronized void keyEchoEnabled(boolean enabled) throws IOException {
-        int mode = getConsoleMode();
+        int mode = getConsoleInputMode();
         if(enabled) {
             mode |= Wincon.ENABLE_ECHO_INPUT;
         }
@@ -66,7 +78,7 @@ public class WindowsTerminal extends UnixLikeTerminal {
 
     @Override
     public synchronized void canonicalMode(boolean enabled) throws IOException {
-        int mode = getConsoleMode();
+        int mode = getConsoleInputMode();
         if(enabled) {
             mode |= Wincon.ENABLE_LINE_INPUT;
         }
@@ -78,7 +90,7 @@ public class WindowsTerminal extends UnixLikeTerminal {
 
     @Override
     public synchronized void keyStrokeSignalsEnabled(boolean enabled) throws IOException {
-        int mode = getConsoleMode();
+        int mode = getConsoleInputMode();
         if(enabled) {
             mode |= Wincon.ENABLE_PROCESSED_INPUT;
         }
@@ -111,9 +123,15 @@ public class WindowsTerminal extends UnixLikeTerminal {
         return new TerminalPosition(column, row);
     }
 
-    private int getConsoleMode() {
+    private int getConsoleInputMode() {
         IntByReference lpMode = new IntByReference();
         WINDOWS_CONSOLE.GetConsoleMode(CONSOLE_INPUT_HANDLE, lpMode);
+        return lpMode.getValue();
+    }
+
+    private int getConsoleOutputMode() {
+        IntByReference lpMode = new IntByReference();
+        WINDOWS_CONSOLE.GetConsoleMode(CONSOLE_OUTPUT_HANDLE, lpMode);
         return lpMode.getValue();
     }
 }

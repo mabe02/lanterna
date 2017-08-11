@@ -28,9 +28,14 @@ interface Wincon extends StdCallLibrary {
     int STD_INPUT_HANDLE = -10;
     int STD_OUTPUT_HANDLE = -11;
 
+    // SetConsoleMode input values
     int ENABLE_PROCESSED_INPUT = 1;
     int ENABLE_LINE_INPUT = 2;
     int ENABLE_ECHO_INPUT = 4;
+
+    // SetConsoleMode screen buffer values
+    int ENABLE_VIRTUAL_TERMINAL_PROCESSING = 4;
+    int DISABLE_NEWLINE_AUTO_RETURN = 8;
 
     WinDef.HANDLE GetStdHandle(int var1);
     boolean GetConsoleMode(WinDef.HANDLE var1, IntByReference var2);
