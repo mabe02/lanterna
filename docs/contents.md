@@ -17,6 +17,7 @@ over the years, since lanterna was first published.
 1. [Tutorial 1](tutorial/Tutorial01.md) - Basic usage
 2. [Tutorial 2](tutorial/Tutorial02.md) - More Terminal functionality
 3. [Tutorial 3](tutorial/Tutorial03.md) - Using the Screen layer
+4. [Tutorial 4](tutorial/Tutorial04.md) - Using the TextGUI layer
 
 ## Examples
 ### Terminal
