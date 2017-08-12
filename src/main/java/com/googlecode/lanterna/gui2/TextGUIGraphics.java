@@ -29,7 +29,7 @@ import java.util.EnumSet;
  * TextGraphics implementation used by TextGUI when doing any drawing operation.
  * @author Martin
  */
-public final class TextGUIGraphics implements ThemedTextGraphics, TextGraphics {
+public class TextGUIGraphics implements ThemedTextGraphics, TextGraphics {
     private final TextGUI textGUI;
     private final TextGraphics backend;
 
