@@ -34,7 +34,7 @@ Lanterna is available on [Maven Central](http://search.maven.org/), through [Son
     <dependency>
         <groupId>com.googlecode.lanterna</groupId>
         <artifactId>lanterna</artifactId>
-        <version>3.0.0-rc1</version>
+        <version>3.0.0</version>
     </dependency>
 ```
 
