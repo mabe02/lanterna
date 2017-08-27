@@ -19,10 +19,13 @@
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.TimeZone;
+import java.util.regex.Pattern;
 
 public class ComboBoxTest extends TestBase {
     public static void main(String[] args) throws IOException, InterruptedException {
@@ -30,7 +33,7 @@ public class ComboBoxTest extends TestBase {
     }
 
     @Override
-    public void init(WindowBasedTextGUI textGUI) {
+    public void init(final WindowBasedTextGUI textGUI) {
         final BasicWindow window = new BasicWindow("ComboBoxTest");
         Panel mainPanel = new Panel();
 
@@ -58,7 +61,7 @@ public class ComboBoxTest extends TestBase {
                 comboBoxCJK.withBorder(Borders.singleLine("CJK"))));
         mainPanel.addComponent(new EmptySpace(TerminalSize.ONE));
 
-        final TextBox textBoxNewItem = new TextBox();
+        final TextBox textBoxNewItem = new TextBox(new TerminalSize(20, 1));
         Button buttonAddItem = new Button("Add", new Runnable() {
             @Override
             public void run() {
@@ -68,7 +71,39 @@ public class ComboBoxTest extends TestBase {
                 window.setFocusedInteractable(textBoxNewItem);
             }
         });
-        mainPanel.addComponent(Panels.horizontal(textBoxNewItem, buttonAddItem));
+        final TextBox textBoxSetSelectedIndex = new TextBox(new TerminalSize(20, 1), "0");
+        textBoxSetSelectedIndex.setValidationPattern(Pattern.compile("-?[0-9]+"));
+        Button buttonSetSelectedIndex = new Button("Set Selected Index", new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    comboBoxEditable.setSelectedIndex(Integer.parseInt(textBoxSetSelectedIndex.getText()));
+                    comboBoxReadOnly.setSelectedIndex(Integer.parseInt(textBoxSetSelectedIndex.getText()));
+                }
+                catch (Exception e) {
+                    MessageDialog.showMessageDialog(textGUI, e.getClass().getName(), e.getMessage(), MessageDialogButton.OK);
+                }
+            }
+        });
+        final TextBox textBoxSetSelectedItem = new TextBox(new TerminalSize(20, 1));
+        Button buttonSetSelectedItem = new Button("Set Selected Item", new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    comboBoxEditable.setSelectedItem(textBoxSetSelectedItem.getText());
+                    comboBoxReadOnly.setSelectedItem(textBoxSetSelectedItem.getText());
+                }
+                catch (Exception e) {
+                    MessageDialog.showMessageDialog(textGUI, e.getClass().getName(), e.getMessage(), MessageDialogButton.OK);
+                }
+            }
+        });
+        mainPanel.addComponent(
+                Panels.vertical(
+                        Panels.horizontal(textBoxNewItem, buttonAddItem),
+                        Panels.horizontal(textBoxSetSelectedIndex, buttonSetSelectedIndex),
+                        Panels.horizontal(textBoxSetSelectedItem, buttonSetSelectedItem))
+                    .withBorder(Borders.singleLineBevel("Modify Content")));
 
         mainPanel.addComponent(new EmptySpace(TerminalSize.ONE));
         mainPanel.addComponent(comboBoxTimeZones.withBorder(Borders.singleLine("Large ComboBox")));
