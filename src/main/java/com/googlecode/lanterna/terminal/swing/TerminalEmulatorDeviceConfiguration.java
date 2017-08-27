@@ -36,12 +36,12 @@ public class TerminalEmulatorDeviceConfiguration {
         return new TerminalEmulatorDeviceConfiguration();
     }
 
-    private final int lineBufferScrollbackSize;
-    private final int blinkLengthInMilliSeconds;
-    private final CursorStyle cursorStyle;
-    private final TextColor cursorColor;
-    private final boolean cursorBlinking;
-    private final boolean clipboardAvailable;
+    private int lineBufferScrollbackSize;
+    private int blinkLengthInMilliSeconds;
+    private CursorStyle cursorStyle;
+    private TextColor cursorColor;
+    private boolean cursorBlinking;
+    private boolean clipboardAvailable;
 
     /**
      * Creates a new terminal device configuration object with all the defaults set
@@ -143,23 +143,34 @@ public class TerminalEmulatorDeviceConfiguration {
         return clipboardAvailable;
     }
 
-    /**
-     * Returns a copy of this device configuration but with a different size of the scrollback buffer
-     * @param lineBufferScrollbackSize Size of the scrollback buffer (in number of lines) the copy should have
-     * @return Copy of this device configuration with a specified size for the scrollback buffer
-     */
+    public TerminalEmulatorDeviceConfiguration withBlinkLengthInMilliSeconds(int blinkLengthInMilliSeconds) {
+        this.blinkLengthInMilliSeconds = blinkLengthInMilliSeconds;
+        return this;
+    }
+
     public TerminalEmulatorDeviceConfiguration withLineBufferScrollbackSize(int lineBufferScrollbackSize) {
-        if(this.lineBufferScrollbackSize == lineBufferScrollbackSize) {
-            return this;
-        }
-        else {
-            return new TerminalEmulatorDeviceConfiguration(
-                    lineBufferScrollbackSize,
-                    blinkLengthInMilliSeconds,
-                    cursorStyle,
-                    cursorColor,
-                    cursorBlinking);
-        }
+        this.lineBufferScrollbackSize = lineBufferScrollbackSize;
+        return this;
+    }
+
+    public TerminalEmulatorDeviceConfiguration withCursorStyle(CursorStyle cursorStyle) {
+        this.cursorStyle = cursorStyle;
+        return this;
+    }
+
+    public TerminalEmulatorDeviceConfiguration withCursorColor(TextColor cursorColor) {
+        this.cursorColor = cursorColor;
+        return this;
+    }
+
+    public TerminalEmulatorDeviceConfiguration withCursorBlinking(boolean cursorBlinking) {
+        this.cursorBlinking = cursorBlinking;
+        return this;
+    }
+
+    public TerminalEmulatorDeviceConfiguration withClipboardAvailable(boolean clipboardAvailable) {
+        this.clipboardAvailable = clipboardAvailable;
+        return this;
     }
 
     /**
@@ -184,4 +195,5 @@ public class TerminalEmulatorDeviceConfiguration {
         VERTICAL_BAR,
         ;
     }
+
 }
