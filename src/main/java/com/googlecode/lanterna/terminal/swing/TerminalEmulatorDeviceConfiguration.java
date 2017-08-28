@@ -36,12 +36,12 @@ public class TerminalEmulatorDeviceConfiguration {
         return new TerminalEmulatorDeviceConfiguration();
     }
 
-    private int lineBufferScrollbackSize;
-    private int blinkLengthInMilliSeconds;
-    private CursorStyle cursorStyle;
-    private TextColor cursorColor;
-    private boolean cursorBlinking;
-    private boolean clipboardAvailable;
+    private final int lineBufferScrollbackSize;
+    private final int blinkLengthInMilliSeconds;
+    private final CursorStyle cursorStyle;
+    private final TextColor cursorColor;
+    private final boolean cursorBlinking;
+    private final boolean clipboardAvailable;
 
     /**
      * Creates a new terminal device configuration object with all the defaults set
@@ -143,34 +143,112 @@ public class TerminalEmulatorDeviceConfiguration {
         return clipboardAvailable;
     }
 
+    /**
+     * Copies the current configuration. The new object has the given value.
+     * @param blinkLengthInMilliSeconds How many milliseconds does a 'blink' last
+     * @return A copy of the current configuration with the changed value.
+     */
     public TerminalEmulatorDeviceConfiguration withBlinkLengthInMilliSeconds(int blinkLengthInMilliSeconds) {
-        this.blinkLengthInMilliSeconds = blinkLengthInMilliSeconds;
-        return this;
+        if (this.blinkLengthInMilliSeconds == blinkLengthInMilliSeconds) {
+            return this;
+        } else {
+            return new TerminalEmulatorDeviceConfiguration(
+                    lineBufferScrollbackSize,
+                    blinkLengthInMilliSeconds,
+                    cursorStyle,
+                    cursorColor,
+                    cursorBlinking);
+        }
     }
 
+    /**
+     * Copies the current configuration. The new object has the given value.
+     * @param lineBufferScrollbackSize How many lines of scrollback buffer should the terminal save?
+     * @return  A copy of the current configuration with the changed value.
+     */
     public TerminalEmulatorDeviceConfiguration withLineBufferScrollbackSize(int lineBufferScrollbackSize) {
-        this.lineBufferScrollbackSize = lineBufferScrollbackSize;
-        return this;
+        if(this.lineBufferScrollbackSize == lineBufferScrollbackSize) {
+            return this;
+        } else {
+            return new TerminalEmulatorDeviceConfiguration(
+                    lineBufferScrollbackSize,
+                    blinkLengthInMilliSeconds,
+                    cursorStyle,
+                    cursorColor,
+                    cursorBlinking);
+        }
     }
 
+    /**
+     * Copies the current configuration. The new object has the given value.
+     * @param cursorStyle Style of the terminal text cursor
+     * @return A copy of the current configuration with the changed value.
+     */
     public TerminalEmulatorDeviceConfiguration withCursorStyle(CursorStyle cursorStyle) {
-        this.cursorStyle = cursorStyle;
-        return this;
+        if(this.cursorStyle == cursorStyle) {
+            return this;
+        } else {
+            return new TerminalEmulatorDeviceConfiguration(
+                    lineBufferScrollbackSize,
+                    blinkLengthInMilliSeconds,
+                    cursorStyle,
+                    cursorColor,
+                    cursorBlinking);
+        }
     }
 
+    /**
+     * Copies the current configuration. The new object has the given value.
+     * @param cursorColor Color of the terminal text cursor
+     * @return A copy of the current configuration with the changed value.
+     */
     public TerminalEmulatorDeviceConfiguration withCursorColor(TextColor cursorColor) {
-        this.cursorColor = cursorColor;
-        return this;
+        if(this.cursorColor == cursorColor) {
+            return this;
+        } else {
+            return new TerminalEmulatorDeviceConfiguration(
+                    lineBufferScrollbackSize,
+                    blinkLengthInMilliSeconds,
+                    cursorStyle,
+                    cursorColor,
+                    cursorBlinking);
+        }
     }
 
+    /**
+     * Copies the current configuration. The new object has the given value.
+     * @param cursorBlinking Should the terminal text cursor blink?
+     * @return A copy of the current configuration with the changed value.
+     */
     public TerminalEmulatorDeviceConfiguration withCursorBlinking(boolean cursorBlinking) {
-        this.cursorBlinking = cursorBlinking;
-        return this;
+        if(this.cursorBlinking == cursorBlinking) {
+            return this;
+        } else {
+            return new TerminalEmulatorDeviceConfiguration(
+                    lineBufferScrollbackSize,
+                    blinkLengthInMilliSeconds,
+                    cursorStyle,
+                    cursorColor,
+                    cursorBlinking);
+        }
     }
 
+    /**
+     * Copies the current configuration. The new object has the given value.
+     * @param clipboardAvailable Should the terminal support pasting text from the clipboard?
+     * @return A copy of the current configuration with the changed value.
+     */
     public TerminalEmulatorDeviceConfiguration withClipboardAvailable(boolean clipboardAvailable) {
-        this.clipboardAvailable = clipboardAvailable;
-        return this;
+        if(this.clipboardAvailable == clipboardAvailable) {
+            return this;
+        } else {
+            return new TerminalEmulatorDeviceConfiguration(
+                    lineBufferScrollbackSize,
+                    blinkLengthInMilliSeconds,
+                    cursorStyle,
+                    cursorColor,
+                    cursorBlinking);
+        }
     }
 
     /**
