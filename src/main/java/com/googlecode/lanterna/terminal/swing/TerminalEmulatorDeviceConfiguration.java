@@ -157,7 +157,8 @@ public class TerminalEmulatorDeviceConfiguration {
                     blinkLengthInMilliSeconds,
                     cursorStyle,
                     cursorColor,
-                    cursorBlinking);
+                    cursorBlinking,
+                    clipboardAvailable);
         }
     }
 
@@ -175,7 +176,8 @@ public class TerminalEmulatorDeviceConfiguration {
                     blinkLengthInMilliSeconds,
                     cursorStyle,
                     cursorColor,
-                    cursorBlinking);
+                    cursorBlinking,
+                    clipboardAvailable);
         }
     }
 
@@ -193,7 +195,8 @@ public class TerminalEmulatorDeviceConfiguration {
                     blinkLengthInMilliSeconds,
                     cursorStyle,
                     cursorColor,
-                    cursorBlinking);
+                    cursorBlinking,
+                    clipboardAvailable);
         }
     }
 
@@ -211,7 +214,8 @@ public class TerminalEmulatorDeviceConfiguration {
                     blinkLengthInMilliSeconds,
                     cursorStyle,
                     cursorColor,
-                    cursorBlinking);
+                    cursorBlinking,
+                    clipboardAvailable);
         }
     }
 
@@ -229,7 +233,8 @@ public class TerminalEmulatorDeviceConfiguration {
                     blinkLengthInMilliSeconds,
                     cursorStyle,
                     cursorColor,
-                    cursorBlinking);
+                    cursorBlinking,
+                    clipboardAvailable);
         }
     }
 
@@ -247,7 +252,8 @@ public class TerminalEmulatorDeviceConfiguration {
                     blinkLengthInMilliSeconds,
                     cursorStyle,
                     cursorColor,
-                    cursorBlinking);
+                    cursorBlinking,
+                    clipboardAvailable);
         }
     }
 
