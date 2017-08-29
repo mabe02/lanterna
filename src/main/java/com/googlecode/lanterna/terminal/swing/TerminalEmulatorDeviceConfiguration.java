@@ -153,12 +153,12 @@ public class TerminalEmulatorDeviceConfiguration {
             return this;
         } else {
             return new TerminalEmulatorDeviceConfiguration(
-                    lineBufferScrollbackSize,
+                    this.lineBufferScrollbackSize,
                     blinkLengthInMilliSeconds,
-                    cursorStyle,
-                    cursorColor,
-                    cursorBlinking,
-                    clipboardAvailable);
+                    this.cursorStyle,
+                    this.cursorColor,
+                    this.cursorBlinking,
+                    this.clipboardAvailable);
         }
     }
 
@@ -173,11 +173,11 @@ public class TerminalEmulatorDeviceConfiguration {
         } else {
             return new TerminalEmulatorDeviceConfiguration(
                     lineBufferScrollbackSize,
-                    blinkLengthInMilliSeconds,
-                    cursorStyle,
-                    cursorColor,
-                    cursorBlinking,
-                    clipboardAvailable);
+                    this.blinkLengthInMilliSeconds,
+                    this.cursorStyle,
+                    this.cursorColor,
+                    this.cursorBlinking,
+                    this.clipboardAvailable);
         }
     }
 
@@ -191,12 +191,12 @@ public class TerminalEmulatorDeviceConfiguration {
             return this;
         } else {
             return new TerminalEmulatorDeviceConfiguration(
-                    lineBufferScrollbackSize,
-                    blinkLengthInMilliSeconds,
+                    this.lineBufferScrollbackSize,
+                    this.blinkLengthInMilliSeconds,
                     cursorStyle,
-                    cursorColor,
-                    cursorBlinking,
-                    clipboardAvailable);
+                    this.cursorColor,
+                    this.cursorBlinking,
+                    this.clipboardAvailable);
         }
     }
 
@@ -210,12 +210,12 @@ public class TerminalEmulatorDeviceConfiguration {
             return this;
         } else {
             return new TerminalEmulatorDeviceConfiguration(
-                    lineBufferScrollbackSize,
-                    blinkLengthInMilliSeconds,
-                    cursorStyle,
+                    this.lineBufferScrollbackSize,
+                    this.blinkLengthInMilliSeconds,
+                    this.cursorStyle,
                     cursorColor,
-                    cursorBlinking,
-                    clipboardAvailable);
+                    this.cursorBlinking,
+                    this.clipboardAvailable);
         }
     }
 
@@ -229,12 +229,12 @@ public class TerminalEmulatorDeviceConfiguration {
             return this;
         } else {
             return new TerminalEmulatorDeviceConfiguration(
-                    lineBufferScrollbackSize,
-                    blinkLengthInMilliSeconds,
-                    cursorStyle,
-                    cursorColor,
+                    this.lineBufferScrollbackSize,
+                    this.blinkLengthInMilliSeconds,
+                    this.cursorStyle,
+                    this.cursorColor,
                     cursorBlinking,
-                    clipboardAvailable);
+                    this.clipboardAvailable);
         }
     }
 
@@ -248,11 +248,11 @@ public class TerminalEmulatorDeviceConfiguration {
             return this;
         } else {
             return new TerminalEmulatorDeviceConfiguration(
-                    lineBufferScrollbackSize,
-                    blinkLengthInMilliSeconds,
-                    cursorStyle,
-                    cursorColor,
-                    cursorBlinking,
+                    this.lineBufferScrollbackSize,
+                    this.blinkLengthInMilliSeconds,
+                    this.cursorStyle,
+                    this.cursorColor,
+                    this.cursorBlinking,
                     clipboardAvailable);
         }
     }
@@ -261,23 +261,29 @@ public class TerminalEmulatorDeviceConfiguration {
      * Different cursor styles supported by SwingTerminal
      */
     public enum CursorStyle {
+
         /**
          * The cursor is drawn by inverting the front- and background colors of the cursor position
          */
         REVERSED,
+
         /**
          * The cursor is drawn by using the cursor color as the background color for the character at the cursor position
          */
         FIXED_BACKGROUND,
+
         /**
          * The cursor is rendered as a thick horizontal line at the bottom of the character
          */
         UNDER_BAR,
+
         /**
          * The cursor is rendered as a left-side aligned vertical line
          */
         VERTICAL_BAR,
+
         ;
+
     }
 
 }
