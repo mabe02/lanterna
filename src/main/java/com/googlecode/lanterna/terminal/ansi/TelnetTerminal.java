@@ -255,8 +255,11 @@ public class TelnetTerminal extends ANSITerminal {
         @Override
         @SuppressWarnings("NullableProblems")   //I can't find the correct way to fix this!
         public int read(byte[] b, int off, int len) throws IOException {
-            if(inputStream.available() > 0) {
-                fillBuffer();
+            if(available() == 0) {
+               // There was nothing in the buffer and the underlying
+               // stream has nothing available, so do a blocking read
+               // from the stream.
+               fillBuffer();
             }
             if(bytesInBuffer == 0) {
                 return -1;
