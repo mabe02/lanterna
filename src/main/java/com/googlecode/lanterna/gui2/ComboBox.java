@@ -316,8 +316,8 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
 
     /**
      * Programmatically selects one item in the combo box, which causes the displayed text to change to match the label
-     * of the selected index
-     * @param selectedIndex Index of the item to select
+     * of the selected index.
+     * @param selectedIndex Index of the item to select, or -1 if the selection should be cleared
      * @throws IndexOutOfBoundsException if the index is out of range
      */
     public synchronized void setSelectedIndex(final int selectedIndex) {
@@ -327,13 +327,10 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
         final int oldSelection = this.selectedIndex;
         this.selectedIndex = selectedIndex;
         if(selectedIndex == -1) {
-            text = "";
+            updateText("");
         }
         else {
-            text = items.get(selectedIndex).toString();
-        }
-        if(textInputPosition > text.length()) {
-            textInputPosition = text.length();
+            updateText(items.get(selectedIndex).toString());
         }
         runOnGUIThreadIfExistsOtherwiseRunDirect(new Runnable() {
             @Override
@@ -344,6 +341,36 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
             }
         });
         invalidate();
+    }
+
+    /**
+     * Programmatically selects one item in the combo box by passing in the value the should be selected. If the value
+     * isn't in the combo box model, nothing happens for read-only combo boxes and for editable ones the text content
+     * is changed to match the result from calling the {@code toString()} method of {@code item}.
+     * <p>
+     * If called with {@code null}, the selection is cleared.
+     * @param item Item in the combo box to select, or null if the selection should be cleared
+     */
+    public synchronized void setSelectedItem(final V item) {
+        if(item == null) {
+            setSelectedIndex(-1);
+        }
+        else {
+            int indexOf = items.indexOf(item);
+            if (indexOf != -1) {
+                setSelectedIndex(indexOf);
+            }
+            else if (!readOnly) {
+                updateText(item.toString());
+            }
+        }
+    }
+
+    private void updateText(String newText) {
+        text = newText;
+        if(textInputPosition > text.length()) {
+            textInputPosition = text.length();
+        }
     }
 
     /**
