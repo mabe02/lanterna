@@ -6,7 +6,7 @@ the client. You will find these classes in the `com.googlecode.lanterna.terminal
 ## Getting the `Terminal` object
 The core of the Terminal layer is the `Terminal` interface which you must retrieve. This can be done either by directly 
 instantiating one of the implementing classes (for example `UnixTerminal` or `SwingTerminalFrame`) or by using the 
-`com.googlecode.lanterna.DefaultTerminalFactory` class which auto-detects and guesses what kind of implementation is
+`com.googlecode.lanterna.terminal.DefaultTerminalFactory` class which auto-detects and guesses what kind of implementation is
 most suitable given the system environment.
 
 ### Different implementations
