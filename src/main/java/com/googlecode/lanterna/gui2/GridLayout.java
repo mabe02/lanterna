@@ -406,6 +406,7 @@ public class GridLayout implements LayoutManager {
                 table.length == 0 ||
                 area.getColumns() <= leftMarginSize + rightMarginSize + ((table[0].length - 1) * horizontalSpacing) ||
                 area.getRows() <= bottomMarginSize + topMarginSize + ((table.length - 1) * verticalSpacing)) {
+            changed = false;
             return;
         }
 
