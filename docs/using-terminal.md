@@ -41,6 +41,9 @@ or you can do just this which will use `stdout`, `stdin` and the platform encodi
 
     Terminal terminal = new DefaultTerminalFactory.createTerminal();
 
+###### Note:
+On Windows, you need to use [javaw](http://pages.citebite.com/p6q0p5r4h7sny) to start your application or
+`IOException` will be thrown while invoking `DefaultTerminalFactory.createTerminal()`, see mabe02/lanterna#335.
 
 ## Entering and exiting private mode
 Before you can print any text or start to move the cursor around, you should enter what's called the _private mode_. In 
