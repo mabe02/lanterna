@@ -408,7 +408,12 @@ public class DefaultTerminalFactory implements TerminalFactory {
             return (Terminal)constructor.newInstance(inputStream, outputStream, charset, UnixLikeTTYTerminal.CtrlCBehaviour.CTRL_C_KILLS_APPLICATION);
         }
         catch(Exception ignore) {
-            return createCygwinTerminal(outputStream, inputStream, charset);
+            try {
+                return createCygwinTerminal(outputStream, inputStream, charset);
+            } catch(IOException e) {
+                throw new IOException("To start java on Windows, use javaw!" + System.lineSeparator()
+                        + "(see https://github.com/mabe02/lanterna/issues/335 )", e);
+            }
         }
     }
     
