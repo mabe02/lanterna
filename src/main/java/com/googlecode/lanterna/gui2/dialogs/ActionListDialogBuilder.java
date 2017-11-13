@@ -43,7 +43,7 @@ public class ActionListDialogBuilder extends AbstractDialogBuilder<ActionListDia
         super("ActionListDialogBuilder");
         this.listBoxSize = null;
         this.canCancel = true;
-	this.closeAutomatically = true;
+        this.closeAutomatically = true;
         this.actions = new ArrayList<Runnable>();
     }
 
@@ -59,7 +59,7 @@ public class ActionListDialogBuilder extends AbstractDialogBuilder<ActionListDia
                 description,
                 listBoxSize,
                 canCancel,
-		closeAutomatically,
+                closeAutomatically,
                 actions);
     }
 
@@ -159,7 +159,7 @@ public class ActionListDialogBuilder extends AbstractDialogBuilder<ActionListDia
      * @return Itself
      */
     public ActionListDialogBuilder setCloseAutomaticallyOnAction(boolean closeAutomatically) {
-	this.closeAutomatically = closeAutomatically;
-	return this;
+        this.closeAutomatically = closeAutomatically;
+        return this;
     }
 }
