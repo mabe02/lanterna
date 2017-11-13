@@ -37,9 +37,6 @@ public class ActionListDialog extends DialogWindow {
             List<Runnable> actions) {
 
         super(title);
-        if(actions.isEmpty()) {
-            throw new IllegalStateException("ActionListDialog needs at least one item");
-        }
 
         ActionListBox listBox = new ActionListBox(actionListPreferredSize);
         for(final Runnable action: actions) {
