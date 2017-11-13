@@ -34,6 +34,7 @@ public class ActionListDialogBuilder extends AbstractDialogBuilder<ActionListDia
     private final List<Runnable> actions;
     private TerminalSize listBoxSize;
     private boolean canCancel;
+    private boolean closeAutomatically;
 
     /**
      * Default constructor
@@ -42,6 +43,7 @@ public class ActionListDialogBuilder extends AbstractDialogBuilder<ActionListDia
         super("ActionListDialogBuilder");
         this.listBoxSize = null;
         this.canCancel = true;
+	this.closeAutomatically = true;
         this.actions = new ArrayList<Runnable>();
     }
 
@@ -57,6 +59,7 @@ public class ActionListDialogBuilder extends AbstractDialogBuilder<ActionListDia
                 description,
                 listBoxSize,
                 canCancel,
+		closeAutomatically,
                 actions);
     }
 
@@ -148,5 +151,15 @@ public class ActionListDialogBuilder extends AbstractDialogBuilder<ActionListDia
      */
     public List<Runnable> getActions() {
         return new ArrayList<Runnable>(actions);
+    }
+
+    /**
+     * Sets if clicking on an action automatically closes the dialog after the action is finished (default: {@code true})
+     * @param closeAutomatically if {@code true} dialog will be automatically closed after choosing and finish any of the action
+     * @return Itself
+     */
+    public ActionListDialogBuilder setCloseAutomaticallyOnAction(boolean closeAutomatically) {
+	this.closeAutomatically = closeAutomatically;
+	return this;
     }
 }
