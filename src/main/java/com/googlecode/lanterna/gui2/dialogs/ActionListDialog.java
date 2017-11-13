@@ -34,6 +34,7 @@ public class ActionListDialog extends DialogWindow {
             String description,
             TerminalSize actionListPreferredSize,
             boolean canCancel,
+	    final boolean closeAutomatically,
             List<Runnable> actions) {
 
         super(title);
@@ -47,7 +48,9 @@ public class ActionListDialog extends DialogWindow {
                 @Override
                 public void run() {
                     action.run();
-                    close();
+		    if(closeAutomatically) {
+			close();
+		    }
                 }
             });
         }
