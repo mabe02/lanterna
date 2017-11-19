@@ -1,14 +1,14 @@
-Windows 7 running Lanterna in the Swing terminal emulator:
-![http://wiki.lanterna.googlecode.com/git/images/screenshots/screenshot1.png](http://wiki.lanterna.googlecode.com/git/images/screenshots/screenshot1.png)
+Windows 10 running Lanterna in the Swing terminal emulator:
+![http://mabe02.github.io/lanterna/resources/screenshots/win10-screenshot.png](http://mabe02.github.io/lanterna/resources/screenshots/win10-screenshot.png)
 
 Xubuntu running Lanterna in the Swing terminal emulator:
-![http://wiki.lanterna.googlecode.com/git/images/screenshots/textboxes.png](http://wiki.lanterna.googlecode.com/git/images/screenshots/textboxes.png)
+TBD
 
 Mac OS X running Lanterna in the Swing terminal emulator:
-![http://wiki.lanterna.googlecode.com/git/images/screenshots/macosx.png](http://wiki.lanterna.googlecode.com/git/images/screenshots/macosx.png)
+TBD
 
 Xubuntu running Lanterna in the Swing terminal emulator:
-![http://wiki.lanterna.googlecode.com/git/images/screenshots/listbox.png](http://wiki.lanterna.googlecode.com/git/images/screenshots/listbox.png)
+TBD
 
 Xubuntu running Lanterna in the Swing terminal emulator:
-![http://wiki.lanterna.googlecode.com/git/images/screenshots/actionlistbox.png](http://wiki.lanterna.googlecode.com/git/images/screenshots/actionlistbox.png)
+TBD
