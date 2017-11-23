@@ -148,6 +148,11 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
                     }
                     return Result.HANDLED;
 
+                case Character:
+                	if(selectByCharacter(keyStroke.getCharacter())) {
+                        return Result.HANDLED;
+                	}
+                    
                 default:
             }
             return Result.UNHANDLED;
@@ -157,6 +162,26 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
         }
     }
 
+    private boolean selectByCharacter(Character character) {
+		character = Character.toLowerCase(character);
+		
+		int selectedIndex = getSelectedIndex();
+		for (int i = 0; i<getItemCount(); i++) {
+			int index = (selectedIndex + i + 1) % getItemCount();
+			V item = getItemAt(index);
+			String label = item != null ? item.toString() : null;
+			if (label != null && label.length() > 0) {
+				char firstChar = Character.toLowerCase(label.charAt(0));
+				if (firstChar == character) {
+					setSelectedIndex(index);
+					return true;
+				}
+			}
+		}
+		
+		return false;
+    }
+    
     @Override
     protected synchronized void afterEnterFocus(FocusChangeDirection direction, Interactable previouslyInFocus) {
         if(items.isEmpty()) {
