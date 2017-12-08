@@ -18,16 +18,19 @@
  */
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.*;
-import com.googlecode.lanterna.graphics.Theme;
-import com.googlecode.lanterna.graphics.ThemeDefinition;
-import com.googlecode.lanterna.input.KeyStroke;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import com.googlecode.lanterna.Symbols;
+import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TerminalTextUtils;
+import com.googlecode.lanterna.graphics.Theme;
+import com.googlecode.lanterna.graphics.ThemeDefinition;
+import com.googlecode.lanterna.input.KeyStroke;
 
 /**
  * This is a simple combo box implementation that allows the user to select one out of multiple items through a
@@ -374,7 +377,7 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
     }
 
     /**
-     * Returns the index of the currently selected item
+     * Returns the index of the currently selected item or -1 for no selection
      * @return Index of the currently selected item
      */
     public int getSelectedIndex() {
@@ -384,12 +387,12 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
     /**
      * Returns the item at the selected index, this is the same as calling:
      * <pre>
-     *     comboBox.getItem(comboBox.getSelectedIndex());
+     *     getSelectedIndex() > -1 ? getItem(getSelectedIndex()) : null
      * </pre>
      * @return The item at the selected index
      */
     public synchronized V getSelectedItem() {
-        return getItem(getSelectedIndex());
+        return getSelectedIndex() > -1 ? getItem(getSelectedIndex()) : null;
     }
 
     /**
