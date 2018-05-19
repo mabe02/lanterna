@@ -8,7 +8,6 @@ import com.googlecode.lanterna.screen.*;
 import com.googlecode.lanterna.terminal.*;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 public class Issue361 {
 
@@ -22,7 +21,7 @@ public class Issue361 {
         window1.setHints(Arrays.asList(Window.Hint.CENTERED));
 
         BasicWindow window2 = new BasicWindow();
-        window2.setHints(Collections.<Window.Hint>emptyList());
+        window2.setHints(Arrays.<Window.Hint>asList());
 
         // Create gui and start gui
         MultiWindowTextGUI gui = new MultiWindowTextGUI(screen);
