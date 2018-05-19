@@ -171,7 +171,9 @@ public class BasicTextImage implements TextImage {
     
     @Override
     public void copyTo(TextImage destination) {
-        copyTo(destination, 0, buffer.length, 0, buffer[0].length, 0, 0);
+        if (buffer.length > 0) {
+            copyTo(destination, 0, buffer.length, 0, buffer[0].length, 0, 0);
+        }
     }
 
     @Override
