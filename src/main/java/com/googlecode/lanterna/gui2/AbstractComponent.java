@@ -363,13 +363,21 @@ public abstract class AbstractComponent<T extends Component> implements Componen
 
     @Override
     public synchronized void onAdded(Container container) {
+        if (parent != container && parent != null) {
+            // first inform current parent:
+            parent.removeComponent(this);
+        }
         parent = container;
     }
 
     @Override
     public synchronized void onRemoved(Container container) {
-        parent = null;
-        themeRenderer = null;
+        if (parent == container) {
+            parent = null;
+            themeRenderer = null;
+        } else {
+            throw new IllegalStateException(this + " is not " + container +"'s child.");
+        }
     }
 
     /**
