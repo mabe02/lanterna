@@ -781,7 +781,7 @@ public class GridLayout implements LayoutManager {
         columnLoop:
         for(int column = tableColumns - 1; column > 0; column--) {
             for(Component[] row : table) {
-                if(row[column] != row[column - 1]) {
+                if(row[column] != null) {
                     continue columnLoop;
                 }
             }
@@ -792,7 +792,7 @@ public class GridLayout implements LayoutManager {
         rowLoop:
         for(int row = tableRows - 1; row > 0; row--) {
             for(int column = 0; column < tableColumns; column++) {
-                if(table[row][column] != table[row - 1][column]) {
+                if(table[row][column] != null) {
                     continue rowLoop;
                 }
             }
