@@ -116,9 +116,9 @@ public class AWTTerminalFontConfiguration {
             // Otherwise try to guess it from the monitor size:
             // If the width is wider than Full HD (1080p, or 1920x1080), then assume it's high-DPI.
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            if (ge.getMaximumWindowBounds().getWidth() > 4000) {
+            if (ge.getMaximumWindowBounds().getWidth() > 4096) {
                 return 56;
-            } else if (ge.getMaximumWindowBounds().getWidth() > 2000) {
+            } else if (ge.getMaximumWindowBounds().getWidth() > 2048) {
                 return 28;
             } else {
                 return 14;
