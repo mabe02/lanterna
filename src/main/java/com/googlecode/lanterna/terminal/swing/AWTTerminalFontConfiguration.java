@@ -20,14 +20,20 @@ package com.googlecode.lanterna.terminal.swing;
 
 import com.googlecode.lanterna.Symbols;
 import com.googlecode.lanterna.TextCharacter;
-
-import java.awt.*;
+import java.awt.Font;
+import java.awt.GraphicsEnvironment;
+import java.awt.RenderingHints;
+import java.awt.Toolkit;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * This class encapsulates the font information used by an {@link AWTTerminal}. By customizing this class, you can
@@ -70,61 +76,54 @@ public class AWTTerminalFontConfiguration {
     )));
 
     private static List<Font> getDefaultWindowsFonts() {
+        int fontSize = getFontSize();
         return Collections.unmodifiableList(Arrays.asList(
-                new Font("Courier New", Font.PLAIN, getFontSize()), //Monospaced can look pretty bad on Windows, so let's override it
-                new Font("Monospaced", Font.PLAIN, getFontSize())));
+                new Font("Courier New", Font.PLAIN, fontSize), //Monospaced can look pretty bad on Windows, so let's override it
+                new Font("Monospaced", Font.PLAIN, fontSize)));
     }
 
     private static List<Font> getDefaultLinuxFonts() {
+        int fontSize = getFontSize();
         return Collections.unmodifiableList(Arrays.asList(
-                new Font("DejaVu Sans Mono", Font.PLAIN, getFontSize()),
-                new Font("Monospaced", Font.PLAIN, getFontSize()),
+                new Font("DejaVu Sans Mono", Font.PLAIN, fontSize),
+                new Font("Monospaced", Font.PLAIN, fontSize),
                 //Below, these should be redundant (Monospaced is supposed to catch-all)
                 // but Java 6 seems to have issues with finding monospaced fonts sometimes
-                new Font("Ubuntu Mono", Font.PLAIN, getFontSize()),
-                new Font("FreeMono", Font.PLAIN, getFontSize()),
-                new Font("Liberation Mono", Font.PLAIN, getFontSize()),
-                new Font("VL Gothic Regular", Font.PLAIN, getFontSize()),
-                new Font("NanumGothic", Font.PLAIN, getFontSize()),
-                new Font("WenQuanYi Zen Hei Mono", Font.PLAIN, getFontSize()),
-                new Font("WenQuanYi Zen Hei", Font.PLAIN, getFontSize()),
-                new Font("AR PL UMing TW", Font.PLAIN, getFontSize()),
-                new Font("AR PL UMing HK", Font.PLAIN, getFontSize()),
-                new Font("AR PL UMing CN", Font.PLAIN, getFontSize())));
+                new Font("Ubuntu Mono", Font.PLAIN, fontSize),
+                new Font("FreeMono", Font.PLAIN, fontSize),
+                new Font("Liberation Mono", Font.PLAIN, fontSize),
+                new Font("VL Gothic Regular", Font.PLAIN, fontSize),
+                new Font("NanumGothic", Font.PLAIN, fontSize),
+                new Font("WenQuanYi Zen Hei Mono", Font.PLAIN, fontSize),
+                new Font("WenQuanYi Zen Hei", Font.PLAIN, fontSize),
+                new Font("AR PL UMing TW", Font.PLAIN, fontSize),
+                new Font("AR PL UMing HK", Font.PLAIN, fontSize),
+                new Font("AR PL UMing CN", Font.PLAIN, fontSize)));
     }
 
     private static List<Font> getDefaultFonts() {
+        int fontSize = getFontSize();
         return Collections.unmodifiableList(Collections.singletonList(
-                new Font("Monospaced", Font.PLAIN, getFontSize())));
+                new Font("Monospaced", Font.PLAIN, fontSize)));
     }
 
     // Here we check the screen resolution on the primary monitor and make a guess at if it's high-DPI or not
-    private static Integer CHOSEN_FONT_SIZE = null;
-    private synchronized static int getFontSize() {
-        if(CHOSEN_FONT_SIZE != null) {
-            return CHOSEN_FONT_SIZE;
-        }
-        // Source: http://stackoverflow.com/questions/3680221/how-can-i-get-the-monitor-size-in-java
-        GraphicsEnvironment ge      = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        GraphicsDevice[]    gs      = ge.getScreenDevices();
-
-        // Assume the first GraphicsDevice is the primary screen (this isn't always correct but what to do?)
-        // Warning, there could be printers coming back here according to JavaDoc! Hopefully Java is reasonable and
-        // passes them in after the real monitor(s).
-        if (gs.length > 0) {
-            int primaryMonitorWidth = gs[0].getDisplayMode().getWidth();
-
-            // If the width is wider than Full HD (1080p, or 1920x1080), then assume it's high-DPI
-            if (primaryMonitorWidth > 2000) {
-                CHOSEN_FONT_SIZE = 28;
+    private static int getFontSize() {
+        if (Toolkit.getDefaultToolkit().getScreenResolution() >= 110) {
+            // Rely on DPI if it is a high value.
+            return Toolkit.getDefaultToolkit().getScreenResolution() / 7 + 1;
+        } else {
+            // Otherwise try to guess it from the monitor size:
+            // If the width is wider than Full HD (1080p, or 1920x1080), then assume it's high-DPI.
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            if (ge.getMaximumWindowBounds().getWidth() > 4000) {
+                return 56;
+            } else if (ge.getMaximumWindowBounds().getWidth() > 2000) {
+                return 28;
+            } else {
+                return 14;
             }
         }
-
-        // If no size was picked, default to 14
-        if(CHOSEN_FONT_SIZE == null) {
-            CHOSEN_FONT_SIZE = 14;
-        }
-        return CHOSEN_FONT_SIZE;
     }
 
     /**
