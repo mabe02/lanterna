@@ -6,7 +6,7 @@ the client. You will find these classes in the `com.googlecode.lanterna.terminal
 ## Getting the `Terminal` object
 The core of the Terminal layer is the `Terminal` interface which you must retrieve. This can be done either by directly 
 instantiating one of the implementing classes (for example `UnixTerminal` or `SwingTerminalFrame`) or by using the 
-`com.googlecode.lanterna.DefaultTerminalFactory` class which auto-detects and guesses what kind of implementation is
+`com.googlecode.lanterna.terminal.DefaultTerminalFactory` class which auto-detects and guesses what kind of implementation is
 most suitable given the system environment.
 
 ### Different implementations
@@ -41,6 +41,9 @@ or you can do just this which will use `stdout`, `stdin` and the platform encodi
 
     Terminal terminal = new DefaultTerminalFactory.createTerminal();
 
+###### Note:
+On Windows, you need to use [javaw](http://pages.citebite.com/p6q0p5r4h7sny) to start your application or
+`IOException` will be thrown while invoking `DefaultTerminalFactory.createTerminal()`, see mabe02/lanterna#335.
 
 ## Entering and exiting private mode
 Before you can print any text or start to move the cursor around, you should enter what's called the _private mode_. In 

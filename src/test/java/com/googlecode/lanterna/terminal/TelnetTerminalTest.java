@@ -65,6 +65,10 @@ public class TelnetTerminalTest {
                     });
                     size = terminal.getTerminalSize();
 
+                    terminal.setCursorPosition(3, 3);
+                    printString(terminal, "Press any key to start");
+                    terminal.readInput(); // Test blocking input
+
                     while(true) {
                         KeyStroke key = terminal.pollInput();
                         if(key != null) {
