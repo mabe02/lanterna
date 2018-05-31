@@ -14,16 +14,10 @@ cursor, setting the color of the text, making the text blink or change to bold f
 problem.
 
 There was then an idea that when a terminal logs on to a system, it will set the TERM environmental variable to a 
-particular value that represented which standard it supported. On the system is then a database with different standards 
-and so any program using text magic can look up the TERM value in this database and get a list of commands supported and 
-how to execute them. There is however no guarantee that the terminal will set this variable and there is no guarantee 
-that the system will have the value in its database. Also, there may be discrepancies when, for example, several 
-implementations of `xterm` exists, which one do you store in your database (the implementations mostly agree on the 
-control characters, but not completely)?
+particular value that represented which standard it supported. On the system, there is a database with different standards and so any program using text magic can look up the TERM value and get a list of commands supported by that standard and learn 
+how to execute them. There is, however, no guarantee that the terminal will set this variable so there is no guarantee that the system will have the value in its database. Also, there may be discrepancies when, for example, several implementations of `xterm` exists, which one do you store in your database (the implementations mostly agree on the control characters, but not completely)?
 
-Today, most terminals will identify themselves as `xterm` through the TERM environmental variable and for the most part 
-support this. There is also an [ANSI standard](http://en.wikipedia.org/wiki/ANSI_escape_code) for escape codes and this 
-is very much in line with what most terminal emulators supports. Incompatibilities arises mostly when it comes to 
+Today, most terminals will identify themselves as `xterm` through the TERM environmental variable and for the most part support this. There is also an [ANSI standard](http://en.wikipedia.org/wiki/ANSI_escape_code) for escape codes and this is very much in line with what most terminal emulators support. Incompatibilities arise mostly when it comes to 
 special keys on the keyboard, such as insert, home, end, page up, and so on, what the terminal emulator will send on 
 standard input when those keys are pressed.
 
