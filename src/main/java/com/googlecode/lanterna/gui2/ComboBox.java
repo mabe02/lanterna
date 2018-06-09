@@ -386,9 +386,9 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
 
     /**
      * Returns the item at the selected index, this is the same as calling:
-     * <pre>
+     * <pre>{@code
      *     getSelectedIndex() > -1 ? getItem(getSelectedIndex()) : null
-     * </pre>
+     * }</pre>
      * @return The item at the selected index
      */
     public synchronized V getSelectedItem() {
