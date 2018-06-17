@@ -114,7 +114,10 @@ public abstract class AbstractComposite<T extends Container> extends AbstractCom
     @Override
     public Interactable nextFocus(Interactable fromThis) {
         if(fromThis == null && getComponent() instanceof Interactable) {
-            return (Interactable)getComponent();
+            Interactable interactable = (Interactable) getComponent();
+            if(interactable.isEnabled()) {
+                return interactable;
+            }
         }
         else if(getComponent() instanceof Container) {
             return ((Container)getComponent()).nextFocus(fromThis);
@@ -125,7 +128,10 @@ public abstract class AbstractComposite<T extends Container> extends AbstractCom
     @Override
     public Interactable previousFocus(Interactable fromThis) {
         if(fromThis == null && getComponent() instanceof Interactable) {
-            return (Interactable)getComponent();
+            Interactable interactable = (Interactable) getComponent();
+            if(interactable.isEnabled()) {
+                return interactable;
+            }
         }
         else if(getComponent() instanceof Container) {
             return ((Container)getComponent()).previousFocus(fromThis);
