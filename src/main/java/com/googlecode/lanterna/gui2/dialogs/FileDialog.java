@@ -164,7 +164,8 @@ public class FileDialog extends DialogWindow {
         @Override
         public void run() {
             if(!fileBox.getText().isEmpty()) {
-                selectedFile = new File(directory, fileBox.getText());
+                File file = new File(fileBox.getText());
+                selectedFile = file.isAbsolute() ? file : new File(directory, fileBox.getText());
                 close();
             }
             else {
