@@ -39,7 +39,7 @@ While not exposed on the `TerminalFactory` interface (that `DefaultTerminalFacto
 
 or you can do just this which will use `stdout`, `stdin` and the platform encoding.  
 
-    Terminal terminal = new DefaultTerminalFactory.createTerminal();
+    Terminal terminal = new DefaultTerminalFactory().createTerminal();
 
 ###### Note:
 On Windows, you need to use [javaw](http://pages.citebite.com/p6q0p5r4h7sny) to start your application or
