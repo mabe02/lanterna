@@ -369,6 +369,19 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
                     return Result.MOVE_FOCUS_DOWN;
                 }
                 break;
+            case PageUp:
+                if(visibleRows > 0 && selectedRow > 0) {
+                    selectedRow -= Math.min(getVisibleRows(), selectedRow);
+                    viewTopRow = selectedRow;
+                }
+                break;
+            case PageDown:
+                if(visibleRows > 0 && selectedRow < tableModel.getRowCount() - 1) {
+                    int toEndDistance = tableModel.getRowCount() - 1 - selectedRow;
+                    selectedRow += Math.min(getVisibleRows(), toEndDistance);
+                    viewTopRow = Math.min(selectedRow, toEndDistance);
+                }
+                break;
             case ArrowLeft:
                 if(cellSelection && selectedColumn > 0) {
                     selectedColumn--;
