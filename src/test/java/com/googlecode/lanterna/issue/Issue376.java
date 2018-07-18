@@ -16,14 +16,15 @@ public class Issue376 {
         gui.waitForWindowToClose(window);
         screen.stopScreen();
     }
-}
 
-class LabelWithTabWindow extends AbstractWindow {
-
-    LabelWithTabWindow() {
-        Panel panel = new Panel();
-        panel.addComponent(new Label("A label without tab"));
-        panel.addComponent(new Label("\tAnd one with tab"));
-        setComponent(panel);
+    private static class LabelWithTabWindow extends AbstractWindow {
+        LabelWithTabWindow() {
+            Panel panel = new Panel();
+            panel.addComponent(new Label("A label without tab"));
+            panel.addComponent(new Label("\tAnd one with tab"));
+            setComponent(panel);
+        }
     }
 }
+
+

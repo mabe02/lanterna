@@ -621,15 +621,17 @@ public class GridLayout implements LayoutManager {
 
     private Set<Integer> getExpandableColumns(Component[][] table) {
         Set<Integer> expandableColumns = new TreeSet<Integer>();
+        Component previousComponent = null;
         for(Component[] row: table) {
             for (int i = 0; i < row.length; i++) {
-                if(row[i] == null) {
+                if(row[i] == null || row[i] == previousComponent) {
                     continue;
                 }
                 GridLayoutData layoutData = getLayoutData(row[i]);
                 if(layoutData.grabExtraHorizontalSpace) {
                     expandableColumns.add(i);
                 }
+                previousComponent = row[i];
             }
         }
         return expandableColumns;
@@ -637,15 +639,19 @@ public class GridLayout implements LayoutManager {
 
     private Set<Integer> getExpandableRows(Component[][] table) {
         Set<Integer> expandableRows = new TreeSet<Integer>();
-        for(int rowIndex = 0; rowIndex < table.length; rowIndex++) {
-            Component[] row = table[rowIndex];
-            for(Component cell : row) {
-                if(cell == null) {
-                    continue;
-                }
-                GridLayoutData layoutData = getLayoutData(cell);
-                if(layoutData.grabExtraVerticalSpace) {
-                    expandableRows.add(rowIndex);
+        Component previousComponent = null;
+        if(table.length > 0) {
+            for (int columnIndex = 0; columnIndex < table[0].length; columnIndex++) {
+                for (int rowIndex = 0; rowIndex < table.length; rowIndex++) {
+                    Component cell = table[rowIndex][columnIndex];
+                    if (cell == null || cell == previousComponent) {
+                        continue;
+                    }
+                    GridLayoutData layoutData = getLayoutData(cell);
+                    if (layoutData.grabExtraVerticalSpace) {
+                        expandableRows.add(rowIndex);
+                    }
+                    previousComponent = cell;
                 }
             }
         }
