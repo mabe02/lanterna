@@ -26,7 +26,10 @@ import com.googlecode.lanterna.gui2.ScrollBar;
 import com.googlecode.lanterna.gui2.TextGUIGraphics;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Default implementation of {@code TableRenderer}
@@ -45,8 +48,9 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
 
     //So that we don't have to recalculate the size every time. This still isn't optimal but shouganai.
     private TerminalSize cachedSize;
-    private final List<Integer> columnSizes;
-    private final List<Integer> rowSizes;
+    private final List<Integer> preferredColumnSizes;
+    private final List<Integer> preferredRowSizes;
+    private final Set<Integer> expandableColumns;
     private int headerSizeInRows;
 
     /**
@@ -63,8 +67,9 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
 
         cachedSize = null;
 
-        columnSizes = new ArrayList<Integer>();
-        rowSizes = new ArrayList<Integer>();
+        preferredColumnSizes = new ArrayList<Integer>();
+        preferredRowSizes = new ArrayList<Integer>();
+        expandableColumns = new TreeSet<Integer>();
         headerSizeInRows = 0;
     }
 
@@ -74,7 +79,7 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
      *
      * @param headerVerticalBorderStyle Style to use to separate Table header from body
      */
-    public void setHeaderVerticalBorderStyle(TableCellBorderStyle headerVerticalBorderStyle) {
+    public synchronized void setHeaderVerticalBorderStyle(TableCellBorderStyle headerVerticalBorderStyle) {
         this.headerVerticalBorderStyle = headerVerticalBorderStyle;
     }
 
@@ -84,7 +89,7 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
      *
      * @param headerHorizontalBorderStyle Style to use when separating header columns horizontally
      */
-    public void setHeaderHorizontalBorderStyle(TableCellBorderStyle headerHorizontalBorderStyle) {
+    public synchronized void setHeaderHorizontalBorderStyle(TableCellBorderStyle headerHorizontalBorderStyle) {
         this.headerHorizontalBorderStyle = headerHorizontalBorderStyle;
     }
 
@@ -94,7 +99,7 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
      *
      * @param cellVerticalBorderStyle Style to use to separate table cells vertically
      */
-    public void setCellVerticalBorderStyle(TableCellBorderStyle cellVerticalBorderStyle) {
+    public synchronized void setCellVerticalBorderStyle(TableCellBorderStyle cellVerticalBorderStyle) {
         this.cellVerticalBorderStyle = cellVerticalBorderStyle;
     }
 
@@ -104,8 +109,18 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
      *
      * @param cellHorizontalBorderStyle Style to use to separate table cells horizontally
      */
-    public void setCellHorizontalBorderStyle(TableCellBorderStyle cellHorizontalBorderStyle) {
+    public synchronized void setCellHorizontalBorderStyle(TableCellBorderStyle cellHorizontalBorderStyle) {
         this.cellHorizontalBorderStyle = cellHorizontalBorderStyle;
+    }
+
+    /**
+     * Sets the list of columns (by index, where 0 is the first column) that can be expanded, should the drawable area
+     * be larger than the table is requesting.
+     * @param expandableColumns Collection of indexes for expandable columns
+     */
+    public synchronized void setExpandableColumns(Collection<Integer> expandableColumns) {
+        this.expandableColumns.clear();
+        this.expandableColumns.addAll(expandableColumns);
     }
 
     private boolean isHorizontallySpaced() {
@@ -114,7 +129,7 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
     }
 
     @Override
-    public TerminalSize getPreferredSize(Table<V> table) {
+    public synchronized TerminalSize getPreferredSize(Table<V> table) {
         //Quick bypass if the table hasn't changed
         if(!table.isInvalid() && cachedSize != null) {
             return cachedSize;
@@ -137,8 +152,8 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
             visibleRows = tableModel.getRowCount();
         }
 
-        columnSizes.clear();
-        rowSizes.clear();
+        preferredColumnSizes.clear();
+        preferredRowSizes.clear();
 
         if(tableModel.getColumnCount() == 0) {
             return TerminalSize.ZERO;
@@ -149,12 +164,12 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
             for(int columnIndex = viewLeftColumn; columnIndex < viewLeftColumn + visibleColumns; columnIndex++) {
                 int columnSize = tableHeaderRenderer.getPreferredSize(table, columnHeaders.get(columnIndex), columnIndex).getColumns();
                 int listOffset = columnIndex - viewLeftColumn;
-                if(columnSizes.size() == listOffset) {
-                    columnSizes.add(columnSize);
+                if(preferredColumnSizes.size() == listOffset) {
+                    preferredColumnSizes.add(columnSize);
                 }
                 else {
-                    if(columnSizes.get(listOffset) < columnSize) {
-                        columnSizes.set(listOffset, columnSize);
+                    if(preferredColumnSizes.get(listOffset) < columnSize) {
+                        preferredColumnSizes.set(listOffset, columnSize);
                     }
                 }
             }
@@ -166,12 +181,12 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
                 V cell = row.get(columnIndex);
                 int columnSize = tableCellRenderer.getPreferredSize(table, cell, columnIndex, rowIndex).getColumns();
                 int listOffset = columnIndex - viewLeftColumn;
-                if(columnSizes.size() == listOffset) {
-                    columnSizes.add(columnSize);
+                if(preferredColumnSizes.size() == listOffset) {
+                    preferredColumnSizes.add(columnSize);
                 }
                 else {
-                    if(columnSizes.get(listOffset) < columnSize) {
-                        columnSizes.set(listOffset, columnSize);
+                    if(preferredColumnSizes.get(listOffset) < columnSize) {
+                        preferredColumnSizes.set(listOffset, columnSize);
                     }
                 }
             }
@@ -181,12 +196,12 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
                 for(int columnIndex = viewLeftColumn; columnIndex < Math.min(row.size(), viewLeftColumn + visibleColumns); columnIndex++) {
                     int columnSize = tableHeaderRenderer.getPreferredSize(table, columnHeaders.get(columnIndex), columnIndex).getColumns();
                     int listOffset = columnIndex - viewLeftColumn;
-                    if(columnSizes.size() == listOffset) {
-                        columnSizes.add(columnSize);
+                    if(preferredColumnSizes.size() == listOffset) {
+                        preferredColumnSizes.add(columnSize);
                     }
                     else {
-                        if(columnSizes.get(listOffset) < columnSize) {
-                            columnSizes.set(listOffset, columnSize);
+                        if(preferredColumnSizes.get(listOffset) < columnSize) {
+                            preferredColumnSizes.set(listOffset, columnSize);
                         }
                     }
                 }
@@ -198,12 +213,12 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
                 V cell = rows.get(rowIndex).get(columnIndex);
                 int rowSize = tableCellRenderer.getPreferredSize(table, cell, columnIndex, rowIndex).getRows();
                 int listOffset = rowIndex - viewTopRow;
-                if(rowSizes.size() == listOffset) {
-                    rowSizes.add(rowSize);
+                if(preferredRowSizes.size() == listOffset) {
+                    preferredRowSizes.add(rowSize);
                 }
                 else {
-                    if(rowSizes.get(listOffset) < rowSize) {
-                        rowSizes.set(listOffset, rowSize);
+                    if(preferredRowSizes.get(listOffset) < rowSize) {
+                        preferredRowSizes.set(listOffset, rowSize);
                     }
                 }
             }
@@ -211,10 +226,10 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
 
         int preferredRowSize = 0;
         int preferredColumnSize = 0;
-        for(int size: columnSizes) {
+        for(int size: preferredColumnSizes) {
             preferredColumnSize += size;
         }
-        for(int size: rowSizes) {
+        for(int size: preferredRowSizes) {
             preferredRowSize += size;
         }
 
@@ -259,7 +274,7 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
     }
 
     @Override
-    public void drawComponent(TextGUIGraphics graphics, Table<V> table) {
+    public synchronized void drawComponent(TextGUIGraphics graphics, Table<V> table) {
         //Get the size
         TerminalSize area = graphics.getSize();
 
@@ -269,13 +284,49 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
         }
 
         // Get preferred size if the table model has changed
-        if(table.isInvalid()) getPreferredSize(table);
+        if(table.isInvalid()) {
+            getPreferredSize(table);
+        }
 
-        int topPosition = drawHeader(graphics, table);
-        drawRows(graphics, table, topPosition);
+        List<Integer> columnSizes = fitColumnsInAvailableSpace(table, area);
+        int topPosition = drawHeader(graphics, table, columnSizes);
+        drawRows(graphics, table, topPosition, columnSizes);
     }
 
-    private int drawHeader(TextGUIGraphics graphics, Table<V> table) {
+    private List<Integer> fitColumnsInAvailableSpace(Table<V> table, TerminalSize area) {
+        List<Integer> columnSizes = new ArrayList<Integer>(preferredColumnSizes);
+        int horizontalSpaceRequirement = 0;
+        int viewLeftColumn = table.getViewLeftColumn();
+        List<String> headers = table.getTableModel().getColumnLabels();
+        int visibleColumns = table.getVisibleColumns();
+        if(visibleColumns == 0) {
+            visibleColumns = table.getTableModel().getColumnCount();
+        }
+        int endColumnIndex = Math.min(headers.size(), viewLeftColumn + visibleColumns);
+        List<Integer> visibleExpandableColumns = new ArrayList<Integer>();
+        for(int index = viewLeftColumn; index < endColumnIndex; index++) {
+            horizontalSpaceRequirement += preferredColumnSizes.get(index - viewLeftColumn);
+            if(headerHorizontalBorderStyle != TableCellBorderStyle.None && index < (endColumnIndex - 1)) {
+                horizontalSpaceRequirement++;
+            }
+            if(expandableColumns.contains(index)) {
+                visibleExpandableColumns.add(index);
+            }
+        }
+        int extraHorizontalSpace = area.getColumns() - horizontalSpaceRequirement;
+        while(extraHorizontalSpace > 0 && !visibleExpandableColumns.isEmpty()) {
+            for(int expandableColumnIndex: visibleExpandableColumns) {
+                columnSizes.set(expandableColumnIndex, columnSizes.get(expandableColumnIndex) + 1);
+                extraHorizontalSpace--;
+                if(extraHorizontalSpace == 0) {
+                    break;
+                }
+            }
+        }
+        return columnSizes;
+    }
+
+    private int drawHeader(TextGUIGraphics graphics, Table<V> table, List<Integer> columnSizes) {
         Theme theme = table.getTheme();
         TableHeaderRenderer<V> tableHeaderRenderer = table.getTableHeaderRenderer();
         List<String> headers = table.getTableModel().getColumnLabels();
@@ -327,7 +378,7 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
         return topPosition;
     }
 
-    private void drawRows(TextGUIGraphics graphics, Table<V> table, int topPosition) {
+    private void drawRows(TextGUIGraphics graphics, Table<V> table, int topPosition, List<Integer> columnSizes) {
         Theme theme = table.getTheme();
         ThemeDefinition themeDefinition = theme.getDefinition(Table.class);
         TerminalSize area = graphics.getSize();
@@ -422,14 +473,14 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
                 }
                 V cell = row.get(columnIndex);
                 TerminalPosition cellPosition = new TerminalPosition(leftPosition, topPosition);
-                TerminalSize cellArea = new TerminalSize(columnSizes.get(columnIndex - viewLeftColumn), rowSizes.get(rowIndex - viewTopRow));
+                TerminalSize cellArea = new TerminalSize(columnSizes.get(columnIndex - viewLeftColumn), preferredRowSizes.get(rowIndex - viewTopRow));
                 tableCellRenderer.drawCell(table, cell, columnIndex, rowIndex, graphics.newTextGraphics(cellPosition, cellArea));
                 leftPosition += cellArea.getColumns();
                 if(leftPosition > area.getColumns()) {
                     break;
                 }
             }
-            topPosition += rowSizes.get(rowIndex - viewTopRow);
+            topPosition += preferredRowSizes.get(rowIndex - viewTopRow);
             if(cellVerticalBorderStyle != TableCellBorderStyle.None) {
                 leftPosition = 0;
                 graphics.applyThemeStyle(themeDefinition.getNormal());

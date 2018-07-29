@@ -145,6 +145,20 @@ public class TerminalPosition implements Comparable<TerminalPosition> {
         return withRelativeRow(deltaRow).withRelativeColumn(deltaColumn);
     }
 
+    /**
+     * Returns itself if it is equal to the supplied position, otherwise the supplied position. You can use this if you
+     * have a position field which is frequently recalculated but often resolves to the same; it will keep the same
+     * object in memory instead of swapping it out every cycle.
+     * @param position Position you want to return
+     * @return Itself if this position equals the position passed in, otherwise the position passed in
+     */
+    public TerminalPosition with(TerminalPosition position) {
+        if(equals(position)) {
+            return this;
+        }
+        return position;
+    }
+
     @Override
     public int compareTo(TerminalPosition o) {
         if(row < o.row) {

@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.googlecode.lanterna.graphics.StyleSet;
+import com.googlecode.lanterna.screen.TabBehaviour;
 
 /**
  * This class contains a number of utility methods for analyzing characters and strings in a terminal context. The main
@@ -169,7 +170,7 @@ public class TerminalTextUtils {
      * be if printed in a terminal. If the string only contains non-CJK characters then the returned value will be same
      * as {@code stringCharacterIndex}, but if there are CJK characters the value will be different due to CJK
      * characters taking up two columns in width. If the character at the index in the string is a CJK character itself,
-     * the returned value will be the index of the left-side of character.
+     * the returned value will be the index of the left-side of character. The tab character is counted as four spaces.
      * @param s String to translate the index from
      * @param stringCharacterIndex Index within the string to get the terminal column index of
      * @return Index of the character inside the String at {@code stringCharacterIndex} when it has been writted to a
@@ -177,12 +178,36 @@ public class TerminalTextUtils {
      * @throws StringIndexOutOfBoundsException if the index given is outside the String length or negative
      */
     public static int getColumnIndex(String s, int stringCharacterIndex) throws StringIndexOutOfBoundsException {
+        return getColumnIndex(s, stringCharacterIndex, TabBehaviour.CONVERT_TO_FOUR_SPACES, -1);
+    }
+
+    /**
+     * Given a string and a character index inside that string, find out what the column index of that character would
+     * be if printed in a terminal. If the string only contains non-CJK characters then the returned value will be same
+     * as {@code stringCharacterIndex}, but if there are CJK characters the value will be different due to CJK
+     * characters taking up two columns in width. If the character at the index in the string is a CJK character itself,
+     * the returned value will be the index of the left-side of character.
+     * @param s String to translate the index from
+     * @param stringCharacterIndex Index within the string to get the terminal column index of
+     * @param tabBehaviour The behavior to use when encountering the tab character
+     * @param firstCharacterColumnPosition Where on the screen the first character in the string would be printed, this
+     *                                     applies only when you have an alignment-based {@link TabBehaviour}
+     * @return Index of the character inside the String at {@code stringCharacterIndex} when it has been writted to a
+     * terminal
+     * @throws StringIndexOutOfBoundsException if the index given is outside the String length or negative
+     */
+    public static int getColumnIndex(String s, int stringCharacterIndex, TabBehaviour tabBehaviour, int firstCharacterColumnPosition) throws StringIndexOutOfBoundsException {
         int index = 0;
         for(int i = 0; i < stringCharacterIndex; i++) {
-            if(isCharCJK(s.charAt(i))) {
+            if(s.charAt(i) == '\t') {
+                index += tabBehaviour.getTabReplacement(firstCharacterColumnPosition).length();
+            }
+            else {
+                if (isCharCJK(s.charAt(i))) {
+                    index++;
+                }
                 index++;
             }
-            index++;
         }
         return index;
     }

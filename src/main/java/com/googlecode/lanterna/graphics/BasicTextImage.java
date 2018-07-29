@@ -211,8 +211,8 @@ public class BasicTextImage implements TextImage {
         }
 
         //Make sure we can't copy more than is available
-        columns = Math.min(buffer[0].length - startColumnIndex, columns);
         rows = Math.min(buffer.length - startRowIndex, rows);
+        columns = rows>0 ? Math.min(buffer[0].length - startColumnIndex, columns) : 0;
 
         //Adjust target lengths as well
         columns = Math.min(destination.getSize().getColumns() - destinationColumnOffset, columns);
