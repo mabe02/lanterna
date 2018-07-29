@@ -26,6 +26,7 @@ import com.googlecode.lanterna.gui2.table.TableModel;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -37,15 +38,18 @@ public class TableTest extends TestBase {
         new TableTest().run(args);
     }
 
+    private int columnCounter = 4;
+
     @Override
     public void init(final WindowBasedTextGUI textGUI) {
         final BasicWindow window = new BasicWindow("Table container test");
+        window.setHints(Arrays.asList(Window.Hint.FIT_TERMINAL_WINDOW));
 
         final Table<String> table = new Table<String>("Column 1", "Column 2", "Column 3");
         final TableModel<String> model = table.getTableModel();
-        model.addRow("Row1", "Row1", "Row1");
-        model.addRow("Row2", "Row2", "Row2");
-        model.addRow("Row3", "Row3", "Row3");
+        for (int i = 1; i < 30; i++) {
+            model.addRow("Row" + i, "Row" + i, "Row" + i);
+        }
 
         Panel buttonPanel = new Panel();
         buttonPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
@@ -86,7 +90,7 @@ public class TableTest extends TestBase {
                                 for(int i = 0; i < model.getRowCount(); i++) {
                                     labels.add("Row" + (i + 1));
                                 }
-                                model.addColumn("NewColumn", labels.toArray(new String[labels.size()]));
+                                model.addColumn("Column " + (columnCounter++), labels.toArray(new String[labels.size()]));
                                 table.invalidate();
                             }
                         })
