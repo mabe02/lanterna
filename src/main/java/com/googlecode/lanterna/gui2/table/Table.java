@@ -40,8 +40,6 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
     private boolean cellSelection;
     private int visibleRows;
     private int visibleColumns;
-    private int viewTopRow;
-    private int viewLeftColumn;
     private int selectedRow;
     private int selectedColumn;
     private boolean escapeByArrowKey;
@@ -60,8 +58,6 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
         this.selectAction = null;
         this.visibleColumns = 0;
         this.visibleRows = 0;
-        this.viewTopRow = 0;
-        this.viewLeftColumn = 0;
         this.cellSelection = false;
         this.selectedRow = 0;
         this.selectedColumn = -1;
@@ -200,9 +196,11 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
      * Returns the index of the row that is currently the first row visible. This is always 0 unless scrolling has been
      * enabled and either the user or the software (through {@code setViewTopRow(..)}) has scrolled down.
      * @return Index of the row that is currently the first row visible
+     * @deprecated Use the table renderers method instead
      */
+    @Deprecated
     public int getViewTopRow() {
-        return viewTopRow;
+        return getRenderer().getViewTopRow();
     }
 
     /**
@@ -211,9 +209,11 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
      *
      * @param viewTopRow Index of the row that is currently the first row visible
      * @return Itself
+     * @deprecated Use the table renderers method instead
      */
+    @Deprecated
     public synchronized Table<V> setViewTopRow(int viewTopRow) {
-        this.viewTopRow = viewTopRow;
+        getRenderer().setViewTopRow(viewTopRow);
         return this;
     }
 
@@ -222,9 +222,11 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
      * been enabled and either the user or the software (through {@code setViewLeftColumn(..)}) has scrolled to the
      * right.
      * @return Index of the column that is currently the first column visible
+     * @deprecated Use the table renderers method instead
      */
+    @Deprecated
     public int getViewLeftColumn() {
-        return viewLeftColumn;
+        return getRenderer().getViewLeftColumn();
     }
 
     /**
@@ -233,9 +235,11 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
      *
      * @param viewLeftColumn Index of the column that is currently the first column visible
      * @return Itself
+     * @deprecated Use the table renderers method instead
      */
+    @Deprecated
     public synchronized Table<V> setViewLeftColumn(int viewLeftColumn) {
-        this.viewLeftColumn = viewLeftColumn;
+        getRenderer().setViewLeftColumn(viewLeftColumn);
         return this;
     }
 
@@ -256,7 +260,6 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
     public synchronized Table<V> setSelectedColumn(int selectedColumn) {
         if(cellSelection) {
             this.selectedColumn = selectedColumn;
-            ensureSelectedItemIsVisible();
         }
         return this;
     }
@@ -276,7 +279,6 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
      */
     public synchronized Table<V> setSelectedRow(int selectedRow) {
         this.selectedRow = selectedRow;
-        ensureSelectedItemIsVisible();
         return this;
     }
 
@@ -370,16 +372,14 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
                 }
                 break;
             case PageUp:
-                if(visibleRows > 0 && selectedRow > 0) {
-                    selectedRow -= Math.min(getVisibleRows(), selectedRow);
-                    viewTopRow = selectedRow;
+                if(getRenderer().getVisibleRowsOnLastDraw() > 0 && selectedRow > 0) {
+                    selectedRow -= Math.min(getRenderer().getVisibleRowsOnLastDraw() - 1, selectedRow);
                 }
                 break;
             case PageDown:
-                if(visibleRows > 0 && selectedRow < tableModel.getRowCount() - 1) {
+                if(getRenderer().getVisibleRowsOnLastDraw() > 0 && selectedRow < tableModel.getRowCount() - 1) {
                     int toEndDistance = tableModel.getRowCount() - 1 - selectedRow;
-                    selectedRow += Math.min(getVisibleRows(), toEndDistance);
-                    viewTopRow = Math.min(selectedRow, toEndDistance);
+                    selectedRow += Math.min(getRenderer().getVisibleRowsOnLastDraw() - 1, toEndDistance);
                 }
                 break;
             case Home:
@@ -416,25 +416,8 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
             default:
                 return super.handleKeyStroke(keyStroke);
         }
-        ensureSelectedItemIsVisible();
         invalidate();
         return Result.HANDLED;
     }
 
-    private void ensureSelectedItemIsVisible() {
-        if(visibleRows > 0 && selectedRow < viewTopRow) {
-            viewTopRow = selectedRow;
-        }
-        else if(visibleRows > 0 && selectedRow >= viewTopRow + visibleRows) {
-            viewTopRow = Math.max(0, selectedRow - visibleRows + 1);
-        }
-        if(selectedColumn != -1) {
-            if(visibleColumns > 0 && selectedColumn < viewLeftColumn) {
-                viewLeftColumn = selectedColumn;
-            }
-            else if(visibleColumns > 0 && selectedColumn >= viewLeftColumn + visibleColumns) {
-                viewLeftColumn = Math.max(0, selectedColumn - visibleColumns + 1);
-            }
-        }
-    }
 }
