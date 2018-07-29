@@ -382,6 +382,12 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
                     viewTopRow = Math.min(selectedRow, toEndDistance);
                 }
                 break;
+            case Home:
+                selectedRow = 0;
+                break;
+            case End:
+                selectedRow = tableModel.getRowCount() - 1;
+                break;
             case ArrowLeft:
                 if(cellSelection && selectedColumn > 0) {
                     selectedColumn--;
