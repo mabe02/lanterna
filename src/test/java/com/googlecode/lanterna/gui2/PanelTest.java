@@ -74,7 +74,6 @@ public class PanelTest extends TestBase {
                         window.close();
                     }
                 })));
-        mainPanel.getPreferredSize();
         textGUI.addWindow(window);
     }
 }
