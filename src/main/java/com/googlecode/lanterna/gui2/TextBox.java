@@ -177,6 +177,9 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
      */
     public synchronized TextBox setText(String text) {
         String[] split = text.split("\n");
+        if (split.length == 0) {
+            split = new String[] { "" };
+        }
         lines.clear();
         longestRow = 1;
         for(String line : split) {
