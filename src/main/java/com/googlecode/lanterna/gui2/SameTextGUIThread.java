@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2018 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
 
@@ -57,6 +57,10 @@ public class SameTextGUIThread extends AbstractTextGUIThread {
     private SameTextGUIThread(TextGUI textGUI) {
         super(textGUI);
         guiThread = Thread.currentThread();
+
+        // By default, reset the exception handler to all exceptions generated in the processUpdate method are thrown
+        // back out instead of logged and dropped
+        exceptionHandler = null;
     }
 
     @Override
