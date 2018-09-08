@@ -18,6 +18,7 @@
  */
 package com.googlecode.lanterna.gui2;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.util.Queue;
 import java.util.concurrent.CountDownLatch;
@@ -72,18 +73,41 @@ public abstract class AbstractTextGUIThread implements TextGUIThread {
         if(getThread() != Thread.currentThread()) {
             throw new IllegalStateException("Calling processEventAndUpdate outside of GUI thread");
         }
-        textGUI.processInput();
-        while(!customTasks.isEmpty()) {
-            Runnable r = customTasks.poll();
-            if(r != null) {
-                r.run();
+        try {
+            textGUI.processInput();
+            while (!customTasks.isEmpty()) {
+                Runnable r = customTasks.poll();
+                if (r != null) {
+                    r.run();
+                }
+            }
+            if (textGUI.isPendingUpdate()) {
+                textGUI.updateScreen();
+                return true;
+            }
+            return false;
+        }
+        catch (EOFException e) {
+            // Always re-throw EOFExceptions so the UI system knows we've closed the terminal
+            throw e;
+        }
+        catch (IOException e) {
+            if (exceptionHandler != null) {
+                exceptionHandler.onIOException(e);
+            }
+            else {
+                throw e;
             }
         }
-        if(textGUI.isPendingUpdate()) {
-            textGUI.updateScreen();
-            return true;
+        catch (RuntimeException e) {
+            if (exceptionHandler != null) {
+                exceptionHandler.onRuntimeException(e);
+            }
+            else {
+                throw e;
+            }
         }
-        return false;
+        return true;
     }
 
     @Override

@@ -57,6 +57,10 @@ public class SameTextGUIThread extends AbstractTextGUIThread {
     private SameTextGUIThread(TextGUI textGUI) {
         super(textGUI);
         guiThread = Thread.currentThread();
+
+        // By default, reset the exception handler to all exceptions generated in the processUpdate method are thrown
+        // back out instead of logged and dropped
+        exceptionHandler = null;
     }
 
     @Override
