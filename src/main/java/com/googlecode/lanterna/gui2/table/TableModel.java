@@ -182,6 +182,13 @@ public class TableModel<V> {
         return this;
     }
 
+    public synchronized TableModel<V> clear() {
+        while (rows.size() > 0) {
+            removeRow(0);
+        }
+        return this;
+    }
+
     /**
      * Returns the label of a column header
      * @param index Index of the column to retrieve the header label for
