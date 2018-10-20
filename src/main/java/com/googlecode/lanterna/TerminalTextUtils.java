@@ -1,6 +1,6 @@
 /*
  * This file is part of lanterna (http://code.google.com/p/lanterna/).
- * 
+ *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Copyright (C) 2010-2018 Martin Berglund
  */
 package com.googlecode.lanterna;
@@ -32,7 +32,7 @@ import com.googlecode.lanterna.screen.TabBehaviour;
  * (Chinese, Japanese, Korean) and other special symbols. This class assumes those are all double-width and in case the
  * terminal (-emulator) chooses to draw them (somehow) as single-column then all the calculations in this class will be
  * wrong. It seems safe to assume what this class considers double-width really is taking up two columns though.
- * 
+ *
  * @author Martin
  */
 public class TerminalTextUtils {
@@ -345,7 +345,7 @@ public class TerminalTextUtils {
                     //   - first char is whitespace
                     // either way: put it in row before break to prevent infinite loop.
                     characterIndex = Math.max( characterIndex, 1); // at least 1 char
-                    
+
                     //Ok, split the row, add it to the result and continue processing the second half on a new line
                     result.add(row.substring(0, characterIndex));
                     while(characterIndex < row.length() &&
@@ -361,22 +361,38 @@ public class TerminalTextUtils {
         return result;
     }
 
+    private static Integer[] mapCodesToIntegerArray(String[] codes) {
+        Integer[] result = new Integer[codes.length];
+        for (int i = 0; i < result.length; i++) {
+            if (codes[i].isEmpty()) {
+                result[i] = 0;
+            } else {
+                try {
+                    // An empty string is equivalent to 0.
+                    // Warning: too large values could throw an Exception!
+                    result[i] = Integer.parseInt(codes[i]);
+                } catch (NumberFormatException ignored) {
+                    throw new IllegalArgumentException("Unknown CSI code " + codes[i]);
+                }
+            }
+        }
+        return result;
+    }
+
     public static void updateModifiersFromCSICode(
             String controlSequence,
             StyleSet<?> target,
             StyleSet<?> original) {
-    
+
         char controlCodeType = controlSequence.charAt(controlSequence.length() - 1);
         controlSequence = controlSequence.substring(2, controlSequence.length() - 1);
-        String[] codes = controlSequence.split(";");
-    
+        Integer[] codes = mapCodesToIntegerArray(controlSequence.split(";"));
+
         TextColor[] palette = TextColor.ANSI.values();
-    
+
         if(controlCodeType == 'm') { // SGRs
-            for (String s : codes) {
-                // An empty string is equivalent to 0.
-                // Warning: too large values could throw an Exception!
-                int code = s.isEmpty() ? 0 : Integer.parseInt(s);
+            for (int i = 0; i < codes.length; i++) {
+                int code = codes[i];
                 switch (code) {
                 case 0:
                     target.setStyleFrom(original);
@@ -412,8 +428,26 @@ public class TerminalTextUtils {
                 case 27:
                     target.disableModifiers(SGR.REVERSE);
                     break;
+                case 38:
+                    if (i + 2 < codes.length && codes[i + 1] == 5) {
+                        target.setForegroundColor(new TextColor.Indexed(codes[i + 2]));
+                        i += 2;
+                    } else if (i + 4 < codes.length && codes[i + 1] == 2) {
+                        target.setForegroundColor(new TextColor.RGB(codes[i + 2], codes[i + 3], codes[i + 4]));
+                        i += 4;
+                    }
+                    break;
                 case 39:
                     target.setForegroundColor(original.getForegroundColor());
+                    break;
+                case 48:
+                    if (i + 2 < codes.length && codes[i + 1] == 5) {
+                        target.setBackgroundColor(new TextColor.Indexed(codes[i + 2]));
+                        i += 2;
+                    } else if (i + 4 < codes.length && codes[i + 1] == 2) {
+                        target.setBackgroundColor(new TextColor.RGB(codes[i + 2], codes[i + 3], codes[i + 4]));
+                        i += 4;
+                    }
                     break;
                 case 49:
                     target.setBackgroundColor(original.getBackgroundColor());
