@@ -6,8 +6,8 @@ create and show one window, it will overlap all other windows and exclusively ta
 remain in focus until either it's closed or another window is shown. There is no way to switch between windows without 
 closing the currently focused. 
 
-However, Lanterna *does* support multi-windows mode where each window is not necessarily model. Due to the nature of the
-terminal and how input works, there's isn't any general standard for how to switch windows is a text console environment
+However, Lanterna *does* support multi-windows mode where each window is not necessarily modal. Due to the nature of the
+terminal and how input works, there isn't any general standard for how to switch windows in a text console environment,
 and as such Lanterna only provides programmatic support for switching active window. You'll have to register key 
 listeners and do the switching yourself if you want to support this.
 
