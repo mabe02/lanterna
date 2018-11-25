@@ -14,14 +14,19 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2018 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Simple layout manager the puts all components on a single line, either horizontally or vertically.
@@ -160,14 +165,25 @@ public class LinearLayout implements LayoutManager {
     @Override
     public void doLayout(TerminalSize area, List<Component> components) {
         if(direction == Direction.VERTICAL) {
-            doVerticalLayout(area, components);
+            if (Boolean.getBoolean("com.googlecode.lanterna.gui2.LinearLayout.useOldNonFlexLayout")) {
+                doVerticalLayout(area, components);
+            }
+            else {
+                doFlexibleVerticalLayout(area, components);
+            }
         }
         else {
-            doHorizontalLayout(area, components);
+            if (Boolean.getBoolean("com.googlecode.lanterna.gui2.LinearLayout.useOldNonFlexLayout")) {
+                doHorizontalLayout(area, components);
+            }
+            else {
+                doFlexibleHorizontalLayout(area, components);
+            }
         }
         this.changed = false;
     }
 
+    @Deprecated
     private void doVerticalLayout(TerminalSize area, List<Component> components) {
         int remainingVerticalSpace = area.getRows();
         int availableHorizontalSpace = area.getColumns();
@@ -213,6 +229,90 @@ public class LinearLayout implements LayoutManager {
         }
     }
 
+    private void doFlexibleVerticalLayout(TerminalSize area, List<Component> components) {
+        int availableVerticalSpace = area.getRows();
+        int availableHorizontalSpace = area.getColumns();
+        List<Component> copyOfComponenets = new ArrayList<Component>(components);
+        final Map<Component, TerminalSize> fittingMap = new IdentityHashMap<Component, TerminalSize>();
+        int totalRequiredVerticalSpace = 0;
+
+        for (Component component: components) {
+            Alignment alignment = Alignment.Beginning;
+            LayoutData layoutData = component.getLayoutData();
+            if (layoutData instanceof LinearLayoutData) {
+                alignment = ((LinearLayoutData)layoutData).alignment;
+            }
+
+            TerminalSize preferredSize = component.getPreferredSize();
+            TerminalSize fittingSize = new TerminalSize(
+                    Math.min(availableHorizontalSpace, preferredSize.getColumns()),
+                    preferredSize.getRows());
+            if(alignment == Alignment.Fill) {
+                fittingSize = fittingSize.withColumns(availableHorizontalSpace);
+            }
+
+            fittingMap.put(component, fittingSize);
+            totalRequiredVerticalSpace += fittingSize.getRows() + spacing;
+        }
+        if (!components.isEmpty()) {
+            // Remove the last spacing
+            totalRequiredVerticalSpace -= spacing;
+        }
+
+        // If we can't fit everything, trim the down the size of the largest components until it fits
+        if (availableVerticalSpace < totalRequiredVerticalSpace) {
+            Collections.sort(copyOfComponenets, new Comparator<Component>() {
+                @Override
+                public int compare(Component o1, Component o2) {
+                    // Reverse sort
+                    return 0 - new Integer(fittingMap.get(o1).getRows()).compareTo(fittingMap.get(o2).getRows());
+                }
+            });
+
+            while (availableVerticalSpace < totalRequiredVerticalSpace) {
+                int largestSize = fittingMap.get(copyOfComponenets.get(0)).getRows();
+                for (Component largeComponent: copyOfComponenets) {
+                    TerminalSize currentSize = fittingMap.get(largeComponent);
+                    if (largestSize > currentSize.getRows()) {
+                        break;
+                    }
+                    fittingMap.put(largeComponent, currentSize.withRelativeRows(-1));
+                    totalRequiredVerticalSpace--;
+                }
+            }
+        }
+
+        // Assign the sizes and positions
+        int topPosition = 0;
+        for(Component component: components) {
+            Alignment alignment = Alignment.Beginning;
+            LayoutData layoutData = component.getLayoutData();
+            if (layoutData instanceof LinearLayoutData) {
+                alignment = ((LinearLayoutData)layoutData).alignment;
+            }
+
+            TerminalSize decidedSize = fittingMap.get(component);
+            TerminalPosition position = component.getPosition();
+            position = position.withRow(topPosition);
+            switch(alignment) {
+                case End:
+                    position = position.withColumn(availableHorizontalSpace - decidedSize.getColumns());
+                    break;
+                case Center:
+                    position = position.withColumn((availableHorizontalSpace - decidedSize.getColumns()) / 2);
+                    break;
+                case Beginning:
+                default:
+                    position = position.withColumn(0);
+                    break;
+            }
+            component.setPosition(component.getPosition().with(position));
+            component.setSize(component.getSize().with(decidedSize));
+            topPosition += decidedSize.getRows() + spacing;
+        }
+    }
+
+    @Deprecated
     private void doHorizontalLayout(TerminalSize area, List<Component> components) {
         int remainingHorizontalSpace = area.getColumns();
         int availableVerticalSpace = area.getRows();
@@ -255,6 +355,89 @@ public class LinearLayout implements LayoutManager {
                 component.setSize(component.getSize().with(decidedSize));
                 remainingHorizontalSpace -= decidedSize.getColumns() + spacing;
             }
+        }
+    }
+
+    private void doFlexibleHorizontalLayout(TerminalSize area, List<Component> components) {
+        int availableVerticalSpace = area.getRows();
+        int availableHorizontalSpace = area.getColumns();
+        List<Component> copyOfComponenets = new ArrayList<Component>(components);
+        final Map<Component, TerminalSize> fittingMap = new IdentityHashMap<Component, TerminalSize>();
+        int totalRequiredHorizontalSpace = 0;
+
+        for (Component component: components) {
+            Alignment alignment = Alignment.Beginning;
+            LayoutData layoutData = component.getLayoutData();
+            if (layoutData instanceof LinearLayoutData) {
+                alignment = ((LinearLayoutData)layoutData).alignment;
+            }
+
+            TerminalSize preferredSize = component.getPreferredSize();
+            TerminalSize fittingSize = new TerminalSize(
+                    preferredSize.getColumns(),
+                    Math.min(availableVerticalSpace, preferredSize.getRows()));
+            if(alignment == Alignment.Fill) {
+                fittingSize = fittingSize.withRows(availableVerticalSpace);
+            }
+
+            fittingMap.put(component, fittingSize);
+            totalRequiredHorizontalSpace += fittingSize.getColumns() + spacing;
+        }
+        if (!components.isEmpty()) {
+            // Remove the last spacing
+            totalRequiredHorizontalSpace -= spacing;
+        }
+
+        // If we can't fit everything, trim the down the size of the largest components until it fits
+        if (availableHorizontalSpace < totalRequiredHorizontalSpace) {
+            Collections.sort(copyOfComponenets, new Comparator<Component>() {
+                @Override
+                public int compare(Component o1, Component o2) {
+                    // Reverse sort
+                    return 0 - new Integer(fittingMap.get(o1).getColumns()).compareTo(fittingMap.get(o2).getColumns());
+                }
+            });
+
+            while (availableHorizontalSpace < totalRequiredHorizontalSpace) {
+                int largestSize = fittingMap.get(copyOfComponenets.get(0)).getColumns();
+                for (Component largeComponent: copyOfComponenets) {
+                    TerminalSize currentSize = fittingMap.get(largeComponent);
+                    if (largestSize > currentSize.getColumns()) {
+                        break;
+                    }
+                    fittingMap.put(largeComponent, currentSize.withRelativeColumns(-1));
+                    totalRequiredHorizontalSpace--;
+                }
+            }
+        }
+
+        // Assign the sizes and positions
+        int topPosition = 0;
+        for(Component component: components) {
+            Alignment alignment = Alignment.Beginning;
+            LayoutData layoutData = component.getLayoutData();
+            if (layoutData instanceof LinearLayoutData) {
+                alignment = ((LinearLayoutData)layoutData).alignment;
+            }
+
+            TerminalSize decidedSize = fittingMap.get(component);
+            TerminalPosition position = component.getPosition();
+            position = position.withRow(topPosition);
+            switch(alignment) {
+                case End:
+                    position = position.withColumn(availableHorizontalSpace - decidedSize.getColumns());
+                    break;
+                case Center:
+                    position = position.withColumn((availableHorizontalSpace - decidedSize.getColumns()) / 2);
+                    break;
+                case Beginning:
+                default:
+                    position = position.withColumn(0);
+                    break;
+            }
+            component.setPosition(component.getPosition().with(position));
+            component.setSize(component.getSize().with(decidedSize));
+            topPosition += decidedSize.getRows() + spacing;
         }
     }
 }

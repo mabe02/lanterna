@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2018 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
 
@@ -114,7 +114,10 @@ public abstract class AbstractComposite<T extends Container> extends AbstractCom
     @Override
     public Interactable nextFocus(Interactable fromThis) {
         if(fromThis == null && getComponent() instanceof Interactable) {
-            return (Interactable)getComponent();
+            Interactable interactable = (Interactable) getComponent();
+            if(interactable.isEnabled()) {
+                return interactable;
+            }
         }
         else if(getComponent() instanceof Container) {
             return ((Container)getComponent()).nextFocus(fromThis);
@@ -125,7 +128,10 @@ public abstract class AbstractComposite<T extends Container> extends AbstractCom
     @Override
     public Interactable previousFocus(Interactable fromThis) {
         if(fromThis == null && getComponent() instanceof Interactable) {
-            return (Interactable)getComponent();
+            Interactable interactable = (Interactable) getComponent();
+            if(interactable.isEnabled()) {
+                return interactable;
+            }
         }
         else if(getComponent() instanceof Container) {
             return ((Container)getComponent()).previousFocus(fromThis);

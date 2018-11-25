@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2018 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
 
@@ -24,6 +24,7 @@ import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogBuilder;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.EnumSet;
 
 /**
@@ -63,6 +64,9 @@ public class WelcomeSplashTest extends TestBase {
         new MessageDialogBuilder()
                 .setTitle("Information")
                 .setText("Welcome to Lanterna!")
+                // test that we can change the Hints (Issue 353)
+                .setExtraWindowHints(Collections.singleton(Window.Hint.EXPANDED))
+                .setExtraWindowHints(Collections.singleton(Window.Hint.CENTERED))
                 .build()
                 .showDialog(textGUI);
     }

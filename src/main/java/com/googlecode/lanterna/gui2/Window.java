@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2018 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
 
@@ -34,51 +34,54 @@ import java.util.Set;
 public interface Window extends BasePane {
     /**
      * Window hints are meta-data stored along with the window that can be used to give the GUI system some ideas of how
-     * this window wants to be treated. There are no guarantees that the hints will be honoured though. You can declare
-     * your own window hints by sub-classing this class.
+     * this window wants to be treated. There are no guarantees that the hints will be honoured though.
+     *
+     * You can declare your own window hints by sub-classing this class.  It is highly recommended to provide
+     * your custom hints a good {@code .toString()}. You'd surely prefer in a debug-session to see the Hints
+     * of a Window as {@code [Expanded, Modal]} than as {@code [foo.Bar@12345, foo.Bar@fedcba]}
      */
     class Hint {
         /**
          * With this hint, the TextGUI system should not draw any decorations around the window. Decorated size will be
          * the same as the window size.
          */
-        public static final Hint NO_DECORATIONS = new Hint();
+        public static final Hint NO_DECORATIONS = new Hint("NoDeco");
 
         /**
          * With this hint, the TextGUI system should skip running any post renderers for the window. By default this
          * means the window won't have any shadow.
          */
-        public static final Hint NO_POST_RENDERING = new Hint();
+        public static final Hint NO_POST_RENDERING = new Hint("NoPostRend");
 
         /**
          * With this hint, the window should never receive focus by the window manager
          */
-        public static final Hint NO_FOCUS = new Hint();
+        public static final Hint NO_FOCUS = new Hint("NoFocus");
 
         /**
          * With this hint, the window wants to be at the center of the terminal instead of using the cascading layout
          * which is the standard.
          */
-        public static final Hint CENTERED = new Hint();
+        public static final Hint CENTERED = new Hint("Centered");
 
         /**
          * Windows with this hint should not be positioned by the window manager, rather they should use whatever
          * position is pre-set.
          */
-        public static final Hint FIXED_POSITION = new Hint();
+        public static final Hint FIXED_POSITION = new Hint("FixedPos");
 
         /**
          * Windows with this hint should not be automatically sized by the window manager (using
          * {@code getPreferredSize()}), rather should rely on the code manually setting the size of the window using
          * {@code setSize(..)}.
          */
-        public static final Hint FIXED_SIZE = new Hint();
+        public static final Hint FIXED_SIZE = new Hint("FixedSize");
 
         /**
          * With this hint, don't let the window grow larger than the terminal screen, rather set components to a smaller
          * size than they prefer.
          */
-        public static final Hint FIT_TERMINAL_WINDOW = new Hint();
+        public static final Hint FIT_TERMINAL_WINDOW = new Hint("FitTermWin");
 
         /**
          * This hint tells the window manager that this window should have exclusive access to the keyboard input until
@@ -86,22 +89,35 @@ public interface Window extends BasePane {
          * the screen with this hint should make the window manager temporarily disable that function until the window
          * is closed.
          */
-        public static final Hint MODAL = new Hint();
+        public static final Hint MODAL = new Hint("Modal");
 
         /**
          * A window with this hint would like to be placed covering the entire screen. Use this in combination with
          * NO_DECORATIONS if you want the content area to take up the entire terminal.
          */
-        public static final Hint FULL_SCREEN = new Hint();
+        public static final Hint FULL_SCREEN = new Hint("FullScreen");
 
         /**
          * This window hint tells the window manager that the window should be taking up almost the entire screen,
          * leaving only a small space around it. This is different from {@code FULL_SCREEN} which takes all available
          * space and completely hide the background and any other window behind it.
          */
-        public static final Hint EXPANDED = new Hint();
+        public static final Hint EXPANDED = new Hint("Expanded");
+
+        private String info;
 
         protected Hint() {
+        }
+
+        protected Hint(String info) {
+            this.info = info;
+        }
+        public String toString() {
+            if (info != null) {
+                return info;
+            } else {
+                return super.toString();
+            }
         }
     }
 

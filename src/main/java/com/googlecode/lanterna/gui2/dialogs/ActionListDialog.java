@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2018 Martin Berglund
  */
 package com.googlecode.lanterna.gui2.dialogs;
 
@@ -34,12 +34,10 @@ public class ActionListDialog extends DialogWindow {
             String description,
             TerminalSize actionListPreferredSize,
             boolean canCancel,
+            final boolean closeAutomatically,
             List<Runnable> actions) {
 
         super(title);
-        if(actions.isEmpty()) {
-            throw new IllegalStateException("ActionListDialog needs at least one item");
-        }
 
         ActionListBox listBox = new ActionListBox(actionListPreferredSize);
         for(final Runnable action: actions) {
@@ -47,7 +45,9 @@ public class ActionListDialog extends DialogWindow {
                 @Override
                 public void run() {
                     action.run();
-                    close();
+                    if(closeAutomatically) {
+                        close();
+                    }
                 }
             });
         }

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2018 Martin Berglund
  */
 package com.googlecode.lanterna;
 
@@ -143,6 +143,20 @@ public class TerminalPosition implements Comparable<TerminalPosition> {
      */
     public TerminalPosition withRelative(int deltaColumn, int deltaRow) {
         return withRelativeRow(deltaRow).withRelativeColumn(deltaColumn);
+    }
+
+    /**
+     * Returns itself if it is equal to the supplied position, otherwise the supplied position. You can use this if you
+     * have a position field which is frequently recalculated but often resolves to the same; it will keep the same
+     * object in memory instead of swapping it out every cycle.
+     * @param position Position you want to return
+     * @return Itself if this position equals the position passed in, otherwise the position passed in
+     */
+    public TerminalPosition with(TerminalPosition position) {
+        if(equals(position)) {
+            return this;
+        }
+        return position;
     }
 
     @Override

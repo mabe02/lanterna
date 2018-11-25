@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2018 Martin Berglund
  */
 package com.googlecode.lanterna.graphics;
 
@@ -171,7 +171,9 @@ public class BasicTextImage implements TextImage {
     
     @Override
     public void copyTo(TextImage destination) {
-        copyTo(destination, 0, buffer.length, 0, buffer[0].length, 0, 0);
+        if (buffer.length > 0) {
+            copyTo(destination, 0, buffer.length, 0, buffer[0].length, 0, 0);
+        }
     }
 
     @Override
@@ -209,8 +211,8 @@ public class BasicTextImage implements TextImage {
         }
 
         //Make sure we can't copy more than is available
-        columns = Math.min(buffer[0].length - startColumnIndex, columns);
         rows = Math.min(buffer.length - startRowIndex, rows);
+        columns = rows>0 ? Math.min(buffer[0].length - startColumnIndex, columns) : 0;
 
         //Adjust target lengths as well
         columns = Math.min(destination.getSize().getColumns() - destinationColumnOffset, columns);

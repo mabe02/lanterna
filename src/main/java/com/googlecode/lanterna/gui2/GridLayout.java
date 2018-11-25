@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2018 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
 
@@ -621,15 +621,17 @@ public class GridLayout implements LayoutManager {
 
     private Set<Integer> getExpandableColumns(Component[][] table) {
         Set<Integer> expandableColumns = new TreeSet<Integer>();
+        Component previousComponent = null;
         for(Component[] row: table) {
             for (int i = 0; i < row.length; i++) {
-                if(row[i] == null) {
+                if(row[i] == null || row[i] == previousComponent) {
                     continue;
                 }
                 GridLayoutData layoutData = getLayoutData(row[i]);
                 if(layoutData.grabExtraHorizontalSpace) {
                     expandableColumns.add(i);
                 }
+                previousComponent = row[i];
             }
         }
         return expandableColumns;
@@ -637,15 +639,19 @@ public class GridLayout implements LayoutManager {
 
     private Set<Integer> getExpandableRows(Component[][] table) {
         Set<Integer> expandableRows = new TreeSet<Integer>();
-        for(int rowIndex = 0; rowIndex < table.length; rowIndex++) {
-            Component[] row = table[rowIndex];
-            for(Component cell : row) {
-                if(cell == null) {
-                    continue;
-                }
-                GridLayoutData layoutData = getLayoutData(cell);
-                if(layoutData.grabExtraVerticalSpace) {
-                    expandableRows.add(rowIndex);
+        Component previousComponent = null;
+        if(table.length > 0) {
+            for (int columnIndex = 0; columnIndex < table[0].length; columnIndex++) {
+                for (int rowIndex = 0; rowIndex < table.length; rowIndex++) {
+                    Component cell = table[rowIndex][columnIndex];
+                    if (cell == null || cell == previousComponent) {
+                        continue;
+                    }
+                    GridLayoutData layoutData = getLayoutData(cell);
+                    if (layoutData.grabExtraVerticalSpace) {
+                        expandableRows.add(rowIndex);
+                    }
+                    previousComponent = cell;
                 }
             }
         }
@@ -781,7 +787,7 @@ public class GridLayout implements LayoutManager {
         columnLoop:
         for(int column = tableColumns - 1; column > 0; column--) {
             for(Component[] row : table) {
-                if(row[column] != row[column - 1]) {
+                if(row[column] != null) {
                     continue columnLoop;
                 }
             }
@@ -792,7 +798,7 @@ public class GridLayout implements LayoutManager {
         rowLoop:
         for(int row = tableRows - 1; row > 0; row--) {
             for(int column = 0; column < tableColumns; column++) {
-                if(table[row][column] != table[row - 1][column]) {
+                if(table[row][column] != null) {
                     continue rowLoop;
                 }
             }

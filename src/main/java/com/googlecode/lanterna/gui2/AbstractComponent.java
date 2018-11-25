@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2018 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
 
@@ -363,13 +363,21 @@ public abstract class AbstractComponent<T extends Component> implements Componen
 
     @Override
     public synchronized void onAdded(Container container) {
+        if (parent != container && parent != null) {
+            // first inform current parent:
+            parent.removeComponent(this);
+        }
         parent = container;
     }
 
     @Override
     public synchronized void onRemoved(Container container) {
-        parent = null;
-        themeRenderer = null;
+        if (parent == container) {
+            parent = null;
+            themeRenderer = null;
+        } else {
+            throw new IllegalStateException(this + " is not " + container +"'s child.");
+        }
     }
 
     /**

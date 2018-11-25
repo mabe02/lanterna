@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2018 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
 
@@ -48,6 +48,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
     private final WindowPostRenderer postRenderer;
 
     private Window activeWindow;
+    private boolean hadWindowAtSomePoint;
     private boolean eofWhenNoWindows;
 
     /**
@@ -186,6 +187,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
         this.windowRenderBufferCache = new IdentityHashMap<Window, TextImage>();
         this.postRenderer = postRenderer;
         this.eofWhenNoWindows = false;
+        this.hadWindowAtSomePoint = false;
     }
 
     @Override
@@ -224,7 +226,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
     @Override
     protected synchronized KeyStroke readKeyStroke() throws IOException {
         KeyStroke keyStroke = super.pollInput();
-        if(eofWhenNoWindows && keyStroke == null && windows.isEmpty()) {
+        if(hadWindowAtSomePoint && eofWhenNoWindows && keyStroke == null && windows.isEmpty()) {
             return new KeyStroke(KeyType.EOF);
         }
         else if(keyStroke != null) {
@@ -297,7 +299,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
 
     /**
      * Sets whether the TextGUI should return EOF when you try to read input while there are no windows in the window
-     * manager. Setting this to true (on by default) will make the GUI automatically exit when the last window has been
+     * manager. Setting this to true (off by default) will make the GUI automatically exit when the last window has been
      * closed.
      * @param eofWhenNoWindows Should the GUI return EOF when there are no windows left
      */
@@ -360,6 +362,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
         if(!window.getHints().contains(Window.Hint.NO_FOCUS)) {
             setActiveWindow(window);
         }
+        hadWindowAtSomePoint = true;
         invalidate();
         return this;
     }

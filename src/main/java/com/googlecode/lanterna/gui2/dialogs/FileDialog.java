@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2018 Martin Berglund
  */
 package com.googlecode.lanterna.gui2.dialogs;
 
@@ -164,7 +164,8 @@ public class FileDialog extends DialogWindow {
         @Override
         public void run() {
             if(!fileBox.getText().isEmpty()) {
-                selectedFile = new File(directory, fileBox.getText());
+                File file = new File(fileBox.getText());
+                selectedFile = file.isAbsolute() ? file : new File(directory, fileBox.getText());
                 close();
             }
             else {
