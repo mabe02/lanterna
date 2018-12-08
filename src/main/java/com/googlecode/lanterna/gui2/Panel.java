@@ -64,6 +64,18 @@ public class Panel extends AbstractComponent<Panel> implements Container {
      * @return Itself
      */
     public Panel addComponent(Component component) {
+        return addComponent(Integer.MAX_VALUE, component);
+    }
+
+    /**
+     * Adds a new child component to the panel. Where within the panel the child will be displayed is up to the layout
+     * manager assigned to this panel. If the component has already been added to another panel, it will first be
+     * removed from that panel before added to this one.
+     * @param component Child component to add to this panel
+     * @param index At what index to add the component among the existing components
+     * @return Itself
+     */
+    public Panel addComponent(int index, Component component) {
         if(component == null) {
             throw new IllegalArgumentException("Cannot add null component");
         }
@@ -74,7 +86,13 @@ public class Panel extends AbstractComponent<Panel> implements Container {
             if(component.getParent() != null) {
                 component.getParent().removeComponent(component);
             }
-            components.add(component);
+            if (index > components.size()) {
+                index = components.size();
+            }
+            else if (index < 0) {
+                index = 0;
+            }
+            components.add(index, component);
         }
         component.onAdded(this);
         invalidate();
