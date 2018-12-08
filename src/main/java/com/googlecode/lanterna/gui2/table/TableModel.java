@@ -190,6 +190,17 @@ public class TableModel<V> {
     }
 
     /**
+     * Removes all rows from the table, this will trigger listeners for each row
+     * @return Itself
+     */
+    public synchronized TableModel<V> clear() {
+        while (rows.size() > 0) {
+            removeRow(0);
+        }
+        return this;
+    }
+
+    /**
      * Returns the label of a column header
      * @param index Index of the column to retrieve the header label for
      * @return Label of the column selected
