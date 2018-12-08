@@ -182,6 +182,10 @@ public class TableModel<V> {
         return this;
     }
 
+    /**
+     * Removes all rows from the table, this will trigger listeners for each row
+     * @return Itself
+     */
     public synchronized TableModel<V> clear() {
         while (rows.size() > 0) {
             removeRow(0);
