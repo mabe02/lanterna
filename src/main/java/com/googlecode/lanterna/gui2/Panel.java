@@ -19,6 +19,7 @@
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.input.KeyStroke;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,6 +39,7 @@ public class Panel extends AbstractComponent<Panel> implements Container {
     private final List<Component> components;
     private LayoutManager layoutManager;
     private TerminalSize cachedPreferredSize;
+    private TextColor fillColorOverride;
 
     /**
      * Default constructor, creates a new panel with no child components and by default set to a vertical
@@ -174,6 +176,25 @@ public class Panel extends AbstractComponent<Panel> implements Container {
     }
 
     /**
+     * Returns the color used to override the default background color from the theme, if set. Otherwise {@code null} is
+     * returned and whatever theme is assigned will be used to derive the fill color.
+     * @return The color, if any, used to fill the panel's unused space instead of the theme's color
+     */
+    public TextColor getFillColorOverride() {
+        return fillColorOverride;
+    }
+
+    /**
+     * Sets an override color to be used instead of the theme's color for Panels when drawing unused space. If called
+     * with {@code null}, it will reset back to the theme's color.
+     * @param fillColor Color to draw the unused space with instead of what the theme definition says, no {@code null}
+     *                  to go back to the theme definition
+     */
+    public void setFillColorOverride(TextColor fillColor) {
+        this.fillColorOverride = fillColorOverride;
+    }
+
+    /**
      * Returns the layout manager assigned to this panel
      * @return Layout manager assigned to this panel
      */
@@ -215,6 +236,9 @@ public class Panel extends AbstractComponent<Panel> implements Container {
 
                 // Reset the area
                 graphics.applyThemeStyle(getThemeDefinition().getNormal());
+                if (fillColorOverride != null) {
+                    graphics.setBackgroundColor(fillColorOverride);
+                }
                 graphics.fill(' ');
 
                 synchronized(components) {
