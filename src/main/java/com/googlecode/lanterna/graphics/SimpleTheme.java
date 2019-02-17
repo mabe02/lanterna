@@ -405,9 +405,9 @@ public class SimpleTheme implements Theme {
     }
 
     private static class Style implements ThemeStyle {
-        private TextColor foreground;
-        private TextColor background;
-        private EnumSet<SGR> sgrs;
+        private final TextColor foreground;
+        private final TextColor background;
+        private final EnumSet<SGR> sgrs;
 
         private Style(TextColor foreground, TextColor background, SGR... sgrs) {
             if(foreground == null) {
