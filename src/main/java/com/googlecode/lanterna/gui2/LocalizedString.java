@@ -33,56 +33,62 @@ public final class LocalizedString {
     /**
      * "OK"
      */
-    public final static LocalizedString OK = new LocalizedString("short.label.ok");
+    public final static LocalizedString OK = new LocalizedString("short.label.ok", "OK");
     /**
      * "Cancel"
      */
-    public final static LocalizedString Cancel = new LocalizedString("short.label.cancel");
+    public final static LocalizedString Cancel = new LocalizedString("short.label.cancel", "Cancel");
     /**
      * "Yes"
      */
-    public final static LocalizedString Yes = new LocalizedString("short.label.yes");
+    public final static LocalizedString Yes = new LocalizedString("short.label.yes", "Yes");
     /**
      * "No"
      */
-    public final static LocalizedString No = new LocalizedString("short.label.no");
+    public final static LocalizedString No = new LocalizedString("short.label.no", "No");
     /**
      * "Close"
      */
-    public final static LocalizedString Close = new LocalizedString("short.label.close");
+    public final static LocalizedString Close = new LocalizedString("short.label.close", "Close");
     /**
      * "Abort"
      */
-    public final static LocalizedString Abort = new LocalizedString("short.label.abort");
+    public final static LocalizedString Abort = new LocalizedString("short.label.abort", "Abort");
     /**
      * "Ignore"
      */
-    public final static LocalizedString Ignore = new LocalizedString("short.label.ignore");
+    public final static LocalizedString Ignore = new LocalizedString("short.label.ignore", "Ignore");
     /**
      * "Retry"
      */
-    public final static LocalizedString Retry = new LocalizedString("short.label.retry");
+    public final static LocalizedString Retry = new LocalizedString("short.label.retry", "Retry");
     /**
      * "Continue"
      */
-    public final static LocalizedString Continue = new LocalizedString("short.label.continue");
+    public final static LocalizedString Continue = new LocalizedString("short.label.continue", "Continue");
     /**
      * "Open"
      */
-    public final static LocalizedString Open = new LocalizedString("short.label.open");
+    public final static LocalizedString Open = new LocalizedString("short.label.open", "Open");
     /**
      * "Save"
      */
-    public final static LocalizedString Save = new LocalizedString("short.label.save");
+    public final static LocalizedString Save = new LocalizedString("short.label.save", "Save");
 
+    private final String defaultValue;
     private final String bundleKey;
 
-    private LocalizedString(final String bundleKey) {
+    private LocalizedString(final String bundleKey, final String defaultValue) {
         this.bundleKey = bundleKey;
+        this.defaultValue = defaultValue;
     }
 
     @Override
     public String toString() {
-        return LocalizedUIBundle.get(Locale.getDefault(), bundleKey);
+        String localizedString = LocalizedUIBundle.get(Locale.getDefault(), bundleKey);
+        if (localizedString == null) {
+            localizedString = defaultValue;
+        }
+        return localizedString;
     }
 }
