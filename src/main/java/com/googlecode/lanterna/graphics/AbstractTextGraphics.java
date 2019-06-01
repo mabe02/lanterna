@@ -289,10 +289,11 @@ public abstract class AbstractTextGraphics implements TextGraphics {
 
     @Override
     public TextGraphics putString(int column, int row, String string, Collection<SGR> extraModifiers) {
-        extraModifiers.removeAll(activeModifiers);
-        enableModifiers(extraModifiers);
+        Collection<SGR> newModifiers = EnumSet.copyOf(extraModifiers);
+        newModifiers.removeAll(activeModifiers);
+        enableModifiers(newModifiers);
         putString(column, row, string);
-        disableModifiers(extraModifiers);
+        disableModifiers(newModifiers);
         return this;
     }
 
