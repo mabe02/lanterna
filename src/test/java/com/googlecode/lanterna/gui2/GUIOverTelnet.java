@@ -40,26 +40,23 @@ public class GUIOverTelnet {
         while(true) {
             final TelnetTerminal telnetTerminal = telnetTerminalServer.acceptConnection();
             System.out.println("Accepted connection from " + telnetTerminal.getRemoteSocketAddress());
-            Thread thread = new Thread() {
-                @Override
-                public void run() {
-                    try {
-                        runGUI(telnetTerminal);
-                    }
-                    catch(IOException e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        telnetTerminal.close();
-                    }
-                    catch(IOException ignore) {}
+            Thread thread = new Thread(() -> {
+                try {
+                    runGUI(telnetTerminal);
                 }
-            };
+                catch(IOException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    telnetTerminal.close();
+                }
+                catch(IOException ignore) {}
+            });
             thread.start();
         }
     }
 
-    private static final List<TextBox> ALL_TEXTBOXES = new ArrayList<TextBox>();
+    private static final List<TextBox> ALL_TEXTBOXES = new ArrayList<>();
 
     @SuppressWarnings({"rawtypes","unchecked"})
     private static void runGUI(final TelnetTerminal telnetTerminal) throws IOException {
@@ -72,20 +69,12 @@ public class GUIOverTelnet {
             final BasicWindow window = new BasicWindow("Text GUI over Telnet");
             Panel contentArea = new Panel();
             contentArea.setLayoutManager(new LinearLayout(Direction.VERTICAL));
-            contentArea.addComponent(new Button("Button", new Runnable() {
-                @Override
-                public void run() {
-                    final BasicWindow messageBox = new BasicWindow("Response");
-                    messageBox.setComponent(Panels.vertical(
-                            new Label("Hello!"),
-                            new Button("Close", new Runnable() {
-                                @Override
-                                public void run() {
-                                    messageBox.close();
-                                }
-                            })));
-                    textGUI.addWindow(messageBox);
-                }
+            contentArea.addComponent(new Button("Button", () -> {
+                final BasicWindow messageBox = new BasicWindow("Response");
+                messageBox.setComponent(Panels.vertical(
+                        new Label("Hello!"),
+                        new Button("Close", messageBox::close)));
+                textGUI.addWindow(messageBox);
             }).withBorder(Borders.singleLine("This is a button")));
 
 
@@ -146,12 +135,7 @@ public class GUIOverTelnet {
                 }
             }.withBorder(Borders.singleLine("Custom component")));
 
-            contentArea.addComponent(new Button("Close", new Runnable() {
-                @Override
-                public void run() {
-                    window.close();
-                }
-            }));
+            contentArea.addComponent(new Button("Close", window::close));
             window.setComponent(contentArea);
 
             textGUI.addWindowAndWait(window);

@@ -39,27 +39,15 @@ public class Issue274 {
         TextBox text = new TextBox(new TerminalSize(10,10),TextBox.Style.MULTI_LINE);
         menubar.addComponent(text);
 
-        menubar.addComponent(new Button("Open", new Runnable(){
-            @Override
-            public void run() {
-                final Window op = new BasicWindow("Select file");
-                gui.addWindow(op);
-                op.setComponent(new Button("Close", new Runnable(){
-                    @Override
-                    public void run() {
-                        op.close();
-                    }
-                }));
-            }
+        menubar.addComponent(new Button("Open", () -> {
+            final Window op = new BasicWindow("Select file");
+            gui.addWindow(op);
+            op.setComponent(new Button("Close", op::close));
         }));
 
         menubar.addComponent(new Button("Save"));
 
-        menubar.addComponent(new Button("Exit", new Runnable(){
-            public void run(){
-                gui.getActiveWindow().close();
-            }
-        }));
+        menubar.addComponent(new Button("Exit", () -> gui.getActiveWindow().close()));
 
         Window main = new BasicWindow("Test");
         main.setComponent(menubar);

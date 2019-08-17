@@ -75,9 +75,9 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
 
         cachedSize = null;
 
-        preferredColumnSizes = new ArrayList<Integer>();
-        preferredRowSizes = new ArrayList<Integer>();
-        expandableColumns = new TreeSet<Integer>();
+        preferredColumnSizes = new ArrayList<>();
+        preferredRowSizes = new ArrayList<>();
+        expandableColumns = new TreeSet<>();
         headerSizeInRows = 0;
     }
 
@@ -278,8 +278,8 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
         int preferredRowSize = 0;
         int preferredColumnSize = 0;
         if (table.getVisibleColumns() == 0) {
-            for (int columnIndex = 0; columnIndex < preferredColumnSizes.size(); columnIndex++) {
-                preferredColumnSize += preferredColumnSizes.get(columnIndex);
+            for (Integer columnSize : preferredColumnSizes) {
+                preferredColumnSize += columnSize;
             }
         }
         else {
@@ -462,12 +462,12 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
     }
 
     private List<Integer> fitColumnsInAvailableSpace(Table<V> table, TerminalSize area, int visibleColumns) {
-        List<Integer> columnSizes = new ArrayList<Integer>(preferredColumnSizes);
+        List<Integer> columnSizes = new ArrayList<>(preferredColumnSizes);
         int horizontalSpaceRequirement = 0;
         int viewLeftColumn = table.getViewLeftColumn();
         List<String> headers = table.getTableModel().getColumnLabels();
         int endColumnIndex = Math.min(headers.size(), viewLeftColumn + visibleColumns);
-        List<Integer> visibleExpandableColumns = new ArrayList<Integer>();
+        List<Integer> visibleExpandableColumns = new ArrayList<>();
         for(int index = viewLeftColumn; index < endColumnIndex; index++) {
             horizontalSpaceRequirement += preferredColumnSizes.get(index);
             if(headerHorizontalBorderStyle != TableCellBorderStyle.None && index < (endColumnIndex - 1)) {

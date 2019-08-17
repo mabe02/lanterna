@@ -38,7 +38,7 @@ public class Environment
         for(String key: keys)
             System.out.println(key + " = " + properties.getProperty(key));
 
-        keys = new ArrayList<String>(System.getenv().keySet());
+        keys = new ArrayList<>(System.getenv().keySet());
         Collections.sort(keys);
         for(String key: keys)
             System.out.println(key + " = " + System.getenv(key));

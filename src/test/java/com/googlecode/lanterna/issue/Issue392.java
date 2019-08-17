@@ -26,12 +26,9 @@ public class Issue392 {
         window = new BasicWindow();
 
         Button button = new Button("test");
-        button.addListener(new Button.Listener() {
-            @Override
-            public void onTriggered(Button b) {
-                setExceptionHandler();
-                throw new RuntimeException("This should be caught in the uncaght exception handler!");
-            }
+        button.addListener(b -> {
+            setExceptionHandler();
+            throw new RuntimeException("This should be caught in the uncaght exception handler!");
         });
         window.setComponent(button);
 

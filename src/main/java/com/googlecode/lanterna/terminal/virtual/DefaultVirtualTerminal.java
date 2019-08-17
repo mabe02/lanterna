@@ -68,11 +68,11 @@ public class DefaultVirtualTerminal extends AbstractTerminal implements VirtualT
     public DefaultVirtualTerminal(TerminalSize initialTerminalSize) {
         this.regularTextBuffer = new TextBuffer();
         this.privateModeTextBuffer = new TextBuffer();
-        this.dirtyTerminalCells = new TreeSet<TerminalPosition>();
-        this.listeners = new ArrayList<VirtualTerminalListener>();
+        this.dirtyTerminalCells = new TreeSet<>();
+        this.listeners = new ArrayList<>();
 
         // Terminal state
-        this.inputQueue = new LinkedBlockingQueue<KeyStroke>();
+        this.inputQueue = new LinkedBlockingQueue<>();
         this.activeModifiers = EnumSet.noneOf(SGR.class);
         this.activeForegroundColor = TextColor.ANSI.DEFAULT;
         this.activeBackgroundColor = TextColor.ANSI.DEFAULT;
@@ -277,11 +277,11 @@ public class DefaultVirtualTerminal extends AbstractTerminal implements VirtualT
     }
 
     public synchronized TreeSet<TerminalPosition> getDirtyCells() {
-        return new TreeSet<TerminalPosition>(dirtyTerminalCells);
+        return new TreeSet<>(dirtyTerminalCells);
     }
 
     public synchronized TreeSet<TerminalPosition> getAndResetDirtyCells() {
-        TreeSet<TerminalPosition> copy = new TreeSet<TerminalPosition>(dirtyTerminalCells);
+        TreeSet<TerminalPosition> copy = new TreeSet<>(dirtyTerminalCells);
         dirtyTerminalCells.clear();
         return copy;
     }
@@ -322,25 +322,17 @@ public class DefaultVirtualTerminal extends AbstractTerminal implements VirtualT
 
     @Override
     public synchronized void forEachLine(int startRow, int endRow, BufferWalker bufferWalker) {
-        final BufferLine emptyLine = new BufferLine() {
-            @Override
-            public TextCharacter getCharacterAt(int column) {
-                return TextCharacter.DEFAULT_CHARACTER;
-            }
-        };
+        final BufferLine emptyLine = column -> TextCharacter.DEFAULT_CHARACTER;
         ListIterator<List<TextCharacter>> iterator = currentTextBuffer.getLinesFrom(startRow);
         for(int row = startRow; row <= endRow; row++) {
             BufferLine bufferLine = emptyLine;
             if(iterator.hasNext()) {
                 final List<TextCharacter> list = iterator.next();
-                bufferLine = new BufferLine() {
-                    @Override
-                    public TextCharacter getCharacterAt(int column) {
-                        if(column >= list.size()) {
-                            return TextCharacter.DEFAULT_CHARACTER;
-                        }
-                        return list.get(column);
+                bufferLine = column -> {
+                    if(column >= list.size()) {
+                        return TextCharacter.DEFAULT_CHARACTER;
                     }
+                    return list.get(column);
                 };
             }
             bufferWalker.onLine(row, bufferLine);
@@ -424,7 +416,7 @@ public class DefaultVirtualTerminal extends AbstractTerminal implements VirtualT
             correctCursor();
             if(!wholeBufferDirty) {
                 // Adjust all "dirty" positions
-                TreeSet<TerminalPosition> newDirtySet = new TreeSet<TerminalPosition>();
+                TreeSet<TerminalPosition> newDirtySet = new TreeSet<>();
                 for(TerminalPosition dirtyPosition: dirtyTerminalCells) {
                     TerminalPosition adjustedPosition = dirtyPosition.withRelativeRow(-trimBacklogRows);
                     if(adjustedPosition.getRow() >= 0) {

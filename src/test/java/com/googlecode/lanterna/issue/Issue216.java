@@ -47,18 +47,15 @@ public class Issue216 {
         panel.addComponent(new TextBox());
 
         panel.addComponent(new Label("Table"));
-        final Table<String> table = new Table<String>("Test");
+        final Table<String> table = new Table<>("Test");
         final TableModel<String> tableModel = table.getTableModel();
         tableModel.addRow("hi");
         panel.addComponent(table);
 
         panel.addComponent(new EmptySpace(new TerminalSize(0,0))); // Empty space underneath labels
-        panel.addComponent(new Button("Submit", new Runnable() {
-            @Override
-            public void run() {
-                tableModel.addRow("haiiii");
-                //table.invalidate();
-            }
+        panel.addComponent(new Button("Submit", () -> {
+            tableModel.addRow("haiiii");
+            //table.invalidate();
         }));
 
         // Create window to hold the panel

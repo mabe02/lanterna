@@ -32,7 +32,7 @@ public class RedundantThemeDeclarationsTest {
             Theme registeredTheme = LanternaThemes.getRegisteredTheme(theme);
             List<String> redundantDeclarations = ((PropertyTheme) registeredTheme).findRedundantDeclarations();
             try {
-                Assert.assertEquals(Collections.EMPTY_LIST, redundantDeclarations);
+                Assert.assertEquals(Collections.emptyList(), redundantDeclarations);
             }
             catch(AssertionError e) {
                 System.out.println("Redundant definitions in theme '" + theme + "':");

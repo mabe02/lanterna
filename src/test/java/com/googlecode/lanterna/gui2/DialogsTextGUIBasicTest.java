@@ -41,104 +41,61 @@ public class DialogsTextGUIBasicTest {
 
             Panel mainPanel = new Panel();
             ActionListBox dialogsListBox = new ActionListBox();
-            dialogsListBox.addItem("Simple TextInputDialog", new Runnable() {
-                @Override
-                public void run() {
-                    String result = TextInputDialog.showDialog(textGUI, "TextInputDialog sample", "This is the description", "initialContent");
-                    System.out.println("Result was: " + result);
-                }
+            dialogsListBox.addItem("Simple TextInputDialog", () -> {
+                String result = TextInputDialog.showDialog(textGUI, "TextInputDialog sample", "This is the description", "initialContent");
+                System.out.println("Result was: " + result);
             });
-            dialogsListBox.addItem("Password input", new Runnable() {
-                @Override
-                public void run() {
-                    String result = TextInputDialog.showPasswordDialog(textGUI, "Test password input", "This is a password input dialog", "");
-                    System.out.println("Result was: " + result);
-                }
+            dialogsListBox.addItem("Password input", () -> {
+                String result = TextInputDialog.showPasswordDialog(textGUI, "Test password input", "This is a password input dialog", "");
+                System.out.println("Result was: " + result);
             });
-            dialogsListBox.addItem("Multi-line input", new Runnable() {
-                @Override
-                public void run() {
-                    String result = new TextInputDialogBuilder()
-                            .setTitle("Multi-line editor")
-                            .setTextBoxSize(new TerminalSize(35, 5))
-                            .build()
-                            .showDialog(textGUI);
-                    System.out.println("Result was: " + result);
-                }
+            dialogsListBox.addItem("Multi-line input", () -> {
+                String result = new TextInputDialogBuilder()
+                        .setTitle("Multi-line editor")
+                        .setTextBoxSize(new TerminalSize(35, 5))
+                        .build()
+                        .showDialog(textGUI);
+                System.out.println("Result was: " + result);
             });
-            dialogsListBox.addItem("Numeric input", new Runnable() {
-                @Override
-                public void run() {
-                    String result = new TextInputDialogBuilder()
-                            .setTitle("Numeric input")
-                            .setDescription("Enter a number")
-                            .setValidationPattern(Pattern.compile("[0-9]+"), "Please enter a valid number")
-                            .build()
-                            .showDialog(textGUI);
-                    System.out.println("Result was: " + result);
-                }
+            dialogsListBox.addItem("Numeric input", () -> {
+                String result = new TextInputDialogBuilder()
+                        .setTitle("Numeric input")
+                        .setDescription("Enter a number")
+                        .setValidationPattern(Pattern.compile("[0-9]+"), "Please enter a valid number")
+                        .build()
+                        .showDialog(textGUI);
+                System.out.println("Result was: " + result);
             });
-            dialogsListBox.addItem("File dialog (open)", new Runnable() {
-                @Override
-                public void run() {
-                    File result = new FileDialogBuilder()
-                            .setTitle("Open File")
-                            .setDescription("Choose a file:")
-                            .setActionLabel(LocalizedString.Open.toString())
-                            .build()
-                            .showDialog(textGUI);
-                    System.out.println("Result was: " + result);
-                }
+            dialogsListBox.addItem("File dialog (open)", () -> {
+                File result = new FileDialogBuilder()
+                        .setTitle("Open File")
+                        .setDescription("Choose a file:")
+                        .setActionLabel(LocalizedString.Open.toString())
+                        .build()
+                        .showDialog(textGUI);
+                System.out.println("Result was: " + result);
             });
-            dialogsListBox.addItem("File dialog (save)", new Runnable() {
-                @Override
-                public void run() {
-                    File result = new FileDialogBuilder()
-                            .setTitle("Save File")
-                            .setDescription("Choose a file:")
-                            .setActionLabel(LocalizedString.Save.toString())
-                            .build()
-                            .showDialog(textGUI);
-                    System.out.println("Result was: " + result);
-                }
+            dialogsListBox.addItem("File dialog (save)", () -> {
+                File result = new FileDialogBuilder()
+                        .setTitle("Save File")
+                        .setDescription("Choose a file:")
+                        .setActionLabel(LocalizedString.Save.toString())
+                        .build()
+                        .showDialog(textGUI);
+                System.out.println("Result was: " + result);
             });
-            dialogsListBox.addItem("Action list dialog", new Runnable() {
-                @Override
-                public void run() {
-                    new ActionListDialogBuilder()
-                            .setTitle("Action List Dialog")
-                            .setDescription("Choose an item")
-                            .addAction("First Item", new Runnable() {
-                                @Override
-                                public void run() {
-                                    MessageDialog.showMessageDialog(textGUI, "Action List Dialog", "You chose First Item", MessageDialogButton.OK);
-                                }
-                            })
-                            .addAction("Second Item", new Runnable() {
-                                @Override
-                                public void run() {
-                                    MessageDialog.showMessageDialog(textGUI, "Action List Dialog", "You chose Second Item", MessageDialogButton.OK);
-                                }
-                            })
-                            .addAction("Third Item", new Runnable() {
-                                @Override
-                                public void run() {
-                                    MessageDialog.showMessageDialog(textGUI, "Action List Dialog", "You chose Third Item", MessageDialogButton.OK);
-                                }
-                            })
-                            .build()
-                            .showDialog(textGUI);
-                }
-            });
+            dialogsListBox.addItem("Action list dialog", () -> new ActionListDialogBuilder()
+                    .setTitle("Action List Dialog")
+                    .setDescription("Choose an item")
+                    .addAction("First Item", () -> MessageDialog.showMessageDialog(textGUI, "Action List Dialog", "You chose First Item", MessageDialogButton.OK))
+                    .addAction("Second Item", () -> MessageDialog.showMessageDialog(textGUI, "Action List Dialog", "You chose Second Item", MessageDialogButton.OK))
+                    .addAction("Third Item", () -> MessageDialog.showMessageDialog(textGUI, "Action List Dialog", "You chose Third Item", MessageDialogButton.OK))
+                    .build()
+                    .showDialog(textGUI));
 
             mainPanel.addComponent(dialogsListBox);
             mainPanel.addComponent(new EmptySpace(TerminalSize.ONE));
-            mainPanel.addComponent(new Button("Exit", new Runnable() {
-                @Override
-                public void run() {
-                    window.close();
-                }
-            }));
+            mainPanel.addComponent(new Button("Exit", window::close));
             window.setComponent(mainPanel);
 
             textGUI.addWindowAndWait(window);

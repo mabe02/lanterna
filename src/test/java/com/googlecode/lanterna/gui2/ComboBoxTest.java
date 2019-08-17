@@ -37,7 +37,7 @@ public class ComboBoxTest extends TestBase {
         final BasicWindow window = new BasicWindow("ComboBoxTest");
         Panel mainPanel = new Panel();
 
-        final ComboBox<String> comboBoxReadOnly = new ComboBox<String>();
+        final ComboBox<String> comboBoxReadOnly = new ComboBox<>();
         final ComboBox<String> comboBoxEditable = new ComboBox<String>().setReadOnly(false);
         final ComboBox<String> comboBoxCJK = new ComboBox<String>().setReadOnly(false);
         final ComboBox<String> comboBoxTimeZones = new ComboBox<String>().setReadOnly(true);
@@ -62,40 +62,31 @@ public class ComboBoxTest extends TestBase {
         mainPanel.addComponent(new EmptySpace(TerminalSize.ONE));
 
         final TextBox textBoxNewItem = new TextBox(new TerminalSize(20, 1));
-        Button buttonAddItem = new Button("Add", new Runnable() {
-            @Override
-            public void run() {
-                comboBoxEditable.addItem(textBoxNewItem.getText());
-                comboBoxReadOnly.addItem(textBoxNewItem.getText());
-                textBoxNewItem.setText("");
-                window.setFocusedInteractable(textBoxNewItem);
-            }
+        Button buttonAddItem = new Button("Add", () -> {
+            comboBoxEditable.addItem(textBoxNewItem.getText());
+            comboBoxReadOnly.addItem(textBoxNewItem.getText());
+            textBoxNewItem.setText("");
+            window.setFocusedInteractable(textBoxNewItem);
         });
         final TextBox textBoxSetSelectedIndex = new TextBox(new TerminalSize(20, 1), "0");
         textBoxSetSelectedIndex.setValidationPattern(Pattern.compile("-?[0-9]+"));
-        Button buttonSetSelectedIndex = new Button("Set Selected Index", new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    comboBoxEditable.setSelectedIndex(Integer.parseInt(textBoxSetSelectedIndex.getText()));
-                    comboBoxReadOnly.setSelectedIndex(Integer.parseInt(textBoxSetSelectedIndex.getText()));
-                }
-                catch (Exception e) {
-                    MessageDialog.showMessageDialog(textGUI, e.getClass().getName(), e.getMessage(), MessageDialogButton.OK);
-                }
+        Button buttonSetSelectedIndex = new Button("Set Selected Index", () -> {
+            try {
+                comboBoxEditable.setSelectedIndex(Integer.parseInt(textBoxSetSelectedIndex.getText()));
+                comboBoxReadOnly.setSelectedIndex(Integer.parseInt(textBoxSetSelectedIndex.getText()));
+            }
+            catch (Exception e) {
+                MessageDialog.showMessageDialog(textGUI, e.getClass().getName(), e.getMessage(), MessageDialogButton.OK);
             }
         });
         final TextBox textBoxSetSelectedItem = new TextBox(new TerminalSize(20, 1));
-        Button buttonSetSelectedItem = new Button("Set Selected Item", new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    comboBoxEditable.setSelectedItem(textBoxSetSelectedItem.getText());
-                    comboBoxReadOnly.setSelectedItem(textBoxSetSelectedItem.getText());
-                }
-                catch (Exception e) {
-                    MessageDialog.showMessageDialog(textGUI, e.getClass().getName(), e.getMessage(), MessageDialogButton.OK);
-                }
+        Button buttonSetSelectedItem = new Button("Set Selected Item", () -> {
+            try {
+                comboBoxEditable.setSelectedItem(textBoxSetSelectedItem.getText());
+                comboBoxReadOnly.setSelectedItem(textBoxSetSelectedItem.getText());
+            }
+            catch (Exception e) {
+                MessageDialog.showMessageDialog(textGUI, e.getClass().getName(), e.getMessage(), MessageDialogButton.OK);
             }
         });
         mainPanel.addComponent(
@@ -109,12 +100,7 @@ public class ComboBoxTest extends TestBase {
         mainPanel.addComponent(comboBoxTimeZones.withBorder(Borders.singleLine("Large ComboBox")));
         mainPanel.addComponent(new EmptySpace(TerminalSize.ONE));
         mainPanel.addComponent(new Separator(Direction.HORIZONTAL).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Fill)));
-        mainPanel.addComponent(new Button("OK", new Runnable() {
-            @Override
-            public void run() {
-                window.close();
-            }
-        }));
+        mainPanel.addComponent(new Button("OK", window::close));
         window.setComponent(mainPanel);
         textGUI.addWindow(window);
     }

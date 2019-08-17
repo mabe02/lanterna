@@ -45,25 +45,17 @@ public class ScrollBarTest extends TestBase {
         final TextBox textBoxHorizontalMax = new TextBox("100").setValidationPattern(Pattern.compile("[0-9]+"));
         final ScrollBar verticalScroll = new ScrollBar(Direction.VERTICAL);
         final ScrollBar horizontalScroll = new ScrollBar(Direction.HORIZONTAL);
-        Button buttonRefresh = new Button("Refresh", new Runnable() {
-            @Override
-            public void run() {
-                ((ScrollBar.DefaultScrollBarRenderer)verticalScroll.getRenderer()).setGrowScrollTracker(checkVerticalTrackerGrow.isChecked());
-                verticalScroll.setScrollMaximum(getInteger(textBoxVerticalMax.getText(), 100));
-                verticalScroll.setScrollPosition(getInteger(textBoxVerticalPosition.getText(), 100));
-                verticalScroll.setViewSize(getInteger(textBoxVerticalSize.getText(), 1));
-                ((ScrollBar.DefaultScrollBarRenderer)horizontalScroll.getRenderer()).setGrowScrollTracker(checkHorizontalTrackerGrow.isChecked());
-                horizontalScroll.setScrollMaximum(getInteger(textBoxHorizontalMax.getText(), 0));
-                horizontalScroll.setScrollPosition(getInteger(textBoxHorizontalPosition.getText(), 0));
-                horizontalScroll.setViewSize(getInteger(textBoxHorizontalSize.getText(), 1));
-            }
+        Button buttonRefresh = new Button("Refresh", () -> {
+            ((ScrollBar.DefaultScrollBarRenderer)verticalScroll.getRenderer()).setGrowScrollTracker(checkVerticalTrackerGrow.isChecked());
+            verticalScroll.setScrollMaximum(getInteger(textBoxVerticalMax.getText(), 100));
+            verticalScroll.setScrollPosition(getInteger(textBoxVerticalPosition.getText(), 100));
+            verticalScroll.setViewSize(getInteger(textBoxVerticalSize.getText(), 1));
+            ((ScrollBar.DefaultScrollBarRenderer)horizontalScroll.getRenderer()).setGrowScrollTracker(checkHorizontalTrackerGrow.isChecked());
+            horizontalScroll.setScrollMaximum(getInteger(textBoxHorizontalMax.getText(), 0));
+            horizontalScroll.setScrollPosition(getInteger(textBoxHorizontalPosition.getText(), 0));
+            horizontalScroll.setViewSize(getInteger(textBoxHorizontalSize.getText(), 1));
         });
-        Button closeButton = new Button("Close", new Runnable() {
-            @Override
-            public void run() {
-                basicWindow.close();
-            }
-        });
+        Button closeButton = new Button("Close", basicWindow::close);
 
         verticalScroll.setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER, GridLayout.Alignment.FILL, false, true));
         horizontalScroll.setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2));

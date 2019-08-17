@@ -48,12 +48,7 @@ public class ListSelectDialog<T> extends DialogWindow {
 
         ActionListBox listBox = new ActionListBox(listBoxPreferredSize);
         for(final T item: content) {
-            listBox.addItem(item.toString(), new Runnable() {
-                @Override
-                public void run() {
-                    onSelect(item);
-                }
-            });
+            listBox.addItem(item.toString(), () -> onSelect(item));
         }
 
         Panel mainPanel = new Panel();
@@ -77,12 +72,7 @@ public class ListSelectDialog<T> extends DialogWindow {
         if(canCancel) {
             Panel buttonPanel = new Panel();
             buttonPanel.setLayoutManager(new GridLayout(2).setHorizontalSpacing(1));
-            buttonPanel.addComponent(new Button(LocalizedString.Cancel.toString(), new Runnable() {
-                @Override
-                public void run() {
-                    onCancel();
-                }
-            }).setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER, GridLayout.Alignment.CENTER, true, false)));
+            buttonPanel.addComponent(new Button(LocalizedString.Cancel.toString(), this::onCancel).setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER, GridLayout.Alignment.CENTER, true, false)));
             buttonPanel.setLayoutData(
                     GridLayout.createLayoutData(
                             GridLayout.Alignment.END,

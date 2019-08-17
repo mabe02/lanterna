@@ -52,7 +52,7 @@ public abstract class AbstractTextGUIThread implements TextGUIThread {
             }
         };
         this.textGUI = textGUI;
-        this.customTasks = new LinkedBlockingQueue<Runnable>();
+        this.customTasks = new LinkedBlockingQueue<>();
     }
 
     @Override
@@ -118,15 +118,12 @@ public abstract class AbstractTextGUIThread implements TextGUIThread {
         }
         else {
             final CountDownLatch countDownLatch = new CountDownLatch(1);
-            invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        runnable.run();
-                    }
-                    finally {
-                        countDownLatch.countDown();
-                    }
+            invokeLater(() -> {
+                try {
+                    runnable.run();
+                }
+                finally {
+                    countDownLatch.countDown();
                 }
             });
             countDownLatch.await();

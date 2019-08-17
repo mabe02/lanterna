@@ -21,6 +21,7 @@ package com.googlecode.lanterna.terminal.swing;
 
 import com.googlecode.lanterna.TextColor;
 import java.awt.Color;
+import java.util.Objects;
 
 /**
  * This class specifies the palette of colors the terminal will use for the normally available 8 + 1 ANSI colors but
@@ -339,61 +340,61 @@ public class TerminalEmulatorPalette {
             return false;
         }
         final TerminalEmulatorPalette other = (TerminalEmulatorPalette) obj;
-        if(this.defaultColor != other.defaultColor && (this.defaultColor == null || !this.defaultColor.equals(other.defaultColor))) {
+        if(!Objects.equals(this.defaultColor, other.defaultColor)) {
             return false;
         }
-        if(this.defaultBrightColor != other.defaultBrightColor && (this.defaultBrightColor == null || !this.defaultBrightColor.equals(other.defaultBrightColor))) {
+        if(!Objects.equals(this.defaultBrightColor, other.defaultBrightColor)) {
             return false;
         }
-        if(this.defaultBackgroundColor != other.defaultBackgroundColor && (this.defaultBackgroundColor == null || !this.defaultBackgroundColor.equals(other.defaultBackgroundColor))) {
+        if(!Objects.equals(this.defaultBackgroundColor, other.defaultBackgroundColor)) {
             return false;
         }
-        if(this.normalBlack != other.normalBlack && (this.normalBlack == null || !this.normalBlack.equals(other.normalBlack))) {
+        if(!Objects.equals(this.normalBlack, other.normalBlack)) {
             return false;
         }
-        if(this.brightBlack != other.brightBlack && (this.brightBlack == null || !this.brightBlack.equals(other.brightBlack))) {
+        if(!Objects.equals(this.brightBlack, other.brightBlack)) {
             return false;
         }
-        if(this.normalRed != other.normalRed && (this.normalRed == null || !this.normalRed.equals(other.normalRed))) {
+        if(!Objects.equals(this.normalRed, other.normalRed)) {
             return false;
         }
-        if(this.brightRed != other.brightRed && (this.brightRed == null || !this.brightRed.equals(other.brightRed))) {
+        if(!Objects.equals(this.brightRed, other.brightRed)) {
             return false;
         }
-        if(this.normalGreen != other.normalGreen && (this.normalGreen == null || !this.normalGreen.equals(other.normalGreen))) {
+        if(!Objects.equals(this.normalGreen, other.normalGreen)) {
             return false;
         }
-        if(this.brightGreen != other.brightGreen && (this.brightGreen == null || !this.brightGreen.equals(other.brightGreen))) {
+        if(!Objects.equals(this.brightGreen, other.brightGreen)) {
             return false;
         }
-        if(this.normalYellow != other.normalYellow && (this.normalYellow == null || !this.normalYellow.equals(other.normalYellow))) {
+        if(!Objects.equals(this.normalYellow, other.normalYellow)) {
             return false;
         }
-        if(this.brightYellow != other.brightYellow && (this.brightYellow == null || !this.brightYellow.equals(other.brightYellow))) {
+        if(!Objects.equals(this.brightYellow, other.brightYellow)) {
             return false;
         }
-        if(this.normalBlue != other.normalBlue && (this.normalBlue == null || !this.normalBlue.equals(other.normalBlue))) {
+        if(!Objects.equals(this.normalBlue, other.normalBlue)) {
             return false;
         }
-        if(this.brightBlue != other.brightBlue && (this.brightBlue == null || !this.brightBlue.equals(other.brightBlue))) {
+        if(!Objects.equals(this.brightBlue, other.brightBlue)) {
             return false;
         }
-        if(this.normalMagenta != other.normalMagenta && (this.normalMagenta == null || !this.normalMagenta.equals(other.normalMagenta))) {
+        if(!Objects.equals(this.normalMagenta, other.normalMagenta)) {
             return false;
         }
-        if(this.brightMagenta != other.brightMagenta && (this.brightMagenta == null || !this.brightMagenta.equals(other.brightMagenta))) {
+        if(!Objects.equals(this.brightMagenta, other.brightMagenta)) {
             return false;
         }
-        if(this.normalCyan != other.normalCyan && (this.normalCyan == null || !this.normalCyan.equals(other.normalCyan))) {
+        if(!Objects.equals(this.normalCyan, other.normalCyan)) {
             return false;
         }
-        if(this.brightCyan != other.brightCyan && (this.brightCyan == null || !this.brightCyan.equals(other.brightCyan))) {
+        if(!Objects.equals(this.brightCyan, other.brightCyan)) {
             return false;
         }
-        if(this.normalWhite != other.normalWhite && (this.normalWhite == null || !this.normalWhite.equals(other.normalWhite))) {
+        if(!Objects.equals(this.normalWhite, other.normalWhite)) {
             return false;
         }
-        return !(this.brightWhite != other.brightWhite && (this.brightWhite == null || !this.brightWhite.equals(other.brightWhite)));
+        return !(!Objects.equals(this.brightWhite, other.brightWhite));
     }
 
     @SuppressWarnings("ConstantConditions")

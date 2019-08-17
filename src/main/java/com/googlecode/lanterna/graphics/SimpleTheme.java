@@ -108,7 +108,7 @@ public class SimpleTheme implements Theme {
      */
     public SimpleTheme(TextColor foreground, TextColor background, SGR... styles) {
         this.defaultDefinition = new Definition(new DefaultMutableThemeStyle(foreground, background, styles));
-        this.overrideDefinitions = new HashMap<Class<?>, Definition>();
+        this.overrideDefinitions = new HashMap<>();
         this.windowPostRenderer = null;
         this.windowDecorationRenderer = null;
     }
@@ -199,10 +199,10 @@ public class SimpleTheme implements Theme {
             this.selected = null;
             this.active = null;
             this.insensitive = null;
-            this.customStyles = new HashMap<String, ThemeStyle>();
+            this.customStyles = new HashMap<>();
             this.properties = new Properties();
-            this.characterMap = new HashMap<String, Character>();
-            this.componentRendererMap = new HashMap<Class<?>, RendererProvider<?>>();
+            this.characterMap = new HashMap<>();
+            this.componentRendererMap = new HashMap<>();
             this.cursorVisible = true;
         }
 

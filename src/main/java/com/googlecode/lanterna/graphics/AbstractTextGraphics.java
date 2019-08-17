@@ -42,12 +42,7 @@ public abstract class AbstractTextGraphics implements TextGraphics {
         this.tabBehaviour = TabBehaviour.ALIGN_TO_COLUMN_4;
         this.foregroundColor = TextColor.ANSI.DEFAULT;
         this.backgroundColor = TextColor.ANSI.DEFAULT;
-        this.shapeRenderer = new DefaultShapeRenderer(new DefaultShapeRenderer.Callback() {
-            @Override
-            public void onPoint(int column, int row, TextCharacter character) {
-                setCharacter(column, row, character);
-            }
-        });
+        this.shapeRenderer = new DefaultShapeRenderer(this::setCharacter);
     }
 
     @Override

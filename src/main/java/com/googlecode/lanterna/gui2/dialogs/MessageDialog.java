@@ -44,12 +44,9 @@ public class MessageDialog extends DialogWindow {
         Panel buttonPanel = new Panel();
         buttonPanel.setLayoutManager(new GridLayout(buttons.length).setHorizontalSpacing(1));
         for(final MessageDialogButton button: buttons) {
-            buttonPanel.addComponent(new Button(button.toString(), new Runnable() {
-                @Override
-                public void run() {
-                    result = button;
-                    close();
-                }
+            buttonPanel.addComponent(new Button(button.toString(), () -> {
+                result = button;
+                close();
             }));
         }
 

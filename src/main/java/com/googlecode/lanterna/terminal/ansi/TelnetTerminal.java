@@ -192,7 +192,7 @@ public class TelnetTerminal extends ANSITerminal {
         }
         
         private static List<String> toList(byte[] array) {
-            List<String> list = new ArrayList<String>(array.length);
+            List<String> list = new ArrayList<>(array.length);
             for(byte b: array) {
                 list.add(String.format("%02X ", b));
             }

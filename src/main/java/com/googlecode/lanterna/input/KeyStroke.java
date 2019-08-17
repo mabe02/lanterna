@@ -20,6 +20,7 @@ package com.googlecode.lanterna.input;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Represents the user pressing a key on the keyboard. If the user held down ctrl and/or alt before pressing the key, 
@@ -246,7 +247,7 @@ public class KeyStroke {
         if (this.keyType != other.keyType) {
             return false;
         }
-        if (this.character != other.character && (this.character == null || !this.character.equals(other.character))) {
+        if (!Objects.equals(this.character, other.character)) {
             return false;
         }
         return this.ctrlDown == other.ctrlDown && 
@@ -269,7 +270,7 @@ public class KeyStroke {
             if (keyStrLC.equals("<s-tab>")) {
                 k = new KeyStroke(KeyType.ReverseTab);
             } else if (keyStr.contains("-")) {
-                ArrayList<String> segments = new ArrayList<String>(Arrays.asList(keyStr.substring(1, keyStr.length() - 1).split("-")));
+                ArrayList<String> segments = new ArrayList<>(Arrays.asList(keyStr.substring(1, keyStr.length() - 1).split("-")));
                 if (segments.size() < 2) {
                     throw new IllegalArgumentException("Invalid vim notation: " + keyStr);
                 }
@@ -277,12 +278,16 @@ public class KeyStroke {
                 boolean altPressed = false;
                 boolean ctrlPressed = false;
                 for (String modifier : segments) {
-                    if ("c".equals(modifier.toLowerCase())) {
-                        ctrlPressed = true;
-                    } else if ("a".equals(modifier.toLowerCase())) {
-                        altPressed = true;
-                    } else if ("s".equals(modifier.toLowerCase())) {
-                        characterStr = characterStr.toUpperCase();
+                    switch (modifier.toLowerCase()) {
+                        case "c":
+                            ctrlPressed = true;
+                            break;
+                        case "a":
+                            altPressed = true;
+                            break;
+                        case "s":
+                            characterStr = characterStr.toUpperCase();
+                            break;
                     }
                 }
                 k = new KeyStroke(characterStr.charAt(0), ctrlPressed, altPressed);

@@ -41,7 +41,7 @@ public class ListSelectDialogBuilder<T> extends AbstractDialogBuilder<ListSelect
         super("ListSelectDialog");
         this.listBoxSize = null;
         this.canCancel = true;
-        this.content = new ArrayList<T>();
+        this.content = new ArrayList<>();
     }
 
     @Override
@@ -51,7 +51,7 @@ public class ListSelectDialogBuilder<T> extends AbstractDialogBuilder<ListSelect
 
     @Override
     protected ListSelectDialog<T> buildDialog() {
-        return new ListSelectDialog<T>(
+        return new ListSelectDialog<>(
                 title,
                 description,
                 listBoxSize,
@@ -122,6 +122,6 @@ public class ListSelectDialogBuilder<T> extends AbstractDialogBuilder<ListSelect
      * @return Copy of the list of items in the list box
      */
     public List<T> getListItems() {
-        return new ArrayList<T>(content);
+        return new ArrayList<>(content);
     }
 }

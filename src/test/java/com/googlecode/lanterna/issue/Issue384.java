@@ -15,7 +15,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 public class Issue384 {
-    private static final Set<Integer> EXPANDABLE_COLUMNS = new TreeSet<Integer>(Arrays.asList(1));
+    private static final Set<Integer> EXPANDABLE_COLUMNS = new TreeSet<>(Arrays.asList(1));
 
     public static void main(String[] args) throws IOException, InterruptedException {
         final Screen screen = new DefaultTerminalFactory().createScreen();
@@ -25,10 +25,10 @@ public class Issue384 {
         window.setHints(Arrays.asList(Window.Hint.FIXED_SIZE));
         window.setSize(new TerminalSize(60, 14));
 
-        final Table<String> table = new Table<String>("Column", "Expanded Column", "Column");
+        final Table<String> table = new Table<>("Column", "Expanded Column", "Column");
         table.setCellSelection(true);
         table.setVisibleRows(10);
-        final DefaultTableRenderer<String> tableRenderer = new DefaultTableRenderer<String>();
+        final DefaultTableRenderer<String> tableRenderer = new DefaultTableRenderer<>();
         tableRenderer.setExpandableColumns(Arrays.asList(1));
         table.setRenderer(tableRenderer);
 
@@ -40,18 +40,8 @@ public class Issue384 {
 
         Panel buttonPanel = new Panel();
         buttonPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
-        buttonPanel.addComponent(new Button("Change Expandable Columns", new Runnable() {
-            @Override
-            public void run() {
-                showExpandableColumnsEditor(textGUI, tableRenderer);
-            }
-        }));
-        buttonPanel.addComponent(new Button("Close", new Runnable() {
-            @Override
-            public void run() {
-                window.close();
-            }
-        }));
+        buttonPanel.addComponent(new Button("Change Expandable Columns", () -> showExpandableColumnsEditor(textGUI, tableRenderer)));
+        buttonPanel.addComponent(new Button("Close", window::close));
 
         window.setComponent(Panels.vertical(
                 table.withBorder(Borders.singleLineBevel("Table")),
@@ -65,23 +55,20 @@ public class Issue384 {
     private static void showExpandableColumnsEditor(MultiWindowTextGUI textGUI, final DefaultTableRenderer<String> tableRenderer) {
         final DialogWindow dialogWindow = new DialogWindow("Select expandable columns") { };
         Panel contentPanel = new Panel(new LinearLayout(Direction.VERTICAL));
-        final CheckBoxList<String> checkBoxList = new CheckBoxList<String>();
+        final CheckBoxList<String> checkBoxList = new CheckBoxList<>();
         checkBoxList.addItem("Column1", EXPANDABLE_COLUMNS.contains(0));
         checkBoxList.addItem("Column2", EXPANDABLE_COLUMNS.contains(1));
         checkBoxList.addItem("Column3", EXPANDABLE_COLUMNS.contains(2));
         contentPanel.addComponent(checkBoxList);
-        contentPanel.addComponent(new Button("OK", new Runnable() {
-            @Override
-            public void run() {
-                EXPANDABLE_COLUMNS.clear();
-                for(int i = 0; i < 3; i++) {
-                    if (checkBoxList.isChecked(i)) {
-                        EXPANDABLE_COLUMNS.add(i);
-                    }
+        contentPanel.addComponent(new Button("OK", () -> {
+            EXPANDABLE_COLUMNS.clear();
+            for(int i = 0; i < 3; i++) {
+                if (checkBoxList.isChecked(i)) {
+                    EXPANDABLE_COLUMNS.add(i);
                 }
-                tableRenderer.setExpandableColumns(EXPANDABLE_COLUMNS);
-                dialogWindow.close();
             }
+            tableRenderer.setExpandableColumns(EXPANDABLE_COLUMNS);
+            dialogWindow.close();
         }), LinearLayout.createLayoutData(LinearLayout.Alignment.End));
         dialogWindow.setComponent(contentPanel);
         dialogWindow.showDialog(textGUI);

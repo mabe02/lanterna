@@ -59,12 +59,7 @@ public class Issue190 {
         input.setLayoutData(BorderLayout.Location.CENTER);
         options.addComponent(input);
 
-        Button send = new Button("Send", new Runnable() {
-            @Override
-            public void run() {
-                input.setText("");
-            }
-        });
+        Button send = new Button("Send", () -> input.setText(""));
         send.setLayoutData(BorderLayout.Location.RIGHT);
         options.addComponent(send);
 

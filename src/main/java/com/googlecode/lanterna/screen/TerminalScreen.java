@@ -181,7 +181,7 @@ public class TerminalScreen extends AbstractScreen {
     }
 
     private void refreshByDelta() throws IOException {
-        Map<TerminalPosition, TextCharacter> updateMap = new TreeMap<TerminalPosition, TextCharacter>(new ScreenPointComparator());
+        Map<TerminalPosition, TextCharacter> updateMap = new TreeMap<>(new ScreenPointComparator());
         TerminalSize terminalSize = getTerminalSize();
 
         useScrollHint();
@@ -394,10 +394,10 @@ public class TerminalScreen extends AbstractScreen {
                 if(o1.getColumn() == o2.getColumn()) {
                     return 0;
                 } else {
-                    return new Integer(o1.getColumn()).compareTo(o2.getColumn());
+                    return Integer.compare(o1.getColumn(), o2.getColumn());
                 }
             } else {
-                return new Integer(o1.getRow()).compareTo(o2.getRow());
+                return Integer.compare(o1.getRow(), o2.getRow());
             }
         }
     }

@@ -67,12 +67,7 @@ public class GridLayoutTest extends TestBase {
         contentPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
         contentPanel.addComponent(Panels.horizontal(leftGridPanel, new EmptySpace(TerminalSize.ONE), rightGridPanel));
         contentPanel.addComponent(new EmptySpace(TerminalSize.ONE));
-        contentPanel.addComponent(new Button("Close", new Runnable() {
-            @Override
-            public void run() {
-                window.close();
-            }
-        }));
+        contentPanel.addComponent(new Button("Close", window::close));
         window.setComponent(contentPanel);
         textGUI.addWindow(window);
     }

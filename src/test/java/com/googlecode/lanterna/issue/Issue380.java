@@ -69,12 +69,7 @@ public class Issue380 {
         }
 
         private Component buildButtonBar() {
-            return new Button("Close", new Runnable() {
-                @Override
-                public void run() {
-                    close();
-                }
-            });
+            return new Button("Close", this::close);
         }
     }
 }

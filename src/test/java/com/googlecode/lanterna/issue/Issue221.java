@@ -40,15 +40,11 @@ public class Issue221 {
         panel.setLayoutManager(new GridLayout(2));
 
         panel.addComponent(new Label("The List"));
-        RadioBoxList<String> box = new RadioBoxList<String>();
+        RadioBoxList<String> box = new RadioBoxList<>();
         box.addItem("Item 1");
         box.addItem("Item 2");
         box.addItem("Item 3");
-        box.addListener(new RadioBoxList.Listener() {
-            @Override public void onSelectionChanged(int selected, int previous) {
-                System.out.println("Selected Index: " + selected + ", previous: " + previous);
-            }
-        });
+        box.addListener((selected, previous) -> System.out.println("Selected Index: " + selected + ", previous: " + previous));
 
         panel.addComponent(box);
 

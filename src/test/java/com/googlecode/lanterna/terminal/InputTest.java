@@ -31,78 +31,63 @@ public class InputTest {
             if("--mouse-click".equals(parameter)) {
                 writeCSISequenceToTerminal((byte) '?', (byte) '1', (byte) '0', (byte) '0', (byte) '0', (byte) 'h');
                 writeCSISequenceToTerminal((byte) '?', (byte) '1', (byte) '0', (byte) '0', (byte) '5', (byte) 'h');
-                Runtime.getRuntime().addShutdownHook(new Thread() {
-                    @Override
-                    public void run() {
-                        try {
-                            writeCSISequenceToTerminal((byte) '?', (byte) '1', (byte) '0', (byte) '0', (byte) '0', (byte) 'l');
-                        }
-                        catch(IOException e) {
-                            e.printStackTrace();
-                        }
+                Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                    try {
+                        writeCSISequenceToTerminal((byte) '?', (byte) '1', (byte) '0', (byte) '0', (byte) '0', (byte) 'l');
                     }
-                });
+                    catch(IOException e) {
+                        e.printStackTrace();
+                    }
+                }));
             }
             else if("--mouse-drag".equals(parameter)) {
                 writeCSISequenceToTerminal((byte) '?', (byte) '1', (byte) '0', (byte) '0', (byte) '2', (byte) 'h');
                 writeCSISequenceToTerminal((byte) '?', (byte) '1', (byte) '0', (byte) '0', (byte) '5', (byte) 'h');
-                Runtime.getRuntime().addShutdownHook(new Thread() {
-                    @Override
-                    public void run() {
-                        try {
-                            writeCSISequenceToTerminal((byte) '?', (byte) '1', (byte) '0', (byte) '0', (byte) '2', (byte) 'l');
-                        }
-                        catch(IOException e) {
-                            e.printStackTrace();
-                        }
+                Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                    try {
+                        writeCSISequenceToTerminal((byte) '?', (byte) '1', (byte) '0', (byte) '0', (byte) '2', (byte) 'l');
                     }
-                });
+                    catch(IOException e) {
+                        e.printStackTrace();
+                    }
+                }));
             }
             else if("--mouse-move".equals(parameter)) {
                 writeCSISequenceToTerminal((byte) '?', (byte) '1', (byte) '0', (byte) '0', (byte) '3', (byte) 'h');
                 writeCSISequenceToTerminal((byte) '?', (byte) '1', (byte) '0', (byte) '0', (byte) '5', (byte) 'h');
-                Runtime.getRuntime().addShutdownHook(new Thread() {
-                    @Override
-                    public void run() {
-                        try {
-                            writeCSISequenceToTerminal((byte) '?', (byte) '1', (byte) '0', (byte) '0', (byte) '3', (byte) 'l');
-                        }
-                        catch(IOException e) {
-                            e.printStackTrace();
-                        }
+                Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                    try {
+                        writeCSISequenceToTerminal((byte) '?', (byte) '1', (byte) '0', (byte) '0', (byte) '3', (byte) 'l');
                     }
-                });
+                    catch(IOException e) {
+                        e.printStackTrace();
+                    }
+                }));
             }
             else if("--reader".equals(parameter)) {
                 useReader = true;
             }
             else if("--cbreak".equals(parameter)) {
                 exec("sh", "-c", "stty -icanon < /dev/tty");
-                Runtime.getRuntime().addShutdownHook(new Thread() {
-                    @Override
-                    public void run() {
-                        try {
-                            exec("sh", "-c", "stty icanon < /dev/tty");
-                        }
-                        catch(IOException e) {
-                            e.printStackTrace();
-                        }
+                Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                    try {
+                        exec("sh", "-c", "stty icanon < /dev/tty");
                     }
-                });
+                    catch(IOException e) {
+                        e.printStackTrace();
+                    }
+                }));
             }
             else if("--no-echo".equals(parameter)) {
                 exec("sh", "-c", "stty -echo < /dev/tty");
-                Runtime.getRuntime().addShutdownHook(new Thread() {
-                    @Override
-                    public void run() {
-                        try {
-                            exec("sh", "-c", "stty echo < /dev/tty");
-                        }
-                        catch(IOException e) {
-                            e.printStackTrace();
-                        }
+                Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                    try {
+                        exec("sh", "-c", "stty echo < /dev/tty");
                     }
-                });
+                    catch(IOException e) {
+                        e.printStackTrace();
+                    }
+                }));
             }
             else if("--private".equals(parameter)) {
                 privateMode = true;

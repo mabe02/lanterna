@@ -72,16 +72,13 @@ class AWTTerminalImplementation extends GraphicalTerminalImplementation {
             }
         });
 
-        component.addHierarchyListener(new HierarchyListener() {
-            @Override
-            public void hierarchyChanged(HierarchyEvent e) {
-                if(e.getChangeFlags() == HierarchyEvent.DISPLAYABILITY_CHANGED) {
-                    if(e.getChanged().isDisplayable()) {
-                        onCreated();
-                    }
-                    else {
-                        onDestroyed();
-                    }
+        component.addHierarchyListener(e -> {
+            if(e.getChangeFlags() == HierarchyEvent.DISPLAYABILITY_CHANGED) {
+                if(e.getChanged().isDisplayable()) {
+                    onCreated();
+                }
+                else {
+                    onDestroyed();
                 }
             }
         });
@@ -123,12 +120,7 @@ class AWTTerminalImplementation extends GraphicalTerminalImplementation {
             component.repaint();
         }
         else {
-            EventQueue.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    component.repaint();
-                }
-            });
+            EventQueue.invokeLater(component::repaint);
         }
     }
 

@@ -135,12 +135,7 @@ class DefaultShapeRenderer implements ShapeRenderer {
         //I've used the algorithm described here:
         //http://www-users.mat.uni.torun.pl/~wrona/3d_tutor/tri_fillers.html
         TerminalPosition[] points = new TerminalPosition[]{p1, p2, p3};
-        Arrays.sort(points, new Comparator<TerminalPosition>() {
-            @Override
-            public int compare(TerminalPosition o1, TerminalPosition o2) {
-                return (o1.getRow() < o2.getRow()) ? -1 : ((o1.getRow() == o2.getRow()) ? 0 : 1);
-            }
-        });
+        Arrays.sort(points, Comparator.comparingInt(TerminalPosition::getRow));
 
         float dx1, dx2, dx3;
         if (points[1].getRow() - points[0].getRow() > 0) {

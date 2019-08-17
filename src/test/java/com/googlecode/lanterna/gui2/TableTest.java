@@ -45,7 +45,7 @@ public class TableTest extends TestBase {
         final BasicWindow window = new BasicWindow("Table container test");
         window.setHints(Arrays.asList(Window.Hint.FIT_TERMINAL_WINDOW));
 
-        final Table<String> table = new Table<String>("Column 1", "Column 2", "Column 3");
+        final Table<String> table = new Table<>("Column 1", "Column 2", "Column 3");
         final TableModel<String> model = table.getTableModel();
         for (int i = 1; i < 30; i++) {
             model.addRow("Row" + i, "Row" + i, "Row" + i);
@@ -54,89 +54,54 @@ public class TableTest extends TestBase {
         Panel buttonPanel = new Panel();
         buttonPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
 
-        buttonPanel.addComponent(new Button("Add...", new Runnable() {
-            @Override
-            public void run() {
-                new ActionListDialogBuilder()
-                        .setTitle("Add to table")
-                        .addAction("Row", new Runnable() {
-                            @Override
-                            public void run() {
-                                List<String> labels = new ArrayList<String>();
-                                for(int i = 0; i < model.getColumnCount(); i++) {
-                                    labels.add("Row" + (model.getRowCount() + 1));
-                                }
-                                model.addRow(labels.toArray(new String[labels.size()]));
-                                table.invalidate();
-                            }
-                        })
-                        .addAction("5 Rows", new Runnable() {
-                            @Override
-                            public void run() {
-                                for(int row = 0; row < 5; row++) {
-                                    List<String> labels = new ArrayList<String>();
-                                    for(int i = 0; i < model.getColumnCount(); i++) {
-                                        labels.add("Row" + (model.getRowCount() + 1));
-                                    }
-                                    model.addRow(labels.toArray(new String[labels.size()]));
-                                }
-                                table.invalidate();
-                            }
-                        })
-                        .addAction("Column", new Runnable() {
-                            @Override
-                            public void run() {
-                                List<String> labels = new ArrayList<String>();
-                                for(int i = 0; i < model.getRowCount(); i++) {
-                                    labels.add("Row" + (i + 1));
-                                }
-                                model.addColumn("Column " + (columnCounter++), labels.toArray(new String[labels.size()]));
-                                table.invalidate();
-                            }
-                        })
-                        .build()
-                        .showDialog(textGUI);
-            }
-        }));
-        buttonPanel.addComponent(new Button("Modify...", new Runnable() {
-            @Override
-            public void run() {
-                onModify(textGUI, table);
-            }
-        }));
-        buttonPanel.addComponent(new Button("Remove...", new Runnable() {
-            @Override
-            public void run() {
-                new ActionListDialogBuilder()
-                        .setTitle("Remove from table")
-                        .addAction("Row", new Runnable() {
-                            @Override
-                            public void run() {
-                                String numberAsText = askForANumber(textGUI, "Enter row # to remove (0-" + (model.getRowCount()-1) + ")");
-                                if(numberAsText != null) {
-                                    model.removeRow(Integer.parseInt(numberAsText));
-                                }
-                            }
-                        })
-                        .addAction("Column", new Runnable() {
-                            @Override
-                            public void run() {
-                                String numberAsText = askForANumber(textGUI, "Enter column # to remove (0-" + (model.getColumnCount()-1) + ")");
-                                if(numberAsText != null) {
-                                    model.removeColumn(Integer.parseInt(numberAsText));
-                                }
-                            }
-                        })
-                        .build()
-                        .showDialog(textGUI);
-            }
-        }));
-        buttonPanel.addComponent(new Button("Close", new Runnable() {
-            @Override
-            public void run() {
-                window.close();
-            }
-        }));
+        buttonPanel.addComponent(new Button("Add...", () -> new ActionListDialogBuilder()
+                .setTitle("Add to table")
+                .addAction("Row", () -> {
+                    List<String> labels = new ArrayList<>();
+                    for (int i = 0; i < model.getColumnCount(); i++) {
+                        labels.add("Row" + (model.getRowCount() + 1));
+                    }
+                    model.addRow(labels.toArray(new String[labels.size()]));
+                    table.invalidate();
+                })
+                .addAction("5 Rows", () -> {
+                    for (int row = 0; row < 5; row++) {
+                        List<String> labels = new ArrayList<>();
+                        for (int i = 0; i < model.getColumnCount(); i++) {
+                            labels.add("Row" + (model.getRowCount() + 1));
+                        }
+                        model.addRow(labels.toArray(new String[labels.size()]));
+                    }
+                    table.invalidate();
+                })
+                .addAction("Column", () -> {
+                    List<String> labels = new ArrayList<>();
+                    for (int i = 0; i < model.getRowCount(); i++) {
+                        labels.add("Row" + (i + 1));
+                    }
+                    model.addColumn("Column " + (columnCounter++), labels.toArray(new String[labels.size()]));
+                    table.invalidate();
+                })
+                .build()
+                .showDialog(textGUI)));
+        buttonPanel.addComponent(new Button("Modify...", () -> onModify(textGUI, table)));
+        buttonPanel.addComponent(new Button("Remove...", () -> new ActionListDialogBuilder()
+                .setTitle("Remove from table")
+                .addAction("Row", () -> {
+                    String numberAsText = askForANumber(textGUI, "Enter row # to remove (0-" + (model.getRowCount() - 1) + ")");
+                    if (numberAsText != null) {
+                        model.removeRow(Integer.parseInt(numberAsText));
+                    }
+                })
+                .addAction("Column", () -> {
+                    String numberAsText = askForANumber(textGUI, "Enter column # to remove (0-" + (model.getColumnCount() - 1) + ")");
+                    if (numberAsText != null) {
+                        model.removeColumn(Integer.parseInt(numberAsText));
+                    }
+                })
+                .build()
+                .showDialog(textGUI)));
+        buttonPanel.addComponent(new Button("Close", window::close));
 
         window.setComponent(Panels.vertical(
                 table.withBorder(Borders.singleLineBevel("Table")),

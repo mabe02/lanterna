@@ -34,7 +34,7 @@ public class InteractableLookupMap {
 
     InteractableLookupMap(TerminalSize size) {
         lookupMap = new int[size.getRows()][size.getColumns()];
-        interactables = new ArrayList<Interactable>();
+        interactables = new ArrayList<>();
         for (int[] aLookupMap : lookupMap) {
             Arrays.fill(aLookupMap, -1);
         }
@@ -254,7 +254,7 @@ public class InteractableLookupMap {
     }
 
     private Set<Interactable> getDisqualifiedInteractables(TerminalPosition startPosition, boolean scanHorizontally) {
-        Set<Interactable> disqualified = new HashSet<Interactable>();
+        Set<Interactable> disqualified = new HashSet<>();
         if (lookupMap.length == 0) { return disqualified; } // safeguard
 
         TerminalSize size = getSize();

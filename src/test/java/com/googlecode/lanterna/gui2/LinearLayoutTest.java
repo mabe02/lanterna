@@ -44,24 +44,9 @@ public class LinearLayoutTest extends TestBase {
                 .addTo(mainPanel);
 
         mainPanel.addComponent(Panels.horizontal(
-                new Button("Add", new Runnable() {
-                    @Override
-                    public void run() {
-                        new Label("LABEL COMPONENT").addTo(labelPanel);
-                    }
-                }),
-                new Button("Spacing", new Runnable() {
-                    @Override
-                    public void run() {
-                        linearLayout.setSpacing(linearLayout.getSpacing() == 1 ? 0 : 1);
-                    }
-                }),
-                new Button("Close", new Runnable() {
-                    @Override
-                    public void run() {
-                        window.close();
-                    }
-                })
+                new Button("Add", () -> new Label("LABEL COMPONENT").addTo(labelPanel)),
+                new Button("Spacing", () -> linearLayout.setSpacing(linearLayout.getSpacing() == 1 ? 0 : 1)),
+                new Button("Close", window::close)
         ));
 
         window.setComponent(mainPanel);

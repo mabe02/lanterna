@@ -31,7 +31,7 @@ import java.util.Set;
 public abstract class DialogWindow extends AbstractWindow {
 
     private static final Set<Hint> GLOBAL_DIALOG_HINTS =
-            Collections.unmodifiableSet(new HashSet<Hint>(Collections.singletonList(Hint.MODAL)));
+            Collections.unmodifiableSet(new HashSet<>(Collections.singletonList(Hint.MODAL)));
 
     /**
      * Default constructor, takes a title for the dialog and runs code shared for dialogs

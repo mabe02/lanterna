@@ -56,12 +56,9 @@ public class TelnetTerminalTest {
                     Random random = new Random();
                     terminal.enterPrivateMode();
                     terminal.clearScreen();
-                    terminal.addResizeListener(new TerminalResizeListener() {
-                        @Override
-                        public void onResized(Terminal terminal, TerminalSize newSize) {
-                            System.err.println("Resized to " + newSize);
-                            size = newSize;
-                        }
+                    terminal.addResizeListener((terminal1, newSize) -> {
+                        System.err.println("Resized to " + newSize);
+                        size = newSize;
                     });
                     size = terminal.getTerminalSize();
 

@@ -44,30 +44,10 @@ public class ThemeTest extends TestBase {
     public void init(final WindowBasedTextGUI textGUI) {
         final BasicWindow mainSelectionWindow = new BasicWindow("Theme Tests");
         ActionListBox mainSelector = new ActionListBox();
-        mainSelector.addItem("Component test", new Runnable() {
-            @Override
-            public void run() {
-                runComponentTest(textGUI);
-            }
-        });
-        mainSelector.addItem("Multi-theme test", new Runnable() {
-            @Override
-            public void run() {
-                runMultiThemeTest(textGUI);
-            }
-        });
-        mainSelector.addItem("Make custom theme", new Runnable() {
-            @Override
-            public void run() {
-                runCustomTheme(textGUI);
-            }
-        });
-        mainSelector.addItem("Exit", new Runnable() {
-            @Override
-            public void run() {
-                mainSelectionWindow.close();
-            }
-        });
+        mainSelector.addItem("Component test", () -> runComponentTest(textGUI));
+        mainSelector.addItem("Multi-theme test", () -> runMultiThemeTest(textGUI));
+        mainSelector.addItem("Make custom theme", () -> runCustomTheme(textGUI));
+        mainSelector.addItem("Exit", mainSelectionWindow::close);
         mainSelectionWindow.setComponent(mainSelector);
         mainSelectionWindow.setHints(Collections.singletonList(Window.Hint.CENTERED));
 
@@ -120,11 +100,11 @@ public class ThemeTest extends TestBase {
                                 .addItem("Item #8")),
                 new ThemedComponentTestDialog(textGUI, "ComboBox",
                         new Panel()
-                                .addComponent(new ComboBox<String>("Editable", "Item #2", "Item #3", "Item #4", "Item #5", "Item #6", "Item #7")
+                                .addComponent(new ComboBox<>("Editable", "Item #2", "Item #3", "Item #4", "Item #5", "Item #6", "Item #7")
                                         .setReadOnly(false)
                                         .setPreferredSize(new TerminalSize(12, 1)))
                                 .addComponent(new EmptySpace())
-                                .addComponent(new ComboBox<String>("Read-only", "Item #2", "Item #3", "Item #4", "Item #5", "Item #6", "Item #7")
+                                .addComponent(new ComboBox<>("Read-only", "Item #2", "Item #3", "Item #4", "Item #5", "Item #6", "Item #7")
                                         .setReadOnly(true)
                                         .setPreferredSize(new TerminalSize(12, 1)))),
                 new ThemedComponentTestDialog(textGUI, "Label",
@@ -185,12 +165,7 @@ public class ThemeTest extends TestBase {
         }
         mainPanel.addComponent(listBox);
         mainPanel.addComponent(new EmptySpace());
-        mainPanel.addComponent(new Button(LocalizedString.Close.toString(), new Runnable() {
-            @Override
-            public void run() {
-                componentTestChooser.close();
-            }
-        }).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.End)));
+        mainPanel.addComponent(new Button(LocalizedString.Close.toString(), componentTestChooser::close).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.End)));
 
         componentTestChooser.setComponent(mainPanel);
         textGUI.addWindowAndWait(componentTestChooser);
@@ -222,26 +197,23 @@ public class ThemeTest extends TestBase {
                 ((AnimatedLabel)embeddedComponent).startAnimation(917);
             }
             else if(embeddedComponent instanceof ProgressBar) {
-                Thread progressBarAdvanceTimer = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        ProgressBar progressBar = (ProgressBar)embeddedComponent;
-                        //noinspection InfiniteLoopStatement
-                        while(true) {
-                            try {
-                                Thread.sleep(100);
-                                if(progressBar.getValue() == progressBar.getMax()) {
-                                    Thread.sleep(1000);
-                                    progressBar.setValue(0);
-                                }
-                                if(progressBar.getValue() == 0) {
-                                    Thread.sleep(1000);
-                                }
-                                progressBar.setValue(progressBar.getValue() + 1);
+                Thread progressBarAdvanceTimer = new Thread(() -> {
+                    ProgressBar progressBar = (ProgressBar)embeddedComponent;
+                    //noinspection InfiniteLoopStatement
+                    while(true) {
+                        try {
+                            Thread.sleep(100);
+                            if(progressBar.getValue() == progressBar.getMax()) {
+                                Thread.sleep(1000);
+                                progressBar.setValue(0);
                             }
-                            catch(InterruptedException e) {
-                                throw new RuntimeException(e);
+                            if(progressBar.getValue() == 0) {
+                                Thread.sleep(1000);
                             }
+                            progressBar.setValue(progressBar.getValue() + 1);
+                        }
+                        catch(InterruptedException e) {
+                            throw new RuntimeException(e);
                         }
                     }
                 }, "ProgressBar #" + System.identityHashCode(embeddedComponent));
@@ -262,23 +234,13 @@ public class ThemeTest extends TestBase {
 
             ActionListBox actionListBox = new ActionListBox();
             for(final String themeName: LanternaThemes.getRegisteredThemes()) {
-                actionListBox.addItem(themeName, new Runnable() {
-                    @Override
-                    public void run() {
-                        borderedComponent.setTheme(LanternaThemes.getRegisteredTheme(themeName));
-                    }
-                });
+                actionListBox.addItem(themeName, () -> borderedComponent.setTheme(LanternaThemes.getRegisteredTheme(themeName)));
             }
             mainPanel.addComponent(actionListBox
                     .withBorder(Borders.doubleLine("Change theme:"))
                     .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER, GridLayout.Alignment.CENTER)));
 
-            Button closeButton = new Button(LocalizedString.Close.toString(), new Runnable() {
-                @Override
-                public void run() {
-                    componentWindow.close();
-                }
-            }).setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.END, GridLayout.Alignment.END));
+            Button closeButton = new Button(LocalizedString.Close.toString(), componentWindow::close).setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.END, GridLayout.Alignment.END));
             mainPanel.addComponent(closeButton);
 
             componentWindow.setComponent(mainPanel);
@@ -310,7 +272,7 @@ public class ThemeTest extends TestBase {
     }
 
     private void runMultiThemeTest(final WindowBasedTextGUI textGUI) {
-        final List<String> themes = new ArrayList<String>(LanternaThemes.getRegisteredThemes());
+        final List<String> themes = new ArrayList<>(LanternaThemes.getRegisteredThemes());
         final int[] windowThemeIndex = new int[] { themes.indexOf("bigsnake"), themes.indexOf("conqueror") };
         final BasicWindow window1 = new BasicWindow("Theme: bigsnake");
         window1.setHints(Collections.singletonList(Window.Hint.FIXED_POSITION));
@@ -334,58 +296,29 @@ public class ThemeTest extends TestBase {
         leftHolder.addComponent(exampleButton);
 
         ActionListBox leftWindowActionBox = new ActionListBox()
-                .addItem("Move button to right", new Runnable() {
-                    @Override
-                    public void run() {
-                        rightHolder.addComponent(exampleButton);
+                .addItem("Move button to right", () -> rightHolder.addComponent(exampleButton))
+                .addItem("Override button theme", () -> {
+                    ActionListDialogBuilder actionListDialogBuilder = new ActionListDialogBuilder();
+                    actionListDialogBuilder.setTitle("Choose theme for the button");
+                    for(final String theme: themes) {
+                        actionListDialogBuilder.addAction(theme, () -> exampleButton.setTheme(LanternaThemes.getRegisteredTheme(theme)));
                     }
+                    actionListDialogBuilder.addAction("Clear override", () -> exampleButton.setTheme(null));
+                    actionListDialogBuilder.build().showDialog(textGUI);
                 })
-                .addItem("Override button theme", new Runnable() {
-                    @Override
-                    public void run() {
-                        ActionListDialogBuilder actionListDialogBuilder = new ActionListDialogBuilder();
-                        actionListDialogBuilder.setTitle("Choose theme for the button");
-                        for(final String theme: themes) {
-                            actionListDialogBuilder.addAction(theme, new Runnable() {
-                                @Override
-                                public void run() {
-                                    exampleButton.setTheme(LanternaThemes.getRegisteredTheme(theme));
-                                }
-                            });
-                        }
-                        actionListDialogBuilder.addAction("Clear override", new Runnable() {
-                            @Override
-                            public void run() {
-                                exampleButton.setTheme(null);
-                            }
-                        });
-                        actionListDialogBuilder.build().showDialog(textGUI);
+                .addItem("Cycle window theme", () -> {
+                    windowThemeIndex[0]++;
+                    if(windowThemeIndex[0] >= themes.size()) {
+                        windowThemeIndex[0] = 0;
                     }
+                    String themeName = themes.get(windowThemeIndex[0]);
+                    window1.setTheme(LanternaThemes.getRegisteredTheme(themeName));
+                    window1.setTitle("Theme: " + themeName);
                 })
-                .addItem("Cycle window theme", new Runnable() {
-                    @Override
-                    public void run() {
-                        windowThemeIndex[0]++;
-                        if(windowThemeIndex[0] >= themes.size()) {
-                            windowThemeIndex[0] = 0;
-                        }
-                        String themeName = themes.get(windowThemeIndex[0]);
-                        window1.setTheme(LanternaThemes.getRegisteredTheme(themeName));
-                        window1.setTitle("Theme: " + themeName);
-                    }
-                })
-                .addItem("Switch active window", new Runnable() {
-                    @Override
-                    public void run() {
-                        textGUI.setActiveWindow(window2);
-                    }
-                })
-                .addItem("Exit", new Runnable() {
-                    @Override
-                    public void run() {
-                        window1.close();
-                        window2.close();
-                    }
+                .addItem("Switch active window", () -> textGUI.setActiveWindow(window2))
+                .addItem("Exit", () -> {
+                    window1.close();
+                    window2.close();
                 });
         window1.setComponent(
                 Panels.vertical(
@@ -403,58 +336,29 @@ public class ThemeTest extends TestBase {
         });
 
         ActionListBox rightWindowActionBox = new ActionListBox()
-                .addItem("Move button to left", new Runnable() {
-                    @Override
-                    public void run() {
-                        leftHolder.addComponent(exampleButton);
+                .addItem("Move button to left", () -> leftHolder.addComponent(exampleButton))
+                .addItem("Override button theme", () -> {
+                    ActionListDialogBuilder actionListDialogBuilder = new ActionListDialogBuilder();
+                    actionListDialogBuilder.setTitle("Choose theme for the button");
+                    for(final String theme: themes) {
+                        actionListDialogBuilder.addAction(theme, () -> exampleButton.setTheme(LanternaThemes.getRegisteredTheme(theme)));
                     }
+                    actionListDialogBuilder.addAction("Clear override", () -> exampleButton.setTheme(null));
+                    actionListDialogBuilder.build().showDialog(textGUI);
                 })
-                .addItem("Override button theme", new Runnable() {
-                    @Override
-                    public void run() {
-                        ActionListDialogBuilder actionListDialogBuilder = new ActionListDialogBuilder();
-                        actionListDialogBuilder.setTitle("Choose theme for the button");
-                        for(final String theme: themes) {
-                            actionListDialogBuilder.addAction(theme, new Runnable() {
-                                @Override
-                                public void run() {
-                                    exampleButton.setTheme(LanternaThemes.getRegisteredTheme(theme));
-                                }
-                            });
-                        }
-                        actionListDialogBuilder.addAction("Clear override", new Runnable() {
-                            @Override
-                            public void run() {
-                                exampleButton.setTheme(null);
-                            }
-                        });
-                        actionListDialogBuilder.build().showDialog(textGUI);
+                .addItem("Cycle window theme", () -> {
+                    windowThemeIndex[1]++;
+                    if(windowThemeIndex[1] >= themes.size()) {
+                        windowThemeIndex[1] = 0;
                     }
+                    String themeName = themes.get(windowThemeIndex[1]);
+                    window2.setTheme(LanternaThemes.getRegisteredTheme(themeName));
+                    window2.setTitle("Theme: " + themeName);
                 })
-                .addItem("Cycle window theme", new Runnable() {
-                    @Override
-                    public void run() {
-                        windowThemeIndex[1]++;
-                        if(windowThemeIndex[1] >= themes.size()) {
-                            windowThemeIndex[1] = 0;
-                        }
-                        String themeName = themes.get(windowThemeIndex[1]);
-                        window2.setTheme(LanternaThemes.getRegisteredTheme(themeName));
-                        window2.setTitle("Theme: " + themeName);
-                    }
-                })
-                .addItem("Switch active window", new Runnable() {
-                    @Override
-                    public void run() {
-                        textGUI.setActiveWindow(window1);
-                    }
-                })
-                .addItem("Exit", new Runnable() {
-                    @Override
-                    public void run() {
-                        window1.close();
-                        window2.close();
-                    }
+                .addItem("Switch active window", () -> textGUI.setActiveWindow(window1))
+                .addItem("Exit", () -> {
+                    window1.close();
+                    window2.close();
                 });
         window2.setComponent(
                 Panels.vertical(
@@ -488,30 +392,30 @@ public class ThemeTest extends TestBase {
 
         Panel colorTable = new Panel(new GridLayout(2));
         colorTable.addComponent(new Label("Base foreground:"));
-        final ComboBox<TextColor.ANSI> baseForeground = new ComboBox<TextColor.ANSI>(TextColor.ANSI.values());
+        final ComboBox<TextColor.ANSI> baseForeground = new ComboBox<>(TextColor.ANSI.values());
         colorTable.addComponent(baseForeground);
         colorTable.addComponent(new Label("Base background:"));
-        final ComboBox<TextColor.ANSI> baseBackground = new ComboBox<TextColor.ANSI>(TextColor.ANSI.values());
+        final ComboBox<TextColor.ANSI> baseBackground = new ComboBox<>(TextColor.ANSI.values());
         baseBackground.setSelectedIndex(7);
         colorTable.addComponent(baseBackground);
         colorTable.addComponent(new Label("Editable foreground:"));
-        final ComboBox<TextColor.ANSI> editableForeground = new ComboBox<TextColor.ANSI>(TextColor.ANSI.values());
+        final ComboBox<TextColor.ANSI> editableForeground = new ComboBox<>(TextColor.ANSI.values());
         editableForeground.setSelectedIndex(7);
         colorTable.addComponent(editableForeground);
         colorTable.addComponent(new Label("Editable background:"));
-        final ComboBox<TextColor.ANSI> editableBackground = new ComboBox<TextColor.ANSI>(TextColor.ANSI.values());
+        final ComboBox<TextColor.ANSI> editableBackground = new ComboBox<>(TextColor.ANSI.values());
         editableBackground.setSelectedIndex(4);
         colorTable.addComponent(editableBackground);
         colorTable.addComponent(new Label("Selected foreground:"));
-        final ComboBox<TextColor.ANSI> selectedForeground = new ComboBox<TextColor.ANSI>(TextColor.ANSI.values());
+        final ComboBox<TextColor.ANSI> selectedForeground = new ComboBox<>(TextColor.ANSI.values());
         selectedForeground.setSelectedIndex(7);
         colorTable.addComponent(selectedForeground);
         colorTable.addComponent(new Label("Selected background:"));
-        final ComboBox<TextColor.ANSI> selectedBackground = new ComboBox<TextColor.ANSI>(TextColor.ANSI.values());
+        final ComboBox<TextColor.ANSI> selectedBackground = new ComboBox<>(TextColor.ANSI.values());
         selectedBackground.setSelectedIndex(4);
         colorTable.addComponent(selectedBackground);
         colorTable.addComponent(new Label("GUI background:"));
-        final ComboBox<TextColor.ANSI> guiBackground = new ComboBox<TextColor.ANSI>(TextColor.ANSI.values());
+        final ComboBox<TextColor.ANSI> guiBackground = new ComboBox<>(TextColor.ANSI.values());
         guiBackground.setSelectedIndex(4);
         colorTable.addComponent(guiBackground);
         final CheckBox activeIsBoxCheck = new CheckBox("Active content is bold").setChecked(true);
@@ -521,28 +425,20 @@ public class ThemeTest extends TestBase {
         mainPanel.addComponent(activeIsBoxCheck);
         mainPanel.addComponent(new EmptySpace());
 
-        Button okButton = new Button(LocalizedString.OK.toString(), new Runnable() {
-            @Override
-            public void run() {
-                SimpleTheme theme = SimpleTheme.makeTheme(
-                        activeIsBoxCheck.isChecked(),
-                        baseForeground.getSelectedItem(),
-                        baseBackground.getSelectedItem(),
-                        editableForeground.getSelectedItem(),
-                        editableBackground.getSelectedItem(),
-                        selectedForeground.getSelectedItem(),
-                        selectedBackground.getSelectedItem(),
-                        guiBackground.getSelectedItem());
-                textGUI.setTheme(theme);
-                customThemeCreator.close();
-            }
+        Button okButton = new Button(LocalizedString.OK.toString(), () -> {
+            SimpleTheme theme = SimpleTheme.makeTheme(
+                    activeIsBoxCheck.isChecked(),
+                    baseForeground.getSelectedItem(),
+                    baseBackground.getSelectedItem(),
+                    editableForeground.getSelectedItem(),
+                    editableBackground.getSelectedItem(),
+                    selectedForeground.getSelectedItem(),
+                    selectedBackground.getSelectedItem(),
+                    guiBackground.getSelectedItem());
+            textGUI.setTheme(theme);
+            customThemeCreator.close();
         });
-        Button cancelButton = new Button(LocalizedString.Cancel.toString(), new Runnable() {
-            @Override
-            public void run() {
-                customThemeCreator.close();
-            }
-        });
+        Button cancelButton = new Button(LocalizedString.Cancel.toString(), customThemeCreator::close);
         mainPanel.addComponent(Panels.horizontal(
                 okButton,
                 cancelButton

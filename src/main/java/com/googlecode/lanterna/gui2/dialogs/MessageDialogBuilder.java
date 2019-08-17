@@ -43,8 +43,8 @@ public class MessageDialogBuilder {
     public MessageDialogBuilder() {
         this.title = "MessageDialog";
         this.text = "Text";
-        this.buttons = new ArrayList<MessageDialogButton>();
-        this.extraWindowHints = new HashSet<Window.Hint>();
+        this.buttons = new ArrayList<>();
+        this.extraWindowHints = new HashSet<>();
         this.extraWindowHints.add(Window.Hint.CENTERED);
     }
 

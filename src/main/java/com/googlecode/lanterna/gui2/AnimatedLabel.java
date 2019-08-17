@@ -30,7 +30,7 @@ import java.util.*;
  */
 public class AnimatedLabel extends Label {
     private static Timer TIMER = null;
-    private static final WeakHashMap<AnimatedLabel, TimerTask> SCHEDULED_TASKS = new WeakHashMap<AnimatedLabel, TimerTask>();
+    private static final WeakHashMap<AnimatedLabel, TimerTask> SCHEDULED_TASKS = new WeakHashMap<>();
 
     /**
      * Creates a classic spinning bar which can be used to signal to the user that an operation in is process.
@@ -66,7 +66,7 @@ public class AnimatedLabel extends Label {
      */
     public AnimatedLabel(String firstFrameText) {
         super(firstFrameText);
-        frames = new ArrayList<String[]>();
+        frames = new ArrayList<>();
         currentFrame = 0;
         combinedMaximumPreferredSize = TerminalSize.ZERO;
 
@@ -158,7 +158,7 @@ public class AnimatedLabel extends Label {
         private final WeakReference<AnimatedLabel> labelRef;
 
         private AnimationTimerTask(AnimatedLabel label) {
-            this.labelRef = new WeakReference<AnimatedLabel>(label);
+            this.labelRef = new WeakReference<>(label);
         }
 
         @Override

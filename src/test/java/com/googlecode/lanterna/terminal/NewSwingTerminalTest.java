@@ -24,7 +24,7 @@ import com.googlecode.lanterna.terminal.swing.SwingTerminal;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Random;
-import javax.swing.Timer;
+import javax.swing.*;
 
 /**
  *
@@ -107,23 +107,13 @@ public class NewSwingTerminalTest extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(NewSwingTerminalTest.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(NewSwingTerminalTest.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(NewSwingTerminalTest.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | UnsupportedLookAndFeelException | IllegalAccessException ex) {
             java.util.logging.Logger.getLogger(NewSwingTerminalTest.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new NewSwingTerminalTest().setVisible(true);
-            }
-        });
+        java.awt.EventQueue.invokeLater(() -> new NewSwingTerminalTest().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

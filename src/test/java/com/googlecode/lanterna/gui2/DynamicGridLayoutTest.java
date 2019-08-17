@@ -58,36 +58,11 @@ public class DynamicGridLayoutTest extends TestBase {
 
         Panel controlPanel = new Panel();
         controlPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
-        controlPanel.addComponent(new Button("Add Component", new Runnable() {
-            @Override
-            public void run() {
-                onAddComponent(textGUI, gridPanel);
-            }
-        }));
-        controlPanel.addComponent(new Button("Modify Component", new Runnable() {
-            @Override
-            public void run() {
-                onModifyComponent(textGUI, gridPanel);
-            }
-        }));
-        controlPanel.addComponent(new Button("Modify Grid", new Runnable() {
-            @Override
-            public void run() {
-                onModifyGrid(textGUI, (GridLayout)gridPanel.getLayoutManager());
-            }
-        }));
-        controlPanel.addComponent(new Button("Reset Grid", new Runnable() {
-            @Override
-            public void run() {
-                onResetGrid(textGUI, gridPanel);
-            }
-        }));
-        controlPanel.addComponent(new Button("Exit", new Runnable() {
-            @Override
-            public void run() {
-                window.close();
-            }
-        }));
+        controlPanel.addComponent(new Button("Add Component", () -> onAddComponent(textGUI, gridPanel)));
+        controlPanel.addComponent(new Button("Modify Component", () -> onModifyComponent(textGUI, gridPanel)));
+        controlPanel.addComponent(new Button("Modify Grid", () -> onModifyGrid(textGUI, (GridLayout)gridPanel.getLayoutManager())));
+        controlPanel.addComponent(new Button("Reset Grid", () -> onResetGrid(textGUI, gridPanel)));
+        controlPanel.addComponent(new Button("Exit", window::close));
 
         mainPanel.addComponent(gridPanel);
         mainPanel.addComponent(
@@ -239,24 +214,16 @@ public class DynamicGridLayoutTest extends TestBase {
             contentPane.addComponent(
                     new EmptySpace(TerminalSize.ONE).setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2)));
 
-            Button okButton = new Button("OK", new Runnable() {
-                @Override
-                public void run() {
-                    gridLayout.setHorizontalSpacing(Integer.parseInt(textBoxHorizontalSpacing.getTextOrDefault("0")));
-                    gridLayout.setVerticalSpacing(Integer.parseInt(textBoxVerticalSpacing.getTextOrDefault("0")));
-                    gridLayout.setLeftMarginSize(Integer.parseInt(textBoxLeftMargin.getTextOrDefault("0")));
-                    gridLayout.setRightMarginSize(Integer.parseInt(textBoxRightMargin.getTextOrDefault("0")));
-                    gridLayout.setTopMarginSize(Integer.parseInt(textBoxTopMargin.getTextOrDefault("0")));
-                    gridLayout.setBottomMarginSize(Integer.parseInt(textBoxBottomMargin.getTextOrDefault("0")));
-                    close();
-                }
+            Button okButton = new Button("OK", () -> {
+                gridLayout.setHorizontalSpacing(Integer.parseInt(textBoxHorizontalSpacing.getTextOrDefault("0")));
+                gridLayout.setVerticalSpacing(Integer.parseInt(textBoxVerticalSpacing.getTextOrDefault("0")));
+                gridLayout.setLeftMarginSize(Integer.parseInt(textBoxLeftMargin.getTextOrDefault("0")));
+                gridLayout.setRightMarginSize(Integer.parseInt(textBoxRightMargin.getTextOrDefault("0")));
+                gridLayout.setTopMarginSize(Integer.parseInt(textBoxTopMargin.getTextOrDefault("0")));
+                gridLayout.setBottomMarginSize(Integer.parseInt(textBoxBottomMargin.getTextOrDefault("0")));
+                close();
             });
-            Button cancelButton = new Button("Cancel", new Runnable() {
-                @Override
-                public void run() {
-                    close();
-                }
-            });
+            Button cancelButton = new Button("Cancel", this::close);
 
             contentPane.addComponent(
                     Panels.horizontal(okButton, cancelButton)
@@ -279,7 +246,7 @@ public class DynamicGridLayoutTest extends TestBase {
             Panel contentPane = new Panel();
             contentPane.setLayoutManager(new GridLayout(2));
             contentPane.addComponent(new Label("Horizontal alignment:"));
-            final RadioBoxList<GridLayout.Alignment> radioBoxesHorizontalAlignment = new RadioBoxList<GridLayout.Alignment>();
+            final RadioBoxList<GridLayout.Alignment> radioBoxesHorizontalAlignment = new RadioBoxList<>();
             radioBoxesHorizontalAlignment.addItem(GridLayout.Alignment.BEGINNING);
             radioBoxesHorizontalAlignment.addItem(GridLayout.Alignment.CENTER);
             radioBoxesHorizontalAlignment.addItem(GridLayout.Alignment.END);
@@ -291,7 +258,7 @@ public class DynamicGridLayoutTest extends TestBase {
                     new EmptySpace(TerminalSize.ONE).setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2)));
 
             contentPane.addComponent(new Label("Vertical alignment:"));
-            final RadioBoxList<GridLayout.Alignment> radioBoxesVerticalAlignment = new RadioBoxList<GridLayout.Alignment>();
+            final RadioBoxList<GridLayout.Alignment> radioBoxesVerticalAlignment = new RadioBoxList<>();
             radioBoxesVerticalAlignment.addItem(GridLayout.Alignment.BEGINNING);
             radioBoxesVerticalAlignment.addItem(GridLayout.Alignment.CENTER);
             radioBoxesVerticalAlignment.addItem(GridLayout.Alignment.END);
@@ -334,26 +301,18 @@ public class DynamicGridLayoutTest extends TestBase {
             contentPane.addComponent(
                     new EmptySpace(TerminalSize.ONE).setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2)));
 
-            Button okButton = new Button("OK", new Runnable() {
-                @Override
-                public void run() {
-                    component.setLayoutData(
-                            GridLayout.createLayoutData(
-                                    radioBoxesHorizontalAlignment.getCheckedItem(),
-                                    radioBoxesVerticalAlignment.getCheckedItem(),
-                                    checkBoxGrabExtraHorizontalSpace.isChecked(),
-                                    checkBoxGrabExtraVerticalSpace.isChecked(),
-                                    Integer.parseInt(textBoxHorizontalSpan.getTextOrDefault("1")),
-                                    Integer.parseInt(textBoxVerticalSpan.getTextOrDefault("1"))));
-                    close();
-                }
+            Button okButton = new Button("OK", () -> {
+                component.setLayoutData(
+                        GridLayout.createLayoutData(
+                                radioBoxesHorizontalAlignment.getCheckedItem(),
+                                radioBoxesVerticalAlignment.getCheckedItem(),
+                                checkBoxGrabExtraHorizontalSpace.isChecked(),
+                                checkBoxGrabExtraVerticalSpace.isChecked(),
+                                Integer.parseInt(textBoxHorizontalSpan.getTextOrDefault("1")),
+                                Integer.parseInt(textBoxVerticalSpan.getTextOrDefault("1"))));
+                close();
             });
-            Button cancelButton = new Button("Cancel", new Runnable() {
-                @Override
-                public void run() {
-                    close();
-                }
-            });
+            Button cancelButton = new Button("Cancel", this::close);
 
             contentPane.addComponent(
                     Panels.horizontal(okButton, cancelButton)

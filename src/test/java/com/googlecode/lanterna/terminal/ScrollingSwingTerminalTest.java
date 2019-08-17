@@ -25,7 +25,7 @@ import com.googlecode.lanterna.terminal.swing.TerminalEmulatorDeviceConfiguratio
 import com.googlecode.lanterna.terminal.swing.SwingTerminalFontConfiguration;
 import java.awt.BorderLayout;
 import java.util.Random;
-import javax.swing.UIManager;
+import javax.swing.*;
 
 /**
  *
@@ -71,39 +71,19 @@ public class ScrollingSwingTerminalTest extends javax.swing.JFrame {
         panelTerminalContainer.setLayout(new java.awt.BorderLayout());
 
         buttonPrint100Lines.setText("Print 100 lines");
-        buttonPrint100Lines.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonPrint100LinesActionPerformed(evt);
-            }
-        });
+        buttonPrint100Lines.addActionListener(this::buttonPrint100LinesActionPerformed);
 
         buttonPrint10Lines.setText("Print 10 lines");
-        buttonPrint10Lines.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonPrint10LinesActionPerformed(evt);
-            }
-        });
+        buttonPrint10Lines.addActionListener(this::buttonPrint10LinesActionPerformed);
 
         buttonPrint1Line.setText("Print 1 line");
-        buttonPrint1Line.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonPrint1LineActionPerformed(evt);
-            }
-        });
+        buttonPrint1Line.addActionListener(this::buttonPrint1LineActionPerformed);
 
         buttonMoveCursor.setText("Move cursor");
-        buttonMoveCursor.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonMoveCursorActionPerformed(evt);
-            }
-        });
+        buttonMoveCursor.addActionListener(this::buttonMoveCursorActionPerformed);
 
         jButton1.setText("Clear");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
+        jButton1.addActionListener(this::jButton1ActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -195,25 +175,12 @@ public class ScrollingSwingTerminalTest extends javax.swing.JFrame {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         }
-        catch(ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ScrollingSwingTerminalTest.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        catch(InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ScrollingSwingTerminalTest.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        catch(IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ScrollingSwingTerminalTest.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        catch(javax.swing.UnsupportedLookAndFeelException ex) {
+        catch(ClassNotFoundException | InstantiationException | UnsupportedLookAndFeelException | IllegalAccessException ex) {
             java.util.logging.Logger.getLogger(ScrollingSwingTerminalTest.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new ScrollingSwingTerminalTest().setVisible(true);
-            }
-        });
+        java.awt.EventQueue.invokeLater(() -> new ScrollingSwingTerminalTest().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

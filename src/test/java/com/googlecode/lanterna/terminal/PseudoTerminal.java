@@ -55,8 +55,8 @@ public class PseudoTerminal {
     }
 
     private static String[] makeEnvironmentVariables() {
-        List<String> environment = new ArrayList<String>();
-        Map<String, String> env = new TreeMap<String, String>(System.getenv());
+        List<String> environment = new ArrayList<>();
+        Map<String, String> env = new TreeMap<>(System.getenv());
         env.put("TERM", "xterm");   //Will this make bash detect us as a proper terminal??
         for(String key : env.keySet()) {
             environment.add(key + "=" + env.get(key));
@@ -161,9 +161,7 @@ public class PseudoTerminal {
                             }
                         }
                     }
-                    catch(IOException e) {
-                    }
-                    catch(InterruptedException e) {
+                    catch(IOException | InterruptedException e) {
                     }
                     finally {
                         try {

@@ -39,19 +39,14 @@ public class ListBoxTest extends TestBase {
         horizontalPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
 
         TerminalSize size = new TerminalSize(14, 10);
-        CheckBoxList<String> checkBoxList = new CheckBoxList<String>(size);
-        RadioBoxList<String> radioBoxList = new RadioBoxList<String>(size);
+        CheckBoxList<String> checkBoxList = new CheckBoxList<>(size);
+        RadioBoxList<String> radioBoxList = new RadioBoxList<>(size);
         ActionListBox actionListBox = new ActionListBox(size);
         for(int i = 0; i < 30; i++) {
             final String itemText = "Item " + (i + 1);
             checkBoxList.addItem(itemText);
             radioBoxList.addItem(itemText);
-            actionListBox.addItem(itemText, new Runnable() {
-                @Override
-                public void run() {
-                    System.out.println("Selected " + itemText);
-                }
-            });
+            actionListBox.addItem(itemText, () -> System.out.println("Selected " + itemText));
         }
         horizontalPanel.addComponent(checkBoxList.withBorder(Borders.singleLine("CheckBoxList")));
         horizontalPanel.addComponent(radioBoxList.withBorder(Borders.singleLine("RadioBoxList")));
@@ -60,12 +55,7 @@ public class ListBoxTest extends TestBase {
         window.setComponent(
                 Panels.vertical(
                         horizontalPanel,
-                        new Button("OK", new Runnable() {
-                            @Override
-                            public void run() {
-                                window.close();
-                            }
-                        })));
+                        new Button("OK", window::close)));
         textGUI.addWindow(window);
     }
 }

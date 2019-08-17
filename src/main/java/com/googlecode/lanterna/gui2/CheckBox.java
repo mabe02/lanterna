@@ -70,7 +70,7 @@ public class CheckBox extends AbstractInteractableComponent<CheckBox> {
         else if(label.contains("\n") || label.contains("\r")) {
             throw new IllegalArgumentException("Multiline checkbox labels are not supported");
         }
-        this.listeners = new CopyOnWriteArrayList<Listener>();
+        this.listeners = new CopyOnWriteArrayList<>();
         this.label = label;
         this.checked = false;
     }
@@ -82,12 +82,9 @@ public class CheckBox extends AbstractInteractableComponent<CheckBox> {
      */
     public synchronized CheckBox setChecked(final boolean checked) {
         this.checked = checked;
-        runOnGUIThreadIfExistsOtherwiseRunDirect(new Runnable() {
-            @Override
-            public void run() {
-                for(Listener listener : listeners) {
-                    listener.onStatusChanged(checked);
-                }
+        runOnGUIThreadIfExistsOtherwiseRunDirect(() -> {
+            for(Listener listener : listeners) {
+                listener.onStatusChanged(checked);
             }
         });
         invalidate();

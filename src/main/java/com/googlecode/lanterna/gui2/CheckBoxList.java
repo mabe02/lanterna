@@ -63,13 +63,13 @@ public class CheckBoxList<V> extends AbstractListBox<V, CheckBoxList<V>> {
      */
     public CheckBoxList(TerminalSize preferredSize) {
         super(preferredSize);
-        this.listeners = new CopyOnWriteArrayList<Listener>();
-        this.itemStatus = new ArrayList<Boolean>();
+        this.listeners = new CopyOnWriteArrayList<>();
+        this.itemStatus = new ArrayList<>();
     }
 
     @Override
     protected ListItemRenderer<V,CheckBoxList<V>> createDefaultListItemRenderer() {
-        return new CheckBoxListItemRenderer<V>();
+        return new CheckBoxListItemRenderer<>();
     }
 
     @Override
@@ -145,12 +145,9 @@ public class CheckBoxList<V> extends AbstractListBox<V, CheckBoxList<V>> {
 
     private void setChecked(final int index, final boolean checked) {
         itemStatus.set(index, checked);
-        runOnGUIThreadIfExistsOtherwiseRunDirect(new Runnable() {
-            @Override
-            public void run() {
-                for(Listener listener: listeners) {
-                    listener.onStatusChanged(index, checked);
-                }
+        runOnGUIThreadIfExistsOtherwiseRunDirect(() -> {
+            for(Listener listener: listeners) {
+                listener.onStatusChanged(index, checked);
             }
         });
     }
@@ -160,7 +157,7 @@ public class CheckBoxList<V> extends AbstractListBox<V, CheckBoxList<V>> {
      * @return List of all items in the list box that has checked state on
      */
     public synchronized List<V> getCheckedItems() {
-        List<V> result = new ArrayList<V>();
+        List<V> result = new ArrayList<>();
         for(int i = 0; i < itemStatus.size(); i++) {
             if(itemStatus.get(i)) {
                 result.add(getItemAt(i));

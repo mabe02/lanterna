@@ -89,16 +89,13 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
         if(catchSpecialCharacters) {
             keyStrokeSignalsEnabled(false);
         }
-        registerTerminalResizeListener(new Runnable() {
-            @Override
-            public void run() {
-                // This will trigger a resize notification as the size will be different than before
-                try {
-                    getTerminalSize();
-                }
-                catch(IOException ignore) {
-                    // Not much to do here, we can't re-throw it
-                }
+        registerTerminalResizeListener(() -> {
+            // This will trigger a resize notification as the size will be different than before
+            try {
+                getTerminalSize();
+            }
+            catch(IOException ignore) {
+                // Not much to do here, we can't re-throw it
             }
         });
         Runtime.getRuntime().addShutdownHook(shutdownHook);
@@ -214,8 +211,7 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
                 exitPrivateMode();
             }
         }
-        catch(IOException ignored) {}
-        catch(IllegalStateException ignored) {} // still possible!
+        catch(IOException | IllegalStateException ignored) {}
 
         try {
             restoreTerminalSettingsAndKeyStrokeSignals();

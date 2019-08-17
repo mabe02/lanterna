@@ -74,16 +74,13 @@ class SwingTerminalImplementation extends GraphicalTerminalImplementation {
                 SwingTerminalImplementation.this.component.requestFocusInWindow();
             }
         });
-        component.addHierarchyListener(new HierarchyListener() {
-            @Override
-            public void hierarchyChanged(HierarchyEvent e) {
-                if(e.getChangeFlags() == HierarchyEvent.DISPLAYABILITY_CHANGED) {
-                    if(e.getChanged().isDisplayable()) {
-                        onCreated();
-                    }
-                    else {
-                        onDestroyed();
-                    }
+        component.addHierarchyListener(e -> {
+            if(e.getChangeFlags() == HierarchyEvent.DISPLAYABILITY_CHANGED) {
+                if(e.getChanged().isDisplayable()) {
+                    onCreated();
+                }
+                else {
+                    onDestroyed();
                 }
             }
         });
@@ -134,12 +131,7 @@ class SwingTerminalImplementation extends GraphicalTerminalImplementation {
             component.repaint();
         }
         else {
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    component.repaint();
-                }
-            });
+            SwingUtilities.invokeLater(component::repaint);
         }
     }
 

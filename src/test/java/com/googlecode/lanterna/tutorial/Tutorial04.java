@@ -116,18 +116,18 @@ public class Tutorial04 {
             read-only and one that is editable.
              */
             contentPanel.addComponent(new Label("Read-only Combo Box (forced size)"));
-            List<String> timezonesAsStrings = new ArrayList<String>();
+            List<String> timezonesAsStrings = new ArrayList<>();
             for(String id: TimeZone.getAvailableIDs()) {
                 timezonesAsStrings.add(id);
             }
-            ComboBox<String> readOnlyComboBox = new ComboBox<String>(timezonesAsStrings);
+            ComboBox<String> readOnlyComboBox = new ComboBox<>(timezonesAsStrings);
             readOnlyComboBox.setReadOnly(true);
             readOnlyComboBox.setPreferredSize(new TerminalSize(20, 1));
             contentPanel.addComponent(readOnlyComboBox);
 
             contentPanel.addComponent(new Label("Editable Combo Box (filled)"));
             contentPanel.addComponent(
-                    new ComboBox<String>("Item #1", "Item #2", "Item #3", "Item #4")
+                    new ComboBox<>("Item #1", "Item #2", "Item #3", "Item #4")
                             .setReadOnly(false)
                             .setLayoutData(GridLayout.createHorizontallyFilledLayoutData(1)));
 
@@ -136,12 +136,7 @@ public class Tutorial04 {
             using one of the pre-defined dialogs when the button is triggered.
              */
             contentPanel.addComponent(new Label("Button (centered)"));
-            contentPanel.addComponent(new Button("Button", new Runnable() {
-                @Override
-                public void run() {
-                    MessageDialog.showMessageDialog(textGUI, "MessageBox", "This is a message box", MessageDialogButton.OK);
-                }
-            }).setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER, GridLayout.Alignment.CENTER)));
+            contentPanel.addComponent(new Button("Button", () -> MessageDialog.showMessageDialog(textGUI, "MessageBox", "This is a message box", MessageDialogButton.OK)).setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER, GridLayout.Alignment.CENTER)));
 
             /*
             Close off with an empty row and a separator, then a button to close the window
@@ -155,12 +150,7 @@ public class Tutorial04 {
                             .setLayoutData(
                                     GridLayout.createHorizontallyFilledLayoutData(2)));
             contentPanel.addComponent(
-                    new Button("Close", new Runnable() {
-                        @Override
-                        public void run() {
-                            window.close();
-                        }
-                    }).setLayoutData(
+                    new Button("Close", window::close).setLayoutData(
                             GridLayout.createHorizontallyEndAlignedLayoutData(2)));
 
             /*

@@ -41,13 +41,10 @@ public class ActionListDialog extends DialogWindow {
 
         ActionListBox listBox = new ActionListBox(actionListPreferredSize);
         for(final Runnable action: actions) {
-            listBox.addItem(action.toString(), new Runnable() {
-                @Override
-                public void run() {
-                    action.run();
-                    if(closeAutomatically) {
-                        close();
-                    }
+            listBox.addItem(action.toString(), () -> {
+                action.run();
+                if(closeAutomatically) {
+                    close();
                 }
             });
         }
@@ -73,12 +70,7 @@ public class ActionListDialog extends DialogWindow {
         if(canCancel) {
             Panel buttonPanel = new Panel();
             buttonPanel.setLayoutManager(new GridLayout(2).setHorizontalSpacing(1));
-            buttonPanel.addComponent(new Button(LocalizedString.Cancel.toString(), new Runnable() {
-                @Override
-                public void run() {
-                    onCancel();
-                }
-            }).setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER, GridLayout.Alignment.CENTER, true, false)));
+            buttonPanel.addComponent(new Button(LocalizedString.Cancel.toString(), this::onCancel).setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER, GridLayout.Alignment.CENTER, true, false)));
             buttonPanel.setLayoutData(
                     GridLayout.createLayoutData(
                             GridLayout.Alignment.END,

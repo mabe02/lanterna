@@ -113,8 +113,8 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
                 throw new IllegalArgumentException("Cannot add null elements to a ComboBox");
             }
         }
-        this.items = new ArrayList<V>(items);
-        this.listeners = new CopyOnWriteArrayList<Listener>();
+        this.items = new ArrayList<>(items);
+        this.listeners = new CopyOnWriteArrayList<>();
         this.popupWindow = null;
         this.selectedIndex = selectedIndex;
         this.readOnly = true;
@@ -335,12 +335,9 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
         else {
             updateText(items.get(selectedIndex).toString());
         }
-        runOnGUIThreadIfExistsOtherwiseRunDirect(new Runnable() {
-            @Override
-            public void run() {
-                for(Listener listener: listeners) {
-                    listener.onSelectionChanged(selectedIndex, oldSelection);
-                }
+        runOnGUIThreadIfExistsOtherwiseRunDirect(() -> {
+            for(Listener listener: listeners) {
+                listener.onSelectionChanged(selectedIndex, oldSelection);
             }
         });
         invalidate();
@@ -436,7 +433,7 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
 
     @Override
     protected InteractableRenderer<ComboBox<V>> createDefaultRenderer() {
-        return new DefaultComboBoxRenderer<V>();
+        return new DefaultComboBoxRenderer<>();
     }
 
     @Override
@@ -587,12 +584,9 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
             for(int i = 0; i < getItemCount(); i++) {
                 V item = items.get(i);
                 final int index = i;
-                listBox.addItem(item.toString(), new Runnable() {
-                    @Override
-                    public void run() {
-                        setSelectedIndex(index);
-                        close();
-                    }
+                listBox.addItem(item.toString(), () -> {
+                    setSelectedIndex(index);
+                    close();
                 });
             }
             listBox.setSelectedIndex(getSelectedIndex());

@@ -69,41 +69,33 @@ public class LineWrappingLabelTest extends TestBase {
         contentPane.setLayoutManager(new BorderLayout());
         contentPane.addComponent(new Label("Resize window by holding ctrl and pressing arrow keys").setLayoutData(BorderLayout.Location.TOP));
         contentPane.addComponent(new Label(BIG_TEXT).withBorder(Borders.doubleLine()).setLayoutData(BorderLayout.Location.CENTER));
-        contentPane.addComponent(new Button("Close", new Runnable() {
-                    @Override
-                    public void run() {
-                        window.close();
-                    }
-                }).setLayoutData(BorderLayout.Location.BOTTOM));
+        contentPane.addComponent(new Button("Close", window::close).setLayoutData(BorderLayout.Location.BOTTOM));
 
         window.setComponent(contentPane);
 
-        textGUI.addListener(new TextGUI.Listener() {
-            @Override
-            public boolean onUnhandledKeyStroke(TextGUI textGUI, KeyStroke keyStroke) {
-                if(keyStroke.isCtrlDown()) {
-                    switch(keyStroke.getKeyType()) {
-                        case ArrowUp:
-                            if(windowSize.getRows() > 1) {
-                                windowSize = windowSize.withRelativeRows(-1);
-                                return true;
-                            }
-                        case ArrowDown:
-                            windowSize = windowSize.withRelativeRows(1);
+        textGUI.addListener((textGUI1, keyStroke) -> {
+            if(keyStroke.isCtrlDown()) {
+                switch(keyStroke.getKeyType()) {
+                    case ArrowUp:
+                        if(windowSize.getRows() > 1) {
+                            windowSize = windowSize.withRelativeRows(-1);
                             return true;
-                        case ArrowLeft:
-                            if(windowSize.getColumns() > 1) {
-                                windowSize = windowSize.withRelativeColumns(-1);
-                                return true;
-                            }
-                        case ArrowRight:
-                            windowSize = windowSize.withRelativeColumns(1);
+                        }
+                    case ArrowDown:
+                        windowSize = windowSize.withRelativeRows(1);
+                        return true;
+                    case ArrowLeft:
+                        if(windowSize.getColumns() > 1) {
+                            windowSize = windowSize.withRelativeColumns(-1);
                             return true;
-                        default:
-                    }
+                        }
+                    case ArrowRight:
+                        windowSize = windowSize.withRelativeColumns(1);
+                        return true;
+                    default:
                 }
-                return false;
             }
+            return false;
         });
 
         textGUI.addWindow(window);

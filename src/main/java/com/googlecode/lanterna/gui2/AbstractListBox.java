@@ -56,7 +56,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
      *             or if set to {@code null} will ask to be big enough to display all items.
      */
     protected AbstractListBox(TerminalSize size) {
-        this.items = new ArrayList<V>();
+        this.items = new ArrayList<>();
         this.selectedIndex = -1;
         setPreferredSize(size);
         setListItemRenderer(createDefaultListItemRenderer());
@@ -64,7 +64,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
 
     @Override
     protected InteractableRenderer<T> createDefaultRenderer() {
-        return new DefaultListBoxRenderer<V, T>();
+        return new DefaultListBoxRenderer<>();
     }
 
     /**
@@ -74,7 +74,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
      * @return {@code ListItemRenderer} to use when drawing the items in the list
      */
     protected ListItemRenderer<V,T> createDefaultListItemRenderer() {
-        return new ListItemRenderer<V,T>();
+        return new ListItemRenderer<>();
     }
     
     ListItemRenderer<V,T> getListItemRenderer() {
@@ -295,7 +295,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
      * @return Copy of all the items in this list box
      */
     public synchronized List<V> getItems() {
-        return new ArrayList<V>(items);
+        return new ArrayList<>(items);
     }
 
     /**

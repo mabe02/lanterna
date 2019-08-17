@@ -125,18 +125,15 @@ public class TextInputDialogBuilder extends AbstractDialogBuilder<TextInputDialo
      * @return Itself
      */
     public TextInputDialogBuilder setValidationPattern(final Pattern pattern, final String errorMessage) {
-        return setValidator(new TextInputDialogResultValidator() {
-            @Override
-            public String validate(String content) {
-                Matcher matcher = pattern.matcher(content);
-                if(!matcher.matches()) {
-                    if(errorMessage == null) {
-                        return "Invalid input";
-                    }
-                    return errorMessage;
+        return setValidator(content -> {
+            Matcher matcher = pattern.matcher(content);
+            if(!matcher.matches()) {
+                if(errorMessage == null) {
+                    return "Invalid input";
                 }
-                return null;
+                return errorMessage;
             }
+            return null;
         });
     }
 

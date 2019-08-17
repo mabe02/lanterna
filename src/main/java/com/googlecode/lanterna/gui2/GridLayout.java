@@ -413,8 +413,8 @@ public class GridLayout implements LayoutManager {
         //Adjust area to the margins
         area = area.withRelative(-leftMarginSize - rightMarginSize, -topMarginSize - bottomMarginSize);
 
-        Map<Component, TerminalSize> sizeMap = new IdentityHashMap<Component, TerminalSize>();
-        Map<Component, TerminalPosition> positionMap = new IdentityHashMap<Component, TerminalPosition>();
+        Map<Component, TerminalSize> sizeMap = new IdentityHashMap<>();
+        Map<Component, TerminalPosition> positionMap = new IdentityHashMap<>();
 
         //Figure out each column first, this can be done independently of the row heights
         int[] columnWidths = getPreferredColumnWidths(table);
@@ -620,7 +620,7 @@ public class GridLayout implements LayoutManager {
     }
 
     private Set<Integer> getExpandableColumns(Component[][] table) {
-        Set<Integer> expandableColumns = new TreeSet<Integer>();
+        Set<Integer> expandableColumns = new TreeSet<>();
         Component previousComponent = null;
         for(Component[] row: table) {
             for (int i = 0; i < row.length; i++) {
@@ -638,7 +638,7 @@ public class GridLayout implements LayoutManager {
     }
 
     private Set<Integer> getExpandableRows(Component[][] table) {
-        Set<Integer> expandableRows = new TreeSet<Integer>();
+        Set<Integer> expandableRows = new TreeSet<>();
         Component previousComponent = null;
         if(table.length > 0) {
             for (int columnIndex = 0; columnIndex < table[0].length; columnIndex++) {
@@ -723,13 +723,13 @@ public class GridLayout implements LayoutManager {
     }
 
     private Component[][] buildTable(List<Component> components) {
-        List<Component[]> rows = new ArrayList<Component[]>();
-        List<int[]> hspans = new ArrayList<int[]>();
-        List<int[]> vspans = new ArrayList<int[]>();
+        List<Component[]> rows = new ArrayList<>();
+        List<int[]> hspans = new ArrayList<>();
+        List<int[]> vspans = new ArrayList<>();
 
         int rowCount = 0;
         int rowsExtent = 1;
-        Queue<Component> toBePlaced = new LinkedList<Component>(components);
+        Queue<Component> toBePlaced = new LinkedList<>(components);
         while(!toBePlaced.isEmpty() || rowCount < rowsExtent) {
             //Start new row
             Component[] row = new Component[numberOfColumns];
@@ -777,8 +777,8 @@ public class GridLayout implements LayoutManager {
         }
         //Could make this into a Set, but I doubt there will be any real gain in performance as these are probably going
         //to be very small.
-        List<Integer> rowsToRemove = new ArrayList<Integer>();
-        List<Integer> columnsToRemove = new ArrayList<Integer>();
+        List<Integer> rowsToRemove = new ArrayList<>();
+        List<Integer> columnsToRemove = new ArrayList<>();
 
         final int tableRows = table.length;
         final int tableColumns = table[0].length;

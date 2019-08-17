@@ -43,8 +43,8 @@ public class InputDecoder {
      */
     public InputDecoder(final Reader source) {
         this.source = new BufferedReader(source);
-        this.bytePatterns = new ArrayList<CharacterPattern>();
-        this.currentMatching = new ArrayList<Character>();
+        this.bytePatterns = new ArrayList<>();
+        this.currentMatching = new ArrayList<>();
         this.seenEOF = false;
         this.timeoutUnits = 0; // default is no wait at all
     }
@@ -70,7 +70,7 @@ public class InputDecoder {
      */
     public synchronized Collection<CharacterPattern> getPatterns() {
         synchronized(bytePatterns) {
-            return new ArrayList<CharacterPattern>(bytePatterns);
+            return new ArrayList<>(bytePatterns);
         }
     }
 

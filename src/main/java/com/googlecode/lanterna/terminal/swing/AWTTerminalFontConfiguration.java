@@ -65,7 +65,7 @@ public class AWTTerminalFontConfiguration {
         ;
     }
 
-    private static final Set<String> MONOSPACE_CHECK_OVERRIDE = Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(
+    private static final Set<String> MONOSPACE_CHECK_OVERRIDE = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
             "VL Gothic Regular",
             "NanumGothic",
             "WenQuanYi Zen Hei Mono",
@@ -176,7 +176,7 @@ public class AWTTerminalFontConfiguration {
      * @return Array with the fonts from the input parameter that were monospaced
      */
     public static Font[] filterMonospaced(Font... fonts) {
-        List<Font> result = new ArrayList<Font>(fonts.length);
+        List<Font> result = new ArrayList<>(fonts.length);
         for(Font font: fonts) {
             if (isFontMonospaced(font)) {
                 result.add(font);
@@ -211,7 +211,7 @@ public class AWTTerminalFontConfiguration {
         }
         this.useAntiAliasing = useAntiAliasing;
         this.boldMode = boldMode;
-        this.fontPriority = new ArrayList<Font>(Arrays.asList(fontsInOrderOfPriority));
+        this.fontPriority = new ArrayList<>(Arrays.asList(fontsInOrderOfPriority));
         this.fontWidth = getFontWidth(fontPriority.get(0));
         this.fontHeight = getFontHeight(fontPriority.get(0));
 
@@ -321,7 +321,7 @@ public class AWTTerminalFontConfiguration {
     }
 
     
-    private static final Set<Character> SYMBOLS_CACHE = new HashSet<Character>();
+    private static final Set<Character> SYMBOLS_CACHE = new HashSet<>();
     static {
         for(Field field: Symbols.class.getFields()) {
             if(field.getType() == char.class &&
@@ -330,10 +330,7 @@ public class AWTTerminalFontConfiguration {
                 try {
                     SYMBOLS_CACHE.add(field.getChar(null));
                 }
-                catch(IllegalArgumentException ignore) {
-                    //Should never happen!
-                }
-                catch(IllegalAccessException ignore) {
+                catch(IllegalArgumentException | IllegalAccessException ignore) {
                     //Should never happen!
                 }
             }

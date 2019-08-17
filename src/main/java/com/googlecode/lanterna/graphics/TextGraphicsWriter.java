@@ -153,7 +153,7 @@ public class TextGraphicsWriter implements StyleSet<TextGraphicsWriter> {
             setStyleFrom(style);
         }
     }
-    private List<WordPart> chunk_queue = new ArrayList<WordPart>();
+    private List<WordPart> chunk_queue = new ArrayList<>();
     private void stash(StringBuilder word, int wordlen) {
         if (word.length() > 0) {
             WordPart chunk = new WordPart(word.toString(),wordlen, this);

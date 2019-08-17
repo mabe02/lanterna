@@ -53,7 +53,7 @@ public class Panel extends AbstractComponent<Panel> implements Container {
         if(layoutManager == null) {
             layoutManager = new AbsoluteLayout();
         }
-        this.components = new ArrayList<Component>();
+        this.components = new ArrayList<>();
         this.layoutManager = layoutManager;
         this.cachedPreferredSize = null;
     }
@@ -152,7 +152,7 @@ public class Panel extends AbstractComponent<Panel> implements Container {
      */
     public Panel removeAllComponents() {
         synchronized(components) {
-            for(Component component : new ArrayList<Component>(components)) {
+            for(Component component : new ArrayList<>(components)) {
                 removeComponent(component);
             }
         }
@@ -212,7 +212,7 @@ public class Panel extends AbstractComponent<Panel> implements Container {
     @Override
     public List<Component> getChildren() {
         synchronized(components) {
-            return new ArrayList<Component>(components);
+            return new ArrayList<>(components);
         }
     }
 
@@ -333,7 +333,7 @@ public class Panel extends AbstractComponent<Panel> implements Container {
     public Interactable previousFocus(Interactable fromThis) {
         boolean chooseNextAvailable = (fromThis == null);
 
-        List<Component> revComponents = new ArrayList<Component>();
+        List<Component> revComponents = new ArrayList<>();
         synchronized(components) {
             revComponents.addAll(components);
         }

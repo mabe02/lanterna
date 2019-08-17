@@ -56,29 +56,19 @@ public class Issue155 {
                         addItem(String.valueOf(i));
                     }
                 }},
-                new Button("Quit", new Runnable() {
-                    @Override public void run() { window.close(); }
-                })
+                new Button("Quit", window::close)
         );
     }
 
     private static Runnable openDialog(final WindowBasedTextGUI gui, final BasicWindow window, final int counter) {
-        return new Runnable() {
-            @Override public void run() {
-                new ActionListDialogBuilder().
-                        setCanCancel(true).
-                        addAction("Reinstall UI (this crashes everything)", setupUI(gui, window, counter)).
-                        build().
-                        showDialog(gui);
-            }
-        };
+        return () -> new ActionListDialogBuilder().
+                setCanCancel(true).
+                addAction("Reinstall UI (this crashes everything)", setupUI(gui, window, counter)).
+                build().
+                showDialog(gui);
     }
 
     private static Runnable setupUI(final WindowBasedTextGUI gui, final BasicWindow window, final int counter) {
-        return new Runnable() {
-            @Override public void run() {
-                window.setComponent(createUi(gui, window, counter));
-            }
-        };
+        return () -> window.setComponent(createUi(gui, window, counter));
     }
 }

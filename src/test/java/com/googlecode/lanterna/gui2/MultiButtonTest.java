@@ -40,12 +40,7 @@ public class MultiButtonTest {
             contentArea.addComponent(new Button("Another button"));
             contentArea.addComponent(new EmptySpace(new TerminalSize(5, 1)));
             //contentArea.addComponent(new Button("Here is a\nmulti-line\ntext segment that is using \\n"));
-            contentArea.addComponent(new Button("OK", new Runnable() {
-                @Override
-                public void run() {
-                    window.close();
-                }
-            }));
+            contentArea.addComponent(new Button("OK", window::close));
 
             window.setComponent(contentArea);
             textGUI.addWindowAndWait(window);

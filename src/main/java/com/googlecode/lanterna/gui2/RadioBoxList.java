@@ -68,13 +68,13 @@ public class RadioBoxList<V> extends AbstractListBox<V, RadioBoxList<V>> {
      */
     public RadioBoxList(TerminalSize preferredSize) {
         super(preferredSize);
-        this.listeners = new CopyOnWriteArrayList<Listener>();
+        this.listeners = new CopyOnWriteArrayList<>();
         this.checkedIndex = -1;
     }
 
     @Override
     protected ListItemRenderer<V,RadioBoxList<V>> createDefaultListItemRenderer() {
-        return new RadioBoxListItemRenderer<V>();
+        return new RadioBoxListItemRenderer<>();
     }
 
     @Override
@@ -213,12 +213,9 @@ public class RadioBoxList<V> extends AbstractListBox<V, RadioBoxList<V>> {
         final int previouslyChecked = checkedIndex;
         this.checkedIndex = index;
         invalidate();
-        runOnGUIThreadIfExistsOtherwiseRunDirect(new Runnable() {
-            @Override
-            public void run() {
-                for(Listener listener: listeners) {
-                    listener.onSelectionChanged(checkedIndex, previouslyChecked);
-                }
+        runOnGUIThreadIfExistsOtherwiseRunDirect(() -> {
+            for(Listener listener: listeners) {
+                listener.onSelectionChanged(checkedIndex, previouslyChecked);
             }
         });
     }

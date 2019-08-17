@@ -35,12 +35,12 @@ class TextBuffer {
     private final LinkedList<List<TextCharacter>> lines;
 
     TextBuffer() {
-        this.lines = new LinkedList<List<TextCharacter>>();
+        this.lines = new LinkedList<>();
         newLine();
     }
 
     synchronized void newLine() {
-        lines.add(new ArrayList<TextCharacter>(200));
+        lines.add(new ArrayList<>(200));
     }
 
     synchronized void removeTopLines(int numberOfLinesToRemove) {

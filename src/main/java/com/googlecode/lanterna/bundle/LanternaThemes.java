@@ -39,7 +39,7 @@ public class LanternaThemes {
         // No instantiation
     }
 
-    private static final ConcurrentHashMap<String, Theme> REGISTERED_THEMES = new ConcurrentHashMap<String, Theme>();
+    private static final ConcurrentHashMap<String, Theme> REGISTERED_THEMES = new ConcurrentHashMap<>();
 
     static {
         // Register the default theme first
@@ -66,7 +66,7 @@ public class LanternaThemes {
      * @return Collection of theme names
      */
     public static Collection<String> getRegisteredThemes() {
-        return new ArrayList<String>(REGISTERED_THEMES.keySet());
+        return new ArrayList<>(REGISTERED_THEMES.keySet());
     }
 
     /**

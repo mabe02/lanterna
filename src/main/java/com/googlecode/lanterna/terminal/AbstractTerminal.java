@@ -37,7 +37,7 @@ public abstract class AbstractTerminal implements Terminal {
     private TerminalSize lastKnownSize;
 
     protected AbstractTerminal() {
-        this.resizeListeners = new ArrayList<TerminalResizeListener>();
+        this.resizeListeners = new ArrayList<>();
         this.lastKnownSize = null;
     }
 

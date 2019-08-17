@@ -52,9 +52,9 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
         if(columnLabels.length == 0) {
             throw new IllegalArgumentException("Table needs at least one column");
         }
-        this.tableHeaderRenderer = new DefaultTableHeaderRenderer<V>();
-        this.tableCellRenderer = new DefaultTableCellRenderer<V>();
-        this.tableModel = new TableModel<V>(columnLabels);
+        this.tableHeaderRenderer = new DefaultTableHeaderRenderer<>();
+        this.tableCellRenderer = new DefaultTableCellRenderer<>();
+        this.tableModel = new TableModel<>(columnLabels);
         this.selectAction = null;
         this.visibleColumns = 0;
         this.visibleRows = 0;
@@ -344,7 +344,7 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
 
     @Override
     protected TableRenderer<V> createDefaultRenderer() {
-        return new DefaultTableRenderer<V>();
+        return new DefaultTableRenderer<>();
     }
 
     @Override

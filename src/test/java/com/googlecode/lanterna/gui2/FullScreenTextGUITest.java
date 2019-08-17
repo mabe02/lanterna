@@ -39,15 +39,12 @@ public class FullScreenTextGUITest {
 
         final AtomicBoolean stop = new AtomicBoolean(false);
         MultiWindowTextGUI textGUI = new MultiWindowTextGUI(screen);
-        textGUI.addListener(new TextGUI.Listener() {
-            @Override
-            public boolean onUnhandledKeyStroke(TextGUI textGUI, KeyStroke key) {
-                if(key.getKeyType() == KeyType.Escape) {
-                    stop.set(true);
-                    return true;
-                }
-                return false;
+        textGUI.addListener((textGUI1, key) -> {
+            if(key.getKeyType() == KeyType.Escape) {
+                stop.set(true);
+                return true;
             }
+            return false;
         });
         try {
             textGUI.getBackgroundPane().setComponent(new BIOS());

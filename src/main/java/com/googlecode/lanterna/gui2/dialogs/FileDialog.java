@@ -195,30 +195,19 @@ public class FileDialog extends DialogWindow {
         if(entries == null) {
             return;
         }
-        Arrays.sort(entries, new Comparator<File>() {
-            @Override
-            public int compare(File o1, File o2) {
-                return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
-            }
-        });
+        Arrays.sort(entries, Comparator.comparing(o -> o.getName().toLowerCase()));
         if (directory.getAbsoluteFile().getParentFile() !=null){
-            directoryListBox.addItem("..", new Runnable() {
-                @Override
-                public void run() {
-                    FileDialog.this.directory = directory.getAbsoluteFile().getParentFile();
-                    reloadViews(directory.getAbsoluteFile().getParentFile());
-                }
+            directoryListBox.addItem("..", () -> {
+                FileDialog.this.directory = directory.getAbsoluteFile().getParentFile();
+                reloadViews(directory.getAbsoluteFile().getParentFile());
             });
         } else {
             File[] roots = File.listRoots();
             for (final File entry : roots) {
                 if (entry.canRead()) {
-                    directoryListBox.addItem('[' + entry.getPath() + ']', new Runnable() {
-                        @Override
-                        public void run() {
-                            FileDialog.this.directory = entry;
-                            reloadViews(entry);
-                        }
+                    directoryListBox.addItem('[' + entry.getPath() + ']', () -> {
+                        FileDialog.this.directory = entry;
+                        reloadViews(entry);
                     });
                 }
             }
@@ -228,21 +217,15 @@ public class FileDialog extends DialogWindow {
                 continue;
             }
             if(entry.isDirectory()) {
-                directoryListBox.addItem(entry.getName(), new Runnable() {
-                    @Override
-                    public void run() {
-                        FileDialog.this.directory = entry;
-                        reloadViews(entry);
-                    }
+                directoryListBox.addItem(entry.getName(), () -> {
+                    FileDialog.this.directory = entry;
+                    reloadViews(entry);
                 });
             }
             else {
-                fileListBox.addItem(entry.getName(), new Runnable() {
-                    @Override
-                    public void run() {
-                        fileBox.setText(entry.getName());
-                        setFocusedInteractable(okButton);
-                    }
+                fileListBox.addItem(entry.getName(), () -> {
+                    fileBox.setText(entry.getName());
+                    setFocusedInteractable(okButton);
                 });
             }
         }

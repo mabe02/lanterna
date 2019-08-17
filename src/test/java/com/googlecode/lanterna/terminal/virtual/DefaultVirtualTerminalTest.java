@@ -98,7 +98,7 @@ public class DefaultVirtualTerminalTest {
         assertEquals('O', virtualTerminal.getCharacter(new TerminalPosition(4, 0)).getCharacter());
 
         assertFalse(virtualTerminal.isWholeBufferDirtyThenReset());
-        assertEquals(new TreeSet<TerminalPosition>(Arrays.asList(
+        assertEquals(new TreeSet<>(Arrays.asList(
                 new TerminalPosition(0, 0),
                 new TerminalPosition(1, 0),
                 new TerminalPosition(2, 0),
@@ -319,7 +319,7 @@ public class DefaultVirtualTerminalTest {
         assertLineEquals("  C", 2);
 
         // Dirty positions should now be these
-        assertEquals(new TreeSet<TerminalPosition>(Arrays.asList(
+        assertEquals(new TreeSet<>(Arrays.asList(
                 new TerminalPosition(0, 0),
                 new TerminalPosition(1, 1),
                 new TerminalPosition(2, 2))), virtualTerminal.getDirtyCells());
@@ -329,7 +329,7 @@ public class DefaultVirtualTerminalTest {
         virtualTerminal.putCharacter('\n');
 
         // Dirty positions should now be adjusted
-        assertEquals(new TreeSet<TerminalPosition>(Arrays.asList(
+        assertEquals(new TreeSet<>(Arrays.asList(
                 new TerminalPosition(1, 0),
                 new TerminalPosition(2, 1))), virtualTerminal.getDirtyCells());
         assertEquals(new TerminalPosition(0, 2), virtualTerminal.getCursorPosition());
@@ -376,15 +376,12 @@ public class DefaultVirtualTerminalTest {
         for(int i = 1; i <= ROWS; i++) {
             putString("Line " + i + "\n");
         }
-        virtualTerminal.forEachLine(0, ROWS, new VirtualTerminal.BufferWalker() {
-            @Override
-            public void onLine(int rowNumber, VirtualTerminal.BufferLine bufferLine) {
-                if(rowNumber == ROWS) {
-                    assertLineEquals("", bufferLine);
-                }
-                else {
-                    assertLineEquals("Line " + (rowNumber + 1), bufferLine);
-                }
+        virtualTerminal.forEachLine(0, ROWS, (rowNumber, bufferLine) -> {
+            if(rowNumber == ROWS) {
+                assertLineEquals("", bufferLine);
+            }
+            else {
+                assertLineEquals("Line " + (rowNumber + 1), bufferLine);
             }
         });
     }

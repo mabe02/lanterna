@@ -57,7 +57,7 @@ public class Button extends AbstractInteractableComponent<Button> {
      * @param label Label to put on the button
      */
     public Button(String label) {
-        this.listeners = new CopyOnWriteArrayList<Listener>();
+        this.listeners = new CopyOnWriteArrayList<>();
         setLabel(label);
     }
 
@@ -68,12 +68,7 @@ public class Button extends AbstractInteractableComponent<Button> {
      */
     public Button(String label, final Runnable action) {
         this(label);
-        listeners.add(new Listener() {
-            @Override
-            public void onTriggered(Button button) {
-                action.run();
-            }
-        });
+        listeners.add(button -> action.run());
     }
 
     @Override

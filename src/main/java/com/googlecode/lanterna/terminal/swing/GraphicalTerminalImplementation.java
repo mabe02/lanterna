@@ -108,7 +108,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
             initialTerminalSize = new TerminalSize(80, 24);
         }
         this.virtualTerminal = new DefaultVirtualTerminal(initialTerminalSize);
-        this.keyQueue = new LinkedBlockingQueue<KeyStroke>();
+        this.keyQueue = new LinkedBlockingQueue<>();
         this.deviceConfiguration = deviceConfiguration;
         this.colorConfiguration = colorConfiguration;
         this.scrollController = scrollController;
@@ -396,54 +396,51 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
             }
         }
 
-        virtualTerminal.forEachLine(firstVisibleRowIndex, lastVisibleRowIndex, new VirtualTerminal.BufferWalker() {
-            @Override
-            public void onLine(int rowNumber, VirtualTerminal.BufferLine bufferLine) {
-                for(int column = 0; column < viewportSize.getColumns(); column++) {
-                    TextCharacter textCharacter = bufferLine.getCharacterAt(column);
-                    boolean atCursorLocation = cursorPosition.equals(column, rowNumber);
-                    //If next position is the cursor location and this is a CJK character (i.e. cursor is on the padding),
-                    //consider this location the cursor position since otherwise the cursor will be skipped
-                    if(!atCursorLocation &&
-                            cursorPosition.getColumn() == column + 1 &&
-                            cursorPosition.getRow() == rowNumber &&
-                            TerminalTextUtils.isCharCJK(textCharacter.getCharacter())) {
-                        atCursorLocation = true;
-                    }
-                    boolean isBlinking = textCharacter.getModifiers().contains(SGR.BLINK);
-                    if(isBlinking) {
-                        foundBlinkingCharacters.set(true);
-                    }
-                    if(dirtyCellsLookupTable.isAllDirty() || dirtyCellsLookupTable.isDirty(rowNumber, column) || isBlinking) {
-                        int characterWidth = fontWidth * (TerminalTextUtils.isCharCJK(textCharacter.getCharacter()) ? 2 : 1);
-                        Color foregroundColor = deriveTrueForegroundColor(textCharacter, atCursorLocation);
-                        Color backgroundColor = deriveTrueBackgroundColor(textCharacter, atCursorLocation);
-                        boolean drawCursor = atCursorLocation &&
-                                (!deviceConfiguration.isCursorBlinking() ||     //Always draw if the cursor isn't blinking
-                                        (deviceConfiguration.isCursorBlinking() && blinkOn));    //If the cursor is blinking, only draw when blinkOn is true
+        virtualTerminal.forEachLine(firstVisibleRowIndex, lastVisibleRowIndex, (rowNumber, bufferLine) -> {
+            for(int column = 0; column < viewportSize.getColumns(); column++) {
+                TextCharacter textCharacter = bufferLine.getCharacterAt(column);
+                boolean atCursorLocation = cursorPosition.equals(column, rowNumber);
+                //If next position is the cursor location and this is a CJK character (i.e. cursor is on the padding),
+                //consider this location the cursor position since otherwise the cursor will be skipped
+                if(!atCursorLocation &&
+                        cursorPosition.getColumn() == column + 1 &&
+                        cursorPosition.getRow() == rowNumber &&
+                        TerminalTextUtils.isCharCJK(textCharacter.getCharacter())) {
+                    atCursorLocation = true;
+                }
+                boolean isBlinking = textCharacter.getModifiers().contains(SGR.BLINK);
+                if(isBlinking) {
+                    foundBlinkingCharacters.set(true);
+                }
+                if(dirtyCellsLookupTable.isAllDirty() || dirtyCellsLookupTable.isDirty(rowNumber, column) || isBlinking) {
+                    int characterWidth = fontWidth * (TerminalTextUtils.isCharCJK(textCharacter.getCharacter()) ? 2 : 1);
+                    Color foregroundColor = deriveTrueForegroundColor(textCharacter, atCursorLocation);
+                    Color backgroundColor = deriveTrueBackgroundColor(textCharacter, atCursorLocation);
+                    boolean drawCursor = atCursorLocation &&
+                            (!deviceConfiguration.isCursorBlinking() ||     //Always draw if the cursor isn't blinking
+                                    (deviceConfiguration.isCursorBlinking() && blinkOn));    //If the cursor is blinking, only draw when blinkOn is true
 
-                        // Visualize bell as all colors inverted
-                        if(bellOn) {
-                            Color temp = foregroundColor;
-                            foregroundColor = backgroundColor;
-                            backgroundColor = temp;
-                        }
+                    // Visualize bell as all colors inverted
+                    if(bellOn) {
+                        Color temp = foregroundColor;
+                        foregroundColor = backgroundColor;
+                        backgroundColor = temp;
+                    }
 
-                        drawCharacter(backbufferGraphics,
-                                textCharacter,
-                                column,
-                                rowNumber,
-                                foregroundColor,
-                                backgroundColor,
-                                fontWidth,
-                                fontHeight,
-                                characterWidth,
-                                scrollOffsetFromTopInPixels,
-                                drawCursor);
-                    }
-                    if(TerminalTextUtils.isCharCJK(textCharacter.getCharacter())) {
-                        column++; //Skip the trailing space after a CJK character
-                    }
+                    drawCharacter(backbufferGraphics,
+                            textCharacter,
+                            column,
+                            rowNumber,
+                            foregroundColor,
+                            backgroundColor,
+                            fontWidth,
+                            fontHeight,
+                            characterWidth,
+                            scrollOffsetFromTopInPixels,
+                            drawCursor);
+                }
+                if(TerminalTextUtils.isCharCJK(textCharacter.getCharacter())) {
+                    column++; //Skip the trailing space after a CJK character
                 }
             }
         });
@@ -810,7 +807,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     ///////////
     // Remaining are private internal classes used by SwingTerminal
     ///////////
-    private static final Set<Character> TYPED_KEYS_TO_IGNORE = new HashSet<Character>(Arrays.asList('\n', '\t', '\r', '\b', '\33', (char)127));
+    private static final Set<Character> TYPED_KEYS_TO_IGNORE = new HashSet<>(Arrays.asList('\n', '\t', '\r', '\b', '\33', (char) 127));
 
     /**
      * Class that translates AWT key events into Lanterna {@link KeyStroke}
@@ -1005,7 +1002,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
         private boolean allDirty;
 
         DirtyCellsLookupTable() {
-            table = new ArrayList<BitSet>();
+            table = new ArrayList<>();
             firstRowIndex = -1;
             allDirty = false;
         }

@@ -310,8 +310,8 @@ public class TerminalTextUtils {
             return Arrays.asList(lines);
         }
 
-        List<String> result = new ArrayList<String>();
-        LinkedList<String> linesToBeWrapped = new LinkedList<String>(Arrays.asList(lines));
+        List<String> result = new ArrayList<>();
+        LinkedList<String> linesToBeWrapped = new LinkedList<>(Arrays.asList(lines));
         while(!linesToBeWrapped.isEmpty()) {
             String row = linesToBeWrapped.removeFirst();
             int rowWidth = getColumnWidth(row);

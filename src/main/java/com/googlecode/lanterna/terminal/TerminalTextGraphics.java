@@ -55,7 +55,7 @@ class TerminalTextGraphics extends AbstractTextGraphics {
         this.terminal = terminal;
         this.terminalSize = terminal.getTerminalSize();
         this.manageCallStackSize = new AtomicInteger(0);
-        this.writeHistory = new HashMap<TerminalPosition, TextCharacter>();
+        this.writeHistory = new HashMap<>();
         this.lastCharacter = null;
         this.lastPosition = null;
     }

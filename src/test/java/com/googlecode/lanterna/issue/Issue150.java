@@ -43,11 +43,7 @@ public class Issue150 {
 
     private static Component createUi() {
         ActionListBox actions = new ActionListBox();
-        actions.addItem("Enter terminal in a strange state", new Runnable() {
-            @Override public void run() {
-                stub();
-            }
-        });
+        actions.addItem("Enter terminal in a strange state", Issue150::stub);
         return actions;
     }
 

@@ -127,7 +127,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
      * @param style Style to use for this {@code TextBox}, instead of auto-detecting
      */
     public TextBox(TerminalSize preferredSize, String initialContent, Style style) {
-        this.lines = new ArrayList<String>();
+        this.lines = new ArrayList<>();
         this.style = style;
         this.readOnly = false;
         this.caretWarp = false;

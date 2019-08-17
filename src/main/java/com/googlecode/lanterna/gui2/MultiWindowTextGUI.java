@@ -183,8 +183,8 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
             BasePane self() { return this; }
         };
         this.backgroundPane.setComponent(background);
-        this.windows = new LinkedList<Window>();
-        this.windowRenderBufferCache = new IdentityHashMap<Window, TextImage>();
+        this.windows = new LinkedList<>();
+        this.windowRenderBufferCache = new IdentityHashMap<>();
         this.postRenderer = postRenderer;
         this.eofWhenNoWindows = false;
         this.hadWindowAtSomePoint = false;
@@ -430,7 +430,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
 
     @Override
     public synchronized Collection<Window> getWindows() {
-        return Collections.unmodifiableList(new ArrayList<Window>(windows));
+        return Collections.unmodifiableList(new ArrayList<>(windows));
     }
 
     @Override

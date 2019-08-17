@@ -31,21 +31,18 @@ import java.util.List;
 
 public class Issue212 {
     public static void main(String[] args) throws IOException {
-        final Table<String> table = new Table<String>("Column 1", "Column 2",
+        final Table<String> table = new Table<>("Column 1", "Column 2",
                 "Column 3");
         table.getTableModel().addRow("1", "2", "3");
         table.getTableModel().addRow("1", "2", "3");
         table.getTableModel().addRow("1", "2", "3");
         table.getTableModel().addRow("1", "2", "3");
         table.getTableModel().addRow("1", "2", "3");
-        table.setSelectAction(new Runnable() {
-            @Override
-            public void run() {
-                List<String> data = table.getTableModel().getRow(
-                        table.getSelectedRow());
-                for (String aData : data) {
-                    System.out.println(aData);
-                }
+        table.setSelectAction(() -> {
+            List<String> data = table.getTableModel().getRow(
+                    table.getSelectedRow());
+            for (String aData : data) {
+                System.out.println(aData);
             }
         });
 

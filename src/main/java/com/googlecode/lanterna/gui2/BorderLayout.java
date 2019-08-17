@@ -160,8 +160,8 @@ public class BorderLayout implements LayoutManager {
     }
     
     private EnumMap<Location, Component> makeLookupMap(List<Component> components) {
-        EnumMap<Location, Component> map = new EnumMap<BorderLayout.Location, Component>(Location.class);
-        List<Component> unassignedComponents = new ArrayList<Component>();
+        EnumMap<Location, Component> map = new EnumMap<>(Location.class);
+        List<Component> unassignedComponents = new ArrayList<>();
         for(Component component: components) {
             if(component.getLayoutData() instanceof Location) {
                 map.put((Location)component.getLayoutData(), component);

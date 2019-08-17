@@ -30,21 +30,17 @@ public class TestUtils {
     public static String downloadGPL() {
         try {
             URL url = new URL("http://www.gnu.org/licenses/gpl.txt");
-            InputStream inputStream = url.openStream();
-            try {
+            try (InputStream inputStream = url.openStream()) {
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 byte[] buffer = new byte[32 * 1024];
                 int readBytes = 0;
-                while(readBytes != -1) {
+                while (readBytes != -1) {
                     readBytes = inputStream.read(buffer);
-                    if(readBytes > 0) {
+                    if (readBytes > 0) {
                         byteArrayOutputStream.write(buffer, 0, readBytes);
                     }
                 }
                 return new String(byteArrayOutputStream.toByteArray());
-            }
-            finally {
-                inputStream.close();
             }
         }
         catch(Exception e) {

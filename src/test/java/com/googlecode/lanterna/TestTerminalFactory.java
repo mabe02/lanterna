@@ -68,13 +68,13 @@ public class TestTerminalFactory extends DefaultTerminalFactory {
             }
             else if("--telnet-port".equals(arg)) {
                 int port = 1024; // default for option w/o param
-                try { port = Integer.valueOf(par); }
+                try { port = Integer.parseInt(par); }
                 catch (NumberFormatException e) {}
                 setTelnetPort(port);
             }
             else if("--with-timeout".equals(arg)) {
                 int inputTimeout = 40; // default for option w/o param
-                try { inputTimeout = Integer.valueOf(par); }
+                try { inputTimeout = Integer.parseInt(par); }
                 catch (NumberFormatException e) {}
                 setInputTimeout(inputTimeout);
             }

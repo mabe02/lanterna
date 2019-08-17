@@ -121,7 +121,7 @@ public abstract class AbstractDialogBuilder<B, T extends DialogWindow> {
     public final T build() {
         T dialog = buildDialog();
         if(!extraWindowHints.isEmpty()) {
-            Set<Window.Hint> combinedHints = new HashSet<Window.Hint>(dialog.getHints());
+            Set<Window.Hint> combinedHints = new HashSet<>(dialog.getHints());
             combinedHints.addAll(extraWindowHints);
             dialog.setHints(combinedHints);
         }

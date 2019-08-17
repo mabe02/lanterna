@@ -17,7 +17,7 @@ public class Issue387 {
 
             Window window = new BasicWindow();
 
-            Table<String> table = new Table<String>("Column");
+            Table<String> table = new Table<>("Column");
             table.setVisibleRows(3);
 
             table.getTableModel().addRow("row 1");

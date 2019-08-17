@@ -95,12 +95,7 @@ public class ScrollingSwingTerminal extends JComponent implements IOSafeTerminal
         @Override
         public void updateModel(final int totalSize, final int screenHeight) {
             if(!SwingUtilities.isEventDispatchThread()) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        updateModel(totalSize, screenHeight);
-                    }
-                });
+                SwingUtilities.invokeLater(() -> updateModel(totalSize, screenHeight));
                 return;
             }
             try {

@@ -33,32 +33,32 @@ import java.util.List;
 public class DefaultKeyDecodingProfile implements KeyDecodingProfile {
 
     private static final List<CharacterPattern> COMMON_PATTERNS
-            = new ArrayList<CharacterPattern>(Arrays.asList(
-                            new CharacterPattern[]{
-                                new BasicCharacterPattern(new KeyStroke(KeyType.Escape), ESC_CODE),
-                                new BasicCharacterPattern(new KeyStroke(KeyType.Tab), '\t'),
-                                new BasicCharacterPattern(new KeyStroke(KeyType.Enter), '\n'),
-                                new BasicCharacterPattern(new KeyStroke(KeyType.Enter), '\r', '\u0000'), //OS X
-                                new BasicCharacterPattern(new KeyStroke(KeyType.Backspace), (char) 0x7f),
-                                new BasicCharacterPattern(new KeyStroke(KeyType.Backspace), (char) 0x08),
-                                new BasicCharacterPattern(new KeyStroke(KeyType.F1), ESC_CODE, '[', '[', 'A'), //Linux
-                                new BasicCharacterPattern(new KeyStroke(KeyType.F2), ESC_CODE, '[', '[', 'B'), //Linux
-                                new BasicCharacterPattern(new KeyStroke(KeyType.F3), ESC_CODE, '[', '[', 'C'), //Linux
-                                new BasicCharacterPattern(new KeyStroke(KeyType.F4), ESC_CODE, '[', '[', 'D'), //Linux
-                                new BasicCharacterPattern(new KeyStroke(KeyType.F5), ESC_CODE, '[', '[', 'E'), //Linux
+            = new ArrayList<>(Arrays.asList(
+            new CharacterPattern[]{
+                    new BasicCharacterPattern(new KeyStroke(KeyType.Escape), ESC_CODE),
+                    new BasicCharacterPattern(new KeyStroke(KeyType.Tab), '\t'),
+                    new BasicCharacterPattern(new KeyStroke(KeyType.Enter), '\n'),
+                    new BasicCharacterPattern(new KeyStroke(KeyType.Enter), '\r', '\u0000'), //OS X
+                    new BasicCharacterPattern(new KeyStroke(KeyType.Backspace), (char) 0x7f),
+                    new BasicCharacterPattern(new KeyStroke(KeyType.Backspace), (char) 0x08),
+                    new BasicCharacterPattern(new KeyStroke(KeyType.F1), ESC_CODE, '[', '[', 'A'), //Linux
+                    new BasicCharacterPattern(new KeyStroke(KeyType.F2), ESC_CODE, '[', '[', 'B'), //Linux
+                    new BasicCharacterPattern(new KeyStroke(KeyType.F3), ESC_CODE, '[', '[', 'C'), //Linux
+                    new BasicCharacterPattern(new KeyStroke(KeyType.F4), ESC_CODE, '[', '[', 'D'), //Linux
+                    new BasicCharacterPattern(new KeyStroke(KeyType.F5), ESC_CODE, '[', '[', 'E'), //Linux
 
-                                new EscapeSequenceCharacterPattern(),
-                                new NormalCharacterPattern(),
-                                new AltAndCharacterPattern(),
-                                new CtrlAndCharacterPattern(),
-                                new CtrlAltAndCharacterPattern(),
-                                new ScreenInfoCharacterPattern(),
-                                new MouseCharacterPattern()
-                            }));
+                    new EscapeSequenceCharacterPattern(),
+                    new NormalCharacterPattern(),
+                    new AltAndCharacterPattern(),
+                    new CtrlAndCharacterPattern(),
+                    new CtrlAltAndCharacterPattern(),
+                    new ScreenInfoCharacterPattern(),
+                    new MouseCharacterPattern()
+            }));
 
     @Override
     public Collection<CharacterPattern> getPatterns() {
-        return new ArrayList<CharacterPattern>(COMMON_PATTERNS);
+        return new ArrayList<>(COMMON_PATTERNS);
     }
 
 }

@@ -42,36 +42,23 @@ public class MultiWindowManagerTest extends TestBase {
         final Window mainWindow = new BasicWindow("Multi Window Test");
         Panel contentArea = new Panel();
         contentArea.setLayoutManager(new LinearLayout(Direction.VERTICAL));
-        contentArea.addComponent(new Button("Add new window", new Runnable() {
-            @Override
-            public void run() {
-                onNewWindow(textGUI);
-            }
-        }));
+        contentArea.addComponent(new Button("Add new window", () -> onNewWindow(textGUI)));
         contentArea.addComponent(new EmptySpace(TerminalSize.ONE));
-        contentArea.addComponent(new Button("Close", new Runnable() {
-            @Override
-            public void run() {
-                mainWindow.close();
-            }
-        }));
+        contentArea.addComponent(new Button("Close", mainWindow::close));
         mainWindow.setComponent(contentArea);
-        textGUI.addListener(new TextGUI.Listener() {
-            @Override
-            public boolean onUnhandledKeyStroke(TextGUI textGUI, KeyStroke keyStroke) {
-                if((keyStroke.isCtrlDown() && keyStroke.getKeyType() == KeyType.Tab) ||
-                        keyStroke.getKeyType() == KeyType.F6) {
-                    ((WindowBasedTextGUI)textGUI).cycleActiveWindow(false);
-                }
-                else if((keyStroke.isCtrlDown() && keyStroke.getKeyType() == KeyType.ReverseTab) ||
-                            keyStroke.getKeyType() == KeyType.F7) {
-                    ((WindowBasedTextGUI)textGUI).cycleActiveWindow(true);
-                }
-                else {
-                    return false;
-                }
-                return true;
+        textGUI.addListener((textGUI1, keyStroke) -> {
+            if((keyStroke.isCtrlDown() && keyStroke.getKeyType() == KeyType.Tab) ||
+                    keyStroke.getKeyType() == KeyType.F6) {
+                ((WindowBasedTextGUI) textGUI1).cycleActiveWindow(false);
             }
+            else if((keyStroke.isCtrlDown() && keyStroke.getKeyType() == KeyType.ReverseTab) ||
+                        keyStroke.getKeyType() == KeyType.F7) {
+                ((WindowBasedTextGUI) textGUI1).cycleActiveWindow(true);
+            }
+            else {
+                return false;
+            }
+            return true;
         });
         textGUI.addWindow(mainWindow);
     }
@@ -80,7 +67,7 @@ public class MultiWindowManagerTest extends TestBase {
 
     private void onNewWindow(WindowBasedTextGUI textGUI) {
         DynamicWindow window = new DynamicWindow();
-        List<String> availableThemes = new ArrayList<String>(LanternaThemes.getRegisteredThemes());
+        List<String> availableThemes = new ArrayList<>(LanternaThemes.getRegisteredThemes());
         String themeName = availableThemes.get(nextTheme++);
         if(nextTheme == availableThemes.size()) {
             nextTheme = 0;
@@ -135,18 +122,8 @@ public class MultiWindowManagerTest extends TestBase {
                     GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.FILL, true, true)));
             contentArea.addComponent(
                     Panels.horizontal(
-                            new Button("Toggle managed", new Runnable() {
-                                @Override
-                                public void run() {
-                                    toggleManaged();
-                                }
-                            }),
-                            new Button("Close", new Runnable() {
-                @Override
-                public void run() {
-                    close();
-                }
-            })));
+                            new Button("Toggle managed", this::toggleManaged),
+                            new Button("Close", this::close)));
             setComponent(contentArea);
         }
 

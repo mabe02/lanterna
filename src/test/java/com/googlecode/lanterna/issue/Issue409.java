@@ -46,35 +46,22 @@ public class Issue409 {
             final CyclingThemesTextBox cyclingThemesTextBox = new CyclingThemesTextBox();
             panel.addComponent(cyclingThemesTextBox);
             panel.addComponent(new EmptySpace());
-            panel.addComponent(new Button("Close", new Runnable() {
-                @Override
-                public void run() {
-                    window.close();
-                }
-            }));
+            panel.addComponent(new Button("Close", window::close));
 
             window.setComponent(panel);
             final MultiWindowTextGUI gui = new MultiWindowTextGUI(screen);
             gui.addWindow(window);
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    int counter = 0;
-                    while(cyclingThemesTextBox.getTextGUI() != null) {
-                        if (++counter % 200 == 0) {
-                            gui.getGUIThread().invokeLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    cyclingThemesTextBox.nextTheme();
-                                }
-                            });
-                        }
-                        else {
-                            try {
-                                Thread.sleep(10);
-                            } catch (InterruptedException e) {
-                                break;
-                            }
+            new Thread(() -> {
+                int counter = 0;
+                while(cyclingThemesTextBox.getTextGUI() != null) {
+                    if (++counter % 200 == 0) {
+                        gui.getGUIThread().invokeLater(cyclingThemesTextBox::nextTheme);
+                    }
+                    else {
+                        try {
+                            Thread.sleep(10);
+                        } catch (InterruptedException e) {
+                            break;
                         }
                     }
                 }
@@ -107,7 +94,7 @@ public class Issue409 {
         public CyclingThemesTextBox() {
             super("Cycling themes: default");
             setPreferredSize(new TerminalSize(40, 1));
-            systemThemes = new ArrayList<String>(LanternaThemes.getRegisteredThemes());
+            systemThemes = new ArrayList<>(LanternaThemes.getRegisteredThemes());
             index = 0;
         }
 

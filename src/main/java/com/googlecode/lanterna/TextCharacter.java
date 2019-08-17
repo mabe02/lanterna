@@ -21,6 +21,7 @@ package com.googlecode.lanterna;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.Objects;
 
 /**
  * Represents a single character with additional metadata such as colors and modifiers. This class is immutable and
@@ -303,13 +304,13 @@ public class TextCharacter {
         if(this.character != other.character) {
             return false;
         }
-        if(this.foregroundColor != other.foregroundColor && (this.foregroundColor == null || !this.foregroundColor.equals(other.foregroundColor))) {
+        if(!Objects.equals(this.foregroundColor, other.foregroundColor)) {
             return false;
         }
-        if(this.backgroundColor != other.backgroundColor && (this.backgroundColor == null || !this.backgroundColor.equals(other.backgroundColor))) {
+        if(!Objects.equals(this.backgroundColor, other.backgroundColor)) {
             return false;
         }
-        return !(this.modifiers != other.modifiers && (this.modifiers == null || !this.modifiers.equals(other.modifiers)));
+        return !(!Objects.equals(this.modifiers, other.modifiers));
     }
 
     @Override

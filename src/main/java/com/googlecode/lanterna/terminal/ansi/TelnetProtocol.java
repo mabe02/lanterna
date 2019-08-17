@@ -69,7 +69,7 @@ class TelnetProtocol {
     public static final Map<Byte, String> CODE_TO_NAME = reverseMap(NAME_TO_CODE);
     
     private static Map<String, Byte> createName2CodeMap() {
-        Map<String, Byte> result = new HashMap<String, Byte>();
+        Map<String, Byte> result = new HashMap<>();
         for(Field field: TelnetProtocol.class.getDeclaredFields()) {
             if(field.getType() != byte.class || (!field.getName().startsWith("COMMAND_") && !field.getName().startsWith("OPTION_"))) {
                 continue;
@@ -78,16 +78,14 @@ class TelnetProtocol {
                 String namePart = field.getName().substring(field.getName().indexOf("_") + 1);
                 result.put(namePart, (Byte)field.get(null));
             }
-            catch(IllegalAccessException ignored) {
-            }
-            catch(IllegalArgumentException ignored) {
+            catch(IllegalAccessException | IllegalArgumentException ignored) {
             }
         }
         return Collections.unmodifiableMap(result);
     }
 
     private static <V,K> Map<V,K> reverseMap(Map<K,V> n2c) {
-        Map<V, K> result = new HashMap<V,K>();
+        Map<V, K> result = new HashMap<>();
         for (Map.Entry<K, V> e : n2c.entrySet()) {
             result.put(e.getValue(), e.getKey());
         }

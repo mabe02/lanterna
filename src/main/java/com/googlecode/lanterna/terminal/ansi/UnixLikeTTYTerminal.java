@@ -93,14 +93,11 @@ public abstract class UnixLikeTTYTerminal extends UnixLikeTerminal {
             Class<?> signalClass = Class.forName("sun.misc.Signal");
             for(Method m : signalClass.getDeclaredMethods()) {
                 if("handle".equals(m.getName())) {
-                    Object windowResizeHandler = Proxy.newProxyInstance(getClass().getClassLoader(), new Class[]{Class.forName("sun.misc.SignalHandler")}, new InvocationHandler() {
-                        @Override
-                        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                            if("handle".equals(method.getName())) {
-                                onResize.run();
-                            }
-                            return null;
+                    Object windowResizeHandler = Proxy.newProxyInstance(getClass().getClassLoader(), new Class[]{Class.forName("sun.misc.SignalHandler")}, (proxy, method, args) -> {
+                        if("handle".equals(method.getName())) {
+                            onResize.run();
                         }
+                        return null;
                     });
                     m.invoke(null, signalClass.getConstructor(String.class).newInstance("WINCH"), windowResizeHandler);
                 }
@@ -148,7 +145,7 @@ public abstract class UnixLikeTTYTerminal extends UnixLikeTerminal {
     }
 
     protected String runSTTYCommand(String... parameters) throws IOException {
-        List<String> commandLine = new ArrayList<String>(Collections.singletonList(
+        List<String> commandLine = new ArrayList<>(Collections.singletonList(
                 getSTTYCommand()));
         commandLine.addAll(Arrays.asList(parameters));
         return exec(commandLine.toArray(new String[commandLine.size()]));

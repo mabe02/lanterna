@@ -44,7 +44,7 @@ public class ActionListDialogBuilder extends AbstractDialogBuilder<ActionListDia
         this.listBoxSize = null;
         this.canCancel = true;
         this.closeAutomatically = true;
-        this.actions = new ArrayList<Runnable>();
+        this.actions = new ArrayList<>();
     }
 
     @Override
@@ -150,7 +150,7 @@ public class ActionListDialogBuilder extends AbstractDialogBuilder<ActionListDia
      * @return Copy of the internal list of actions currently inside this builder
      */
     public List<Runnable> getActions() {
-        return new ArrayList<Runnable>(actions);
+        return new ArrayList<>(actions);
     }
 
     /**

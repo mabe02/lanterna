@@ -74,7 +74,7 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
             this.terminalCharset = terminalCharset;
         }
         this.inputDecoder = new InputDecoder(new InputStreamReader(this.terminalInput, this.terminalCharset));
-        this.keyQueue = new LinkedList<KeyStroke>();
+        this.keyQueue = new LinkedList<>();
         this.readLock = new ReentrantLock();
         this.lastReportedCursorPosition = null;
         //noinspection ConstantConditions

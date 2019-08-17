@@ -66,12 +66,12 @@ public class EscapeSequenceCharacterPattern implements CharacterPattern {
      *  Map of recognized "standard pattern" sequences:<br>
      *   e.g.: 24 -&gt; F12 : "Esc [ <b>24</b> ~"
      */
-    protected final Map<Integer, KeyType>   stdMap = new HashMap<Integer, KeyType>();
+    protected final Map<Integer, KeyType>   stdMap = new HashMap<>();
     /**
      *  Map of recognized "finish pattern" sequences:<br>
      *   e.g.: 'A' -&gt; ArrowUp : "Esc [ <b>A</b>"
      */
-    protected final Map<Character, KeyType> finMap = new HashMap<Character, KeyType>();
+    protected final Map<Character, KeyType> finMap = new HashMap<>();
     /**
      *  A flag to control, whether an Esc-prefix for an Esc-sequence is to be treated
      *  as Alt-pressed. Some Terminals (e.g. putty) report the Alt-modifier like that.<p>

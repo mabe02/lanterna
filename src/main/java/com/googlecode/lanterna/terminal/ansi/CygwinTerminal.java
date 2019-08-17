@@ -82,7 +82,7 @@ public class CygwinTerminal extends UnixLikeTTYTerminal {
 
     @Override
     protected String runSTTYCommand(String... parameters) throws IOException {
-        List<String> commandLine = new ArrayList<String>(Arrays.asList(
+        List<String> commandLine = new ArrayList<>(Arrays.asList(
                 findSTTY(),
                 "-F",
                 getPseudoTerminalDevice()));

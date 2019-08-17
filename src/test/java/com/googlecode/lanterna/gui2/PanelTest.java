@@ -68,12 +68,7 @@ public class PanelTest extends TestBase {
 
         window.setComponent(Panels.vertical(
                 mainPanel.withBorder(Borders.singleLine("Main")),
-                new Button("OK", new Runnable() {
-                    @Override
-                    public void run() {
-                        window.close();
-                    }
-                })));
+                new Button("OK", window::close)));
         textGUI.addWindow(window);
     }
 }

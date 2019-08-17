@@ -45,12 +45,9 @@ public class MiscComponentTest extends TestBase {
         textBoxPanel.addComponent(Panels.horizontal(new Label("Password: "), new TextBox(new TerminalSize(12, 1), "Text").setMask('*')));
 
         Panel buttonPanel = new Panel();
-        buttonPanel.addComponent(new Button("Enable spacing", new Runnable() {
-            @Override
-            public void run() {
-                LinearLayout layoutManager = (LinearLayout) leftPanel.getLayoutManager();
-                layoutManager.setSpacing(layoutManager.getSpacing() == 0 ? 1 : 0);
-            }
+        buttonPanel.addComponent(new Button("Enable spacing", () -> {
+            LinearLayout layoutManager = (LinearLayout) leftPanel.getLayoutManager();
+            layoutManager.setSpacing(layoutManager.getSpacing() == 0 ? 1 : 0);
         }));
 
         leftPanel.addComponent(checkBoxPanel.withBorder(Borders.singleLine("CheckBoxes")));
@@ -89,12 +86,9 @@ public class MiscComponentTest extends TestBase {
         contentArea.addComponent(
                 new Separator(Direction.HORIZONTAL).setLayoutData(
                         LinearLayout.createLayoutData(LinearLayout.Alignment.Fill)));
-        Button okButton = new Button("OK", new Runnable() {
-            @Override
-            public void run() {
-                window.close();
-                timer.cancel();
-            }
+        Button okButton = new Button("OK", () -> {
+            window.close();
+            timer.cancel();
         }).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
         contentArea.addComponent(okButton);
         window.setComponent(contentArea);

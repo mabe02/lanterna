@@ -232,8 +232,8 @@ public class LinearLayout implements LayoutManager {
     private void doFlexibleVerticalLayout(TerminalSize area, List<Component> components) {
         int availableVerticalSpace = area.getRows();
         int availableHorizontalSpace = area.getColumns();
-        List<Component> copyOfComponenets = new ArrayList<Component>(components);
-        final Map<Component, TerminalSize> fittingMap = new IdentityHashMap<Component, TerminalSize>();
+        List<Component> copyOfComponenets = new ArrayList<>(components);
+        final Map<Component, TerminalSize> fittingMap = new IdentityHashMap<>();
         int totalRequiredVerticalSpace = 0;
 
         for (Component component: components) {
@@ -261,12 +261,9 @@ public class LinearLayout implements LayoutManager {
 
         // If we can't fit everything, trim the down the size of the largest components until it fits
         if (availableVerticalSpace < totalRequiredVerticalSpace) {
-            Collections.sort(copyOfComponenets, new Comparator<Component>() {
-                @Override
-                public int compare(Component o1, Component o2) {
-                    // Reverse sort
-                    return 0 - new Integer(fittingMap.get(o1).getRows()).compareTo(fittingMap.get(o2).getRows());
-                }
+            copyOfComponenets.sort((o1, o2) -> {
+                // Reverse sort
+                return 0 - Integer.compare(fittingMap.get(o1).getRows(), fittingMap.get(o2).getRows());
             });
 
             while (availableVerticalSpace < totalRequiredVerticalSpace) {
@@ -361,8 +358,8 @@ public class LinearLayout implements LayoutManager {
     private void doFlexibleHorizontalLayout(TerminalSize area, List<Component> components) {
         int availableVerticalSpace = area.getRows();
         int availableHorizontalSpace = area.getColumns();
-        List<Component> copyOfComponenets = new ArrayList<Component>(components);
-        final Map<Component, TerminalSize> fittingMap = new IdentityHashMap<Component, TerminalSize>();
+        List<Component> copyOfComponenets = new ArrayList<>(components);
+        final Map<Component, TerminalSize> fittingMap = new IdentityHashMap<>();
         int totalRequiredHorizontalSpace = 0;
 
         for (Component component: components) {
@@ -390,12 +387,9 @@ public class LinearLayout implements LayoutManager {
 
         // If we can't fit everything, trim the down the size of the largest components until it fits
         if (availableHorizontalSpace < totalRequiredHorizontalSpace) {
-            Collections.sort(copyOfComponenets, new Comparator<Component>() {
-                @Override
-                public int compare(Component o1, Component o2) {
-                    // Reverse sort
-                    return 0 - new Integer(fittingMap.get(o1).getColumns()).compareTo(fittingMap.get(o2).getColumns());
-                }
+            copyOfComponenets.sort((o1, o2) -> {
+                // Reverse sort
+                return 0 - Integer.compare(fittingMap.get(o1).getColumns(), fittingMap.get(o2).getColumns());
             });
 
             while (availableHorizontalSpace < totalRequiredHorizontalSpace) {

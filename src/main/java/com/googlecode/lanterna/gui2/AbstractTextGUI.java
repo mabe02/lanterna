@@ -54,7 +54,7 @@ public abstract class AbstractTextGUI implements TextGUI {
             throw new IllegalArgumentException("Creating a TextGUI requires an underlying Screen");
         }
         this.screen = screen;
-        this.listeners = new CopyOnWriteArrayList<Listener>();
+        this.listeners = new CopyOnWriteArrayList<>();
         this.blockingIO = false;
         this.dirty = false;
         this.guiTheme = LanternaThemes.getDefaultTheme();

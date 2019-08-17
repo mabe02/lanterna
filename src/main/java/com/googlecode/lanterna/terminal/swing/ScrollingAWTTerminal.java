@@ -94,12 +94,7 @@ public class ScrollingAWTTerminal extends Container implements IOSafeTerminal {
         @Override
         public void updateModel(final int totalSize, final int screenHeight) {
             if(!EventQueue.isDispatchThread()) {
-                EventQueue.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        updateModel(totalSize, screenHeight);
-                    }
-                });
+                EventQueue.invokeLater(() -> updateModel(totalSize, screenHeight));
                 return;
             }
             try {
