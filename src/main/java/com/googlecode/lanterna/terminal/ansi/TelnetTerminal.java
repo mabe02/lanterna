@@ -25,6 +25,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.ArrayList;
@@ -48,7 +50,7 @@ public class TelnetTerminal extends ANSITerminal {
     private final NegotiationState negotiationState;
 
     TelnetTerminal(Socket socket, Charset terminalCharset) throws IOException {
-        this(socket, new TelnetClientIACFilterer(socket.getInputStream()), socket.getOutputStream(), terminalCharset);
+        this(socket, new TelnetClientIACFilterer(new ReadPollingAdapter(socket)), socket.getOutputStream(), terminalCharset);
     }
 
     //This weird construction is just so that we can access the input filter without changing the visibility in StreamBasedTerminal
@@ -204,7 +206,103 @@ public class TelnetTerminal extends ANSITerminal {
         void onResize(int columns, int rows);
         void requestReply(boolean will, byte option) throws IOException;
     }
-    
+
+    private static class ReadPollingAdapter extends InputStream {
+        private final int socketTimeout;
+        private final Socket socket;
+        private final InputStream socketInputStream;
+        private final ByteArrayOutputStream pendingData;
+        private final byte[] buffer;
+        private boolean eof;
+
+        private ReadPollingAdapter(Socket socket) throws IOException {
+            // Allow user to override this by setting a magic system property
+            Integer timeoutConfiguration = Integer.getInteger(
+                    "com.googlecode.lanterna.terminal.ansi.TelnetTerminal.ReadPollingAdapter.socketTimeout",
+                    5);
+            // Clamp to [1 .. 1000] range
+            this.socketTimeout = Math.max(Math.min(timeoutConfiguration, 1000), 1);
+            this.socket = socket;
+            this.socketInputStream = socket.getInputStream();
+            this.pendingData = new ByteArrayOutputStream();
+            this.buffer = new byte[4 * 1024];
+            this.eof = false;
+        }
+
+        @Override
+        public synchronized int read() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public int read(byte[] b) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public int read(byte[] b, int off, int len) throws IOException {
+            if (eof) {
+                return -1;
+            }
+            if (pendingData.size() > 0) {
+                int bytesToCopy = Math.min(pendingData.size(), len);
+                System.arraycopy(pendingData.toByteArray(), 0, b, off, bytesToCopy);
+                if (bytesToCopy < pendingData.size()) {
+                    int remainingNumberOfBytes = pendingData.size() - bytesToCopy;
+                    byte[] remaining = new byte[remainingNumberOfBytes];
+                    System.arraycopy(pendingData.toByteArray(), bytesToCopy, remaining, 0, remainingNumberOfBytes);
+                    pendingData.reset();
+                    pendingData.write(remaining);
+                }
+                else {
+                    pendingData.reset();
+                }
+                return bytesToCopy;
+            }
+            else {
+                disableTimeout();
+                int bytesRead = socketInputStream.read(b, off, len);
+                if (bytesRead == -1) {
+                    eof = true;
+                }
+                return bytesRead;
+            }
+        }
+
+        @Override
+        public synchronized int available() throws IOException {
+            if (eof) {
+                return 1;
+            }
+            if (pendingData.size() > 0) {
+                return pendingData.size();
+            }
+            try {
+                enableTimeout();
+                int bytesRead = socketInputStream.read(buffer);
+                if (bytesRead > 0) {
+                    pendingData.write(buffer, 0, bytesRead);
+                }
+                else if (bytesRead == -1) {
+                    eof = true;
+                    bytesRead = 1;
+                }
+                return bytesRead;
+            }
+            catch (SocketTimeoutException ignored) {
+                return 0;
+            }
+        }
+
+        private void enableTimeout() throws SocketException {
+            socket.setSoTimeout(socketTimeout);
+        }
+
+        private void disableTimeout() throws SocketException {
+            socket.setSoTimeout(0);
+        }
+    }
+
     private static class TelnetClientIACFilterer extends InputStream {
         private final NegotiationState negotiationState;
         private final InputStream inputStream;
@@ -238,30 +336,30 @@ public class TelnetTerminal extends ANSITerminal {
 
         @Override
         public int available() throws IOException {
+            if (bytesInBuffer > 0) {
+                return bytesInBuffer;
+            }
             int underlyingStreamAvailable = inputStream.available();
-            if(underlyingStreamAvailable == 0 && bytesInBuffer == 0) {
+            if(underlyingStreamAvailable == 0) {
                 return 0;
             }
-            else if(underlyingStreamAvailable == 0) {
-                return bytesInBuffer;
-            }
-            else if(bytesInBuffer == buffer.length) {
-                return bytesInBuffer;
-            }
             fillBuffer();
-            return bytesInBuffer;
+            return Math.abs(bytesInBuffer);
         }
 
         @Override
         @SuppressWarnings("NullableProblems")   //I can't find the correct way to fix this!
         public int read(byte[] b, int off, int len) throws IOException {
+            if (bytesInBuffer == -1) {
+                return -1;
+            }
             if(available() == 0) {
                // There was nothing in the buffer and the underlying
                // stream has nothing available, so do a blocking read
                // from the stream.
                fillBuffer();
             }
-            if(bytesInBuffer == 0) {
+            if(bytesInBuffer <= 0) {
                 return -1;
             }
             int bytesToCopy = Math.min(len, bytesInBuffer);
@@ -274,6 +372,7 @@ public class TelnetTerminal extends ANSITerminal {
         private void fillBuffer() throws IOException {
             int readBytes = inputStream.read(workingBuffer, 0, Math.min(workingBuffer.length, buffer.length - bytesInBuffer));
             if(readBytes == -1) {
+                bytesInBuffer = -1;
                 return;
             }
             for(int i = 0; i < readBytes; i++) {

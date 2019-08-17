@@ -28,6 +28,7 @@ import com.googlecode.lanterna.terminal.ansi.TelnetTerminal;
 import com.googlecode.lanterna.terminal.ansi.TelnetTerminalServer;
 
 import java.io.IOException;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -156,7 +157,13 @@ public class GUIOverTelnet {
             textGUI.addWindowAndWait(window);
         }
         finally {
-            screen.stopScreen();
+            try {
+                screen.stopScreen();
+            }
+            catch (SocketException ignore) {
+                // If the telnet client suddenly quit, we'll get an exception when we try to get the client to exit
+                // private mode, but that's fine, no need to report this
+            }
         }
     }
 }
