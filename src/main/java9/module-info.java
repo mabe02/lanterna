@@ -30,5 +30,5 @@ module com.googlecode.lanterna {
     exports com.googlecode.lanterna.terminal.swing;
     exports com.googlecode.lanterna.terminal.virtual;
 
-    requires java.desktop;
+    requires static java.desktop;
 }

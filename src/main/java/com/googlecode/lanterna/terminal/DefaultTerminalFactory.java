@@ -26,12 +26,11 @@ import com.googlecode.lanterna.terminal.ansi.TelnetTerminalServer;
 import com.googlecode.lanterna.terminal.ansi.UnixLikeTTYTerminal;
 import com.googlecode.lanterna.terminal.ansi.UnixTerminal;
 import com.googlecode.lanterna.terminal.swing.*;
-
-import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.util.EnumSet;
 
@@ -107,7 +106,7 @@ public class DefaultTerminalFactory implements TerminalFactory {
         // 3 different reasons for tty-based terminal:
         //   "explicit preference", "no alternative",
         //       ("because we can" - unless "rather not")
-        if (forceTextTerminal || GraphicsEnvironment.isHeadless() ||
+        if (forceTextTerminal || isAwtHeadless() ||
                 (System.console() != null && !preferTerminalEmulator) ) {
             // if tty but have no tty, but do have a port, then go telnet:
             if( telnetPort > 0 && System.console() == null) {
@@ -138,18 +137,17 @@ public class DefaultTerminalFactory implements TerminalFactory {
      * @return New terminal emulator exposed as a {@link Terminal} interface
      */
     public Terminal createTerminalEmulator() {
-        Window window;
-        if(!forceAWTOverSwing && hasSwing()) {
-            window = createSwingTerminal();
-        }
-        else {
-            window = createAWTTerminal();
+        Terminal terminal;
+        if (!forceAWTOverSwing && hasSwing()) {
+            terminal = createSwingTerminal();
+        } else {
+            terminal = createAWTTerminal();
         }
 
-        if(autoOpenTerminalFrame) {
-            window.setVisible(true);
+        if (autoOpenTerminalFrame) {
+            makeWindowVisible(terminal);
         }
-        return (Terminal)window;
+        return terminal;
     }
 
     public AWTTerminalFrame createAWTTerminal() {
@@ -203,6 +201,17 @@ public class DefaultTerminalFactory implements TerminalFactory {
         }
     }
 
+    private boolean isAwtHeadless() {
+        try {
+            Class cls = Class.forName("java.awt.GraphicsEnvironment");
+            Method method = cls.getDeclaredMethod("isHeadless");
+            return (Boolean) method.invoke(null);
+        } catch (Exception ignore) {
+            // Most likely cause is that the java.desktop module is not available in the runtime image.
+            return true;
+        }
+    }
+
     private boolean hasSwing() {
         try {
             Class.forName("javax.swing.JComponent");
@@ -210,6 +219,16 @@ public class DefaultTerminalFactory implements TerminalFactory {
         }
         catch(Exception ignore) {
             return false;
+        }
+    }
+
+    private void makeWindowVisible(Terminal terminal) {
+        try {
+            Class cls = Class.forName("java.awt.Window");
+            Method method = cls.getDeclaredMethod("setVisible", boolean.class);
+            method.invoke(terminal, true);
+        } catch (Exception ex) {
+            throw new RuntimeException("Failed to make terminal emulator window visible.", ex);
         }
     }
 
