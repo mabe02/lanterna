@@ -40,8 +40,10 @@ over the years, since lanterna was first published.
 14. [Message dialogs](examples/gui/message_dialogs.md)
 15. [Text Input dialogs](examples/gui/text_input_dialogs.md)
 16. [File dialogs](examples/gui/file_dialogs.md)
-17. [Action list dialogs](examples/gui/action_list_dialogs.md)
-18. [Tables](examples/gui/tables.md)
+17. [Directory dialogs](examples/gui/dir_dialogs.md)
+18. [Action list dialogs](examples/gui/action_list_dialogs.md)
+19. [Tables](examples/gui/tables.md)
+20. [Menus](examples/gui/menus.md)
 
 ## Changes
 1. [2.0.0](ChangesFrom1to2.md)
