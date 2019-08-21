@@ -14,9 +14,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
+ * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2017 Bruno Eberhard
  * Copyright (C) 2017 University of Waikato, Hamilton, NZ
  */
-
 package com.googlecode.lanterna.gui2.menu;
 
 import com.googlecode.lanterna.gui2.Direction;
@@ -27,6 +28,7 @@ import com.googlecode.lanterna.gui2.Panel;
  * A menubar offering drop-down menus.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
+ * @author Bruno Eberhard
  * @version $Revision$
  */
 public class MenuBar extends Panel {
@@ -35,8 +37,7 @@ public class MenuBar extends Panel {
      * Initializes the menubar.
      */
     public MenuBar() {
-        super();
-        setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
+        super(new LinearLayout(Direction.HORIZONTAL));
     }
 
     /**

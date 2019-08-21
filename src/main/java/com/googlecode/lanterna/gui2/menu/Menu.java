@@ -1,4 +1,6 @@
 /*
+ * This file is part of lanterna.
+ *
  * This file is part of lanterna (http://code.google.com/p/lanterna/).
  *
  * lanterna is free software: you can redistribute it and/or modify
@@ -14,82 +16,97 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
+ * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2017 Bruno Eberhard
  * Copyright (C) 2017 University of Waikato, Hamilton, NZ
  */
-
 package com.googlecode.lanterna.gui2.menu;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.gui2.Button;
 import com.googlecode.lanterna.gui2.Window.Hint;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 
-import java.util.Arrays;
-
 /**
  * Represents a menu.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
+ * @author Bruno Eberhard
  */
-public class Menu extends Button {
+public class Menu extends Button implements Runnable {
 
-    /** for generating the menu. */
-    protected MenuListDialogBuilder builder;
+	private final List<Runnable> items = new ArrayList<Runnable>();
+	private Menu parent;
 
-    /** the context. */
-    protected WindowBasedTextGUI context;
+	private final Listener listener = new Listener() {
+		@Override
+		public void onTriggered(Button button) {
+			run();
+		}
+	};
 
-    /**
+	/**
      * Initializes the menu.
      *
      * @param label the name of the menu
      */
-    public Menu(String label, final WindowBasedTextGUI context) {
+    public Menu(String label) {
         super(label);
-        this.context = context;
-        this.builder = new MenuListDialogBuilder();
-        this.builder.setTitle("");
-        addListener(newListener());
+        addListener(listener);
     }
 
     /**
-     * Returns the button listener, which pops up the action list dialog
-     * displaying the menu.
-     *
-     * @return the listener
-     */
-    protected Listener newListener() {
-        return new Listener() {
-            @Override
-            public void onTriggered(Button button) {
-                MenuListDialog dialog = builder.build();
-                dialog.setHints(Arrays.asList(Hint.FIXED_POSITION));
-                dialog.setPosition(
-                        new TerminalPosition(
-                                Menu.this.getPosition().getColumn() + 2,
-                                Menu.this.getPosition().getRow() + 3));
-                dialog.showDialog(context);
-            }
-        };
-    }
-
-    /**
-     * Adds the menu item (name and action).
-     *
-     * @param label  Label of the menu item
-     * @param action Action to perform if the user selects this item
-     */
-    public void addMenuItem(String label, Runnable action) {
-        builder.addAction(label, action);
-    }
-
-    /**
-     * Adds the menu item.
+     * Adds the menu item. A (sub) menu is also a menu item
      *
      * @param item the menu item
      */
-    public void addMenuItem(MenuItem item) {
-        builder.addAction(item.getTitle(), item.getRunnable(context));
+    public void addMenuItem(Runnable item) {
+        items.add(item);
+        if (item instanceof Menu) {
+        	((Menu) item).parent = this;
+        }
     }
+
+    // Runnable
+
+    @Override
+    public String toString() {
+    	return getLabel();
+    }
+
+    private WindowBasedTextGUI getWindowBasedTextGUI() {
+    	if (parent != null) {
+    		return parent.getWindowBasedTextGUI();
+    	} else {
+    		return (WindowBasedTextGUI) getTextGUI();
+    	}
+    }
+
+    private int calcDepth() {
+    	int depth = 0;
+    	Menu m = this;
+    	while (m.parent != null) {
+    		m = m.parent;
+    		depth++;
+    	}
+    	return depth;
+    }
+
+    @Override
+    public void run() {
+		MenuListDialog dialog = new MenuListDialog(items);
+		dialog.setHints(Arrays.asList(Hint.FIXED_POSITION));
+		int depth = calcDepth();
+		dialog.setPosition(
+				new TerminalPosition(
+						Menu.this.getPosition().getColumn() + depth * 2,
+						Menu.this.getPosition().getRow() + depth * 2 + 1));
+
+		dialog.showDialog(getWindowBasedTextGUI());
+    }
+
 }
