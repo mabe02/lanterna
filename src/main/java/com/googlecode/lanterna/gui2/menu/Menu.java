@@ -37,15 +37,14 @@ import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @author Bruno Eberhard
  */
-public class Menu extends Button implements Runnable {
-
+public class Menu extends Button {
 	private final List<Runnable> items = new ArrayList<Runnable>();
 	private Menu parent;
 
 	private final Listener listener = new Listener() {
 		@Override
 		public void onTriggered(Button button) {
-			run();
+            popup();
 		}
 	};
 
@@ -66,12 +65,36 @@ public class Menu extends Button implements Runnable {
      */
     public void addMenuItem(Runnable item) {
         items.add(item);
-        if (item instanceof Menu) {
-        	((Menu) item).parent = this;
-        }
     }
 
-    // Runnable
+    public void addMenuItem(final String label, final Runnable action) {
+        addMenuItem(new Runnable() {
+            @Override
+            public void run() {
+                action.run();
+            }
+
+            @Override
+            public String toString() {
+                return label;
+            }
+        });
+    }
+
+    public void addSubMenuItem(final Menu subMenu) {
+       subMenu.parent = this;
+       addMenuItem(new Runnable() {
+           @Override
+           public void run() {
+               subMenu.popup();
+           }
+
+           @Override
+           public String toString() {
+               return subMenu.toString();
+           }
+       });
+    }
 
     @Override
     public String toString() {
@@ -96,8 +119,7 @@ public class Menu extends Button implements Runnable {
     	return depth;
     }
 
-    @Override
-    public void run() {
+    private void popup() {
 		MenuListDialog dialog = new MenuListDialog(items);
 		dialog.setHints(Arrays.asList(Hint.FIXED_POSITION));
 		int depth = calcDepth();
@@ -108,5 +130,4 @@ public class Menu extends Button implements Runnable {
 
 		dialog.showDialog(getWindowBasedTextGUI());
     }
-
 }

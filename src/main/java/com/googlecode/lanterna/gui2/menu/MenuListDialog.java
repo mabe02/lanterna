@@ -20,13 +20,11 @@
  */
 package com.googlecode.lanterna.gui2.menu;
 
-import java.util.List;
-
-import com.googlecode.lanterna.gui2.Button;
 import com.googlecode.lanterna.gui2.GridLayout;
-import com.googlecode.lanterna.gui2.LocalizedString;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
+
+import java.util.List;
 
 /**
  * Dialog containing a multiple item action list box.
@@ -34,7 +32,7 @@ import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
  * @author Martin
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class MenuListDialog extends DialogWindow {
+class MenuListDialog extends DialogWindow {
 
 	private final Runnable closeRunnable = new Runnable() {
 		@Override
@@ -45,6 +43,7 @@ public class MenuListDialog extends DialogWindow {
 
 	MenuListDialog(List<Runnable> items) {
 		super("");
+		setCloseWindowWithEscape(true);
 
 		if (items.isEmpty()) {
 			throw new IllegalStateException("MenuListDialog needs at least one item");
@@ -63,12 +62,9 @@ public class MenuListDialog extends DialogWindow {
 
 		Panel buttonPanel = new Panel();
 		buttonPanel.setLayoutManager(new GridLayout(2).setHorizontalSpacing(1));
-		buttonPanel.addComponent(new Button(LocalizedString.Close.toString(), closeRunnable).setLayoutData(
-				GridLayout.createLayoutData(GridLayout.Alignment.CENTER, GridLayout.Alignment.CENTER, true, false)));
 		buttonPanel.setLayoutData(
 				GridLayout.createLayoutData(GridLayout.Alignment.END, GridLayout.Alignment.CENTER, false, false))
 				.addTo(mainPanel);
 		setComponent(mainPanel);
 	}
-
 }
