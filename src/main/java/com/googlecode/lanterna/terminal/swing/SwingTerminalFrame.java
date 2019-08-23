@@ -158,6 +158,12 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
         super.dispose();
         disposed = true;
     }
+    
+    @Override
+    public void pack() {
+        super.pack();
+        disposed = false;
+    }
 
     @Override
     public void close() {
