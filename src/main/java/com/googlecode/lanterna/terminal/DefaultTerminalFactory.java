@@ -424,8 +424,7 @@ public class DefaultTerminalFactory implements TerminalFactory {
             try {
                 return createCygwinTerminal(outputStream, inputStream, charset);
             } catch(IOException e) {
-                throw new IOException("To start java on Windows, use javaw!" + System.lineSeparator()
-                        + "(see https://github.com/mabe02/lanterna/issues/335 )", e);
+                throw new IOException("To start java on Windows, use javaw! (see https://github.com/mabe02/lanterna/issues/335 )", e);
             }
         }
     }
