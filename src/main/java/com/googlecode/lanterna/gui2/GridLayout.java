@@ -670,7 +670,7 @@ public class GridLayout implements LayoutManager {
                     columnWidths[columnOffset]--;
                     totalWidth--;
                 }
-                if(++columnOffset == numberOfColumns) {
+                if(++columnOffset == columnWidths.length) {
                     columnOffset = 0;
                 }
             }

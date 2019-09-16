@@ -64,6 +64,7 @@ public class DefaultTerminalFactory implements TerminalFactory {
     private TerminalEmulatorDeviceConfiguration deviceConfiguration;
     private AWTTerminalFontConfiguration fontConfiguration;
     private MouseCaptureMode mouseCaptureMode;
+    private UnixTerminal.CtrlCBehaviour unixTerminalCtrlCBehaviour;
     
     /**
      * Creates a new DefaultTerminalFactory with all properties set to their defaults
@@ -94,6 +95,7 @@ public class DefaultTerminalFactory implements TerminalFactory {
         this.title = null;
         this.autoCloseTriggers = EnumSet.of(TerminalEmulatorAutoCloseTrigger.CloseOnExitPrivateMode);
         this.mouseCaptureMode = null;
+        this.unixTerminalCtrlCBehaviour = UnixTerminal.CtrlCBehaviour.CTRL_C_KILLS_APPLICATION;
 
         //SwingTerminal will replace these null values for the default implementation if they are unchanged
         this.colorConfiguration = null;
@@ -267,6 +269,17 @@ public class DefaultTerminalFactory implements TerminalFactory {
     }
 
     /**
+     * Sets the default CTRL-C behavior to use for all {@link UnixTerminal} objects created by this factory. You can
+     * use this to tell Lanterna to trap CTRL-C instead of exiting the application. Non-UNIX terminals are not affected
+     * by this.
+     * @param unixTerminalCtrlCBehaviour CTRL-C behavior to use for {@link UnixTerminal}:s
+     */
+    public DefaultTerminalFactory setUnixTerminalCtrlCBehaviour(UnixTerminal.CtrlCBehaviour unixTerminalCtrlCBehaviour) {
+        this.unixTerminalCtrlCBehaviour = unixTerminalCtrlCBehaviour;
+        return this;
+    }
+
+    /**
      * Primarily for debugging applications with mouse interactions:
      * If no Console is available (e.g. from within an IDE), then fall
      * back to TelnetTerminal on specified port.
@@ -430,8 +443,7 @@ public class DefaultTerminalFactory implements TerminalFactory {
             try {
                 return createCygwinTerminal(outputStream, inputStream, charset);
             } catch(IOException e) {
-                throw new IOException("To start java on Windows, use javaw!" + System.lineSeparator()
-                        + "(see https://github.com/mabe02/lanterna/issues/335 )", e);
+                throw new IOException("To start java on Windows, use javaw! (see https://github.com/mabe02/lanterna/issues/335 )", e);
             }
         }
     }
@@ -449,10 +461,10 @@ public class DefaultTerminalFactory implements TerminalFactory {
         try {
             Class<?> nativeImplementation = Class.forName("com.googlecode.lanterna.terminal.NativeGNULinuxTerminal");
             Constructor<?> constructor = nativeImplementation.getConstructor(InputStream.class, OutputStream.class, Charset.class, UnixLikeTTYTerminal.CtrlCBehaviour.class);
-            unixTerminal = (UnixTerminal)constructor.newInstance(inputStream, outputStream, charset, UnixLikeTTYTerminal.CtrlCBehaviour.CTRL_C_KILLS_APPLICATION);
+            unixTerminal = (UnixTerminal)constructor.newInstance(inputStream, outputStream, charset, unixTerminalCtrlCBehaviour);
         }
         catch(Exception ignore) {
-            unixTerminal = new UnixTerminal(inputStream, outputStream, charset);
+            unixTerminal = new UnixTerminal(inputStream, outputStream, charset, unixTerminalCtrlCBehaviour);
         }
         if(mouseCaptureMode != null) {
             unixTerminal.setMouseCaptureMode(mouseCaptureMode);
