@@ -110,19 +110,32 @@ public class AWTTerminalFontConfiguration {
 
     // Here we check the screen resolution on the primary monitor and make a guess at if it's high-DPI or not
     private static int getFontSize() {
+        int baseFontSize = 14;
+        String[] javaVersion = System.getProperty("java.version", "1").split("\\.");
+        if (System.getProperty("os.name", "").startsWith("Windows") && Integer.parseInt(javaVersion[0]) >= 9) {
+            // Java 9+ reports itself as HiDPI-unaware on Windows and will be scaled by the OS
+            // Keep in mind that Java 8 and earlier reports itself as version 1.X.0_YYY
+            return baseFontSize;
+        }
+        else {
+            return getHPIAdjustedFontSize(baseFontSize);
+        }
+    }
+
+    private static int getHPIAdjustedFontSize(int baseFontSize) {
         if (Toolkit.getDefaultToolkit().getScreenResolution() >= 110) {
             // Rely on DPI if it is a high value.
-            return Toolkit.getDefaultToolkit().getScreenResolution() / 7 + 1;
+            return Toolkit.getDefaultToolkit().getScreenResolution() / (baseFontSize/2) + 1;
         } else {
             // Otherwise try to guess it from the monitor size:
             // If the width is wider than Full HD (1080p, or 1920x1080), then assume it's high-DPI.
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             if (ge.getMaximumWindowBounds().getWidth() > 4096) {
-                return 56;
+                return baseFontSize * 4;
             } else if (ge.getMaximumWindowBounds().getWidth() > 2048) {
-                return 28;
+                return baseFontSize * 2;
             } else {
-                return 14;
+                return baseFontSize;
             }
         }
     }
