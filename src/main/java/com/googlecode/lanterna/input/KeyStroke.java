@@ -50,7 +50,7 @@ public class KeyStroke {
      * @param keyType Type of the key pressed by this keystroke
      */
     public KeyStroke(KeyType keyType) {
-        this(keyType, false, false);
+        this(keyType, null, false, false, false);
     }
     
     /**
@@ -128,6 +128,13 @@ public class KeyStroke {
         this.ctrlDown = ctrlDown;
         this.altDown = altDown;
         this.eventTime = System.currentTimeMillis();
+    }
+
+    /**
+     * an F3-KeyStroke that is distinguishable from a CursorLocation report.
+     */
+    public static class RealF3 extends KeyStroke {
+        public RealF3() { super(KeyType.F3,false,false,false); }
     }
 
     /**
