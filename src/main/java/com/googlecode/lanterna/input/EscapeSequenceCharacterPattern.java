@@ -144,6 +144,8 @@ public class EscapeSequenceCharacterPattern implements CharacterPattern {
             bShift = (mods & SHIFT) != 0;
             bAlt   = (mods & ALT)   != 0;
             bCtrl  = (mods & CTRL)  != 0;
+        } else if (mods == -1 && key == KeyType.F3) {
+            return new KeyStroke.RealF3();
         }
         return new KeyStroke( key , bCtrl, bAlt, bShift);
     }
@@ -161,15 +163,19 @@ public class EscapeSequenceCharacterPattern implements CharacterPattern {
      */
     protected KeyStroke getKeyStrokeRaw(char first,int num1,int num2,char last,boolean bEsc) {
         KeyType kt;
-        boolean bPuttyCtrl = false;
+        boolean bPuttyCtrl = false, bRealF3 = false;
         if (last == '~' && stdMap.containsKey(num1)) {
             kt = stdMap.get(num1);
         } else if (finMap.containsKey(last)) {
             kt = finMap.get(last);
-            // Putty sends ^[OA for ctrl arrow-up, ^[[A for plain arrow-up:
-            // but only for A-D -- other ^[O... sequences are just plain keys
-            if (first == 'O' && last >= 'A' && last <= 'D') { bPuttyCtrl = true; }
-            // if we ever stumble into "keypad-mode", then it will end up inverted.
+            if (first == 'O') {
+                // Putty sends ^[OA for ctrl arrow-up, ^[[A for plain arrow-up:
+                // but only for A-D -- other ^[O... sequences are just plain keys
+                // if we ever stumble into "keypad-mode", then it will end up inverted.
+                if (last >= 'A' && last <= 'D') { bPuttyCtrl = true; }
+                // ^[OR is a "real" F3 Key, ^[[1;1R may be F3 or a CursorLocation report!
+                if (last == 'R') { bRealF3 = true; }
+            }
         } else {
             kt = null; // unknown key.
         }
@@ -181,6 +187,9 @@ public class EscapeSequenceCharacterPattern implements CharacterPattern {
         if (bPuttyCtrl) {
             if (mods >= 0) { mods |= CTRL; }
             else { mods = CTRL; }
+        }
+        if (bRealF3) {
+            mods = -1;
         }
         return getKeyStroke( kt, mods );
     }
