@@ -48,7 +48,7 @@ public class TelnetTerminal extends ANSITerminal {
     private final NegotiationState negotiationState;
 
     TelnetTerminal(Socket socket, Charset terminalCharset) throws IOException {
-        this(socket, new TelnetClientIACFilterer(socket.getInputStream()), socket.getOutputStream(), terminalCharset);
+        this(socket, new TelnetClientIACFilterer(socket), socket.getOutputStream(), terminalCharset);
     }
 
     //This weird construction is just so that we can access the input filter without changing the visibility in StreamBasedTerminal
@@ -212,14 +212,16 @@ public class TelnetTerminal extends ANSITerminal {
         private final byte[] workingBuffer;
         private int bytesInBuffer;
         private TelnetClientEventListener eventListener;
+        private Socket socket;
 
-        TelnetClientIACFilterer(InputStream inputStream) {
+        TelnetClientIACFilterer(Socket socket) throws IOException {
             this.negotiationState = new NegotiationState();
-            this.inputStream = inputStream;
+            this.inputStream = socket.getInputStream();
             this.buffer = new byte[64 * 1024];
             this.workingBuffer = new byte[1024];
             this.bytesInBuffer = 0;
             this.eventListener = null;
+            this.socket = socket;
         }
 
         private void setEventListener(TelnetClientEventListener eventListener) {
@@ -238,30 +240,26 @@ public class TelnetTerminal extends ANSITerminal {
 
         @Override
         public int available() throws IOException {
-            int underlyingStreamAvailable = inputStream.available();
-            if(underlyingStreamAvailable == 0 && bytesInBuffer == 0) {
-                return 0;
-            }
-            else if(underlyingStreamAvailable == 0) {
+            if(bytesInBuffer > 0) {
                 return bytesInBuffer;
             }
-            else if(bytesInBuffer == buffer.length) {
-                return bytesInBuffer;
-            }
-            fillBuffer();
-            return bytesInBuffer;
+            fillBuffer(false);
+            return Math.abs(bytesInBuffer);
         }
 
         @Override
         @SuppressWarnings("NullableProblems")   //I can't find the correct way to fix this!
         public int read(byte[] b, int off, int len) throws IOException {
+            if (bytesInBuffer == -1) {
+                return -1;
+            }
             if(available() == 0) {
                // There was nothing in the buffer and the underlying
                // stream has nothing available, so do a blocking read
                // from the stream.
-               fillBuffer();
+               fillBuffer(true);
             }
-            if(bytesInBuffer == 0) {
+            if(bytesInBuffer <= 0) {
                 return -1;
             }
             int bytesToCopy = Math.min(len, bytesInBuffer);
@@ -271,10 +269,16 @@ public class TelnetTerminal extends ANSITerminal {
             return bytesToCopy;
         }
 
-        private void fillBuffer() throws IOException {
-            int readBytes = inputStream.read(workingBuffer, 0, Math.min(workingBuffer.length, buffer.length - bytesInBuffer));
-            if(readBytes == -1) {
-                return;
+        private void fillBuffer(boolean block) throws IOException {
+            int maxFill = Math.min(workingBuffer.length, buffer.length - bytesInBuffer);
+
+            int oldTimeout = socket.getSoTimeout();
+            if (!block) { socket.setSoTimeout(1); }
+            int readBytes = inputStream.read(workingBuffer, 0, maxFill);
+            if (!block) { socket.setSoTimeout(oldTimeout); }
+
+            if (readBytes == -1) {
+                bytesInBuffer = -1; return;
             }
             for(int i = 0; i < readBytes; i++) {
                 if(workingBuffer[i] == COMMAND_IAC) {
