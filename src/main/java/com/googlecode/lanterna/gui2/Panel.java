@@ -210,7 +210,7 @@ public class Panel extends AbstractComponent<Panel> implements Container {
     }
 
     @Override
-    public Collection<Component> getChildren() {
+    public List<Component> getChildren() {
         synchronized(components) {
             return new ArrayList<Component>(components);
         }

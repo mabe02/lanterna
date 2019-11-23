@@ -19,6 +19,7 @@
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.gui2.menu.MenuBar;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.TerminalSize;
 
@@ -69,6 +70,13 @@ public interface Window extends BasePane {
          * position is pre-set.
          */
         public static final Hint FIXED_POSITION = new Hint("FixedPos");
+
+        /**
+         * Windows with this hint should (optionally) be rendered differently by the window manager to distiguish them
+         * from ordinary windows. This is intended to be used only by menu popups (See {@link MenuBar},
+         * {@link com.googlecode.lanterna.gui2.menu.Menu} and {@link com.googlecode.lanterna.gui2.menu.MenuItem}).
+         */
+        public static final Hint MENU_POPUP = new Hint("MenuPopup");
 
         /**
          * Windows with this hint should not be automatically sized by the window manager (using
@@ -206,7 +214,10 @@ public interface Window extends BasePane {
 
     /**
      * This method is called by the GUI system to update the window on where the window manager placed it. Calling this
-     * yourself will have no effect other than making the {@code getPosition()} call incorrect until the next redraw.
+     * yourself will have no effect other than making the {@code getPosition()} call incorrect until the next redraw,
+     * unless you have specified through window hints that you don't want the window manager to automatically place
+     * the window. Notice that the position here is expressed in "global" coordinates, which means measured from the
+     * top-left corner of the terminal itself.
      * @param topLeft Global coordinates of the top-left corner of the window
      */
     void setPosition(TerminalPosition topLeft);
@@ -361,5 +372,21 @@ public interface Window extends BasePane {
      * @param position Position expressed in global coordinates to translate to local coordinates of this Window
      * @return The global coordinates expressed as local coordinates
      */
+    @Override
     TerminalPosition fromGlobal(TerminalPosition position);
+
+    /**
+     * Sets the active {@link MenuBar} for this window. The menu will be rendered at the top, inside the window
+     * decorations, if set. If called with {@code null}, any previously set menu bar is removed.
+     * @param menubar The {@link MenuBar} to assign to this window
+     */
+    @Override
+    void setMenuBar(MenuBar menubar);
+
+    /**
+     * Returns the {@link MenuBar} assigned to this window, if any, otherwise returns {code null}.
+     * @return The active menu bar or {@code null}
+     */
+    @Override
+    MenuBar getMenuBar();
 }
