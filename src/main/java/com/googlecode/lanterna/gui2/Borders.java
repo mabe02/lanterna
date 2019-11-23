@@ -277,8 +277,6 @@ public class Borders {
             }
 
             wrappedComponent.draw(graphics.newTextGraphics(getWrappedComponentTopLeftOffset(), getWrappedComponentSize(drawableArea)));
-
-
             joinLinesWithFrame(graphics);
         }
 

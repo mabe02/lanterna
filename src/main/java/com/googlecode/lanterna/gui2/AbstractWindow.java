@@ -19,6 +19,7 @@
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.gui2.menu.MenuBar;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.input.KeyType;
@@ -159,7 +160,14 @@ public abstract class AbstractWindow extends AbstractBasePane<Window> implements
 
     @Override
     public TerminalSize getPreferredSize() {
-        return contentHolder.getPreferredSize();
+        TerminalSize preferredSize = contentHolder.getPreferredSize();
+        MenuBar menuBar = getMenuBar();
+        if (menuBar.getMenuCount() > 0) {
+            TerminalSize menuPreferredSize = menuBar.getPreferredSize();
+            preferredSize = preferredSize.withRelativeRows(menuPreferredSize.getRows())
+                    .withColumns(Math.max(menuPreferredSize.getColumns(), preferredSize.getColumns()));
+        }
+        return preferredSize;
     }
 
     @Override

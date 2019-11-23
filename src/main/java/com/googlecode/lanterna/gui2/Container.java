@@ -19,7 +19,7 @@
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.input.KeyStroke;
-import java.util.Collection;
+import java.util.List;
 
 /**
  * Container is a component that contains a collection of child components. The basic example of an implementation of 
@@ -39,11 +39,11 @@ public interface Container extends Component {
     int getChildCount();
 
     /**
-     * Returns collection that is to be considered a copy of the list of children contained inside of this object. 
+     * Returns a list that is to be considered a copy of the list of children contained inside of this object.
      * Modifying this list will not affect any internal state.
      * @return Child-components inside of this Container
      */
-    Collection<Component> getChildren();
+    List<Component> getChildren();
 
     /**
      * Returns {@code true} if this container contains the supplied component either directly or indirectly through

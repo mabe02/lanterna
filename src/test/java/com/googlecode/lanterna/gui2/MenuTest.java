@@ -2,11 +2,13 @@ package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.bundle.LanternaThemes;
 import com.googlecode.lanterna.gui2.dialogs.FileDialogBuilder;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 import com.googlecode.lanterna.gui2.menu.Menu;
 import com.googlecode.lanterna.gui2.menu.MenuBar;
+import com.googlecode.lanterna.gui2.menu.MenuItem;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,61 +20,69 @@ public class MenuTest extends TestBase {
 
     @Override
     public void init(final WindowBasedTextGUI textGUI) {
+        textGUI.setTheme(LanternaThemes.getRegisteredTheme("businessmachine"));
+        // Create window to hold the menu
+        final BasicWindow window = new BasicWindow();
+        Panel contentPane = new Panel(new BorderLayout());
+        contentPane.addComponent(Panels.vertical(
+                new MultiColorComponent(),
+                new Button("Close", new Runnable() {
+                    @Override
+                    public void run() {
+                        window.close();
+                    }
+                })));
+        window.setComponent(contentPane);
+
         MenuBar menubar = new MenuBar();
+        window.setMenuBar(menubar);
 
         // "File" menu
         Menu menuFile = new Menu("File");
-        menubar.addMenu(menuFile);
-        menuFile.addMenuItem("Open...", new Runnable() {
+        menubar.add(menuFile);
+        menuFile.add(new MenuItem("Open...", new Runnable() {
             public void run() {
                 File file = new FileDialogBuilder().build().showDialog(textGUI);
                 if (file != null)
                     MessageDialog.showMessageDialog(
                             textGUI, "Open", "Selected file:\n" + file, MessageDialogButton.OK);
             }
-        });
-        menuFile.addMenuItem("Exit", new Runnable() {
+        }));
+        menuFile.add(new MenuItem("Exit", new Runnable() {
             public void run() {
-                System.exit(0);
+                window.close();
             }
-        });
+        }));
 
         Menu countryMenu = new Menu("Country");
-        menubar.addMenu(countryMenu);
+        menubar.add(countryMenu);
 
         Menu germanySubMenu = new Menu("Germany");
-        countryMenu.addSubMenuItem(germanySubMenu);
+        countryMenu.add(germanySubMenu);
         for (String state: GERMANY_STATES) {
-            germanySubMenu.addMenuItem(state, DO_NOTHING);
+            germanySubMenu.add(new MenuItem(state, DO_NOTHING));
         }
         Menu japanSubMenu = new Menu("Japan");
-        countryMenu.addSubMenuItem(japanSubMenu);
+        countryMenu.add(japanSubMenu);
         for (String prefecture: JAPAN_PREFECTURES) {
-            japanSubMenu.addMenuItem(prefecture, DO_NOTHING);
+            japanSubMenu.add(new MenuItem(prefecture, DO_NOTHING));
         }
 
         // "Help" menu
         Menu menuHelp = new Menu("Help");
-        menubar.addMenu(menuHelp);
-        menuHelp.addMenuItem("Homepage", new Runnable() {
+        menubar.add(menuHelp);
+        menuHelp.add(new MenuItem("Homepage", new Runnable() {
             public void run() {
                 MessageDialog.showMessageDialog(
                         textGUI, "Homepage", "https://github.com/mabe02/lanterna", MessageDialogButton.OK);
             }
-        });
-        menuHelp.addMenuItem("About", new Runnable() {
+        }));
+        menuHelp.add(new MenuItem("About", new Runnable() {
             public void run() {
                 MessageDialog.showMessageDialog(
                         textGUI, "About", "Lanterna drop-down menu", MessageDialogButton.OK);
             }
-        });
-
-        // Create window to hold the panel
-        BasicWindow window = new BasicWindow();
-        Panel contentPane = new Panel(new BorderLayout());
-        contentPane.addComponent(menubar, BorderLayout.Location.TOP);
-        contentPane.addComponent(new EmptySpace(TextColor.ANSI.YELLOW, new TerminalSize(40, 15)));
-        window.setComponent(contentPane);
+        }));
 
         // Create textGUI and start textGUI
         textGUI.addWindow(window);
@@ -97,4 +107,30 @@ public class MenuTest extends TestBase {
             "Shiga","Shimane","Shizuoka","Tochigi","Tokushima","Tokyo","Tottori","Toyama","Wakayama","Yamagata",
             "Yamaguchi","Yamanashi",
     };
+
+    private static class MultiColorComponent extends AbstractComponent<MultiColorComponent> {
+        @Override
+        protected ComponentRenderer<MultiColorComponent> createDefaultRenderer() {
+            return new ComponentRenderer<MultiColorComponent>() {
+                @Override
+                public TerminalSize getPreferredSize(MultiColorComponent component) {
+                    return new TerminalSize(40, 15);
+                }
+
+                @Override
+                public void drawComponent(TextGUIGraphics graphics, MultiColorComponent component) {
+                    graphics.applyThemeStyle(getTheme().getDefaultDefinition().getNormal());
+                    graphics.fill(' ');
+                    int row = 1;
+                    for (TextColor color: TextColor.ANSI.values()) {
+                        graphics.applyThemeStyle(getTheme().getDefaultDefinition().getNormal());
+                        graphics.putString(1, row, color.toString() + ": ");
+                        graphics.setForegroundColor(TextColor.ANSI.BLACK);
+                        graphics.setBackgroundColor(color);
+                        graphics.putString(20, row++, "     TEXT     ");
+                    }
+                }
+            };
+        }
+    }
 }

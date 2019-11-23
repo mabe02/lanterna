@@ -62,7 +62,13 @@ public class DefaultWindowDecorationRenderer implements WindowDecorationRenderer
         String actualTitle = TerminalTextUtils.fitString(title, titleMaxColumns);
         int titleActualColumns = TerminalTextUtils.getColumnWidth(actualTitle);
 
-        graphics.applyThemeStyle(themeDefinition.getPreLight());
+        // Don't draw highlights on menu popup windows
+        if (window.getHints().contains(Window.Hint.MENU_POPUP)) {
+            graphics.applyThemeStyle(themeDefinition.getNormal());
+        }
+        else {
+            graphics.applyThemeStyle(themeDefinition.getPreLight());
+        }
         graphics.drawLine(new TerminalPosition(0, drawableArea.getRows() - 2), new TerminalPosition(0, 1), verticalLine);
         graphics.drawLine(new TerminalPosition(1, 0), new TerminalPosition(drawableArea.getColumns() - 2, 0), horizontalLine);
         graphics.setCharacter(0, 0, topLeftCorner);

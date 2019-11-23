@@ -21,6 +21,7 @@ package com.googlecode.lanterna.gui2;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.graphics.Theme;
+import com.googlecode.lanterna.gui2.menu.MenuBar;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.input.MouseAction;
@@ -70,13 +71,14 @@ public abstract class AbstractBasePane<T extends BasePane> implements BasePane {
     public void draw(TextGUIGraphics graphics) {
         graphics.applyThemeStyle(getTheme().getDefinition(Window.class).getNormal());
         graphics.fill(' ');
-        contentHolder.draw(graphics);
 
         if(!interactableLookupMap.getSize().equals(graphics.getSize())) {
             interactableLookupMap = new InteractableLookupMap(graphics.getSize());
         } else {
             interactableLookupMap.reset();
         }
+
+        contentHolder.draw(graphics);
         contentHolder.updateLookupMap(interactableLookupMap);
         //interactableLookupMap.debug();
         invalid = false;
@@ -124,6 +126,7 @@ public abstract class AbstractBasePane<T extends BasePane> implements BasePane {
         else if(focusedInteractable == null) {
             // If nothing is focused and the user presses certain navigation keys, try to find if there is an
             // Interactable component we can move focus to.
+            MenuBar menuBar = getMenuBar();
             Component baseComponent = getComponent();
             Interactable.FocusChangeDirection direction = Interactable.FocusChangeDirection.TELEPORT;
             Interactable nextFocus = null;
@@ -132,11 +135,14 @@ public abstract class AbstractBasePane<T extends BasePane> implements BasePane {
                 case ArrowRight:
                 case ArrowDown:
                     direction = Interactable.FocusChangeDirection.NEXT;
-                    if (baseComponent instanceof Container) {
-                        nextFocus = ((Container) baseComponent).nextFocus(null);
-                    }
-                    else if (baseComponent instanceof Interactable) {
-                        nextFocus = (Interactable) baseComponent;
+                    // First try the menu, then the actual component
+                    nextFocus = menuBar.nextFocus(null);
+                    if (nextFocus == null) {
+                        if (baseComponent instanceof Container) {
+                            nextFocus = ((Container) baseComponent).nextFocus(null);
+                        } else if (baseComponent instanceof Interactable) {
+                            nextFocus = (Interactable) baseComponent;
+                        }
                     }
                     break;
 
@@ -149,6 +155,10 @@ public abstract class AbstractBasePane<T extends BasePane> implements BasePane {
                     }
                     else if (baseComponent instanceof Interactable) {
                         nextFocus = (Interactable) baseComponent;
+                    }
+                    // If no component can take focus, try the menu
+                    if (nextFocus == null) {
+                        nextFocus = menuBar.previousFocus(null);
                     }
                     break;
             }
@@ -317,6 +327,16 @@ public abstract class AbstractBasePane<T extends BasePane> implements BasePane {
         this.theme = theme;
     }
 
+    @Override
+    public MenuBar getMenuBar() {
+        return contentHolder.getMenuBar();
+    }
+
+    @Override
+    public void setMenuBar(MenuBar menuBar) {
+        contentHolder.setMenuBar(menuBar);
+    }
+
     protected void addBasePaneListener(BasePaneListener<T> basePaneListener) {
         listeners.addIfAbsent(basePaneListener);
     }
@@ -330,6 +350,49 @@ public abstract class AbstractBasePane<T extends BasePane> implements BasePane {
     }
 
     protected class ContentHolder extends AbstractComposite<Container> {
+        private MenuBar menuBar;
+
+        ContentHolder() {
+            this.menuBar = new EmptyMenuBar();
+        }
+
+        private void setMenuBar(MenuBar menuBar) {
+            if (menuBar == null) {
+                menuBar = new EmptyMenuBar();
+            }
+
+            if (this.menuBar != menuBar) {
+                menuBar.onAdded(this);
+                this.menuBar.onRemoved(this);
+                this.menuBar = menuBar;
+                if(focusedInteractable == null) {
+                    setFocusedInteractable(menuBar.nextFocus(null));
+                }
+                invalidate();
+            }
+        }
+
+        private MenuBar getMenuBar() {
+            return menuBar;
+        }
+
+        @Override
+        public boolean isInvalid() {
+            return super.isInvalid() || menuBar.isInvalid();
+        }
+
+        @Override
+        public void invalidate() {
+            super.invalidate();
+            menuBar.invalidate();
+        }
+
+        @Override
+        public void updateLookupMap(InteractableLookupMap interactableLookupMap) {
+            super.updateLookupMap(interactableLookupMap);
+            menuBar.updateLookupMap(interactableLookupMap);
+        }
+
         @Override
         public void setComponent(Component component) {
             if(getComponent() == component) {
@@ -372,6 +435,13 @@ public abstract class AbstractBasePane<T extends BasePane> implements BasePane {
 
                 @Override
                 public void drawComponent(TextGUIGraphics graphics, Container component) {
+                    if (!(menuBar instanceof EmptyMenuBar)) {
+                        int menuBarHeight = menuBar.getPreferredSize().getRows();
+                        TextGUIGraphics menuGraphics = graphics.newTextGraphics(TerminalPosition.TOP_LEFT_CORNER, graphics.getSize().withRows(menuBarHeight));
+                        menuBar.draw(menuGraphics);
+                        graphics = graphics.newTextGraphics(TerminalPosition.TOP_LEFT_CORNER.withRelativeRow(menuBarHeight), graphics.getSize().withRelativeRows(-menuBarHeight));
+                    }
+
                     Component subComponent = getComponent();
                     if(subComponent == null) {
                         return;
@@ -388,12 +458,31 @@ public abstract class AbstractBasePane<T extends BasePane> implements BasePane {
 
         @Override
         public TerminalPosition toBasePane(TerminalPosition position) {
+            if (!(menuBar instanceof EmptyMenuBar)) {
+                int menuBarHeight = menuBar.getPreferredSize().getRows();
+                position = position.withRelativeRow(menuBarHeight);
+            }
             return position;
         }
 
         @Override
         public BasePane getBasePane() {
             return AbstractBasePane.this;
+        }
+    }
+
+    private static class EmptyMenuBar extends MenuBar {
+        @Override
+        public boolean isInvalid() {
+            return false;
+        }
+
+        @Override
+        public synchronized void onAdded(Container container) {
+        }
+
+        @Override
+        public synchronized void onRemoved(Container container) {
         }
     }
 }
