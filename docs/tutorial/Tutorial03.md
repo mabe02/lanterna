@@ -186,4 +186,5 @@ the call to `startScreen()`
         }
 
 The full code to this tutorial is available in the [test section of the source code](https://github.com/mabe02/lanterna/blob/master/src/test/java/com/googlecode/lanterna/tutorial/Tutorial03.java)
+
 [Move on to tutorial 4](Tutorial04.md)
