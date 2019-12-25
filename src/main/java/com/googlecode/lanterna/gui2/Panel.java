@@ -218,37 +218,54 @@ public class Panel extends AbstractComponent<Panel> implements Container {
 
     @Override
     protected ComponentRenderer<Panel> createDefaultRenderer() {
-        return new ComponentRenderer<Panel>() {
+        return new DefaultPanelRenderer();
+    }
 
-            @Override
-            public TerminalSize getPreferredSize(Panel component) {
-                synchronized(components) {
-                    cachedPreferredSize = layoutManager.getPreferredSize(components);
-                }
-                return cachedPreferredSize;
+    public class DefaultPanelRenderer implements ComponentRenderer<Panel> {
+        private boolean fillAreaBeforeDrawingComponents = true;
+
+        /**
+         * If setting this to {@code false} (default is {@code true}), the {@link Panel} will not reset it's drawable
+         * area with the space character ' ' before drawing all the components. Usually you <b>do</b> want to reset this
+         * area before drawing but you might have a custom renderer that has prepared the area already and just want the
+         * panel renderer to layout and draw the components in the panel without touching the existing content. One such
+         * example is the {@code FullScreenTextGUITest}.
+         * @param fillAreaBeforeDrawingComponents Should the panels area be cleared before drawing components?
+         */
+        public void setFillAreaBeforeDrawingComponents(boolean fillAreaBeforeDrawingComponents) {
+            this.fillAreaBeforeDrawingComponents = fillAreaBeforeDrawingComponents;
+        }
+
+        @Override
+        public TerminalSize getPreferredSize(Panel component) {
+            synchronized(components) {
+                cachedPreferredSize = layoutManager.getPreferredSize(components);
+            }
+            return cachedPreferredSize;
+        }
+
+        @Override
+        public void drawComponent(TextGUIGraphics graphics, Panel panel) {
+            if(isInvalid()) {
+                layout(graphics.getSize());
             }
 
-            @Override
-            public void drawComponent(TextGUIGraphics graphics, Panel component) {
-                if(isInvalid()) {
-                    layout(graphics.getSize());
-                }
-
+            if (fillAreaBeforeDrawingComponents) {
                 // Reset the area
                 graphics.applyThemeStyle(getThemeDefinition().getNormal());
                 if (fillColorOverride != null) {
                     graphics.setBackgroundColor(fillColorOverride);
                 }
                 graphics.fill(' ');
+            }
 
-                synchronized(components) {
-                    for(Component child: components) {
-                        TextGUIGraphics componentGraphics = graphics.newTextGraphics(child.getPosition(), child.getSize());
-                        child.draw(componentGraphics);
-                    }
+            synchronized(components) {
+                for(Component child: components) {
+                    TextGUIGraphics componentGraphics = graphics.newTextGraphics(child.getPosition(), child.getSize());
+                    child.draw(componentGraphics);
                 }
             }
-        };
+        }
     }
 
     @Override
