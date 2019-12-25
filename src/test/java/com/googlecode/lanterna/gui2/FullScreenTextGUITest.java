@@ -26,6 +26,7 @@ import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -55,6 +56,9 @@ public class FullScreenTextGUITest {
                     Thread.sleep(1);
                 }
             }
+        }
+        catch (EOFException ignore) {
+            // Terminal closed
         }
         finally {
             screen.stopScreen();
@@ -167,7 +171,11 @@ public class FullScreenTextGUITest {
         
         @Override
         protected ComponentRenderer<Panel> createDefaultRenderer() {
-            final ComponentRenderer<Panel> panelRenderer = super.createDefaultRenderer();
+            final DefaultPanelRenderer panelRenderer = (DefaultPanelRenderer)super.createDefaultRenderer();
+
+            // Turn off clearing the main area since we'll be using a custom renderer below to prepare the background
+            panelRenderer.setFillAreaBeforeDrawingComponents(false);
+
             return new ComponentRenderer<Panel>() {
                 @Override
                 public TerminalSize getPreferredSize(Panel component) {
@@ -194,6 +202,7 @@ public class FullScreenTextGUITest {
             public BIOSButton(String label, String description) {
                 super(label);
                 this.description = description;
+                setRenderer(newRenderer());
             }
 
             @Override
@@ -201,8 +210,7 @@ public class FullScreenTextGUITest {
                 helpLabel.setText(description);
             }
 
-            @Override
-            protected ButtonRenderer createDefaultRenderer() {
+            private ButtonRenderer newRenderer() {
                 return new ButtonRenderer() {
                     @Override
                     public TerminalPosition getCursorLocation(Button component) {

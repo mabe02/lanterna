@@ -119,6 +119,7 @@ public abstract class AbstractWindow extends AbstractBasePane<Window> implements
     public void setVisible(boolean visible) {
         this.visible = visible;
     }
+
     @Override
     public void draw(TextGUIGraphics graphics) {
         if(!graphics.getSize().equals(lastKnownSize)) {

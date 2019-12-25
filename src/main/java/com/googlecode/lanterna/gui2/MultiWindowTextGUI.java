@@ -433,7 +433,9 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
     @Override
     public synchronized MultiWindowTextGUI setActiveWindow(Window activeWindow) {
         this.activeWindow = activeWindow;
-        if (activeWindow != null) moveToTop(activeWindow);
+        if (activeWindow != null) {
+            moveToTop(activeWindow);
+        }
         return this;
     }
 

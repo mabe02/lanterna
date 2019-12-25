@@ -42,7 +42,10 @@ public class LanternaThemes {
     private static final ConcurrentHashMap<String, Theme> REGISTERED_THEMES = new ConcurrentHashMap<String, Theme>();
 
     static {
+        // Register the hard-coded default theme first
         registerTheme("default", new DefaultTheme());
+
+        // Now register all bundled themes that are defined in property files (if found)
         registerPropTheme("bigsnake", loadPropTheme("bigsnake-theme.properties"));
         registerPropTheme("businessmachine", loadPropTheme("businessmachine-theme.properties"));
         registerPropTheme("conqueror", loadPropTheme("conqueror-theme.properties"));

@@ -110,6 +110,7 @@ public abstract class AbstractBasePane<T extends BasePane> implements BasePane {
     abstract T self();
 
     private boolean doHandleInput(KeyStroke key) {
+        boolean result = false;
         if(key.getKeyType() == KeyType.MouseEvent) {
             MouseAction mouseAction = (MouseAction)key;
             TerminalPosition localCoordinates = fromGlobal(mouseAction.getPosition());
@@ -120,21 +121,58 @@ public abstract class AbstractBasePane<T extends BasePane> implements BasePane {
                 }
             }
         }
-        else if(focusedInteractable != null) {
+        else if(focusedInteractable == null) {
+            // If nothing is focused and the user presses certain navigation keys, try to find if there is an
+            // Interactable component we can move focus to.
+            Component baseComponent = getComponent();
+            Interactable.FocusChangeDirection direction = Interactable.FocusChangeDirection.TELEPORT;
+            Interactable nextFocus = null;
+            switch (key.getKeyType()) {
+                case Tab:
+                case ArrowRight:
+                case ArrowDown:
+                    direction = Interactable.FocusChangeDirection.NEXT;
+                    if (baseComponent instanceof Container) {
+                        nextFocus = ((Container) baseComponent).nextFocus(null);
+                    }
+                    else if (baseComponent instanceof Interactable) {
+                        nextFocus = (Interactable) baseComponent;
+                    }
+                    break;
+
+                case ReverseTab:
+                case ArrowUp:
+                case ArrowLeft:
+                    direction = Interactable.FocusChangeDirection.PREVIOUS;
+                    if (baseComponent instanceof Container) {
+                        nextFocus = ((Container) baseComponent).previousFocus(null);
+                    }
+                    else if (baseComponent instanceof Interactable) {
+                        nextFocus = (Interactable) baseComponent;
+                    }
+                    break;
+            }
+            if (nextFocus != null) {
+                setFocusedInteractable(nextFocus, direction);
+                result = true;
+            }
+        }
+        else {
             Interactable next = null;
             Interactable.FocusChangeDirection direction = Interactable.FocusChangeDirection.TELEPORT; //Default
-            Interactable.Result result = focusedInteractable.handleInput(key);
+            Interactable.Result handleResult = focusedInteractable.handleInput(key);
             if(!enableDirectionBasedMovements) {
-                if(result == Interactable.Result.MOVE_FOCUS_DOWN || result == Interactable.Result.MOVE_FOCUS_RIGHT) {
-                    result = Interactable.Result.MOVE_FOCUS_NEXT;
+                if(handleResult == Interactable.Result.MOVE_FOCUS_DOWN || handleResult == Interactable.Result.MOVE_FOCUS_RIGHT) {
+                    handleResult = Interactable.Result.MOVE_FOCUS_NEXT;
                 }
-                else if(result == Interactable.Result.MOVE_FOCUS_UP || result == Interactable.Result.MOVE_FOCUS_LEFT) {
-                    result = Interactable.Result.MOVE_FOCUS_PREVIOUS;
+                else if(handleResult == Interactable.Result.MOVE_FOCUS_UP || handleResult == Interactable.Result.MOVE_FOCUS_LEFT) {
+                    handleResult = Interactable.Result.MOVE_FOCUS_PREVIOUS;
                 }
             }
-            switch (result) {
+            switch (handleResult) {
                 case HANDLED:
-                    return true;
+                    result = true;
+                    break;
                 case UNHANDLED:
                     //Filter the event recursively through all parent containers until we hit null; give the containers
                     //a chance to absorb the event
@@ -145,7 +183,8 @@ public abstract class AbstractBasePane<T extends BasePane> implements BasePane {
                         }
                         parent = parent.getParent();
                     }
-                    return false;
+                    result = false;
+                    break;
                 case MOVE_FOCUS_NEXT:
                     next = contentHolder.nextFocus(focusedInteractable);
                     if(next == null) {
@@ -187,10 +226,10 @@ public abstract class AbstractBasePane<T extends BasePane> implements BasePane {
             }
             if(next != null) {
                 setFocusedInteractable(next, direction);
+                result = true;
             }
-            return true;
         }
-        return false;
+        return result;
     }
 
     @Override
