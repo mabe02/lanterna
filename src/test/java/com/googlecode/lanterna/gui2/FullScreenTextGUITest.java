@@ -26,6 +26,7 @@ import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -55,6 +56,9 @@ public class FullScreenTextGUITest {
                     Thread.sleep(1);
                 }
             }
+        }
+        catch (EOFException ignore) {
+            // Terminal closed
         }
         finally {
             screen.stopScreen();
