@@ -110,16 +110,7 @@ public class DefaultTerminalFactory implements TerminalFactory {
         //       ("because we can" - unless "rather not")
         if (forceTextTerminal || isAwtHeadless() ||
                 (System.console() != null && !preferTerminalEmulator) ) {
-            // if tty but have no tty, but do have a port, then go telnet:
-            if( telnetPort > 0 && System.console() == null) {
-                return createTelnetTerminal();
-            }
-            if(isOperatingSystemWindows()) {
-                return createWindowsTerminal();
-            }
-            else {
-                return createUnixTerminal(outputStream, inputStream, charset);
-            }
+            return createHeadlessTerminal();
         }
         else {
             // while Lanterna's TerminalEmulator lacks mouse support:
@@ -131,6 +122,19 @@ public class DefaultTerminalFactory implements TerminalFactory {
                 return createTerminalEmulator();
             }
         }
+    }
+
+    @Override
+    public Terminal createHeadlessTerminal() throws IOException {
+        // if tty but have no tty, but do have a port, then go telnet:
+        if( telnetPort > 0 && System.console() == null) {
+            return createTelnetTerminal();
+        }
+        if(isOperatingSystemWindows()) {
+            return createWindowsTerminal();
+        }
+
+        return createUnixTerminal(outputStream, inputStream, charset);
     }
 
     /**
