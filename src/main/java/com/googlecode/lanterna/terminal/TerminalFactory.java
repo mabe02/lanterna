@@ -35,13 +35,4 @@ public interface TerminalFactory {
      * @throws IOException If there was an I/O error with the underlying input/output system
      */
     Terminal createTerminal() throws IOException;
-
-    /**
-     * Instantiates a Terminal according to the factory implementation with the exception that
-     * {@link DefaultTerminalFactory#preferTerminalEmulator} is always ignored. You may want to use this method when
-     * using tools that rely on AOT compilation such as Graal native-image to ensure AWT/Swing code paths are not hit.
-     * @return Terminal implementation
-     * @throws IOException If there was an I/O error with the underlying input/output system
-     */
-    Terminal createHeadlessTerminal() throws IOException;
 }
