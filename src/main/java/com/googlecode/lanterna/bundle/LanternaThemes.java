@@ -42,8 +42,15 @@ public class LanternaThemes {
     private static final ConcurrentHashMap<String, Theme> REGISTERED_THEMES = new ConcurrentHashMap<String, Theme>();
 
     static {
-        // Register the hard-coded default theme first
-        registerTheme("default", new DefaultTheme());
+        // Register the default theme first
+        Properties defaultThemeProperties = loadPropTheme("default-theme.properties");
+        if (defaultThemeProperties != null) {
+            registerPropTheme("default", defaultThemeProperties);
+        }
+        else {
+            // If we couldn't load it from file, use the hard-coded one instead
+            registerTheme("default", new DefaultTheme());
+        }
 
         // Now register all bundled themes that are defined in property files (if found)
         registerPropTheme("bigsnake", loadPropTheme("bigsnake-theme.properties"));
@@ -109,8 +116,7 @@ public class LanternaThemes {
     private static Properties loadPropTheme(String resourceFileName) {
         Properties properties = new Properties();
         try {
-            ClassLoader classLoader = AbstractTextGUI.class.getClassLoader();
-            InputStream resourceAsStream = classLoader.getResourceAsStream(resourceFileName);
+            InputStream resourceAsStream = AbstractTextGUI.class.getResourceAsStream(resourceFileName);
             if(resourceAsStream == null) {
                 resourceAsStream = new FileInputStream("src/main/resources/" + resourceFileName);
             }
@@ -119,9 +125,7 @@ public class LanternaThemes {
             return properties;
         }
         catch(IOException e) {
-            if("default-theme.properties".equals(resourceFileName)) {
-                throw new RuntimeException("Unable to load the default theme", e);
-            }
+            // Failed to load theme, return null
             return null;
         }
     }
