@@ -251,16 +251,19 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
                     windowRenderBufferCache.put(window, textImage);
                 }
                 TextGUIGraphics windowGraphics = new TextGUIGraphics(this, textImage.newTextGraphics());
+                TextGUIGraphics insideWindowDecorationsGraphics = windowGraphics;
                 TerminalPosition contentOffset = TerminalPosition.TOP_LEFT_CORNER;
                 if (!window.getHints().contains(Window.Hint.NO_DECORATIONS)) {
                     WindowDecorationRenderer decorationRenderer = getWindowManager().getWindowDecorationRenderer(window);
-                    windowGraphics = decorationRenderer.draw(this, windowGraphics, window);
+                    insideWindowDecorationsGraphics = decorationRenderer.draw(this, windowGraphics, window);
                     contentOffset = decorationRenderer.getOffset(window);
                 }
 
-                window.draw(windowGraphics);
+                window.draw(insideWindowDecorationsGraphics);
                 window.setContentOffset(contentOffset);
-                Borders.joinLinesWithFrame(windowGraphics);
+                if (windowGraphics != insideWindowDecorationsGraphics) {
+                    Borders.joinLinesWithFrame(windowGraphics);
+                }
 
                 graphics.drawImage(window.getPosition(), textImage);
 
