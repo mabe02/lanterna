@@ -45,7 +45,7 @@ public class MenuBar extends AbstractComponent<MenuBar> implements Container {
      * Creates a new menu bar
      */
     public MenuBar() {
-        this.menus = new CopyOnWriteArrayList<Menu>();
+        this.menus = new CopyOnWriteArrayList<>();
     }
 
     /**
@@ -66,7 +66,7 @@ public class MenuBar extends AbstractComponent<MenuBar> implements Container {
 
     @Override
     public List<Component> getChildren() {
-        return new ArrayList<Component>(menus);
+        return new ArrayList<>(menus);
     }
 
     @Override

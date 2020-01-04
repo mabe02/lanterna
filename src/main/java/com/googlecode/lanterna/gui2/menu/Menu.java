@@ -43,7 +43,7 @@ public class Menu extends MenuItem {
      */
     public Menu(String label) {
         super(label);
-        this.subItems = new ArrayList<MenuItem>();
+        this.subItems = new ArrayList<>();
     }
 
     /**

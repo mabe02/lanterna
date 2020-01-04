@@ -115,6 +115,7 @@ public class ListSelectDialog<T> extends DialogWindow {
      * @param <T> Type of items in the dialog
      * @return The selected item or {@code null} if cancelled
      */
+    @SafeVarargs
     public static <T> T showDialog(WindowBasedTextGUI textGUI, String title, String description, T... items) {
         return showDialog(textGUI, title, description, null, items);
     }
@@ -129,6 +130,7 @@ public class ListSelectDialog<T> extends DialogWindow {
      * @param <T> Type of items in the dialog
      * @return The selected item or {@code null} if cancelled
      */
+    @SafeVarargs
     public static <T> T showDialog(WindowBasedTextGUI textGUI, String title, String description, int listBoxHeight, T... items) {
         int width = 0;
         for(T item: items) {
@@ -148,6 +150,7 @@ public class ListSelectDialog<T> extends DialogWindow {
      * @param <T> Type of items in the dialog
      * @return The selected item or {@code null} if cancelled
      */
+    @SafeVarargs
     public static <T> T showDialog(WindowBasedTextGUI textGUI, String title, String description, TerminalSize listBoxSize, T... items) {
         ListSelectDialog<T> listSelectDialog = new ListSelectDialogBuilder<T>()
                 .setTitle(title)

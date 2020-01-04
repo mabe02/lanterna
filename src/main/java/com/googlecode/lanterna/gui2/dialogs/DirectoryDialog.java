@@ -167,31 +167,20 @@ public class DirectoryDialog extends DialogWindow {
         if (entries == null) {
             return;
         }
-        Arrays.sort(entries, new Comparator<File>() {
-            @Override
-            public int compare(File o1, File o2) {
-                return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
-            }
-        });
+        Arrays.sort(entries, Comparator.comparing(o -> o.getName().toLowerCase()));
         if (directory.getAbsoluteFile().getParentFile() != null) {
-            dirListBox.addItem("..", new Runnable() {
-                @Override
-                public void run() {
-                    DirectoryDialog.this.directory = directory.getAbsoluteFile().getParentFile();
-                    reloadViews(directory.getAbsoluteFile().getParentFile());
-                }
+            dirListBox.addItem("..", () -> {
+                DirectoryDialog.this.directory = directory.getAbsoluteFile().getParentFile();
+                reloadViews(directory.getAbsoluteFile().getParentFile());
             });
         }
         else {
             File[] roots = File.listRoots();
             for (final File entry : roots) {
                 if (entry.canRead()) {
-                    dirListBox.addItem('[' + entry.getPath() + ']', new Runnable() {
-                        @Override
-                        public void run() {
-                            DirectoryDialog.this.directory = entry;
-                            reloadViews(entry);
-                        }
+                    dirListBox.addItem('[' + entry.getPath() + ']', () -> {
+                        DirectoryDialog.this.directory = entry;
+                        reloadViews(entry);
                     });
                 }
             }
@@ -201,12 +190,9 @@ public class DirectoryDialog extends DialogWindow {
                 continue;
             }
             if (entry.isDirectory()) {
-                dirListBox.addItem(entry.getName(), new Runnable() {
-                    @Override
-                    public void run() {
-                        DirectoryDialog.this.directory = entry;
-                        reloadViews(entry);
-                    }
+                dirListBox.addItem(entry.getName(), () -> {
+                    DirectoryDialog.this.directory = entry;
+                    reloadViews(entry);
                 });
             }
         }

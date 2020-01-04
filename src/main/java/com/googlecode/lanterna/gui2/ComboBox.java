@@ -71,6 +71,7 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
      * displayed at once, more than that and there will be a scroll bar.
      * @param items Items to populate the new combo box with
      */
+    @SafeVarargs
     public ComboBox(V... items) {
         this(Arrays.asList(items));
     }

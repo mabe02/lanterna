@@ -44,12 +44,7 @@ public class MenuTest extends TestBase {
         Panel contentPane = new Panel(new BorderLayout());
         contentPane.addComponent(Panels.vertical(
                 new MultiColorComponent(),
-                new Button("Close", new Runnable() {
-                    @Override
-                    public void run() {
-                        window.close();
-                    }
-                })));
+                new Button("Close", window::close)));
         window.setComponent(contentPane);
 
         MenuBar menubar = new MenuBar();
@@ -58,19 +53,13 @@ public class MenuTest extends TestBase {
         // "File" menu
         Menu menuFile = new Menu("File");
         menubar.add(menuFile);
-        menuFile.add(new MenuItem("Open...", new Runnable() {
-            public void run() {
-                File file = new FileDialogBuilder().build().showDialog(textGUI);
-                if (file != null)
-                    MessageDialog.showMessageDialog(
-                            textGUI, "Open", "Selected file:\n" + file, MessageDialogButton.OK);
-            }
+        menuFile.add(new MenuItem("Open...", () -> {
+            File file = new FileDialogBuilder().build().showDialog(textGUI);
+            if (file != null)
+                MessageDialog.showMessageDialog(
+                        textGUI, "Open", "Selected file:\n" + file, MessageDialogButton.OK);
         }));
-        menuFile.add(new MenuItem("Exit", new Runnable() {
-            public void run() {
-                window.close();
-            }
-        }));
+        menuFile.add(new MenuItem("Exit", window::close));
 
         Menu countryMenu = new Menu("Country");
         menubar.add(countryMenu);
@@ -89,27 +78,16 @@ public class MenuTest extends TestBase {
         // "Help" menu
         Menu menuHelp = new Menu("Help");
         menubar.add(menuHelp);
-        menuHelp.add(new MenuItem("Homepage", new Runnable() {
-            public void run() {
-                MessageDialog.showMessageDialog(
-                        textGUI, "Homepage", "https://github.com/mabe02/lanterna", MessageDialogButton.OK);
-            }
-        }));
-        menuHelp.add(new MenuItem("About", new Runnable() {
-            public void run() {
-                MessageDialog.showMessageDialog(
-                        textGUI, "About", "Lanterna drop-down menu", MessageDialogButton.OK);
-            }
-        }));
+        menuHelp.add(new MenuItem("Homepage", () -> MessageDialog.showMessageDialog(
+                textGUI, "Homepage", "https://github.com/mabe02/lanterna", MessageDialogButton.OK)));
+        menuHelp.add(new MenuItem("About", () -> MessageDialog.showMessageDialog(
+                textGUI, "About", "Lanterna drop-down menu", MessageDialogButton.OK)));
 
         // Create textGUI and start textGUI
         textGUI.addWindow(window);
     }
 
-    private static final Runnable DO_NOTHING = new Runnable() {
-        @Override
-        public void run() {
-        }
+    private static final Runnable DO_NOTHING = () -> {
     };
 
     private static final String[] GERMANY_STATES = new String[]{

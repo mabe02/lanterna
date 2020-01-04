@@ -205,7 +205,7 @@ public class DefaultTerminalFactory implements TerminalFactory {
 
     private boolean isAwtHeadless() {
         try {
-            Class cls = Class.forName("java.awt.GraphicsEnvironment");
+            Class<?> cls = Class.forName("java.awt.GraphicsEnvironment");
             Method method = cls.getDeclaredMethod("isHeadless");
             return (Boolean) method.invoke(null);
         } catch (Exception ignore) {
@@ -226,7 +226,7 @@ public class DefaultTerminalFactory implements TerminalFactory {
 
     private void makeWindowVisible(Terminal terminal) {
         try {
-            Class cls = Class.forName("java.awt.Window");
+            Class<?> cls = Class.forName("java.awt.Window");
             Method method = cls.getDeclaredMethod("setVisible", boolean.class);
             method.invoke(terminal, true);
         } catch (Exception ex) {

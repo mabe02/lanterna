@@ -26,6 +26,7 @@ import com.googlecode.lanterna.input.KeyType;
 
 import java.io.IOException;
 
+@SuppressWarnings("rawtypes")
 public class InputUITest extends TestBase {
     public static void main(String[] args) throws IOException, InterruptedException {
         new InputUITest().run(args);
@@ -93,12 +94,7 @@ public class InputUITest extends TestBase {
                 Panels.vertical(
                         interactable.withBorder(Borders.doubleLineBevel("Press any key to test capturing the KeyStroke")),
                         new Label("Use the TAB key to shift focus"),
-                        new Button("Close", new Runnable() {
-                            @Override
-                            public void run() {
-                                window.close();
-                            }
-                        })));
+                        new Button("Close", window::close)));
         textGUI.addWindow(window);
     }
 }

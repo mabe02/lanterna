@@ -43,10 +43,7 @@ public class MenuItem extends AbstractInteractableComponent<MenuItem> {
      * @param label Label of the new {@link MenuItem}
      */
     public MenuItem(String label) {
-        this(label, new Runnable() {
-            @Override
-            public void run() {
-            }
+        this(label, () -> {
         });
     }
 
