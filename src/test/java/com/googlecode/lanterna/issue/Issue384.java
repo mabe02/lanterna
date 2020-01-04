@@ -10,26 +10,26 @@ import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Set;
 import java.util.TreeSet;
 
 public class Issue384 {
-    private static final Set<Integer> EXPANDABLE_COLUMNS = new TreeSet<>(Arrays.asList(1));
+    private static final Set<Integer> EXPANDABLE_COLUMNS = new TreeSet<>(Collections.singletonList(1));
 
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws IOException {
         final Screen screen = new DefaultTerminalFactory().createScreen();
         screen.startScreen();
         final MultiWindowTextGUI textGUI = new MultiWindowTextGUI(screen);
         final Window window = new BasicWindow("Table container test");
-        window.setHints(Arrays.asList(Window.Hint.FIXED_SIZE));
+        window.setHints(Collections.singletonList(Window.Hint.FIXED_SIZE));
         window.setSize(new TerminalSize(60, 14));
 
         final Table<String> table = new Table<>("Column", "Expanded Column", "Column");
         table.setCellSelection(true);
         table.setVisibleRows(10);
         final DefaultTableRenderer<String> tableRenderer = new DefaultTableRenderer<>();
-        tableRenderer.setExpandableColumns(Arrays.asList(1));
+        tableRenderer.setExpandableColumns(Collections.singletonList(1));
         table.setRenderer(tableRenderer);
 
         final TableModel<String> model = table.getTableModel();

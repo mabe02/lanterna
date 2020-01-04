@@ -22,7 +22,6 @@ import com.googlecode.lanterna.*;
 import com.googlecode.lanterna.graphics.BasicTextImage;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.graphics.TextImage;
-import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
 
@@ -226,15 +225,13 @@ public class FullScreenTextGUITest {
                         if(isFocused()) {
                             graphics.setForegroundColor(TextColor.ANSI.WHITE);
                             graphics.setBackgroundColor(TextColor.ANSI.RED);
-                            graphics.setModifiers(EnumSet.of(SGR.BOLD));
-                            graphics.putString(0, 0, "  " + getLabel());
                         }
                         else {
                             graphics.setForegroundColor(TextColor.ANSI.YELLOW);
                             graphics.setBackgroundColor(TextColor.ANSI.BLUE);
-                            graphics.setModifiers(EnumSet.of(SGR.BOLD));
-                            graphics.putString(0, 0, "  " + getLabel());
                         }
+                        graphics.setModifiers(EnumSet.of(SGR.BOLD));
+                        graphics.putString(0, 0, "  " + getLabel());
                     }
                 };
             }

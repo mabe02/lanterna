@@ -229,7 +229,7 @@ public class TelnetTerminal extends ANSITerminal {
         }
 
         @Override
-        public int read() throws IOException {
+        public int read() {
             throw new UnsupportedOperationException("TelnetClientIACFilterer doesn't support .read()");
         }
 
@@ -248,7 +248,6 @@ public class TelnetTerminal extends ANSITerminal {
         }
 
         @Override
-        @SuppressWarnings("NullableProblems")   //I can't find the correct way to fix this!
         public int read(byte[] b, int off, int len) throws IOException {
             if (bytesInBuffer == -1) {
                 return -1;

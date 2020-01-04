@@ -56,7 +56,6 @@ public class InteractableLookupMap {
      * Adds an interactable component to the lookup map
      * @param interactable Interactable to add to the lookup map
      */
-    @SuppressWarnings("ConstantConditions")
     public synchronized void add(Interactable interactable) {
         TerminalPosition topLeft = interactable.toBasePane(TerminalPosition.TOP_LEFT_CORNER);
         TerminalSize size = interactable.getSize();

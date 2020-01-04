@@ -56,7 +56,7 @@ public class MessageDialogBuilder {
         MessageDialog messageDialog = new MessageDialog(
                 title,
                 text,
-                buttons.toArray(new MessageDialogButton[buttons.size()]));
+                buttons.toArray(new MessageDialogButton[0]));
         messageDialog.setHints(extraWindowHints);
         return messageDialog;
     }

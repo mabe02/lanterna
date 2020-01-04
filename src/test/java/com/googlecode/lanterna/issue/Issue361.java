@@ -7,7 +7,7 @@ import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.screen.*;
 import com.googlecode.lanterna.terminal.*;
 
-import java.util.Arrays;
+import java.util.Collections;
 
 public class Issue361 {
 
@@ -18,10 +18,10 @@ public class Issue361 {
         screen.startScreen();
 
         BasicWindow window1 = new BasicWindow();
-        window1.setHints(Arrays.asList(Window.Hint.CENTERED));
+        window1.setHints(Collections.singletonList(Window.Hint.CENTERED));
 
         BasicWindow window2 = new BasicWindow();
-        window2.setHints(Arrays.<Window.Hint>asList());
+        window2.setHints(Collections.<Window.Hint>emptyList());
 
         // Create gui and start gui
         MultiWindowTextGUI gui = new MultiWindowTextGUI(screen);

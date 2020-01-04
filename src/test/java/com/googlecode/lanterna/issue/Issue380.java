@@ -5,7 +5,7 @@ import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.Collections;
 
 public class Issue380 {
     public static void main(String[] args) throws IOException {
@@ -13,7 +13,7 @@ public class Issue380 {
         screen.startScreen();
         MultiWindowTextGUI gui = new MultiWindowTextGUI(screen);
         Window window = new GridWindowWithTwoLargeComponents();
-        window.setHints(Arrays.asList(Window.Hint.EXPANDED));
+        window.setHints(Collections.singletonList(Window.Hint.EXPANDED));
         gui.addWindow(window);
         gui.waitForWindowToClose(window);
         screen.stopScreen();

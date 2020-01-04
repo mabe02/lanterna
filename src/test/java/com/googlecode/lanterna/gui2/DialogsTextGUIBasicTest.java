@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
  * @author Martin
  */
 public class DialogsTextGUIBasicTest {
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws IOException {
         Screen screen = new TestTerminalFactory(args).createScreen();
         screen.startScreen();
         final WindowBasedTextGUI textGUI = new MultiWindowTextGUI(screen);

@@ -39,6 +39,7 @@ public abstract class TestBase {
         }
         textGUI.setBlockingIO(false);
         textGUI.setEOFWhenNoWindows(true);
+        //noinspection ResultOfMethodCallIgnored
         textGUI.isEOFWhenNoWindows();   //No meaning, just to silence IntelliJ:s "is never used" alert
 
         try {

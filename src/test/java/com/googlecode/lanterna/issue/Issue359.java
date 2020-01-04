@@ -10,7 +10,7 @@ import com.googlecode.lanterna.terminal.*;
 import java.io.IOException;
 
 public class Issue359 {
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         try {
             Screen screen = new DefaultTerminalFactory().createScreen();
             screen.startScreen();

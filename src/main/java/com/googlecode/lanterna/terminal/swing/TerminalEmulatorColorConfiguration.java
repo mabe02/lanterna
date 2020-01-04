@@ -62,7 +62,10 @@ public class TerminalEmulatorColorConfiguration {
      * @param isForeground Is the color intended to be used as foreground color
      * @param inBoldContext Is the color intended to be used for on a character this is bold
      * @return The AWT color that represents this text color
+     * @deprecated This adds a runtime dependency to the java.desktop module which isn't declared in the module
+     * descriptor of lanterna. If you want to call this method, make sure to add it to your module.
      */
+    @Deprecated
     public Color toAWTColor(TextColor color, boolean isForeground, boolean inBoldContext) {
         if(color instanceof TextColor.ANSI) {
             return colorPalette.get((TextColor.ANSI)color, isForeground, inBoldContext && useBrightColorsOnBold);

@@ -10,20 +10,16 @@ import com.googlecode.lanterna.terminal.Terminal;
 import java.io.IOException;
 
 public class Issue392 {
-    private static DefaultTerminalFactory terminalFactory;
-    private static Terminal terminal;
-    private static TerminalScreen screen;
     private static MultiWindowTextGUI textGUI;
-    private static BasicWindow window;
 
     public static void main(String[] args) throws IOException {
-        terminalFactory = new DefaultTerminalFactory();
-        terminal = terminalFactory.createTerminal();
-        screen = new TerminalScreen(terminal);
+        DefaultTerminalFactory terminalFactory = new DefaultTerminalFactory();
+        Terminal terminal = terminalFactory.createTerminal();
+        TerminalScreen screen = new TerminalScreen(terminal);
         screen.startScreen();
         textGUI = new MultiWindowTextGUI(screen);
         setExceptionHandler();
-        window = new BasicWindow();
+        BasicWindow window = new BasicWindow();
 
         Button button = new Button("test");
         button.addListener(b -> {

@@ -25,7 +25,7 @@ import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.ansi.TelnetTerminal;
 import com.googlecode.lanterna.terminal.ansi.TelnetTerminalServer;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Random;
 
 /**
@@ -34,7 +34,7 @@ import java.util.Random;
  */
 public class TelnetTerminalTest {
     public static void main(String[] args) throws IOException {
-        TelnetTerminalServer server = new TelnetTerminalServer(1024, Charset.forName("utf-8"));
+        TelnetTerminalServer server = new TelnetTerminalServer(1024, StandardCharsets.UTF_8);
         //noinspection InfiniteLoopStatement
         while(true) {
             TelnetTerminal telnetTerminal = server.acceptConnection();

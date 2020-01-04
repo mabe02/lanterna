@@ -25,7 +25,7 @@ import com.googlecode.lanterna.screen.Screen;
 import java.io.IOException;
 
 public class MultiButtonTest {
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws IOException {
         Screen screen = new TestTerminalFactory(args).createScreen();
         screen.startScreen();
         MultiWindowTextGUI textGUI = new MultiWindowTextGUI(screen);

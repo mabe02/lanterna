@@ -187,7 +187,7 @@ public class MultiWindowManagerTest extends TestBase {
         }
     }
 
-    private class BackgroundComponent extends GUIBackdrop {
+    private static class BackgroundComponent extends GUIBackdrop {
         @Override
         protected ComponentRenderer<EmptySpace> createDefaultRenderer() {
             return new ComponentRenderer<EmptySpace>() {

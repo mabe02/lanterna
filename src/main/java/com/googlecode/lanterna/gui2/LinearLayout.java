@@ -22,8 +22,6 @@ import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
@@ -263,7 +261,7 @@ public class LinearLayout implements LayoutManager {
         if (availableVerticalSpace < totalRequiredVerticalSpace) {
             copyOfComponenets.sort((o1, o2) -> {
                 // Reverse sort
-                return 0 - Integer.compare(fittingMap.get(o1).getRows(), fittingMap.get(o2).getRows());
+                return -Integer.compare(fittingMap.get(o1).getRows(), fittingMap.get(o2).getRows());
             });
 
             while (availableVerticalSpace < totalRequiredVerticalSpace) {
@@ -389,7 +387,7 @@ public class LinearLayout implements LayoutManager {
         if (availableHorizontalSpace < totalRequiredHorizontalSpace) {
             copyOfComponenets.sort((o1, o2) -> {
                 // Reverse sort
-                return 0 - Integer.compare(fittingMap.get(o1).getColumns(), fittingMap.get(o2).getColumns());
+                return -Integer.compare(fittingMap.get(o1).getColumns(), fittingMap.get(o2).getColumns());
             });
 
             while (availableHorizontalSpace < totalRequiredHorizontalSpace) {

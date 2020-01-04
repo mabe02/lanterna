@@ -40,12 +40,6 @@ class IssueX {
         private Screen screen;
         private TextGraphics screenWriter;
 
-        private int current_y = 1;
-        private int default_x = 3;
-
-        @SuppressWarnings("unused")
-		private boolean conversionFinished = false;
-
         public LanternaTerminalWriter(String[] args) throws IOException {
             screen = new TestTerminalFactory(args).createScreen();
             screen.startScreen();
@@ -55,11 +49,12 @@ class IssueX {
 
         public void close() throws IOException {
             screen.stopScreen();
-            conversionFinished = true;
         }
 
         public void write(String string, SGR... styles) throws IOException {
             screenWriter.enableModifiers(styles);
+            int current_y = 1;
+            int default_x = 3;
             screenWriter.putString(default_x, current_y, string);
             screen.pollInput();
             screen.refresh();

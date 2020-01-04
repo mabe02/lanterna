@@ -153,8 +153,7 @@ public class DirectoryDialog extends DialogWindow {
         }
     }
 
-    private class DoNothing implements Runnable {
-
+    private static class DoNothing implements Runnable {
         @Override
         public void run() {
         }

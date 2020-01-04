@@ -24,7 +24,6 @@ import com.googlecode.lanterna.TestTerminalFactory;
 import com.googlecode.lanterna.terminal.swing.SwingTerminalFrame;
 
 import javax.swing.*;
-import java.io.IOException;
 
 /**
  *
@@ -32,7 +31,7 @@ import java.io.IOException;
  */
 public class SwingTerminalTest {
 
-    public static void main(String[] args) throws InterruptedException, IOException {
+    public static void main(String[] args) throws InterruptedException {
         SwingTerminalFrame terminal = new TestTerminalFactory(args).createSwingTerminal();
         terminal.setVisible(true);
         terminal.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

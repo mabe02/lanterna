@@ -182,7 +182,7 @@ public class FileDialog extends DialogWindow {
         }
     }
 
-    private class DoNothing implements Runnable {
+    private static class DoNothing implements Runnable {
         @Override
         public void run() {
         }

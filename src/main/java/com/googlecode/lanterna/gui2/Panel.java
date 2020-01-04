@@ -22,7 +22,6 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.input.KeyStroke;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -191,7 +190,7 @@ public class Panel extends AbstractComponent<Panel> implements Container {
      *                  to go back to the theme definition
      */
     public void setFillColorOverride(TextColor fillColor) {
-        this.fillColorOverride = fillColorOverride;
+        this.fillColorOverride = fillColor;
     }
 
     /**
@@ -333,9 +332,9 @@ public class Panel extends AbstractComponent<Panel> implements Container {
     public Interactable previousFocus(Interactable fromThis) {
         boolean chooseNextAvailable = (fromThis == null);
 
-        List<Component> revComponents = new ArrayList<>();
+        List<Component> revComponents;
         synchronized(components) {
-            revComponents.addAll(components);
+            revComponents = new ArrayList<>(components);
         }
         Collections.reverse(revComponents);
 

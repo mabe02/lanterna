@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Class containing graphics code for ANSI compliant text terminals and terminal emulators. All the methods inside of
@@ -326,12 +327,12 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
     }
 
     @Override
-    public void pushTitle() throws IOException {
+    public void pushTitle() {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @Override
-    public void popTitle() throws IOException {
+    public void popTitle() {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
@@ -372,7 +373,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
             writeCSISequenceToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'0', (byte)'3', (byte)l_or_h);
             break;
         }
-        if(getCharset().equals(Charset.forName("UTF-8"))) {
+        if(getCharset().equals(StandardCharsets.UTF_8)) {
             writeCSISequenceToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'0', (byte)'5', (byte)l_or_h);
         }
     }

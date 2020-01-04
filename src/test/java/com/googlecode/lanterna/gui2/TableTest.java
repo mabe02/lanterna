@@ -27,6 +27,7 @@ import com.googlecode.lanterna.gui2.table.TableModel;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -43,7 +44,7 @@ public class TableTest extends TestBase {
     @Override
     public void init(final WindowBasedTextGUI textGUI) {
         final BasicWindow window = new BasicWindow("Table container test");
-        window.setHints(Arrays.asList(Window.Hint.FIT_TERMINAL_WINDOW));
+        window.setHints(Collections.singletonList(Window.Hint.FIT_TERMINAL_WINDOW));
 
         final Table<String> table = new Table<>("Column 1", "Column 2", "Column 3");
         final TableModel<String> model = table.getTableModel();
@@ -61,7 +62,7 @@ public class TableTest extends TestBase {
                     for (int i = 0; i < model.getColumnCount(); i++) {
                         labels.add("Row" + (model.getRowCount() + 1));
                     }
-                    model.addRow(labels.toArray(new String[labels.size()]));
+                    model.addRow(labels.toArray(new String[0]));
                     table.invalidate();
                 })
                 .addAction("5 Rows", () -> {
@@ -70,7 +71,7 @@ public class TableTest extends TestBase {
                         for (int i = 0; i < model.getColumnCount(); i++) {
                             labels.add("Row" + (model.getRowCount() + 1));
                         }
-                        model.addRow(labels.toArray(new String[labels.size()]));
+                        model.addRow(labels.toArray(new String[0]));
                     }
                     table.invalidate();
                 })
@@ -79,7 +80,7 @@ public class TableTest extends TestBase {
                     for (int i = 0; i < model.getRowCount(); i++) {
                         labels.add("Row" + (i + 1));
                     }
-                    model.addColumn("Column " + (columnCounter++), labels.toArray(new String[labels.size()]));
+                    model.addColumn("Column " + (columnCounter++), labels.toArray(new String[0]));
                     table.invalidate();
                 })
                 .build()
@@ -117,6 +118,7 @@ public class TableTest extends TestBase {
                 "Force re-calculate/re-draw"
         };
         String choice = chooseAString(textGUI, "Modify what?", dialogChoices);
+        //noinspection StatementWithEmptyBody
         if(choice == null) {
         }
         else if(choice.equals(dialogChoices[0])) {

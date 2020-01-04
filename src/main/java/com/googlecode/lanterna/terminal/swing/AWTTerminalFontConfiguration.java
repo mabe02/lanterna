@@ -148,15 +148,15 @@ public class AWTTerminalFontConfiguration {
         String osName = System.getProperty("os.name", "").toLowerCase();
         if(osName.contains("win")) {
             List<Font> windowsFonts = getDefaultWindowsFonts();
-            return windowsFonts.toArray(new Font[windowsFonts.size()]);
+            return windowsFonts.toArray(new Font[0]);
         }
         else if(osName.contains("linux")) {
             List<Font> linuxFonts = getDefaultLinuxFonts();
-            return linuxFonts.toArray(new Font[linuxFonts.size()]);
+            return linuxFonts.toArray(new Font[0]);
         }
         else {
             List<Font> defaultFonts = getDefaultFonts();
-            return defaultFonts.toArray(new Font[defaultFonts.size()]);
+            return defaultFonts.toArray(new Font[0]);
         }
     }
 
@@ -182,7 +182,7 @@ public class AWTTerminalFontConfiguration {
                 result.add(font);
             }
         }
-        return result.toArray(new Font[result.size()]);
+        return result.toArray(new Font[0]);
     }
 
     /**

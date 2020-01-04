@@ -61,7 +61,7 @@ public class PseudoTerminal {
         for(String key : env.keySet()) {
             environment.add(key + "=" + env.get(key));
         }
-        return environment.toArray(new String[environment.size()]);
+        return environment.toArray(new String[0]);
     }
 
     private static class ProcessOutputReader {

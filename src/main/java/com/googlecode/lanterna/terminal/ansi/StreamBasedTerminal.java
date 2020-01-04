@@ -27,7 +27,6 @@ import java.nio.charset.Charset;
 import com.googlecode.lanterna.Symbols;
 import com.googlecode.lanterna.TerminalTextUtils;
 import com.googlecode.lanterna.input.InputDecoder;
-import com.googlecode.lanterna.input.KeyDecodingProfile;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.ScreenInfoAction;
 import com.googlecode.lanterna.input.ScreenInfoCharacterPattern;
@@ -35,6 +34,7 @@ import com.googlecode.lanterna.terminal.AbstractTerminal;
 import com.googlecode.lanterna.TerminalPosition;
 
 import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.TimeUnit;
@@ -51,7 +51,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public abstract class StreamBasedTerminal extends AbstractTerminal {
 
-    private static final Charset UTF8_REFERENCE = Charset.forName("UTF-8");
+    private static final Charset UTF8_REFERENCE = StandardCharsets.UTF_8;
 
     private final InputStream terminalInput;
     private final OutputStream terminalOutput;
@@ -77,7 +77,6 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
         this.keyQueue = new LinkedList<>();
         this.readLock = new ReentrantLock();
         this.lastReportedCursorPosition = null;
-        //noinspection ConstantConditions
     }
 
     /**

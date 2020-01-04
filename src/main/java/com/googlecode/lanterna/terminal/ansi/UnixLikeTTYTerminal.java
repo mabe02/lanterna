@@ -19,7 +19,6 @@
 package com.googlecode.lanterna.terminal.ansi;
 
 import java.io.*;
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.nio.charset.Charset;
@@ -79,7 +78,7 @@ public abstract class UnixLikeTTYTerminal extends UnixLikeTerminal {
     }
 
     @Override
-    protected void acquire() throws IOException {
+    protected void acquire() {
         // Hack!
     }
 
@@ -148,7 +147,7 @@ public abstract class UnixLikeTTYTerminal extends UnixLikeTerminal {
         List<String> commandLine = new ArrayList<>(Collections.singletonList(
                 getSTTYCommand()));
         commandLine.addAll(Arrays.asList(parameters));
-        return exec(commandLine.toArray(new String[commandLine.size()]));
+        return exec(commandLine.toArray(new String[0]));
     }
 
     protected String exec(String... cmd) throws IOException {

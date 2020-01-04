@@ -17,7 +17,7 @@ public class TextGraphicsWriter implements StyleSet<TextGraphicsWriter> {
     private final TextGraphics backend;
     private TerminalPosition cursorPosition;
     private TextColor foregroundColor, backgroundColor;
-    private EnumSet<SGR> style = EnumSet.noneOf(SGR.class);
+    private final EnumSet<SGR> style = EnumSet.noneOf(SGR.class);
     private WrapBehaviour wrapBehaviour = WrapBehaviour.WORD;
     private boolean styleable = true;
     
@@ -147,13 +147,17 @@ public class TextGraphicsWriter implements StyleSet<TextGraphicsWriter> {
     // may consist of differently styled parts. This class describes one such
     // part.
     private static class WordPart extends StyleSet.Set {
-        String word; int wordlen;
+        private final String word;
+        private final int wordlen;
+
         WordPart(String word, int wordlen, StyleSet<?> style) {
             this.word = word; this.wordlen = wordlen;
             setStyleFrom(style);
         }
     }
-    private List<WordPart> chunk_queue = new ArrayList<>();
+
+    private final List<WordPart> chunk_queue = new ArrayList<>();
+
     private void stash(StringBuilder word, int wordlen) {
         if (word.length() > 0) {
             WordPart chunk = new WordPart(word.toString(),wordlen, this);

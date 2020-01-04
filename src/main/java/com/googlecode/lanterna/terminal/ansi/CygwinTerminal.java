@@ -64,7 +64,7 @@ public class CygwinTerminal extends UnixLikeTTYTerminal {
     }
 
     @Override
-    protected TerminalSize findTerminalSize() throws IOException {
+    protected TerminalSize findTerminalSize() {
         try {
             String stty = runSTTYCommand("-a");
             Matcher matcher = STTY_SIZE_PATTERN.matcher(stty);
@@ -87,7 +87,7 @@ public class CygwinTerminal extends UnixLikeTTYTerminal {
                 "-F",
                 getPseudoTerminalDevice()));
         commandLine.addAll(Arrays.asList(parameters));
-        return exec(commandLine.toArray(new String[commandLine.size()]));
+        return exec(commandLine.toArray(new String[0]));
     }
 
     private String findSTTY() {

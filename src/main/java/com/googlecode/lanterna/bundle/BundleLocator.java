@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.PropertyResourceBundle;
@@ -79,7 +80,7 @@ public abstract class BundleLocator {
     private static class UTF8Control extends ResourceBundle.Control {
         public ResourceBundle newBundle
                 (String baseName, Locale locale, String format, ClassLoader loader, boolean reload)
-                throws IllegalAccessException, InstantiationException, IOException
+                throws IOException
         {
             // The below is a copy of the default implementation.
             String bundleName = toBundleName(baseName, locale);
@@ -101,7 +102,7 @@ public abstract class BundleLocator {
             if (stream != null) {
                 try {
                     // Only this line is changed to make it to read properties files as UTF-8.
-                    bundle = new PropertyResourceBundle(new InputStreamReader(stream, "UTF-8"));
+                    bundle = new PropertyResourceBundle(new InputStreamReader(stream, StandardCharsets.UTF_8));
                 } finally {
                     stream.close();
                 }

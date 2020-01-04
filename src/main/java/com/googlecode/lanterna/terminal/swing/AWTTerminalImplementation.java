@@ -58,9 +58,7 @@ class AWTTerminalImplementation extends GraphicalTerminalImplementation {
         //Prevent us from shrinking beyond one character
         component.setMinimumSize(new Dimension(fontConfiguration.getFontWidth(), fontConfiguration.getFontHeight()));
 
-        //noinspection unchecked
         component.setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, Collections.<AWTKeyStroke>emptySet());
-        //noinspection unchecked
         component.setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, Collections.<AWTKeyStroke>emptySet());
 
         component.addKeyListener(new TerminalInputListener());

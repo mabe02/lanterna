@@ -336,7 +336,7 @@ public class DefaultVirtualTerminalTest {
     }
 
     @Test
-    public void testPrivateMode() throws Exception {
+    public void testPrivateMode() {
         final int ROWS = 5;
         virtualTerminal.setTerminalSize(new TerminalSize(20, ROWS));
         for(int i = 1; i <= ROWS + 2; i++) {

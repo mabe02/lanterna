@@ -199,7 +199,6 @@ public class ThemeTest extends TestBase {
             else if(embeddedComponent instanceof ProgressBar) {
                 Thread progressBarAdvanceTimer = new Thread(() -> {
                     ProgressBar progressBar = (ProgressBar)embeddedComponent;
-                    //noinspection InfiniteLoopStatement
                     while(true) {
                         try {
                             Thread.sleep(100);

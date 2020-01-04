@@ -64,7 +64,7 @@ public class SimpleWindowManagerTest extends TestBase {
         }
     }
 
-    private class UndecoratedCenteredWindow extends TestWindow {
+    private static class UndecoratedCenteredWindow extends TestWindow {
 
         UndecoratedCenteredWindow() {
             super("UndecoratedCentered");
@@ -72,12 +72,10 @@ public class SimpleWindowManagerTest extends TestBase {
         }
     }
 
-    private class FullScreenWindow extends TestWindow {
-        private final boolean decorations;
+    private static class FullScreenWindow extends TestWindow {
 
         public FullScreenWindow(boolean decorations) {
             super("FullScreenWindow");
-            this.decorations = decorations;
 
             Panel content = new Panel();
             content.setLayoutManager(new BorderLayout());
@@ -88,16 +86,14 @@ public class SimpleWindowManagerTest extends TestBase {
 
             setComponent(content);
 
-            setHints(this.decorations ? Collections.singletonList(Hint.FULL_SCREEN) : Arrays.asList(Hint.FULL_SCREEN, Hint.NO_DECORATIONS));
+            setHints(decorations ? Collections.singletonList(Hint.FULL_SCREEN) : Arrays.asList(Hint.FULL_SCREEN, Hint.NO_DECORATIONS));
         }
     }
 
-    private class ExpandedWindow extends TestWindow {
-        private final boolean decorations;
+    private static class ExpandedWindow extends TestWindow {
 
         public ExpandedWindow(boolean decorations) {
             super("ExpandedWindow");
-            this.decorations = decorations;
 
             Panel content = new Panel();
             content.setLayoutManager(new BorderLayout());
@@ -108,7 +104,7 @@ public class SimpleWindowManagerTest extends TestBase {
 
             setComponent(content);
 
-            setHints(this.decorations ? Collections.singletonList(Hint.EXPANDED) : Arrays.asList(Hint.EXPANDED, Hint.NO_DECORATIONS));
+            setHints(decorations ? Collections.singletonList(Hint.EXPANDED) : Arrays.asList(Hint.EXPANDED, Hint.NO_DECORATIONS));
         }
     }
 

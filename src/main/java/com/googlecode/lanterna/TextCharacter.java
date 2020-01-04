@@ -61,7 +61,7 @@ public class TextCharacter {
         this(character.getCharacter(),
                 character.getForegroundColor(), 
                 character.getBackgroundColor(),
-                character.getModifiers().toArray(new SGR[character.getModifiers().size()]));
+                character.getModifiers().toArray(new SGR[0]));
     }
 
     /**
@@ -310,7 +310,7 @@ public class TextCharacter {
         if(!Objects.equals(this.backgroundColor, other.backgroundColor)) {
             return false;
         }
-        return !(!Objects.equals(this.modifiers, other.modifiers));
+        return Objects.equals(this.modifiers, other.modifiers);
     }
 
     @Override

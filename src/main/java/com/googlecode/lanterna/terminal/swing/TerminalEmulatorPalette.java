@@ -330,7 +330,7 @@ public class TerminalEmulatorPalette {
         throw new IllegalArgumentException("Unknown text color " + color);
     }
 
-    @SuppressWarnings({"SimplifiableIfStatement", "ConstantConditions"})
+    @SuppressWarnings({"SimplifiableIfStatement"})
     @Override
     public boolean equals(Object obj) {
         if(obj == null) {
@@ -394,10 +394,9 @@ public class TerminalEmulatorPalette {
         if(!Objects.equals(this.normalWhite, other.normalWhite)) {
             return false;
         }
-        return !(!Objects.equals(this.brightWhite, other.brightWhite));
+        return Objects.equals(this.brightWhite, other.brightWhite);
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Override
     public int hashCode() {
         int hash = 5;

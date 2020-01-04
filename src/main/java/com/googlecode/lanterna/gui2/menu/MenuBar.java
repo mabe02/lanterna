@@ -37,6 +37,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @author Bruno Eberhard
  * @author Martin Berglund
  */
+@SuppressWarnings("SuspiciousMethodCalls")
 public class MenuBar extends AbstractComponent<MenuBar> implements Container {
     private static final int EXTRA_PADDING = 0;
     private final List<Menu> menus;

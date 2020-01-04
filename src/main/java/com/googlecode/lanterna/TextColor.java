@@ -63,7 +63,8 @@ public interface TextColor {
     /**
      * Converts this color to an AWT color object, assuming a standard VGA palette.
      * @return TextColor as an AWT Color
-     * @deprecated This adds a runtime dependency to the java.desktop module which isn't declared in the module descriptor of lanterna. If you want to call this method, make sure to add it to your module.
+     * @deprecated This adds a runtime dependency to the java.desktop module which isn't declared in the module
+     * descriptor of lanterna. If you want to call this method, make sure to add it to your module.
      */
     @Deprecated
     Color toColor();
@@ -614,7 +615,6 @@ public interface TextColor {
             return hash;
         }
 
-        @SuppressWarnings("SimplifiableIfStatement")
         @Override
         public boolean equals(Object obj) {
             if (obj == null) {

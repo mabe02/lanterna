@@ -27,7 +27,6 @@ import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.IOSafeTerminal;
 import com.googlecode.lanterna.terminal.TerminalResizeListener;
 import com.googlecode.lanterna.terminal.virtual.DefaultVirtualTerminal;
-import com.googlecode.lanterna.terminal.virtual.VirtualTerminal;
 
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -416,9 +415,8 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
                     int characterWidth = fontWidth * (TerminalTextUtils.isCharCJK(textCharacter.getCharacter()) ? 2 : 1);
                     Color foregroundColor = deriveTrueForegroundColor(textCharacter, atCursorLocation);
                     Color backgroundColor = deriveTrueBackgroundColor(textCharacter, atCursorLocation);
-                    boolean drawCursor = atCursorLocation &&
-                            (!deviceConfiguration.isCursorBlinking() ||     //Always draw if the cursor isn't blinking
-                                    (deviceConfiguration.isCursorBlinking() && blinkOn));    //If the cursor is blinking, only draw when blinkOn is true
+                    //Always draw if the cursor isn't blinking
+                    boolean drawCursor = atCursorLocation && (!deviceConfiguration.isCursorBlinking() || blinkOn);    //If the cursor is blinking, only draw when blinkOn is true
 
                     // Visualize bell as all colors inverted
                     if(bellOn) {
@@ -941,7 +939,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
                     if(!shiftDown) {
                         character = Character.toLowerCase(character);
                     }
-                    keyQueue.add(new KeyStroke(character, ctrlDown, altDown, shiftDown));
+                    keyQueue.add(new KeyStroke(character, true, true, shiftDown));
                 }
             }
         }

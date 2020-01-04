@@ -9,6 +9,7 @@ import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -66,7 +67,7 @@ public class Tutorial04 {
              */
             Panel contentPanel = new Panel(new GridLayout(2));
 
-            /**
+            /*
              * Lanterna contains a number of built-in layout managers, the simplest one being LinearLayout that simply
              * arranges components in either a horizontal or a vertical line. In this tutorial, we'll use the GridLayout
              * which is based on the layout manager with the same name in SWT. In the constructor above we have
@@ -116,10 +117,7 @@ public class Tutorial04 {
             read-only and one that is editable.
              */
             contentPanel.addComponent(new Label("Read-only Combo Box (forced size)"));
-            List<String> timezonesAsStrings = new ArrayList<>();
-            for(String id: TimeZone.getAvailableIDs()) {
-                timezonesAsStrings.add(id);
-            }
+            List<String> timezonesAsStrings = new ArrayList<>(Arrays.asList(TimeZone.getAvailableIDs()));
             ComboBox<String> readOnlyComboBox = new ComboBox<>(timezonesAsStrings);
             readOnlyComboBox.setReadOnly(true);
             readOnlyComboBox.setPreferredSize(new TerminalSize(20, 1));

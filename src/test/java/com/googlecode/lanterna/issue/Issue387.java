@@ -10,7 +10,7 @@ import java.io.IOException;
 
 public class Issue387 {
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         try {
             Screen screen = new DefaultTerminalFactory().createScreen();
             screen.startScreen();

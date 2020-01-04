@@ -77,8 +77,9 @@ public interface StyleSet<T extends StyleSet<T>> {
     
     
     class Set implements StyleSet<Set> {
-        TextColor foregroundColor, backgroundColor;
-        EnumSet<SGR> style = EnumSet.noneOf(SGR.class);
+        private TextColor foregroundColor;
+        private TextColor backgroundColor;
+        private final EnumSet<SGR> style = EnumSet.noneOf(SGR.class);
         
         public Set() {}
         public Set(StyleSet<?> source) {
@@ -127,6 +128,7 @@ public interface StyleSet<T extends StyleSet<T>> {
         public EnumSet<SGR> getActiveModifiers() {
             return EnumSet.copyOf(style);
         }
+
         @Override
         public Set setStyleFrom(StyleSet<?> source) {
             setBackgroundColor(source.getBackgroundColor());
@@ -134,6 +136,5 @@ public interface StyleSet<T extends StyleSet<T>> {
             setModifiers(source.getActiveModifiers());
             return this;
         }
-        
     }
 }

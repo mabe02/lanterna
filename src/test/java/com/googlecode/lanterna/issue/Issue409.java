@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Issue409 {
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         try {
             Screen screen = new DefaultTerminalFactory().createScreen();
             screen.startScreen();

@@ -464,7 +464,7 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
     private List<Integer> fitColumnsInAvailableSpace(Table<V> table, TerminalSize area, int visibleColumns) {
         List<Integer> columnSizes = new ArrayList<>(preferredColumnSizes);
         int horizontalSpaceRequirement = 0;
-        int viewLeftColumn = table.getViewLeftColumn();
+        int viewLeftColumn = table.getRenderer().getViewLeftColumn();
         List<String> headers = table.getTableModel().getColumnLabels();
         int endColumnIndex = Math.min(headers.size(), viewLeftColumn + visibleColumns);
         List<Integer> visibleExpandableColumns = new ArrayList<>();
@@ -494,7 +494,7 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
         Theme theme = table.getTheme();
         TableHeaderRenderer<V> tableHeaderRenderer = table.getTableHeaderRenderer();
         List<String> headers = table.getTableModel().getColumnLabels();
-        int viewLeftColumn = table.getViewLeftColumn();
+        int viewLeftColumn = table.getRenderer().getViewLeftColumn();
         int visibleColumns = table.getVisibleColumns();
         if(visibleColumns == 0) {
             visibleColumns = table.getTableModel().getColumnCount();
@@ -553,8 +553,8 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
         TableCellRenderer<V> tableCellRenderer = table.getTableCellRenderer();
         TableModel<V> tableModel = table.getTableModel();
         List<List<V>> rows = tableModel.getRows();
-        int viewTopRow = table.getViewTopRow();
-        int viewLeftColumn = table.getViewLeftColumn();
+        int viewTopRow = table.getRenderer().getViewTopRow();
+        int viewLeftColumn = table.getRenderer().getViewLeftColumn();
 
         //Draw scrollbars (if needed)
         if(needVerticalScrollBar) {

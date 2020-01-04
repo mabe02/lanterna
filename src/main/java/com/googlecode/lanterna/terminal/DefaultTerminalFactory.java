@@ -159,7 +159,7 @@ public class DefaultTerminalFactory implements TerminalFactory {
                 deviceConfiguration,
                 fontConfiguration,
                 colorConfiguration,
-                autoCloseTriggers.toArray(new TerminalEmulatorAutoCloseTrigger[autoCloseTriggers.size()]));
+                autoCloseTriggers.toArray(new TerminalEmulatorAutoCloseTrigger[0]));
     }
 
     public SwingTerminalFrame createSwingTerminal() {
@@ -169,7 +169,7 @@ public class DefaultTerminalFactory implements TerminalFactory {
                 deviceConfiguration,
                 fontConfiguration instanceof SwingTerminalFontConfiguration ? (SwingTerminalFontConfiguration)fontConfiguration : null,
                 colorConfiguration,
-                autoCloseTriggers.toArray(new TerminalEmulatorAutoCloseTrigger[autoCloseTriggers.size()]));
+                autoCloseTriggers.toArray(new TerminalEmulatorAutoCloseTrigger[0]));
     }
 
     /**

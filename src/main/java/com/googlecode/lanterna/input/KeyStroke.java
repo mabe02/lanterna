@@ -217,7 +217,7 @@ public class KeyStroke {
             String sep=""; sb.append(", modifiers=[");
             if (ctrlDown) {  sb.append(sep).append("ctrl"); sep=","; }
             if (altDown) {   sb.append(sep).append("alt"); sep=","; }
-            if (shiftDown) { sb.append(sep).append("shift"); sep=","; }
+            if (shiftDown) { sb.append(sep).append("shift"); }
             sb.append("]");
         }
         return sb.append('}').toString();

@@ -21,7 +21,7 @@ import com.googlecode.lanterna.terminal.Terminal;
 
 public class Issue274 {
 
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws IOException {
 
         final Terminal ter = new DefaultTerminalFactory()
                 .setForceTextTerminal(true)

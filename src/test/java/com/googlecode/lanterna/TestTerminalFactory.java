@@ -40,7 +40,7 @@ public class TestTerminalFactory extends DefaultTerminalFactory {
         if (args == null) { return; }
         for(String arg: args) {
             if (arg == null) { continue; }
-            String tok[] = arg.split("=", 2);
+            String[] tok = arg.split("=", 2);
             arg = tok[0]; // only the part before "="
             String par = tok.length > 1 ? tok[1] : "";
             if("--text-terminal".equals(arg) || "--no-swing".equals(arg)) {

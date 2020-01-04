@@ -512,7 +512,7 @@ public class GridLayout implements LayoutManager {
     private int[] getPreferredColumnWidths(Component[][] table) {
         //actualNumberOfColumns may be different from this.numberOfColumns since some columns may have been eliminated
         int actualNumberOfColumns = table[0].length;
-        int columnWidths[] = new int[actualNumberOfColumns];
+        int[] columnWidths = new int[actualNumberOfColumns];
 
         //Start by letting all span = 1 columns take what they need
         for(Component[] row: table) {
@@ -564,7 +564,7 @@ public class GridLayout implements LayoutManager {
 
     private int[] getPreferredRowHeights(Component[][] table) {
         int numberOfRows = table.length;
-        int rowHeights[] = new int[numberOfRows];
+        int[] rowHeights = new int[numberOfRows];
 
         //Start by letting all span = 1 rows take what they need
         int rowIndex = 0;
@@ -583,7 +583,7 @@ public class GridLayout implements LayoutManager {
 
         //Next, do span > 1 and enlarge if necessary
         for(int x = 0; x < numberOfColumns; x++) {
-            for(int y = 0; y < numberOfRows && y < table.length; ) {
+            for(int y = 0; y < numberOfRows; ) {
                 if(x >= table[y].length) {
                     y++;
                     continue;
