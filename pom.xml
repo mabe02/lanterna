@@ -57,10 +57,6 @@
                         <goals>
                             <goal>compile</goal>
                         </goals>
-                        <configuration>
-                            <source>1.6</source>
-                            <target>1.6</target>
-                        </configuration>
                     </execution>
                     <execution>
                         <id>java9</id>
