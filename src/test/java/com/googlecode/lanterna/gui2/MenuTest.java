@@ -38,7 +38,6 @@ public class MenuTest extends TestBase {
 
     @Override
     public void init(final WindowBasedTextGUI textGUI) {
-        textGUI.setTheme(LanternaThemes.getRegisteredTheme("businessmachine"));
         // Create window to hold the menu
         final BasicWindow window = new BasicWindow();
         Panel contentPane = new Panel(new BorderLayout());
