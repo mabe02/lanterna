@@ -113,10 +113,6 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
         getContentPane().add(swingTerminal, BorderLayout.CENTER);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setBackground(Color.BLACK); //This will reduce white flicker when resizing the window
-        pack();
-
-        //Put input focus on the terminal component by default
-        swingTerminal.requestFocusInWindow();
     }
 
     /**
@@ -163,6 +159,17 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
     public void pack() {
         super.pack();
         disposed = false;
+    }
+
+    @Override
+    public void setVisible(boolean visible) {
+        if (visible) {
+            pack();
+
+            //Put input focus on the terminal component by default
+            swingTerminal.requestFocusInWindow();
+        }
+        super.setVisible(visible);
     }
 
     @Override
