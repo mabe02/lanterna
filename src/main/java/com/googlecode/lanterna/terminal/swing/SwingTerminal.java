@@ -29,6 +29,10 @@ import com.googlecode.lanterna.terminal.TerminalResizeListener;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.InputMethodEvent;
+import java.awt.event.InputMethodListener;
+import java.awt.im.InputMethodRequests;
+import java.text.AttributedCharacterIterator;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -44,6 +48,7 @@ import java.util.concurrent.TimeUnit;
 public class SwingTerminal extends JComponent implements IOSafeTerminal {
 
     private final SwingTerminalImplementation terminalImplementation;
+    private final TerminalInputMethodRequests inputMethodRequests;
 
     /**
      * Creates a new SwingTerminal with all the defaults set and no scroll controller connected.
@@ -154,6 +159,19 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
             colorConfiguration = TerminalEmulatorColorConfiguration.getDefault();
         }
 
+        enableInputMethods(true);
+
+        // For some reason an InputMethodListener needs to be attached in order to start receiving IME events.
+        addInputMethodListener(new InputMethodListener() {
+            @Override
+            public void inputMethodTextChanged(InputMethodEvent event) {
+            }
+
+            @Override
+            public void caretPositionChanged(InputMethodEvent event) {
+            }
+        });
+
         terminalImplementation = new SwingTerminalImplementation(
                 this,
                 fontConfiguration,
@@ -161,6 +179,8 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
                 deviceConfiguration,
                 colorConfiguration,
                 scrollController);
+
+        inputMethodRequests = new TerminalInputMethodRequests(this, terminalImplementation);
     }
 
     /**
@@ -190,6 +210,20 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
      */
     public void addInput(KeyStroke keyStroke) {
         terminalImplementation.addInput(keyStroke);
+    }
+
+    @Override
+    public InputMethodRequests getInputMethodRequests() {
+        return inputMethodRequests;
+    }
+
+    @Override
+    protected void processInputMethodEvent(InputMethodEvent e) {
+        AttributedCharacterIterator iterator = e.getText();
+        for(int i = 0; i < e.getCommittedCharacterCount(); i++) {
+            terminalImplementation.addInput(new KeyStroke(iterator.current(), false, false));
+            iterator.next();
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////
