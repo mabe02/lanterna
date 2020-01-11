@@ -20,13 +20,11 @@ class TerminalInputMethodRequests implements InputMethodRequests {
     @Override
     public Rectangle getTextLocation(TextHitInfo offset) {
         Point location = owner.getLocationOnScreen();
-        int offsetX = 0;
-        int offsetY = 0;
         TerminalPosition cursorPosition = terminalImplementation.getCursorPosition();
-        if (cursorPosition != null) {
-            offsetX = cursorPosition.getColumn() * terminalImplementation.getFontWidth();
-            offsetY = cursorPosition.getRow() * terminalImplementation.getFontHeight() + terminalImplementation.getFontHeight();
-        }
+
+        int offsetX = cursorPosition.getColumn() * terminalImplementation.getFontWidth();
+        int offsetY = cursorPosition.getRow() * terminalImplementation.getFontHeight() + terminalImplementation.getFontHeight();
+
         return new Rectangle(location.x + offsetX, location.y + offsetY, 0, 0);
     }
 
