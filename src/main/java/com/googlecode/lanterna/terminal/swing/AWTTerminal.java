@@ -158,6 +158,7 @@ public class AWTTerminal extends Panel implements IOSafeTerminal {
             colorConfiguration = TerminalEmulatorColorConfiguration.getDefault();
         }
 
+        // This will enable CJK and complex input systems
         enableInputMethods(true);
 
         // For some reason an InputMethodListener needs to be attached in order to start receiving IME events.
