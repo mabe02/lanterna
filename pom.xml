@@ -5,7 +5,7 @@
     <packaging>jar</packaging>
     <name>Lanterna</name>
     <description>Java library for creating text-based terminal GUIs</description>
-    <version>3.1.0-SNAPSHOT</version>
+    <version>3.1.0-alpha1</version>
     <url>https://github.com/mabe02/lanterna</url>
 
     <licenses>
@@ -162,7 +162,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
-                        <version>3.2.1</version>
+                        <version>2.2.1</version>
                         <executions>
                             <execution>
                                 <id>attach-sources</id>
@@ -175,7 +175,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>3.1.1</version>
+                        <version>2.9.1</version>
                         <executions>
                             <execution>
                                 <id>attach-javadocs</id>
