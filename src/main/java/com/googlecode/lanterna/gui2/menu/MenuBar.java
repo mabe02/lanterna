@@ -166,7 +166,7 @@ public class MenuBar extends AbstractComponent<MenuBar> implements Container {
                 totalWidth += preferredSize.getColumns();
             }
             totalWidth += EXTRA_PADDING;
-            return new TerminalSize(totalWidth, maxHeight + 1);
+            return new TerminalSize(totalWidth, maxHeight);
         }
 
         @Override
@@ -192,13 +192,6 @@ public class MenuBar extends AbstractComponent<MenuBar> implements Container {
                 leftPosition += finalWidth + EXTRA_PADDING;
                 TextGUIGraphics componentGraphics = graphics.newTextGraphics(menu.getPosition(), menu.getSize());
                 menu.draw(componentGraphics);
-            }
-
-
-            if (size.getRows() > 1) {
-                graphics.applyThemeStyle(getThemeDefinition().getNormal());
-                graphics.drawLine(0, size.getRows() - 1, size.getColumns(),
-                        size.getRows() - 1, Symbols.DOUBLE_LINE_HORIZONTAL);
             }
         }
     }

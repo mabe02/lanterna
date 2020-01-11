@@ -42,6 +42,7 @@ public class MenuTest extends TestBase {
         final BasicWindow window = new BasicWindow();
         Panel contentPane = new Panel(new BorderLayout());
         contentPane.addComponent(Panels.vertical(
+                new Separator(Direction.HORIZONTAL).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Fill)),
                 new MultiColorComponent(),
                 new Button("Close", window::close)));
         window.setComponent(contentPane);
