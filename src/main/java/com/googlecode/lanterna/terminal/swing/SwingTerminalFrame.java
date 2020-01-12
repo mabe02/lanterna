@@ -116,6 +116,30 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
     }
 
     /**
+     * Returns the current font configuration. Note that it is immutable and cannot be changed.
+     * @return This {@link SwingTerminalFrame}'s current font configuration
+     */
+    public SwingTerminalFontConfiguration getFontConfiguration() {
+        return swingTerminal.getFontConfiguration();
+    }
+
+    /**
+     * Returns this terminal emulator's color configuration. Note that it is immutable and cannot be changed.
+     * @return This {@link SwingTerminalFrame}'s color configuration
+     */
+    public TerminalEmulatorColorConfiguration getColorConfiguration() {
+        return swingTerminal.getColorConfiguration();
+    }
+
+    /**
+     * Returns this terminal emulator's device configuration. Note that it is immutable and cannot be changed.
+     * @return This {@link SwingTerminalFrame}'s device configuration
+     */
+    public TerminalEmulatorDeviceConfiguration getDeviceConfiguration() {
+        return swingTerminal.getDeviceConfiguration();
+    }
+
+    /**
      * Returns the auto-close triggers used by the SwingTerminalFrame
      * @return Current auto-close trigger
      */

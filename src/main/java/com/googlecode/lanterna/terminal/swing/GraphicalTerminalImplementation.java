@@ -131,6 +131,14 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
         virtualTerminal.setBacklogSize(deviceConfiguration.getLineBufferScrollbackSize());
     }
 
+    TerminalEmulatorDeviceConfiguration getDeviceConfiguration() {
+        return deviceConfiguration;
+    }
+
+    TerminalEmulatorColorConfiguration getColorConfiguration() {
+        return colorConfiguration;
+    }
+
     ///////////
     // First abstract methods that are implemented in AWTTerminalImplementation and SwingTerminalImplementation
     ///////////

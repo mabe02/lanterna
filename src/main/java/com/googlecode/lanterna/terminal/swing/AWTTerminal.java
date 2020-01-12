@@ -184,6 +184,30 @@ public class AWTTerminal extends Panel implements IOSafeTerminal {
     }
 
     /**
+     * Returns the current font configuration. Note that it is immutable and cannot be changed.
+     * @return This AWTTerminal's current font configuration
+     */
+    public AWTTerminalFontConfiguration getFontConfiguration() {
+        return terminalImplementation.getFontConfiguration();
+    }
+
+    /**
+     * Returns this terminal emulator's color configuration. Note that it is immutable and cannot be changed.
+     * @return This {@link AWTTerminal}'s color configuration
+     */
+    public TerminalEmulatorColorConfiguration getColorConfiguration() {
+        return terminalImplementation.getColorConfiguration();
+    }
+
+    /**
+     * Returns this terminal emulator's device configuration. Note that it is immutable and cannot be changed.
+     * @return This {@link AWTTerminal}'s device configuration
+     */
+    public TerminalEmulatorDeviceConfiguration getDeviceConfiguration() {
+        return terminalImplementation.getDeviceConfiguration();
+    }
+
+    /**
      * Overridden method from AWT's {@code Component} class that returns the preferred size of the terminal (in pixels)
      * @return The terminal's preferred size in pixels
      */
