@@ -124,6 +124,30 @@ public class AWTTerminalFrame extends Frame implements IOSafeTerminal {
     }
 
     /**
+     * Returns the current font configuration. Note that it is immutable and cannot be changed.
+     * @return This {@link AWTTerminalFrame}'s current font configuration
+     */
+    public AWTTerminalFontConfiguration getFontConfiguration() {
+        return awtTerminal.getFontConfiguration();
+    }
+
+    /**
+     * Returns this terminal emulator's color configuration. Note that it is immutable and cannot be changed.
+     * @return This {@link AWTTerminalFrame}'s color configuration
+     */
+    public TerminalEmulatorColorConfiguration getColorConfiguration() {
+        return awtTerminal.getColorConfiguration();
+    }
+
+    /**
+     * Returns this terminal emulator's device configuration. Note that it is immutable and cannot be changed.
+     * @return This {@link AWTTerminalFrame}'s device configuration
+     */
+    public TerminalEmulatorDeviceConfiguration getDeviceConfiguration() {
+        return awtTerminal.getDeviceConfiguration();
+    }
+
+    /**
      * Returns the auto-close triggers used by the AWTTerminalFrame
      * @return Current auto-close trigger
      */

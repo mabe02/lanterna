@@ -87,6 +87,10 @@ class AWTTerminalImplementation extends GraphicalTerminalImplementation {
         });
     }
 
+    public AWTTerminalFontConfiguration getFontConfiguration() {
+        return fontConfiguration;
+    }
+
     @Override
     protected int getFontHeight() {
         return fontConfiguration.getFontHeight();
