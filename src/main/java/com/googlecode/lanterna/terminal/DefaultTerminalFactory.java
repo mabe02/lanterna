@@ -110,16 +110,7 @@ public class DefaultTerminalFactory implements TerminalFactory {
         //       ("because we can" - unless "rather not")
         if (forceTextTerminal || isAwtHeadless() ||
                 (System.console() != null && !preferTerminalEmulator) ) {
-            // if tty but have no tty, but do have a port, then go telnet:
-            if( telnetPort > 0 && System.console() == null) {
-                return createTelnetTerminal();
-            }
-            if(isOperatingSystemWindows()) {
-                return createWindowsTerminal();
-            }
-            else {
-                return createUnixTerminal(outputStream, inputStream, charset);
-            }
+            return createHeadlessTerminal();
         }
         else {
             // while Lanterna's TerminalEmulator lacks mouse support:
@@ -131,6 +122,25 @@ public class DefaultTerminalFactory implements TerminalFactory {
                 return createTerminalEmulator();
             }
         }
+    }
+
+    /**
+     * Instantiates a Terminal according to the factory implementation with the exception that
+     * {@link DefaultTerminalFactory#preferTerminalEmulator} is always ignored. You may want to use this method when
+     * using tools that rely on AOT compilation such as Graal native-image to ensure AWT/Swing code paths are not hit.
+     * @return Terminal implementation
+     * @throws IOException If there was an I/O error with the underlying input/output system
+     */
+    public Terminal createHeadlessTerminal() throws IOException {
+        // if tty but have no tty, but do have a port, then go telnet:
+        if( telnetPort > 0 && System.console() == null) {
+            return createTelnetTerminal();
+        }
+        if(isOperatingSystemWindows()) {
+            return createWindowsTerminal();
+        }
+
+        return createUnixTerminal(outputStream, inputStream, charset);
     }
 
     /**
