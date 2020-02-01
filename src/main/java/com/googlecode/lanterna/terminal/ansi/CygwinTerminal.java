@@ -32,18 +32,22 @@ import java.util.regex.Pattern;
  * This class extends UnixLikeTerminal and implements the Cygwin-specific implementations. This means, running a Java
  * application using Lanterna inside the Cygwin Terminal application. The standard Windows command prompt (cmd.exe) is
  * not supported by this class.
- * <p>
+ * <p/>
  * <b>NOTE:</b> This class is experimental and does not fully work! Some of the operations, like disabling echo and
  * changing cbreak seems to be impossible to do without resorting to native code. Running "stty raw" before starting the
  * JVM will improve compatibility.
+ * <p/>
+ * <b>NOTE:</b> This class will try to find Cygwin by scanning the directories on java.library.path, but you can also
+ * tell it where Cygwin is installed by setting the CYGWIN_HOME environment variable.
  *
  * @author Martin
  * @author Andreas
  */
 public class CygwinTerminal extends UnixLikeTTYTerminal {
-
     private static final String STTY_LOCATION = findProgram("stty.exe");
     private static final Pattern STTY_SIZE_PATTERN = Pattern.compile(".*rows ([0-9]+);.*columns ([0-9]+);.*");
+    private static final String JAVA_LIBRARY_PATH_PROPERTY = "java.library.path";
+    private static final String CYGWIN_HOME_ENV = "CYGWIN_HOME";
 
     /**
      * Creates a new CygwinTerminal based off input and output streams and a character set to use
@@ -90,6 +94,12 @@ public class CygwinTerminal extends UnixLikeTTYTerminal {
         return exec(commandLine.toArray(new String[0]));
     }
 
+    @Override
+    protected void acquire() throws IOException {
+        super.acquire();
+        // Placeholder in case we want to add extra stty invocations for Cygwin
+    }
+
     private String findSTTY() {
         return STTY_LOCATION;
     }
@@ -101,7 +111,13 @@ public class CygwinTerminal extends UnixLikeTTYTerminal {
     }
 
     private static String findProgram(String programName) {
-        String[] paths = System.getProperty("java.library.path").split(";");
+        if (System.getenv(CYGWIN_HOME_ENV) != null) {
+            File cygwinHomeBinFile = new File(System.getenv(CYGWIN_HOME_ENV) + "/bin", programName);
+            if (cygwinHomeBinFile.exists()) {
+                return cygwinHomeBinFile.getAbsolutePath();
+            }
+        }
+        String[] paths = System.getProperty(JAVA_LIBRARY_PATH_PROPERTY).split(";");
         for(String path : paths) {
             File shBin = new File(path, programName);
             if(shBin.exists()) {

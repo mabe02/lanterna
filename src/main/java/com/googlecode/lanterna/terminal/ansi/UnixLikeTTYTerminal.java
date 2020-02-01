@@ -110,36 +110,36 @@ public abstract class UnixLikeTTYTerminal extends UnixLikeTerminal {
 
     @Override
     protected void saveTerminalSettings() throws IOException {
-        sttyStatusToRestore = exec(getSTTYCommand(), "-g").trim();
+        sttyStatusToRestore = runSTTYCommand("-g").trim();
     }
 
     @Override
     protected void restoreTerminalSettings() throws IOException {
         if(sttyStatusToRestore != null) {
-            exec(getSTTYCommand(), sttyStatusToRestore);
+            runSTTYCommand(sttyStatusToRestore);
         }
     }
 
     @Override
     protected void keyEchoEnabled(boolean enabled) throws IOException {
-        exec(getSTTYCommand(), enabled ? "echo" : "-echo");
+        runSTTYCommand(enabled ? "echo" : "-echo");
     }
 
     @Override
     protected void canonicalMode(boolean enabled) throws IOException {
-        exec(getSTTYCommand(), enabled ? "icanon" : "-icanon");
+        runSTTYCommand(enabled ? "icanon" : "-icanon");
         if(!enabled) {
-            exec(getSTTYCommand(), "min", "1");
+            runSTTYCommand("min", "1");
         }
     }
 
     @Override
     protected void keyStrokeSignalsEnabled(boolean enabled) throws IOException {
         if(enabled) {
-            exec(getSTTYCommand(), "intr", "^C");
+            runSTTYCommand("intr", "^C");
         }
         else {
-            exec(getSTTYCommand(), "intr", "undef");
+            runSTTYCommand("intr", "undef");
         }
     }
 
