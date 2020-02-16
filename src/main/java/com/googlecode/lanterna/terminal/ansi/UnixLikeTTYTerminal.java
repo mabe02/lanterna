@@ -78,7 +78,7 @@ public abstract class UnixLikeTTYTerminal extends UnixLikeTerminal {
     }
 
     @Override
-    protected void acquire() {
+    protected void acquire() throws IOException {
         // Hack!
     }
 
