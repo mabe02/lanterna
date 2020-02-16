@@ -21,6 +21,7 @@
 package com.googlecode.lanterna.gui2.menu;
 
 import com.googlecode.lanterna.Symbols;
+import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.input.KeyStroke;
@@ -149,6 +150,12 @@ public class MenuBar extends AbstractComponent<MenuBar> implements Container {
         for (Menu menu: menus) {
             interactableLookupMap.add(menu);
         }
+    }
+
+    @Override
+    public TerminalPosition toBasePane(TerminalPosition position) {
+        // Assume the menu is always at the top of the content panel
+        return position;
     }
 
     /**
