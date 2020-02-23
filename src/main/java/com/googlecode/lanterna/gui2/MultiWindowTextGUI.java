@@ -79,6 +79,23 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
 
     /**
      * Creates a new {@code MultiWindowTextGUI} that uses the specified {@code Screen} as the backend for all drawing
+     * operations and a custom {@link WindowManager}. The screen will be automatically wrapped in a
+     * {@code VirtualScreen} in order to deal with GUIs becoming too big to fit the terminal. The background area of the
+     * GUI will use the default {@link GUIBackdrop} component.
+     * @param guiThreadFactory Factory implementation to use when creating the {@code TextGUIThread}
+     * @param screen Screen to use as the backend for drawing operations
+     * @param windowManager Custom window manager to use
+     */
+    public MultiWindowTextGUI(TextGUIThreadFactory guiThreadFactory, Screen screen, WindowManager windowManager) {
+        this(guiThreadFactory,
+                screen,
+                windowManager,
+                null,
+                new GUIBackdrop());
+    }
+
+    /**
+     * Creates a new {@code MultiWindowTextGUI} that uses the specified {@code Screen} as the backend for all drawing
      * operations. The screen will be automatically wrapped in a {@code VirtualScreen} in order to deal with GUIs
      * becoming too big to fit the terminal. The background area of the GUI is a solid color as decided by the
      * {@code backgroundColor} parameter.

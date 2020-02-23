@@ -153,7 +153,6 @@ public class DefaultWindowManager implements WindowManager {
      * @param window Window to prepare decorated size and position for
      */
     protected void prepareWindow(TerminalSize screenSize, Window window) {
-        WindowDecorationRenderer decorationRenderer = getWindowDecorationRenderer(window);
         TerminalSize contentAreaSize;
         if(window.getHints().contains(Window.Hint.FIXED_SIZE)) {
             contentAreaSize = window.getSize();
@@ -161,7 +160,7 @@ public class DefaultWindowManager implements WindowManager {
         else {
             contentAreaSize = window.getPreferredSize();
         }
-        TerminalSize size = decorationRenderer.getDecoratedSize(window, contentAreaSize);
+        TerminalSize size = getWindowDecorationRenderer(window).getDecoratedSize(window, contentAreaSize);
         TerminalPosition position = window.getPosition();
 
         if(window.getHints().contains(Window.Hint.FULL_SCREEN)) {
