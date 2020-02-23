@@ -81,7 +81,7 @@ public interface Window extends BasePane {
         /**
          * Windows with this hint should not be automatically sized by the window manager (using
          * {@code getPreferredSize()}), rather should rely on the code manually setting the size of the window using
-         * {@code setSize(..)}.
+         * {@code setFixedSize(..)}.
          */
         public static final Hint FIXED_SIZE = new Hint("FixedSize");
 
@@ -239,8 +239,19 @@ public interface Window extends BasePane {
      * <b>Important:</b> if you are writing your own {@link WindowManager}, you should call {@code setDecoratedSize}
      * instead of this when decided the size of the window.
      * @param size New size of your fixed-size window
+     * @deprecated This method is deprecated now as it probably doesn't do what you think. Please use
+     * {@code setFixedSize} or {@code setDecoratedSize} instead, depending on what you are trying to do.
      */
+    @Deprecated
     void setSize(TerminalSize size);
+
+    /**
+     * Calling this method will add the FIXED_SIZE window hint (if it wasn't present already) and attempt to force the
+     * window to always have the size specified. Notice that it's up to the {@link WindowManager} if this size and hint
+     * are going to be honored.
+     * @param size New size of your fixed-size window
+     */
+    void setFixedSize(TerminalSize size);
 
     /**
      * Returns the last known size of the window including window decorations put on by the window manager. The value

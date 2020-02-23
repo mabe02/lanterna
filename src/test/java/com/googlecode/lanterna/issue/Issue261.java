@@ -55,7 +55,7 @@ public class Issue261 {
 
         // Create window to hold the panel
         BasicWindow window = new BasicWindow();
-        window.setSize(new TerminalSize(500, 700));
+        window.setFixedSize(new TerminalSize(500, 700));
         window.setComponent(panel);
 
         gui.addWindowAndWait(window);

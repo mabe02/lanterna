@@ -102,7 +102,7 @@ public class MultiWindowManagerTest extends TestBase {
             statsTableContainer.addComponent(new Label("Size:"));
             this.labelWindowSize = new Label("");
             statsTableContainer.addComponent(labelWindowSize);
-            statsTableContainer.addComponent(new Label("Auto-size:"));
+            statsTableContainer.addComponent(new Label("Auto-sized:"));
             this.labelUnlockWindow = new Label("true");
             statsTableContainer.addComponent(labelUnlockWindow);
 
@@ -125,19 +125,18 @@ public class MultiWindowManagerTest extends TestBase {
             contentArea.addComponent(
                     new Label(
                             "Move window with ALT+Arrow\n" +
-                            "Resize window with CTRL+Arrow\n" +
-                            " (need to disabled managed mode to resize)"));
+                            "Resize window with CTRL+Arrow"));
             contentArea.addComponent(new EmptySpace(TerminalSize.ONE).setLayoutData(
                     GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.FILL, true, true)));
             contentArea.addComponent(
                     Panels.horizontal(
-                            new Button("Toggle managed", this::toggleManaged),
+                            new Button("Toggle auto-sized", this::toggleManaged),
                             new Button("Close", this::close)));
             setComponent(contentArea);
         }
 
         private void toggleManaged() {
-            boolean isManaged = labelUnlockWindow.getText().equals("true");
+            boolean isManaged = !getHints().contains(Hint.FIXED_SIZE);
             isManaged = !isManaged;
             if(isManaged) {
                 setHints(Collections.<Hint> emptyList());
@@ -158,7 +157,8 @@ public class MultiWindowManagerTest extends TestBase {
                             setPosition(getPosition().withRelativeRow(1));
                         }
                         else if(key.isCtrlDown()) {
-                            setSize(getSize().withRelativeRows(1));
+                            setFixedSize(getSize().withRelativeRows(1));
+                            labelUnlockWindow.setText("false");
                         }
                         handled = true;
                         break;
@@ -167,7 +167,8 @@ public class MultiWindowManagerTest extends TestBase {
                             setPosition(getPosition().withRelativeColumn(-1));
                         }
                         else if(key.isCtrlDown() && getSize().getColumns() > 1) {
-                            setSize(getSize().withRelativeColumns(-1));
+                            setFixedSize(getSize().withRelativeColumns(-1));
+                            labelUnlockWindow.setText("false");
                         }
                         handled = true;
                         break;
@@ -176,7 +177,8 @@ public class MultiWindowManagerTest extends TestBase {
                             setPosition(getPosition().withRelativeColumn(1));
                         }
                         else if(key.isCtrlDown()) {
-                            setSize(getSize().withRelativeColumns(1));
+                            setFixedSize(getSize().withRelativeColumns(1));
+                            labelUnlockWindow.setText("false");
                         }
                         handled = true;
                         break;
@@ -185,11 +187,11 @@ public class MultiWindowManagerTest extends TestBase {
                             setPosition(getPosition().withRelativeRow(-1));
                         }
                         else if(key.isCtrlDown() && getSize().getRows() > 1) {
-                            setSize(getSize().withRelativeRows(-1));
+                            setFixedSize(getSize().withRelativeRows(-1));
+                            labelUnlockWindow.setText("false");
                         }
                         handled = true;
                         break;
-                    default:
                 }
             }
             return handled;

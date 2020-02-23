@@ -23,7 +23,7 @@ public class Issue384 {
         final MultiWindowTextGUI textGUI = new MultiWindowTextGUI(screen);
         final Window window = new BasicWindow("Table container test");
         window.setHints(Collections.singletonList(Window.Hint.FIXED_SIZE));
-        window.setSize(new TerminalSize(60, 14));
+        window.setFixedSize(new TerminalSize(60, 14));
 
         final Table<String> table = new Table<>("Column", "Expanded Column", "Column");
         table.setCellSelection(true);
