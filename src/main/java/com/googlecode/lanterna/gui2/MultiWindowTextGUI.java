@@ -58,7 +58,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
      * @param screen Screen to use as the backend for drawing operations
      */
     public MultiWindowTextGUI(Screen screen) {
-        this(screen, TextColor.ANSI.BLUE);
+        this(new SameTextGUIThread.Factory(), screen);
     }
 
     /**
@@ -83,7 +83,10 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
      * {@code backgroundColor} parameter.
      * @param screen Screen to use as the backend for drawing operations
      * @param backgroundColor Color to use for the GUI background
+     * @deprecated It's preferred to use a custom background component if you want to customize the background color,
+     * or change the theme
      */
+    @Deprecated
     public MultiWindowTextGUI(
             Screen screen,
             TextColor backgroundColor) {
@@ -161,7 +164,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
         }
         if(background == null) {
             //Use a sensible default instead of throwing
-            background = new EmptySpace(TextColor.ANSI.BLUE);
+            background = new GUIBackdrop();
         }
         this.virtualScreen = screen;
         this.windowManager = windowManager;
