@@ -235,7 +235,10 @@ public interface Window extends BasePane {
      * next redraw based on how large area the TextGraphics given is covering. However, if you add the FIXED_SIZE
      * window hint, the auto-size calculation will be turned off and you can use this method to set how large you want
      * the window to be.
-     * @param size New size of the window
+     * <p/>
+     * <b>Important:</b> if you are writing your own {@link WindowManager}, you should call {@code setDecoratedSize}
+     * instead of this when decided the size of the window.
+     * @param size New size of your fixed-size window
      */
     void setSize(TerminalSize size);
 
@@ -250,6 +253,9 @@ public interface Window extends BasePane {
      * This method is called by the GUI system to update the window on how large it is, counting window decorations too.
      * Calling this yourself will have no effect other than making the {@code getDecoratedSize()} call incorrect until
      * the next redraw.
+     * <p/>
+     * <b>Important:</b> if you are writing your own {@link WindowManager}, you should call this method instead of
+     * {@code setSize} when decided the size of the window.
      * @param decoratedSize Size of the window, including window decorations
      */
     void setDecoratedSize(TerminalSize decoratedSize);

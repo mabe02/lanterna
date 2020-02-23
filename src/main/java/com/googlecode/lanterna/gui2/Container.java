@@ -19,6 +19,7 @@
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.input.KeyStroke;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -39,11 +40,24 @@ public interface Container extends Component {
     int getChildCount();
 
     /**
-     * Returns a list that is to be considered a copy of the list of children contained inside of this object.
-     * Modifying this list will not affect any internal state.
+     * Returns collection that is to be considered a copy of the list of children contained inside of this object. 
+     * Modifying this collection will not affect any internal state.
+     * <p/>
+     * This method isn't deprecated but it should have originally been defined as returning a List instead of a
+     * Collection. See {@code getChildrenList} for a method with this signature.
      * @return Child-components inside of this Container
+     * @see Container#getChildrenList()
      */
-    List<Component> getChildren();
+    Collection<Component> getChildren();
+
+    /**
+     * Returns list that is to be considered a copy of the list of children inside of this container.
+     * Modifying this list will not affect any internal state. This method is essentially the same as getChildren but
+     * the returned collection is a list.
+     * @return Child-components inside of this Container
+     * @see Container#getChildren()
+     */
+    List<Component> getChildrenList();
 
     /**
      * Returns {@code true} if this container contains the supplied component either directly or indirectly through

@@ -91,6 +91,16 @@ public class VirtualScreen extends AbstractScreen {
         return viewportSize;
     }
 
+    public void setViewportTopLeft(TerminalPosition position) {
+        viewportTopLeft = position;
+        while(viewportTopLeft.getColumn() > 0 && viewportTopLeft.getColumn() + viewportSize.getColumns() > minimumSize.getColumns()) {
+            viewportTopLeft = viewportTopLeft.withRelativeColumn(-1);
+        }
+        while(viewportTopLeft.getRow() > 0 && viewportTopLeft.getRow() + viewportSize.getRows() > minimumSize.getRows()) {
+            viewportTopLeft = viewportTopLeft.withRelativeRow(-1);
+        }
+    }
+
     @Override
     public void startScreen() throws IOException {
         realScreen.startScreen();

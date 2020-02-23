@@ -21,6 +21,7 @@ package com.googlecode.lanterna.gui2;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.input.KeyStroke;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -71,13 +72,18 @@ public abstract class AbstractComposite<T extends Container> extends AbstractCom
     }
 
     @Override
-    public List<Component> getChildren() {
+    public List<Component> getChildrenList() {
         if(component != null) {
             return Collections.singletonList(component);
         }
         else {
             return Collections.emptyList();
         }
+    }
+
+    @Override
+    public Collection<Component> getChildren() {
+        return getChildrenList();
     }
 
     @Override

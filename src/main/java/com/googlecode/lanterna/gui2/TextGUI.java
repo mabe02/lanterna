@@ -20,6 +20,7 @@ package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.graphics.Theme;
 import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.screen.Screen;
 
 import java.io.IOException;
 
@@ -56,6 +57,12 @@ public interface TextGUI {
     boolean processInput() throws IOException;
 
     /**
+     * Returns the {@link Screen} for this {@link WindowBasedTextGUI}
+     * @return the {@link Screen} used by this {@link WindowBasedTextGUI}
+     */
+    Screen getScreen();
+
+    /**
      * Updates the screen, to make any changes visible to the user.
      * @throws java.io.IOException In case there was an underlying I/O error
      */
@@ -67,6 +74,15 @@ public interface TextGUI {
      * @return {@code true} if this TextGUI has a change and is waiting for someone to call {@code updateScreen()}
      */
     boolean isPendingUpdate();
+
+    /**
+     * This method controls whether or not the virtual screen should be used. This is what enabled you to make your UI
+     * larger than what fits the terminal, as it will expand the virtual area and put in scrollbars. If set to
+     * {@code false}, the virtual screen will be bypassed and any content outside of the screen will be cropped. This
+     * property is {@code true} by default.
+     * @param virtualScreenEnabled If {@code true}, then virtual screen will be used, otherwise it is bypassed
+     */
+    void setVirtualScreenEnabled(boolean virtualScreenEnabled);
 
     /**
      * The first time this method is called, it will create a new TextGUIThread object that you can use to automatically

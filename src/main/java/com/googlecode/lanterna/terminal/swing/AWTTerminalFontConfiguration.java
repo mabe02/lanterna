@@ -270,7 +270,7 @@ public class AWTTerminalFontConfiguration {
      * Returns the horizontal size in pixels of the fonts configured
      * @return Horizontal size in pixels of the fonts configured
      */
-    int getFontWidth() {
+    public int getFontWidth() {
         return fontWidth;
     }
 
@@ -278,7 +278,7 @@ public class AWTTerminalFontConfiguration {
      * Returns the vertical size in pixels of the fonts configured
      * @return Vertical size in pixels of the fonts configured
      */
-    int getFontHeight() {
+    public int getFontHeight() {
         return fontHeight;
     }
 
@@ -286,7 +286,7 @@ public class AWTTerminalFontConfiguration {
      * Returns {@code true} if anti-aliasing has been enabled, {@code false} otherwise
      * @return {@code true} if anti-aliasing has been enabled, {@code false} otherwise
      */
-    boolean isAntiAliased() {
+    public boolean isAntiAliased() {
         return useAntiAliasing;
     }
 

@@ -22,6 +22,7 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.input.KeyStroke;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -209,7 +210,12 @@ public class Panel extends AbstractComponent<Panel> implements Container {
     }
 
     @Override
-    public List<Component> getChildren() {
+    public Collection<Component> getChildren() {
+        return getChildrenList();
+    }
+
+    @Override
+    public List<Component> getChildrenList() {
         synchronized(components) {
             return new ArrayList<>(components);
         }

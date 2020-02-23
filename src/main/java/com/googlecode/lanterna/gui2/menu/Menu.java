@@ -73,7 +73,7 @@ public class Menu extends MenuItem {
                     @Override
                     public void onUnhandledInput(Window basePane, KeyStroke keyStroke, AtomicBoolean hasBeenHandled) {
                         if (keyStroke.getKeyType() == KeyType.ArrowLeft) {
-                            int thisMenuIndex = menuBar.getChildren().indexOf(Menu.this);
+                            int thisMenuIndex = menuBar.getChildrenList().indexOf(Menu.this);
                             if (thisMenuIndex > 0) {
                                 popupMenu.close();
                                 Menu nextSelectedMenu = menuBar.getMenu(thisMenuIndex - 1);
@@ -82,7 +82,7 @@ public class Menu extends MenuItem {
                             }
                         }
                         else if (keyStroke.getKeyType() == KeyType.ArrowRight) {
-                            int thisMenuIndex = menuBar.getChildren().indexOf(Menu.this);
+                            int thisMenuIndex = menuBar.getChildrenList().indexOf(Menu.this);
                             if (thisMenuIndex >= 0 && thisMenuIndex < menuBar.getMenuCount() - 1) {
                                 popupMenu.close();
                                 Menu nextSelectedMenu = menuBar.getMenu(thisMenuIndex + 1);

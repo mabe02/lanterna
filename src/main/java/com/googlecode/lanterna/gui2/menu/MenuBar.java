@@ -27,6 +27,7 @@ import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.input.KeyStroke;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -67,8 +68,13 @@ public class MenuBar extends AbstractComponent<MenuBar> implements Container {
     }
 
     @Override
-    public List<Component> getChildren() {
+    public List<Component> getChildrenList() {
         return new ArrayList<>(menus);
+    }
+
+    @Override
+    public Collection<Component> getChildren() {
+        return getChildrenList();
     }
 
     @Override

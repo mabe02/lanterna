@@ -124,6 +124,11 @@ public abstract class AbstractTextGUI implements TextGUI {
     }
 
     @Override
+    public Screen getScreen() {
+        return screen;
+    }
+
+    @Override
     public boolean isPendingUpdate() {
         return screen.doResizeIfNecessary() != null || dirty;
     }
