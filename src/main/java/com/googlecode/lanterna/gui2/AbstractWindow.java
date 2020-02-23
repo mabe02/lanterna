@@ -221,8 +221,15 @@ public abstract class AbstractWindow extends AbstractBasePane<Window> implements
     }
 
     @Override
+    @Deprecated
     public void setSize(TerminalSize size) {
         setSize(size, true);
+    }
+
+    @Override
+    public void setFixedSize(TerminalSize size) {
+        hints.add(Hint.FIXED_SIZE);
+        setSize(size);
     }
 
     private void setSize(TerminalSize size, boolean invalidate) {
