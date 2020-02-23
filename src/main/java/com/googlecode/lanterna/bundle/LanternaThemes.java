@@ -116,7 +116,8 @@ public class LanternaThemes {
     private static Properties loadPropTheme(String resourceFileName) {
         Properties properties = new Properties();
         try {
-            InputStream resourceAsStream = AbstractTextGUI.class.getResourceAsStream(resourceFileName);
+            ClassLoader classLoader = AbstractTextGUI.class.getClassLoader();
+            InputStream resourceAsStream = classLoader.getResourceAsStream(resourceFileName);
             if(resourceAsStream == null) {
                 resourceAsStream = new FileInputStream("src/main/resources/" + resourceFileName);
             }
