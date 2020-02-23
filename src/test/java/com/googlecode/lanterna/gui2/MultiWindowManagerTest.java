@@ -36,6 +36,9 @@ public class MultiWindowManagerTest extends TestBase {
         new MultiWindowManagerTest().run(args);
     }
 
+    private boolean virtualScreenEnabled = true;
+    private Button buttonToggleVirtualScreen;
+
     @Override
     public void init(final WindowBasedTextGUI textGUI) {
         textGUI.getBackgroundPane().setComponent(new BackgroundComponent());
@@ -48,6 +51,15 @@ public class MultiWindowManagerTest extends TestBase {
                 onNewWindow(textGUI);
             }
         }));
+        buttonToggleVirtualScreen = new Button("Virtual Screen: Enabled", new Runnable() {
+            @Override
+            public void run() {
+                virtualScreenEnabled = !virtualScreenEnabled;
+                textGUI.setVirtualScreenEnabled(virtualScreenEnabled);
+                buttonToggleVirtualScreen.setLabel("Virtual Screen: " + (virtualScreenEnabled ? "Enabled" : "Disabled"));
+            }
+        });
+        contentArea.addComponent(buttonToggleVirtualScreen);
         contentArea.addComponent(new EmptySpace(TerminalSize.ONE));
         contentArea.addComponent(new Button("Close", new Runnable() {
             @Override

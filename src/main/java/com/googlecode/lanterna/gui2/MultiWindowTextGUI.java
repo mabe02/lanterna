@@ -50,6 +50,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
     private Window activeWindow;
     private boolean hadWindowAtSomePoint;
     private boolean eofWhenNoWindows;
+    private boolean virtualScreenEnabled;
 
     /**
      * Creates a new {@code MultiWindowTextGUI} that uses the specified {@code Screen} as the backend for all drawing
@@ -164,6 +165,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
             background = new EmptySpace(TextColor.ANSI.BLUE);
         }
         this.virtualScreen = screen;
+        this.virtualScreenEnabled = true;
         this.windowManager = windowManager;
         this.backgroundPane = new AbstractBasePane<BasePane>() {
             @Override
@@ -202,24 +204,30 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
 
     @Override
     public synchronized void updateScreen() throws IOException {
-        TerminalSize minimumTerminalSize = TerminalSize.ZERO;
-        for(Window window: windows) {
-            if(window.isVisible()) {
-                if (window.getHints().contains(Window.Hint.FULL_SCREEN) ||
-                        window.getHints().contains(Window.Hint.FIT_TERMINAL_WINDOW) ||
-                        window.getHints().contains(Window.Hint.EXPANDED)) {
-                    //Don't take full screen windows or auto-sized windows into account
-                    continue;
+        if (virtualScreenEnabled) {
+            TerminalSize minimumTerminalSize = TerminalSize.ZERO;
+            for (Window window : windows) {
+                if (window.isVisible()) {
+                    if (window.getHints().contains(Window.Hint.FULL_SCREEN) ||
+                            window.getHints().contains(Window.Hint.FIT_TERMINAL_WINDOW) ||
+                            window.getHints().contains(Window.Hint.EXPANDED)) {
+                        //Don't take full screen windows or auto-sized windows into account
+                        continue;
+                    }
+                    TerminalPosition lastPosition = window.getPosition();
+                    minimumTerminalSize = minimumTerminalSize.max(
+                            //Add position to size to get the bottom-right corner of the window
+                            window.getDecoratedSize().withRelative(
+                                    Math.max(lastPosition.getColumn(), 0),
+                                    Math.max(lastPosition.getRow(), 0)));
                 }
-                TerminalPosition lastPosition = window.getPosition();
-                minimumTerminalSize = minimumTerminalSize.max(
-                        //Add position to size to get the bottom-right corner of the window
-                        window.getDecoratedSize().withRelative(
-                                Math.max(lastPosition.getColumn(), 0),
-                                Math.max(lastPosition.getRow(), 0)));
             }
+            virtualScreen.setMinimumSize(minimumTerminalSize);
         }
-        virtualScreen.setMinimumSize(minimumTerminalSize);
+        else {
+            virtualScreen.setViewportTopLeft(TerminalPosition.TOP_LEFT_CORNER);
+            virtualScreen.setMinimumSize(virtualScreen.getViewportSize());
+        }
         super.updateScreen();
     }
 
@@ -318,6 +326,18 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
      */
     public boolean isEOFWhenNoWindows() {
         return eofWhenNoWindows;
+    }
+
+    /**
+     * This method controls whether or not the virtual screen should be used. This is what enabled you to make your UI
+     * larger than what fits the terminal, as it will expand the virtual area and put in scrollbars. If set to
+     * {@code false}, the virtual screen will be bypassed and any content outside of the screen will be cropped. This
+     * property is {@code true} by default.
+     * @param virtualScreenEnabled If {@code true}, then virtual screen will be used, otherwise it is bypassed
+     */
+    @Override
+    public void setVirtualScreenEnabled(boolean virtualScreenEnabled) {
+        this.virtualScreenEnabled = virtualScreenEnabled;
     }
 
     @Override
@@ -450,11 +470,6 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
     @Override
     public BasePane getBackgroundPane() {
         return backgroundPane;
-    }
-
-    @Override
-    public Screen getScreen() {
-        return virtualScreen;
     }
 
     @Override

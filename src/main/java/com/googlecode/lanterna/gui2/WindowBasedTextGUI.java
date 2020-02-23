@@ -107,12 +107,6 @@ public interface WindowBasedTextGUI extends TextGUI {
     BasePane getBackgroundPane();
 
     /**
-     * Returns the {@link Screen} for this {@link WindowBasedTextGUI}
-     * @return the {@link Screen} used by this {@link WindowBasedTextGUI}
-     */
-    Screen getScreen();
-
-    /**
      * Returns the {@link WindowPostRenderer} for this {@link WindowBasedTextGUI}
      * @return the {@link WindowPostRenderer} for this {@link WindowBasedTextGUI}
      */
