@@ -36,11 +36,13 @@ import java.util.*;
  * This is the main Text GUI implementation built into Lanterna, supporting multiple tiled windows and a dynamic
  * background area that can be fully customized. If you want to create a text-based GUI with windows and controls,
  * it's very likely this is what you want to use.
- *
+ * <p/>
+ * Note: This class used to always wrap the {@link Screen} object with a {@link VirtualScreen} to ensure that the UI
+ * always fits. As of 3.1.0, we don't do this anymore so when you create the {@link MultiWindowTextGUI} you can wrap
+ * the screen parameter yourself if you want to keep this behavior.
  * @author Martin
  */
 public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTextGUI {
-    private final VirtualScreen virtualScreen;
     private final WindowManager windowManager;
     private final BasePane backgroundPane;
     private final List<Window> windows;
@@ -50,12 +52,11 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
     private Window activeWindow;
     private boolean hadWindowAtSomePoint;
     private boolean eofWhenNoWindows;
-    private boolean virtualScreenEnabled;
 
     /**
      * Creates a new {@code MultiWindowTextGUI} that uses the specified {@code Screen} as the backend for all drawing
-     * operations. The screen will be automatically wrapped in a {@code VirtualScreen} in order to deal with GUIs
-     * becoming too big to fit the terminal. The background area of the GUI will be solid blue.
+     * operations. The background area of the GUI will be a solid color, depending on theme (default is blue). The
+     * current thread will be used as the GUI thread for all Lanterna library operations.
      * @param screen Screen to use as the backend for drawing operations
      */
     public MultiWindowTextGUI(Screen screen) {
@@ -64,8 +65,8 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
 
     /**
      * Creates a new {@code MultiWindowTextGUI} that uses the specified {@code Screen} as the backend for all drawing
-     * operations. The screen will be automatically wrapped in a {@code VirtualScreen} in order to deal with GUIs
-     * becoming too big to fit the terminal. The background area of the GUI will be solid blue
+     * operations. The background area of the GUI will be a solid color, depending on theme (default is blue). This
+     * constructor allows you control the threading model for the UI.
      * @param guiThreadFactory Factory implementation to use when creating the {@code TextGUIThread}
      * @param screen Screen to use as the backend for drawing operations
      */
@@ -79,9 +80,8 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
 
     /**
      * Creates a new {@code MultiWindowTextGUI} that uses the specified {@code Screen} as the backend for all drawing
-     * operations and a custom {@link WindowManager}. The screen will be automatically wrapped in a
-     * {@code VirtualScreen} in order to deal with GUIs becoming too big to fit the terminal. The background area of the
-     * GUI will use the default {@link GUIBackdrop} component.
+     * operations. The background area of the GUI will be a solid color, depending on theme (default is blue). This
+     * constructor allows you control the threading model for the UI and set a custom {@link WindowManager}.
      * @param guiThreadFactory Factory implementation to use when creating the {@code TextGUIThread}
      * @param screen Screen to use as the backend for drawing operations
      * @param windowManager Custom window manager to use
@@ -96,13 +96,11 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
 
     /**
      * Creates a new {@code MultiWindowTextGUI} that uses the specified {@code Screen} as the backend for all drawing
-     * operations. The screen will be automatically wrapped in a {@code VirtualScreen} in order to deal with GUIs
-     * becoming too big to fit the terminal. The background area of the GUI is a solid color as decided by the
-     * {@code backgroundColor} parameter.
+     * operations. The background area of the GUI is a solid color as decided by the {@code backgroundColor} parameter.
      * @param screen Screen to use as the backend for drawing operations
      * @param backgroundColor Color to use for the GUI background
      * @deprecated It's preferred to use a custom background component if you want to customize the background color,
-     * or change the theme
+     * or you should change the theme. Using this constructor won't work well with theming.
      */
     @Deprecated
     public MultiWindowTextGUI(
@@ -114,9 +112,8 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
 
     /**
      * Creates a new {@code MultiWindowTextGUI} that uses the specified {@code Screen} as the backend for all drawing
-     * operations. The screen will be automatically wrapped in a {@code VirtualScreen} in order to deal with GUIs
-     * becoming too big to fit the terminal. The background area of the GUI is the component passed in as the
-     * {@code background} parameter, forced to full size.
+     * operations. The background area of the GUI will be the component supplied instead of the usual backdrop. This
+     * constructor allows you to set a custom {@link WindowManager} instead of {@link DefaultWindowManager}.
      * @param screen Screen to use as the backend for drawing operations
      * @param windowManager Window manager implementation to use
      * @param background Component to use as the background of the GUI, behind all the windows
@@ -131,9 +128,9 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
 
     /**
      * Creates a new {@code MultiWindowTextGUI} that uses the specified {@code Screen} as the backend for all drawing
-     * operations. The screen will be automatically wrapped in a {@code VirtualScreen} in order to deal with GUIs
-     * becoming too big to fit the terminal. The background area of the GUI is the component passed in as the
-     * {@code background} parameter, forced to full size.
+     * operations. The background area of the GUI will be the component supplied instead of the usual backdrop. This
+     * constructor allows you to set a custom {@link WindowManager} instead of {@link DefaultWindowManager} as well
+     * as a custom {@link WindowPostRenderer} that can be used to tweak the appearance of any window.
      * @param screen Screen to use as the backend for drawing operations
      * @param windowManager Window manager implementation to use
      * @param postRenderer {@code WindowPostRenderer} object to invoke after each window has been drawn
@@ -150,9 +147,10 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
 
     /**
      * Creates a new {@code MultiWindowTextGUI} that uses the specified {@code Screen} as the backend for all drawing
-     * operations. The screen will be automatically wrapped in a {@code VirtualScreen} in order to deal with GUIs
-     * becoming too big to fit the terminal. The background area of the GUI is the component passed in as the
-     * {@code background} parameter, forced to full size.
+     * operations. The background area of the GUI will be the component supplied instead of the usual backdrop. This
+     * constructor allows you to set a custom {@link WindowManager} instead of {@link DefaultWindowManager} as well
+     * as a custom {@link WindowPostRenderer} that can be used to tweak the appearance of any window. This constructor
+     * also allows you to control the threading model for the UI.
      * @param guiThreadFactory Factory implementation to use when creating the {@code TextGUIThread}
      * @param screen Screen to use as the backend for drawing operations
      * @param windowManager Window manager implementation to use
@@ -166,16 +164,6 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
             WindowPostRenderer postRenderer,
             Component background) {
 
-        this(guiThreadFactory, new VirtualScreen(screen), windowManager, postRenderer, background);
-    }
-
-    private MultiWindowTextGUI(
-            TextGUIThreadFactory guiThreadFactory,
-            VirtualScreen screen,
-            WindowManager windowManager,
-            WindowPostRenderer postRenderer,
-            Component background) {
-
         super(guiThreadFactory, screen);
         if(windowManager == null) {
             throw new IllegalArgumentException("Creating a window-based TextGUI requires a WindowManager");
@@ -184,8 +172,6 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
             //Use a sensible default instead of throwing
             background = new GUIBackdrop();
         }
-        this.virtualScreen = screen;
-        this.virtualScreenEnabled = true;
         this.windowManager = windowManager;
         this.backgroundPane = new AbstractBasePane<BasePane>() {
             @Override
@@ -224,7 +210,9 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
 
     @Override
     public synchronized void updateScreen() throws IOException {
-        if (virtualScreenEnabled) {
+        if (getScreen() instanceof VirtualScreen) {
+            // If the user has passed in a virtual screen, we should calculate the minimum size required and tell it.
+            // Previously the constructor always wrapped the screen in a VirtualScreen, but now we need to check.
             TerminalSize minimumTerminalSize = TerminalSize.ZERO;
             for (Window window : windows) {
                 if (window.isVisible()) {
@@ -242,11 +230,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
                                     Math.max(lastPosition.getRow(), 0)));
                 }
             }
-            virtualScreen.setMinimumSize(minimumTerminalSize);
-        }
-        else {
-            virtualScreen.setViewportTopLeft(TerminalPosition.TOP_LEFT_CORNER);
-            virtualScreen.setMinimumSize(virtualScreen.getViewportSize());
+            ((VirtualScreen) getScreen()).setMinimumSize(minimumTerminalSize);
         }
         super.updateScreen();
     }
@@ -349,15 +333,14 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
     }
 
     /**
-     * This method controls whether or not the virtual screen should be used. This is what enabled you to make your UI
-     * larger than what fits the terminal, as it will expand the virtual area and put in scrollbars. If set to
-     * {@code false}, the virtual screen will be bypassed and any content outside of the screen will be cropped. This
-     * property is {@code true} by default.
-     * @param virtualScreenEnabled If {@code true}, then virtual screen will be used, otherwise it is bypassed
+     * This method used to exist to control if the virtual screen should by bypassed or not. Since 3.1.0 calling this
+     * has no effect since we don't force a VirtualScreen anymore and you control it yourself when you create the GUI.
+     * @param virtualScreenEnabled Not used anymore
+     * @deprecated This method don't do anything anymore (as of 3.1.0)
      */
     @Override
+    @Deprecated
     public void setVirtualScreenEnabled(boolean virtualScreenEnabled) {
-        this.virtualScreenEnabled = virtualScreenEnabled;
     }
 
     @Override
