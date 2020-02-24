@@ -36,7 +36,7 @@ import java.util.*;
  * This is the main Text GUI implementation built into Lanterna, supporting multiple tiled windows and a dynamic
  * background area that can be fully customized. If you want to create a text-based GUI with windows and controls,
  * it's very likely this is what you want to use.
- * <p/>
+ * <p>
  * Note: This class used to always wrap the {@link Screen} object with a {@link VirtualScreen} to ensure that the UI
  * always fits. As of 3.1.0, we don't do this anymore so when you create the {@link MultiWindowTextGUI} you can wrap
  * the screen parameter yourself if you want to keep this behavior.
