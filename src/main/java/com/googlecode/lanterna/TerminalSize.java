@@ -103,7 +103,8 @@ public class TerminalSize {
         if(delta == 0) {
             return this;
         }
-        return withColumns(columns + delta);
+        // Prevent going below 0 (which would throw an exception)
+        return withColumns(Math.max(0, columns + delta));
     }
 
     /**
@@ -117,7 +118,8 @@ public class TerminalSize {
         if(delta == 0) {
             return this;
         }
-        return withRows(rows + delta);
+        // Prevent going below 0 (which would throw an exception)
+        return withRows(Math.max(0, rows + delta));
     }
 
     /**
