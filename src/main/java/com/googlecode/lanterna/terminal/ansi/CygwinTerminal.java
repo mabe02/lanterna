@@ -32,11 +32,11 @@ import java.util.regex.Pattern;
  * This class extends UnixLikeTerminal and implements the Cygwin-specific implementations. This means, running a Java
  * application using Lanterna inside the Cygwin Terminal application. The standard Windows command prompt (cmd.exe) is
  * not supported by this class.
- * <p/>
+ * <p>
  * <b>NOTE:</b> This class is experimental and does not fully work! Some of the operations, like disabling echo and
  * changing cbreak seems to be impossible to do without resorting to native code. Running "stty raw" before starting the
  * JVM will improve compatibility.
- * <p/>
+ * <p>
  * <b>NOTE:</b> This class will try to find Cygwin by scanning the directories on java.library.path, but you can also
  * tell it where Cygwin is installed by setting the CYGWIN_HOME environment variable.
  *

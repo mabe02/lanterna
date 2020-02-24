@@ -42,7 +42,7 @@ public interface Container extends Component {
     /**
      * Returns collection that is to be considered a copy of the list of children contained inside of this object. 
      * Modifying this collection will not affect any internal state.
-     * <p/>
+     * <p>
      * This method isn't deprecated but it should have originally been defined as returning a List instead of a
      * Collection. See {@code getChildrenList} for a method with this signature.
      * @return Child-components inside of this Container

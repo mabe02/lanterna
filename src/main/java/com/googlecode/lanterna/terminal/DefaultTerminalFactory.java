@@ -254,6 +254,7 @@ public class DefaultTerminalFactory implements TerminalFactory {
      * use this to tell Lanterna to trap CTRL-C instead of exiting the application. Non-UNIX terminals are not affected
      * by this.
      * @param unixTerminalCtrlCBehaviour CTRL-C behavior to use for {@link UnixTerminal}:s
+     * @return Itself
      */
     public DefaultTerminalFactory setUnixTerminalCtrlCBehaviour(UnixTerminal.CtrlCBehaviour unixTerminalCtrlCBehaviour) {
         this.unixTerminalCtrlCBehaviour = unixTerminalCtrlCBehaviour;
