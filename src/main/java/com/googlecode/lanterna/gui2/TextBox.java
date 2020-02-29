@@ -239,6 +239,41 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
     }
 
     /**
+     * Removes a line from a {@link TextBox} component. If the component is single-line, they only valid call to this
+     * method is {@code removeLine(0)} which has the same effect as calling {@code setText("")}. For multi-line text
+     * boxes, the line at the specified index will be removed. Will throw {@link ArrayIndexOutOfBoundsException} if you
+     * specified an incorrect index.
+     * @param lineIndex Index of the line to remove, has to be 0 or greater and less than the number of lines in the
+     *                  text box
+     * @return Itself
+     */
+    public synchronized TextBox removeLine(int lineIndex) {
+        if (style == Style.SINGLE_LINE) {
+            if (lineIndex == 0) {
+                setText("");
+                return this;
+            }
+            else {
+                throw new ArrayIndexOutOfBoundsException("Cannot remove line " + lineIndex + " from a single-line TextBox");
+            }
+        }
+
+        if (lineIndex < 0 || lineIndex >= lines.size()) {
+            throw new ArrayIndexOutOfBoundsException("Invalid line index for TextBox with " + lines.size() + " lines: " + lineIndex);
+        }
+        lines.remove(lineIndex);
+        if (caretPosition.getRow() == lineIndex) {
+            // Validate the caret can still stay in this position
+            setCaretPosition(caretPosition.getRow(), caretPosition.getColumn());
+        }
+        else if (caretPosition.getRow() > lineIndex) {
+            // Update caret position
+            setCaretPosition(caretPosition.getRow() - 1, caretPosition.getColumn());
+        }
+        return this;
+    }
+
+    /**
      * Sets if the caret should jump to the beginning of the next line if right arrow is pressed while at the end of a
      * line. Similarly, pressing left arrow at the beginning of a line will make the caret jump to the end of the
      * previous line. This only makes sense for multi-line TextBox:es; for single-line ones it has no effect. By default
