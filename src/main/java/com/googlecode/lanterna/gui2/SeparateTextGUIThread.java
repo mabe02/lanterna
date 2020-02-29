@@ -120,6 +120,12 @@ public class SeparateTextGUIThread extends AbstractTextGUIThread implements Asyn
                 }
                 catch(EOFException e) {
                     stop();
+                    if (textGUI instanceof WindowBasedTextGUI) {
+                        // Close all windows on EOF
+                        for (Window window: ((WindowBasedTextGUI) textGUI).getWindows()) {
+                            window.close();
+                        }
+                    }
                     break; //Break out quickly from the main loop
                 }
                 catch(IOException e) {
