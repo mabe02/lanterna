@@ -176,6 +176,21 @@ public class GridLayout implements LayoutManager {
 
     /**
      * This is a shortcut method that will create a grid layout data object that will expand its cell as much as is can
+     * horizontally and make the component occupy the whole area horizontally and center it vertically, spanning 1 cell.
+     * @return Layout data object with the specified span and horizontally expanding as much as it can
+     */
+    public static LayoutData createHorizontallyFilledLayoutData() {
+        return createLayoutData(
+                Alignment.FILL,
+                Alignment.CENTER,
+                true,
+                false,
+                1,
+                1);
+    }
+
+    /**
+     * This is a shortcut method that will create a grid layout data object that will expand its cell as much as is can
      * horizontally and make the component occupy the whole area horizontally and center it vertically
      * @param horizontalSpan How many cells to span horizontally
      * @return Layout data object with the specified span and horizontally expanding as much as it can
