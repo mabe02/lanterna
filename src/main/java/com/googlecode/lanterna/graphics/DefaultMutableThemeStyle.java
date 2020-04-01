@@ -55,7 +55,7 @@ public class DefaultMutableThemeStyle implements ThemeStyle {
      * @param sgrs Modifiers to apply to the text with this style
      */
     public DefaultMutableThemeStyle(TextColor foreground, TextColor background, SGR... sgrs) {
-        this(foreground, background, EnumSet.copyOf(Arrays.asList(sgrs)));
+        this(foreground, background, sgrs.length > 0 ? EnumSet.copyOf(Arrays.asList(sgrs)) : EnumSet.noneOf(SGR.class));
     }
 
     private DefaultMutableThemeStyle(TextColor foreground, TextColor background, EnumSet<SGR> sgrs) {
