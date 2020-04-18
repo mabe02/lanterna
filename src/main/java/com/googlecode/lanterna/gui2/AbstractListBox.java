@@ -18,14 +18,15 @@
  */
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.TerminalTextUtils;
-import com.googlecode.lanterna.TerminalPosition;
-import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.graphics.ThemeDefinition;
-import com.googlecode.lanterna.input.KeyStroke;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TerminalTextUtils;
+import com.googlecode.lanterna.graphics.ThemeDefinition;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.MouseAction;
 
 /**
  * Base class for several list box implementations, this will handle things like list of items and the scrollbar.
@@ -152,7 +153,10 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
                 	if(selectByCharacter(keyStroke.getCharacter())) {
                         return Result.HANDLED;
                 	}
-                    
+                	return Result.UNHANDLED;
+                case MouseEvent:
+                	selectedIndex = getIndexByMouseAction((MouseAction) keyStroke);
+                	return super.handleKeyStroke(keyStroke);
                 default:
             }
             return Result.UNHANDLED;
@@ -161,6 +165,16 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
             invalidate();
         }
     }
+    
+	/**
+	 * By converting {@link TerminalPosition}s to
+	 * {@link #toGlobal(TerminalPosition)} gets index clicked on by mouse action.
+	 * 
+	 * @return index of a item that was clicked on with {@link MouseAction}
+	 */
+	protected int getIndexByMouseAction(MouseAction click) {
+		return click.getPosition().getRow() - getGlobalPosition().getRow();
+	}
 
     private boolean selectByCharacter(Character character) {
 		character = Character.toLowerCase(character);

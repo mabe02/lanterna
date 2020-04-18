@@ -20,16 +20,22 @@
  */
 package com.googlecode.lanterna.gui2.menu;
 
-import com.googlecode.lanterna.Symbols;
-import com.googlecode.lanterna.TerminalPosition;
-import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.gui2.*;
-import com.googlecode.lanterna.input.KeyStroke;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.gui2.AbstractComponent;
+import com.googlecode.lanterna.gui2.Component;
+import com.googlecode.lanterna.gui2.ComponentRenderer;
+import com.googlecode.lanterna.gui2.Container;
+import com.googlecode.lanterna.gui2.Interactable;
+import com.googlecode.lanterna.gui2.InteractableLookupMap;
+import com.googlecode.lanterna.gui2.TextGUIGraphics;
+import com.googlecode.lanterna.gui2.Window;
+import com.googlecode.lanterna.input.KeyStroke;
 
 /**
  * A menu bar offering drop-down menus. You can attach a menu bar to a {@link Window} by using the
@@ -162,6 +168,10 @@ public class MenuBar extends AbstractComponent<MenuBar> implements Container {
     public TerminalPosition toBasePane(TerminalPosition position) {
         // Assume the menu is always at the top of the content panel
         return position;
+    }
+    
+    public boolean isEmptyMenuBar() {
+    	return false;
     }
 
     /**

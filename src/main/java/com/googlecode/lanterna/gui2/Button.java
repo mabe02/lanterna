@@ -18,16 +18,16 @@
  */
 package com.googlecode.lanterna.gui2;
 
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import com.googlecode.lanterna.Symbols;
-import com.googlecode.lanterna.TerminalTextUtils;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TerminalTextUtils;
 import com.googlecode.lanterna.graphics.ThemeDefinition;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
-
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Simple labeled button that the user can trigger by pressing the Enter or the Spacebar key on the keyboard when the
@@ -83,8 +83,9 @@ public class Button extends AbstractInteractableComponent<Button> {
 
     @Override
     public synchronized Result handleKeyStroke(KeyStroke keyStroke) {
-        if(keyStroke.getKeyType() == KeyType.Enter ||
-                (keyStroke.getKeyType() == KeyType.Character && keyStroke.getCharacter() == ' ')) {
+		if ((keyStroke.getKeyType() == KeyType.Enter
+				|| (keyStroke.getKeyType() == KeyType.Character && keyStroke.getCharacter() == ' ')
+				|| keyStroke.getKeyType() == KeyType.MouseEvent) && isFocused()) {
             triggerActions();
             return Result.HANDLED;
         }
