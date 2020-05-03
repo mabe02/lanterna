@@ -438,4 +438,8 @@ public class DefaultVirtualTerminal extends AbstractTerminal implements VirtualT
                         Math.max(cursorPosition.getRow(), 0));
     }
 
+    @Override
+    public String toString() {
+        return currentTextBuffer.toString();
+    }
 }

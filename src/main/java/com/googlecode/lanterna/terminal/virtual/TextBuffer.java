@@ -117,4 +117,18 @@ class TextBuffer {
         }
         return textCharacter;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder bo = new StringBuilder();
+        for (List<TextCharacter> line : lines) {
+            StringBuilder b = new StringBuilder();
+            for (TextCharacter c : line) {
+                b.append(c.getCharacter());
+            }
+            bo.append(b.toString().replaceFirst("\\s+$", ""));
+            bo.append('\n');
+        }
+        return bo.toString();
+    }
 }
