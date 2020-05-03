@@ -68,4 +68,12 @@ public interface TableRenderer<V> extends InteractableRenderer<Table<V>> {
      * @param viewLeftColumn First column to be displayed when drawing the table
      */
     void setViewLeftColumn(int viewLeftColumn);
+
+    /**
+     * @param allowPartialColumn when not all columns fit on the screen, whether to render part of a column, or skip rendering that column entirely
+     */
+    void setAllowPartialColumn(boolean allowPartialColumn);
+
+    /** @see #setAllowPartialColumn */
+    boolean getAllowPartialColumn();
 }

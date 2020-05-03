@@ -47,6 +47,44 @@ public class TableUnitTests {
     }
 
     @Test
+    public void testRendersVisibleRowsAndColumns() throws Exception {
+        addRowsWithLongSecondColumn(4);
+        assertScreenEquals("" +
+                "a  b\n" +
+                "A1                           ▲\n" +
+                "A2                           █\n" +
+                "A3                           ▼\n" +
+                "◄█████████████▒▒▒▒▒▒▒▒▒▒▒▒▒▒►");
+    }
+
+    @Test
+    public void testRendersVisibleRowsAndColumnsPartially() throws Exception {
+        table.getRenderer().setAllowPartialColumn(true);
+        addRowsWithLongSecondColumn(4);
+        assertScreenEquals("" +
+                "a  b\n" +
+                "A1 BBBBBBBBBBBBBBBBBBBBBBBBBB▲\n" +
+                "A2 BBBBBBBBBBBBBBBBBBBBBBBBBB█\n" +
+                "A3 BBBBBBBBBBBBBBBBBBBBBBBBBB▼\n" +
+                "◄█████████████▒▒▒▒▒▒▒▒▒▒▒▒▒▒►");
+    }
+
+    @Test
+    public void testRendersVisibleRowsAndColumnsPartiallyWhenHorizontallyScrolled() throws Exception {
+        model = new TableModel<>("x", "a", "b");
+        table.setTableModel(this.model);
+        table.getRenderer().setAllowPartialColumn(true);
+        table.getRenderer().setViewLeftColumn(1);
+        addRowsWithLongThirdColumn(4);
+        assertScreenEquals("" +
+                "a  b\n" +
+                "A1 BBBBBBBBBBBBBBBBBBBBBBBBBB▲\n" +
+                "A2 BBBBBBBBBBBBBBBBBBBBBBBBBB█\n" +
+                "A3 BBBBBBBBBBBBBBBBBBBBBBBBBB▼\n" +
+                "◄▒▒▒▒▒▒▒▒▒█████████▒▒▒▒▒▒▒▒▒►");
+    }
+
+    @Test
     public void testRendersVisibleRows() throws Exception {
         table.setVisibleRows(2);
         addFourRows();
@@ -195,6 +233,12 @@ public class TableUnitTests {
     private void addRowsWithLongSecondColumn(int rows) {
         for (int i = 1; i <= rows; i++) {
             model.addRow("A" + i, "BBBBBBBBBBBBBBBBBBBBBBBBBBBBB"+i);
+        }
+    }
+
+    private void addRowsWithLongThirdColumn(int rows) {
+        for (int i = 1; i <= rows; i++) {
+            model.addRow("X", "A" + i, "BBBBBBBBBBBBBBBBBBBBBBBBBBBBB"+i);
         }
     }
 
