@@ -21,6 +21,7 @@ package com.googlecode.lanterna.gui2;
 import java.io.EOFException;
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Default implementation of TextGUIThread, this class runs the GUI event processing on a dedicated thread. The GUI
@@ -76,6 +77,11 @@ public class SeparateTextGUIThread extends AbstractTextGUIThread implements Asyn
     @Override
     public void waitForStop() throws InterruptedException {
         waitLatch.await();
+    }
+
+    @Override
+    public void waitForStop(long time, TimeUnit unit) throws InterruptedException {
+        waitLatch.await(time, unit);
     }
 
     @Override
