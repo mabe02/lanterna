@@ -57,6 +57,8 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
     private final Set<Integer> expandableColumns;
     private int headerSizeInRows;
 
+    private boolean scrollBarsHidden;
+
     /**
      * Default constructor
      */
@@ -72,6 +74,7 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
         viewTopRow = 0;
         viewLeftColumn = 0;
         visibleRowsOnLastDraw = 0;
+        scrollBarsHidden = false;
 
         cachedSize = null;
 
@@ -129,6 +132,16 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
     public synchronized void setExpandableColumns(Collection<Integer> expandableColumns) {
         this.expandableColumns.clear();
         this.expandableColumns.addAll(expandableColumns);
+    }
+
+    @Override
+    public boolean areScrollBarsHidden() {
+        return scrollBarsHidden;
+    }
+
+    @Override
+    public void setScrollBarsHidden(boolean scrollBarsHidden) {
+        this.scrollBarsHidden = scrollBarsHidden;
     }
 
     private boolean isHorizontallySpaced() {
@@ -322,13 +335,15 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
             }
         }
 
-        //Add one space taken by scrollbars (we always add one for the vertical scrollbar but for the horizontal only if
-        // we think we need one). Unfortunately we don't know the size constraints at this point so we don't know if the
-        // table will need to force scrollbars or not. We might think that we don't need a horizontal scrollbar here but
-        // it might turn out that we need it.
-        preferredColumnSize++;
-        if(visibleColumns < tableModel.getColumnCount()) {
-            preferredRowSize++;
+        if(!scrollBarsHidden) {
+            //Add one space taken by scrollbars (we always add one for the vertical scrollbar but for the horizontal only if
+            // we think we need one). Unfortunately we don't know the size constraints at this point so we don't know if the
+            // table will need to force scrollbars or not. We might think that we don't need a horizontal scrollbar here but
+            // it might turn out that we need it.
+            preferredColumnSize++;
+            if (visibleColumns < tableModel.getColumnCount()) {
+                preferredRowSize++;
+            }
         }
 
         cachedSize = new TerminalSize(preferredColumnSize, preferredRowSize);
@@ -381,12 +396,12 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
         }
 
         int visibleRows = calculateVisibleRows(areaWithoutScrollBars, viewTopRow, preferredVisibleRows);
-        boolean needVerticalScrollBar = visibleRows < table.getTableModel().getRowCount();
+        boolean needVerticalScrollBar = !scrollBarsHidden && visibleRows < table.getTableModel().getRowCount();
         if(needVerticalScrollBar) {
             areaWithoutScrollBars = areaWithoutScrollBars.withRelativeColumns(-verticalScrollBar.getPreferredSize().getColumns());
         }
         int visibleColumns = calculateVisibleColumns(areaWithoutScrollBars, viewLeftColumn, preferredVisibleColumns);
-        boolean needHorizontalScrollBar = visibleColumns < table.getTableModel().getColumnCount();
+        boolean needHorizontalScrollBar = !scrollBarsHidden && visibleColumns < table.getTableModel().getColumnCount();
         if(needHorizontalScrollBar) {
             areaWithoutScrollBars = areaWithoutScrollBars.withRelativeRows(-horizontalScrollBar.getPreferredSize().getRows());
 

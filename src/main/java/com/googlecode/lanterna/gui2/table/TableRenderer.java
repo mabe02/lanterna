@@ -33,6 +33,10 @@ public interface TableRenderer<V> extends InteractableRenderer<Table<V>> {
     @Override
     TerminalSize getPreferredSize(Table<V> component);
 
+    boolean areScrollBarsHidden();
+
+    void setScrollBarsHidden(boolean scrollBarsHidden);
+
     /**
      * Returns the number of rows visible in the table cell area on the last draw operation
      * @return The number of rows visible in the table cell area on the last draw operation
