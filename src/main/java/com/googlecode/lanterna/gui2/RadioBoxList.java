@@ -18,14 +18,15 @@
  */
 package com.googlecode.lanterna.gui2;
 
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.graphics.ThemeDefinition;
 import com.googlecode.lanterna.graphics.ThemeStyle;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
-
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import com.googlecode.lanterna.input.MouseAction;
 
 /**
  * The list box will display a number of items, of which one and only one can be marked as selected.
@@ -79,9 +80,16 @@ public class RadioBoxList<V> extends AbstractListBox<V, RadioBoxList<V>> {
 
     @Override
     public synchronized Result handleKeyStroke(KeyStroke keyStroke) {
-        if(keyStroke.getKeyType() == KeyType.Enter ||
-                (keyStroke.getKeyType() == KeyType.Character && keyStroke.getCharacter() == ' ')) {
-            setCheckedIndex( getSelectedIndex() );
+        if ((keyStroke.getKeyType() == KeyType.Enter
+                || (keyStroke.getKeyType() == KeyType.Character && keyStroke.getCharacter() == ' ')
+                || keyStroke.getKeyType() == KeyType.MouseEvent) && isFocused()) {
+            if (keyStroke.getKeyType() == KeyType.MouseEvent) {
+                int newIndex = getIndexByMouseAction((MouseAction) keyStroke);
+                if (newIndex != getSelectedIndex()) {
+                    return super.handleKeyStroke(keyStroke);
+                }
+            }
+            setCheckedIndex(getSelectedIndex());
             return Result.HANDLED;
         }
         return super.handleKeyStroke(keyStroke);

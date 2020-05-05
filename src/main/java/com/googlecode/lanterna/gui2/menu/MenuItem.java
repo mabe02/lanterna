@@ -87,7 +87,7 @@ public class MenuItem extends AbstractInteractableComponent<MenuItem> {
     @Override
     protected Result handleKeyStroke(KeyStroke keyStroke) {
         Result result;
-        if (keyStroke.getKeyType() == KeyType.Enter) {
+        if ((keyStroke.getKeyType() == KeyType.Enter || keyStroke.getKeyType() == KeyType.MouseEvent) && isFocused()) {
             if (onActivated()) {
                 BasePane basePane = getBasePane();
                 if (basePane instanceof Window && ((Window) basePane).getHints().contains(Window.Hint.MENU_POPUP)) {

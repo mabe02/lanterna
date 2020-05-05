@@ -18,12 +18,13 @@
  */
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.TerminalPosition;
-import com.googlecode.lanterna.input.KeyStroke;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
+import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.gui2.menu.MenuBar;
+import com.googlecode.lanterna.input.KeyStroke;
 
 /**
  * This abstract implementation contains common code for the different {@code Composite} implementations. A
@@ -53,10 +54,15 @@ public abstract class AbstractComposite<T extends Container> extends AbstractCom
         if(oldComponent != null) {
             removeComponent(oldComponent);
         }
-        if(component != null) {
+        if (component != null) {
             this.component = component;
             component.onAdded(this);
-            component.setPosition(TerminalPosition.TOP_LEFT_CORNER);
+            MenuBar menuBar = getBasePane().getMenuBar();
+            if (menuBar == null || menuBar.isEmptyMenuBar()) {
+                component.setPosition(TerminalPosition.TOP_LEFT_CORNER);
+            } else {
+                component.setPosition(TerminalPosition.TOP_LEFT_CORNER.withRelativeRow(1));
+            }
             invalidate();
         }
     }

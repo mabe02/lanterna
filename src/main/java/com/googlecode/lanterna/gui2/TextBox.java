@@ -18,15 +18,16 @@
  */
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.TerminalTextUtils;
-import com.googlecode.lanterna.TerminalPosition;
-import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.graphics.ThemeDefinition;
-import com.googlecode.lanterna.input.KeyStroke;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
+
+import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TerminalTextUtils;
+import com.googlecode.lanterna.graphics.ThemeDefinition;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.MouseAction;
 
 /**
  * This component keeps a text content that is editable by the user. A TextBox can be single line or multiline and lets
@@ -622,6 +623,21 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
                 }
                 if(lines.get(caretPosition.getRow()).length() < caretPosition.getColumn()) {
                     caretPosition = caretPosition.withColumn(lines.get(caretPosition.getRow()).length());
+                }
+                return Result.HANDLED;
+            case MouseEvent:
+                if (!isFocused()) {
+                    break;
+                }
+                MouseAction mouseAction = (MouseAction) keyStroke;
+                int newCaretPositionColumn = mouseAction.getPosition().getColumn() - getGlobalPosition().getColumn();
+                int newCaretPositionRow = mouseAction.getPosition().getRow() - getGlobalPosition().getRow();
+                String newActiveLine = lines.get(newCaretPositionRow);
+                if (newCaretPositionColumn > newActiveLine.length()) {
+                    caretPosition = caretPosition.with(new TerminalPosition(newActiveLine.length(), newCaretPositionRow));
+                } else {
+                    caretPosition = caretPosition
+                            .with(new TerminalPosition(newCaretPositionColumn, newCaretPositionRow));
                 }
                 return Result.HANDLED;
             default:

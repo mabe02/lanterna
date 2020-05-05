@@ -35,6 +35,15 @@ public interface Component extends TextGUIElement {
      * @return Position of this component
      */
     TerminalPosition getPosition();
+    
+    /**
+     * Returns the top-left corner of this component in global coordinates space
+     * using {@link TerminalPosition#TOP_LEFT_CORNER} with
+     * {@link #toGlobal(TerminalPosition)}
+     * 
+     * @return global position of this component
+     */
+    TerminalPosition getGlobalPosition();
 
     /**
      * This method will be called by the layout manager when it has decided where the component is to be located. If you

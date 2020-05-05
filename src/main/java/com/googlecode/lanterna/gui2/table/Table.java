@@ -18,10 +18,13 @@
  */
 package com.googlecode.lanterna.gui2.table;
 
-import com.googlecode.lanterna.gui2.*;
-import com.googlecode.lanterna.input.KeyStroke;
-
 import java.util.List;
+
+import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.gui2.AbstractInteractableComponent;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
+import com.googlecode.lanterna.input.MouseAction;
 
 /**
  * The table class is an interactable component that displays a grid of cells containing data along with a header of
@@ -413,11 +416,54 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
                     return Result.MOVE_FOCUS_NEXT;
                 }
                 break;
+            case MouseEvent:
+                if (!isFocused()) {
+                    return super.handleKeyStroke(keyStroke);
+                }
+                int clickedRow = getRowByMouseAction((MouseAction) keyStroke);
+                int clickedColumn = getColumnByMouseAction((MouseAction) keyStroke);
+                if (clickedRow == selectedRow && clickedColumn == selectedColumn) {
+                    return handleKeyStroke(new KeyStroke(KeyType.Enter));
+                }
+                selectedRow = clickedRow;
+                selectedColumn = clickedColumn;
+                break;
             default:
                 return super.handleKeyStroke(keyStroke);
         }
         invalidate();
         return Result.HANDLED;
+    }
+    
+    /**
+     * By converting {@link TerminalPosition}s to
+     * {@link #toGlobal(TerminalPosition)} gets row clicked on by mouse action.
+     * 
+     * @return row of a table that was clicked on with {@link MouseAction}
+     */
+    protected int getRowByMouseAction(MouseAction click) {
+        return click.getPosition().getRow() - getGlobalPosition().getRow() - 1;
+    }
+    
+    /**
+     * By converting {@link TerminalPosition}s to
+     * {@link #toGlobal(TerminalPosition)} and by comparing widths of column
+     * headers, gets column clicked on by mouse action.
+     * 
+     * @return row of a table that was clicked on with {@link MouseAction}
+     */
+    protected int getColumnByMouseAction(MouseAction click) {
+        int column = 0;
+        int columnSize = getTableHeaderRenderer().getPreferredSize(this, getTableModel().getColumnLabel(column), column)
+                .getColumns();
+        int globalColumnClicked = click.getPosition().getColumn() - getGlobalPosition().getColumn();
+        while (globalColumnClicked - columnSize - 1 >= 0) {
+            globalColumnClicked -= columnSize;
+            column++;
+            columnSize = getTableHeaderRenderer().getPreferredSize(this, getTableModel().getColumnLabel(column), column)
+                    .getColumns();
+        }
+        return column;
     }
 
 }

@@ -22,6 +22,7 @@ import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
+import com.googlecode.lanterna.input.MouseAction;
 
 /**
  * This class is a list box implementation that displays a number of items that has actions associated with them. You
@@ -93,11 +94,16 @@ public class ActionListBox extends AbstractListBox<Runnable, ActionListBox> {
     @Override
     public Result handleKeyStroke(KeyStroke keyStroke) {
         Object selectedItem = getSelectedItem();
-        if(selectedItem != null &&
-                (keyStroke.getKeyType() == KeyType.Enter ||
-                (keyStroke.getKeyType() == KeyType.Character && keyStroke.getCharacter() == ' '))) {
-
-            ((Runnable)selectedItem).run();
+        if (selectedItem != null && (keyStroke.getKeyType() == KeyType.Enter
+                || (keyStroke.getKeyType() == KeyType.Character && keyStroke.getCharacter() == ' ')
+                || keyStroke.getKeyType() == KeyType.MouseEvent) && isFocused()) {
+            if (keyStroke.getKeyType() == KeyType.MouseEvent) {
+                int newIndex = getIndexByMouseAction((MouseAction) keyStroke);
+                if (newIndex != getSelectedIndex()) {
+                    return super.handleKeyStroke(keyStroke);
+                }
+            }
+            ((Runnable) selectedItem).run();
             return Result.HANDLED;
         }
         return super.handleKeyStroke(keyStroke);

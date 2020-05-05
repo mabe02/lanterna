@@ -18,15 +18,15 @@
  */
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.TerminalTextUtils;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TerminalTextUtils;
 import com.googlecode.lanterna.graphics.ThemeDefinition;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
-
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * The checkbox component looks like a regular checkbox that you can find in modern graphics user interfaces, a label
@@ -101,8 +101,9 @@ public class CheckBox extends AbstractInteractableComponent<CheckBox> {
 
     @Override
     public Result handleKeyStroke(KeyStroke keyStroke) {
-        if((keyStroke.getKeyType() == KeyType.Character && keyStroke.getCharacter() == ' ') ||
-                keyStroke.getKeyType() == KeyType.Enter) {
+        if (((keyStroke.getKeyType() == KeyType.Character && keyStroke.getCharacter() == ' ')
+                || keyStroke.getKeyType() == KeyType.Enter || keyStroke.getKeyType() == KeyType.MouseEvent)
+                && isFocused()) {
             setChecked(!isChecked());
             return Result.HANDLED;
         }

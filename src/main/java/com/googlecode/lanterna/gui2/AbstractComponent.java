@@ -206,6 +206,11 @@ public abstract class AbstractComponent<T extends Component> implements Componen
     }
     
     @Override
+    public TerminalPosition getGlobalPosition() {
+        return toGlobal(TerminalPosition.TOP_LEFT_CORNER);
+    }
+    
+    @Override
     public boolean isInvalid() {
         return invalid;
     }
