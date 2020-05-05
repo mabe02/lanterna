@@ -366,6 +366,9 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
         if(viewTopRow > selectedRow) {
             viewTopRow = selectedRow;
         }
+        if (viewTopRow >= table.getTableModel().getRowCount()) {
+            viewTopRow = Math.max(0, table.getTableModel().getRowCount() - 1);
+        }
 
         TerminalSize areaWithoutScrollBars = area.withRelativeRows(-headerSizeIncludingBorder);
         int preferredVisibleRows = table.getVisibleRows();
