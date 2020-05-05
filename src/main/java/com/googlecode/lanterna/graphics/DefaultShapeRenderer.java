@@ -182,9 +182,20 @@ class DefaultShapeRenderer implements ShapeRenderer {
 
     @Override
     public void fillRectangle(TerminalPosition topLeft, TerminalSize size, TextCharacter character) {
+        final boolean characterDoubleWidth = character.isDoubleWidth();
         for(int y = 0; y < size.getRows(); y++) {
             for(int x = 0; x < size.getColumns(); x++) {
-                callback.onPoint(topLeft.getColumn() + x, topLeft.getRow() + y, character);
+                // Don't put a double-width character at the right edge of the area
+                if (characterDoubleWidth && x + 1 == size.getColumns()) {
+                    callback.onPoint(topLeft.getColumn() + x, topLeft.getRow() + y, character.withCharacter(' '));
+                }
+                else {
+                    // Default case
+                    callback.onPoint(topLeft.getColumn() + x, topLeft.getRow() + y, character);
+                }
+                if (characterDoubleWidth) {
+                    x++;
+                }
             }
         }
     }

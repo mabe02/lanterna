@@ -233,10 +233,39 @@ public class BasicTextImage implements TextImage {
             //Manually copy character by character
             for(int y = startRowIndex; y < startRowIndex + rows; y++) {
                 for(int x = startColumnIndex; x < startColumnIndex + columns; x++) {
+                    TextCharacter character = buffer[y][x];
+                    if (character.isDoubleWidth()) {
+                        // If we're about to put a double-width character, first reset the character next to it
+                        if (x + 1 < startColumnIndex + columns) {
+                            destination.setCharacterAt(
+                                    x - startColumnIndex + destinationColumnOffset,
+                                    y - startRowIndex + destinationRowOffset,
+                                    character.withCharacter(' '));
+                        }
+                        // If the last character is a double-width character, it would exceed the dimension so reset it
+                        else if (x + 1 == startColumnIndex + columns) {
+                            character = character.withCharacter(' ');
+                        }
+                    }
                     destination.setCharacterAt(
                             x - startColumnIndex + destinationColumnOffset, 
-                            y - startRowIndex + destinationRowOffset, 
-                            buffer[y][x]);
+                            y - startRowIndex + destinationRowOffset,
+                            character);
+                    if (character.isDoubleWidth()) {
+                        x++;
+                    }
+                }
+            }
+        }
+
+        // If the character immediately to the left in the destination is double-width, then reset it
+        if (destinationColumnOffset > 0) {
+            int destinationX = destinationColumnOffset - 1;
+            for(int y = startRowIndex; y < startRowIndex + rows; y++) {
+                int destinationY = y - startRowIndex + destinationRowOffset;
+                TextCharacter neighbour = destination.getCharacterAt(destinationX, destinationY);
+                if (neighbour.isDoubleWidth()) {
+                    destination.setCharacterAt(destinationX, destinationY, neighbour.withCharacter(' '));
                 }
             }
         }
