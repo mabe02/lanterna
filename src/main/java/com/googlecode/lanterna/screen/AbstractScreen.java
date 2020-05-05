@@ -240,17 +240,6 @@ public abstract class AbstractScreen implements Screen {
     }
 
     private TextCharacter getCharacterFromBuffer(ScreenBuffer buffer, int column, int row) {
-        if(column > 0) {
-            //If we are picking the padding of a CJK character, pick the actual CJK character instead of the padding
-            TextCharacter leftOfSpecifiedCharacter = buffer.getCharacterAt(column - 1, row);
-            if(leftOfSpecifiedCharacter == null) {
-                //If the character left of us doesn't exist, we don't exist either
-                return null;
-            }
-            else if(TerminalTextUtils.isCharCJK(leftOfSpecifiedCharacter.getCharacter())) {
-                return leftOfSpecifiedCharacter;
-            }
-        }
         return buffer.getCharacterAt(column, row);
     }
     

@@ -197,7 +197,7 @@ public class TerminalScreen extends AbstractScreen {
                     x++;    //Skip the trailing padding
                 } else if (TerminalTextUtils.isCharCJK(frontBufferCharacter.getCharacter())) {
                     if (x+1 < terminalSize.getColumns()) {
-                        updateMap.put(new TerminalPosition(x+1, y), backBufferCharacter.withCharacter(' '));
+                        updateMap.put(new TerminalPosition(x+1, y), frontBufferCharacter.withCharacter(' '));
                     }
                 }
             }
