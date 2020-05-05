@@ -470,7 +470,7 @@ public class GridLayout implements LayoutManager {
 
                     int availableHorizontalSpace = 0;
                     int availableVerticalSpace = 0;
-                    for (int i = 0; i < layoutData.horizontalSpan; i++) {
+                    for (int i = 0; i < layoutData.horizontalSpan && x + i < columnWidths.length; i++) {
                         availableHorizontalSpace += columnWidths[x + i] + (i > 0 ? horizontalSpacing : 0);
                     }
                     for (int i = 0; i < layoutData.verticalSpan; i++) {
@@ -552,9 +552,10 @@ public class GridLayout implements LayoutManager {
                     continue;
                 }
                 GridLayoutData layoutData = getLayoutData(component);
-                if(layoutData.horizontalSpan > 1) {
+                int horizontalSpan = Math.min(layoutData.horizontalSpan, actualNumberOfColumns - i);
+                if(horizontalSpan > 1) {
                     int accumWidth = 0;
-                    for(int j = i; j < i + layoutData.horizontalSpan; j++) {
+                    for(int j = i; j < i + horizontalSpan; j++) {
                         accumWidth += columnWidths[j];
                     }
 
@@ -564,14 +565,14 @@ public class GridLayout implements LayoutManager {
                         do {
                             columnWidths[i + columnOffset++]++;
                             accumWidth++;
-                            if(columnOffset == layoutData.horizontalSpan) {
+                            if(columnOffset == horizontalSpan) {
                                 columnOffset = 0;
                             }
                         }
                         while(preferredWidth > accumWidth);
                     }
                 }
-                i += layoutData.horizontalSpan;
+                i += horizontalSpan;
             }
         }
         return columnWidths;
