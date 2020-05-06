@@ -89,7 +89,7 @@ public class WindowShadowRenderer implements WindowPostRenderer {
                 }
                 TextCharacter neighbour = textGraphics.getCharacter(upperRight.getColumn() - 1, row);
                 // Only need to draw this is the character to the left isn't double-width
-                if (!neighbour.isDoubleWidth()) {
+                if (neighbour != null && !neighbour.isDoubleWidth()) {
                     textGraphics.setCharacter(upperRight.getColumn(), row, characterToDraw);
                 }
             }
