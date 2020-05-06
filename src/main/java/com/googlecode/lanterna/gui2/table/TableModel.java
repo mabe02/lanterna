@@ -134,7 +134,7 @@ public class TableModel<V> {
     }
 
     /**
-     * Adds a new row to the table model at the end
+     * Adds a new row to the table model at the end. This may update the selection to make sure the same row is selected.
      * @param values Data to associate with the new row, mapped column by column in order
      * @return Itself
      */
@@ -145,7 +145,7 @@ public class TableModel<V> {
     }
 
     /**
-     * Adds a new row to the table model at the end
+     * Adds a new row to the table model at the end. This may update the selection to make sure the same row is selected.
      * @param values Data to associate with the new row, mapped column by column in order
      * @return Itself
      */
@@ -155,7 +155,7 @@ public class TableModel<V> {
     }
 
     /**
-     * Inserts a new row to the table model at a particular index
+     * Inserts a new row to the table model at a particular index. This may update the selection to make sure the same row is selected.
      * @param index Index the new row should have, 0 means the first row and <i>row count</i> will append the row at the
      *              end
      * @param values Data to associate with the new row, mapped column by column in order
@@ -171,7 +171,7 @@ public class TableModel<V> {
     }
 
     /**
-     * Removes a row at a particular index from the table model
+     * Removes a row at a particular index from the table model. This may update the selection to make sure the same row is selected.
      * @param index Index of the row to remove
      * @return Itself
      */

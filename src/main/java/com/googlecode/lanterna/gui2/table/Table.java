@@ -69,11 +69,23 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
         this.tableModelListener = new TableModel.Listener<V>() {
             @Override
             public void onRowAdded(TableModel<V> model, int index) {
+                if (index <= selectedRow) {
+                    selectedRow = Math.min(model.getRowCount() - 1, selectedRow + 1);
+                }
                 invalidate();
             }
 
             @Override
             public void onRowRemoved(TableModel<V> model, int index, List<V> oldRow) {
+                if (index < selectedRow) {
+                    selectedRow = Math.max(0, selectedRow-1);
+                } else {
+                    // We may have deleted the selected row
+                    int rowCount = model.getRowCount();
+                    if (selectedRow > rowCount - 1) {
+                        selectedRow = Math.max(0, rowCount - 1);
+                    }
+                }
                 invalidate();
             }
 
@@ -281,6 +293,15 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
      * @return Itself
      */
     public synchronized Table<V> setSelectedRow(int selectedRow) {
+        if (selectedRow < 0) {
+            throw new IllegalArgumentException("selectedRow must be >= 0 but was " + selectedRow);
+        }
+        int rowCount = tableModel.getRowCount();
+        if (rowCount == 0) {
+            selectedRow = 0;
+        } else if (selectedRow > rowCount - 1) {
+            selectedRow = rowCount - 1;
+        }
         this.selectedRow = selectedRow;
         return this;
     }
