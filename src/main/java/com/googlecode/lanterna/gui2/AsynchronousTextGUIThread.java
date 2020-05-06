@@ -18,6 +18,8 @@
  */
 package com.googlecode.lanterna.gui2;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Extended interface of TextGUIThread for implementations that uses a separate thread for all GUI event processing and
  * updating.
@@ -40,6 +42,12 @@ public interface AsynchronousTextGUIThread extends TextGUIThread {
      * @throws InterruptedException In case this thread was interrupted while waiting for the GUI thread to exit
      */
     void waitForStop() throws InterruptedException;
+
+    /**
+     * Blocks until the GUI loop has stopped
+     * @throws InterruptedException In case this thread was interrupted while waiting for the GUI thread to exit
+     */
+    void waitForStop(long time, TimeUnit unit) throws InterruptedException;
 
     /**
      * Returns the current status of this GUI thread
