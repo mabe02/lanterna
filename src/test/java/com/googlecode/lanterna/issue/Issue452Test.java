@@ -84,7 +84,7 @@ public class Issue452Test {
 
     @Test
     public void testMultuLineTextBox() {
-        TextBox multiLine = new TextBox("123456789" + System.lineSeparator() + "abcdefgh", Style.MULTI_LINE);
+        TextBox multiLine = new TextBox("123456789\nabcdefgh", Style.MULTI_LINE);
         content.addComponent(multiLine, LAYOUT_NEW_ROW);
         // Focus component
         clickOn(multiLine);
@@ -93,12 +93,12 @@ public class Issue452Test {
         multiLine.handleInput(clickAt(3, 0));
         multiLine.handleInput(new KeyStroke(KeyType.Backspace));
         // 3rd position (3) should be deleted
-        assertEquals("12456789" + System.lineSeparator() + "abcdefgh", multiLine.getText());
+        assertEquals("12456789\nabcdefgh", multiLine.getText());
         // Click at 5th position 2nd row
         multiLine.handleInput(clickAt(5, 1));
         multiLine.handleInput(new KeyStroke(KeyType.Backspace));
         // 5th position (e) should be deleted
-        assertEquals("12456789" + System.lineSeparator() + "abcdfgh", multiLine.getText());
+        assertEquals("12456789\nabcdfgh", multiLine.getText());
     }
 
     @Test
