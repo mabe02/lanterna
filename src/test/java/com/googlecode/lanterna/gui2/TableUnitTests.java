@@ -57,6 +57,50 @@ public class TableUnitTests {
     }
 
     @Test
+    public void testRendersVisibleRowsAndColumns() throws Exception {
+        table.setVisibleRows(3);
+        addRowsWithLongSecondColumn(4);
+        assertScreenEquals("" +
+                "a  b\n" +
+                "A1                           ▲\n" +
+                "A2                           ▼\n" +
+                "◄█████████████▒▒▒▒▒▒▒▒▒▒▒▒▒▒►");
+    }
+
+    @Test
+    public void testRendersVisibleRowsWithoutVerticalScrollBar() throws Exception {
+        table.setVisibleRows(2);
+        table.getRenderer().setScrollBarsHidden(true);
+        addFourRows();
+        assertScreenEquals("" +
+                "a  b\n" +
+                "A1 B1\n" +
+                "A2 B2");
+    }
+
+    @Test
+    public void testRendersVisibleColumnsWithoutHorizontalScrollBar() throws Exception {
+        table.setVisibleRows(2);
+        table.getRenderer().setScrollBarsHidden(true);
+        addRowsWithLongSecondColumn(2);
+        assertScreenEquals("" +
+                "a  b\n" +
+                "A1\n" +
+                "A2");
+    }
+
+    @Test
+    public void testRendersVisibleRowsAndColumnsWithoutHorizontalScrollBar() throws Exception {
+        table.setVisibleRows(2);
+        table.getRenderer().setScrollBarsHidden(true);
+        addRowsWithLongSecondColumn(4);
+        assertScreenEquals("" +
+                "a  b\n" +
+                "A1\n" +
+                "A2");
+    }
+
+    @Test
     public void testRendersVisibleRowsWithSelection() throws Exception {
         table.setVisibleRows(2);
         addFourRows();
@@ -146,6 +190,12 @@ public class TableUnitTests {
         model.addRow("A2", "B2");
         model.addRow("A3", "B3");
         model.addRow("A4", "B4");
+    }
+
+    private void addRowsWithLongSecondColumn(int rows) {
+        for (int i = 1; i <= rows; i++) {
+            model.addRow("A" + i, "BBBBBBBBBBBBBBBBBBBBBBBBBBBBB"+i);
+        }
     }
 
     private void assertScreenEquals(String expected) throws IOException {
