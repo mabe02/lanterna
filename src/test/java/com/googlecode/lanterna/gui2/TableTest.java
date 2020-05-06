@@ -18,7 +18,10 @@
  */
 package com.googlecode.lanterna.gui2;
 
+import com.googlecode.lanterna.SGR;
+import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.dialogs.*;
+import com.googlecode.lanterna.gui2.table.DefaultTableCellRenderer;
 import com.googlecode.lanterna.gui2.table.DefaultTableRenderer;
 import com.googlecode.lanterna.gui2.table.Table;
 import com.googlecode.lanterna.gui2.table.TableCellBorderStyle;
@@ -26,7 +29,6 @@ import com.googlecode.lanterna.gui2.table.TableModel;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -47,6 +49,19 @@ public class TableTest extends TestBase {
         window.setHints(Collections.singletonList(Window.Hint.FIT_TERMINAL_WINDOW));
 
         final Table<String> table = new Table<>("Column 1", "Column 2", "Column 3");
+        table.setTableCellRenderer(new DefaultTableCellRenderer<String>() {
+            @Override
+            protected void applyStyle(Table<String> table, String cell, int columnIndex, int rowIndex, boolean isSelected, TextGUIGraphics textGUIGraphics) {
+                super.applyStyle(table, cell, columnIndex, rowIndex, isSelected, textGUIGraphics);
+                if (columnIndex == 1) {
+                    textGUIGraphics.setBackgroundColor(TextColor.ANSI.BLACK);
+                    textGUIGraphics.setForegroundColor(TextColor.ANSI.GREEN);
+                    if (isSelected) {
+                        textGUIGraphics.enableModifiers(SGR.REVERSE);
+                    }
+                }
+            }
+        });
         final TableModel<String> model = table.getTableModel();
         for (int i = 1; i < 30; i++) {
             model.addRow("Row" + i, "Row" + i, "Row" + i);
