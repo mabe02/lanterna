@@ -135,7 +135,7 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
     }
 
     @Override
-    public boolean areScrollBarsHidden() {
+    public boolean isScrollBarsHidden() {
         return scrollBarsHidden;
     }
 

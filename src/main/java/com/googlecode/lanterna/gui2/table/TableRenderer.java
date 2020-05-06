@@ -33,7 +33,7 @@ public interface TableRenderer<V> extends InteractableRenderer<Table<V>> {
     @Override
     TerminalSize getPreferredSize(Table<V> component);
 
-    boolean areScrollBarsHidden();
+    boolean isScrollBarsHidden();
 
     void setScrollBarsHidden(boolean scrollBarsHidden);
 
