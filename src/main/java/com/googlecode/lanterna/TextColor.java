@@ -77,23 +77,37 @@ public interface TextColor {
      * For more information, see http://en.wikipedia.org/wiki/File:Ansi.png
      */
     enum ANSI implements TextColor {
-        BLACK((byte)0, 0, 0, 0),
+        BLACK((byte) 0, 0, 0, 0),
+        BLACK_BRIGHT((byte)0, true, 85, 85, 85),
         RED((byte)1, 170, 0, 0),
+        RED_BRIGHT((byte)1, true, 255, 85, 85),
         GREEN((byte)2, 0, 170, 0),
+        GREEN_BRIGHT((byte)2, true, 85, 255, 85),
         YELLOW((byte)3, 170, 85, 0),
+        YELLOW_BRIGHT((byte)3, true, 255, 255, 85),
         BLUE((byte)4, 0, 0, 170),
+        BLUE_BRIGHT((byte)4, true, 85, 85, 255),
         MAGENTA((byte)5, 170, 0, 170),
+        MAGENTA_BRIGHT((byte)5, true, 255, 85, 255),
         CYAN((byte)6, 0, 170, 170),
+        CYAN_BRIGHT((byte)6, true, 85, 255, 255),
         WHITE((byte)7, 170, 170, 170),
+        WHITE_BRIGHT((byte)7, true, 255, 255, 255),
         DEFAULT((byte)9, 0, 0, 0);
 
         private final byte index;
+        private final boolean bright;
         private final int red;
         private final int green;
         private final int blue;
 
         ANSI(byte index, int red, int green, int blue) {
+            this(index, false, red, green, blue);
+        }
+
+        ANSI(byte index, boolean bright, int red, int green, int blue) {
             this.index = index;
+            this.bright = bright;
             this.red = red;
             this.green = green;
             this.blue = blue;
@@ -101,12 +115,17 @@ public interface TextColor {
 
         @Override
         public byte[] getForegroundSGRSequence() {
-            return new byte[] { (byte)'3', (byte)(48 + index)}; //48 is ascii code for '0'
+            return new byte[]{(byte) (bright ? '9' : '3'), (byte)(48 + index)}; //48 is ascii code for '0'
         }
 
         @Override
         public byte[] getBackgroundSGRSequence() {
-            return new byte[] { (byte)'4', (byte)(48 + index)}; //48 is ascii code for '0'
+            byte b = (byte) (48 + index); //48 is ascii code for '0'
+            return bright ? new byte[]{(byte) '1', (byte) '0', b} : new byte[]{(byte) '4', b};
+        }
+
+        public boolean isBright() {
+            return bright;
         }
 
         @Override
