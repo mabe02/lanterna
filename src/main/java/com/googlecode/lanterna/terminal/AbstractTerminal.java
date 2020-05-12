@@ -33,8 +33,8 @@ import java.util.List;
  */
 public abstract class AbstractTerminal implements Terminal {
 
-    private final List<TerminalResizeListener> resizeListeners;
-    private TerminalSize lastKnownSize;
+    protected final List<TerminalResizeListener> resizeListeners;
+    protected TerminalSize lastKnownSize;
 
     protected AbstractTerminal() {
         this.resizeListeners = new ArrayList<>();
