@@ -100,7 +100,7 @@ public interface TextColor {
         private final int green;
         private final int blue;
         private final byte[] foregroundSGR;
-        private final byte[] backgrondSGR;
+        private final byte[] backgroundSGR;
 
         ANSI(int index, int red, int green, int blue) {
             this(index, false, red, green, blue);
@@ -112,7 +112,7 @@ public interface TextColor {
             this.green = green;
             this.blue = blue;
             foregroundSGR = String.format("%d%d", bright ? 9 : 3, index).getBytes();
-            backgrondSGR = String.format("%d%d", bright ? 10 : 4, index).getBytes();
+            backgroundSGR = String.format("%d%d", bright ? 10 : 4, index).getBytes();
         }
 
         @Override
@@ -122,7 +122,7 @@ public interface TextColor {
 
         @Override
         public byte[] getBackgroundSGRSequence() {
-            return backgrondSGR.clone();
+            return backgroundSGR.clone();
         }
 
         public boolean isBright() {
