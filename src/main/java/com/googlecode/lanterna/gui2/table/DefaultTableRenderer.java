@@ -56,6 +56,7 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
     private final List<Integer> preferredRowSizes;
     private final Set<Integer> expandableColumns;
     private int headerSizeInRows;
+    private boolean allowPartialColumn;
 
     private boolean scrollBarsHidden;
 
@@ -74,6 +75,7 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
         viewTopRow = 0;
         viewLeftColumn = 0;
         visibleRowsOnLastDraw = 0;
+        allowPartialColumn = false;
         scrollBarsHidden = false;
 
         cachedSize = null;
@@ -175,6 +177,16 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
 
     public void setViewLeftColumn(int viewLeftColumn) {
         this.viewLeftColumn = viewLeftColumn;
+    }
+
+    @Override
+    public void setAllowPartialColumn(boolean allowPartialColumn) {
+        this.allowPartialColumn = allowPartialColumn;
+    }
+
+    @Override
+    public boolean getAllowPartialColumn() {
+        return allowPartialColumn;
     }
 
     @Override
@@ -427,6 +439,13 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
             visibleRows = calculateVisibleRows(areaWithoutScrollBars, viewTopRow, preferredVisibleRows);
         }
 
+        int renderColumns;
+        if (allowPartialColumn && visibleColumns < preferredVisibleColumns - viewLeftColumn) {
+            renderColumns = visibleColumns + 1;
+        } else {
+            renderColumns =  visibleColumns;
+        }
+
         List<Integer> columnSizes = fitColumnsInAvailableSpace(table, areaWithoutScrollBars, visibleColumns);
         drawHeader(graphics, table, columnSizes);
         drawRows(graphics.newTextGraphics(
@@ -437,6 +456,7 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
                 columnSizes,
                 visibleRows,
                 visibleColumns,
+                renderColumns,
                 needVerticalScrollBar,
                 needHorizontalScrollBar);
 
@@ -563,6 +583,7 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
             List<Integer> columnSizes,
             int visibleRows,
             int visibleColumns,
+            int renderColumns,
             boolean needVerticalScrollBar,
             boolean needHorizontalScrollBar) {
         Theme theme = table.getTheme();
@@ -633,7 +654,7 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
         for(int rowIndex = viewTopRow; rowIndex < Math.min(viewTopRow + visibleRows, rows.size()); rowIndex++) {
             int leftPosition = 0;
             List<V> row = rows.get(rowIndex);
-            for(int columnIndex = viewLeftColumn; columnIndex < Math.min(viewLeftColumn + visibleColumns, row.size()); columnIndex++) {
+            for(int columnIndex = viewLeftColumn; columnIndex < Math.min(viewLeftColumn + renderColumns, row.size()); columnIndex++) {
                 if(columnIndex > viewLeftColumn) {
                     if(table.getSelectedRow() == rowIndex && !table.isCellSelection()) {
                         if(table.isFocused()) {
@@ -676,7 +697,7 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
             if(cellVerticalBorderStyle != TableCellBorderStyle.None) {
                 leftPosition = 0;
                 graphics.applyThemeStyle(themeDefinition.getNormal());
-                for(int i = viewLeftColumn; i < Math.min(viewLeftColumn + visibleColumns + 1, row.size()); i++) {
+                for(int i = viewLeftColumn; i < Math.min(viewLeftColumn + renderColumns + 1, row.size()); i++) {
                     if(i > viewLeftColumn) {
                         graphics.setCharacter(
                                 leftPosition,
