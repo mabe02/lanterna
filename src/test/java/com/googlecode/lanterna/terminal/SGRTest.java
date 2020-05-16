@@ -65,6 +65,8 @@ public class SGRTest {
         textGraphics.putString(10, 16, string);
         textGraphics.disableModifiers(SGR.REVERSE);
         rawTerminal.setCursorPosition(0, 0);
+        textGraphics.setForegroundColor(TextColor.ANSI.RED_BRIGHT);
+        textGraphics.putString(10, 18, string);
         rawTerminal.flush();
         try {
             while(rawTerminal.pollInput() == null) {

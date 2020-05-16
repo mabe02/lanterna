@@ -286,22 +286,30 @@ public class TerminalEmulatorPalette {
         if(useBrightTones) {
             switch(color) {
                 case BLACK:
+                case BLACK_BRIGHT:
                     return brightBlack;
                 case BLUE:
+                case BLUE_BRIGHT:
                     return brightBlue;
                 case CYAN:
+                case CYAN_BRIGHT:
                     return brightCyan;
                 case DEFAULT:
                     return isForeground ? defaultBrightColor : defaultBackgroundColor;
                 case GREEN:
+                case GREEN_BRIGHT:
                     return brightGreen;
                 case MAGENTA:
+                case MAGENTA_BRIGHT:
                     return brightMagenta;
                 case RED:
+                case RED_BRIGHT:
                     return brightRed;
                 case WHITE:
+                case WHITE_BRIGHT:
                     return brightWhite;
                 case YELLOW:
+                case YELLOW_BRIGHT:
                     return brightYellow;
             }
         }
@@ -309,22 +317,38 @@ public class TerminalEmulatorPalette {
             switch(color) {
                 case BLACK:
                     return normalBlack;
+                case BLACK_BRIGHT:
+                    return brightBlack;
                 case BLUE:
                     return normalBlue;
+                case BLUE_BRIGHT:
+                    return brightBlue;
                 case CYAN:
                     return normalCyan;
+                case CYAN_BRIGHT:
+                    return brightCyan;
                 case DEFAULT:
                     return isForeground ? defaultColor : defaultBackgroundColor;
                 case GREEN:
                     return normalGreen;
+                case GREEN_BRIGHT:
+                    return brightGreen;
                 case MAGENTA:
                     return normalMagenta;
+                case MAGENTA_BRIGHT:
+                    return brightMagenta;
                 case RED:
                     return normalRed;
+                case RED_BRIGHT:
+                    return brightRed;
                 case WHITE:
                     return normalWhite;
+                case WHITE_BRIGHT:
+                    return brightWhite;
                 case YELLOW:
                     return normalYellow;
+                case YELLOW_BRIGHT:
+                    return brightYellow;
             }
         }
         throw new IllegalArgumentException("Unknown text color " + color);
