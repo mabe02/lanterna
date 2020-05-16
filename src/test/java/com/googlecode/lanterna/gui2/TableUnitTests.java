@@ -95,7 +95,7 @@ public class TableUnitTests {
     }
 
     @Test
-    public void testRendersVisibleRowsAndColumns() throws Exception {
+    public void testRendersVisibleRowsAndColumnsWithRestrictedVerticalSpace() throws Exception {
         table.setVisibleRows(3);
         addRowsWithLongSecondColumn(4);
         assertScreenEquals("" +
