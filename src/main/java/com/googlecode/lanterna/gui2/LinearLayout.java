@@ -55,11 +55,31 @@ public class LinearLayout implements LayoutManager {
         Fill,
     }
 
+    /**
+     * This enum type will what to do with a component if the container has extra space to offer. This can happen if the
+     * window runs in full screen or the window has been programmatically set to a fixed size, above the preferred size
+     * of the window.
+     */
+    public enum GrowPolicy {
+        /**
+         * This is the default grow policy, the component will not become larger than the preferred size, even if the
+         * container can offer more.
+         */
+        None,
+        /**
+         * With this grow policy, if the container has more space available then this component will be grown to fill
+         * the extra space.
+         */
+        CanGrow,
+    }
+
     private static class LinearLayoutData implements LayoutData {
         private final Alignment alignment;
+        private final GrowPolicy growPolicy;
 
-        public LinearLayoutData(Alignment alignment) {
+        public LinearLayoutData(Alignment alignment, GrowPolicy growPolicy) {
             this.alignment = alignment;
+            this.growPolicy = growPolicy;
         }
     }
 
@@ -72,7 +92,21 @@ public class LinearLayout implements LayoutManager {
      * @see Alignment
      */
     public static LayoutData createLayoutData(Alignment alignment) {
-        return new LinearLayoutData(alignment);
+        return createLayoutData(alignment, GrowPolicy.None);
+    }
+
+    /**
+     * Creates a {@code LayoutData} for {@code LinearLayout} that assigns a component to a particular alignment on its
+     * counter-axis, meaning the horizontal alignment on vertical {@code LinearLayout}s and vertical alignment on
+     * horizontal {@code LinearLayout}s.
+     * @param alignment Alignment to store in the {@code LayoutData} object
+     * @param growPolicy When policy to apply to the component if the parent container has more space available along
+     *                   the main axis.
+     * @return {@code LayoutData} object created for {@code LinearLayout}s with the specified alignment
+     * @see Alignment
+     */
+    public static LayoutData createLayoutData(Alignment alignment, GrowPolicy growPolicy) {
+        return new LinearLayoutData(alignment, growPolicy);
     }
 
     private final Direction direction;
@@ -277,6 +311,28 @@ public class LinearLayout implements LayoutManager {
             }
         }
 
+        // If we have more space available than we need, grow components to fill
+        if (availableVerticalSpace > totalRequiredVerticalSpace) {
+            boolean resizedOneComponent = false;
+            while (availableVerticalSpace > totalRequiredVerticalSpace) {
+                for(Component component: components) {
+                    final LinearLayoutData layoutData = (LinearLayoutData)component.getLayoutData();
+                    final TerminalSize currentSize = fittingMap.get(component);
+                    if (layoutData != null && layoutData.growPolicy == GrowPolicy.CanGrow) {
+                        fittingMap.put(component, currentSize.withRelativeRows(1));
+                        availableVerticalSpace--;
+                        resizedOneComponent = true;
+                    }
+                    if (availableVerticalSpace <= totalRequiredVerticalSpace) {
+                        break;
+                    }
+                }
+                if (!resizedOneComponent) {
+                    break;
+                }
+            }
+        }
+
         // Assign the sizes and positions
         int topPosition = 0;
         for(Component component: components) {
@@ -399,6 +455,28 @@ public class LinearLayout implements LayoutManager {
                     }
                     fittingMap.put(largeComponent, currentSize.withRelativeColumns(-1));
                     totalRequiredHorizontalSpace--;
+                }
+            }
+        }
+
+        // If we have more space available than we need, grow components to fill
+        if (availableHorizontalSpace > totalRequiredHorizontalSpace) {
+            boolean resizedOneComponent = false;
+            while (availableHorizontalSpace > totalRequiredHorizontalSpace) {
+                for(Component component: components) {
+                    final LinearLayoutData layoutData = (LinearLayoutData)component.getLayoutData();
+                    final TerminalSize currentSize = fittingMap.get(component);
+                    if (layoutData != null && layoutData.growPolicy == GrowPolicy.CanGrow) {
+                        fittingMap.put(component, currentSize.withRelativeColumns(1));
+                        availableHorizontalSpace--;
+                        resizedOneComponent = true;
+                    }
+                    if (availableHorizontalSpace <= totalRequiredHorizontalSpace) {
+                        break;
+                    }
+                }
+                if (!resizedOneComponent) {
+                    break;
                 }
             }
         }

@@ -19,6 +19,8 @@
 package com.googlecode.lanterna.gui2;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 
 public class LinearLayoutTest extends TestBase {
     public static void main(String[] args) throws InterruptedException, IOException {
@@ -35,9 +37,11 @@ public class LinearLayoutTest extends TestBase {
         labelPanel.setLayoutManager(linearLayout);
 
         for(int i = 0; i < 5; i++) {
-            new Label("LABEL COMPONENT").addTo(labelPanel);
+            new Label("LABEL COMPONENT")
+                    .setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Beginning, LinearLayout.GrowPolicy.CanGrow))
+                    .addTo(labelPanel);
         }
-        mainPanel.addComponent(labelPanel);
+        mainPanel.addComponent(labelPanel.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Beginning, LinearLayout.GrowPolicy.CanGrow)));
 
         new Separator(Direction.HORIZONTAL)
                 .setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Fill))
@@ -46,6 +50,8 @@ public class LinearLayoutTest extends TestBase {
         mainPanel.addComponent(Panels.horizontal(
                 new Button("Add", () -> new Label("LABEL COMPONENT").addTo(labelPanel)),
                 new Button("Spacing", () -> linearLayout.setSpacing(linearLayout.getSpacing() == 1 ? 0 : 1)),
+                new Button("Expand", () -> window.setHints(Collections.singletonList(Window.Hint.EXPANDED))),
+                new Button("Collapse", () -> window.setHints(Collections.emptySet())),
                 new Button("Close", window::close)
         ));
 
