@@ -47,7 +47,7 @@ public class TableUnitTests {
     }
 
     @Test
-    public void testRendersVisibleRowsAndColumns_1() throws Exception {
+    public void testRendersVisibleRowsAndColumns() throws Exception {
         addRowsWithLongSecondColumn(4);
         assertScreenEquals("" +
                 "a  b\n" +
@@ -95,7 +95,7 @@ public class TableUnitTests {
     }
 
     @Test
-    public void testRendersVisibleRowsAndColumns_2() throws Exception {
+    public void testRendersVisibleRowsAndColumnsWithRestrictedVerticalSpace() throws Exception {
         table.setVisibleRows(3);
         addRowsWithLongSecondColumn(4);
         assertScreenEquals("" +
