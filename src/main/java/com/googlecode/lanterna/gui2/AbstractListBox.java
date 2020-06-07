@@ -173,7 +173,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
      * @return index of a item that was clicked on with {@link MouseAction}
      */
     protected int getIndexByMouseAction(MouseAction click) {
-        return click.getPosition().getRow() - getGlobalPosition().getRow();
+        return Math.min(click.getPosition().getRow() - getGlobalPosition().getRow(), items.size() -1);
     }
 
     private boolean selectByCharacter(Character character) {

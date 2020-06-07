@@ -107,18 +107,18 @@ public class Issue452Test {
         content.addComponent(checkBox, LAYOUT_NEW_ROW);
         assertFalse(checkBox.isFocused());
         assertFalse(checkBox.isChecked());
-        // First click should only focus the checkbox
-        clickOn(checkBox);
-        assertTrue(checkBox.isFocused());
-        assertFalse(checkBox.isChecked());
-        // Second click should change its value to TRUE
+        // First click should focus the checkbox and item should be selected
         clickOn(checkBox);
         assertTrue(checkBox.isFocused());
         assertTrue(checkBox.isChecked());
-        // Third click should change its value back to FALSE
+        // Second click, focus should remain and item should be unselected
         clickOn(checkBox);
         assertTrue(checkBox.isFocused());
         assertFalse(checkBox.isChecked());
+        // Third click should change its value back to TRUE
+        clickOn(checkBox);
+        assertTrue(checkBox.isFocused());
+        assertTrue(checkBox.isChecked());
     }
 
     @Test
@@ -126,8 +126,6 @@ public class Issue452Test {
         Button button = new Button("Button", createRunnable("Button"));
         content.addComponent(button, LAYOUT_NEW_ROW);
         assertFalse(button.isFocused());
-        // First click should only focus the button
-        clickOn(button);
         try {
             clickOn(button);
             fail();
@@ -147,38 +145,35 @@ public class Issue452Test {
         clickOn(menu);
         // First index is selected at the beginning so no need to focus it
         assertEquals(0, menu.getSelectedIndex());
-        try {
-            menu.handleInput(clickAt(0, 0));
-            fail();
-        } catch (RunnableExecuted e) {
-            assertEquals("Menu1", e.getName());
-        }
-        // First click on second menu to focus
-        menu.handleInput(clickAt(0, 1));
-        assertEquals(1, menu.getSelectedIndex());
+//        try {
+//            menu.handleInput(clickAt(0, 0));
+//            fail();
+//        } catch (RunnableExecuted e) {
+//            assertEquals("Menu1", e.getName());
+//        }
+        
         try {
             menu.handleInput(clickAt(0, 1));
             fail();
         } catch (RunnableExecuted e) {
             assertEquals("Menu2", e.getName());
+            assertEquals(1, menu.getSelectedIndex());
         }
-        // First click on third menu to focus
-        menu.handleInput(clickAt(0, 2));
-        assertEquals(2, menu.getSelectedIndex());
+        
         try {
             menu.handleInput(clickAt(0, 2));
             fail();
         } catch (RunnableExecuted e) {
             assertEquals("Menu3", e.getName());
+            assertEquals(2, menu.getSelectedIndex());
         }
-        // First click on forth menu to focus
-        menu.handleInput(clickAt(0, 3));
-        assertEquals(3, menu.getSelectedIndex());
+        
         try {
             menu.handleInput(clickAt(0, 3));
             fail();
         } catch (RunnableExecuted e) {
             assertEquals("Menu4", e.getName());
+            assertEquals(3, menu.getSelectedIndex());
         }
     }
 
@@ -194,30 +189,14 @@ public class Issue452Test {
         assertEquals(null, list.getCheckedItem());
 
         list.handleInput(clickAt(0, 1));
-        // second radio should be selected but still nothing should be checked
+        // second radio should be selected and item should be checked
         assertEquals("RadioGogo", list.getSelectedItem());
-        assertEquals(null, list.getCheckedItem());
+        assertEquals("RadioGogo", list.getCheckedItem());
 
         list.handleInput(clickAt(0, 2));
-        // third radio should be selected but still nothing should be checked
-        assertEquals("RadioBlaBla", list.getSelectedItem());
-        assertEquals(null, list.getCheckedItem());
-
-        list.handleInput(clickAt(0, 2));
-        // second click on third radio so it should now be selected as well as checked
+        // third radio should be selected and item should be checked
         assertEquals("RadioBlaBla", list.getSelectedItem());
         assertEquals("RadioBlaBla", list.getCheckedItem());
-
-        list.handleInput(clickAt(0, 0));
-        // first click on first radio so it should now be selected , but third radio
-        // still should be checked
-        assertEquals("RadioGaga", list.getSelectedItem());
-        assertEquals("RadioBlaBla", list.getCheckedItem());
-
-        list.handleInput(clickAt(0, 0));
-        // second click on first radio so it should now be selected as well as checked
-        assertEquals("RadioGaga", list.getSelectedItem());
-        assertEquals("RadioGaga", list.getCheckedItem());
     }
 
     @Test

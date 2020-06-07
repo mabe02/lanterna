@@ -80,14 +80,16 @@ public class RadioBoxList<V> extends AbstractListBox<V, RadioBoxList<V>> {
 
     @Override
     public synchronized Result handleKeyStroke(KeyStroke keyStroke) {
-        if ((keyStroke.getKeyType() == KeyType.Enter
-                || (keyStroke.getKeyType() == KeyType.Character && keyStroke.getCharacter() == ' ')
-                || keyStroke.getKeyType() == KeyType.MouseEvent) && isFocused()) {
-            if (keyStroke.getKeyType() == KeyType.MouseEvent) {
-                int newIndex = getIndexByMouseAction((MouseAction) keyStroke);
-                if (newIndex != getSelectedIndex()) {
-                    return super.handleKeyStroke(keyStroke);
-                }
+        if (isKeyboardActivationStroke(keyStroke)) {
+            setCheckedIndex(getSelectedIndex());
+        } else if (keyStroke.getKeyType() == KeyType.MouseEvent) {
+            // includes mouse drag
+            int existingIndex = getSelectedIndex();
+            int newIndex = getIndexByMouseAction((MouseAction) keyStroke);
+            if (existingIndex != newIndex) {
+                Result result = super.handleKeyStroke(keyStroke);
+                setCheckedIndex(getSelectedIndex());
+                return result;
             }
             setCheckedIndex(getSelectedIndex());
             return Result.HANDLED;
