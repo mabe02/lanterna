@@ -101,7 +101,7 @@ public class ActionListBox extends AbstractListBox<Runnable, ActionListBox> {
             // includes mouse drag
             int existingIndex = getSelectedIndex();
             int newIndex = getIndexByMouseAction((MouseAction) keyStroke);
-            if (existingIndex != newIndex) {
+            if (existingIndex != newIndex || !isFocused()) {
                 Result result = super.handleKeyStroke(keyStroke);
                 runSelectedItem();
                 return result;

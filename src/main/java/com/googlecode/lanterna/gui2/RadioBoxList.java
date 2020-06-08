@@ -86,7 +86,7 @@ public class RadioBoxList<V> extends AbstractListBox<V, RadioBoxList<V>> {
             // includes mouse drag
             int existingIndex = getSelectedIndex();
             int newIndex = getIndexByMouseAction((MouseAction) keyStroke);
-            if (existingIndex != newIndex) {
+            if (existingIndex != newIndex || !isFocused()) {
                 Result result = super.handleKeyStroke(keyStroke);
                 setCheckedIndex(getSelectedIndex());
                 return result;
