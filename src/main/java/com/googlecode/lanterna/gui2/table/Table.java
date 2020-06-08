@@ -349,9 +349,9 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
     }
 
     /**
-     * Assigns an action to run whenever the user presses the enter key while focused on the table. If called with
+     * Assigns an action to run whenever the user presses the enter or space key while focused on the table. If called with
      * {@code null}, no action will be run.
-     * @param selectAction Action to perform when user presses the enter key
+     * @param selectAction Action to perform when user presses the enter or space key
      * @return Itself
      */
     public synchronized Table<V> setSelectAction(Runnable selectAction) {
@@ -445,15 +445,19 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
                     return Result.MOVE_FOCUS_RIGHT;
                 }
                 break;
+            case Character:
             case Enter:
-                Runnable runnable = selectAction;   //To avoid synchronizing
-                if(runnable != null) {
-                    runnable.run();
+                if (isKeyboardActivationStroke(keyStroke)) {
+                    Runnable runnable = selectAction;   //To avoid synchronizing
+                    if(runnable != null) {
+                        runnable.run();
+                    } else {
+                        return Result.MOVE_FOCUS_NEXT;
+                    }
+                    break;
+                } else {
+                    return super.handleKeyStroke(keyStroke);
                 }
-                else {
-                    return Result.MOVE_FOCUS_NEXT;
-                }
-                break;
             case MouseEvent:
                 if (!isFocused()) {
                     super.handleKeyStroke(keyStroke);
