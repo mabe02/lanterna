@@ -452,7 +452,7 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
                     if(runnable != null) {
                         runnable.run();
                     } else {
-                        return Result.MOVE_FOCUS_NEXT;
+                        return Result.HANDLED;
                     }
                     break;
                 } else {
@@ -487,8 +487,9 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
     protected int getRowByMouseAction(MouseAction mouseAction) {
         int minPossible = getFirstViewedRowIndex();
         int maxPossible = getLastViewedRowIndex();
+        int mouseSpecified = mouseAction.getPosition().getRow() - getGlobalPosition().getRow() - 1;
         
-        return Math.max(minPossible, Math.min(mouseAction.getPosition().getRow() - getGlobalPosition().getRow() - 1, maxPossible));
+        return Math.max(minPossible, Math.min(mouseSpecified, maxPossible));
     }
     
     /**

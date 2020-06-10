@@ -26,25 +26,15 @@ import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.googlecode.lanterna.TerminalPosition;
-import com.googlecode.lanterna.gui2.ActionListBox;
-import com.googlecode.lanterna.gui2.BasicWindow;
-import com.googlecode.lanterna.gui2.Button;
-import com.googlecode.lanterna.gui2.CheckBox;
-import com.googlecode.lanterna.gui2.GridLayout;
-import com.googlecode.lanterna.gui2.Interactable;
-import com.googlecode.lanterna.gui2.LayoutData;
-import com.googlecode.lanterna.gui2.Panel;
-import com.googlecode.lanterna.gui2.RadioBoxList;
-import com.googlecode.lanterna.gui2.TextBox;
+import com.googlecode.lanterna.*;
+import com.googlecode.lanterna.graphics.*;
+import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.TextBox.Style;
-import com.googlecode.lanterna.gui2.Window;
-import com.googlecode.lanterna.gui2.table.Table;
-import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.input.KeyType;
-import com.googlecode.lanterna.input.MouseAction;
-import com.googlecode.lanterna.input.MouseActionType;
-import com.googlecode.lanterna.screen.TerminalScreen;
+import com.googlecode.lanterna.gui2.table.*;
+import com.googlecode.lanterna.input.*;
+import com.googlecode.lanterna.screen.*;
+import com.googlecode.lanterna.terminal.*;
+
 
 /**
  * Automatic tests for mouse support. These test do not actually lauch
@@ -136,44 +126,38 @@ public class Issue452Test {
 
     @Test
     public void testActionListBox() {
-        ActionListBox menu = new ActionListBox();
-        menu.addItem(createRunnable("Menu1"));
-        menu.addItem(createRunnable("Menu2"));
-        menu.addItem(createRunnable("Menu3"));
-        menu.addItem(createRunnable("Menu4"));
-        content.addComponent(menu, LAYOUT_NEW_ROW);
-        clickOn(menu);
+        ActionListBox listBox = new ActionListBox();
+        listBox.addItem(createRunnable("item_1"));
+        listBox.addItem(createRunnable("item_2"));
+        listBox.addItem(createRunnable("item_3"));
+        listBox.addItem(createRunnable("item_4"));
+        content.addComponent(listBox, LAYOUT_NEW_ROW);
+        
         // First index is selected at the beginning so no need to focus it
-        assertEquals(0, menu.getSelectedIndex());
-//        try {
-//            menu.handleInput(clickAt(0, 0));
-//            fail();
-//        } catch (RunnableExecuted e) {
-//            assertEquals("Menu1", e.getName());
-//        }
+        assertEquals(0, listBox.getSelectedIndex());
         
         try {
-            menu.handleInput(clickAt(0, 1));
+            listBox.handleInput(clickAt(0, 1));
             fail();
         } catch (RunnableExecuted e) {
-            assertEquals("Menu2", e.getName());
-            assertEquals(1, menu.getSelectedIndex());
+            assertEquals("item_2", e.getName());
+            assertEquals(1, listBox.getSelectedIndex());
         }
         
         try {
-            menu.handleInput(clickAt(0, 2));
+            listBox.handleInput(clickAt(0, 2));
             fail();
         } catch (RunnableExecuted e) {
-            assertEquals("Menu3", e.getName());
-            assertEquals(2, menu.getSelectedIndex());
+            assertEquals("item_3", e.getName());
+            assertEquals(2, listBox.getSelectedIndex());
         }
         
         try {
-            menu.handleInput(clickAt(0, 3));
+            listBox.handleInput(clickAt(0, 3));
             fail();
         } catch (RunnableExecuted e) {
-            assertEquals("Menu4", e.getName());
-            assertEquals(3, menu.getSelectedIndex());
+            assertEquals("item_4", e.getName());
+            assertEquals(3, listBox.getSelectedIndex());
         }
     }
 
@@ -200,8 +184,9 @@ public class Issue452Test {
     }
 
     @Test
-    public void testTable() {
+    public void testTable() throws Exception {
         Table<String> table = new Table<>("Column0000000", "Column111", "Column22222");
+        table.setTheme(new SimpleTheme(TextColor.ANSI.WHITE, TextColor.ANSI.BLACK));
         table.getTableModel().addRow("0", "0", "0");
         table.getTableModel().addRow("1", "1", "1");
         table.getTableModel().addRow("2", "2", "2");
@@ -209,10 +194,19 @@ public class Issue452Test {
         table.setCellSelection(true);
         content.addComponent(table, LAYOUT_NEW_ROW);
 
-        assertFalse(table.isFocused());
-        clickOn(table);
-        // after first click table should be focused and first column a first row should
-        // be selected
+        // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        // making use of the drawing routines in the renderer to know the size this thing is
+        DefaultTerminalFactory terminalFactory = new DefaultTerminalFactory();
+        Terminal terminal = terminalFactory.createTerminal();
+        TerminalScreen screen = new TerminalScreen(terminal);
+        screen.startScreen();
+        WindowBasedTextGUI textGUI = new MultiWindowTextGUI(screen);
+        Window window = new BasicWindow("needing to get the table drawn");
+        window.setComponent(table);
+        textGUI.addWindow(window);
+        textGUI.updateScreen();
+        // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        
         assertTrue(table.isFocused());
         assertEquals(0, table.getSelectedColumn());
         assertEquals(0, table.getSelectedRow());
@@ -221,12 +215,19 @@ public class Issue452Test {
         // for all indices sets position to 1, 1
         table.setSelectedColumn(1);
         table.setSelectedRow(1);
-        for (int positionRow = 0; positionRow < table.getTableModel().getRowCount(); positionRow++) {
-            for (int positionColumn = 0; positionColumn < table.getTableModel().getColumnCount(); positionColumn++) {
-                assertTablePositionSelectedAndExecuted(table, positionRow, positionColumn);
-            }
-        }
-
+        
+        // ease to set debugger breakpoints
+        assertTablePositionSelectedAndExecuted(table, 0, 0);
+        assertTablePositionSelectedAndExecuted(table, 1, 0);
+        assertTablePositionSelectedAndExecuted(table, 2, 0);
+        
+        assertTablePositionSelectedAndExecuted(table, 0, 1);
+        assertTablePositionSelectedAndExecuted(table, 1, 1);
+        assertTablePositionSelectedAndExecuted(table, 2, 1);
+        
+        assertTablePositionSelectedAndExecuted(table, 0, 2);
+        assertTablePositionSelectedAndExecuted(table, 1, 2);
+        assertTablePositionSelectedAndExecuted(table, 2, 2);
     }
 
     /**
@@ -234,21 +235,23 @@ public class Issue452Test {
      * will have + length of previous column header lenghts because they span
      * multiple columns
      */
-    private void assertTablePositionSelectedAndExecuted(Table<String> table, int positionRow, int positionColumn) {
-        int previousCollumnsWidth = 0;
+    private void assertTablePositionSelectedAndExecuted(Table<String> table, int positionColumn, int positionRow) {
+        int headerPadding = 1; // should get this from renderer somehow...?
+        
+        int previousColumnsWidth = 0;
         for (int i = 0; i < positionColumn; i++) {
-            previousCollumnsWidth += table.getTableModel().getColumnLabel(i).length();
+            previousColumnsWidth += table.getTableModel().getColumnLabel(i).length();
+            previousColumnsWidth += headerPadding;
         }
-        clickOnWithRelative(table, positionColumn + previousCollumnsWidth, positionRow + 1);
-        assertEquals(positionColumn, table.getSelectedColumn());
-        assertEquals(positionRow, table.getSelectedRow());
+        
         try {
-            clickOnWithRelative(table, positionColumn + previousCollumnsWidth, positionRow + 1);
+            clickOnWithRelative(table, previousColumnsWidth, positionRow + 1);
+            System.out.println("--- Should not be here, should have thrown and caught exception from prior method call to clickOnWithRelative( table, positionColumn: " + positionColumn + ", x: " + previousColumnsWidth + ", y: " + (positionRow +1) +")");
             fail();
         } catch (RunnableExecuted e) {
             assertEquals("Table", e.getName());
-            assertEquals(positionColumn, table.getSelectedColumn());
-            assertEquals(positionRow, table.getSelectedRow());
+            assertEquals("column:"+positionColumn, "column:"+table.getSelectedColumn());
+            assertEquals("row:"+positionRow, "row:"+table.getSelectedRow());
         }
     }
 
@@ -270,8 +273,8 @@ public class Issue452Test {
      * Clicks at position of the {@link Interactable} with offset
      */
     private void clickOnWithRelative(Interactable component, int column, int row) {
-        component.handleInput(
-                clickAt(component.getPosition().getColumn() + column, component.getPosition().getRow() + row));
+        MouseAction mouseAction = clickAt(component.getGlobalPosition().getColumn() + column, component.getGlobalPosition().getRow() + row);
+        component.handleInput(mouseAction);
     }
 
     private Runnable createRunnable(String name) {
