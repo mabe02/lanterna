@@ -632,12 +632,13 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
                 MouseAction mouseAction = (MouseAction) keyStroke;
                 int newCaretPositionColumn = mouseAction.getPosition().getColumn() - getGlobalPosition().getColumn();
                 int newCaretPositionRow = mouseAction.getPosition().getRow() - getGlobalPosition().getRow();
-                String newActiveLine = lines.get(newCaretPositionRow);
-                if (newCaretPositionColumn > newActiveLine.length()) {
-                    caretPosition = caretPosition.with(new TerminalPosition(newActiveLine.length(), newCaretPositionRow));
-                } else {
-                    caretPosition = caretPosition
-                            .with(new TerminalPosition(newCaretPositionColumn, newCaretPositionRow));
+                if (newCaretPositionRow >= 0 && newCaretPositionRow < lines.size()) {
+                    String newActiveLine = lines.get(newCaretPositionRow);
+                    int minPositionAttempt = 0;
+                    int maxPositionAttempt = newActiveLine.length();
+                    newCaretPositionColumn = Math.max(minPositionAttempt, Math.min(newCaretPositionColumn, maxPositionAttempt));
+                    
+                    caretPosition = caretPosition.with(new TerminalPosition(newCaretPositionColumn, newCaretPositionRow));
                 }
                 return Result.HANDLED;
             default:
