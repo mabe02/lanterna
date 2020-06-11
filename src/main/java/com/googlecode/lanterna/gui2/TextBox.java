@@ -625,8 +625,9 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
                         performMoveCaretDown();
                     }
                 } else {
-                    int newCaretPositionColumn = mouseAction.getPosition().getColumn() - getGlobalPosition().getColumn();
-                    int newCaretPositionRow = mouseAction.getPosition().getRow() - getGlobalPosition().getRow();
+                    TerminalPosition offset = getRenderer().getViewTopLeft();
+                    int newCaretPositionColumn = mouseAction.getPosition().getColumn() - getGlobalPosition().getColumn() + offset.getColumn();
+                    int newCaretPositionRow = mouseAction.getPosition().getRow() - getGlobalPosition().getRow() + offset.getRow();
                     if (newCaretPositionRow >= 0 && newCaretPositionRow < lines.size()) {
                         String newActiveLine = lines.get(newCaretPositionRow);
                         int minPositionAttempt = 0;

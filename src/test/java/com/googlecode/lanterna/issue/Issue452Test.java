@@ -58,34 +58,56 @@ public class Issue452Test {
         window.setComponent(content);
     }
 
+    /**
+        some tests need to have the component rendered in to get sizing
+    */
+    void displayForRenderering(Component component) throws Exception {
+        // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        // making use of the drawing routines in the renderer to know the size this thing is
+        DefaultTerminalFactory terminalFactory = new DefaultTerminalFactory();
+        Terminal terminal = terminalFactory.createTerminal();
+        TerminalScreen screen = new TerminalScreen(terminal);
+        screen.startScreen();
+        WindowBasedTextGUI textGUI = new MultiWindowTextGUI(screen);
+        Window window = new BasicWindow("needing to get the table drawn");
+        window.setComponent(component);
+        textGUI.addWindow(window);
+        textGUI.updateScreen();
+        // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    }
+
     @Test
-    public void testSingleLineTextBox() {
+    public void testSingleLineTextBox() throws Exception {
         TextBox singleLine = new TextBox("123456789");
         content.addComponent(singleLine, LAYOUT_NEW_ROW);
+        displayForRenderering(singleLine);
+
         // Focus component
         clickOn(singleLine);
         assertTrue(singleLine.isFocused());
         // Click at 3rd position
-        singleLine.handleInput(clickAt(3, 0));
+        clickOnWithRelative(singleLine, 3, 0);
         singleLine.handleInput(new KeyStroke(KeyType.Backspace));
         // 3rd position (3) should be deleted
         assertEquals("12456789", singleLine.getText());
     }
 
     @Test
-    public void testMultuLineTextBox() {
+    public void testMultuLineTextBox() throws Exception {
         TextBox multiLine = new TextBox("123456789\nabcdefgh", Style.MULTI_LINE);
         content.addComponent(multiLine, LAYOUT_NEW_ROW);
+        displayForRenderering(multiLine);
+
         // Focus component
         clickOn(multiLine);
         assertTrue(multiLine.isFocused());
         // Click at 3rd position 1st row
-        multiLine.handleInput(clickAt(3, 0));
+        clickOnWithRelative(multiLine, 3, 0);
         multiLine.handleInput(new KeyStroke(KeyType.Backspace));
         // 3rd position (3) should be deleted
         assertEquals("12456789\nabcdefgh", multiLine.getText());
         // Click at 5th position 2nd row
-        multiLine.handleInput(clickAt(5, 1));
+        clickOnWithRelative(multiLine, 5, 1);
         multiLine.handleInput(new KeyStroke(KeyType.Backspace));
         // 5th position (e) should be deleted
         assertEquals("12456789\nabcdfgh", multiLine.getText());
@@ -193,20 +215,8 @@ public class Issue452Test {
         table.setSelectAction(createRunnable("Table"));
         table.setCellSelection(true);
         content.addComponent(table, LAYOUT_NEW_ROW);
+        displayForRenderering(table);
 
-        // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-        // making use of the drawing routines in the renderer to know the size this thing is
-        DefaultTerminalFactory terminalFactory = new DefaultTerminalFactory();
-        Terminal terminal = terminalFactory.createTerminal();
-        TerminalScreen screen = new TerminalScreen(terminal);
-        screen.startScreen();
-        WindowBasedTextGUI textGUI = new MultiWindowTextGUI(screen);
-        Window window = new BasicWindow("needing to get the table drawn");
-        window.setComponent(table);
-        textGUI.addWindow(window);
-        textGUI.updateScreen();
-        // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-        
         assertTrue(table.isFocused());
         assertEquals(0, table.getSelectedColumn());
         assertEquals(0, table.getSelectedRow());
