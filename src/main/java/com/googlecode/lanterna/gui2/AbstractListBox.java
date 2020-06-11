@@ -39,7 +39,8 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
     private final List<V> items;
     private int selectedIndex;
     private ListItemRenderer<V,T> listItemRenderer;
-
+    protected TerminalPosition scrollOffset = new TerminalPosition(0, 0);
+    
     /**
      * This constructor sets up the component so it has no preferred size but will ask to be as big as the list is. If
      * the GUI cannot accommodate this size, scrolling and a vertical scrollbar will be used.
@@ -190,7 +191,9 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
      * @return index of a item that was clicked on with {@link MouseAction}
      */
     protected int getIndexByMouseAction(MouseAction click) {
-        return Math.min(click.getPosition().getRow() - getGlobalPosition().getRow(), items.size() -1);
+        int index = click.getPosition().getRow() - getGlobalPosition().getRow() - scrollOffset.getRow();
+        
+        return Math.min(index, items.size() -1);
     }
 
     private boolean selectByCharacter(Character character) {
@@ -376,7 +379,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
     public static class DefaultListBoxRenderer<V, T extends AbstractListBox<V, T>> implements InteractableRenderer<T> {
         private final ScrollBar verticalScrollBar;
         private int scrollTopIndex;
-
+        
         /**
          * Default constructor
          */
@@ -436,6 +439,8 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
                     items.size() - scrollTopIndex < componentHeight) {
                 scrollTopIndex = items.size() - componentHeight;
             }
+            
+            listBox.scrollOffset = new TerminalPosition(0, -scrollTopIndex);
 
             graphics.applyThemeStyle(themeDefinition.getNormal());
             graphics.fill(' ');
