@@ -27,6 +27,7 @@ import com.googlecode.lanterna.TerminalTextUtils;
 import com.googlecode.lanterna.graphics.ThemeDefinition;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.MouseAction;
+import com.googlecode.lanterna.input.MouseActionType;
 
 /**
  * Base class for several list box implementations, this will handle things like list of items and the scrollbar.
@@ -155,7 +156,23 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
                     }
                     return Result.UNHANDLED;
                 case MouseEvent:
-                    selectedIndex = getIndexByMouseAction((MouseAction) keyStroke);
+                    MouseAction mouseAction = (MouseAction) keyStroke;
+                    MouseActionType actionType = mouseAction.getActionType();
+                    
+                    if (actionType == MouseActionType.CLICK_RELEASE) {
+                        // do nothing, desired actioning has been performed already on CLICK_DOWN and DRAG
+                        return Result.HANDLED;
+                    } else if (actionType == MouseActionType.SCROLL_UP) {
+                        // relying on setSelectedIndex(index) to clip the index to valid values within range
+                        setSelectedIndex(getSelectedIndex() -1);
+                        return Result.HANDLED;
+                    } else if (actionType == MouseActionType.SCROLL_DOWN) {
+                        // relying on setSelectedIndex(index) to clip the index to valid values within range
+                        setSelectedIndex(getSelectedIndex() +1);
+                        return Result.HANDLED;
+                    }
+            
+                    selectedIndex = getIndexByMouseAction(mouseAction);
                     return super.handleKeyStroke(keyStroke);
                 default:
             }
@@ -316,17 +333,13 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
      * Sets which item in the list box that is currently selected. Please note that in this context, selected simply
      * means it is the item that currently has input focus. This is not to be confused with list box implementations
      * such as {@code CheckBoxList} where individual items have a certain checked/unchecked state.
+     * This method will clip the supplied index to within 0 to items.size() -1.
      * @param index Index of the item that should be currently selected
      * @return Itself
      */
     public synchronized T setSelectedIndex(int index) {
-        selectedIndex = index;
-        if(selectedIndex < 0) {
-            selectedIndex = 0;
-        }
-        if(selectedIndex > items.size() - 1) {
-            selectedIndex = items.size() - 1;
-        }
+        selectedIndex = Math.max(0, Math.min(index, items.size() -1));
+        
         invalidate();
         return self();
     }

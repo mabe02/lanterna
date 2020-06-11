@@ -99,9 +99,12 @@ public class ActionListBox extends AbstractListBox<Runnable, ActionListBox> {
             return Result.HANDLED;
         } else if (keyStroke.getKeyType() == KeyType.MouseEvent) {
             MouseAction mouseAction = (MouseAction) keyStroke;
-            if (mouseAction.getActionType() == MouseActionType.CLICK_RELEASE) {
-                // do nothing, desired actioning has been performed already on CLICK_DOWN and DRAG
-                return Result.HANDLED;
+            MouseActionType actionType = mouseAction.getActionType();
+            
+            if (actionType == MouseActionType.CLICK_RELEASE
+                    || actionType == MouseActionType.SCROLL_UP
+                    || actionType == MouseActionType.SCROLL_DOWN) {
+                return super.handleKeyStroke(keyStroke);
             }
             
             // includes mouse drag
