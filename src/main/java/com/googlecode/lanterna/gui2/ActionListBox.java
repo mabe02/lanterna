@@ -98,9 +98,15 @@ public class ActionListBox extends AbstractListBox<Runnable, ActionListBox> {
             runSelectedItem();
             return Result.HANDLED;
         } else if (keyStroke.getKeyType() == KeyType.MouseEvent) {
+            MouseAction mouseAction = (MouseAction) keyStroke;
+            if (mouseAction.getActionType() == MouseActionType.CLICK_RELEASE) {
+                // nothing to do, the actioning would already have been performed on CLICK_DOWN and DRAG
+                return Result.HANDLED;
+            }
+            
             // includes mouse drag
             int existingIndex = getSelectedIndex();
-            int newIndex = getIndexByMouseAction((MouseAction) keyStroke);
+            int newIndex = getIndexByMouseAction(mouseAction);
             if (existingIndex != newIndex || !isFocused()) {
                 Result result = super.handleKeyStroke(keyStroke);
                 runSelectedItem();

@@ -27,6 +27,7 @@ import com.googlecode.lanterna.graphics.ThemeStyle;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.input.MouseAction;
+import com.googlecode.lanterna.input.MouseActionType;
 
 /**
  * The list box will display a number of items, of which one and only one can be marked as selected.
@@ -83,9 +84,14 @@ public class RadioBoxList<V> extends AbstractListBox<V, RadioBoxList<V>> {
         if (isKeyboardActivationStroke(keyStroke)) {
             setCheckedIndex(getSelectedIndex());
         } else if (keyStroke.getKeyType() == KeyType.MouseEvent) {
+            MouseAction mouseAction = (MouseAction) keyStroke;
+            if (mouseAction.getActionType() == MouseActionType.CLICK_RELEASE) {
+                // do nothing, desired actioning has been performed already on CLICK_DOWN and DRAG
+                return Result.HANDLED;
+            }
             // includes mouse drag
             int existingIndex = getSelectedIndex();
-            int newIndex = getIndexByMouseAction((MouseAction) keyStroke);
+            int newIndex = getIndexByMouseAction(mouseAction);
             if (existingIndex != newIndex || !isFocused()) {
                 Result result = super.handleKeyStroke(keyStroke);
                 setCheckedIndex(getSelectedIndex());
