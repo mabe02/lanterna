@@ -137,7 +137,7 @@ public class CheckBoxList<V> extends AbstractListBox<V, CheckBoxList<V>> {
     /**
      * Programmatically sets the checked state of an item in the list box.
      * If the state was already true, it is set to false, otherwise it is set to true.
-     * @param checked If {@code true}, then the item is set to checked, otherwise not
+     * @param index Index of the item to toggle the status of
      * @return Itself
      */
     public synchronized CheckBoxList<V> toggleChecked(final int index) {
