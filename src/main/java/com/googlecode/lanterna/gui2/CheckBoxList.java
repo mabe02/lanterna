@@ -52,6 +52,8 @@ public class CheckBoxList<V> extends AbstractListBox<V, CheckBoxList<V>> {
     
     // this is used during mouse dragged to assign all items to the same state
     private boolean stateForMouseDragged;
+    private int minIndexForMouseDragged;
+    private int maxIndexForMouseDragged;
 
     /**
      * Creates a new {@code CheckBoxList} that is initially empty and has no hardcoded preferred size, so it will
@@ -225,9 +227,17 @@ public class CheckBoxList<V> extends AbstractListBox<V, CheckBoxList<V>> {
             if (actionType == MouseActionType.CLICK_DOWN) {
                 stateForMouseDragged = !isChecked(newIndex);
                 setChecked(newIndex, stateForMouseDragged);
+                minIndexForMouseDragged = newIndex;
+                maxIndexForMouseDragged = newIndex;
             }
+            
+            minIndexForMouseDragged = Math.min(minIndexForMouseDragged, newIndex);
+            maxIndexForMouseDragged = Math.max(maxIndexForMouseDragged, newIndex);
+            
             if (actionType == MouseActionType.DRAG) {
-                setChecked(newIndex, stateForMouseDragged);
+                for (int i = minIndexForMouseDragged; i <= maxIndexForMouseDragged; i++) {
+	                setChecked(i, stateForMouseDragged);
+                }
             }
             return result;
         }
