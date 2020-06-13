@@ -34,6 +34,7 @@ import com.googlecode.lanterna.gui2.table.*;
 import com.googlecode.lanterna.input.*;
 import com.googlecode.lanterna.screen.*;
 import com.googlecode.lanterna.terminal.*;
+import com.googlecode.lanterna.terminal.virtual.DefaultVirtualTerminal;
 
 
 /**
@@ -64,8 +65,7 @@ public class Issue452Test {
     void displayForRenderering(Component component) throws Exception {
         // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
         // making use of the drawing routines in the renderer to know the size this thing is
-        DefaultTerminalFactory terminalFactory = new DefaultTerminalFactory();
-        Terminal terminal = terminalFactory.createTerminal();
+        Terminal terminal = new DefaultVirtualTerminal(new TerminalSize(100, 100));
         TerminalScreen screen = new TerminalScreen(terminal);
         screen.startScreen();
         WindowBasedTextGUI textGUI = new MultiWindowTextGUI(screen);
