@@ -472,19 +472,21 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
                     return Result.HANDLED;
                 }
                 break;
-
+            case Character:
             case Enter:
-                if(popupWindow != null) {
-                    popupWindow.listBox.handleKeyStroke(keyStroke);
-                    popupWindow.close();
-                    popupWindow = null;
+                if (isKeyboardActivationStroke(keyStroke)) {
+                    if(popupWindow != null) {
+                        popupWindow.listBox.handleKeyStroke(keyStroke);
+                        popupWindow.close();
+                        popupWindow = null;
+                    }
+                    else {
+                        popupWindow = new PopupWindow();
+                        popupWindow.setPosition(toGlobal(new TerminalPosition(0, 1)));
+                        ((WindowBasedTextGUI) getTextGUI()).addWindow(popupWindow);
+                    }
                 }
-                else {
-                    popupWindow = new PopupWindow();
-                    popupWindow.setPosition(toGlobal(new TerminalPosition(0, 1)));
-                    ((WindowBasedTextGUI) getTextGUI()).addWindow(popupWindow);
-                }
-                break;
+                return super.handleKeyStroke(keyStroke);
 
             case Escape:
                 if(popupWindow != null) {
