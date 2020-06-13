@@ -379,7 +379,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
     public static class DefaultListBoxRenderer<V, T extends AbstractListBox<V, T>> implements InteractableRenderer<T> {
         private final ScrollBar verticalScrollBar;
         private int scrollTopIndex;
-        
+
         /**
          * Default constructor
          */
