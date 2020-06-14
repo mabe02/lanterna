@@ -66,7 +66,7 @@ public class Issue452 {
 
     public static void main(String[] args) throws IOException {
         try (Screen screen = new DefaultTerminalFactory().setTelnetPort(23000)
-                .setMouseCaptureMode(MouseCaptureMode.CLICK).setInitialTerminalSize(new TerminalSize(100, 100))
+                .setMouseCaptureMode(MouseCaptureMode.CLICK_RELEASE_DRAG_MOVE).setInitialTerminalSize(new TerminalSize(100, 100))
                 .createScreen()) {
             screen.startScreen();
             WindowBasedTextGUI gui = new MultiWindowTextGUI(screen);
