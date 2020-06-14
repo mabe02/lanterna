@@ -64,8 +64,7 @@ public class Issue490 {
             log.setCaretPosition(log.getLineCount(), Integer.MAX_VALUE);
         }
     }
-        
-	
+    
     private TextBox logTextBox;
     
     void go() throws Exception {
@@ -76,6 +75,7 @@ public class Issue490 {
                 .createScreen()) {
             screen.startScreen();
             WindowBasedTextGUI gui = new MultiWindowTextGUI(screen);
+
             window = new BasicWindow("Issue490");
             window.addWindowListener(new WindowListenerAdapter() {
                 @Override
@@ -83,6 +83,7 @@ public class Issue490 {
                     log("input: " + keyStroke);
                 }
             });
+
             window.setTheme(LanternaThemes.getRegisteredTheme("businessmachine"));
             window.setComponent(makeUi());
             gui.addWindowAndWait(window);
@@ -116,6 +117,23 @@ public class Issue490 {
         
         CheckBoxList<String> checkboxList = new CheckBoxList<>();
         eachOf(45, i -> checkboxList.addItem("heckboxList: " + i));
+//=======
+//        logTextBox = new TextBox(new TerminalSize(80, 10));
+//        logTextBox.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Fill));
+//        Button clearLogButton = new Button("CLEAR LOG", () -> logTextBox.setText(""));
+//        
+//        ActionListBox listBox = new ActionListBox();
+//        eachOf(200, i -> listBox.addItem("item: " + i, () -> log("item: " + i)));
+//        
+//        ActionListBox listBox2 = new ActionListBox();
+//        eachOf(200, i -> listBox2.addItem("item: " + i, () -> log("listBox2 item: " + i)));
+//        
+//        RadioBoxList radioBoxList = new RadioBoxList();
+//        eachOf(200, i -> radioBoxList.addItem("radio item: " + i));
+//        
+//        CheckBoxList<String> checkboxList = new CheckBoxList<>();
+//        eachOf(200, i -> checkboxList.addItem("heckboxList: " + i));
+//>>>>>>> 91107fdf (rough cut of ScrollPanel)
         // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
         
         // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -143,10 +161,13 @@ public class Issue490 {
         listBox.clearItems();
         eachOf(count, i -> listBox.addItem("item: " + i, () -> log("item: " + i)));
     }
-    
-    
+
     void log(String message) {
-        logAppendMax(10, message);
+        if (logTextBox.getText().trim().length() == 0) {
+            logTextBox.setText(message);
+        } else {
+            logTextBox.addLine(message);
+        }
     }
     
     void eachOf(int count, Consumer<Integer> op) {

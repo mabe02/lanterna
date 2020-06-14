@@ -68,11 +68,10 @@ public class TextBox extends AbstractInteractableComponent<TextBox> implements S
     private int longestRow;
     private Character mask;
     private Pattern validationPattern;
-//<<<<<<< HEAD
+
     private TextChangeListener textChangeListener;
-//=======
+
     private boolean isWithinScrollPanel = false;
-//>>>>>>> 34ef3168 (rough cut of ScrollPanel)
 
     /**
      * Default constructor, this creates a single-line {@code TextBox} of size 10 which is initially empty
@@ -160,6 +159,26 @@ public class TextBox extends AbstractInteractableComponent<TextBox> implements S
     @Override
     public void setIsWithinScrollPanel(boolean isWithinScrollPanel) {
         this.isWithinScrollPanel = isWithinScrollPanel;
+    }
+    
+    @Override
+    public boolean isVerticalScrollCapable() {
+        return false;
+    }
+    
+    @Override
+    public boolean isHorizontalScrollCapable() {
+        return false;
+    }
+    
+    @Override
+    public boolean isVerticalScrollVisible() {
+        return false;
+    }
+    
+    @Override
+    public boolean isHorizontalScrollVisible() {
+        return false;
     }
     
     /**
@@ -1004,8 +1023,6 @@ public class TextBox extends AbstractInteractableComponent<TextBox> implements S
             }
         }
     }
-//<<<<<<< HEAD
-//<<<<<<< HEAD
 
     /**
      * Listener interface for when the {@link TextBox} content has changed. This can be either by user interactions with
@@ -1022,9 +1039,3 @@ public class TextBox extends AbstractInteractableComponent<TextBox> implements S
         void onTextChanged(String newText, boolean changedByUserInteraction);
     }
 }
-//=======
-}
-//>>>>>>> 34ef3168 (rough cut of ScrollPanel)
-//=======
-}
-//>>>>>>> 2dbf630a (preparing ScrollBar renderer to handle mouse clicks)

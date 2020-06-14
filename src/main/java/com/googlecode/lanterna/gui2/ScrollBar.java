@@ -206,7 +206,7 @@ public class ScrollBar extends AbstractInteractableComponent<ScrollBar> {
     public ScrollBarRenderer getScrollBarRenderer() {
         return (ScrollBarRenderer) getRenderer();
     }
-    
+  
     @Override
     protected InteractableRenderer<ScrollBar> createDefaultRenderer() {
         return new DefaultScrollBarRenderer();
@@ -216,7 +216,6 @@ public class ScrollBar extends AbstractInteractableComponent<ScrollBar> {
      * Helper class for making new {@code ScrollBar} renderers a little bit cleaner
      */
     public static abstract class ScrollBarRenderer implements InteractableRenderer<ScrollBar> {
-        
         @Override
         public TerminalSize getPreferredSize(ScrollBar component) {
             return TerminalSize.ONE;
@@ -224,8 +223,8 @@ public class ScrollBar extends AbstractInteractableComponent<ScrollBar> {
         @Override
         public TerminalPosition getCursorLocation(ScrollBar component) {
             //todo, use real thing
-            return null;
-            //return new TerminalPosition(0,0);
+            //return null;
+            return new TerminalPosition(0,0);
         }
         
         public abstract ScrollBarRects getScrollBarRects();

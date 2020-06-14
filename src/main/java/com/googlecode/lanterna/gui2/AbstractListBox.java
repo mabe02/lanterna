@@ -126,6 +126,29 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
         int offset = Math.max(min, Math.min(goal, max));
         scrollOffset = scrollOffset.withRow(offset);
     }
+
+    @Override
+    public boolean isVerticalScrollCapable() {
+        return true;
+    }
+    
+    @Override
+    public boolean isHorizontalScrollCapable() {
+        return false;
+    }
+    
+    @Override
+    public boolean isVerticalScrollVisible() {
+        int componentHeight = getSize().getRows();
+        int itemCount = getItems().size();
+        
+        return itemCount > componentHeight;
+    }
+    
+    @Override
+    public boolean isHorizontalScrollVisible() {
+        return false;
+    }
     
     @Override
     protected InteractableRenderer<T> createDefaultRenderer() {
