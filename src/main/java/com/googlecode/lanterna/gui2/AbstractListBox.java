@@ -27,6 +27,7 @@ import com.googlecode.lanterna.TerminalTextUtils;
 import com.googlecode.lanterna.graphics.ThemeDefinition;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.MouseAction;
+import com.googlecode.lanterna.input.MouseActionType;
 
 /**
  * Base class for several list box implementations, this will handle things like list of items and the scrollbar.
@@ -38,7 +39,8 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
     private final List<V> items;
     private int selectedIndex;
     private ListItemRenderer<V,T> listItemRenderer;
-
+    protected TerminalPosition scrollOffset = new TerminalPosition(0, 0);
+    
     /**
      * This constructor sets up the component so it has no preferred size but will ask to be as big as the list is. If
      * the GUI cannot accommodate this size, scrolling and a vertical scrollbar will be used.
@@ -155,7 +157,23 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
                     }
                     return Result.UNHANDLED;
                 case MouseEvent:
-                    selectedIndex = getIndexByMouseAction((MouseAction) keyStroke);
+                    MouseAction mouseAction = (MouseAction) keyStroke;
+                    MouseActionType actionType = mouseAction.getActionType();
+                    
+                    if (actionType == MouseActionType.CLICK_RELEASE) {
+                        // do nothing, desired actioning has been performed already on CLICK_DOWN and DRAG
+                        return Result.HANDLED;
+                    } else if (actionType == MouseActionType.SCROLL_UP) {
+                        // relying on setSelectedIndex(index) to clip the index to valid values within range
+                        setSelectedIndex(getSelectedIndex() -1);
+                        return Result.HANDLED;
+                    } else if (actionType == MouseActionType.SCROLL_DOWN) {
+                        // relying on setSelectedIndex(index) to clip the index to valid values within range
+                        setSelectedIndex(getSelectedIndex() +1);
+                        return Result.HANDLED;
+                    }
+            
+                    selectedIndex = getIndexByMouseAction(mouseAction);
                     return super.handleKeyStroke(keyStroke);
                 default:
             }
@@ -173,7 +191,9 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
      * @return index of a item that was clicked on with {@link MouseAction}
      */
     protected int getIndexByMouseAction(MouseAction click) {
-        return click.getPosition().getRow() - getGlobalPosition().getRow();
+        int index = click.getPosition().getRow() - getGlobalPosition().getRow() - scrollOffset.getRow();
+        
+        return Math.min(index, items.size() -1);
     }
 
     private boolean selectByCharacter(Character character) {
@@ -316,17 +336,13 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
      * Sets which item in the list box that is currently selected. Please note that in this context, selected simply
      * means it is the item that currently has input focus. This is not to be confused with list box implementations
      * such as {@code CheckBoxList} where individual items have a certain checked/unchecked state.
+     * This method will clip the supplied index to within 0 to items.size() -1.
      * @param index Index of the item that should be currently selected
      * @return Itself
      */
     public synchronized T setSelectedIndex(int index) {
-        selectedIndex = index;
-        if(selectedIndex < 0) {
-            selectedIndex = 0;
-        }
-        if(selectedIndex > items.size() - 1) {
-            selectedIndex = items.size() - 1;
-        }
+        selectedIndex = Math.max(0, Math.min(index, items.size() -1));
+        
         invalidate();
         return self();
     }
@@ -423,6 +439,8 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
                     items.size() - scrollTopIndex < componentHeight) {
                 scrollTopIndex = items.size() - componentHeight;
             }
+            
+            listBox.scrollOffset = new TerminalPosition(0, -scrollTopIndex);
 
             graphics.applyThemeStyle(themeDefinition.getNormal());
             graphics.fill(' ');

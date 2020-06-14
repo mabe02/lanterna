@@ -28,6 +28,7 @@ import com.googlecode.lanterna.TerminalTextUtils;
 import com.googlecode.lanterna.graphics.ThemeDefinition;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.MouseAction;
+import com.googlecode.lanterna.input.MouseActionType;
 
 /**
  * This component keeps a text content that is editable by the user. A TextBox can be single line or multiline and lets
@@ -558,32 +559,16 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
                 }
                 return Result.HANDLED;
             case ArrowUp:
-                if(caretPosition.getRow() > 0) {
-                    int trueColumnPosition = TerminalTextUtils.getColumnIndex(lines.get(caretPosition.getRow()), caretPosition.getColumn());
-                    caretPosition = caretPosition.withRelativeRow(-1);
-                    line = lines.get(caretPosition.getRow());
-                    if(trueColumnPosition > TerminalTextUtils.getColumnWidth(line)) {
-                        caretPosition = caretPosition.withColumn(line.length());
-                    }
-                    else {
-                        caretPosition = caretPosition.withColumn(TerminalTextUtils.getStringCharacterIndex(line, trueColumnPosition));
-                    }
+                if(canMoveCaretUp()) {
+                    performMoveCaretUp();
                 }
                 else if(verticalFocusSwitching) {
                     return Result.MOVE_FOCUS_UP;
                 }
                 return Result.HANDLED;
             case ArrowDown:
-                if(caretPosition.getRow() < lines.size() - 1) {
-                    int trueColumnPosition = TerminalTextUtils.getColumnIndex(lines.get(caretPosition.getRow()), caretPosition.getColumn());
-                    caretPosition = caretPosition.withRelativeRow(1);
-                    line = lines.get(caretPosition.getRow());
-                    if(trueColumnPosition > TerminalTextUtils.getColumnWidth(line)) {
-                        caretPosition = caretPosition.withColumn(line.length());
-                    }
-                    else {
-                        caretPosition = caretPosition.withColumn(TerminalTextUtils.getStringCharacterIndex(line, trueColumnPosition));
-                    }
+                if(canMoveCaretDown()) {
+                    performMoveCaretDown();
                 }
                 else if(verticalFocusSwitching) {
                     return Result.MOVE_FOCUS_DOWN;
@@ -630,19 +615,59 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
                     break;
                 }
                 MouseAction mouseAction = (MouseAction) keyStroke;
-                int newCaretPositionColumn = mouseAction.getPosition().getColumn() - getGlobalPosition().getColumn();
-                int newCaretPositionRow = mouseAction.getPosition().getRow() - getGlobalPosition().getRow();
-                String newActiveLine = lines.get(newCaretPositionRow);
-                if (newCaretPositionColumn > newActiveLine.length()) {
-                    caretPosition = caretPosition.with(new TerminalPosition(newActiveLine.length(), newCaretPositionRow));
+                MouseActionType actionType = mouseAction.getActionType();
+                if (actionType == MouseActionType.SCROLL_UP) {
+                    if (canMoveCaretUp()) {
+                        performMoveCaretUp();
+                    }
+                } else if (actionType == MouseActionType.SCROLL_DOWN) {
+                    if (canMoveCaretDown()) {
+                        performMoveCaretDown();
+                    }
                 } else {
-                    caretPosition = caretPosition
-                            .with(new TerminalPosition(newCaretPositionColumn, newCaretPositionRow));
+                    TerminalPosition offset = getRenderer().getViewTopLeft();
+                    int newCaretPositionColumn = mouseAction.getPosition().getColumn() - getGlobalPosition().getColumn() + offset.getColumn();
+                    int newCaretPositionRow = mouseAction.getPosition().getRow() - getGlobalPosition().getRow() + offset.getRow();
+                    if (newCaretPositionRow >= 0 && newCaretPositionRow < lines.size()) {
+                        String newActiveLine = lines.get(newCaretPositionRow);
+                        int minPositionAttempt = 0;
+                        int maxPositionAttempt = newActiveLine.length();
+                        newCaretPositionColumn = Math.max(minPositionAttempt, Math.min(newCaretPositionColumn, maxPositionAttempt));
+                        
+                        caretPosition = caretPosition.with(new TerminalPosition(newCaretPositionColumn, newCaretPositionRow));
+                    }
                 }
                 return Result.HANDLED;
             default:
         }
         return super.handleKeyStroke(keyStroke);
+    }
+    
+    private boolean canMoveCaretUp() {
+        return caretPosition.getRow() > 0;
+    }
+    private boolean canMoveCaretDown() {
+        return caretPosition.getRow() < lines.size() - 1;
+    }
+    private void performMoveCaretUp() {
+        int trueColumnPosition = TerminalTextUtils.getColumnIndex(lines.get(caretPosition.getRow()), caretPosition.getColumn());
+        caretPosition = caretPosition.withRelativeRow(-1);
+        String line = lines.get(caretPosition.getRow());
+        if(trueColumnPosition > TerminalTextUtils.getColumnWidth(line)) {
+            caretPosition = caretPosition.withColumn(line.length());
+        } else {
+            caretPosition = caretPosition.withColumn(TerminalTextUtils.getStringCharacterIndex(line, trueColumnPosition));
+        }
+    }
+    private void performMoveCaretDown() {
+        int trueColumnPosition = TerminalTextUtils.getColumnIndex(lines.get(caretPosition.getRow()), caretPosition.getColumn());
+        caretPosition = caretPosition.withRelativeRow(1);
+        String line = lines.get(caretPosition.getRow());
+        if(trueColumnPosition > TerminalTextUtils.getColumnWidth(line)) {
+            caretPosition = caretPosition.withColumn(line.length());
+        } else {
+            caretPosition = caretPosition.withColumn(TerminalTextUtils.getStringCharacterIndex(line, trueColumnPosition));
+        }
     }
 
     private boolean validated(String line) {

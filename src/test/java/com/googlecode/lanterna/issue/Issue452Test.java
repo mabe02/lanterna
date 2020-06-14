@@ -26,25 +26,16 @@ import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.googlecode.lanterna.TerminalPosition;
-import com.googlecode.lanterna.gui2.ActionListBox;
-import com.googlecode.lanterna.gui2.BasicWindow;
-import com.googlecode.lanterna.gui2.Button;
-import com.googlecode.lanterna.gui2.CheckBox;
-import com.googlecode.lanterna.gui2.GridLayout;
-import com.googlecode.lanterna.gui2.Interactable;
-import com.googlecode.lanterna.gui2.LayoutData;
-import com.googlecode.lanterna.gui2.Panel;
-import com.googlecode.lanterna.gui2.RadioBoxList;
-import com.googlecode.lanterna.gui2.TextBox;
+import com.googlecode.lanterna.*;
+import com.googlecode.lanterna.graphics.*;
+import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.TextBox.Style;
-import com.googlecode.lanterna.gui2.Window;
-import com.googlecode.lanterna.gui2.table.Table;
-import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.input.KeyType;
-import com.googlecode.lanterna.input.MouseAction;
-import com.googlecode.lanterna.input.MouseActionType;
-import com.googlecode.lanterna.screen.TerminalScreen;
+import com.googlecode.lanterna.gui2.table.*;
+import com.googlecode.lanterna.input.*;
+import com.googlecode.lanterna.screen.*;
+import com.googlecode.lanterna.terminal.*;
+import com.googlecode.lanterna.terminal.virtual.DefaultVirtualTerminal;
+
 
 /**
  * Automatic tests for mouse support. These test do not actually lauch
@@ -68,34 +59,55 @@ public class Issue452Test {
         window.setComponent(content);
     }
 
+    /**
+        some tests need to have the component rendered in to get sizing
+    */
+    void displayForRenderering(Component component) throws Exception {
+        // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        // making use of the drawing routines in the renderer to know the size this thing is
+        Terminal terminal = new DefaultVirtualTerminal(new TerminalSize(100, 100));
+        TerminalScreen screen = new TerminalScreen(terminal);
+        screen.startScreen();
+        WindowBasedTextGUI textGUI = new MultiWindowTextGUI(screen);
+        Window window = new BasicWindow("needing to get the table drawn");
+        window.setComponent(component);
+        textGUI.addWindow(window);
+        textGUI.updateScreen();
+        // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    }
+
     @Test
-    public void testSingleLineTextBox() {
+    public void testSingleLineTextBox() throws Exception {
         TextBox singleLine = new TextBox("123456789");
         content.addComponent(singleLine, LAYOUT_NEW_ROW);
+        displayForRenderering(singleLine);
+
         // Focus component
         clickOn(singleLine);
         assertTrue(singleLine.isFocused());
         // Click at 3rd position
-        singleLine.handleInput(clickAt(3, 0));
+        clickOnWithRelative(singleLine, 3, 0);
         singleLine.handleInput(new KeyStroke(KeyType.Backspace));
         // 3rd position (3) should be deleted
         assertEquals("12456789", singleLine.getText());
     }
 
     @Test
-    public void testMultuLineTextBox() {
+    public void testMultuLineTextBox() throws Exception {
         TextBox multiLine = new TextBox("123456789\nabcdefgh", Style.MULTI_LINE);
         content.addComponent(multiLine, LAYOUT_NEW_ROW);
+        displayForRenderering(multiLine);
+
         // Focus component
         clickOn(multiLine);
         assertTrue(multiLine.isFocused());
         // Click at 3rd position 1st row
-        multiLine.handleInput(clickAt(3, 0));
+        clickOnWithRelative(multiLine, 3, 0);
         multiLine.handleInput(new KeyStroke(KeyType.Backspace));
         // 3rd position (3) should be deleted
         assertEquals("12456789\nabcdefgh", multiLine.getText());
         // Click at 5th position 2nd row
-        multiLine.handleInput(clickAt(5, 1));
+        clickOnWithRelative(multiLine, 5, 1);
         multiLine.handleInput(new KeyStroke(KeyType.Backspace));
         // 5th position (e) should be deleted
         assertEquals("12456789\nabcdfgh", multiLine.getText());
@@ -107,18 +119,18 @@ public class Issue452Test {
         content.addComponent(checkBox, LAYOUT_NEW_ROW);
         assertFalse(checkBox.isFocused());
         assertFalse(checkBox.isChecked());
-        // First click should only focus the checkbox
-        clickOn(checkBox);
-        assertTrue(checkBox.isFocused());
-        assertFalse(checkBox.isChecked());
-        // Second click should change its value to TRUE
+        // First click should focus the checkbox and item should be selected
         clickOn(checkBox);
         assertTrue(checkBox.isFocused());
         assertTrue(checkBox.isChecked());
-        // Third click should change its value back to FALSE
+        // Second click, focus should remain and item should be unselected
         clickOn(checkBox);
         assertTrue(checkBox.isFocused());
         assertFalse(checkBox.isChecked());
+        // Third click should change its value back to TRUE
+        clickOn(checkBox);
+        assertTrue(checkBox.isFocused());
+        assertTrue(checkBox.isChecked());
     }
 
     @Test
@@ -126,8 +138,6 @@ public class Issue452Test {
         Button button = new Button("Button", createRunnable("Button"));
         content.addComponent(button, LAYOUT_NEW_ROW);
         assertFalse(button.isFocused());
-        // First click should only focus the button
-        clickOn(button);
         try {
             clickOn(button);
             fail();
@@ -138,47 +148,38 @@ public class Issue452Test {
 
     @Test
     public void testActionListBox() {
-        ActionListBox menu = new ActionListBox();
-        menu.addItem(createRunnable("Menu1"));
-        menu.addItem(createRunnable("Menu2"));
-        menu.addItem(createRunnable("Menu3"));
-        menu.addItem(createRunnable("Menu4"));
-        content.addComponent(menu, LAYOUT_NEW_ROW);
-        clickOn(menu);
+        ActionListBox listBox = new ActionListBox();
+        listBox.addItem(createRunnable("item_1"));
+        listBox.addItem(createRunnable("item_2"));
+        listBox.addItem(createRunnable("item_3"));
+        listBox.addItem(createRunnable("item_4"));
+        content.addComponent(listBox, LAYOUT_NEW_ROW);
+        
         // First index is selected at the beginning so no need to focus it
-        assertEquals(0, menu.getSelectedIndex());
+        assertEquals(0, listBox.getSelectedIndex());
+        
         try {
-            menu.handleInput(clickAt(0, 0));
+            listBox.handleInput(clickAt(0, 1));
             fail();
         } catch (RunnableExecuted e) {
-            assertEquals("Menu1", e.getName());
+            assertEquals("item_2", e.getName());
+            assertEquals(1, listBox.getSelectedIndex());
         }
-        // First click on second menu to focus
-        menu.handleInput(clickAt(0, 1));
-        assertEquals(1, menu.getSelectedIndex());
+        
         try {
-            menu.handleInput(clickAt(0, 1));
+            listBox.handleInput(clickAt(0, 2));
             fail();
         } catch (RunnableExecuted e) {
-            assertEquals("Menu2", e.getName());
+            assertEquals("item_3", e.getName());
+            assertEquals(2, listBox.getSelectedIndex());
         }
-        // First click on third menu to focus
-        menu.handleInput(clickAt(0, 2));
-        assertEquals(2, menu.getSelectedIndex());
+        
         try {
-            menu.handleInput(clickAt(0, 2));
+            listBox.handleInput(clickAt(0, 3));
             fail();
         } catch (RunnableExecuted e) {
-            assertEquals("Menu3", e.getName());
-        }
-        // First click on forth menu to focus
-        menu.handleInput(clickAt(0, 3));
-        assertEquals(3, menu.getSelectedIndex());
-        try {
-            menu.handleInput(clickAt(0, 3));
-            fail();
-        } catch (RunnableExecuted e) {
-            assertEquals("Menu4", e.getName());
+            assertEquals("item_4", e.getName());
+            assertEquals(3, listBox.getSelectedIndex());
         }
     }
 
@@ -194,46 +195,28 @@ public class Issue452Test {
         assertEquals(null, list.getCheckedItem());
 
         list.handleInput(clickAt(0, 1));
-        // second radio should be selected but still nothing should be checked
+        // second radio should be selected and item should be checked
         assertEquals("RadioGogo", list.getSelectedItem());
-        assertEquals(null, list.getCheckedItem());
+        assertEquals("RadioGogo", list.getCheckedItem());
 
         list.handleInput(clickAt(0, 2));
-        // third radio should be selected but still nothing should be checked
-        assertEquals("RadioBlaBla", list.getSelectedItem());
-        assertEquals(null, list.getCheckedItem());
-
-        list.handleInput(clickAt(0, 2));
-        // second click on third radio so it should now be selected as well as checked
+        // third radio should be selected and item should be checked
         assertEquals("RadioBlaBla", list.getSelectedItem());
         assertEquals("RadioBlaBla", list.getCheckedItem());
-
-        list.handleInput(clickAt(0, 0));
-        // first click on first radio so it should now be selected , but third radio
-        // still should be checked
-        assertEquals("RadioGaga", list.getSelectedItem());
-        assertEquals("RadioBlaBla", list.getCheckedItem());
-
-        list.handleInput(clickAt(0, 0));
-        // second click on first radio so it should now be selected as well as checked
-        assertEquals("RadioGaga", list.getSelectedItem());
-        assertEquals("RadioGaga", list.getCheckedItem());
     }
 
     @Test
-    public void testTable() {
+    public void testTable() throws Exception {
         Table<String> table = new Table<>("Column0000000", "Column111", "Column22222");
+        table.setTheme(new SimpleTheme(TextColor.ANSI.WHITE, TextColor.ANSI.BLACK));
         table.getTableModel().addRow("0", "0", "0");
         table.getTableModel().addRow("1", "1", "1");
         table.getTableModel().addRow("2", "2", "2");
         table.setSelectAction(createRunnable("Table"));
         table.setCellSelection(true);
         content.addComponent(table, LAYOUT_NEW_ROW);
+        displayForRenderering(table);
 
-        assertFalse(table.isFocused());
-        clickOn(table);
-        // after first click table should be focused and first column a first row should
-        // be selected
         assertTrue(table.isFocused());
         assertEquals(0, table.getSelectedColumn());
         assertEquals(0, table.getSelectedRow());
@@ -242,12 +225,19 @@ public class Issue452Test {
         // for all indices sets position to 1, 1
         table.setSelectedColumn(1);
         table.setSelectedRow(1);
-        for (int positionRow = 0; positionRow < table.getTableModel().getRowCount(); positionRow++) {
-            for (int positionColumn = 0; positionColumn < table.getTableModel().getColumnCount(); positionColumn++) {
-                assertTablePositionSelectedAndExecuted(table, positionRow, positionColumn);
-            }
-        }
-
+        
+        // ease to set debugger breakpoints
+        assertTablePositionSelectedAndExecuted(table, 0, 0);
+        assertTablePositionSelectedAndExecuted(table, 1, 0);
+        assertTablePositionSelectedAndExecuted(table, 2, 0);
+        
+        assertTablePositionSelectedAndExecuted(table, 0, 1);
+        assertTablePositionSelectedAndExecuted(table, 1, 1);
+        assertTablePositionSelectedAndExecuted(table, 2, 1);
+        
+        assertTablePositionSelectedAndExecuted(table, 0, 2);
+        assertTablePositionSelectedAndExecuted(table, 1, 2);
+        assertTablePositionSelectedAndExecuted(table, 2, 2);
     }
 
     /**
@@ -255,21 +245,23 @@ public class Issue452Test {
      * will have + length of previous column header lenghts because they span
      * multiple columns
      */
-    private void assertTablePositionSelectedAndExecuted(Table<String> table, int positionRow, int positionColumn) {
-        int previousCollumnsWidth = 0;
+    private void assertTablePositionSelectedAndExecuted(Table<String> table, int positionColumn, int positionRow) {
+        int headerPadding = 1; // should get this from renderer somehow...?
+        
+        int previousColumnsWidth = 0;
         for (int i = 0; i < positionColumn; i++) {
-            previousCollumnsWidth += table.getTableModel().getColumnLabel(i).length();
+            previousColumnsWidth += table.getTableModel().getColumnLabel(i).length();
+            previousColumnsWidth += headerPadding;
         }
-        clickOnWithRelative(table, positionColumn + previousCollumnsWidth, positionRow + 1);
-        assertEquals(positionColumn, table.getSelectedColumn());
-        assertEquals(positionRow, table.getSelectedRow());
+        
         try {
-            clickOnWithRelative(table, positionColumn + previousCollumnsWidth, positionRow + 1);
+            clickOnWithRelative(table, previousColumnsWidth, positionRow + 1);
+            System.out.println("--- Should not be here, should have thrown and caught exception from prior method call to clickOnWithRelative( table, positionColumn: " + positionColumn + ", x: " + previousColumnsWidth + ", y: " + (positionRow +1) +")");
             fail();
         } catch (RunnableExecuted e) {
             assertEquals("Table", e.getName());
-            assertEquals(positionColumn, table.getSelectedColumn());
-            assertEquals(positionRow, table.getSelectedRow());
+            assertEquals("column:"+positionColumn, "column:"+table.getSelectedColumn());
+            assertEquals("row:"+positionRow, "row:"+table.getSelectedRow());
         }
     }
 
@@ -291,8 +283,8 @@ public class Issue452Test {
      * Clicks at position of the {@link Interactable} with offset
      */
     private void clickOnWithRelative(Interactable component, int column, int row) {
-        component.handleInput(
-                clickAt(component.getPosition().getColumn() + column, component.getPosition().getRow() + row));
+        MouseAction mouseAction = clickAt(component.getGlobalPosition().getColumn() + column, component.getGlobalPosition().getRow() + row);
+        component.handleInput(mouseAction);
     }
 
     private Runnable createRunnable(String name) {

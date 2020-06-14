@@ -27,6 +27,9 @@ import com.googlecode.lanterna.TerminalTextUtils;
 import com.googlecode.lanterna.graphics.ThemeDefinition;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
+import com.googlecode.lanterna.input.MouseAction;
+import com.googlecode.lanterna.input.MouseActionType;
+
 
 /**
  * The checkbox component looks like a regular checkbox that you can find in modern graphics user interfaces, a label
@@ -101,9 +104,11 @@ public class CheckBox extends AbstractInteractableComponent<CheckBox> {
 
     @Override
     public Result handleKeyStroke(KeyStroke keyStroke) {
-        if (((keyStroke.getKeyType() == KeyType.Character && keyStroke.getCharacter() == ' ')
-                || keyStroke.getKeyType() == KeyType.Enter || keyStroke.getKeyType() == KeyType.MouseEvent)
-                && isFocused()) {
+        if (isKeyboardActivationStroke(keyStroke)) {
+            setChecked(!isChecked());
+            return Result.HANDLED;
+        } else if (isMouseActivationStroke(keyStroke)) {
+            getBasePane().setFocusedInteractable(this);
             setChecked(!isChecked());
             return Result.HANDLED;
         }

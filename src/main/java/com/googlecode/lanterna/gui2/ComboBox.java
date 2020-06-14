@@ -31,6 +31,9 @@ import com.googlecode.lanterna.TerminalTextUtils;
 import com.googlecode.lanterna.graphics.Theme;
 import com.googlecode.lanterna.graphics.ThemeDefinition;
 import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
+import com.googlecode.lanterna.input.MouseAction;
+import com.googlecode.lanterna.input.MouseActionType;
 
 /**
  * This is a simple combo box implementation that allows the user to select one out of multiple items through a
@@ -449,54 +452,29 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
 
     private Result handleReadOnlyCBKeyStroke(KeyStroke keyStroke) {
         switch(keyStroke.getKeyType()) {
-            case ArrowDown:
-                if(popupWindow != null) {
-                    popupWindow.listBox.handleKeyStroke(keyStroke);
-                    return Result.HANDLED;
-                }
-                return Result.MOVE_FOCUS_DOWN;
-
-            case ArrowUp:
-                if(popupWindow != null) {
-                    popupWindow.listBox.handleKeyStroke(keyStroke);
-                    return Result.HANDLED;
-                }
-                return Result.MOVE_FOCUS_UP;
-
-            case PageUp:
-            case PageDown:
-            case Home:
-            case End:
-                if(popupWindow != null) {
-                    popupWindow.listBox.handleKeyStroke(keyStroke);
-                    return Result.HANDLED;
-                }
-                break;
-
+            case Character:
             case Enter:
-                if(popupWindow != null) {
-                    popupWindow.listBox.handleKeyStroke(keyStroke);
-                    popupWindow.close();
-                    popupWindow = null;
+                if (isKeyboardActivationStroke(keyStroke)) {
+                    showPopup(keyStroke);
                 }
-                else {
-                    popupWindow = new PopupWindow();
-                    popupWindow.setPosition(toGlobal(new TerminalPosition(0, 1)));
-                    ((WindowBasedTextGUI) getTextGUI()).addWindow(popupWindow);
-                }
-                break;
-
-            case Escape:
-                if(popupWindow != null) {
-                    popupWindow.close();
-                    popupWindow = null;
-                    return Result.HANDLED;
+                return super.handleKeyStroke(keyStroke);
+            
+            case MouseEvent:
+                if (isMouseActivationStroke(keyStroke)) {
+                    showPopup(keyStroke);
                 }
                 break;
-
+            
             default:
         }
         return super.handleKeyStroke(keyStroke);
+    }
+    
+    protected void showPopup(KeyStroke keyStroke) {
+        popupWindow = new PopupWindow();
+        popupWindow.setPosition(toGlobal(new TerminalPosition(0, 1)));
+        ((WindowBasedTextGUI) getTextGUI()).addWindow(popupWindow);
+        ((WindowBasedTextGUI) getTextGUI()).setActiveWindow(popupWindow);
     }
 
     private Result handleEditableCBKeyStroke(KeyStroke keyStroke) {
@@ -588,6 +566,7 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
                 listBox.addItem(item.toString(), () -> {
                     setSelectedIndex(index);
                     close();
+                    popupWindow = null;
                 });
             }
             listBox.setSelectedIndex(getSelectedIndex());
@@ -602,6 +581,15 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
         @Override
         public synchronized Theme getTheme() {
             return ComboBox.this.getTheme();
+        }
+        @Override
+        public synchronized boolean handleInput(KeyStroke keyStroke) {
+            if (keyStroke.getKeyType() == KeyType.Escape) {
+                close();
+                popupWindow = null;
+                return true;
+            }
+            return super.handleInput(keyStroke);
         }
     }
 

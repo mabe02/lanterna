@@ -83,9 +83,7 @@ public class Button extends AbstractInteractableComponent<Button> {
 
     @Override
     public synchronized Result handleKeyStroke(KeyStroke keyStroke) {
-        if ((keyStroke.getKeyType() == KeyType.Enter
-                || (keyStroke.getKeyType() == KeyType.Character && keyStroke.getCharacter() == ' ')
-                || keyStroke.getKeyType() == KeyType.MouseEvent) && isFocused()) {
+        if (isActivationStroke(keyStroke)) {
             triggerActions();
             return Result.HANDLED;
         }

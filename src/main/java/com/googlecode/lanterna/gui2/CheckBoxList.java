@@ -23,6 +23,8 @@ import com.googlecode.lanterna.graphics.ThemeDefinition;
 import com.googlecode.lanterna.graphics.ThemeStyle;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
+import com.googlecode.lanterna.input.MouseAction;
+import com.googlecode.lanterna.input.MouseActionType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +49,11 @@ public class CheckBoxList<V> extends AbstractListBox<V, CheckBoxList<V>> {
 
     private final List<Listener> listeners;
     private final List<Boolean> itemStatus;
+    
+    // this is used during mouse dragged to assign all items to the same state
+    private boolean stateForMouseDragged;
+    private int minIndexForMouseDragged;
+    private int maxIndexForMouseDragged;
 
     /**
      * Creates a new {@code CheckBoxList} that is initially empty and has no hardcoded preferred size, so it will
@@ -128,7 +135,18 @@ public class CheckBoxList<V> extends AbstractListBox<V, CheckBoxList<V>> {
 
         return itemStatus.get(index);
     }
-
+    
+    /**
+     * Programmatically sets the checked state of an item in the list box.
+     * If the state was already true, it is set to false, otherwise it is set to true.
+     * @param index Index of the item to toggle the status of
+     * @return Itself
+     */
+    public synchronized CheckBoxList<V> toggleChecked(final int index) {
+        setChecked(index, !isChecked(index));
+        return self();
+    }
+    
     /**
      * Programmatically sets the checked state of an item in the list box
      * @param object Object to set the checked state of
@@ -191,14 +209,39 @@ public class CheckBoxList<V> extends AbstractListBox<V, CheckBoxList<V>> {
 
     @Override
     public synchronized Result handleKeyStroke(KeyStroke keyStroke) {
-        if(keyStroke.getKeyType() == KeyType.Enter ||
-                (keyStroke.getKeyType() == KeyType.Character && keyStroke.getCharacter() == ' ')) {
-            if(itemStatus.get(getSelectedIndex()))
-                setChecked(getSelectedIndex(), Boolean.FALSE);
-            else
-                setChecked(getSelectedIndex(), Boolean.TRUE);
+        if (isKeyboardActivationStroke(keyStroke)) {
+            toggleChecked(getSelectedIndex());
             return Result.HANDLED;
+        } else if (keyStroke.getKeyType() == KeyType.MouseEvent) {
+            MouseAction mouseAction = (MouseAction) keyStroke;
+            MouseActionType actionType = mouseAction.getActionType();
+            
+            if (actionType == MouseActionType.CLICK_RELEASE
+                    || actionType == MouseActionType.SCROLL_UP
+                    || actionType == MouseActionType.SCROLL_DOWN) {
+                return super.handleKeyStroke(keyStroke);
+            }
+            
+            Result result = super.handleKeyStroke(keyStroke);
+            int newIndex = getIndexByMouseAction(mouseAction);
+            if (actionType == MouseActionType.CLICK_DOWN) {
+                stateForMouseDragged = !isChecked(newIndex);
+                setChecked(newIndex, stateForMouseDragged);
+                minIndexForMouseDragged = newIndex;
+                maxIndexForMouseDragged = newIndex;
+            }
+            
+            minIndexForMouseDragged = Math.min(minIndexForMouseDragged, newIndex);
+            maxIndexForMouseDragged = Math.max(maxIndexForMouseDragged, newIndex);
+            
+            if (actionType == MouseActionType.DRAG) {
+                for (int i = minIndexForMouseDragged; i <= maxIndexForMouseDragged; i++) {
+	                setChecked(i, stateForMouseDragged);
+                }
+            }
+            return result;
         }
+        
         return super.handleKeyStroke(keyStroke);
     }
 

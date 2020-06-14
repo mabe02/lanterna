@@ -20,6 +20,9 @@ package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
+import com.googlecode.lanterna.input.MouseAction;
+import com.googlecode.lanterna.input.MouseActionType;
 
 /**
  * Default implementation of Interactable that extends from AbstractComponent. If you want to write your own component
@@ -194,4 +197,28 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
         this.inputFilter = inputFilter;
         return self();
     }
+    
+    public boolean isKeyboardActivationStroke(KeyStroke keyStroke) {
+        boolean isKeyboardActivation = (keyStroke.getKeyType() == KeyType.Character && keyStroke.getCharacter() == ' ') || keyStroke.getKeyType() == KeyType.Enter;
+        
+        return isFocused() && isKeyboardActivation;
+    }
+    
+    public boolean isMouseActivationStroke(KeyStroke keyStroke) {
+        boolean isMouseActivation = false;
+        if (keyStroke instanceof MouseAction) {
+            MouseAction action = (MouseAction)keyStroke;
+            isMouseActivation = action.getActionType() == MouseActionType.CLICK_DOWN;
+        }
+        
+        return isMouseActivation;
+    }
+    
+    public boolean isActivationStroke(KeyStroke keyStroke) {
+        boolean isKeyboardActivationStroke = isKeyboardActivationStroke(keyStroke);
+        boolean isMouseActivationStroke = isMouseActivationStroke(keyStroke);
+        
+        return isKeyboardActivationStroke || isMouseActivationStroke;
+    }
+	
 }

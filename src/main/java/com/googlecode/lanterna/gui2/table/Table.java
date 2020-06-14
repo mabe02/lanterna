@@ -217,6 +217,23 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
     public int getViewTopRow() {
         return getRenderer().getViewTopRow();
     }
+    
+    /**
+     * Returns the index of the first row that is currently visible.
+     * @returns the index of the first row that is currently visible
+     */
+    public int getFirstViewedRowIndex() {
+        return getRenderer().getViewTopRow();
+    }
+    
+    /**
+     * Returns the index of the last row that is currently visible.
+     * @returns the index of the last row that is currently visible
+     */
+    public int getLastViewedRowIndex() {
+        int visibleRows = getRenderer().getVisibleRowsOnLastDraw();
+        return Math.min(getRenderer().getViewTopRow() + visibleRows -1, tableModel.getRowCount() -1);
+    }
 
     /**
      * Sets the view row offset for the first row to display in the table. Calling this with 0 will make the first row
@@ -332,9 +349,9 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
     }
 
     /**
-     * Assigns an action to run whenever the user presses the enter key while focused on the table. If called with
+     * Assigns an action to run whenever the user presses the enter or space key while focused on the table. If called with
      * {@code null}, no action will be run.
-     * @param selectAction Action to perform when user presses the enter key
+     * @param selectAction Action to perform when user presses the enter or space key
      * @return Itself
      */
     public synchronized Table<V> setSelectAction(Runnable selectAction) {
@@ -428,26 +445,31 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
                     return Result.MOVE_FOCUS_RIGHT;
                 }
                 break;
+            case Character:
             case Enter:
-                Runnable runnable = selectAction;   //To avoid synchronizing
-                if(runnable != null) {
-                    runnable.run();
-                }
-                else {
-                    return Result.MOVE_FOCUS_NEXT;
-                }
-                break;
-            case MouseEvent:
-                if (!isFocused()) {
+                if (isKeyboardActivationStroke(keyStroke)) {
+                    Runnable runnable = selectAction;   //To avoid synchronizing
+                    if(runnable != null) {
+                        runnable.run();
+                    } else {
+                        return Result.HANDLED;
+                    }
+                    break;
+                } else {
                     return super.handleKeyStroke(keyStroke);
                 }
-                int clickedRow = getRowByMouseAction((MouseAction) keyStroke);
-                int clickedColumn = getColumnByMouseAction((MouseAction) keyStroke);
-                if (clickedRow == selectedRow && clickedColumn == selectedColumn) {
+            case MouseEvent:
+                if (!isFocused()) {
+                    super.handleKeyStroke(keyStroke);
+                }
+                int mouseRow = getRowByMouseAction((MouseAction) keyStroke);
+                int mouseColumn = getColumnByMouseAction((MouseAction) keyStroke);
+                boolean isDifferentCell = mouseRow != selectedRow || mouseColumn != selectedColumn;
+                selectedRow = mouseRow;
+                selectedColumn = mouseColumn;
+                if (isDifferentCell) {
                     return handleKeyStroke(new KeyStroke(KeyType.Enter));
                 }
-                selectedRow = clickedRow;
-                selectedColumn = clickedColumn;
                 break;
             default:
                 return super.handleKeyStroke(keyStroke);
@@ -462,8 +484,12 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
      * 
      * @return row of a table that was clicked on with {@link MouseAction}
      */
-    protected int getRowByMouseAction(MouseAction click) {
-        return click.getPosition().getRow() - getGlobalPosition().getRow() - 1;
+    protected int getRowByMouseAction(MouseAction mouseAction) {
+        int minPossible = getFirstViewedRowIndex();
+        int maxPossible = getLastViewedRowIndex();
+        int mouseSpecified = mouseAction.getPosition().getRow() - getGlobalPosition().getRow() - 1;
+        
+        return Math.max(minPossible, Math.min(mouseSpecified, maxPossible));
     }
     
     /**
@@ -473,16 +499,15 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
      * 
      * @return row of a table that was clicked on with {@link MouseAction}
      */
-    protected int getColumnByMouseAction(MouseAction click) {
+    protected int getColumnByMouseAction(MouseAction mouseAction) {
+        int maxColumnIndex = tableModel.getColumnCount() -1;
         int column = 0;
-        int columnSize = getTableHeaderRenderer().getPreferredSize(this, getTableModel().getColumnLabel(column), column)
-                .getColumns();
-        int globalColumnClicked = click.getPosition().getColumn() - getGlobalPosition().getColumn();
-        while (globalColumnClicked - columnSize - 1 >= 0) {
-            globalColumnClicked -= columnSize;
+        int columnSize = tableHeaderRenderer.getPreferredSize(this, tableModel.getColumnLabel(column), column).getColumns();
+        int globalColumnMoused = mouseAction.getPosition().getColumn() - getGlobalPosition().getColumn();
+        while (globalColumnMoused - columnSize - 1 >= 0 && column < maxColumnIndex) {
+            globalColumnMoused -= columnSize;
             column++;
-            columnSize = getTableHeaderRenderer().getPreferredSize(this, getTableModel().getColumnLabel(column), column)
-                    .getColumns();
+            columnSize = tableHeaderRenderer.getPreferredSize(this, tableModel.getColumnLabel(column), column).getColumns();
         }
         return column;
     }

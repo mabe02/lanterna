@@ -23,6 +23,7 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.input.MouseAction;
+import com.googlecode.lanterna.input.MouseActionType;
 
 /**
  * This class is a list box implementation that displays a number of items that has actions associated with them. You
@@ -93,19 +94,41 @@ public class ActionListBox extends AbstractListBox<Runnable, ActionListBox> {
 
     @Override
     public Result handleKeyStroke(KeyStroke keyStroke) {
-        Object selectedItem = getSelectedItem();
-        if (selectedItem != null && (keyStroke.getKeyType() == KeyType.Enter
-                || (keyStroke.getKeyType() == KeyType.Character && keyStroke.getCharacter() == ' ')
-                || keyStroke.getKeyType() == KeyType.MouseEvent) && isFocused()) {
-            if (keyStroke.getKeyType() == KeyType.MouseEvent) {
-                int newIndex = getIndexByMouseAction((MouseAction) keyStroke);
-                if (newIndex != getSelectedIndex()) {
-                    return super.handleKeyStroke(keyStroke);
-                }
-            }
-            ((Runnable) selectedItem).run();
+        if (isKeyboardActivationStroke(keyStroke)) {
+            runSelectedItem();
             return Result.HANDLED;
+        } else if (keyStroke.getKeyType() == KeyType.MouseEvent) {
+            MouseAction mouseAction = (MouseAction) keyStroke;
+            MouseActionType actionType = mouseAction.getActionType();
+            
+            if (actionType == MouseActionType.CLICK_RELEASE
+                    || actionType == MouseActionType.SCROLL_UP
+                    || actionType == MouseActionType.SCROLL_DOWN) {
+                return super.handleKeyStroke(keyStroke);
+            }
+            
+            // includes mouse drag
+            int existingIndex = getSelectedIndex();
+            int newIndex = getIndexByMouseAction(mouseAction);
+            if (existingIndex != newIndex || !isFocused() || actionType == MouseActionType.CLICK_DOWN) {
+                // the index has changed, or the focus needs to be obtained, or the user is clicking on the current selection to perform the action again
+                Result result = super.handleKeyStroke(keyStroke);
+                runSelectedItem();
+                return result;
+            }
+            return Result.HANDLED;
+        } else {
+            Result result = super.handleKeyStroke(keyStroke);
+            //runSelectedItem();
+            return result;
         }
-        return super.handleKeyStroke(keyStroke);
     }
+    
+    public void runSelectedItem() {
+        Object selectedItem = getSelectedItem();
+        if (selectedItem != null) {
+            ((Runnable) selectedItem).run();
+        }
+    }
+	
 }
