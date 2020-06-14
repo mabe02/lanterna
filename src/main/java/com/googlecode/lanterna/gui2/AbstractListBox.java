@@ -157,6 +157,10 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
                     }
                     return Result.UNHANDLED;
                 case MouseEvent:
+                    if (isMouseMove(keyStroke)) {
+                        // do nothing
+                        return Result.UNHANDLED;
+                    }
                     MouseAction mouseAction = (MouseAction) keyStroke;
                     MouseActionType actionType = mouseAction.getActionType();
                     
