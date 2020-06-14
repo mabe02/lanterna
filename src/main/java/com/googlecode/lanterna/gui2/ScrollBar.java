@@ -20,7 +20,12 @@ package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.Symbols;
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.graphics.ThemeDefinition;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
+import com.googlecode.lanterna.input.MouseAction;
+import com.googlecode.lanterna.input.MouseActionType;
 
 /**
  * Classic scrollbar that can be used to display where inside a larger component a view is showing. This implementation
@@ -41,7 +46,7 @@ import com.googlecode.lanterna.graphics.ThemeDefinition;
  *
  * @author Martin
  */
-public class ScrollBar extends AbstractComponent<ScrollBar> {
+public class ScrollBar extends AbstractInteractableComponent<ScrollBar> {
 
     private final Direction direction;
     private int maximum;
@@ -135,19 +140,45 @@ public class ScrollBar extends AbstractComponent<ScrollBar> {
             return getSize().getRows();
         }
     }
+    
+    @Override
+    public boolean isFocusable() {
+        return true;
+    }
 
     @Override
-    protected ComponentRenderer<ScrollBar> createDefaultRenderer() {
+    public Result handleKeyStroke(KeyStroke keyStroke) {
+        if (keyStroke.getKeyType() == KeyType.MouseEvent) {
+            MouseAction mouseAction = (MouseAction) keyStroke;
+            MouseActionType actionType = mouseAction.getActionType();
+        
+            if (actionType == MouseActionType.CLICK_RELEASE
+                    || actionType == MouseActionType.SCROLL_UP
+                    || actionType == MouseActionType.SCROLL_DOWN) {
+                return super.handleKeyStroke(keyStroke);
+            }
+            
+        }
+        return Result.HANDLED;
+    }
+    
+    @Override
+    protected InteractableRenderer<ScrollBar> createDefaultRenderer() {
         return new DefaultScrollBarRenderer();
     }
 
     /**
      * Helper class for making new {@code ScrollBar} renderers a little bit cleaner
      */
-    public static abstract class ScrollBarRenderer implements ComponentRenderer<ScrollBar> {
+    public static abstract class ScrollBarRenderer implements InteractableRenderer<ScrollBar> {
         @Override
         public TerminalSize getPreferredSize(ScrollBar component) {
             return TerminalSize.ONE;
+        }
+        @Override
+        public TerminalPosition getCursorLocation(ScrollBar component) {
+            //todo, use real thing
+            return new TerminalPosition(0,0);
         }
     }
 
