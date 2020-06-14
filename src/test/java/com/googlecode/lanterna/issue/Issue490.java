@@ -70,12 +70,11 @@ public class Issue490 {
     void go() throws Exception {
         try (Screen screen = new DefaultTerminalFactory()
                 .setTelnetPort(23000)
-                .setMouseCaptureMode(MouseCaptureMode.CLICK_RELEASE_DRAG_MOVE)
+                .setMouseCaptureMode(MouseCaptureMode.CLICK_RELEASE_DRAG)
                 .setInitialTerminalSize(new TerminalSize(100, 100))
                 .createScreen()) {
             screen.startScreen();
             WindowBasedTextGUI gui = new MultiWindowTextGUI(screen);
-
             window = new BasicWindow("Issue490");
             window.addWindowListener(new WindowListenerAdapter() {
                 @Override
@@ -83,7 +82,6 @@ public class Issue490 {
                     log("input: " + keyStroke);
                 }
             });
-
             window.setTheme(LanternaThemes.getRegisteredTheme("businessmachine"));
             window.setComponent(makeUi());
             gui.addWindowAndWait(window);
