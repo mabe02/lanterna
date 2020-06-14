@@ -38,7 +38,7 @@ import com.googlecode.lanterna.input.MouseActionType;
  * Size-wise, a {@code TextBox} should be hard-coded to a particular size, it's not good at guessing how large it should
  * be. You can do this through the constructor.
  */
-public class TextBox extends AbstractInteractableComponent<TextBox> {
+public class TextBox extends AbstractInteractableComponent<TextBox> implements ScrollableBox {
 
     /**
      * Enum value to force a {@code TextBox} to be either single line or multi line. This is usually auto-detected if
@@ -68,7 +68,11 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
     private int longestRow;
     private Character mask;
     private Pattern validationPattern;
+//<<<<<<< HEAD
     private TextChangeListener textChangeListener;
+//=======
+    private boolean isWithinScrollPanel = false;
+//>>>>>>> 34ef3168 (rough cut of ScrollPanel)
 
     /**
      * Default constructor, this creates a single-line {@code TextBox} of size 10 which is initially empty
@@ -152,7 +156,32 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
         }
         setPreferredSize(preferredSize);
     }
-
+    
+    @Override
+    public void setIsWithinScrollPanel(boolean isWithinScrollPanel) {
+        this.isWithinScrollPanel = isWithinScrollPanel;
+    }
+    
+    @Override
+    public boolean isVerticalScrollCapable() {
+        return false;
+    }
+    
+    @Override
+    public boolean isHorizontalScrollCapable() {
+        return false;
+    }
+    
+    @Override
+    public boolean isVerticalScrollVisible() {
+        return false;
+    }
+    
+    @Override
+    public boolean isHorizontalScrollVisible() {
+        return false;
+    }
+    
     /**
      * Sets a pattern on which the content of the text box is to be validated. For multi-line TextBox:s, the pattern is
      * checked against each line individually, not the content as a whole. Partial matchings will not be allowed, the
@@ -995,6 +1024,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
             }
         }
     }
+//<<<<<<< HEAD
 
     /**
      * Listener interface for when the {@link TextBox} content has changed. This can be either by user interactions with
@@ -1011,3 +1041,6 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
         void onTextChanged(String newText, boolean changedByUserInteraction);
     }
 }
+//=======
+}
+//>>>>>>> 34ef3168 (rough cut of ScrollPanel)

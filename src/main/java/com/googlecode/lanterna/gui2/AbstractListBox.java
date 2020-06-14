@@ -35,10 +35,11 @@ import com.googlecode.lanterna.input.MouseActionType;
  * @param <V> Type of items this list box contains
  * @author Martin
  */
-public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extends AbstractInteractableComponent<T> {
+public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extends AbstractInteractableComponent<T> implements ScrollableBox {
     private final List<V> items;
     private int selectedIndex;
     private ListItemRenderer<V,T> listItemRenderer;
+    private boolean isWithinScrollPanel = false;
     protected TerminalPosition scrollOffset = new TerminalPosition(0, 0);
     
     /**
@@ -65,6 +66,34 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
         setListItemRenderer(createDefaultListItemRenderer());
     }
 
+    @Override
+    public void setIsWithinScrollPanel(boolean isWithinScrollPanel) {
+        this.isWithinScrollPanel = isWithinScrollPanel;
+    }
+    
+    @Override
+    public boolean isVerticalScrollCapable() {
+        return true;
+    }
+    
+    @Override
+    public boolean isHorizontalScrollCapable() {
+        return false;
+    }
+    
+    @Override
+    public boolean isVerticalScrollVisible() {
+        int componentHeight = getSize().getRows();
+        int itemCount = getItems().size();
+        
+        return itemCount > componentHeight;
+    }
+    
+    @Override
+    public boolean isHorizontalScrollVisible() {
+        return false;
+    }
+    
     @Override
     protected InteractableRenderer<T> createDefaultRenderer() {
         return new DefaultListBoxRenderer<>();
