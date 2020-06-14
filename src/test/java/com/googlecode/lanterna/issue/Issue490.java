@@ -51,12 +51,18 @@ public class Issue490 {
     void go() throws Exception {
         try (Screen screen = new DefaultTerminalFactory()
                 .setTelnetPort(23000)
-                .setMouseCaptureMode(MouseCaptureMode.CLICK_RELEASE_DRAG_MOVE)
+                .setMouseCaptureMode(MouseCaptureMode.CLICK_RELEASE_DRAG)
                 .setInitialTerminalSize(new TerminalSize(100, 100))
                 .createScreen()) {
             screen.startScreen();
             WindowBasedTextGUI gui = new MultiWindowTextGUI(screen);
             Window window = new BasicWindow("Issue490");
+            window.addWindowListener(new WindowListenerAdapter() {
+                @Override
+                public void onInput(com.googlecode.lanterna.gui2.Window basePane, com.googlecode.lanterna.input.KeyStroke keyStroke, java.util.concurrent.atomic.AtomicBoolean deliverEvent) {
+                    log("input: " + keyStroke);
+                }
+            });
             window.setTheme(LanternaThemes.getRegisteredTheme("businessmachine"));
             window.setComponent(makeUi());
             gui.addWindowAndWait(window);
@@ -89,6 +95,7 @@ public class Issue490 {
         Panel ui = new Panel(new LinearLayout(Direction.VERTICAL));
         ui.setPreferredSize(new TerminalSize(160, 40));
         ui.addComponent(logTextBox.withBorder(Borders.singleLine("log")));
+        
         Panel hpanel = new Panel(new GridLayout(100));
         hpanel.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Fill));
         ui.addComponent(hpanel.withBorder(Borders.singleLine("components")));
