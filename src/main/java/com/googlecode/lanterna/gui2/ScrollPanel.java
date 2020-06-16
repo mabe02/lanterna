@@ -196,15 +196,12 @@ public class ScrollPanel extends Panel {
             //}
             //
             //scrollableBox.setSize(
-            
         }
         
         @Override
         public boolean hasChanged() {
-
           //  boolean isVerticalScrollVisible = isVerticalScrollVisible();
           //  boolean isHorizontalScrollVisible = isHorizontalScrollVisible();
-
             boolean isVerticalScrollVisible = scrollableBox.isVerticalScrollVisible();
             boolean isHorizontalScrollVisible = scrollableBox.isHorizontalScrollVisible();
             
@@ -229,6 +226,8 @@ public class ScrollPanel extends Panel {
                     addComponent(horizontalScrollBar, Location.BOTTOM);
                 }
             }
+            
+            
             
             once = true;
             return isChanged;
@@ -440,4 +439,3 @@ Y8b  d8 `8b  d8' 88  V888    88    88 `88. `8b  d8' 88booo. 88booo. 88.     88 `
     }
     
 }
-

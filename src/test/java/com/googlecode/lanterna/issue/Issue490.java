@@ -64,13 +64,13 @@ public class Issue490 {
             log.setCaretPosition(log.getLineCount(), Integer.MAX_VALUE);
         }
     }
-    
+
     private TextBox logTextBox;
     
     void go() throws Exception {
         try (Screen screen = new DefaultTerminalFactory()
                 .setTelnetPort(23000)
-                .setMouseCaptureMode(MouseCaptureMode.CLICK_RELEASE_DRAG)
+                .setMouseCaptureMode(MouseCaptureMode.CLICK_RELEASE_DRAG_MOVE)
                 .setInitialTerminalSize(new TerminalSize(100, 100))
                 .createScreen()) {
             screen.startScreen();
@@ -161,11 +161,7 @@ public class Issue490 {
     }
 
     void log(String message) {
-        if (logTextBox.getText().trim().length() == 0) {
-            logTextBox.setText(message);
-        } else {
-            logTextBox.addLine(message);
-        }
+        logAppendMax(10, message);
     }
     
     void eachOf(int count, Consumer<Integer> op) {

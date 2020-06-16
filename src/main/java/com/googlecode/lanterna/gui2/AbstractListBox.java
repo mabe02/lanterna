@@ -133,11 +133,6 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
     }
     
     @Override
-    public boolean isHorizontalScrollCapable() {
-        return false;
-    }
-    
-    @Override
     public boolean isVerticalScrollVisible() {
         int componentHeight = getSize().getRows();
         int itemCount = getItems().size();
@@ -146,9 +141,20 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
     }
     
     @Override
-    public boolean isHorizontalScrollVisible() {
-        return false;
+    public int getVerticalScrollMaximum() {
+        return getItems().size();
     }
+    
+    @Override
+    public int getVerticalScrollPosition() {
+        return - scrollOffset.getRow();
+    }
+    
+    @Override
+    public boolean isWithinScrollPanel() {
+        return isWithinScrollPanel;
+    }
+    
     
     @Override
     protected InteractableRenderer<T> createDefaultRenderer() {
@@ -499,7 +505,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
                     maxWidth = stringLengthInColumns;
                 }
             }
-            int additionalWidth = listBox.isWithinScrollPanel ? 0 : 1;
+            int additionalWidth = listBox.isWithinScrollPanel() ? 0 : 1;
             return new TerminalSize(maxWidth + additionalWidth, listBox.getItemCount());
         }
 
@@ -549,7 +555,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
             }
 
             graphics.applyThemeStyle(themeDefinition.getNormal());
-            if(!listBox.isWithinScrollPanel && items.size() > componentHeight) {
+            if(!listBox.isWithinScrollPanel() && items.size() > componentHeight) {
                 verticalScrollBar.onAdded(listBox.getParent());
                 verticalScrollBar.setViewSize(componentHeight);
                 verticalScrollBar.setScrollMaximum(items.size());
