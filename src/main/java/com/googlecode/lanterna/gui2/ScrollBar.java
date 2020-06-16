@@ -244,15 +244,19 @@ public class ScrollBar extends AbstractInteractableComponent<ScrollBar> {
             TerminalRect moreArrowRect = getScrollMoreArrowRect(component);
             TerminalRect thumbRect = getThumbRect(component, position, maximum);
             TerminalRect thumbCenterRect = getThumbCenterRect(component, thumbRect);
+            //TerminalRect pageLessRect = getPageLessRect(component, lessArrowRect, thumbRect);
+            //TerminalRect pageMoreRect = getPageMoreRect(component, moreArrowRect, thumbRect);
             
             ThemeDefinition themeDefinition = component.getThemeDefinition();
             graphics.applyThemeStyle(themeDefinition.getNormal());
             
             graphics.fillRectangle(TerminalPosition.TOP_LEFT_CORNER, component.getSize(), getBackgroundChar(component));
-            graphics.fillRectangle(lessArrowRect.getPosition(), lessArrowRect.getSize(), getLessChar(component));
-            graphics.fillRectangle(moreArrowRect.getPosition(), moreArrowRect.getSize(), getMoreChar(component));
-            graphics.fillRectangle(thumbRect.getPosition(), thumbRect.getSize(), getThumbChar(component));
-            graphics.fillRectangle(thumbCenterRect.getPosition(), thumbCenterRect.getSize(), getThumbCenterChar(component));
+            graphics.fillRectangle(lessArrowRect.position, lessArrowRect.size, getLessChar(component));
+            graphics.fillRectangle(moreArrowRect.position, moreArrowRect.size, getMoreChar(component));
+            graphics.fillRectangle(thumbRect.position, thumbRect.size, getThumbChar(component));
+            graphics.fillRectangle(thumbCenterRect.position, thumbCenterRect.size, getThumbCenterChar(component));
+            //graphics.fillRectangle(pageLessRect.position, pageLessRect.size, 'a');
+            //graphics.fillRectangle(pageMoreRect.position, pageMoreRect.size, 'b');
         }
 
         private float clampRatio(float value) {
@@ -274,12 +278,20 @@ public class ScrollBar extends AbstractInteractableComponent<ScrollBar> {
             final int h = size < 2 ? 0 : 1;
             return new TerminalRect(x, y, w, h);
         }
-        //public TerminalRect getPageLessRect() {
-        //    
-        //}
-        //public TerminalRect getPageMoreRect() {
-        //    
-        //}
+        public TerminalRect getPageLessRect(ScrollBar component, TerminalRect lessArrowRect, TerminalRect thumbRect) {
+            final int x = component.isVertical() ? 0 : lessArrowRect.xAndWidth;
+            final int y = component.isHorizontal() ? 0 : lessArrowRect.yAndHeight;
+            final int w = component.isVertical() ? thumbRect.width : thumbRect.x - x;
+            final int h = component.isHorizontal() ? thumbRect.height : thumbRect.y - y;
+            return new TerminalRect(x, y, w, h);
+        }
+        public TerminalRect getPageMoreRect(ScrollBar component, TerminalRect moreArrowRect, TerminalRect thumbRect) {
+            final int x = component.isVertical() ? 0 : thumbRect.xAndWidth;
+            final int y = component.isHorizontal() ? 0 : thumbRect.yAndHeight;
+            final int w = component.isVertical() ? thumbRect.width : moreArrowRect.x - thumbRect.xAndWidth;
+            final int h = component.isHorizontal() ? thumbRect.height : moreArrowRect.y - thumbRect.yAndHeight;
+            return new TerminalRect(x, y, w, h);
+        }
         public TerminalRect getThumbRect(ScrollBar component, int position, int maximum) {
             TerminalSize size = component.getSize();
             final int viewSize = component.getViewSize();
@@ -300,8 +312,8 @@ public class ScrollBar extends AbstractInteractableComponent<ScrollBar> {
             return new TerminalRect(thumbX, thumbY, thumbWidth, thumbHeight);
         }
         public TerminalRect getThumbCenterRect(ScrollBar component, TerminalRect thumbRect) {
-            final int x = component.isVertical() ? 0 : (thumbRect.getX() + thumbRect.getWidth()/2);
-            final int y = component.isHorizontal() ? 0 : (thumbRect.getY() + thumbRect.getHeight()/2);
+            final int x = component.isVertical() ? 0 : thumbRect.x + thumbRect.width/2;
+            final int y = component.isHorizontal() ? 0 : thumbRect.y + thumbRect.height/2;
             final int w = 1;
             final int h = 1;
             return new TerminalRect(x, y, w, h);
