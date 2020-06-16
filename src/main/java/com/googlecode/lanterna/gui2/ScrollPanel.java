@@ -58,13 +58,33 @@ public class ScrollPanel extends Panel {
      */
     public ScrollPanel(ScrollableBox scrollableBox) {
         this.scrollableBox = scrollableBox;
-        verticalScrollBar = new ScrollBar(Direction.VERTICAL);
-        horizontalScrollBar = new ScrollBar(Direction.HORIZONTAL);
+        verticalScrollBar = new ScrollBar(Direction.VERTICAL, this);
+        horizontalScrollBar = new ScrollBar(Direction.HORIZONTAL, this);
         scrollPanelLayoutManager = new ScrollPanelLayoutManager();
         setLayoutManager(scrollPanelLayoutManager);
         
         scrollableBox.setIsWithinScrollPanel(true);
         addComponent(scrollableBox, Location.CENTER);
+    }
+    
+    public void doPageVerticalLess() {
+        // delegate, don't want the renderer having reference to scrollableBox
+        scrollableBox.doPageVerticalLess();
+    }
+    
+    public void doPageVerticalMore() {
+        // delegate, don't want the renderer having reference to scrollableBox
+        scrollableBox.doPageVerticalMore();
+    }
+    
+    public void doPageHorizontalLess() {
+        // delegate, don't want the renderer having reference to scrollableBox
+        scrollableBox.doPageHorizontalLess();
+    }
+    
+    public void doPageHorizontalMore() {
+        // delegate, don't want the renderer having reference to scrollableBox
+        scrollableBox.doPageHorizontalMore();
     }
     
     @Override
@@ -74,7 +94,6 @@ public class ScrollPanel extends Panel {
         // ?
         scrollableBox.invalidate();
     }
-    
     
     public class ScrollPanelLayoutManager extends BorderLayout {
     
