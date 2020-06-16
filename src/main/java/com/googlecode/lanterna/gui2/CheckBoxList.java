@@ -214,8 +214,7 @@ public class CheckBoxList<V> extends AbstractListBox<V, CheckBoxList<V>> {
             return Result.HANDLED;
         } else if (keyStroke.getKeyType() == KeyType.MouseEvent) {
             if (isMouseMove(keyStroke)) {
-                // do nothing
-                return Result.UNHANDLED;
+                return super.handleKeyStroke(keyStroke);
             }
             MouseAction mouseAction = (MouseAction) keyStroke;
             MouseActionType actionType = mouseAction.getActionType();

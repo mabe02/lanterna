@@ -157,12 +157,14 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
                     }
                     return Result.UNHANDLED;
                 case MouseEvent:
-                    if (isMouseMove(keyStroke)) {
-                        // do nothing
-                        return Result.UNHANDLED;
-                    }
                     MouseAction mouseAction = (MouseAction) keyStroke;
                     MouseActionType actionType = mouseAction.getActionType();
+                    if (isMouseMove(keyStroke)) {
+                        // do nothing
+                        takeFocus();
+                        selectedIndex = getIndexByMouseAction(mouseAction);
+                        return Result.HANDLED;
+                    }
                     
                     if (actionType == MouseActionType.CLICK_RELEASE) {
                         // do nothing, desired actioning has been performed already on CLICK_DOWN and DRAG

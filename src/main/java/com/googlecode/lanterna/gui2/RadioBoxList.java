@@ -85,8 +85,7 @@ public class RadioBoxList<V> extends AbstractListBox<V, RadioBoxList<V>> {
             setCheckedIndex(getSelectedIndex());
         } else if (keyStroke.getKeyType() == KeyType.MouseEvent) {
             if (isMouseMove(keyStroke)) {
-                // do nothing
-                return Result.UNHANDLED;
+                return super.handleKeyStroke(keyStroke);
             }
             MouseAction mouseAction = (MouseAction) keyStroke;
             MouseActionType actionType = mouseAction.getActionType();
