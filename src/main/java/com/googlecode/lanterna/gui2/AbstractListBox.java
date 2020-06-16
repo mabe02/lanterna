@@ -160,7 +160,6 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
                     MouseAction mouseAction = (MouseAction) keyStroke;
                     MouseActionType actionType = mouseAction.getActionType();
                     if (isMouseMove(keyStroke)) {
-                        // do nothing
                         takeFocus();
                         selectedIndex = getIndexByMouseAction(mouseAction);
                         return Result.HANDLED;
