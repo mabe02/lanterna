@@ -240,6 +240,5 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
     public boolean isMouseUp(KeyStroke keyStroke) {
         return keyStroke.getKeyType() == KeyType.MOUSE_EVENT && ((MouseAction)keyStroke).isMouseUp();
     }
-    
 	
 }

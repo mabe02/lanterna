@@ -53,16 +53,21 @@ public class ScrollBar extends AbstractInteractableComponent<ScrollBar> {
     private int maximum;
     private int position;
     private int viewSize;
+    private final ScrollPanel scrollPanel;
 
     /**
      * Creates a new {@code ScrollBar} with a specified direction
      * @param direction Direction of the scrollbar
      */
     public ScrollBar(Direction direction) {
+        this(direction, null);
+    }
+    public ScrollBar(Direction direction, ScrollPanel scrollPanel) {
         this.direction = direction;
         this.maximum = 100;
         this.position = 0;
         this.viewSize = 0;
+        this.scrollPanel = scrollPanel;
     }
 
     /**
@@ -172,8 +177,31 @@ public class ScrollBar extends AbstractInteractableComponent<ScrollBar> {
                 return super.handleKeyStroke(keyStroke);
             }
             
+            if (scrollPanel != null) {
+                ScrollBarRects rects = getScrollBarRenderer().getScrollBarRects();
+                
+                // the mouse events delivered are not in local coordinates, translate them
+                int x = mouseAction.getPosition().getColumn() - getGlobalPosition().getColumn();
+                int y = mouseAction.getPosition().getRow() - getGlobalPosition().getRow();
+                
+                if (isVertical()) {
+                    if (isMouseDown(keyStroke)) {
+                        rects.pageLessRect.whenContains(x, y, () -> scrollPanel.doPageVerticalLess());
+                        rects.pageMoreRect.whenContains(x, y, () -> scrollPanel.doPageVerticalMore());
+                    }
+                } else {
+                    if (isMouseDown(keyStroke)) {
+                        rects.pageLessRect.whenContains(x, y, () -> scrollPanel.doPageHorizontalLess());
+                        rects.pageMoreRect.whenContains(x, y, () -> scrollPanel.doPageHorizontalMore());
+                    }
+                }
+            }
         }
         return Result.HANDLED;
+    }
+    
+    public ScrollBarRenderer getScrollBarRenderer() {
+        return (ScrollBarRenderer) getRenderer();
     }
     
     @Override
@@ -185,6 +213,8 @@ public class ScrollBar extends AbstractInteractableComponent<ScrollBar> {
      * Helper class for making new {@code ScrollBar} renderers a little bit cleaner
      */
     public static abstract class ScrollBarRenderer implements InteractableRenderer<ScrollBar> {
+        
+        
         @Override
         public TerminalSize getPreferredSize(ScrollBar component) {
             return TerminalSize.ONE;
@@ -194,6 +224,32 @@ public class ScrollBar extends AbstractInteractableComponent<ScrollBar> {
             //todo, use real thing
             return null;
             //return new TerminalPosition(0,0);
+        }
+        
+        public abstract ScrollBarRects getScrollBarRects();
+    }
+    
+    public static class ScrollBarRects {
+        public final TerminalRect lessArrowRect;
+        public final TerminalRect moreArrowRect;
+        public final TerminalRect thumbRect;
+        public final TerminalRect thumbCenterRect;
+        public final TerminalRect pageLessRect;
+        public final TerminalRect pageMoreRect;
+        
+        public ScrollBarRects(
+                TerminalRect lessArrowRect,
+                TerminalRect moreArrowRect,
+                TerminalRect thumbRect,
+                TerminalRect thumbCenterRect,
+                TerminalRect pageLessRect,
+                TerminalRect pageMoreRect) {
+            this.lessArrowRect   = lessArrowRect;
+            this.moreArrowRect   = moreArrowRect;
+            this.thumbRect       = thumbRect;
+            this.thumbCenterRect = thumbCenterRect;
+            this.pageLessRect    = pageLessRect;
+            this.pageMoreRect    = pageMoreRect;
         }
     }
 
@@ -205,7 +261,8 @@ public class ScrollBar extends AbstractInteractableComponent<ScrollBar> {
      */
     public static class DefaultScrollBarRenderer extends ScrollBarRenderer {
 
-        private boolean growScrollTracker;
+        private boolean growScrollTracker = true;
+        private ScrollBarRects scrollBarRects;
 
         /**
          * Default constructor
@@ -244,8 +301,10 @@ public class ScrollBar extends AbstractInteractableComponent<ScrollBar> {
             TerminalRect moreArrowRect = getScrollMoreArrowRect(component);
             TerminalRect thumbRect = getThumbRect(component, position, maximum);
             TerminalRect thumbCenterRect = getThumbCenterRect(component, thumbRect);
-            //TerminalRect pageLessRect = getPageLessRect(component, lessArrowRect, thumbRect);
-            //TerminalRect pageMoreRect = getPageMoreRect(component, moreArrowRect, thumbRect);
+            TerminalRect pageLessRect = getPageLessRect(component, lessArrowRect, thumbRect);
+            TerminalRect pageMoreRect = getPageMoreRect(component, moreArrowRect, thumbRect);
+            
+            this.scrollBarRects = new ScrollBarRects(lessArrowRect, moreArrowRect, thumbRect, thumbCenterRect, pageLessRect, pageMoreRect);
             
             ThemeDefinition themeDefinition = component.getThemeDefinition();
             graphics.applyThemeStyle(themeDefinition.getNormal());
@@ -257,6 +316,11 @@ public class ScrollBar extends AbstractInteractableComponent<ScrollBar> {
             graphics.fillRectangle(thumbCenterRect.position, thumbCenterRect.size, getThumbCenterChar(component));
             //graphics.fillRectangle(pageLessRect.position, pageLessRect.size, 'a');
             //graphics.fillRectangle(pageMoreRect.position, pageMoreRect.size, 'b');
+        }
+        
+        @Override
+        public ScrollBarRects getScrollBarRects() {
+            return scrollBarRects;
         }
 
         private float clampRatio(float value) {
