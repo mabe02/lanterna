@@ -31,11 +31,39 @@ public interface ScrollableBox extends Component {
 
     void setIsWithinScrollPanel(boolean isWithinScrollPanel);
     
-    boolean isVerticalScrollCapable();
+    default boolean isWithinScrollPanel() {
+        return false;
+    }
     
-    boolean isHorizontalScrollCapable();
+    default boolean isVerticalScrollCapable() {
+        return false;
+    }
     
-    boolean isVerticalScrollVisible();
+    default boolean isHorizontalScrollCapable() {
+        return false;
+    }
     
-    boolean isHorizontalScrollVisible();
+    default boolean isVerticalScrollVisible() {
+        return false;
+    }
+    
+    default boolean isHorizontalScrollVisible() {
+        return false;
+    }
+    
+    default int getVerticalScrollMaximum() {
+        return 0;
+    }
+    
+    default int getHorizontalScrollMaximum() {
+        return 0;
+    }
+    
+    default int getVerticalScrollPosition() {
+        return 0;
+    }
+    
+    default int getHorizontalScrollPosition() {
+        return 0;
+    }
 }

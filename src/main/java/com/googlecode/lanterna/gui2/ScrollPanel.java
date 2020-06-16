@@ -100,22 +100,23 @@ public class ScrollPanel extends Panel {
         @Override
         public void doLayout(TerminalSize area, List<Component> components) {
            super.doLayout(area, components);
-            //int width = area.getColumns();
-            //int height = area.getRows();
-            //
-            //if (priorLayoutHasVerticalScrollVisible) {
-            //    width--;
-            //}
-            //if (priorLayoutHasHorizontalScrollVisible) {
-            //    height--;
-            //}
-            //
-            //scrollableBox.setSize(
-            
+           
+           if (scrollableBox.isVerticalScrollVisible()) {
+                verticalScrollBar.setViewSize(verticalScrollBar.getSize().getRows());
+                verticalScrollBar.setScrollMaximum(scrollableBox.getVerticalScrollMaximum());
+                verticalScrollBar.setScrollPosition(scrollableBox.getVerticalScrollPosition());
+           }
+           
+           if (scrollableBox.isHorizontalScrollVisible()) {
+                horizontalScrollBar.setViewSize(horizontalScrollBar.getSize().getColumns());
+                horizontalScrollBar.setScrollMaximum(scrollableBox.getHorizontalScrollMaximum());
+                horizontalScrollBar.setScrollPosition(scrollableBox.getHorizontalScrollPosition());
+           }
         }
         
         @Override
         public boolean hasChanged() {
+        
             boolean isVerticalScrollVisible = scrollableBox.isVerticalScrollVisible();
             boolean isHorizontalScrollVisible = scrollableBox.isHorizontalScrollVisible();
             
@@ -124,7 +125,12 @@ public class ScrollPanel extends Panel {
             priorLayoutHasVerticalScrollVisible = isVerticalScrollVisible;
             priorLayoutHasHorizontalScrollVisible = isHorizontalScrollVisible;
             
-            if (isChanged) {
+            // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            // this 'true' here is a hack to get the layout happening
+            // otherwise the scroller lags one 'tick' behind realtime
+            // other option would be to subclass the Renderer it seems
+            // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            if (true || isChanged) {
                 removeComponent(verticalScrollBar);
                 removeComponent(horizontalScrollBar);
                 if (isVerticalScrollVisible) {
@@ -134,6 +140,8 @@ public class ScrollPanel extends Panel {
                     addComponent(horizontalScrollBar, Location.BOTTOM);
                 }
             }
+            
+            
             
             once = true;
             return isChanged;
