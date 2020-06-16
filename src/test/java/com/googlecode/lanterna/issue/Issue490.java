@@ -45,13 +45,26 @@ public class Issue490 {
     }
     
     // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-    
+    private void logAppendMax(int lineCount, String message) {
+        TextBox log = logTextBox;
+        try {
+            while (log.getLineCount() >= lineCount) {
+                log.removeLine(0);
+            }
+        } finally {
+            log.addLine(message);
+            // unfortunately some methods expect (row, column), some (column, row)
+            log.setCaretPosition(log.getLineCount(), Integer.MAX_VALUE);
+        }
+    }
+        
+	
     private TextBox logTextBox;
     
     void go() throws Exception {
         try (Screen screen = new DefaultTerminalFactory()
                 .setTelnetPort(23000)
-                .setMouseCaptureMode(MouseCaptureMode.CLICK_RELEASE_DRAG)
+                .setMouseCaptureMode(MouseCaptureMode.CLICK_RELEASE_DRAG_MOVE)
                 .setInitialTerminalSize(new TerminalSize(100, 100))
                 .createScreen()) {
             screen.startScreen();
@@ -73,21 +86,21 @@ public class Issue490 {
         
         // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
         // instantiate ui components (no layout activities)
-        logTextBox = new TextBox(new TerminalSize(80, 10));
+        logTextBox = new TextBox(new TerminalSize(80, 12));
         logTextBox.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Fill));
         Button clearLogButton = new Button("CLEAR LOG", () -> logTextBox.setText(""));
         
         ActionListBox listBox = new ActionListBox();
-        eachOf(200, i -> listBox.addItem("item: " + i, () -> log("item: " + i)));
-        
         ActionListBox listBox2 = new ActionListBox();
-        eachOf(200, i -> listBox2.addItem("item: " + i, () -> log("listBox2 item: " + i)));
+        
+        eachOf(45, i -> listBox.addItem("assign: " + (5*i), () -> reassignItems(5*i, listBox2)));
+        eachOf(45, i -> listBox2.addItem("item: " + i, () -> log("listBox2 item: " + i)));
         
         RadioBoxList radioBoxList = new RadioBoxList();
-        eachOf(200, i -> radioBoxList.addItem("radio item: " + i));
+        eachOf(45, i -> radioBoxList.addItem("radio item: " + i));
         
         CheckBoxList<String> checkboxList = new CheckBoxList<>();
-        eachOf(200, i -> checkboxList.addItem("heckboxList: " + i));
+        eachOf(45, i -> checkboxList.addItem("heckboxList: " + i));
         // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
         
         // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -109,12 +122,15 @@ public class Issue490 {
         return ui;
     }
     
+    void reassignItems(int count, ActionListBox listBox) {
+        log("reassignItems(" + count + ", " + listBox + ")");
+        listBox.clearItems();
+        eachOf(count, i -> listBox.addItem("item: " + i, () -> log("item: " + i)));
+    }
+    
+    
     void log(String message) {
-        if (logTextBox.getText().trim().length() == 0) {
-            logTextBox.setText(message);
-        } else {
-            logTextBox.addLine(message);
-        }
+        logAppendMax(10, message);
     }
     
     void eachOf(int count, Consumer<Integer> op) {
