@@ -96,6 +96,15 @@ public class TerminalRect {
         return new TerminalRect(x, y, width, rows);
     }
 
+    public boolean whenContains(int x, int y, Runnable op) {
+        if (this.x <= x && x < this.xAndWidth && this.y <= y && y < this.yAndHeight) {
+            op.run();
+            return true;
+        }
+        return false;
+    }
+
+
     @Override
     public String toString() {
         return "{x: " + x + ", y: " + y + ", width: " + width + ", height: " + height + "}";
