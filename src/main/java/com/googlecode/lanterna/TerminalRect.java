@@ -27,53 +27,56 @@ import java.util.Objects;
  */
 public class TerminalRect {
     
-    private final TerminalPosition position;
-    private final TerminalSize size;
+    // one of the benefits of immutable: ease of usage
+    public final TerminalPosition position;
+    public final TerminalSize size;
+    public final int x;
+    public final int y;
+    public final int width;
+    public final int height;
+    
+    public final int xAndWidth;
+    public final int yAndHeight;
     
     /**
-     * Creates a new terminal rect representation with a given width (columns) and height (rows)
-     * @param columns Width, in number of columns
-     * @param rows Height, in number of columns
+     * Creates a new terminal rect representation at the supplied x y position with the supplied width and height.
+     *
+     * Both width and height must be at least zero (non negative)
+     *
+     * @param width number of columns
+     * @param height number of rows
      */
-    public TerminalRect(int x, int y, int w, int h) {
-        if (w < 0) {
-            throw new IllegalArgumentException("TerminalSize.columns cannot be less than 0!");
+    public TerminalRect(int x, int y, int width, int height) {
+        if (width < 0) {
+            throw new IllegalArgumentException("TerminalRect.width cannot be less than 0!");
         }
-        if (h < 0) {
-            throw new IllegalArgumentException("TerminalSize.rows cannot be less than 0!");
+        if (height < 0) {
+            throw new IllegalArgumentException("TerminalRect.height cannot be less than 0!");
         }
         position = new TerminalPosition(x, y);
-        size = new TerminalSize(w, h);
-    }
-    
-    public TerminalPosition getPosition() {
-        return position;
-    }
-    
-    public int getX() {
-        return position.getColumn();
-    }
-    public int getY() {
-        return position.getRow();
-    }
-    public int getWidth() {
-        return size.getColumns();
-    }
-    public int getHeight() {
-        return size.getRows();
-    }
-    
-    public TerminalSize getSize() {
-        return size;
+        size = new TerminalSize(width, height);
+        
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.xAndWidth = x + width;
+        this.yAndHeight = y + height;
     }
     
     /**
      * @return Returns the width of this rect, in number of columns
      */
     public int getColumns() {
-        return getSize().getColumns();
+        return width;
     }
-
+    
+    /**
+     * @return Returns the height of this rect representation, in number of rows
+     */
+    public int getRows() {
+        return height;
+    }
     
     /**
      * Creates a new rect based on this rect, but with a different width
@@ -81,28 +84,21 @@ public class TerminalRect {
      * @return New rect based on this one, but with a new width
      */
     public TerminalRect withColumns(int columns) {
-        return new TerminalRect(position.getColumn(), position.getRow(), columns, size.getRows());
+        return new TerminalRect(x, y, columns, height);
     }
-
-    /**
-     * @return Returns the height of this rect representation, in number of rows
-     */
-    public int getRows() {
-        return getSize().getRows();
-    }
-
+    
     /**
      * Creates a new rect based on this rect, but with a different height
      * @param rows Height of the new rect, in rows
      * @return New rect based on this one, but with a new height
      */
     public TerminalRect withRows(int rows) {
-        return new TerminalRect(position.getColumn(), position.getRow(), size.getColumns(), rows);
+        return new TerminalRect(x, y, width, rows);
     }
 
     @Override
     public String toString() {
-        return "{x: " + position.getColumn() + ", y: " + position.getRow() + ", w: " + size.getColumns() + ", h: " + size.getRows() + "}";
+        return "{x: " + x + ", y: " + y + ", width: " + width + ", height: " + height + "}";
     }
 
     @Override
