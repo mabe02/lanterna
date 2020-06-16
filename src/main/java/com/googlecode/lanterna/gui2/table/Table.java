@@ -25,6 +25,7 @@ import com.googlecode.lanterna.gui2.AbstractInteractableComponent;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.input.MouseAction;
+import com.googlecode.lanterna.input.MouseActionType;
 
 /**
  * The table class is an interactable component that displays a grid of cells containing data along with a header of
@@ -459,6 +460,12 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
                     return super.handleKeyStroke(keyStroke);
                 }
             case MouseEvent:
+                MouseAction action = (MouseAction)keyStroke;
+                MouseActionType actionType = action.getActionType();
+                if (actionType == MouseActionType.MOVE) {
+                    // do nothing
+                    return Result.UNHANDLED;
+                } 
                 if (!isFocused()) {
                     super.handleKeyStroke(keyStroke);
                 }
