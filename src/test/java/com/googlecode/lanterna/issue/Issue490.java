@@ -45,6 +45,13 @@ public class Issue490 {
     }
     
     // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    
+    Window window;
+    
+    void assignTheme(String themeName) {
+        window.setTheme(LanternaThemes.getRegisteredTheme(themeName));
+    }
+    
     private void logAppendMax(int lineCount, String message) {
         TextBox log = logTextBox;
         try {
@@ -69,7 +76,7 @@ public class Issue490 {
                 .createScreen()) {
             screen.startScreen();
             WindowBasedTextGUI gui = new MultiWindowTextGUI(screen);
-            Window window = new BasicWindow("Issue490");
+            window = new BasicWindow("Issue490");
             window.addWindowListener(new WindowListenerAdapter() {
                 @Override
                 public void onInput(com.googlecode.lanterna.gui2.Window basePane, com.googlecode.lanterna.input.KeyStroke keyStroke, java.util.concurrent.atomic.AtomicBoolean deliverEvent) {
@@ -90,6 +97,14 @@ public class Issue490 {
         logTextBox.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Fill));
         Button clearLogButton = new Button("CLEAR LOG", () -> logTextBox.setText(""));
         
+        ActionListBox themes = new ActionListBox(new TerminalSize(40, 62));
+        themes.addItem("theme: default        ", () -> assignTheme("default"));
+        themes.addItem("theme: defrost        ", () -> assignTheme("defrost"));
+        themes.addItem("theme: bigsnake       ", () -> assignTheme("bigsnake"));
+        themes.addItem("theme: conqueror      ", () -> assignTheme("conqueror"));
+        themes.addItem("theme: businessmachine", () -> assignTheme("businessmachine"));
+        themes.addItem("theme: blaster        ", () -> assignTheme("blaster"));
+		
         ActionListBox listBox = new ActionListBox();
         ActionListBox listBox2 = new ActionListBox();
         
@@ -112,6 +127,7 @@ public class Issue490 {
         Panel hpanel = new Panel(new GridLayout(100));
         hpanel.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Fill));
         ui.addComponent(hpanel.withBorder(Borders.singleLine("components")));
+        hpanel.addComponent(themes.withBorder(Borders.singleLine("themes")));
         hpanel.addComponent(listBox.withBorder(Borders.singleLine("listBox")));
         hpanel.addComponent(new ScrollPanel(listBox2).withBorder(Borders.singleLine("scrollPanel listBox")));
         hpanel.addComponent(new ScrollPanel(radioBoxList).withBorder(Borders.singleLine("scrollPanel radio list")));

@@ -183,7 +183,8 @@ public class ScrollBar extends AbstractInteractableComponent<ScrollBar> {
         @Override
         public TerminalPosition getCursorLocation(ScrollBar component) {
             //todo, use real thing
-            return new TerminalPosition(0,0);
+            return null;
+            //return new TerminalPosition(0,0);
         }
     }
 
