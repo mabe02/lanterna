@@ -155,6 +155,20 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
         return isWithinScrollPanel;
     }
     
+    @Override
+    public void doPageVerticalLess() {
+        if(getSize() != null) {
+            setSelectedIndex(getSelectedIndex() - getSize().getRows());
+        }
+    }
+    
+    @Override
+    public void doPageVerticalMore() {
+        if(getSize() != null) {
+            setSelectedIndex(getSelectedIndex() + getSize().getRows());
+        }
+    }
+    
     
     @Override
     protected InteractableRenderer<T> createDefaultRenderer() {
@@ -229,7 +243,6 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
                 case END:
                     selectedIndex = items.size() - 1;
                     return Result.HANDLED;
-
 
                 case PAGE_UP:
                     doPageKeyboard(true, true);

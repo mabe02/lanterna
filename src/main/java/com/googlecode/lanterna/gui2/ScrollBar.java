@@ -207,7 +207,6 @@ public class ScrollBar extends AbstractInteractableComponent<ScrollBar> {
     public ScrollBarRenderer getScrollBarRenderer() {
         return (ScrollBarRenderer) getRenderer();
     }
-  
     @Override
     protected InteractableRenderer<ScrollBar> createDefaultRenderer() {
         return new DefaultScrollBarRenderer();
@@ -217,6 +216,8 @@ public class ScrollBar extends AbstractInteractableComponent<ScrollBar> {
      * Helper class for making new {@code ScrollBar} renderers a little bit cleaner
      */
     public static abstract class ScrollBarRenderer implements InteractableRenderer<ScrollBar> {
+        
+        
         @Override
         public TerminalSize getPreferredSize(ScrollBar component) {
             return TerminalSize.ONE;
@@ -252,6 +253,32 @@ public class ScrollBar extends AbstractInteractableComponent<ScrollBar> {
             this.thumbCenter = thumbCenter;
             this.pageLess    = pageLess;
             this.pageMore    = pageMore;
+        }
+        
+        public abstract ScrollBarRects getScrollBarRects();
+    }
+    
+    public static class ScrollBarRects {
+        public final TerminalRect lessArrowRect;
+        public final TerminalRect moreArrowRect;
+        public final TerminalRect thumbRect;
+        public final TerminalRect thumbCenterRect;
+        public final TerminalRect pageLessRect;
+        public final TerminalRect pageMoreRect;
+        
+        public ScrollBarRects(
+                TerminalRect lessArrowRect,
+                TerminalRect moreArrowRect,
+                TerminalRect thumbRect,
+                TerminalRect thumbCenterRect,
+                TerminalRect pageLessRect,
+                TerminalRect pageMoreRect) {
+            this.lessArrowRect   = lessArrowRect;
+            this.moreArrowRect   = moreArrowRect;
+            this.thumbRect       = thumbRect;
+            this.thumbCenterRect = thumbCenterRect;
+            this.pageLessRect    = pageLessRect;
+            this.pageMoreRect    = pageMoreRect;
         }
     }
 
@@ -318,6 +345,11 @@ public class ScrollBar extends AbstractInteractableComponent<ScrollBar> {
             graphics.fillRectangle(thumbCenter.position, thumbCenter.size, getThumbCenterChar(component));
             //graphics.fillRectangle(pageLess.position, pageLess.size, 'a');
             //graphics.fillRectangle(pageMore.position, pageMore.size, 'b');
+        }
+        
+        @Override
+        public ScrollBarRects getScrollBarRects() {
+            return scrollBarRects;
         }
         
         @Override

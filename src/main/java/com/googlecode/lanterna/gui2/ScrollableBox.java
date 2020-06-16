@@ -35,36 +35,25 @@ public interface ScrollableBox extends Component {
         return false;
     }
     
-    default boolean isVerticalScrollCapable() {
-        return false;
-    }
+    default boolean isVerticalScrollCapable() { return false; }
     
-    default boolean isHorizontalScrollCapable() {
-        return false;
-    }
+    default boolean isHorizontalScrollCapable() { return false; }
     
-    default boolean isVerticalScrollVisible() {
-        return false;
-    }
+    default boolean isVerticalScrollVisible() { return false; }
     
-    default boolean isHorizontalScrollVisible() {
-        return false;
-    }
+    default boolean isHorizontalScrollVisible() { return false; }
     
-    default int getVerticalScrollMaximum() {
-        return 0;
-    }
+    default int getVerticalScrollMaximum() { return 0; }
     
-    default int getHorizontalScrollMaximum() {
-        return 0;
-    }
+    default int getHorizontalScrollMaximum() { return 0; }
     
-    default int getVerticalScrollPosition() {
-        return 0;
-    }
+    default int getVerticalScrollPosition() { return 0; }
     
-    default int getHorizontalScrollPosition() {
-        return 0;
-    }
+    default int getHorizontalScrollPosition() { return 0; }
+    
+    default public void doPageVerticalLess() {}
+    default public void doPageVerticalMore() {}
+    default public void doPageHorizontalLess() {}
+    default public void doPageHorizontalMore() {}
 
 }
