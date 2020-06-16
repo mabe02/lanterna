@@ -1025,6 +1025,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> implements S
         }
     }
 //<<<<<<< HEAD
+//<<<<<<< HEAD
 
     /**
      * Listener interface for when the {@link TextBox} content has changed. This can be either by user interactions with
@@ -1044,3 +1045,6 @@ public class TextBox extends AbstractInteractableComponent<TextBox> implements S
 //=======
 }
 //>>>>>>> 34ef3168 (rough cut of ScrollPanel)
+//=======
+}
+//>>>>>>> 2dbf630a (preparing ScrollBar renderer to handle mouse clicks)
