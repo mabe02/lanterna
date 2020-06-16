@@ -1023,7 +1023,6 @@ public class TextBox extends AbstractInteractableComponent<TextBox> implements S
             }
         }
     }
-
     /**
      * Listener interface for when the {@link TextBox} content has changed. This can be either by user interactions with
      * the component or through programmatically adding and removing lines (there is a flag set on the callback method
