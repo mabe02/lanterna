@@ -312,7 +312,6 @@ public class ScrollBar extends AbstractInteractableComponent<ScrollBar> {
             graphics.applyThemeStyle(themeDefinition.getNormal());
             
             graphics.fillRectangle(TerminalPosition.TOP_LEFT_CORNER, component.getSize(), getBackgroundChar(component));
-
             graphics.fillRectangle(lessArrow.position, lessArrow.size, getLessChar(component));
             graphics.fillRectangle(moreArrow.position, moreArrow.size, getMoreChar(component));
             graphics.fillRectangle(thumb.position, thumb.size, getThumbChar(component));
@@ -376,8 +375,14 @@ public class ScrollBar extends AbstractInteractableComponent<ScrollBar> {
             final int thumbY = component.isHorizontal() ? 0 : scrollTrackerPosition;
             int thumbWidth = component.isVertical() ? 1 : scrollTrackerSize;
             int thumbHeight = component.isHorizontal() ? 1 : scrollTrackerSize;
-
             return new TerminalRectangle(thumbX, thumbY, thumbWidth, thumbHeight);
+        }
+        public TerminalRect getThumbCenterRect(ScrollBar component, TerminalRect thumbRect) {
+            final int x = component.isVertical() ? 0 : thumbRect.x + thumbRect.width/2;
+            final int y = component.isHorizontal() ? 0 : thumbRect.y + thumbRect.height/2;
+            final int w = 1;
+            final int h = 1;
+            return new TerminalRect(x, y, w, h);
         }
         public char getLessChar(ScrollBar component) {
             return findChar(component, "UP_ARROW", Symbols.TRIANGLE_UP_POINTING_BLACK, "LEFT_ARROW", Symbols.TRIANGLE_LEFT_POINTING_BLACK);
