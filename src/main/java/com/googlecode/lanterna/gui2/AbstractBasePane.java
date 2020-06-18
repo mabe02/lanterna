@@ -30,6 +30,7 @@ import com.googlecode.lanterna.gui2.menu.MenuBar;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.input.MouseAction;
+import com.googlecode.lanterna.input.MouseActionType;
 
 /**
  * This abstract implementation of {@code BasePane} has the common code shared by all different concrete
@@ -44,6 +45,8 @@ public abstract class AbstractBasePane<T extends BasePane> implements BasePane {
     private boolean strictFocusChange;
     private boolean enableDirectionBasedMovements;
     private Theme theme;
+    
+    private Interactable mouseDownForDrag = null;
 
     protected AbstractBasePane() {
         this.contentHolder = new ContentHolder();
@@ -238,7 +241,19 @@ public abstract class AbstractBasePane<T extends BasePane> implements BasePane {
         if (localCoordinates == null) {
            return false;
         }
+        
         Interactable interactable = interactableLookupMap.getInteractableAt(localCoordinates);
+        if (mouseAction.isMouseDown()) {
+            mouseDownForDrag = interactable;
+        }
+        if (mouseAction.isMouseUp()) {
+            mouseDownForDrag = null;
+        }
+        
+        if (mouseAction.isMouseDrag() && mouseDownForDrag != null) {
+            return mouseDownForDrag.handleInput(mouseAction) == Result.HANDLED;
+        } 
+        
         if (interactable == null) {
            return false;
         }

@@ -53,4 +53,8 @@ public interface ScrollableBox extends Component {
     
     default public void doScroll(boolean isVertical, boolean isLess) {}
     default public void doPage(boolean isVertical, boolean isLess) {}
+    
+    default public void thumbMouseDown(boolean isVertical, TerminalPosition position) {}
+    default public void thumbMouseDrag(boolean isVertical, TerminalPosition position) {}
+    default public void mouseUp() {}
 }
