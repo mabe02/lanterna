@@ -173,6 +173,7 @@ public class ScrollBar extends AbstractInteractableComponent<ScrollBar> {
             }
             
             if (scrollPanel != null) {
+                boolean isVertical = isVertical();
                 ScrollBarRects rects = getScrollBarRenderer().getScrollBarRects();
                 
                 // the mouse events delivered are not in local coordinates, translate them
@@ -180,12 +181,17 @@ public class ScrollBar extends AbstractInteractableComponent<ScrollBar> {
                 int y = mouseAction.getPosition().getRow() - getGlobalPosition().getRow();
                 
                 if (isMouseDown(keyStroke)) {
-                    boolean isVertical = isVertical();
                     rects.lessArrowRect.whenContains(x, y, () -> scrollPanel.doScroll(isVertical, true));
                     rects.moreArrowRect.whenContains(x, y, () -> scrollPanel.doScroll(isVertical, false));
-                    rects.thumbRect.whenContains(x, y, () -> {});
+                    rects.thumbRect.whenContains(x, y, () -> scrollPanel.thumbMouseDown(isVertical, mouseAction.getPosition()));
                     rects.pageLessRect.whenContains(x, y, () -> scrollPanel.doPage(isVertical, true));
                     rects.pageMoreRect.whenContains(x, y, () -> scrollPanel.doPage(isVertical, false));
+                }
+                if (isMouseUp(keyStroke)) {
+                    scrollPanel.mouseUp();
+                }
+                if (isMouseDrag(keyStroke)) {
+                    scrollPanel.thumbMouseDrag(isVertical, mouseAction.getPosition());
                 }
             }
         }

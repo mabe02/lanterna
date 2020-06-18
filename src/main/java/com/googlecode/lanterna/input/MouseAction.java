@@ -74,6 +74,22 @@ public class MouseAction extends KeyStroke {
     public TerminalPosition getPosition() {
         return position;
     }
+    
+    public boolean isMouseDown() {
+        return actionType == MouseActionType.CLICK_DOWN;
+    }
+    
+    public boolean isMouseDrag() {
+        return actionType == MouseActionType.DRAG;
+    }
+    
+    public boolean isMouseMove() {
+        return actionType == MouseActionType.MOVE;
+    }
+    
+    public boolean isMouseUp() {
+        return actionType == MouseActionType.CLICK_RELEASE;
+    }
 
     @Override
     public String toString() {
