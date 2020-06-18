@@ -199,6 +199,12 @@ public class ScrollBar extends AbstractInteractableComponent<ScrollBar> {
                 if (isMouseDrag(keyStroke)) {
                     scrollPanel.thumbMouseDrag(isVertical, mouseAction.getPosition());
                 }
+                if (isMouseUp(keyStroke)) {
+                    scrollPanel.mouseUp();
+                }
+                if (isMouseDrag(keyStroke)) {
+                    scrollPanel.thumbMouseDrag(isVertical, mouseAction.getPosition());
+                }
             }
         }
         return Result.HANDLED;

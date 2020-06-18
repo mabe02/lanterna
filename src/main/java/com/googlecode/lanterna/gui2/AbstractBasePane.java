@@ -246,7 +246,7 @@ public abstract class AbstractBasePane<T extends BasePane> implements BasePane {
         if (mouseAction.isMouseDown()) {
             mouseDownForDrag = interactable;
         }
-
+        
         Interactable wasMouseDownForDrag = mouseDownForDrag;
         if (mouseAction.isMouseUp()) {
             mouseDownForDrag = null;

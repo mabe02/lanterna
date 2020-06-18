@@ -151,6 +151,17 @@ public class ScrollPanel extends Panel {
         scrollableBox.doScroll(isVertical, isLess);
     }
     
+    public void thumbMouseDown(boolean isVertical, TerminalPosition position) {
+        scrollableBox.thumbMouseDown(isVertical, position);
+    }
+    
+    public void thumbMouseDrag(boolean isVertical, TerminalPosition position) {
+        scrollableBox.thumbMouseDrag(isVertical, position);
+    }
+    public void mouseUp() {
+        scrollableBox.mouseUp();
+    }
+    
     @Override
     public void invalidate() {
         // ?
