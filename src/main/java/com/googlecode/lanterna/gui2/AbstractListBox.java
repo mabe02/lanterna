@@ -121,7 +121,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
         pullSelectionIntoView();
         if (priorOffset == scrollOffset.getRow()) {
             // scrolling stopped, start moving selection more
-            selectedIndex += desiredDelta * (isLess ? -1 : 1);
+            setSelectedIndex(selectedIndex + desiredDelta * (isLess ? -1 : 1));
         }
     }
     private void pullSelectionIntoView() {
