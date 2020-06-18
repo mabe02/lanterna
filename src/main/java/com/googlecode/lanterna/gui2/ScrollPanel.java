@@ -19,6 +19,7 @@
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.gui2.BorderLayout.Location;
@@ -75,6 +76,17 @@ public class ScrollPanel extends Panel {
     public void doScroll(boolean isVertical, boolean isLess) {
         // delegate, don't want the renderer having reference to scrollableBox
         scrollableBox.doScroll(isVertical, isLess);
+    }
+    
+    public void thumbMouseDown(boolean isVertical, TerminalPosition position) {
+        scrollableBox.thumbMouseDown(isVertical, position);
+    }
+    
+    public void thumbMouseDrag(boolean isVertical, TerminalPosition position) {
+        scrollableBox.thumbMouseDrag(isVertical, position);
+    }
+    public void mouseUp() {
+        scrollableBox.mouseUp();
     }
     
     @Override

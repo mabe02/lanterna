@@ -42,6 +42,10 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
     private boolean isWithinScrollPanel = false;
     protected TerminalPosition scrollOffset = new TerminalPosition(0, 0);
     
+    protected TerminalPosition thumbMouseDownPosition = null;
+    protected int offsetAtMouseDown = 0;
+    protected int selectedAtMouseDown = 0;
+    
     /**
      * This constructor sets up the component so it has no preferred size but will ask to be as big as the list is. If
      * the GUI cannot accommodate this size, scrolling and a vertical scrollbar will be used.
@@ -108,20 +112,48 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
         doOffsetAmount(isVertical, isLess, 1);
     }
     
+    @Override
+    public void thumbMouseDown(boolean isVertical, TerminalPosition position) {
+        thumbMouseDownPosition = position;
+        offsetAtMouseDown = scrollOffset.getRow();
+        selectedAtMouseDown = selectedIndex;
+    }
+    public void mouseUp() {
+        thumbMouseDownPosition = null;
+    }
+    
+    @Override
+    public void thumbMouseDrag(boolean isVertical, TerminalPosition position) {
+        if (thumbMouseDownPosition == null) {
+            thumbMouseDown(isVertical, position);
+            return;
+        }
+        
+        int delta = position.getRow() - thumbMouseDownPosition.getRow();
+        boolean isLess = delta < 0;
+        if (delta != 0) {
+            // reseting to the beginning prior to offset to get smoother resolution
+            scrollOffset = scrollOffset.withRow(offsetAtMouseDown);
+            selectedIndex = selectedAtMouseDown;
+            doOffsetAmount(isVertical, isLess, Math.abs(delta));
+        }
+        
+    }
+    
     public void doPageKeyboard(boolean isVertical, boolean isLess) {
         doOffsetAmount(isVertical, isLess, getSize().getRows());
     }
-    public void doOffsetAmount(boolean isVertical, boolean isLess, int desiredDelta) {
+    public void doOffsetAmount(boolean isVertical, boolean isLess, int desiredMagnitude) {
         int priorOffset = scrollOffset.getRow();
         if (isVertical && isLess && getSize() != null) {
-            adjustScrollOffset(desiredDelta);
+            adjustScrollOffset(desiredMagnitude);
         } else if (isVertical && !isLess && getSize() != null) {
-            adjustScrollOffset(-desiredDelta);
+            adjustScrollOffset(-desiredMagnitude);
         }
         pullSelectionIntoView();
         if (priorOffset == scrollOffset.getRow()) {
             // scrolling stopped, start moving selection more
-            setSelectedIndex(selectedIndex + desiredDelta * (isLess ? -1 : 1));
+            setSelectedIndex(selectedIndex + desiredMagnitude * (isLess ? -1 : 1));
         }
     }
     private void pullSelectionIntoView() {
