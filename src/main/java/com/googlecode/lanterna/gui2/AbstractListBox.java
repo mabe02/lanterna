@@ -186,6 +186,8 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
         }
         
         int delta = position.getRow() - thumbMouseDownPosition.getRow();
+        float ratioMultiplier = ((float)getItemCount() / (float)getSize().getRows());
+        delta = (int)(delta * ratioMultiplier);
         boolean isLess = delta < 0;
         if (delta != 0) {
             // reseting to the beginning prior to offset to get smoother resolution
