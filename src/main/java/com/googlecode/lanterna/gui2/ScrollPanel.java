@@ -67,24 +67,14 @@ public class ScrollPanel extends Panel {
         addComponent(scrollableBox, Location.CENTER);
     }
     
-    public void doPageVerticalLess() {
+    public void doPage(boolean isVertical, boolean isLess) {
         // delegate, don't want the renderer having reference to scrollableBox
-        scrollableBox.doPageVerticalLess();
+        scrollableBox.doPage(isVertical, isLess);
     }
     
-    public void doPageVerticalMore() {
+    public void doScroll(boolean isVertical, boolean isLess) {
         // delegate, don't want the renderer having reference to scrollableBox
-        scrollableBox.doPageVerticalMore();
-    }
-    
-    public void doPageHorizontalLess() {
-        // delegate, don't want the renderer having reference to scrollableBox
-        scrollableBox.doPageHorizontalLess();
-    }
-    
-    public void doPageHorizontalMore() {
-        // delegate, don't want the renderer having reference to scrollableBox
-        scrollableBox.doPageHorizontalMore();
+        scrollableBox.doScroll(isVertical, isLess);
     }
     
     @Override

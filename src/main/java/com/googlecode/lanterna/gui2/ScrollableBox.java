@@ -51,8 +51,6 @@ public interface ScrollableBox extends Component {
     
     default int getHorizontalScrollPosition() { return 0; }
     
-    default public void doPageVerticalLess() {}
-    default public void doPageVerticalMore() {}
-    default public void doPageHorizontalLess() {}
-    default public void doPageHorizontalMore() {}
+    default public void doScroll(boolean isVertical, boolean isLess) {}
+    default public void doPage(boolean isVertical, boolean isLess) {}
 }

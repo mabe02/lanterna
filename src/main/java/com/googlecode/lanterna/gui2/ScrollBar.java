@@ -184,16 +184,13 @@ public class ScrollBar extends AbstractInteractableComponent<ScrollBar> {
                 int x = mouseAction.getPosition().getColumn() - getGlobalPosition().getColumn();
                 int y = mouseAction.getPosition().getRow() - getGlobalPosition().getRow();
                 
-                if (isVertical()) {
-                    if (isMouseDown(keyStroke)) {
-                        rects.pageLessRect.whenContains(x, y, () -> scrollPanel.doPageVerticalLess());
-                        rects.pageMoreRect.whenContains(x, y, () -> scrollPanel.doPageVerticalMore());
-                    }
-                } else {
-                    if (isMouseDown(keyStroke)) {
-                        rects.pageLessRect.whenContains(x, y, () -> scrollPanel.doPageHorizontalLess());
-                        rects.pageMoreRect.whenContains(x, y, () -> scrollPanel.doPageHorizontalMore());
-                    }
+                if (isMouseDown(keyStroke)) {
+                    boolean isVertical = isVertical();
+                    rects.lessArrowRect.whenContains(x, y, () -> scrollPanel.doScroll(isVertical, true));
+                    rects.moreArrowRect.whenContains(x, y, () -> scrollPanel.doScroll(isVertical, false));
+                    rects.thumbRect.whenContains(x, y, () -> {});
+                    rects.pageLessRect.whenContains(x, y, () -> scrollPanel.doPage(isVertical, true));
+                    rects.pageMoreRect.whenContains(x, y, () -> scrollPanel.doPage(isVertical, false));
                 }
             }
         }

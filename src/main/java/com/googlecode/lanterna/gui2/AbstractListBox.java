@@ -100,19 +100,49 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
     }
     
     @Override
-    public void doPageVerticalLess() {
-        if(getSize() != null) {
-            setSelectedIndex(getSelectedIndex() - getSize().getRows());
-        }
+    public void doPage(boolean isVertical, boolean isLess) {
+        doPageKeyboard(isVertical, isLess);
     }
-    
     @Override
-    public void doPageVerticalMore() {
-        if(getSize() != null) {
-            setSelectedIndex(getSelectedIndex() + getSize().getRows());
+    public void doScroll(boolean isVertical, boolean isLess) {
+        doOffsetAmount(isVertical, isLess, 1);
+    }
+    
+    public void doPageKeyboard(boolean isVertical, boolean isLess) {
+        doOffsetAmount(isVertical, isLess, getSize().getRows());
+    }
+    public void doOffsetAmount(boolean isVertical, boolean isLess, int desiredDelta) {
+        int priorOffset = scrollOffset.getRow();
+        if (isVertical && isLess && getSize() != null) {
+            adjustScrollOffset(desiredDelta);
+        } else if (isVertical && !isLess && getSize() != null) {
+            adjustScrollOffset(-desiredDelta);
+        }
+        pullSelectionIntoView();
+        if (priorOffset == scrollOffset.getRow()) {
+            // scrolling stopped, start moving selection more
+            selectedIndex += desiredDelta * (isLess ? -1 : 1);
+        }
+    }
+    private void pullSelectionIntoView() {
+        int minViewableSelection = Math.max(0, -scrollOffset.getRow());
+        int maxViewableSelection = minViewableSelection + getSize().getRows();
+        if (selectedIndex < minViewableSelection) {
+            selectedIndex = minViewableSelection;
+        } else if(selectedIndex >= maxViewableSelection) {
+            selectedIndex = maxViewableSelection -1;
         }
     }
     
+    public void adjustScrollOffset(int verticalAmount) {
+        // scrollerOffset is negative
+        int min = Math.min(0, getSize().getRows() - getItemCount());
+        int max = 0;
+        
+        int goal = scrollOffset.getRow() + verticalAmount;
+        int offset = Math.max(min, Math.min(goal, max));
+        scrollOffset = scrollOffset.withRow(offset);
+    }
     
     @Override
     protected InteractableRenderer<T> createDefaultRenderer() {
@@ -188,13 +218,13 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
                     selectedIndex = items.size() - 1;
                     return Result.HANDLED;
 
+
                 case PAGE_UP:
-                    doPageVerticalLess();
+                    doPageKeyboard(true, true);
                     return Result.HANDLED;
 
                 case PAGE_DOWN:
-                    doPageVerticalMore();
-
+                    doPageKeyboard(true, false);
                     return Result.HANDLED;
 
                 case CHARACTER:
@@ -469,6 +499,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
 
         @Override
         public void drawComponent(TextGUIGraphics graphics, T listBox) {
+            scrollTopIndex = - listBox.scrollOffset.getRow();
             //update the page size, used for page up and page down keys
             ThemeDefinition themeDefinition = listBox.getTheme().getDefinition(AbstractListBox.class);
             int componentHeight = graphics.getSize().getRows();
@@ -570,7 +601,8 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
          */
         public void drawItem(TextGUIGraphics graphics, T listBox, int index, V item, boolean selected, boolean focused) {
             ThemeDefinition themeDefinition = listBox.getTheme().getDefinition(AbstractListBox.class);
-            if(selected && focused) {
+            //if(selected && focused) {
+            if (selected) {
                 graphics.applyThemeStyle(themeDefinition.getSelected());
             }
             else {
