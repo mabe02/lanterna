@@ -27,11 +27,15 @@ import com.googlecode.lanterna.graphics.ThemeDefinition;
  * 
  * @author ginkoblongata
  */
-public interface ScrollableBox extends Component {
+public interface ScrollableBox<T extends AbstractListBox> extends Component {
 
     void setIsWithinScrollPanel(ScrollPanel scrollPanel);
     
     default boolean isVerticalScrollCapable() { return false; }
     default boolean isHorizontalScrollCapable() { return false; }
+    
+    default int getSelectedIndex() { return -1; }
+    default T setSelectedIndex(int selectedIndex) { return (T)this; }
+    default void pullSelectionIntoView() {}
     
 }
