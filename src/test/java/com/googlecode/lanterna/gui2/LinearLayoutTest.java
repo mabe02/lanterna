@@ -50,6 +50,7 @@ public class LinearLayoutTest extends TestBase {
         mainPanel.addComponent(Panels.horizontal(
                 new Button("Add", () -> new Label("LABEL COMPONENT").addTo(labelPanel)),
                 new Button("Spacing", () -> linearLayout.setSpacing(linearLayout.getSpacing() == 1 ? 0 : 1)),
+                new Button("Toggle Hide Odd #", () -> toggleVisibleOnOddNumberLabels(labelPanel)),
                 new Button("Expand", () -> window.setHints(Collections.singletonList(Window.Hint.EXPANDED))),
                 new Button("Collapse", () -> window.setHints(Collections.emptySet())),
                 new Button("Close", window::close)
@@ -57,5 +58,14 @@ public class LinearLayoutTest extends TestBase {
 
         window.setComponent(mainPanel);
         textGUI.addWindow(window);
+    }
+
+    void toggleVisibleOnOddNumberLabels(Panel panel) {
+        for (int i = 0; i < panel.getChildCount(); i++) {
+            if ((i + 1) % 2 == 1) {
+                Component component = panel.getChildrenList().get(i);
+                component.setVisible(!component.isVisible());
+            }
+        }
     }
 }

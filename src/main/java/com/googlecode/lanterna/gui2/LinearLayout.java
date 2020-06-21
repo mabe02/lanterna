@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Simple layout manager the puts all components on a single line, either horizontally or vertically.
@@ -153,6 +154,9 @@ public class LinearLayout implements LayoutManager {
 
     @Override
     public TerminalSize getPreferredSize(List<Component> components) {
+        // Filter out invisible components
+        components = components.stream().filter(Component::isVisible).collect(Collectors.toList());
+
         if(direction == Direction.VERTICAL) {
             return getPreferredSizeVertically(components);
         }
@@ -165,9 +169,6 @@ public class LinearLayout implements LayoutManager {
         int maxWidth = 0;
         int height = 0;
         for(Component component: components) {
-            if (!component.isVisible()) {
-                continue;
-            }
             TerminalSize preferredSize = component.getPreferredSize();
             if(maxWidth < preferredSize.getColumns()) {
                 maxWidth = preferredSize.getColumns();
@@ -182,9 +183,6 @@ public class LinearLayout implements LayoutManager {
         int maxHeight = 0;
         int width = 0;
         for(Component component: components) {
-            if (!component.isVisible()) {
-                continue;
-            }
             TerminalSize preferredSize = component.getPreferredSize();
             if(maxHeight < preferredSize.getRows()) {
                 maxHeight = preferredSize.getRows();
@@ -202,6 +200,9 @@ public class LinearLayout implements LayoutManager {
 
     @Override
     public void doLayout(TerminalSize area, List<Component> components) {
+        // Filter out invisible components
+        components = components.stream().filter(Component::isVisible).collect(Collectors.toList());
+
         if(direction == Direction.VERTICAL) {
             if (Boolean.getBoolean("com.googlecode.lanterna.gui2.LinearLayout.useOldNonFlexLayout")) {
                 doVerticalLayout(area, components);
@@ -226,9 +227,6 @@ public class LinearLayout implements LayoutManager {
         int remainingVerticalSpace = area.getRows();
         int availableHorizontalSpace = area.getColumns();
         for(Component component: components) {
-            if (!component.isVisible()) {
-                continue;
-            }
             if(remainingVerticalSpace <= 0) {
                 component.setPosition(TerminalPosition.TOP_LEFT_CORNER);
                 component.setSize(TerminalSize.ZERO);
@@ -278,9 +276,6 @@ public class LinearLayout implements LayoutManager {
         int totalRequiredVerticalSpace = 0;
 
         for (Component component: components) {
-            if (!component.isVisible()) {
-                continue;
-            }
             Alignment alignment = Alignment.Beginning;
             LayoutData layoutData = component.getLayoutData();
             if (layoutData instanceof LinearLayoutData) {
@@ -380,9 +375,6 @@ public class LinearLayout implements LayoutManager {
         int remainingHorizontalSpace = area.getColumns();
         int availableVerticalSpace = area.getRows();
         for(Component component: components) {
-            if (!component.isVisible()) {
-                continue;
-            }
             if(remainingHorizontalSpace <= 0) {
                 component.setPosition(TerminalPosition.TOP_LEFT_CORNER);
                 component.setSize(TerminalSize.ZERO);
@@ -432,9 +424,6 @@ public class LinearLayout implements LayoutManager {
         int totalRequiredHorizontalSpace = 0;
 
         for (Component component: components) {
-            if (!component.isVisible()) {
-                continue;
-            }
             Alignment alignment = Alignment.Beginning;
             LayoutData layoutData = component.getLayoutData();
             if (layoutData instanceof LinearLayoutData) {
