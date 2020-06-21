@@ -21,7 +21,7 @@ package com.googlecode.lanterna.gui2;
 import com.googlecode.lanterna.Symbols;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TerminalPosition;
-import com.googlecode.lanterna.TerminalRect;
+import com.googlecode.lanterna.TerminalRectangle;
 import com.googlecode.lanterna.graphics.ThemeDefinition;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
@@ -186,11 +186,11 @@ public class ScrollBar extends AbstractInteractableComponent<ScrollBar> {
                 int y = mouseAction.getPosition().getRow() - getGlobalPosition().getRow();
                 
                 if (isMouseDown(keyStroke)) {
-                    rects.lessArrowRect.whenContains(x, y, () -> scrollPanel.doScroll(isVertical, true));
-                    rects.moreArrowRect.whenContains(x, y, () -> scrollPanel.doScroll(isVertical, false));
-                    rects.thumbRect.whenContains(x, y, () -> scrollPanel.thumbMouseDown(isVertical, mouseAction.getPosition()));
-                    rects.pageLessRect.whenContains(x, y, () -> scrollPanel.doPage(isVertical, true));
-                    rects.pageMoreRect.whenContains(x, y, () -> scrollPanel.doPage(isVertical, false));
+                    rects.lessArrow.whenContains(x, y, () -> scrollPanel.doScroll(isVertical, true));
+                    rects.moreArrow.whenContains(x, y, () -> scrollPanel.doScroll(isVertical, false));
+                    rects.thumb.whenContains(x, y, () -> scrollPanel.thumbMouseDown(isVertical, mouseAction.getPosition()));
+                    rects.pageLess.whenContains(x, y, () -> scrollPanel.doPage(isVertical, true));
+                    rects.pageMore.whenContains(x, y, () -> scrollPanel.doPage(isVertical, false));
                 }
                 if (isMouseUp(keyStroke)) {
                     scrollPanel.mouseUp();
@@ -217,7 +217,6 @@ public class ScrollBar extends AbstractInteractableComponent<ScrollBar> {
      */
     public static abstract class ScrollBarRenderer implements InteractableRenderer<ScrollBar> {
         
-        
         @Override
         public TerminalSize getPreferredSize(ScrollBar component) {
             return TerminalSize.ONE;
@@ -233,26 +232,26 @@ public class ScrollBar extends AbstractInteractableComponent<ScrollBar> {
     }
     
     public static class ScrollBarRects {
-        public final TerminalRect lessArrowRect;
-        public final TerminalRect moreArrowRect;
-        public final TerminalRect thumbRect;
-        public final TerminalRect thumbCenterRect;
-        public final TerminalRect pageLessRect;
-        public final TerminalRect pageMoreRect;
+        public final TerminalRectangle lessArrow;
+        public final TerminalRectangle moreArrow;
+        public final TerminalRectangle thumb;
+        public final TerminalRectangle thumbCenter;
+        public final TerminalRectangle pageLess;
+        public final TerminalRectangle pageMore;
         
         public ScrollBarRects(
-                TerminalRect lessArrowRect,
-                TerminalRect moreArrowRect,
-                TerminalRect thumbRect,
-                TerminalRect thumbCenterRect,
-                TerminalRect pageLessRect,
-                TerminalRect pageMoreRect) {
-            this.lessArrowRect   = lessArrowRect;
-            this.moreArrowRect   = moreArrowRect;
-            this.thumbRect       = thumbRect;
-            this.thumbCenterRect = thumbCenterRect;
-            this.pageLessRect    = pageLessRect;
-            this.pageMoreRect    = pageMoreRect;
+                TerminalRectangle lessArrow,
+                TerminalRectangle moreArrow,
+                TerminalRectangle thumb,
+                TerminalRectangle thumbCenter,
+                TerminalRectangle pageLess,
+                TerminalRectangle pageMore) {
+            this.lessArrow   = lessArrow;
+            this.moreArrow   = moreArrow;
+            this.thumb       = thumb;
+            this.thumbCenter = thumbCenter;
+            this.pageLess    = pageLess;
+            this.pageMore    = pageMore;
         }
     }
 
@@ -300,25 +299,25 @@ public class ScrollBar extends AbstractInteractableComponent<ScrollBar> {
                 component.setScrollPosition(position);
             }
             
-            TerminalRect lessArrowRect = getScrollLessArrowRect(component);
-            TerminalRect moreArrowRect = getScrollMoreArrowRect(component);
-            TerminalRect thumbRect = getThumbRect(component, position, maximum);
-            TerminalRect thumbCenterRect = getThumbCenterRect(component, thumbRect);
-            TerminalRect pageLessRect = getPageLessRect(component, lessArrowRect, thumbRect);
-            TerminalRect pageMoreRect = getPageMoreRect(component, moreArrowRect, thumbRect);
+            TerminalRectangle lessArrow = getScrollLessArrowRect(component);
+            TerminalRectangle moreArrow = getScrollMoreArrowRect(component);
+            TerminalRectangle thumb = getThumbRect(component, position, maximum);
+            TerminalRectangle thumbCenter = getThumbCenterRect(component, thumb);
+            TerminalRectangle pageLess = getPageLessRect(component, lessArrow, thumb);
+            TerminalRectangle pageMore = getPageMoreRect(component, moreArrow, thumb);
             
-            this.scrollBarRects = new ScrollBarRects(lessArrowRect, moreArrowRect, thumbRect, thumbCenterRect, pageLessRect, pageMoreRect);
+            this.scrollBarRects = new ScrollBarRects(lessArrow, moreArrow, thumb, thumbCenter, pageLess, pageMore);
             
             ThemeDefinition themeDefinition = component.getThemeDefinition();
             graphics.applyThemeStyle(themeDefinition.getNormal());
             
             graphics.fillRectangle(TerminalPosition.TOP_LEFT_CORNER, component.getSize(), getBackgroundChar(component));
-            graphics.fillRectangle(lessArrowRect.position, lessArrowRect.size, getLessChar(component));
-            graphics.fillRectangle(moreArrowRect.position, moreArrowRect.size, getMoreChar(component));
-            graphics.fillRectangle(thumbRect.position, thumbRect.size, getThumbChar(component));
-            graphics.fillRectangle(thumbCenterRect.position, thumbCenterRect.size, getThumbCenterChar(component));
-            //graphics.fillRectangle(pageLessRect.position, pageLessRect.size, 'a');
-            //graphics.fillRectangle(pageMoreRect.position, pageMoreRect.size, 'b');
+            graphics.fillRectangle(lessArrow.position, lessArrow.size, getLessChar(component));
+            graphics.fillRectangle(moreArrow.position, moreArrow.size, getMoreChar(component));
+            graphics.fillRectangle(thumb.position, thumb.size, getThumbChar(component));
+            graphics.fillRectangle(thumbCenter.position, thumbCenter.size, getThumbCenterChar(component));
+            //graphics.fillRectangle(pageLess.position, pageLess.size, 'a');
+            //graphics.fillRectangle(pageMore.position, pageMore.size, 'b');
         }
         
         @Override
@@ -329,37 +328,37 @@ public class ScrollBar extends AbstractInteractableComponent<ScrollBar> {
         private float clampRatio(float value) {
             return Math.max(0.0f, Math.min(value, 1.0f));
         }
-        public TerminalRect getScrollLessArrowRect(ScrollBar component) {
+        public TerminalRectangle getScrollLessArrowRect(ScrollBar component) {
             final int size = component.getViewSize();
             final int x = 0;
             final int y = 0;
             final int w = size < 2 ? 0 : 1;
             final int h = size < 2 ? 0 : 1;
-            return new TerminalRect(x, y, w, h);
+            return new TerminalRectangle(x, y, w, h);
         }
-        public TerminalRect getScrollMoreArrowRect(ScrollBar component) {
+        public TerminalRectangle getScrollMoreArrowRect(ScrollBar component) {
             final int size = component.getViewSize();
             final int x = component.isVertical() ? 0 : size-1;
             final int y = component.isHorizontal() ? 0 : size-1;
             final int w = size < 2 ? 0 : 1;
             final int h = size < 2 ? 0 : 1;
-            return new TerminalRect(x, y, w, h);
+            return new TerminalRectangle(x, y, w, h);
         }
-        public TerminalRect getPageLessRect(ScrollBar component, TerminalRect lessArrowRect, TerminalRect thumbRect) {
-            final int x = component.isVertical() ? 0 : lessArrowRect.xAndWidth;
-            final int y = component.isHorizontal() ? 0 : lessArrowRect.yAndHeight;
-            final int w = component.isVertical() ? thumbRect.width : thumbRect.x - x;
-            final int h = component.isHorizontal() ? thumbRect.height : thumbRect.y - y;
-            return new TerminalRect(x, y, w, h);
+        public TerminalRectangle getPageLessRect(ScrollBar component, TerminalRectangle lessArrow, TerminalRectangle thumb) {
+            final int x = component.isVertical() ? 0 : lessArrow.xAndWidth;
+            final int y = component.isHorizontal() ? 0 : lessArrow.yAndHeight;
+            final int w = component.isVertical() ? thumb.width : thumb.x - x;
+            final int h = component.isHorizontal() ? thumb.height : thumb.y - y;
+            return new TerminalRectangle(x, y, w, h);
         }
-        public TerminalRect getPageMoreRect(ScrollBar component, TerminalRect moreArrowRect, TerminalRect thumbRect) {
-            final int x = component.isVertical() ? 0 : thumbRect.xAndWidth;
-            final int y = component.isHorizontal() ? 0 : thumbRect.yAndHeight;
-            final int w = component.isVertical() ? thumbRect.width : moreArrowRect.x - thumbRect.xAndWidth;
-            final int h = component.isHorizontal() ? thumbRect.height : moreArrowRect.y - thumbRect.yAndHeight;
-            return new TerminalRect(x, y, w, h);
+        public TerminalRectangle getPageMoreRect(ScrollBar component, TerminalRectangle moreArrow, TerminalRectangle thumb) {
+            final int x = component.isVertical() ? 0 : thumb.xAndWidth;
+            final int y = component.isHorizontal() ? 0 : thumb.yAndHeight;
+            final int w = component.isVertical() ? thumb.width : moreArrow.x - thumb.xAndWidth;
+            final int h = component.isHorizontal() ? thumb.height : moreArrow.y - thumb.yAndHeight;
+            return new TerminalRectangle(x, y, w, h);
         }
-        public TerminalRect getThumbRect(ScrollBar component, int position, int maximum) {
+        public TerminalRectangle getThumbRect(ScrollBar component, int position, int maximum) {
             TerminalSize size = component.getSize();
             final int viewSize = component.getViewSize();
             final int scrollableArea = viewSize -2;
@@ -376,14 +375,14 @@ public class ScrollBar extends AbstractInteractableComponent<ScrollBar> {
             final int thumbY = component.isHorizontal() ? 0 : scrollTrackerPosition;
             int thumbWidth = component.isVertical() ? 1 : scrollTrackerSize;
             int thumbHeight = component.isHorizontal() ? 1 : scrollTrackerSize;
-            return new TerminalRect(thumbX, thumbY, thumbWidth, thumbHeight);
+            return new TerminalRectangle(thumbX, thumbY, thumbWidth, thumbHeight);
         }
-        public TerminalRect getThumbCenterRect(ScrollBar component, TerminalRect thumbRect) {
-            final int x = component.isVertical() ? 0 : thumbRect.x + thumbRect.width/2;
-            final int y = component.isHorizontal() ? 0 : thumbRect.y + thumbRect.height/2;
+        public TerminalRectangle getThumbCenterRect(ScrollBar component, TerminalRectangle thumb) {
+            final int x = component.isVertical() ? 0 : thumb.x + thumb.width/2;
+            final int y = component.isHorizontal() ? 0 : thumb.y + thumb.height/2;
             final int w = 1;
             final int h = 1;
-            return new TerminalRect(x, y, w, h);
+            return new TerminalRectangle(x, y, w, h);
         }
         public char getLessChar(ScrollBar component) {
             return findChar(component, "UP_ARROW", Symbols.TRIANGLE_UP_POINTING_BLACK, "LEFT_ARROW", Symbols.TRIANGLE_LEFT_POINTING_BLACK);

@@ -39,12 +39,8 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
     private final List<V> items;
     private int selectedIndex;
     private ListItemRenderer<V,T> listItemRenderer;
-    private boolean isWithinScrollPanel = false;
+    protected boolean isWithinScrollPanel = false;
     protected TerminalPosition scrollOffset = new TerminalPosition(0, 0);
-    
-    protected TerminalPosition thumbMouseDownPosition = null;
-    protected int offsetAtMouseDown = 0;
-    protected int selectedAtMouseDown = 0;
     
     /**
      * This constructor sets up the component so it has no preferred size but will ask to be as big as the list is. If
@@ -75,89 +71,42 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
         this.isWithinScrollPanel = isWithinScrollPanel;
     }
     
-    @Override
-    public boolean isVerticalScrollCapable() {
-        return true;
-    }
-    
-    @Override
-    public boolean isVerticalScrollVisible() {
-        int componentHeight = getSize().getRows();
-        int itemCount = getItems().size();
-        
-        return itemCount > componentHeight;
-    }
-    
-    @Override
-    public int getVerticalScrollMaximum() {
-        return getItems().size();
-    }
-    
-    @Override
-    public int getVerticalScrollPosition() {
-        return - scrollOffset.getRow();
-    }
-    
-    @Override
-    public boolean isWithinScrollPanel() {
-        return isWithinScrollPanel;
-    }
-    
-    @Override
-    public void doPage(boolean isVertical, boolean isLess) {
-        doPageKeyboard(isVertical, isLess);
-    }
-    @Override
-    public void doScroll(boolean isVertical, boolean isLess) {
-        doOffsetAmount(isVertical, isLess, 1);
-    }
-    
-    @Override
-    public void thumbMouseDown(boolean isVertical, TerminalPosition position) {
-        thumbMouseDownPosition = position;
-        offsetAtMouseDown = scrollOffset.getRow();
-        selectedAtMouseDown = selectedIndex;
-    }
-    public void mouseUp() {
-        thumbMouseDownPosition = null;
-    }
-    
-    @Override
-    public void thumbMouseDrag(boolean isVertical, TerminalPosition position) {
-        if (thumbMouseDownPosition == null) {
-            thumbMouseDown(isVertical, position);
-            return;
-        }
-        
-        int delta = position.getRow() - thumbMouseDownPosition.getRow();
-        float ratioMultiplier = ((float)getItemCount() / (float)getSize().getRows());
-        delta = (int)(delta * ratioMultiplier);
-        boolean isLess = delta < 0;
-        if (delta != 0) {
-            // reseting to the beginning prior to offset to get smoother resolution
-            scrollOffset = scrollOffset.withRow(offsetAtMouseDown);
-            selectedIndex = selectedAtMouseDown;
-            doOffsetAmount(isVertical, isLess, Math.abs(delta));
-        }
-        
-    }
+    //@Override
+    //public void thumbMouseDrag(boolean isVertical, TerminalPosition position) {
+    //    if (thumbMouseDownPosition == null) {
+    //        thumbMouseDown(isVertical, position);
+    //        return;
+    //    }
+    //    
+    //    int delta = position.getRow() - thumbMouseDownPosition.getRow();
+    //    float ratioMultiplier = ((float)getItemCount() / (float)getSize().getRows());
+    //    delta = (int)(delta * ratioMultiplier);
+    //    boolean isLess = delta < 0;
+    //    if (delta != 0) {
+    //        // reseting to the beginning prior to offset to get smoother resolution
+    //        scrollOffset = scrollOffset.withRow(offsetAtMouseDown);
+    //        selectedIndex = selectedAtMouseDown;
+    //        doOffsetAmount(isVertical, isLess, Math.abs(delta));
+    //    }
+    //    
+    //}
     
     public void doPageKeyboard(boolean isVertical, boolean isLess) {
-        doOffsetAmount(isVertical, isLess, getSize().getRows());
+        //doOffsetAmount(isVertical, isLess, getSize().getRows());
     }
-    public void doOffsetAmount(boolean isVertical, boolean isLess, int desiredMagnitude) {
-        int priorOffset = scrollOffset.getRow();
-        if (isVertical && isLess && getSize() != null) {
-            adjustScrollOffset(desiredMagnitude);
-        } else if (isVertical && !isLess && getSize() != null) {
-            adjustScrollOffset(-desiredMagnitude);
-        }
-        pullSelectionIntoView();
-        if (priorOffset == scrollOffset.getRow()) {
-            // scrolling stopped, start moving selection more
-            setSelectedIndex(selectedIndex + desiredMagnitude * (isLess ? -1 : 1));
-        }
-    }
+    //public void doOffsetAmount(boolean isVertical, boolean isLess, int desiredMagnitude) {
+    //    int priorOffset = scrollOffset.getRow();
+    //    if (isVertical && isLess && getSize() != null) {
+    //        adjustScrollOffset(desiredMagnitude);
+    //    } else if (isVertical && !isLess && getSize() != null) {
+    //        adjustScrollOffset(-desiredMagnitude);
+    //    }
+    //    pullSelectionIntoView();
+    //    if (priorOffset == scrollOffset.getRow()) {
+    //        // scrolling stopped, start moving selection more
+    //        setSelectedIndex(selectedIndex + desiredMagnitude * (isLess ? -1 : 1));
+    //    }
+    //}
     private void pullSelectionIntoView() {
         int minViewableSelection = Math.max(0, -scrollOffset.getRow());
         int maxViewableSelection = minViewableSelection + getSize().getRows();
@@ -527,7 +476,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
                     maxWidth = stringLengthInColumns;
                 }
             }
-            int additionalWidth = listBox.isWithinScrollPanel() ? 0 : 1;
+            int additionalWidth = listBox.isWithinScrollPanel ? 0 : 1;
             return new TerminalSize(maxWidth + additionalWidth, listBox.getItemCount());
         }
 
@@ -577,7 +526,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
             }
 
             graphics.applyThemeStyle(themeDefinition.getNormal());
-            if(!listBox.isWithinScrollPanel() && items.size() > componentHeight) {
+            if(!listBox.isWithinScrollPanel && items.size() > componentHeight) {
                 verticalScrollBar.onAdded(listBox.getParent());
                 verticalScrollBar.setViewSize(componentHeight);
                 verticalScrollBar.setScrollMaximum(items.size());

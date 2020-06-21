@@ -182,14 +182,12 @@ public class ImageComponentTest extends TestBase {
         ImageComponent imageComponentZ = makeImageComponent(controller, IMAGE_Z);
         
         
-        
         Panel mainPanel = new Panel();
         mainPanel.setLayoutManager(new GridLayout(2));
         mainPanel.addComponent(imageComponentX.withBorder(Borders.singleLine("x")));
         mainPanel.addComponent(imageComponentY.withBorder(Borders.singleLine("y")));
         mainPanel.addComponent(imageComponentZ.withBorder(Borders.singleLine("z")));
         mainPanel.addComponent(controller.selectedImageComponent.withBorder(Borders.singleLine("selection")));
-        
         
         window.setComponent(mainPanel);
         textGUI.addWindow(window);
@@ -226,4 +224,3 @@ public class ImageComponentTest extends TestBase {
         }
     }
 }
-
