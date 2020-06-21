@@ -159,6 +159,40 @@ public class TerminalPosition implements Comparable<TerminalPosition> {
         return position;
     }
 
+    public TerminalPosition plus(TerminalPosition position) {
+        return withRelative(position);
+    }
+    
+    public TerminalPosition minus(TerminalPosition position) {
+        return withRelative(-position.getColumn(), -position.getRow());
+    }
+    
+    public TerminalPosition multiply(TerminalPosition position) {
+        return new TerminalPosition(column * position.column, row * position.row);
+    }
+    
+    public TerminalPosition divide(TerminalPosition denominator) {
+        return new TerminalPosition(column / denominator.column, row / denominator.row);
+    }
+    
+    public TerminalPosition abs() {
+        int x = Math.abs(column);
+        int y = Math.abs(row);
+        return new TerminalPosition(x, y);
+    }
+    
+    public TerminalPosition min(TerminalPosition position) {
+        int x = Math.min(column, position.column);
+        int y = Math.min(row, position.row);
+        return new TerminalPosition(x, y);
+    }
+    
+    public TerminalPosition max(TerminalPosition position) {
+        int x = Math.max(column, position.column);
+        int y = Math.max(row, position.row);
+        return new TerminalPosition(x, y);
+    }
+
     @Override
     public int compareTo(TerminalPosition o) {
         if(row < o.row) {
