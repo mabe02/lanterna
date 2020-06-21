@@ -27,11 +27,12 @@ import com.googlecode.lanterna.terminal.ansi.UnixLikeTTYTerminal;
 import com.googlecode.lanterna.terminal.ansi.UnixTerminal;
 import com.googlecode.lanterna.terminal.swing.*;
 
-import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.util.EnumSet;
 
@@ -109,7 +110,7 @@ public class DefaultTerminalFactory implements TerminalFactory {
         // 3 different reasons for tty-based terminal:
         //   "explicit preference", "no alternative",
         //       ("because we can" - unless "rather not")
-        if (forceTextTerminal || GraphicsEnvironment.isHeadless() ||
+        if (forceTextTerminal || isGraphicsEnvironmentHeadless() ||
                 (System.console() != null && !preferTerminalEmulator) ) {
             // if tty but have no tty, but do have a port, then go telnet:
             if( telnetPort > 0 && System.console() == null) {
@@ -134,13 +135,26 @@ public class DefaultTerminalFactory implements TerminalFactory {
         }
     }
 
+    private boolean isGraphicsEnvironmentHeadless() {
+        try {
+            // Don't import the class, use reflection instead to make this easier to work with JVMs without AWT/Swing
+            Class<?> graphicsEnvironmentClass = Class.forName("java.awt.GraphicsEnvironment");
+            Method isHeadlessMethod = graphicsEnvironmentClass.getMethod("isHeadless");
+            return (Boolean)isHeadlessMethod.invoke(null);
+        }
+        catch (Exception e) {
+            // Assume headless if AWT/Swing doesn't exist
+            return true;
+        }
+    }
+
     /**
      * Creates a new terminal emulator window which will be either Swing-based or AWT-based depending on what is
      * available on the system
      * @return New terminal emulator exposed as a {@link Terminal} interface
      */
     public Terminal createTerminalEmulator() {
-        Window window;
+        Terminal window;
         if(!forceAWTOverSwing && hasSwing()) {
             window = createSwingTerminal();
         }
@@ -149,9 +163,23 @@ public class DefaultTerminalFactory implements TerminalFactory {
         }
 
         if(autoOpenTerminalFrame) {
-            window.setVisible(true);
+            showEmulatorWindow(window);
         }
-        return (Terminal)window;
+        return window;
+    }
+
+    private void showEmulatorWindow(Terminal window) {
+        // Don't import the class, use reflection instead to make this easier to work with JVMs without AWT/Swing
+        try {
+            Method setVisibleMethod = window.getClass().getMethod("setVisible", boolean.class);
+            setVisibleMethod.invoke(window, true);
+        } catch (NoSuchMethodException e) {
+            throw new IllegalArgumentException(e);
+        } catch (IllegalAccessException e) {
+            throw new IllegalArgumentException(e);
+        } catch (InvocationTargetException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     public AWTTerminalFrame createAWTTerminal() {
