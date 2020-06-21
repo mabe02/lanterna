@@ -85,22 +85,26 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
         return true;
     }
     
-    public void doPageKeyboard(boolean isVertical, boolean isLess) {
-        //doOffsetAmount(isVertical, isLess, getSize().getRows());
+    private void doPageKeyboard(boolean isLess) {
+        if (scrollPanel != null) {
+            scrollPanel.doPageKeyboard(true, isLess);
+        } else {
+            doOffsetAmount(isLess, getSize().getRows());
+        }
     }
-    //public void doOffsetAmount(boolean isVertical, boolean isLess, int desiredMagnitude) {
-    //    int priorOffset = scrollOffset.getRow();
-    //    if (isVertical && isLess && getSize() != null) {
-    //        adjustScrollOffset(desiredMagnitude);
-    //    } else if (isVertical && !isLess && getSize() != null) {
-    //        adjustScrollOffset(-desiredMagnitude);
-    //    }
-    //    pullSelectionIntoView();
-    //    if (priorOffset == scrollOffset.getRow()) {
-    //        // scrolling stopped, start moving selection more
-    //        setSelectedIndex(selectedIndex + desiredMagnitude * (isLess ? -1 : 1));
-    //    }
-    //}
+    private void doOffsetAmount(boolean isLess, int desiredMagnitude) {
+        int priorOffset = scrollOffset.getRow();
+        if (isLess && getSize() != null) {
+            adjustScrollOffset(desiredMagnitude);
+        } else if (!isLess && getSize() != null) {
+            adjustScrollOffset(-desiredMagnitude);
+        }
+        if (priorOffset == scrollOffset.getRow()) {
+            // scrolling stopped, start moving selection more
+            setSelectedIndex(selectedIndex + desiredMagnitude * (isLess ? -1 : 1));
+        }
+        pullSelectionIntoView();
+    }
     @Override
     public void pullSelectionIntoView() {
         int offset = getScrollOffset();
@@ -114,6 +118,21 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
             setSelectedIndex(maxViewableSelection -1);
         }
     }
+    public void pullOffsetToSelection() {
+        if (scrollPanel != null) {
+            int vOffset = scrollPanel.getScrollOffset().getRow();
+            TerminalSize vp = scrollPanel.getViewportSize();
+            if (selectedIndex < -vOffset) {
+                int distance = -vOffset - selectedIndex;
+                scrollPanel.doOffsetAmount(new TerminalPosition(0, distance));
+            } else if (-vOffset + vp.getRows() -1 < selectedIndex) {
+                int distance = selectedIndex - (-vOffset + vp.getRows() -1);
+                scrollPanel.doOffsetAmount(new TerminalPosition(0, -distance));
+            }
+        } else {
+            // TODO: not in ScrollPanel
+        }
+    }
     int getScrollOffset() {
         if (scrollPanel != null) {
             return scrollPanel.getScrollOffset().getRow();
@@ -122,7 +141,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
         }
     }
     
-    public void adjustScrollOffset(int verticalAmount) {
+    private void adjustScrollOffset(int verticalAmount) {
         // scrollerOffset is negative
         int min = Math.min(0, getSize().getRows() - getItemCount());
         int max = 0;
@@ -188,30 +207,36 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
                     if(items.isEmpty() || selectedIndex == items.size() - 1) {
                         return Result.MOVE_FOCUS_DOWN;
                     }
-                    selectedIndex++;
+                    setSelectedIndex(getSelectedIndex() +1);
+                    pullOffsetToSelection();
                     return Result.HANDLED;
 
                 case ArrowUp:
                     if(items.isEmpty() || selectedIndex == 0) {
                         return Result.MOVE_FOCUS_UP;
                     }
-                    selectedIndex--;
+                    setSelectedIndex(getSelectedIndex() -1);
+                    pullOffsetToSelection();
                     return Result.HANDLED;
 
                 case Home:
-                    selectedIndex = 0;
+                    setSelectedIndex(0);
+                    pullOffsetToSelection();
                     return Result.HANDLED;
 
                 case End:
-                    selectedIndex = items.size() - 1;
+                    setSelectedIndex(items.size() - 1);
+                    pullOffsetToSelection();
                     return Result.HANDLED;
 
                 case PageUp:
-                    doPageKeyboard(true, true);
+                    doPageKeyboard(true);
+                    pullOffsetToSelection();
                     return Result.HANDLED;
 
                 case PageDown:
-                    doPageKeyboard(true, false);
+                    doPageKeyboard(false);
+                    pullOffsetToSelection();
                     return Result.HANDLED;
 
                 case Character:
@@ -224,7 +249,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
                     MouseActionType actionType = mouseAction.getActionType();
                     if (isMouseMove(keyStroke)) {
                         takeFocus();
-                        selectedIndex = getIndexByMouseAction(mouseAction);
+                        setSelectedIndex(getIndexByMouseAction(mouseAction));
                         return Result.HANDLED;
                     }
                     
@@ -241,7 +266,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
                         return Result.HANDLED;
                     }
             
-                    selectedIndex = getIndexByMouseAction(mouseAction);
+                    setSelectedIndex(getIndexByMouseAction(mouseAction));
                     return super.handleKeyStroke(keyStroke);
                 default:
             }

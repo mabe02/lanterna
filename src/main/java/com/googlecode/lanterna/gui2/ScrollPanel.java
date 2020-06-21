@@ -322,8 +322,7 @@ Y8b  d8 `8b  d8' 88  V888    88    88 `88. `8b  d8' 88booo. 88booo. 88.     88 `
         if (scrollableBox != null) {
             if (Objects.equals(priorOffset, scrollOffset)) {
                 // scrolling stopped, start moving selection more
-                boolean isLess = desiredOffset.getRow() > 0;
-                int amount = desiredOffset.getRow();// * (isLess ? -1 : 1);
+                int amount = desiredOffset.getRow() * -1;
                 scrollableBox.setSelectedIndex(scrollableBox.getSelectedIndex() + amount);
             }
             scrollableBox.pullSelectionIntoView();

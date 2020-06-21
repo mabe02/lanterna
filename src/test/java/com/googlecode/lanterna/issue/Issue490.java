@@ -108,14 +108,14 @@ public class Issue490 {
         ActionListBox listBox = new ActionListBox();
         ActionListBox listBox2 = new ActionListBox();
         
-        eachOf(45, i -> listBox.addItem("assign: " + (5*i), () -> reassignItems(5*i, listBox2)));
-        eachOf(45, i -> listBox2.addItem("item: " + i, () -> log("listBox2 item: " + i)));
+        eachOf(245, i -> listBox.addItem("assign: " + (5*i), () -> reassignItems(5*i, listBox2)));
+        eachOf(245, i -> listBox2.addItem("item: " + i, () -> log("listBox2 item: " + i)));
         
         RadioBoxList radioBoxList = new RadioBoxList();
-        eachOf(45, i -> radioBoxList.addItem("radio item: " + i));
+        eachOf(245, i -> radioBoxList.addItem("radio item: " + i));
         
         CheckBoxList<String> checkboxList = new CheckBoxList<>();
-        eachOf(45, i -> checkboxList.addItem("heckboxList: " + i));
+        eachOf(245, i -> checkboxList.addItem("heckboxList: " + i));
         // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
         
         // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
