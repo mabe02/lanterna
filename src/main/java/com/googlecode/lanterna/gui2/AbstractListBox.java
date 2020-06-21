@@ -42,10 +42,6 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
     protected boolean isWithinScrollPanel = false;
     protected TerminalPosition scrollOffset = new TerminalPosition(0, 0);
     
-    protected TerminalPosition thumbMouseDownPosition = null;
-    protected int offsetAtMouseDown = 0;
-    protected int selectedAtMouseDown = 0;
-    
     /**
      * This constructor sets up the component so it has no preferred size but will ask to be as big as the list is. If
      * the GUI cannot accommodate this size, scrolling and a vertical scrollbar will be used.
@@ -199,21 +195,21 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
     }
     
     public void doPageKeyboard(boolean isVertical, boolean isLess) {
-        doOffsetAmount(isVertical, isLess, getSize().getRows());
+        //doOffsetAmount(isVertical, isLess, getSize().getRows());
     }
-    public void doOffsetAmount(boolean isVertical, boolean isLess, int desiredMagnitude) {
-        int priorOffset = scrollOffset.getRow();
-        if (isVertical && isLess && getSize() != null) {
-            adjustScrollOffset(desiredMagnitude);
-        } else if (isVertical && !isLess && getSize() != null) {
-            adjustScrollOffset(-desiredMagnitude);
-        }
-        pullSelectionIntoView();
-        if (priorOffset == scrollOffset.getRow()) {
-            // scrolling stopped, start moving selection more
-            setSelectedIndex(selectedIndex + desiredMagnitude * (isLess ? -1 : 1));
-        }
-    }
+    //public void doOffsetAmount(boolean isVertical, boolean isLess, int desiredMagnitude) {
+    //    int priorOffset = scrollOffset.getRow();
+    //    if (isVertical && isLess && getSize() != null) {
+    //        adjustScrollOffset(desiredMagnitude);
+    //    } else if (isVertical && !isLess && getSize() != null) {
+    //        adjustScrollOffset(-desiredMagnitude);
+    //    }
+    //    pullSelectionIntoView();
+    //    if (priorOffset == scrollOffset.getRow()) {
+    //        // scrolling stopped, start moving selection more
+    //        setSelectedIndex(selectedIndex + desiredMagnitude * (isLess ? -1 : 1));
+    //    }
+    //}
     private void pullSelectionIntoView() {
         int minViewableSelection = Math.max(0, -scrollOffset.getRow());
         int maxViewableSelection = minViewableSelection + getSize().getRows();
@@ -582,7 +578,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
                     maxWidth = stringLengthInColumns;
                 }
             }
-            int additionalWidth = listBox.isWithinScrollPanel() ? 0 : 1;
+            int additionalWidth = listBox.isWithinScrollPanel ? 0 : 1;
             return new TerminalSize(maxWidth + additionalWidth, listBox.getItemCount());
         }
 
@@ -632,7 +628,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
             }
 
             graphics.applyThemeStyle(themeDefinition.getNormal());
-            if(!listBox.isWithinScrollPanel() && items.size() > componentHeight) {
+            if(!listBox.isWithinScrollPanel && items.size() > componentHeight) {
                 verticalScrollBar.onAdded(listBox.getParent());
                 verticalScrollBar.setViewSize(componentHeight);
                 verticalScrollBar.setScrollMaximum(items.size());

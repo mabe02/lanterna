@@ -223,7 +223,6 @@ public class ScrollBar extends AbstractInteractableComponent<ScrollBar> {
      */
     public static abstract class ScrollBarRenderer implements InteractableRenderer<ScrollBar> {
         
-        
         @Override
         public TerminalSize getPreferredSize(ScrollBar component) {
             return TerminalSize.ONE;
@@ -265,26 +264,26 @@ public class ScrollBar extends AbstractInteractableComponent<ScrollBar> {
     }
     
     public static class ScrollBarRects {
-        public final TerminalRect lessArrowRect;
-        public final TerminalRect moreArrowRect;
-        public final TerminalRect thumbRect;
-        public final TerminalRect thumbCenterRect;
-        public final TerminalRect pageLessRect;
-        public final TerminalRect pageMoreRect;
+        public final TerminalRectangle lessArrow;
+        public final TerminalRectangle moreArrow;
+        public final TerminalRectangle thumb;
+        public final TerminalRectangle thumbCenter;
+        public final TerminalRectangle pageLess;
+        public final TerminalRectangle pageMore;
         
         public ScrollBarRects(
-                TerminalRect lessArrowRect,
-                TerminalRect moreArrowRect,
-                TerminalRect thumbRect,
-                TerminalRect thumbCenterRect,
-                TerminalRect pageLessRect,
-                TerminalRect pageMoreRect) {
-            this.lessArrowRect   = lessArrowRect;
-            this.moreArrowRect   = moreArrowRect;
-            this.thumbRect       = thumbRect;
-            this.thumbCenterRect = thumbCenterRect;
-            this.pageLessRect    = pageLessRect;
-            this.pageMoreRect    = pageMoreRect;
+                TerminalRectangle lessArrow,
+                TerminalRectangle moreArrow,
+                TerminalRectangle thumb,
+                TerminalRectangle thumbCenter,
+                TerminalRectangle pageLess,
+                TerminalRectangle pageMore) {
+            this.lessArrow   = lessArrow;
+            this.moreArrow   = moreArrow;
+            this.thumb       = thumb;
+            this.thumbCenter = thumbCenter;
+            this.pageLess    = pageLess;
+            this.pageMore    = pageMore;
         }
     }
 
@@ -415,12 +414,12 @@ public class ScrollBar extends AbstractInteractableComponent<ScrollBar> {
             int thumbHeight = component.isHorizontal() ? 1 : scrollTrackerSize;
             return new TerminalRectangle(thumbX, thumbY, thumbWidth, thumbHeight);
         }
-        public TerminalRect getThumbCenterRect(ScrollBar component, TerminalRect thumbRect) {
-            final int x = component.isVertical() ? 0 : thumbRect.x + thumbRect.width/2;
-            final int y = component.isHorizontal() ? 0 : thumbRect.y + thumbRect.height/2;
+        public TerminalRectangle getThumbCenterRect(ScrollBar component, TerminalRectangle thumb) {
+            final int x = component.isVertical() ? 0 : thumb.x + thumb.width/2;
+            final int y = component.isHorizontal() ? 0 : thumb.y + thumb.height/2;
             final int w = 1;
             final int h = 1;
-            return new TerminalRect(x, y, w, h);
+            return new TerminalRectangle(x, y, w, h);
         }
         public char getLessChar(ScrollBar component) {
             return findChar(component, "UP_ARROW", Symbols.TRIANGLE_UP_POINTING_BLACK, "LEFT_ARROW", Symbols.TRIANGLE_LEFT_POINTING_BLACK);

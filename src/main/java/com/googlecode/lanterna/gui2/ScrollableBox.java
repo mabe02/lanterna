@@ -30,31 +30,4 @@ import com.googlecode.lanterna.graphics.ThemeDefinition;
 public interface ScrollableBox extends Component {
 
     void setIsWithinScrollPanel(boolean isWithinScrollPanel);
-    
-    default boolean isWithinScrollPanel() {
-        return false;
-    }
-    
-    default boolean isVerticalScrollCapable() { return false; }
-    
-    default boolean isHorizontalScrollCapable() { return false; }
-    
-    default boolean isVerticalScrollVisible() { return false; }
-    
-    default boolean isHorizontalScrollVisible() { return false; }
-    
-    default int getVerticalScrollMaximum() { return 0; }
-    
-    default int getHorizontalScrollMaximum() { return 0; }
-    
-    default int getVerticalScrollPosition() { return 0; }
-    
-    default int getHorizontalScrollPosition() { return 0; }
-    
-    default public void doScroll(boolean isVertical, boolean isLess) {}
-    default public void doPage(boolean isVertical, boolean isLess) {}
-    
-    default public void thumbMouseDown(boolean isVertical, TerminalPosition position) {}
-    default public void thumbMouseDrag(boolean isVertical, TerminalPosition position) {}
-    default public void mouseUp() {}
 }
