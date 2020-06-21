@@ -614,6 +614,10 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
                 if (!isFocused()) {
                     break;
                 }
+                if (isMouseMove(keyStroke)) {
+                    // do nothing
+                    return Result.UNHANDLED;
+                }
                 MouseAction mouseAction = (MouseAction) keyStroke;
                 MouseActionType actionType = mouseAction.getActionType();
                 if (actionType == MouseActionType.SCROLL_UP) {

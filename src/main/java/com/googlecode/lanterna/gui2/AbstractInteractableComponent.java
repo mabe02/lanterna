@@ -174,6 +174,10 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
                 case ReverseTab:
                     return Result.MOVE_FOCUS_PREVIOUS;
                 case MouseEvent:
+                    if (isMouseMove(keyStroke)) {
+                        // do nothing
+                        return Result.UNHANDLED;
+                    }
                     getBasePane().setFocusedInteractable(this);
                     return Result.HANDLED;
                 default:
@@ -219,6 +223,10 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
         boolean isMouseActivationStroke = isMouseActivationStroke(keyStroke);
         
         return isKeyboardActivationStroke || isMouseActivationStroke;
+    }
+    
+    public boolean isMouseMove(KeyStroke keyStroke) {
+        return keyStroke.getKeyType() == KeyType.MouseEvent && ((MouseAction)keyStroke).getActionType() == MouseActionType.MOVE;
     }
 	
 }
