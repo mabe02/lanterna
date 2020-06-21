@@ -30,6 +30,8 @@ import com.googlecode.lanterna.gui2.TextGUIGraphics;
 import com.googlecode.lanterna.gui2.Window;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
+import com.googlecode.lanterna.input.MouseAction;
+import com.googlecode.lanterna.input.MouseActionType;
 
 /**
  * This class is a single item that appears in a {@link Menu} with an optional action attached to it
@@ -93,6 +95,9 @@ public class MenuItem extends AbstractInteractableComponent<MenuItem> {
                     ((Window) basePane).close();
                 }
             }
+            return Result.HANDLED;
+        } else if (isMouseMove(keyStroke)) {
+            takeFocus();
             return Result.HANDLED;
         } else {
             return super.handleKeyStroke(keyStroke);

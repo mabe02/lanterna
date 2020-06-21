@@ -31,6 +31,14 @@ import java.util.List;
 public class MouseCharacterPattern implements CharacterPattern {
     private static final char[] PATTERN = { KeyDecodingProfile.ESC_CODE, '[', 'M' };
 
+
+    // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    // some terminals, for example XTerm, issue mouse down when it
+    // should be mouse move, after first click then they correctly issues
+    // mouse move, do some coercion here to force the correct action
+    private boolean isMouseDown = false;
+    // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
     @Override
     public Matching match(List<Character> seq) {
         int size = seq.size();
@@ -50,7 +58,8 @@ public class MouseCharacterPattern implements CharacterPattern {
             return Matching.NOT_YET; // maybe later
         }
         MouseActionType actionType = null;
-        int button = (seq.get(3) & 0x3) + 1;
+        int part = (seq.get(3) & 0x3) + 1;
+        int button = part;
         if(button == 4) {
             //If last two bits are both set, it means button click release
             button = 0;
@@ -60,9 +69,11 @@ public class MouseCharacterPattern implements CharacterPattern {
             case(1):
                 if(button > 0) {
                     actionType = MouseActionType.CLICK_DOWN;
+                    isMouseDown = true;
                 }
                 else {
                     actionType = MouseActionType.CLICK_RELEASE;
+                    isMouseDown = false;
                 }
                 break;
             case(2): case(0):
@@ -84,6 +95,23 @@ public class MouseCharacterPattern implements CharacterPattern {
                 }
                 break;
         }
+        
+        // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        // coerce action types:
+        // when in between CLICK_DOWN and CLICK_RELEASE coerce MOVE to DRAG
+        // when not between CLICK_DOWN and CLICK_RELEASE coerce DRAG to MOVE
+        if (isMouseDown) {
+            if (actionType == MouseActionType.MOVE) {
+                actionType = MouseActionType.DRAG;
+            }
+        } else {
+            if (actionType == MouseActionType.DRAG) {
+                actionType = MouseActionType.MOVE;
+            }
+        }
+        // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        
+        
         TerminalPosition pos = new TerminalPosition( seq.get(4) - 33, seq.get(5) - 33 );
 
         MouseAction ma = new MouseAction(actionType, button, pos );
