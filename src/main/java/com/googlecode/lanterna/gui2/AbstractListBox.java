@@ -373,7 +373,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
     protected int getIndexByMouseAction(MouseAction click) {
         int index = click.getPosition().getRow() - getGlobalPosition().getRow() - scrollOffset.getRow();
         
-        return Math.min(index, items.size() -1);
+        return Math.max(-1, Math.min(index, items.size() -1));
     }
 
     private boolean selectByCharacter(Character character) {
