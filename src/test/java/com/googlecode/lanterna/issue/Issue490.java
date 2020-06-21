@@ -129,9 +129,9 @@ public class Issue490 {
         ui.addComponent(hpanel.withBorder(Borders.singleLine("components")));
         hpanel.addComponent(themes.withBorder(Borders.singleLine("themes")));
         hpanel.addComponent(listBox.withBorder(Borders.singleLine("listBox")));
-        hpanel.addComponent(new ScrollPanel(listBox2, true, false).withBorder(Borders.singleLine("scrollPanel listBox")));
-        hpanel.addComponent(new ScrollPanel(radioBoxList, true, false).withBorder(Borders.singleLine("scrollPanel radio list")));
-        hpanel.addComponent(new ScrollPanel(checkboxList, true, false).withBorder(Borders.singleLine("scrollPanel checkbox")));
+        hpanel.addComponent(new ScrollPanel(listBox2).withBorder(Borders.singleLine("scrollPanel listBox")));
+        hpanel.addComponent(new ScrollPanel(radioBoxList).withBorder(Borders.singleLine("scrollPanel radio list")));
+        hpanel.addComponent(new ScrollPanel(checkboxList).withBorder(Borders.singleLine("scrollPanel checkbox")));
         ui.addComponent(clearLogButton);
         // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
         
