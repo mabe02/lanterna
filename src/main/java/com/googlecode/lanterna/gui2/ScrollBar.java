@@ -384,15 +384,15 @@ public class ScrollBar extends AbstractInteractableComponent<ScrollBar> {
         public TerminalRectangle getPageLessRect(ScrollBar component, TerminalRectangle lessArrow, TerminalRectangle thumb) {
             final int x = component.isVertical() ? 0 : lessArrow.xAndWidth;
             final int y = component.isHorizontal() ? 0 : lessArrow.yAndHeight;
-            final int w = component.isVertical() ? thumb.width : thumb.x - x;
-            final int h = component.isHorizontal() ? thumb.height : thumb.y - y;
+            final int w = Math.max(0, component.isVertical() ? thumb.width : thumb.x - x);
+            final int h = Math.max(0, component.isHorizontal() ? thumb.height : thumb.y - y);
             return new TerminalRectangle(x, y, w, h);
         }
         public TerminalRectangle getPageMoreRect(ScrollBar component, TerminalRectangle moreArrow, TerminalRectangle thumb) {
             final int x = component.isVertical() ? 0 : thumb.xAndWidth;
             final int y = component.isHorizontal() ? 0 : thumb.yAndHeight;
-            final int w = component.isVertical() ? thumb.width : moreArrow.x - thumb.xAndWidth;
-            final int h = component.isHorizontal() ? thumb.height : moreArrow.y - thumb.yAndHeight;
+            final int w = Math.max(0, component.isVertical() ? thumb.width : moreArrow.x - thumb.xAndWidth);
+            final int h = Math.max(0, component.isHorizontal() ? thumb.height : moreArrow.y - thumb.yAndHeight);
             return new TerminalRectangle(x, y, w, h);
         }
         public TerminalRectangle getThumbRect(ScrollBar component, int position, int maximum) {
@@ -410,8 +410,8 @@ public class ScrollBar extends AbstractInteractableComponent<ScrollBar> {
             
             final int thumbX = component.isVertical() ? 0 : scrollTrackerPosition;
             final int thumbY = component.isHorizontal() ? 0 : scrollTrackerPosition;
-            int thumbWidth = component.isVertical() ? 1 : scrollTrackerSize;
-            int thumbHeight = component.isHorizontal() ? 1 : scrollTrackerSize;
+            int thumbWidth = Math.max(0, component.isVertical() ? 1 : scrollTrackerSize);
+            int thumbHeight = Math.max(0, component.isHorizontal() ? 1 : scrollTrackerSize);
             return new TerminalRectangle(thumbX, thumbY, thumbWidth, thumbHeight);
         }
         public TerminalRectangle getThumbCenterRect(ScrollBar component, TerminalRectangle thumb) {

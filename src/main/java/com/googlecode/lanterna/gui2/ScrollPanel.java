@@ -144,8 +144,17 @@ public class ScrollPanel extends Panel {
         addComponent(centerViewPort, Location.CENTER);
         
         if (scrollableComponent instanceof ScrollableBox) {
-            ((ScrollableBox)scrollableComponent).setIsWithinScrollPanel(true);
+            ((ScrollableBox)scrollableComponent).setIsWithinScrollPanel(this);
         }
+    }
+    
+    public ScrollPanel(ScrollableBox box) {
+        this(box, box.isHorizontalScrollCapable(), box.isVerticalScrollCapable());
+    }
+    
+    public void redoOffset() {
+       scrollOffset = new TerminalPosition(0,0);
+       thumbMouseDownPosition = null;
     }
     
     boolean isVerticalScrollVisible() {
@@ -158,13 +167,13 @@ public class ScrollPanel extends Panel {
     }
     
     void updateScrollerBars() {
-        if (isVerticalScrollVisible()) {
+        if (isVerticalScrollCapable) {
             verticalScrollBar.setViewSize(verticalScrollBar.getSize().getRows());
             verticalScrollBar.setScrollMaximum(scrollableComponent.getSize().getRows());
             //verticalScrollBar.setScrollPosition(scrollableComponent.getVerticalScrollPosition());
             verticalScrollBar.setScrollPosition(-scrollOffset.getRow());
         }
-        if (isHorizontalScrollVisible()) {
+        if (isHorizontalScrollCapable) {
             horizontalScrollBar.setViewSize(horizontalScrollBar.getSize().getColumns());
             horizontalScrollBar.setScrollMaximum(scrollableComponent.getSize().getColumns());
             //horizontalScrollBar.setScrollPosition(scrollableComponent.getHorizontalScrollPosition());
@@ -198,6 +207,12 @@ public class ScrollPanel extends Panel {
             
             int columns = size.getColumns() + (isVerticalScrollVisible() ? 1 : 0);
             int rows = size.getRows() + (isHorizontalScrollVisible() ? 1 : 0);
+            //TerminalSize size = ScrollPanel.this.getPreferredSize();
+            TerminalSize size = super.getPreferredSize(components);
+            int xpad = isVerticalScrollVisible() ? 1 : 0;
+            int ypad = isHorizontalScrollVisible() ? 1 : 0;
+            int columns = size.getColumns() + xpad;
+            int rows = size.getRows() + ypad;
             
             return new TerminalSize(columns, rows);
         }
@@ -249,6 +264,7 @@ public class ScrollPanel extends Panel {
                 if (isHorizontalScrollVisible) {
                     addComponent(horizontalScrollBar, Location.BOTTOM);
                 }
+                updateScrollerBars();
             }
             
             once = true;
@@ -270,7 +286,10 @@ public class ScrollPanel extends Panel {
         @Override
         public TerminalSize getPreferredSize(List<Component> components) {
             // ignored as this is in a BorderLayout.CENTER anyway
-            return TerminalSize.ONE;
+            if (components.size() != 1) {
+                return TerminalSize.ONE;
+            }
+            return components.get(0).getPreferredSize();
         }
         
         @Override
@@ -280,17 +299,12 @@ public class ScrollPanel extends Panel {
             }
             
             Component it = components.get(0);
-            int width = isHorizontalScrollVisible() ? it.getPreferredSize().getColumns() : getSize().getColumns();
-            int height = isVerticalScrollVisible() ? it.getPreferredSize().getRows() : getSize().getRows();
-            
+            TerminalSize preferredSize = it.getPreferredSize();
+            int width = isHorizontalScrollVisible() ? preferredSize.getColumns() : getSize().getColumns();
+            int height = isVerticalScrollVisible() ? preferredSize.getRows() : getSize().getRows();
             
             it.setSize(new TerminalSize(width, height));
-            
-            // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-            // offset
             it.setPosition(scrollOffset);
-            
-            // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
         }
         
         @Override

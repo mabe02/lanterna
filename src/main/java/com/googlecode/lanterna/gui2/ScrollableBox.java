@@ -29,5 +29,9 @@ import com.googlecode.lanterna.graphics.ThemeDefinition;
  */
 public interface ScrollableBox extends Component {
 
-    void setIsWithinScrollPanel(boolean isWithinScrollPanel);
+    void setIsWithinScrollPanel(ScrollPanel scrollPanel);
+    
+    default boolean isVerticalScrollCapable() { return false; }
+    default boolean isHorizontalScrollCapable() { return false; }
+    
 }

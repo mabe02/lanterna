@@ -37,16 +37,12 @@ public class ImageComponent extends AbstractInteractableComponent {
     
     TextImage textImage;
     
-    
     public ImageComponent() {
         setTextImage(new BasicTextImage(0,0));
     }
     
     public void setTextImage(TextImage textImage) {
         this.textImage = textImage;
-
-
-     //  ??   setPreferredSize(textImage.getSize());
         setPreferredSize(textImage.getSize());
         invalidate();
     }
@@ -61,7 +57,6 @@ public class ImageComponent extends AbstractInteractableComponent {
             @Override
             public TerminalSize getPreferredSize(ImageComponent panel) {
                 return textImage.getSize();
-
        // ??    return ImageComponent.this.getPreferredSize();
             }
             @Override

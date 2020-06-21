@@ -39,7 +39,8 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
     private final List<V> items;
     private int selectedIndex;
     private ListItemRenderer<V,T> listItemRenderer;
-    protected boolean isWithinScrollPanel = false;
+    
+    protected ScrollPanel scrollPanel = null;
     protected TerminalPosition scrollOffset = new TerminalPosition(0, 0);
     
     /**
@@ -67,8 +68,21 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
     }
 
     @Override
-    public void setIsWithinScrollPanel(boolean isWithinScrollPanel) {
-        this.isWithinScrollPanel = isWithinScrollPanel;
+    public void setIsWithinScrollPanel(ScrollPanel scrollPanel) {
+        this.scrollPanel = scrollPanel;
+    }
+    boolean isWithinScrollPanel() {
+        return scrollPanel != null;
+    }
+    void ifScrollPanelRedoOffset() {
+        if (isWithinScrollPanel()) {
+            scrollPanel.redoOffset();
+        }
+    }
+    
+    @Override
+    public boolean isVerticalScrollCapable() {
+        return true;
     }
     
     //@Override
@@ -410,6 +424,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
         if(selectedIndex == -1) {
             selectedIndex = 0;
         }
+        ifScrollPanelRedoOffset();
         invalidate();
         return self();
     }
@@ -429,6 +444,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
         while(selectedIndex >= items.size()) {
             selectedIndex--;
         }
+        ifScrollPanelRedoOffset();
         invalidate();
         return existing;
     }
@@ -440,6 +456,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
     public synchronized T clearItems() {
         items.clear();
         selectedIndex = -1;
+        ifScrollPanelRedoOffset();
         invalidate();
         return self();
     }
@@ -508,7 +525,6 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
      */
     public synchronized T setSelectedIndex(int index) {
         selectedIndex = Math.max(0, Math.min(index, items.size() -1));
-        
         invalidate();
         return self();
     }
@@ -530,11 +546,12 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
      * @return The currently selected item in the list box, or {@code null} if there are no items
      */
     public synchronized V getSelectedItem() {
-        if (selectedIndex == -1) {
-            return null;
-        } else {
-            return items.get(selectedIndex);
+        List<V> theItems = items;
+        int index = getSelectedIndex();
+        if (0 <= index && index < theItems.size()) {
+            return theItems.get(index);
         }
+        return null;
     }
 
     /**
@@ -578,7 +595,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
                     maxWidth = stringLengthInColumns;
                 }
             }
-            int additionalWidth = listBox.isWithinScrollPanel ? 0 : 1;
+            int additionalWidth = listBox.isWithinScrollPanel() ? 0 : 1;
             return new TerminalSize(maxWidth + additionalWidth, listBox.getItemCount());
         }
 
@@ -612,7 +629,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
 
             graphics.applyThemeStyle(themeDefinition.getNormal());
             graphics.fill(' ');
-
+            
             TerminalSize itemSize = graphics.getSize().withRows(1);
             for(int i = scrollTopIndex; i < items.size(); i++) {
                 if(i - scrollTopIndex >= componentHeight) {
@@ -628,7 +645,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
             }
 
             graphics.applyThemeStyle(themeDefinition.getNormal());
-            if(!listBox.isWithinScrollPanel && items.size() > componentHeight) {
+            if(!listBox.isWithinScrollPanel() && items.size() > componentHeight) {
                 verticalScrollBar.onAdded(listBox.getParent());
                 verticalScrollBar.setViewSize(componentHeight);
                 verticalScrollBar.setScrollMaximum(items.size());
