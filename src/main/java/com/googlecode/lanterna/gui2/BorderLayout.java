@@ -152,7 +152,7 @@ public class BorderLayout implements LayoutManager {
         
         //Set the remaining components to 0x0
         for(Component component: components) {
-            if(!layout.values().contains(component)) {
+            if(component.isVisible() && !layout.containsValue(component)) {
                 component.setPosition(TerminalPosition.TOP_LEFT_CORNER);
                 component.setSize(TerminalSize.ZERO);
             }
@@ -163,6 +163,9 @@ public class BorderLayout implements LayoutManager {
         EnumMap<Location, Component> map = new EnumMap<>(Location.class);
         List<Component> unassignedComponents = new ArrayList<>();
         for(Component component: components) {
+            if (!component.isVisible()) {
+                continue;
+            }
             if(component.getLayoutData() instanceof Location) {
                 map.put((Location)component.getLayoutData(), component);
             }
