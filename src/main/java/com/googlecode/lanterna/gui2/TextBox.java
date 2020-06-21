@@ -157,26 +157,6 @@ public class TextBox extends AbstractInteractableComponent<TextBox> implements S
         this.isWithinScrollPanel = isWithinScrollPanel;
     }
     
-    @Override
-    public boolean isVerticalScrollCapable() {
-        return false;
-    }
-    
-    @Override
-    public boolean isHorizontalScrollCapable() {
-        return false;
-    }
-    
-    @Override
-    public boolean isVerticalScrollVisible() {
-        return false;
-    }
-    
-    @Override
-    public boolean isHorizontalScrollVisible() {
-        return false;
-    }
-    
     /**
      * Sets a pattern on which the content of the text box is to be validated. For multi-line TextBox:s, the pattern is
      * checked against each line individually, not the content as a whole. Partial matchings will not be allowed, the

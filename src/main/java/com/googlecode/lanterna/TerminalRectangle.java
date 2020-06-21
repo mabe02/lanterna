@@ -25,7 +25,7 @@ import java.util.Objects;
  *
  * @author ginkoblongata
  */
-public class TerminalRect {
+public class TerminalRectangle {
     
     // one of the benefits of immutable: ease of usage
     public final TerminalPosition position;
@@ -41,18 +41,12 @@ public class TerminalRect {
     /**
      * Creates a new terminal rect representation at the supplied x y position with the supplied width and height.
      *
-     * Both width and height must be at least zero (non negative)
+     * Both width and height must be at least zero (non negative) as checked in TerminalSize.
      *
      * @param width number of columns
      * @param height number of rows
      */
-    public TerminalRect(int x, int y, int width, int height) {
-        if (width < 0) {
-            throw new IllegalArgumentException("TerminalRect.width cannot be less than 0!");
-        }
-        if (height < 0) {
-            throw new IllegalArgumentException("TerminalRect.height cannot be less than 0!");
-        }
+    public TerminalRectangle(int x, int y, int width, int height) {
         position = new TerminalPosition(x, y);
         size = new TerminalSize(width, height);
         
@@ -83,8 +77,8 @@ public class TerminalRect {
      * @param columns Width of the new rect, in columns
      * @return New rect based on this one, but with a new width
      */
-    public TerminalRect withColumns(int columns) {
-        return new TerminalRect(x, y, columns, height);
+    public TerminalRectangle withColumns(int columns) {
+        return new TerminalRectangle(x, y, columns, height);
     }
     
     /**
@@ -92,8 +86,8 @@ public class TerminalRect {
      * @param rows Height of the new rect, in rows
      * @return New rect based on this one, but with a new height
      */
-    public TerminalRect withRows(int rows) {
-        return new TerminalRect(x, y, width, rows);
+    public TerminalRectangle withRows(int rows) {
+        return new TerminalRectangle(x, y, width, rows);
     }
 
     public boolean whenContains(int x, int y, Runnable op) {
@@ -114,8 +108,8 @@ public class TerminalRect {
     public boolean equals(Object obj) {
         return obj != null
             && obj.getClass() == getClass()
-            && Objects.equals(position, ((TerminalRect)obj).position)
-            && Objects.equals(size, ((TerminalRect)obj).size);
+            && Objects.equals(position, ((TerminalRectangle)obj).position)
+            && Objects.equals(size, ((TerminalRectangle)obj).size);
     }
 
     @Override
