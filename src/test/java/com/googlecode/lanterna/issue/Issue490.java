@@ -83,7 +83,7 @@ public class Issue490 {
                     log("input: " + keyStroke);
                 }
             });
-            window.setTheme(LanternaThemes.getRegisteredTheme("businessmachine"));
+            window.setTheme(LanternaThemes.getRegisteredTheme("blaster"));
             window.setComponent(makeUi());
             gui.addWindowAndWait(window);
         }

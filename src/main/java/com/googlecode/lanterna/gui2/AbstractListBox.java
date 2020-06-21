@@ -35,7 +35,7 @@ import com.googlecode.lanterna.input.MouseActionType;
  * @param <V> Type of items this list box contains
  * @author Martin
  */
-public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extends AbstractInteractableComponent<T> implements ScrollableBox {
+public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extends AbstractInteractableComponent<T> implements ScrollableBox<T> {
     private final List<V> items;
     private int selectedIndex;
     private ListItemRenderer<V,T> listItemRenderer;
@@ -85,26 +85,6 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
         return true;
     }
     
-    //@Override
-    //public void thumbMouseDrag(boolean isVertical, TerminalPosition position) {
-    //    if (thumbMouseDownPosition == null) {
-    //        thumbMouseDown(isVertical, position);
-    //        return;
-    //    }
-    //    
-    //    int delta = position.getRow() - thumbMouseDownPosition.getRow();
-    //    float ratioMultiplier = ((float)getItemCount() / (float)getSize().getRows());
-    //    delta = (int)(delta * ratioMultiplier);
-    //    boolean isLess = delta < 0;
-    //    if (delta != 0) {
-    //        // reseting to the beginning prior to offset to get smoother resolution
-    //        scrollOffset = scrollOffset.withRow(offsetAtMouseDown);
-    //        selectedIndex = selectedAtMouseDown;
-    //        doOffsetAmount(isVertical, isLess, Math.abs(delta));
-    //    }
-    //    
-    //}
-    
     public void doPageKeyboard(boolean isVertical, boolean isLess) {
         //doOffsetAmount(isVertical, isLess, getSize().getRows());
     }
@@ -121,13 +101,24 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
     //        setSelectedIndex(selectedIndex + desiredMagnitude * (isLess ? -1 : 1));
     //    }
     //}
-    private void pullSelectionIntoView() {
-        int minViewableSelection = Math.max(0, -scrollOffset.getRow());
-        int maxViewableSelection = minViewableSelection + getSize().getRows();
+    @Override
+    public void pullSelectionIntoView() {
+        int offset = getScrollOffset();
+        int viewedRows = scrollPanel != null ? scrollPanel.getViewportSize().getRows() : getSize().getRows();
+        
+        int minViewableSelection = Math.max(0, -offset);
+        int maxViewableSelection = minViewableSelection + viewedRows;
         if (selectedIndex < minViewableSelection) {
-            selectedIndex = minViewableSelection;
+            setSelectedIndex(minViewableSelection);
         } else if(selectedIndex >= maxViewableSelection) {
-            selectedIndex = maxViewableSelection -1;
+            setSelectedIndex(maxViewableSelection -1);
+        }
+    }
+    int getScrollOffset() {
+        if (scrollPanel != null) {
+            return scrollPanel.getScrollOffset().getRow();
+        } else {
+            return scrollOffset.getRow();
         }
     }
     
@@ -420,6 +411,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
      * @param index Index of the item that should be currently selected
      * @return Itself
      */
+    @Override
     public synchronized T setSelectedIndex(int index) {
         selectedIndex = Math.max(0, Math.min(index, items.size() -1));
         invalidate();
@@ -432,6 +424,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
      * implementations such as {@code CheckBoxList} where individual items have a certain checked/unchecked state.
      * @return The index of the currently selected row in the list box, or -1 if there are no items
      */
+    @Override
     public int getSelectedIndex() {
         return selectedIndex;
     }

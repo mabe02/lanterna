@@ -50,6 +50,7 @@ import java.util.Objects;
 public class ScrollPanel extends Panel {
     
     private final Component scrollableComponent;
+    private final ScrollableBox scrollableBox;
     private final ScrollBar verticalScrollBar;
     private final ScrollBar horizontalScrollBar;
     
@@ -71,7 +72,7 @@ public class ScrollPanel extends Panel {
     protected TerminalPosition thumbMouseDownPosition = null;
     protected TerminalPosition offsetAtMouseDown = null;
     protected TerminalPosition thumbMouseDownMask = null;
-    //protected int selectedAtMouseDown = 0;
+    protected int selectedAtMouseDown = 0;
 
     /**
      * Default constructor, creates a new panel with no child components and by default set to a vertical
@@ -92,7 +93,10 @@ public class ScrollPanel extends Panel {
         addComponent(centerViewPort, Location.CENTER);
         
         if (scrollableComponent instanceof ScrollableBox) {
-            ((ScrollableBox)scrollableComponent).setIsWithinScrollPanel(this);
+            scrollableBox = (ScrollableBox)scrollableComponent;
+            scrollableBox.setIsWithinScrollPanel(this);
+        } else {
+            scrollableBox = null;
         }
     }
     
@@ -103,6 +107,10 @@ public class ScrollPanel extends Panel {
     public void redoOffset() {
        scrollOffset = new TerminalPosition(0,0);
        thumbMouseDownPosition = null;
+    }
+    
+    public TerminalPosition getScrollOffset() {
+        return scrollOffset;
     }
     
     boolean isVerticalScrollVisible() {
@@ -118,13 +126,11 @@ public class ScrollPanel extends Panel {
         if (isVerticalScrollCapable) {
             verticalScrollBar.setViewSize(verticalScrollBar.getSize().getRows());
             verticalScrollBar.setScrollMaximum(scrollableComponent.getSize().getRows());
-            //verticalScrollBar.setScrollPosition(scrollableComponent.getVerticalScrollPosition());
             verticalScrollBar.setScrollPosition(-scrollOffset.getRow());
         }
         if (isHorizontalScrollCapable) {
             horizontalScrollBar.setViewSize(horizontalScrollBar.getSize().getColumns());
             horizontalScrollBar.setScrollMaximum(scrollableComponent.getSize().getColumns());
-            //horizontalScrollBar.setScrollPosition(scrollableComponent.getHorizontalScrollPosition());
             horizontalScrollBar.setScrollPosition(-scrollOffset.getColumn());
         }
     }
@@ -142,7 +148,6 @@ public class ScrollPanel extends Panel {
         
         @Override
         public TerminalSize getPreferredSize(List<Component> components) {
-            //TerminalSize size = ScrollPanel.this.getPreferredSize();
             TerminalSize size = super.getPreferredSize(components);
             int xpad = isVerticalScrollVisible() ? 1 : 0;
             int ypad = isHorizontalScrollVisible() ? 1 : 0;
@@ -236,22 +241,6 @@ public class ScrollPanel extends Panel {
             priorLayoutHasVerticalScrollVisible = isVerticalScrollVisible;
             priorLayoutHasHorizontalScrollVisible = isHorizontalScrollVisible;
             
-            // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-            // this 'true' here is a hack to get the layout happening
-            // otherwise the scroller lags one 'tick' behind realtime
-            // other option would be to subclass the Renderer it seems
-            // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-            //if (true || isChanged) {
-            //    removeComponent(verticalScrollBar);
-            //    removeComponent(horizontalScrollBar);
-            //    if (isVerticalScrollVisible) {
-            //        addComponent(verticalScrollBar, Location.RIGHT);
-            //    }
-            //    if (isHorizontalScrollVisible) {
-            //        addComponent(horizontalScrollBar, Location.BOTTOM);
-            //    }
-            //}
-            
             once = true;
             return isChanged;
         }
@@ -287,7 +276,9 @@ Y8b  d8 `8b  d8' 88  V888    88    88 `88. `8b  d8' 88booo. 88booo. 88.     88 `
         thumbMouseDownPosition = position;
         thumbMouseDownMask = mask(isVertical);
         offsetAtMouseDown = scrollOffset;
-        //selectedAtMouseDown = selectedIndex;
+        if (scrollableBox != null) {
+            selectedAtMouseDown = scrollableBox.getSelectedIndex();
+        }
     }
     public void mouseUp() {
         thumbMouseDownPosition = null;
@@ -308,7 +299,9 @@ Y8b  d8 `8b  d8' 88  V888    88    88 `88. `8b  d8' 88booo. 88booo. 88.     88 `
         
         
         if (!Objects.equals(ORIGIN, delta)) {
-            //selectedIndex = selectedAtMouseDown;
+            if (scrollableBox != null) {
+                scrollableBox.setSelectedIndex(selectedAtMouseDown);
+            }
             doOffsetAmount(delta);
         }
     }
@@ -326,10 +319,14 @@ Y8b  d8 `8b  d8' 88  V888    88    88 `88. `8b  d8' 88booo. 88booo. 88.     88 `
         TerminalPosition priorOffset = scrollOffset;
         adjustScrollOffset(desiredOffset);
         
-        //pullSelectionIntoView();
-        if (Objects.equals(priorOffset, scrollOffset)) {
-            // scrolling stopped, start moving selection more
-            //setSelectedIndex(selectedIndex + desiredOffset * (isLess ? -1 : 1));
+        if (scrollableBox != null) {
+            if (Objects.equals(priorOffset, scrollOffset)) {
+                // scrolling stopped, start moving selection more
+                boolean isLess = desiredOffset.getRow() > 0;
+                int amount = desiredOffset.getRow();// * (isLess ? -1 : 1);
+                scrollableBox.setSelectedIndex(scrollableBox.getSelectedIndex() + amount);
+            }
+            scrollableBox.pullSelectionIntoView();
         }
     }
     //private void pullSelectionIntoView() {
