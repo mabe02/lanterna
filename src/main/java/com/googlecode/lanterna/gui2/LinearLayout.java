@@ -165,6 +165,9 @@ public class LinearLayout implements LayoutManager {
         int maxWidth = 0;
         int height = 0;
         for(Component component: components) {
+            if (!component.isVisible()) {
+                continue;
+            }
             TerminalSize preferredSize = component.getPreferredSize();
             if(maxWidth < preferredSize.getColumns()) {
                 maxWidth = preferredSize.getColumns();
@@ -179,6 +182,9 @@ public class LinearLayout implements LayoutManager {
         int maxHeight = 0;
         int width = 0;
         for(Component component: components) {
+            if (!component.isVisible()) {
+                continue;
+            }
             TerminalSize preferredSize = component.getPreferredSize();
             if(maxHeight < preferredSize.getRows()) {
                 maxHeight = preferredSize.getRows();
@@ -220,6 +226,9 @@ public class LinearLayout implements LayoutManager {
         int remainingVerticalSpace = area.getRows();
         int availableHorizontalSpace = area.getColumns();
         for(Component component: components) {
+            if (!component.isVisible()) {
+                continue;
+            }
             if(remainingVerticalSpace <= 0) {
                 component.setPosition(TerminalPosition.TOP_LEFT_CORNER);
                 component.setSize(TerminalSize.ZERO);
@@ -269,6 +278,9 @@ public class LinearLayout implements LayoutManager {
         int totalRequiredVerticalSpace = 0;
 
         for (Component component: components) {
+            if (!component.isVisible()) {
+                continue;
+            }
             Alignment alignment = Alignment.Beginning;
             LayoutData layoutData = component.getLayoutData();
             if (layoutData instanceof LinearLayoutData) {
@@ -368,6 +380,9 @@ public class LinearLayout implements LayoutManager {
         int remainingHorizontalSpace = area.getColumns();
         int availableVerticalSpace = area.getRows();
         for(Component component: components) {
+            if (!component.isVisible()) {
+                continue;
+            }
             if(remainingHorizontalSpace <= 0) {
                 component.setPosition(TerminalPosition.TOP_LEFT_CORNER);
                 component.setSize(TerminalSize.ZERO);
@@ -417,6 +432,9 @@ public class LinearLayout implements LayoutManager {
         int totalRequiredHorizontalSpace = 0;
 
         for (Component component: components) {
+            if (!component.isVisible()) {
+                continue;
+            }
             Alignment alignment = Alignment.Beginning;
             LayoutData layoutData = component.getLayoutData();
             if (layoutData instanceof LinearLayoutData) {

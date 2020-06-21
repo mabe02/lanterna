@@ -266,6 +266,9 @@ public class Panel extends AbstractComponent<Panel> implements Container {
 
             synchronized(components) {
                 for(Component child: components) {
+                    if (!child.isVisible()) {
+                        continue;
+                    }
                     TextGUIGraphics componentGraphics = graphics.newTextGraphics(child.getPosition(), child.getSize());
                     child.draw(componentGraphics);
                 }

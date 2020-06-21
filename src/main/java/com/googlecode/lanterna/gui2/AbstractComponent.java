@@ -69,6 +69,7 @@ public abstract class AbstractComponent<T extends Component> implements Componen
     private TerminalPosition position;
     private Theme themeOverride;
     private LayoutData layoutData;
+    private boolean visible;
     private boolean invalid;
 
     /**
@@ -79,6 +80,7 @@ public abstract class AbstractComponent<T extends Component> implements Componen
         position = TerminalPosition.TOP_LEFT_CORNER;
         explicitPreferredSize = null;
         layoutData = null;
+        visible = true;
         invalid = true;
         parent = null;
         overrideRenderer = null;
@@ -182,6 +184,20 @@ public abstract class AbstractComponent<T extends Component> implements Componen
     @Override
     public final synchronized T setPreferredSize(TerminalSize explicitPreferredSize) {
         this.explicitPreferredSize = explicitPreferredSize;
+        return self();
+    }
+
+    @Override
+    public boolean isVisible() {
+        return visible;
+    }
+
+    @Override
+    public T setVisible(boolean visible) {
+        if (this.visible != visible) {
+            this.visible = visible;
+            invalidate();
+        }
         return self();
     }
 

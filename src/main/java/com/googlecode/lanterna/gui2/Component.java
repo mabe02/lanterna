@@ -100,6 +100,25 @@ public interface Component extends TextGUIElement {
      * @return This component's layout data
      */
     LayoutData getLayoutData();
+
+    /**
+     * Returns the component's own state as to if it should be visible or not. The exact behavior of an invisible
+     * component will depend on the layout manager; some will just ignore invisible components where others leave an
+     * empty space in their place. Invisible components cannot get input focus. The visibility value of the component
+     * has no effect if the component is not added to a container.
+     * @return The component's internal visibility state
+     */
+    boolean isVisible();
+
+    /**
+     * Sets the component's own state as to if it should be visible or not. The exact behavior of an invisible
+     * component will depend on the layout manager; some will just ignore invisible components where others leave an
+     * empty space in their place. Invisible components cannot get input focus. The visibility value of the component
+     * has no effect if the component is not added to a container.
+     * @param visible {@code true} if the component should be visible, {@code false} otherwise
+     * @return Itself
+     */
+    Component setVisible(boolean visible);
     
     /**
      * Returns the container which is holding this container, or {@code null} if it's not assigned to anything.
