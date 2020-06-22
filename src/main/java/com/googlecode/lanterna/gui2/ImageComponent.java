@@ -4,7 +4,7 @@ import com.googlecode.lanterna.*;
 import com.googlecode.lanterna.graphics.*;
 
 /**
-	
+    
 */
 public class ImageComponent extends AbstractInteractableComponent {
     
