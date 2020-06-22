@@ -82,6 +82,15 @@ public class SplitPanel extends Panel {
                 }
                 if (mouse.isMouseDrag()) {
                     drag = mouse.getPosition();
+                    
+                    // xxxxxxxxxxxxxxxxxxxxx
+                    // this is a hack, should not be needed if the pane drag
+                    // only on mouse down'd comp stuff was completely working
+                    if (down == null) {
+                        down = drag;
+                    }
+                    // xxxxxxxxxxxxxxxxxxxxx
+                    
                     int delta = isHorizontal ? drag.minus(down).getColumn() : drag.minus(down).getRow();
                     // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
                     if (isHorizontal) {
@@ -162,11 +171,11 @@ public class SplitPanel extends Panel {
             }
             
             if (isHorizontal) {
-                int leftWidth = (int)(w * ratio);
-                int leftHeight = Math.min(compA.getPreferredSize().getRows(), h);
+                int leftWidth = Math.max(0, (int)(w * ratio));
+                int leftHeight = Math.max(0, Math.min(compA.getPreferredSize().getRows(), h));
                 
-                int rightWidth = w - leftWidth;
-                int rightHeight = Math.min(compB.getPreferredSize().getRows(), h);
+                int rightWidth = Math.max(0, w - leftWidth);
+                int rightHeight = Math.max(0, Math.min(compB.getPreferredSize().getRows(), h));
                 
                 compA.setSize(new TerminalSize(leftWidth, leftHeight));
                 thumb.setSize(thumb.getPreferredSize());
@@ -176,11 +185,11 @@ public class SplitPanel extends Panel {
                 thumb.setPosition(new TerminalPosition(leftWidth, h/2 - tHeight/2));
                 compB.setPosition(new TerminalPosition(leftWidth + tWidth, 0));
             } else {
-                int leftWidth = Math.min(compA.getPreferredSize().getColumns(), w);
-                int leftHeight = (int)(h * ratio);
+                int leftWidth = Math.max(0, Math.min(compA.getPreferredSize().getColumns(), w));
+                int leftHeight = Math.max(0, (int)(h * ratio));
                 
-                int rightWidth = Math.min(compB.getPreferredSize().getColumns(), w);
-                int rightHeight = h - leftHeight;
+                int rightWidth = Math.max(0, Math.min(compB.getPreferredSize().getColumns(), w));
+                int rightHeight = Math.max(0, h - leftHeight);
                 
                 compA.setSize(new TerminalSize(leftWidth, leftHeight));
                 thumb.setSize(thumb.getPreferredSize());
