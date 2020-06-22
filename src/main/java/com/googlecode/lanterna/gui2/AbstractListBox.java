@@ -118,7 +118,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
             setSelectedIndex(maxViewableSelection -1);
         }
     }
-    public void pullOffsetToSelection() {
+    public void pullViewportToOverlapSelection() {
         if (scrollPanel != null) {
             int vOffset = scrollPanel.getScrollOffset().getRow();
             TerminalSize vp = scrollPanel.getViewportSize();
@@ -208,7 +208,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
                         return Result.MOVE_FOCUS_DOWN;
                     }
                     setSelectedIndex(getSelectedIndex() +1);
-                    pullOffsetToSelection();
+                    pullViewportToOverlapSelection();
                     return Result.HANDLED;
 
                 case ArrowUp:
@@ -216,27 +216,27 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
                         return Result.MOVE_FOCUS_UP;
                     }
                     setSelectedIndex(getSelectedIndex() -1);
-                    pullOffsetToSelection();
+                    pullViewportToOverlapSelection();
                     return Result.HANDLED;
 
                 case Home:
                     setSelectedIndex(0);
-                    pullOffsetToSelection();
+                    pullViewportToOverlapSelection();
                     return Result.HANDLED;
 
                 case End:
                     setSelectedIndex(items.size() - 1);
-                    pullOffsetToSelection();
+                    pullViewportToOverlapSelection();
                     return Result.HANDLED;
 
                 case PageUp:
                     doPageKeyboard(true);
-                    pullOffsetToSelection();
+                    pullViewportToOverlapSelection();
                     return Result.HANDLED;
 
                 case PageDown:
                     doPageKeyboard(false);
-                    pullOffsetToSelection();
+                    pullViewportToOverlapSelection();
                     return Result.HANDLED;
 
                 case Character:
@@ -259,10 +259,12 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
                     } else if (actionType == MouseActionType.SCROLL_UP) {
                         // relying on setSelectedIndex(index) to clip the index to valid values within range
                         setSelectedIndex(getSelectedIndex() -1);
+                        pullViewportToOverlapSelection();
                         return Result.HANDLED;
                     } else if (actionType == MouseActionType.SCROLL_DOWN) {
                         // relying on setSelectedIndex(index) to clip the index to valid values within range
                         setSelectedIndex(getSelectedIndex() +1);
+                        pullViewportToOverlapSelection();
                         return Result.HANDLED;
                     }
             
