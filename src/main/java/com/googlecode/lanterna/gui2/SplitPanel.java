@@ -77,6 +77,15 @@ public class SplitPanel extends Panel {
                 }
                 if (mouse.isMouseDrag()) {
                     drag = mouse.getPosition();
+                    
+                    // xxxxxxxxxxxxxxxxxxxxx
+                    // this is a hack, should not be needed if the pane drag
+                    // only on mouse down'd comp stuff was completely working
+                    if (down == null) {
+                        down = drag;
+                    }
+                    // xxxxxxxxxxxxxxxxxxxxx
+                    
                     int delta = isHorizontal ? drag.minus(down).getColumn() : drag.minus(down).getRow();
                     // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
                     if (isHorizontal) {
@@ -136,3 +145,82 @@ public class SplitPanel extends Panel {
             }
         }
         
+        @Override
+        public void doLayout(TerminalSize area, List<Component> components) {
+            TerminalSize size = getSize();
+            
+            // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            // TODO: themed
+            int length = isHorizontal ? size.getRows() : size.getColumns();
+            TerminalSize tsize = new TerminalSize(isHorizontal ? 1 : length, !isHorizontal ? 1 : length);
+            TextImage textImage = new BasicTextImage(tsize);
+            Theme theme = getTheme();
+            ThemeDefinition themeDefinition = theme.getDefaultDefinition();
+            ThemeStyle themeStyle = themeDefinition.getNormal();
+            textImage.setAll(new TextCharacter(isHorizontal ? Symbols.BOLD_SINGLE_LINE_VERTICAL : Symbols.BOLD_SINGLE_LINE_HORIZONTAL, themeStyle.getForeground(), themeStyle.getBackground()));
+            thumb.setTextImage(textImage);
+            // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            
+            int tWidth = thumb.getPreferredSize().getColumns();
+            int tHeight = thumb.getPreferredSize().getRows();
+                
+            int w = size.getColumns();
+            int h = size.getRows();
+            
+            if (isHorizontal) {
+                w -= tWidth;
+            } else {
+                h -= tHeight;
+            }
+            
+            if (isHorizontal) {
+                int leftWidth = Math.max(0, (int)(w * ratio));
+                int leftHeight = Math.max(0, Math.min(compA.getPreferredSize().getRows(), h));
+                
+                int rightWidth = Math.max(0, w - leftWidth);
+                int rightHeight = Math.max(0, Math.min(compB.getPreferredSize().getRows(), h));
+                
+                compA.setSize(new TerminalSize(leftWidth, leftHeight));
+                thumb.setSize(thumb.getPreferredSize());
+                compB.setSize(new TerminalSize(rightWidth, rightHeight));
+                
+                compA.setPosition(new TerminalPosition(0,0));
+                thumb.setPosition(new TerminalPosition(leftWidth, h/2 - tHeight/2));
+                compB.setPosition(new TerminalPosition(leftWidth + tWidth, 0));
+            } else {
+                int leftWidth = Math.max(0, Math.min(compA.getPreferredSize().getColumns(), w));
+                int leftHeight = Math.max(0, (int)(h * ratio));
+                
+                int rightWidth = Math.max(0, Math.min(compB.getPreferredSize().getColumns(), w));
+                int rightHeight = Math.max(0, h - leftHeight);
+                
+                compA.setSize(new TerminalSize(leftWidth, leftHeight));
+                thumb.setSize(thumb.getPreferredSize());
+                compB.setSize(new TerminalSize(rightWidth, rightHeight));
+                
+                compA.setPosition(new TerminalPosition(0,0));
+                thumb.setPosition(new TerminalPosition(w/2 - tWidth/2, leftHeight));
+                compB.setPosition(new TerminalPosition(0, leftHeight + tHeight));
+            }
+        }
+        
+        @Override
+        public boolean hasChanged() {
+            return true;
+        }
+    }
+    
+    /*
+     * Use whatever sizing.
+     *
+     *
+     */
+    public void setRatio(int left, int right) {
+        if (left == 0 || right == 0) {
+            ratio = 0.5;
+        }
+        int total = Math.abs(left) + Math.abs(right);
+        ratio = (double)left / (double)total;
+    }
+    
+}
