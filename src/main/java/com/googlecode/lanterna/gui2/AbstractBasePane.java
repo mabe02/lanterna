@@ -241,12 +241,10 @@ public abstract class AbstractBasePane<T extends BasePane> implements BasePane {
         if (localCoordinates == null) {
            return false;
         }
-        
         Interactable interactable = interactableLookupMap.getInteractableAt(localCoordinates);
         if (mouseAction.isMouseDown()) {
             mouseDownForDrag = interactable;
         }
-        
         Interactable wasMouseDownForDrag = mouseDownForDrag;
         if (mouseAction.isMouseUp()) {
             mouseDownForDrag = null;
@@ -254,7 +252,6 @@ public abstract class AbstractBasePane<T extends BasePane> implements BasePane {
         if (mouseAction.isMouseDrag() && mouseDownForDrag != null) {
             return mouseDownForDrag.handleInput(mouseAction) == Result.HANDLED;
         }
-
         if (interactable == null) {
            return false;
         }
