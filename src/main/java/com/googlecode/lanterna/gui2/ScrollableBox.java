@@ -27,7 +27,7 @@ import com.googlecode.lanterna.graphics.ThemeDefinition;
  * 
  * @author ginkoblongata
  */
-public interface ScrollableBox<T extends AbstractListBox> extends Component {
+public interface ScrollableBox<T> extends Component {
 
     void setIsWithinScrollPanel(ScrollPanel scrollPanel);
     
