@@ -61,7 +61,7 @@ public class Issue490 {
         } finally {
             log.addLine(message);
             // unfortunately some methods expect (row, column), some (column, row)
-            log.setCaretPosition(log.getLineCount(), Integer.MAX_VALUE);
+            log.setCaretPosition(new TerminalPosition(Integer.MAX_VALUE, log.getLineCount()));
         }
     }
     
