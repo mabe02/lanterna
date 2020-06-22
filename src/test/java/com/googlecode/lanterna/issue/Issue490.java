@@ -71,7 +71,7 @@ public class Issue490 {
         try (Screen screen = new DefaultTerminalFactory()
                 .setTelnetPort(23000)
                 .setMouseCaptureMode(MouseCaptureMode.CLICK_RELEASE_DRAG_MOVE)
-                .setInitialTerminalSize(new TerminalSize(100, 100))
+                .setInitialTerminalSize(new TerminalSize(100, 140))
                 .createScreen()) {
             screen.startScreen();
             WindowBasedTextGUI gui = new MultiWindowTextGUI(screen);
@@ -133,6 +133,16 @@ public class Issue490 {
 //        eachOf(200, i -> checkboxList.addItem("heckboxList: " + i));
 //>>>>>>> 91107fdf (rough cut of ScrollPanel)
         eachOf(245, i -> checkboxList.addItem("heckboxList: " + i));
+        
+        
+        ActionListBox listBox3 = new ActionListBox();
+        eachOf(245, i -> listBox3.addItem("item: " + i, () -> log("listBox3 item: " + i)));
+        
+        RadioBoxList radioBoxList2 = new RadioBoxList();
+        eachOf(245, i -> radioBoxList2.addItem("radio item: " + i));
+        
+        CheckBoxList<String> checkboxList2 = new CheckBoxList<>();
+        eachOf(245, i -> checkboxList2.addItem("heckboxList2: " + i));
         // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
         
         // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -143,12 +153,19 @@ public class Issue490 {
         
         Panel hpanel = new Panel(new GridLayout(100));
         hpanel.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Fill));
-        ui.addComponent(hpanel.withBorder(Borders.singleLine("components")));
         hpanel.addComponent(themes.withBorder(Borders.singleLine("themes")));
         hpanel.addComponent(listBox.withBorder(Borders.singleLine("listBox")));
         hpanel.addComponent(new ScrollPanel(listBox2).withBorder(Borders.singleLine("scrollPanel listBox")));
         hpanel.addComponent(new ScrollPanel(radioBoxList).withBorder(Borders.singleLine("scrollPanel radio list")));
         hpanel.addComponent(new ScrollPanel(checkboxList).withBorder(Borders.singleLine("scrollPanel checkbox")));
+        
+        Panel hpanel2 = new Panel(new GridLayout(100));
+        hpanel2.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Fill));
+        hpanel2.addComponent(listBox3.withBorder(Borders.singleLine("listBox3")));
+        hpanel2.addComponent(radioBoxList2.withBorder(Borders.singleLine("radio list 2")));
+        hpanel2.addComponent(checkboxList2.withBorder(Borders.singleLine("checkbox 2")));
+        
+        ui.addComponent(Panels.vertical(hpanel, hpanel2));
         ui.addComponent(clearLogButton);
         // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
         
