@@ -31,8 +31,9 @@ public class ImageComponent extends AbstractInteractableComponent {
     private TextImage textImage;
 
 /**
-    
-*/
+ * 
+ * @author ginkoblongata
+ */
 public class ImageComponent extends AbstractInteractableComponent {
     
     TextImage textImage;

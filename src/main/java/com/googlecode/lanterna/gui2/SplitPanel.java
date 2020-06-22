@@ -57,7 +57,47 @@ public class SplitPanel extends Panel {
         addComponent(b);
     }
     ImageComponent makeThumb() {
-        ImageComponent imageComponent = new ImageComponent();
+        ImageComponent imageComponent = new ImageComponent() {
+            TerminalSize aSize;
+            TerminalSize bSize;
+            TerminalSize tSize;
+            TerminalPosition down = null;
+            TerminalPosition drag = null;
+            @Override
+            public Result handleKeyStroke(KeyStroke keyStroke) {
+                if (!(keyStroke instanceof MouseAction)) {
+                    return Result.UNHANDLED;
+                }
+                MouseAction mouse = (MouseAction)keyStroke;
+                if (mouse.isMouseDown()) {
+                    aSize = compA.getSize();
+                    bSize = compB.getSize();
+                    tSize = thumb.getSize();
+                    down = mouse.getPosition();
+                }
+                if (mouse.isMouseDrag()) {
+                    drag = mouse.getPosition();
+                    int delta = isHorizontal ? drag.minus(down).getColumn() : drag.minus(down).getRow();
+                    // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                    if (isHorizontal) {
+                        int a = Math.max(1, tSize.getColumns() + aSize.getColumns() + delta);
+                        int b = Math.max(1, bSize.getColumns() - delta);
+                        setRatio(a, b);
+                    } else {
+                        int a = Math.max(1, tSize.getRows() + aSize.getRows() + delta);
+                        int b = Math.max(1, bSize.getRows() - delta);
+                        setRatio(a, b);
+                    }
+                    // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                }
+                if (mouse.isMouseUp()) {
+                    down = null;
+                    drag = null;
+                }
+                return Result.HANDLED;
+            }
+        };
+        
         return imageComponent;
     }
     
