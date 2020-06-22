@@ -172,46 +172,42 @@ public class TextBox extends AbstractInteractableComponent<TextBox> implements S
         return true;
     }
     
-    public void pullViewportToOverlapSelection() {
+    public void pullViewportToOverlapCaret() {
         if (scrollPanel != null) {
-            //TerminalPosition offset = getRenderer().getViewTopLeft();
-            
-            // make sure the caret is visible, this method cannot be called all the time
-            int caretX = caretPosition.getColumn();
-            int caretY = caretPosition.getRow();
-            
-            TerminalPosition scrollOffset = scrollPanel.getScrollOffset();
-            int scrollX = scrollOffset.getColumn();
-            int scrollY = scrollOffset.getRow();
-            
-            TerminalSize vp = scrollPanel.getViewportSize();
-            
-            TerminalPosition pullAmount = new TerminalPosition(0, 0);
-            // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-            // horizontal pull
-            int dx = 0;
-            if (caretX < -scrollX) {
-                dx = -scrollX - caretX;
-            } else if (-scrollX + vp.getColumns() -1 < caretX) {
-                dx = -(caretX - (-scrollX + vp.getColumns() -1));
-            }
-            pullAmount = pullAmount.withColumn(dx);
-            // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-            
-            // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-            // vertical pull
-            int dy = 0;
-            if (caretY < -scrollY) {
-                dy = -scrollY - caretY;
-            } else if (-scrollY + vp.getRows() -1 < caretY) {
-                dy = -(caretY - (-scrollY + vp.getRows() -1));
-            }
-            pullAmount = pullAmount.withRow(dy);
-            // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-            
+            TerminalPosition pullAmount = calculatePull();
             scrollPanel.doOffsetAmount(pullAmount);
-            //scrollPanel.invalidate();
         }
+    }
+    @Override
+    public void pullSelectionIntoView() {
+        if (scrollPanel != null) {
+            TerminalPosition pullAmount = calculatePull();
+            setCaretPosition(caretPosition.plus(pullAmount));
+        }
+    }
+    private TerminalPosition calculatePull() {
+        int caretX = caretPosition.getColumn();
+        int caretY = caretPosition.getRow();
+        
+        TerminalPosition scrollOffset = scrollPanel.getScrollOffset();
+        int scrollX = scrollOffset.getColumn();
+        int scrollY = scrollOffset.getRow();
+        TerminalSize vp = scrollPanel.getViewportSize();
+        int dx = 0;
+        if (caretX < -scrollX) {
+            dx = -scrollX - caretX;
+        } else if (-scrollX + vp.getColumns() -1 < caretX) {
+            dx = -(caretX - (-scrollX + vp.getColumns() -1));
+        }
+        
+        int dy = 0;
+        if (caretY < -scrollY) {
+            dy = -scrollY - caretY;
+        } else if (-scrollY + vp.getRows() -1 < caretY) {
+            dy = -(caretY - (-scrollY + vp.getRows() -1));
+        }
+        
+        return new TerminalPosition(dx, dy);
     }
     
     /**
@@ -342,11 +338,11 @@ public class TextBox extends AbstractInteractableComponent<TextBox> implements S
         lines.remove(lineIndex);
         if (caretPosition.getRow() == lineIndex) {
             // Validate the caret can still stay in this position
-            setCaretPosition(caretPosition.getRow(), caretPosition.getColumn());
+            setCaretPosition(caretPosition);
         }
         else if (caretPosition.getRow() > lineIndex) {
             // Update caret position
-            setCaretPosition(caretPosition.getRow() - 1, caretPosition.getColumn());
+            setCaretPosition(caretPosition.minus(new TerminalPosition(0,1)));
         }
         fireOnTextChanged(false);
         return this;
@@ -391,7 +387,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> implements S
      * @return Itself
      */
     public synchronized TextBox setCaretPosition(int column) {
-        return setCaretPosition(getCaretPosition().getRow(), column);
+        return setCaretPosition(caretPosition.withColumn(column));
     }
 
     /**
@@ -399,24 +395,24 @@ public class TextBox extends AbstractInteractableComponent<TextBox> implements S
      * line component is not used. If one of the positions are out of bounds, it is automatically set back into range.
      * @param line Which line inside the {@link TextBox} to move the caret to (0 being the first line), ignored if the
      *             {@link TextBox} is single-line
-     * @param column  What column on the specified line to move the text caret to (0 being the first column)
+     * @param position What row & column to move the text caret to (0 being the first column)
      * @return Itself
      */
-    public synchronized TextBox setCaretPosition(int line, int column) {
-        if(line < 0) {
-            line = 0;
+    public synchronized TextBox setCaretPosition(TerminalPosition position) {
+        if (lines.size() == 0) {
+            // bail
+            caretPosition = new TerminalPosition(0, 0);
+            return this;
         }
-        else if(line >= lines.size()) {
-            line = lines.size() - 1;
-        }
-        if(column < 0) {
-            column = 0;
-        }
-        else if(column > lines.get(line).length()) {
-            column = lines.get(line).length();
-        }
-        caretPosition = caretPosition.withRow(line).withColumn(column);
-        pullViewportToOverlapSelection();
+        
+        int x = position.getColumn();
+        int y = position.getRow();
+        
+        y = Math.max(0, Math.min(y, lines.size()-1));
+        x = Math.max(0, Math.min(x, lines.get(y).length()));
+        
+        caretPosition = new TerminalPosition(x, y);
+        //pullViewportToOverlapCaret();
         return this;
     }
 
@@ -568,7 +564,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> implements S
         try {
             return handleKeyStrokeAll(keyStroke);
         } finally {
-            pullViewportToOverlapSelection();
+            pullViewportToOverlapCaret();
         }
     }
     
