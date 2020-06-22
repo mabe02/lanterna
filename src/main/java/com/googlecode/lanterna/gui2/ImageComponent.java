@@ -4,8 +4,9 @@ import com.googlecode.lanterna.*;
 import com.googlecode.lanterna.graphics.*;
 
 /**
-    
-*/
+ * 
+ * @author ginkoblongata
+ */
 public class ImageComponent extends AbstractInteractableComponent {
     
     TextImage textImage;
