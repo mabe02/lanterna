@@ -116,7 +116,7 @@ public class SplitPanelTest extends TestBase {
     @Override
     public void init(WindowBasedTextGUI textGUI) {
         final BasicWindow window = new BasicWindow("SplitPanelTest");
-        window.setTheme(LanternaThemes.getRegisteredTheme("businessmachine"));
+        window.setTheme(LanternaThemes.getRegisteredTheme("conqueror"));
 
         ImageComponent left = makeImageComponent(IMAGE_X);
         ImageComponent right = makeImageComponent(IMAGE_Y);
@@ -162,4 +162,3 @@ public class SplitPanelTest extends TestBase {
         }
     }
 }
-
