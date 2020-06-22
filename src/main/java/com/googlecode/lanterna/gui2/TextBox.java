@@ -167,6 +167,48 @@ public class TextBox extends AbstractInteractableComponent<TextBox> implements S
         return true;
     }
     
+    public void pullViewportToOverlapSelection() {
+        if (scrollPanel != null) {
+            //TerminalPosition offset = getRenderer().getViewTopLeft();
+            
+            // make sure the caret is visible, this method cannot be called all the time
+            int caretX = caretPosition.getColumn();
+            int caretY = caretPosition.getRow();
+            
+            TerminalPosition scrollOffset = scrollPanel.getScrollOffset();
+            int scrollX = scrollOffset.getColumn();
+            int scrollY = scrollOffset.getRow();
+            
+            TerminalSize vp = scrollPanel.getViewportSize();
+            
+            TerminalPosition pullAmount = new TerminalPosition(0, 0);
+            // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            // horizontal pull
+            int dx = 0;
+            if (caretX < -scrollX) {
+                dx = -scrollX - caretX;
+            } else if (-scrollX + vp.getColumns() -1 < caretX) {
+                dx = -(caretX - (-scrollX + vp.getColumns() -1));
+            }
+            pullAmount = pullAmount.withColumn(dx);
+            // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            
+            // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            // vertical pull
+            int dy = 0;
+            if (caretY < -scrollY) {
+                dy = -scrollY - caretY;
+            } else if (-scrollY + vp.getRows() -1 < caretY) {
+                dy = -(caretY - (-scrollY + vp.getRows() -1));
+            }
+            pullAmount = pullAmount.withRow(dy);
+            // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            
+            scrollPanel.doOffsetAmount(pullAmount);
+            //scrollPanel.invalidate();
+        }
+    }
+    
     /**
      * Sets a pattern on which the content of the text box is to be validated. For multi-line TextBox:s, the pattern is
      * checked against each line individually, not the content as a whole. Partial matchings will not be allowed, the
@@ -355,6 +397,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> implements S
             column = lines.get(line).length();
         }
         caretPosition = caretPosition.withRow(line).withColumn(column);
+        pullViewportToOverlapSelection();
         return this;
     }
 
@@ -503,6 +546,14 @@ public class TextBox extends AbstractInteractableComponent<TextBox> implements S
 
     @Override
     public synchronized Result handleKeyStroke(KeyStroke keyStroke) {
+        try {
+            return handleKeyStrokeAll(keyStroke);
+        } finally {
+            pullViewportToOverlapSelection();
+        }
+    }
+    
+    private Result handleKeyStrokeAll(KeyStroke keyStroke) {
         if(readOnly) {
             return handleKeyStrokeReadOnly(keyStroke);
         }

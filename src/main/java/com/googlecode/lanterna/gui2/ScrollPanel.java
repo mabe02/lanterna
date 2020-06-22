@@ -347,6 +347,7 @@ Y8b  d8 `8b  d8' 88  V888    88    88 `88. `8b  d8' 88booo. 88booo. 88.     88 `
         
         scrollOffset = goal;
         
+        invalidate();
         updateScrollerBars();
     }
     
