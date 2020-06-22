@@ -160,6 +160,16 @@ public class TextBox extends AbstractInteractableComponent<TextBox> implements S
     @Override
     public void setIsWithinScrollPanel(ScrollPanel scrollPanel) {
         this.scrollPanel = scrollPanel;
+        // when in scrollpanel, allow the renderer to determination full size
+        setPreferredSize(null);
+    }
+    @Override
+    public boolean isVerticalScrollCapable() {
+        return true;
+    }
+    @Override
+    public boolean isHorizontalScrollCapable() {
+        return true;
     }
     
     /**
@@ -880,14 +890,15 @@ public class TextBox extends AbstractInteractableComponent<TextBox> implements S
             if(realTextArea.getRows() == 0 || realTextArea.getColumns() == 0) {
                 return;
             }
+            boolean inScrollPanel = component.scrollPanel != null;
             boolean drawVerticalScrollBar = false;
             boolean drawHorizontalScrollBar = false;
             int textBoxLineCount = component.getLineCount();
-            if(!hideScrollBars && textBoxLineCount > realTextArea.getRows() && realTextArea.getColumns() > 1) {
+            if(!inScrollPanel && !hideScrollBars && textBoxLineCount > realTextArea.getRows() && realTextArea.getColumns() > 1) {
                 realTextArea = realTextArea.withRelativeColumns(-1);
                 drawVerticalScrollBar = true;
             }
-            if(!hideScrollBars && component.longestRow > realTextArea.getColumns() && realTextArea.getRows() > 1) {
+            if(!inScrollPanel && !hideScrollBars && component.longestRow > realTextArea.getColumns() && realTextArea.getRows() > 1) {
                 realTextArea = realTextArea.withRelativeRows(-1);
                 drawHorizontalScrollBar = true;
                 if(textBoxLineCount > realTextArea.getRows() && !drawVerticalScrollBar) {
@@ -895,9 +906,11 @@ public class TextBox extends AbstractInteractableComponent<TextBox> implements S
                     drawVerticalScrollBar = true;
                 }
             }
-
-            drawTextArea(graphics.newTextGraphics(TerminalPosition.TOP_LEFT_CORNER, realTextArea), component);
-
+            if (inScrollPanel) {
+                drawTextArea(graphics, component);
+            } else {
+                drawTextArea(graphics.newTextGraphics(TerminalPosition.TOP_LEFT_CORNER, realTextArea), component);
+            }
             //Draw scrollbars, if any
             if(drawVerticalScrollBar) {
                 verticalScrollBar.onAdded(component.getParent());

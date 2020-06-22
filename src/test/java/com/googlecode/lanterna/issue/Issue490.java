@@ -164,6 +164,17 @@ public class Issue490 {
         hpanel2.addComponent(listBox3.withBorder(Borders.singleLine("listBox3")));
         hpanel2.addComponent(radioBoxList2.withBorder(Borders.singleLine("radio list 2")));
         hpanel2.addComponent(checkboxList2.withBorder(Borders.singleLine("checkbox 2")));
+        TextBox textBox = new TextBox("", TextBox.Style.MULTI_LINE);
+        ScrollPanel textBoxScrollPanel = new ScrollPanel(textBox);
+        textBoxScrollPanel.setPreferredSize(new TerminalSize(32, 16));
+        eachOf(30, i -> textBox.addLine("-> " + i + ", aklkjh 0 "+i+" 876  "+i+" 76 s   "+i+" ==ssss55 "+i+" 55 555   "+i+" 5 5 55 "+i+"  55555 s "+i+" sssfa --> " + i ));
+        hpanel2.addComponent(textBoxScrollPanel.withBorder(Borders.singleLine("scroll TextBox")));
+        
+        
+        TextBox textBox2 = new TextBox("", TextBox.Style.MULTI_LINE);
+        textBox2.setPreferredSize(new TerminalSize(32, 16));
+        eachOf(30, i -> textBox2.addLine("abc: "+i+", aklkjh 0 "+i+" 876  "+i+" 76 s   "+i+" ==ssss55 "+i+" 55 555   "+i+" 5 5 55 "+i+"  55555 s "+i+" sssfa --> " + i ));
+        hpanel2.addComponent(textBox2.withBorder(Borders.singleLine("TextBox old style")));
         
         ui.addComponent(Panels.vertical(hpanel, hpanel2));
         ui.addComponent(clearLogButton);
