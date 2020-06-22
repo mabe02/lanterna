@@ -241,21 +241,27 @@ public abstract class AbstractBasePane<T extends BasePane> implements BasePane {
         if (localCoordinates == null) {
            return false;
         }
-        
         Interactable interactable = interactableLookupMap.getInteractableAt(localCoordinates);
         if (mouseAction.isMouseDown()) {
             mouseDownForDrag = interactable;
         }
+        Interactable wasMouseDownForDrag = mouseDownForDrag;
         if (mouseAction.isMouseUp()) {
             mouseDownForDrag = null;
         }
-        
         if (mouseAction.isMouseDrag() && mouseDownForDrag != null) {
             return mouseDownForDrag.handleInput(mouseAction) == Result.HANDLED;
-        } 
-        
+        }
         if (interactable == null) {
            return false;
+        }
+        if (mouseAction.isMouseUp()) {
+            // MouseUp only handled by same interactable as MouseDown
+            if (wasMouseDownForDrag == interactable) {
+                return interactable.handleInput(mouseAction) == Result.HANDLED;
+            }
+            // did not handleInput because mouse up was not on component mouse down was on
+            return false;
         }
         return interactable.handleInput(mouseAction) == Result.HANDLED;
      }
