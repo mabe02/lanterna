@@ -90,6 +90,9 @@ public class TerminalRectangle {
         return new TerminalRectangle(x, y, width, rows);
     }
 
+    public boolean whenContains(TerminalPosition p, Runnable op) {
+        return whenContains(p.getColumn(), p.getRow(), op);
+    }
     public boolean whenContains(int x, int y, Runnable op) {
         if (this.x <= x && x < this.xAndWidth && this.y <= y && y < this.yAndHeight) {
             op.run();

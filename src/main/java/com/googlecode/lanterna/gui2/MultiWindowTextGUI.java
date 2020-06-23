@@ -20,12 +20,9 @@ package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.graphics.BasicTextImage;
 import com.googlecode.lanterna.graphics.TextImage;
-import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.input.KeyType;
+import com.googlecode.lanterna.input.*;
 import com.googlecode.lanterna.screen.Screen;
-import com.googlecode.lanterna.TerminalPosition;
-import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.*;
 import com.googlecode.lanterna.screen.VirtualScreen;
 
 import java.io.EOFException;
@@ -356,6 +353,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
 
     @Override
     public synchronized boolean handleInput(KeyStroke keyStroke) {
+        ifMouseDownPossiblyChangeActiveWindow(keyStroke);
         Window activeWindow = getActiveWindow();
         if(activeWindow != null) {
             return activeWindow.handleInput(keyStroke);
@@ -364,6 +362,21 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
             return backgroundPane.handleInput(keyStroke);
         }
     }
+    
+    public synchronized void ifMouseDownPossiblyChangeActiveWindow(KeyStroke keyStroke) {
+        if (!(keyStroke instanceof MouseAction)) {
+            return;
+        }
+        MouseAction mouse = (MouseAction)keyStroke;
+        if(mouse.isMouseDown()) {
+            // for now, active windows do not overlap?
+            // by happenstance, the last in the list in case of many overlapping will be active
+            for (Window w : getWindows()) {
+                w.getBounds().whenContains(mouse.getPosition(), () -> setActiveWindow(w));
+            }
+        }
+    }
+    
 
     @Override
     public WindowManager getWindowManager() {
