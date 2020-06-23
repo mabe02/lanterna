@@ -422,6 +422,10 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
             int dx = mp.getColumn() - dragStart.getColumn();
             int dy = mp.getRow() - dragStart.getRow();
             
+            // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            // if dragging, can no longer adhere to other hints
+            titleBarDragWindow.setHints(Collections.singletonList(Window.Hint.FIXED_POSITION));
+            // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
             titleBarDragWindow.setPosition(new TerminalPosition(wp.getColumn() + dx, wp.getRow() + dy));
         }
         
