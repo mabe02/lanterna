@@ -369,7 +369,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
         }
     }
     
-    protected synchronized void ifMouseDownPossiblyChangeActiveWindow(KeyStroke keyStroke) {
+    public synchronized void ifMouseDownPossiblyChangeActiveWindow(KeyStroke keyStroke) {
         if (!(keyStroke instanceof MouseAction)) {
             return;
         }
@@ -391,6 +391,8 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
                 if (priorActiveWindow.getHints().contains(Hint.MENU_POPUP)) {
                     priorActiveWindow.close();
                 }
+            for (Window w : getWindows()) {
+                w.getBounds().whenContains(mouse.getPosition(), () -> setActiveWindow(w));
             }
         }
     }
