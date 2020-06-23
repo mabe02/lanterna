@@ -43,6 +43,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
     private final WindowManager windowManager;
     private final BasePane backgroundPane;
     private final List<Window> windows;
+    private final List<Window> stableOrderingOfWindows;
     private final IdentityHashMap<Window, TextImage> windowRenderBufferCache;
     private final WindowPostRenderer postRenderer;
 
@@ -189,6 +190,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
         };
         this.backgroundPane.setComponent(background);
         this.windows = new LinkedList<>();
+        this.stableOrderingOfWindows = new LinkedList<>();
         this.windowRenderBufferCache = new IdentityHashMap<>();
         this.postRenderer = postRenderer;
         this.eofWhenNoWindows = false;
@@ -249,7 +251,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
     @Override
     protected synchronized void drawGUI(TextGUIGraphics graphics) {
         drawBackgroundPane(graphics);
-        getWindowManager().prepareWindows(this, Collections.unmodifiableList(windows), graphics.getSize());
+        windowManager.prepareWindows(this, Collections.unmodifiableList(stableOrderingOfWindows), graphics.getSize());
         for(Window window: windows) {
             if (window.isVisible()) {
                 // First draw windows to a buffer, then copy it to the real destination. This is to make physical off-screen
@@ -263,7 +265,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
                 TextGUIGraphics insideWindowDecorationsGraphics = windowGraphics;
                 TerminalPosition contentOffset = TerminalPosition.TOP_LEFT_CORNER;
                 if (!window.getHints().contains(Window.Hint.NO_DECORATIONS)) {
-                    WindowDecorationRenderer decorationRenderer = getWindowManager().getWindowDecorationRenderer(window);
+                    WindowDecorationRenderer decorationRenderer = windowManager.getWindowDecorationRenderer(window);
                     insideWindowDecorationsGraphics = decorationRenderer.draw(this, windowGraphics, window);
                     contentOffset = decorationRenderer.getOffset(window);
                 }
@@ -394,7 +396,10 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
             window.getTextGUI().removeWindow(window);
         }
         window.setTextGUI(this);
-        windowManager.onAdded(this, window, windows);
+        windowManager.onAdded(this, window, stableOrderingOfWindows);
+        if (!stableOrderingOfWindows.contains(window)) {
+            stableOrderingOfWindows.add(window);
+        }
         if(!windows.contains(window)) {
             windows.add(window);
         }
@@ -420,7 +425,8 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
             return this;
         }
         window.setTextGUI(null);
-        windowManager.onRemoved(this, window, windows);
+        stableOrderingOfWindows.remove(window);
+        windowManager.onRemoved(this, window, stableOrderingOfWindows);
         changeWindow: if(activeWindow == window) {
             //Go backward in reverse and find the first suitable window
             for(int index = windows.size() - 1; index >= 0; index--) {
