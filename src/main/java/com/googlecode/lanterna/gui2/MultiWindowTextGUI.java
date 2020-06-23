@@ -369,7 +369,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
         }
     }
     
-    public synchronized void ifMouseDownPossiblyChangeActiveWindow(KeyStroke keyStroke) {
+    protected synchronized void ifMouseDownPossiblyChangeActiveWindow(KeyStroke keyStroke) {
         if (!(keyStroke instanceof MouseAction)) {
             return;
         }
