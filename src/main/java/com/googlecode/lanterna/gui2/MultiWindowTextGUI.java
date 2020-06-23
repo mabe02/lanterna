@@ -50,6 +50,10 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
     private Window activeWindow;
     private boolean hadWindowAtSomePoint;
     private boolean eofWhenNoWindows;
+    
+    private Window titleBarDragWindow;
+    private TerminalPosition originWindowPosition;
+    private TerminalPosition dragStart;
 
     /**
      * Creates a new {@code MultiWindowTextGUI} that uses the specified {@code Screen} as the backend for all drawing
@@ -356,6 +360,8 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
     @Override
     public synchronized boolean handleInput(KeyStroke keyStroke) {
         ifMouseDownPossiblyChangeActiveWindow(keyStroke);
+        ifMouseDownPossiblyStartTitleDrag(keyStroke);
+        ifMouseDragPossiblyMoveWindow(keyStroke);
         Window activeWindow = getActiveWindow();
         if(activeWindow != null) {
             return activeWindow.handleInput(keyStroke);
@@ -365,7 +371,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
         }
     }
     
-    public synchronized void ifMouseDownPossiblyChangeActiveWindow(KeyStroke keyStroke) {
+    protected synchronized void ifMouseDownPossiblyChangeActiveWindow(KeyStroke keyStroke) {
         if (!(keyStroke instanceof MouseAction)) {
             return;
         }
@@ -379,6 +385,47 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
         }
     }
     
+    protected void ifMouseDownPossiblyStartTitleDrag(KeyStroke keyStroke) {
+        if (!(keyStroke instanceof MouseAction)) {
+            return;
+        }
+        MouseAction mouse = (MouseAction)keyStroke;
+        if(mouse.isMouseDown()) {
+            titleBarDragWindow = null;
+            dragStart = null;
+            Window window = getActiveWindow();
+            if (window == null) {
+                return;
+            }
+            WindowDecorationRenderer decorator = windowManager.getWindowDecorationRenderer(window);
+            TerminalRectangle titleBarRectangle = decorator.getTitleBarRectangle(window);
+            TerminalPosition local = window.fromDecoratedGlobal(mouse.getPosition());
+            titleBarRectangle.whenContains(local, () -> {
+                titleBarDragWindow = window;
+                originWindowPosition = titleBarDragWindow.getPosition();
+                dragStart = mouse.getPosition();
+            });
+        }
+        
+    }
+    protected void ifMouseDragPossiblyMoveWindow(KeyStroke keyStroke) {
+        if (titleBarDragWindow == null) {
+            return;
+        }
+        if (!(keyStroke instanceof MouseAction)) {
+            return;
+        }
+        MouseAction mouse = (MouseAction)keyStroke;
+        if(mouse.isMouseDrag()) {
+            TerminalPosition mp = mouse.getPosition();
+            TerminalPosition wp = originWindowPosition;
+            int dx = mp.getColumn() - dragStart.getColumn();
+            int dy = mp.getRow() - dragStart.getRow();
+            
+            titleBarDragWindow.setPosition(new TerminalPosition(wp.getColumn() + dx, wp.getRow() + dy));
+        }
+        
+    }
 
     @Override
     public WindowManager getWindowManager() {

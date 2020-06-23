@@ -149,13 +149,29 @@ public abstract class AbstractWindow extends AbstractBasePane<Window> implements
     }
 
     @Override
+    @Deprecated
     public TerminalPosition fromGlobal(TerminalPosition globalPosition) {
+        return fromContentGlobal(globalPosition);
+    }
+    
+    @Override
+    public TerminalPosition fromContentGlobal(TerminalPosition globalPosition) {
         if(globalPosition == null || lastKnownPosition == null) {
             return null;
         }
         return globalPosition.withRelative(
                 -lastKnownPosition.getColumn() - contentOffset.getColumn(),
                 -lastKnownPosition.getRow() - contentOffset.getRow());
+    }
+    
+    @Override
+    public TerminalPosition fromDecoratedGlobal(TerminalPosition globalPosition) {
+        if(globalPosition == null || lastKnownPosition == null) {
+            return null;
+        }
+        return globalPosition.withRelative(
+                -lastKnownPosition.getColumn(),
+                -lastKnownPosition.getRow());
     }
 
     @Override

@@ -398,7 +398,11 @@ public interface Window extends BasePane {
      * @return The global coordinates expressed as local coordinates
      */
     @Override
+    @Deprecated
     TerminalPosition fromGlobal(TerminalPosition position);
+    
+    TerminalPosition fromContentGlobal(TerminalPosition position);
+    TerminalPosition fromDecoratedGlobal(TerminalPosition position);
 
     /**
      * Sets the active {@link MenuBar} for this window. The menu will be rendered at the top, inside the window
