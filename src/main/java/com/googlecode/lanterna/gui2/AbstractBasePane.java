@@ -349,6 +349,7 @@ public abstract class AbstractBasePane<T extends BasePane> implements BasePane {
     @Override
     public synchronized void setTheme(Theme theme) {
         this.theme = theme;
+        invalidate();
     }
 
     @Override
