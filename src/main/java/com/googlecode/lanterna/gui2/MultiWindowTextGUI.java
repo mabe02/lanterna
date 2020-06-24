@@ -391,8 +391,6 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
                 if (priorActiveWindow.getHints().contains(Hint.MENU_POPUP)) {
                     priorActiveWindow.close();
                 }
-            for (Window w : getWindows()) {
-                w.getBounds().whenContains(mouse.getPosition(), () -> setActiveWindow(w));
             }
         }
     }
