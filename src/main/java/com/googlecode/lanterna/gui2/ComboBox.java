@@ -431,7 +431,6 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
     protected synchronized void afterLeaveFocus(FocusChangeDirection direction, Interactable nextInFocus) {
         if(popupWindow != null) {
             popupWindow.close();
-            popupWindow = null;
         }
     }
 
@@ -558,7 +557,8 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
         public PopupWindow() {
             setHints(Arrays.asList(
                     Hint.NO_FOCUS,
-                    Hint.FIXED_POSITION));
+                    Hint.FIXED_POSITION,
+                    Hint.MENU_POPUP));
             listBox = new ActionListBox(ComboBox.this.getSize().withRows(getItemCount()));
             for(int i = 0; i < getItemCount(); i++) {
                 V item = items.get(i);
@@ -566,7 +566,6 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
                 listBox.addItem(item.toString(), () -> {
                     setSelectedIndex(index);
                     close();
-                    popupWindow = null;
                 });
             }
             listBox.setSelectedIndex(getSelectedIndex());
@@ -577,6 +576,11 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
             }
             setComponent(listBox);
         }
+        @Override
+        public void close() {
+            super.close();
+            popupWindow = null;
+        }
 
         @Override
         public synchronized Theme getTheme() {
@@ -586,7 +590,6 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
         public synchronized boolean handleInput(KeyStroke keyStroke) {
             if (keyStroke.getKeyType() == KeyType.Escape) {
                 close();
-                popupWindow = null;
                 return true;
             }
             return super.handleInput(keyStroke);

@@ -24,10 +24,13 @@ import com.googlecode.lanterna.input.*;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.*;
 import com.googlecode.lanterna.screen.VirtualScreen;
+import com.googlecode.lanterna.gui2.Window.Hint;
 
 import java.io.EOFException;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean
+;
 
 /**
  * This is the main Text GUI implementation built into Lanterna, supporting multiple tiled windows and a dynamic
@@ -379,8 +382,19 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
         if(mouse.isMouseDown()) {
             // for now, active windows do not overlap?
             // by happenstance, the last in the list in case of many overlapping will be active
+            Window priorActiveWindow = getActiveWindow();
+            AtomicBoolean anyHit = new AtomicBoolean(false);
             for (Window w : getWindows()) {
-                w.getBounds().whenContains(mouse.getPosition(), () -> setActiveWindow(w));
+                w.getBounds().whenContains(mouse.getPosition(), () -> {
+                    setActiveWindow(w);
+                    anyHit.set(true);
+                });
+            }
+            // clear popup menus if they clicked onto another window or missed all windows
+            if (priorActiveWindow != getActiveWindow() || !anyHit.get()) {
+                if (priorActiveWindow.getHints().contains(Hint.MENU_POPUP)) {
+                    priorActiveWindow.close();
+                }
             }
         }
     }
@@ -397,6 +411,12 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
             if (window == null) {
                 return;
             }
+            
+            if (window.getHints().contains(Hint.MENU_POPUP)) {
+                // popup windows are not draggable
+                return;
+            }
+            
             WindowDecorationRenderer decorator = windowManager.getWindowDecorationRenderer(window);
             TerminalRectangle titleBarRectangle = decorator.getTitleBarRectangle(window);
             TerminalPosition local = window.fromDecoratedGlobal(mouse.getPosition());
@@ -421,14 +441,21 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
             TerminalPosition wp = originWindowPosition;
             int dx = mp.getColumn() - dragStart.getColumn();
             int dy = mp.getRow() - dragStart.getRow();
-            
-            // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-            // if dragging, can no longer adhere to other hints
-            titleBarDragWindow.setHints(Collections.singletonList(Window.Hint.FIXED_POSITION));
-            // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            changeWindowHintsForDragged(titleBarDragWindow);
             titleBarDragWindow.setPosition(new TerminalPosition(wp.getColumn() + dx, wp.getRow() + dy));
+            // TODO ? any additional children popups (shown menus, etc) should also be moved (or just closed)
         }
         
+    }
+    /**
+     * In order for window to be draggable, it would no longer be CENTERED.    
+     * Removes Hint.CENTERED, adds Hint.FIXED_POSITION to the window hints.
+     */
+    protected void changeWindowHintsForDragged(Window window) {
+        Set<Hint> hints = new HashSet<>(titleBarDragWindow.getHints());
+        hints.remove(Hint.CENTERED);
+        hints.add(Hint.FIXED_POSITION);
+        titleBarDragWindow.setHints(hints);
     }
 
     @Override
