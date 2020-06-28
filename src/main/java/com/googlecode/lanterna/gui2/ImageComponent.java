@@ -9,7 +9,7 @@ import com.googlecode.lanterna.graphics.*;
  */
 public class ImageComponent extends AbstractInteractableComponent {
     
-    TextImage textImage;
+    private TextImage textImage;
     
     public ImageComponent() {
         setTextImage(new BasicTextImage(0,0));
