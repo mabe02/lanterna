@@ -19,9 +19,10 @@
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.TerminalRectangle;
+import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.menu.MenuBar;
 import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.TerminalSize;
 
 import java.util.Collection;
 import java.util.Set;
@@ -180,6 +181,13 @@ public interface Window extends BasePane {
     @Override
     void invalidate();
 
+    
+    default TerminalRectangle getBounds() {
+        TerminalPosition position = getPosition();
+        TerminalSize size = getDecoratedSize();
+        return new TerminalRectangle(position.getColumn(), position.getRow(), size.getColumns(), size.getRows());
+    }
+    
     /**
      * Returns the size this window would like to be
      * @return Desired size of this window
@@ -390,7 +398,11 @@ public interface Window extends BasePane {
      * @return The global coordinates expressed as local coordinates
      */
     @Override
+    @Deprecated
     TerminalPosition fromGlobal(TerminalPosition position);
+    
+    TerminalPosition fromContentGlobal(TerminalPosition position);
+    TerminalPosition fromDecoratedGlobal(TerminalPosition position);
 
     /**
      * Sets the active {@link MenuBar} for this window. The menu will be rendered at the top, inside the window
