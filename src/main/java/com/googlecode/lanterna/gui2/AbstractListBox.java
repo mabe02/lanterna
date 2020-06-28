@@ -723,7 +723,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
          */
         public void drawItem(TextGUIGraphics graphics, T listBox, int index, V item, boolean selected, boolean focused) {
             ThemeDefinition themeDefinition = listBox.getTheme().getDefinition(AbstractListBox.class);
-            //if(selected && focused) {
+            
             if (selected) {
                 graphics.applyThemeStyle(themeDefinition.getSelected());
             }

@@ -36,7 +36,7 @@ public class ImageComponent extends AbstractInteractableComponent {
  */
 public class ImageComponent extends AbstractInteractableComponent {
     
-    TextImage textImage;
+    private TextImage textImage;
     
     public ImageComponent() {
         setTextImage(new BasicTextImage(0,0));
