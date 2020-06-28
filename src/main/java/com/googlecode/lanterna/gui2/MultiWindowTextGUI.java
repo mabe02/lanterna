@@ -20,17 +20,17 @@ package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.graphics.BasicTextImage;
 import com.googlecode.lanterna.graphics.TextImage;
-import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.input.KeyType;
+import com.googlecode.lanterna.input.*;
 import com.googlecode.lanterna.screen.Screen;
-import com.googlecode.lanterna.TerminalPosition;
-import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.*;
 import com.googlecode.lanterna.screen.VirtualScreen;
+import com.googlecode.lanterna.gui2.Window.Hint;
 
 import java.io.EOFException;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean
+;
 
 /**
  * This is the main Text GUI implementation built into Lanterna, supporting multiple tiled windows and a dynamic
@@ -46,12 +46,17 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
     private final WindowManager windowManager;
     private final BasePane backgroundPane;
     private final List<Window> windows;
+    private final List<Window> stableOrderingOfWindows;
     private final IdentityHashMap<Window, TextImage> windowRenderBufferCache;
     private final WindowPostRenderer postRenderer;
 
     private Window activeWindow;
     private boolean hadWindowAtSomePoint;
     private boolean eofWhenNoWindows;
+    
+    private Window titleBarDragWindow;
+    private TerminalPosition originWindowPosition;
+    private TerminalPosition dragStart;
 
     /**
      * Creates a new {@code MultiWindowTextGUI} that uses the specified {@code Screen} as the backend for all drawing
@@ -192,6 +197,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
         };
         this.backgroundPane.setComponent(background);
         this.windows = new LinkedList<>();
+        this.stableOrderingOfWindows = new LinkedList<>();
         this.windowRenderBufferCache = new IdentityHashMap<>();
         this.postRenderer = postRenderer;
         this.eofWhenNoWindows = false;
@@ -252,7 +258,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
     @Override
     protected synchronized void drawGUI(TextGUIGraphics graphics) {
         drawBackgroundPane(graphics);
-        getWindowManager().prepareWindows(this, Collections.unmodifiableList(windows), graphics.getSize());
+        windowManager.prepareWindows(this, Collections.unmodifiableList(stableOrderingOfWindows), graphics.getSize());
         for(Window window: windows) {
             if (window.isVisible()) {
                 // First draw windows to a buffer, then copy it to the real destination. This is to make physical off-screen
@@ -266,7 +272,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
                 TextGUIGraphics insideWindowDecorationsGraphics = windowGraphics;
                 TerminalPosition contentOffset = TerminalPosition.TOP_LEFT_CORNER;
                 if (!window.getHints().contains(Window.Hint.NO_DECORATIONS)) {
-                    WindowDecorationRenderer decorationRenderer = getWindowManager().getWindowDecorationRenderer(window);
+                    WindowDecorationRenderer decorationRenderer = windowManager.getWindowDecorationRenderer(window);
                     insideWindowDecorationsGraphics = decorationRenderer.draw(this, windowGraphics, window);
                     contentOffset = decorationRenderer.getOffset(window);
                 }
@@ -356,6 +362,9 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
 
     @Override
     public synchronized boolean handleInput(KeyStroke keyStroke) {
+        ifMouseDownPossiblyChangeActiveWindow(keyStroke);
+        ifMouseDownPossiblyStartTitleDrag(keyStroke);
+        ifMouseDragPossiblyMoveWindow(keyStroke);
         Window activeWindow = getActiveWindow();
         if(activeWindow != null) {
             return activeWindow.handleInput(keyStroke);
@@ -363,6 +372,90 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
         else {
             return backgroundPane.handleInput(keyStroke);
         }
+    }
+    
+    protected synchronized void ifMouseDownPossiblyChangeActiveWindow(KeyStroke keyStroke) {
+        if (!(keyStroke instanceof MouseAction)) {
+            return;
+        }
+        MouseAction mouse = (MouseAction)keyStroke;
+        if(mouse.isMouseDown()) {
+            // for now, active windows do not overlap?
+            // by happenstance, the last in the list in case of many overlapping will be active
+            Window priorActiveWindow = getActiveWindow();
+            AtomicBoolean anyHit = new AtomicBoolean(false);
+            for (Window w : getWindows()) {
+                w.getBounds().whenContains(mouse.getPosition(), () -> {
+                    setActiveWindow(w);
+                    anyHit.set(true);
+                });
+            }
+            // clear popup menus if they clicked onto another window or missed all windows
+            if (priorActiveWindow != getActiveWindow() || !anyHit.get()) {
+                if (priorActiveWindow.getHints().contains(Hint.MENU_POPUP)) {
+                    priorActiveWindow.close();
+                }
+            }
+        }
+    }
+    
+    protected void ifMouseDownPossiblyStartTitleDrag(KeyStroke keyStroke) {
+        if (!(keyStroke instanceof MouseAction)) {
+            return;
+        }
+        MouseAction mouse = (MouseAction)keyStroke;
+        if(mouse.isMouseDown()) {
+            titleBarDragWindow = null;
+            dragStart = null;
+            Window window = getActiveWindow();
+            if (window == null) {
+                return;
+            }
+            
+            if (window.getHints().contains(Hint.MENU_POPUP)) {
+                // popup windows are not draggable
+                return;
+            }
+            
+            WindowDecorationRenderer decorator = windowManager.getWindowDecorationRenderer(window);
+            TerminalRectangle titleBarRectangle = decorator.getTitleBarRectangle(window);
+            TerminalPosition local = window.fromDecoratedGlobal(mouse.getPosition());
+            titleBarRectangle.whenContains(local, () -> {
+                titleBarDragWindow = window;
+                originWindowPosition = titleBarDragWindow.getPosition();
+                dragStart = mouse.getPosition();
+            });
+        }
+        
+    }
+    protected void ifMouseDragPossiblyMoveWindow(KeyStroke keyStroke) {
+        if (titleBarDragWindow == null) {
+            return;
+        }
+        if (!(keyStroke instanceof MouseAction)) {
+            return;
+        }
+        MouseAction mouse = (MouseAction)keyStroke;
+        if(mouse.isMouseDrag()) {
+            TerminalPosition mp = mouse.getPosition();
+            TerminalPosition wp = originWindowPosition;
+            int dx = mp.getColumn() - dragStart.getColumn();
+            int dy = mp.getRow() - dragStart.getRow();
+            changeWindowHintsForDragged(titleBarDragWindow);
+            titleBarDragWindow.setPosition(new TerminalPosition(wp.getColumn() + dx, wp.getRow() + dy));
+            // TODO ? any additional children popups (shown menus, etc) should also be moved (or just closed)
+        }
+        
+    }
+    /**
+     * In order for window to be draggable, it would no longer be CENTERED.    
+     * Removes Hint.CENTERED, adds Hint.FIXED_POSITION to the window hints.
+     */
+    protected void changeWindowHintsForDragged(Window window) {
+        Set<Hint> hints = new HashSet<>(titleBarDragWindow.getHints());
+        hints.remove(Hint.CENTERED);
+        hints.add(Hint.FIXED_POSITION);
+        titleBarDragWindow.setHints(hints);
     }
 
     @Override
@@ -381,7 +474,10 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
             window.getTextGUI().removeWindow(window);
         }
         window.setTextGUI(this);
-        windowManager.onAdded(this, window, windows);
+        windowManager.onAdded(this, window, stableOrderingOfWindows);
+        if (!stableOrderingOfWindows.contains(window)) {
+            stableOrderingOfWindows.add(window);
+        }
         if(!windows.contains(window)) {
             windows.add(window);
         }
@@ -407,7 +503,8 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
             return this;
         }
         window.setTextGUI(null);
-        windowManager.onRemoved(this, window, windows);
+        stableOrderingOfWindows.remove(window);
+        windowManager.onRemoved(this, window, stableOrderingOfWindows);
         changeWindow: if(activeWindow == window) {
             //Go backward in reverse and find the first suitable window
             for(int index = windows.size() - 1; index >= 0; index--) {
