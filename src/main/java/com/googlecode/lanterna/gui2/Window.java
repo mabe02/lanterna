@@ -387,7 +387,7 @@ public interface Window extends BasePane {
     TerminalPosition getCursorPosition();
 
     /**
-     * This is deprecated in favor of calling either of: toGlobalFromContentRelative() or toGlobalFromDecoratedRelative().
+     * @deprecated This is deprecated in favor of calling either of: {@code toGlobalFromContentRelative()} or {@code toGlobalFromDecoratedRelative()}.
      * @see Window#toGlobalFromContentRelative()
      * @see Window#toGlobalFromDecoratedRelative()
      */
@@ -409,7 +409,7 @@ public interface Window extends BasePane {
     TerminalPosition toGlobalFromDecoratedRelative(TerminalPosition decoratedPosition);
 
     /**
-     * This is deprecated in favor of calling either of: fromGlobalToContentRelative() or fromGlobalToDecoratedRelative()
+     * @deprecated This is deprecated in favor of calling either of: {@code fromGlobalToContentRelative()} or {@code fromGlobalToDecoratedRelative()}
      * @see Window#fromGlobalToContentRelative()
      * @see Window#fromGlobalToDecoratedRelative()
      */
