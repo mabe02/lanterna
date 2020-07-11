@@ -415,7 +415,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
             
             WindowDecorationRenderer decorator = windowManager.getWindowDecorationRenderer(window);
             TerminalRectangle titleBarRectangle = decorator.getTitleBarRectangle(window);
-            TerminalPosition local = window.fromDecoratedGlobal(mouse.getPosition());
+            TerminalPosition local = window.fromGlobalToDecoratedRelative(mouse.getPosition());
             titleBarRectangle.whenContains(local, () -> {
                 titleBarDragWindow = window;
                 originWindowPosition = titleBarDragWindow.getPosition();

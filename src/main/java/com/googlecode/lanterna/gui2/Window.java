@@ -182,6 +182,10 @@ public interface Window extends BasePane {
     void invalidate();
 
     
+    /**
+     * Return the last known size of the window including window decoration and the window position as a TerminalRectangle.
+     * @return the decorated size and position of the window
+     */
     default TerminalRectangle getBounds() {
         TerminalPosition position = getPosition();
         TerminalSize size = getDecoratedSize();
@@ -383,26 +387,52 @@ public interface Window extends BasePane {
     TerminalPosition getCursorPosition();
 
     /**
-     * Returns a position in the window's local coordinate space to global coordinates
+     * This is deprecated in favor of calling either of: toGlobalFromContentRelative() or toGlobalFromDecoratedRelative().
+     * @see Window#toGlobalFromContentRelative()
+     * @see Window#toGlobalFromDecoratedRelative()
+     */
+    @Override
+    @Deprecated
+    TerminalPosition toGlobal(TerminalPosition localPosition);
+    
+    /**
+     * Returns a position in the window content's local coordinate space to global coordinates
      * @param localPosition The local position to translate
      * @return The local position translated to global coordinates
      */
-    @Override
-    TerminalPosition toGlobal(TerminalPosition localPosition);
+    TerminalPosition toGlobalFromContentRelative(TerminalPosition localPosition);
+    /**
+     * Returns a position in the decorated window local coordinate space to global coordinates
+     * @param localPosition The local position to translate
+     * @return The local position translated to global coordinates
+     */
+    TerminalPosition toGlobalFromDecoratedRelative(TerminalPosition decoratedPosition);
 
     /**
-     * Returns a position expressed in global coordinates, i.e. row and column offset from the top-left corner of the
-     * terminal into a position relative to the top-left corner of the window. Calling
-     * {@code fromGlobal(toGlobal(..))} should return the exact same position.
-     * @param position Position expressed in global coordinates to translate to local coordinates of this Window
-     * @return The global coordinates expressed as local coordinates
+     * This is deprecated in favor of calling either of: fromGlobalToContentRelative() or fromGlobalToDecoratedRelative()
+     * @see Window#fromGlobalToContentRelative()
+     * @see Window#fromGlobalToDecoratedRelative()
      */
     @Override
     @Deprecated
     TerminalPosition fromGlobal(TerminalPosition position);
     
-    TerminalPosition fromContentGlobal(TerminalPosition position);
-    TerminalPosition fromDecoratedGlobal(TerminalPosition position);
+    /**
+     * Returns a position expressed in global coordinates, i.e. row and column offset from the top-left corner of the
+     * terminal into a position relative to the top-left corner of the window's content. Calling
+     * {@code fromGlobalToContentRelative(toGlobalFromContentRelative(..))} should return the exact same position.
+     * @param position Position expressed in global coordinates to translate to local coordinates of this Window's content.
+     * @return The global coordinates expressed as local coordinates
+     */
+    TerminalPosition fromGlobalToContentRelative(TerminalPosition position);
+    /**
+     * Returns a position expressed in global coordinates, i.e. row and column offset from the top-left corner of the
+     * terminal into a position relative to the top-left corner of the window including it's decoration. Calling
+     * {@code fromGlobalToDecoratedRelative(toGlobalFromDecoratedRelative(..))} should return the exact same position.
+     * @param position Position expressed in global coordinates to translate to local coordinates of this window including it's decoration.
+     * @return The global coordinates expressed as local coordinates
+     */
+    TerminalPosition fromGlobalToDecoratedRelative(TerminalPosition position);
 
     /**
      * Sets the active {@link MenuBar} for this window. The menu will be rendered at the top, inside the window
