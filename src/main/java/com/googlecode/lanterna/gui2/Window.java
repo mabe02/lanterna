@@ -181,6 +181,7 @@ public interface Window extends BasePane {
     @Override
     void invalidate();
 
+
     /**
      * Return the last known size of the window including window decoration and the window position as a TerminalRectangle.
      * @return the decorated size and position of the window
