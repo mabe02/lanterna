@@ -18,8 +18,7 @@
  */
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.TerminalPosition;
-import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.*;
 
 /**
  * Interface that defines a class that draws window decorations, i.e. a surrounding layer around the window that usually
@@ -53,4 +52,9 @@ public interface WindowDecorationRenderer {
      * @return Position of the top left corner of the window, relative to the top left corner of the window decoration
      */
     TerminalPosition getOffset(Window window);
+    
+    
+    default TerminalRectangle getTitleBarRectangle(Window window) {
+        return new TerminalRectangle(0, 0, window.getDecoratedSize().getColumns(), getOffset(window).getRow());
+    }
 }

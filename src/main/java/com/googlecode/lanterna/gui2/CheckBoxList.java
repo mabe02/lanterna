@@ -162,6 +162,9 @@ public class CheckBoxList<V> extends AbstractListBox<V, CheckBoxList<V>> {
     }
 
     private void setChecked(final int index, final boolean checked) {
+        if (!(0 <= index && index < itemStatus.size())) {
+            return;
+        }
         itemStatus.set(index, checked);
         runOnGUIThreadIfExistsOtherwiseRunDirect(() -> {
             for(Listener listener: listeners) {
