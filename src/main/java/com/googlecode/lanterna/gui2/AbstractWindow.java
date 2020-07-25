@@ -140,22 +140,43 @@ public abstract class AbstractWindow extends AbstractBasePane<Window> implements
         return handled;
     }
 
-    @Override
-    public TerminalPosition toGlobal(TerminalPosition localPosition) {
-        if(localPosition == null) {
-            return null;
-        }
-        return lastKnownPosition.withRelative(contentOffset.withRelative(localPosition));
-    }
-
+    /**
+     * @see Window#toGlobal()
+     */
     @Override
     @Deprecated
-    public TerminalPosition fromGlobal(TerminalPosition globalPosition) {
-        return fromContentGlobal(globalPosition);
+    public TerminalPosition toGlobal(TerminalPosition localPosition) {
+        return toGlobalFromContentRelative(localPosition);
     }
     
     @Override
-    public TerminalPosition fromContentGlobal(TerminalPosition globalPosition) {
+    public TerminalPosition toGlobalFromContentRelative(TerminalPosition contentLocalPosition) {
+        if(contentLocalPosition == null) {
+            return null;
+        }
+        return lastKnownPosition.withRelative(contentOffset.withRelative(contentLocalPosition));
+    }
+    
+    @Override
+    @Deprecated
+    public TerminalPosition toGlobalFromDecoratedRelative(TerminalPosition localPosition) {
+        if(localPosition == null) {
+            return null;
+        }
+        return lastKnownPosition.withRelative(localPosition);
+    }
+
+    /**
+     * @see Window#fromGlobal()
+     */
+    @Override
+    @Deprecated
+    public TerminalPosition fromGlobal(TerminalPosition globalPosition) {
+        return fromGlobalToContentRelative(globalPosition);
+    }
+    
+    @Override
+    public TerminalPosition fromGlobalToContentRelative(TerminalPosition globalPosition) {
         if(globalPosition == null || lastKnownPosition == null) {
             return null;
         }
@@ -165,7 +186,7 @@ public abstract class AbstractWindow extends AbstractBasePane<Window> implements
     }
     
     @Override
-    public TerminalPosition fromDecoratedGlobal(TerminalPosition globalPosition) {
+    public TerminalPosition fromGlobalToDecoratedRelative(TerminalPosition globalPosition) {
         if(globalPosition == null || lastKnownPosition == null) {
             return null;
         }

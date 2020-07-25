@@ -45,13 +45,10 @@ import java.util.concurrent.atomic.AtomicBoolean
 public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTextGUI {
     private final WindowManager windowManager;
     private final BasePane backgroundPane;
-    private final List<Window> windows;
-    private final List<Window> stableOrderingOfWindows;
+    private final WindowList windowList;
     private final IdentityHashMap<Window, TextImage> windowRenderBufferCache;
     private final WindowPostRenderer postRenderer;
-
-    private Window activeWindow;
-    private boolean hadWindowAtSomePoint;
+    
     private boolean eofWhenNoWindows;
     
     private Window titleBarDragWindow;
@@ -170,6 +167,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
             Component background) {
 
         super(guiThreadFactory, screen);
+        windowList = new WindowList();
         if(windowManager == null) {
             throw new IllegalArgumentException("Creating a window-based TextGUI requires a WindowManager");
         }
@@ -196,17 +194,14 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
             BasePane self() { return this; }
         };
         this.backgroundPane.setComponent(background);
-        this.windows = new LinkedList<>();
-        this.stableOrderingOfWindows = new LinkedList<>();
         this.windowRenderBufferCache = new IdentityHashMap<>();
         this.postRenderer = postRenderer;
         this.eofWhenNoWindows = false;
-        this.hadWindowAtSomePoint = false;
     }
 
     @Override
     public synchronized boolean isPendingUpdate() {
-        for(Window window: windows) {
+        for(Window window: getWindows()) {
             if(window.isVisible() && window.isInvalid()) {
                 return true;
             }
@@ -220,7 +215,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
             // If the user has passed in a virtual screen, we should calculate the minimum size required and tell it.
             // Previously the constructor always wrapped the screen in a VirtualScreen, but now we need to check.
             TerminalSize minimumTerminalSize = TerminalSize.ZERO;
-            for (Window window : windows) {
+            for (Window window : getWindows()) {
                 if (window.isVisible()) {
                     if (window.getHints().contains(Window.Hint.FULL_SCREEN) ||
                             window.getHints().contains(Window.Hint.FIT_TERMINAL_WINDOW) ||
@@ -244,7 +239,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
     @Override
     protected synchronized KeyStroke readKeyStroke() throws IOException {
         KeyStroke keyStroke = super.pollInput();
-        if(hadWindowAtSomePoint && eofWhenNoWindows && keyStroke == null && windows.isEmpty()) {
+        if(windowList.isHadWindowAtSomePoint() && eofWhenNoWindows && keyStroke == null && getWindows().isEmpty()) {
             return new KeyStroke(KeyType.EOF);
         }
         else if(keyStroke != null) {
@@ -258,8 +253,8 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
     @Override
     protected synchronized void drawGUI(TextGUIGraphics graphics) {
         drawBackgroundPane(graphics);
-        windowManager.prepareWindows(this, Collections.unmodifiableList(stableOrderingOfWindows), graphics.getSize());
-        for(Window window: windows) {
+        windowManager.prepareWindows(this, windowList.getWindowsInStableOrder(), graphics.getSize());
+        for(Window window: getWindows()) {
             if (window.isVisible()) {
                 // First draw windows to a buffer, then copy it to the real destination. This is to make physical off-screen
                 // drawing work better. Store the buffers in a cache so we don't have to re-create them every time.
@@ -300,7 +295,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
         }
 
         // Purge the render buffer cache from windows that have been removed
-        windowRenderBufferCache.keySet().retainAll(windows);
+        windowRenderBufferCache.keySet().retainAll(getWindows());
     }
 
     private void drawBackgroundPane(TextGUIGraphics graphics) {
@@ -384,7 +379,8 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
             // by happenstance, the last in the list in case of many overlapping will be active
             Window priorActiveWindow = getActiveWindow();
             AtomicBoolean anyHit = new AtomicBoolean(false);
-            for (Window w : getWindows()) {
+            List<Window> snapshot = new ArrayList<>(getWindows());
+            for (Window w : snapshot) {
                 w.getBounds().whenContains(mouse.getPosition(), () -> {
                     setActiveWindow(w);
                     anyHit.set(true);
@@ -419,7 +415,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
             
             WindowDecorationRenderer decorator = windowManager.getWindowDecorationRenderer(window);
             TerminalRectangle titleBarRectangle = decorator.getTitleBarRectangle(window);
-            TerminalPosition local = window.fromDecoratedGlobal(mouse.getPosition());
+            TerminalPosition local = window.fromGlobalToDecoratedRelative(mouse.getPosition());
             titleBarRectangle.whenContains(local, () -> {
                 titleBarDragWindow = window;
                 originWindowPosition = titleBarDragWindow.getPosition();
@@ -474,17 +470,10 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
             window.getTextGUI().removeWindow(window);
         }
         window.setTextGUI(this);
-        windowManager.onAdded(this, window, stableOrderingOfWindows);
-        if (!stableOrderingOfWindows.contains(window)) {
-            stableOrderingOfWindows.add(window);
-        }
-        if(!windows.contains(window)) {
-            windows.add(window);
-        }
-        if(!window.getHints().contains(Window.Hint.NO_FOCUS)) {
-            setActiveWindow(window);
-        }
-        hadWindowAtSomePoint = true;
+        windowManager.onAdded(this, window, windowList.getWindowsInStableOrder());
+        
+        windowList.addWindow(window);
+        
         invalidate();
         return this;
     }
@@ -498,26 +487,13 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
 
     @Override
     public synchronized WindowBasedTextGUI removeWindow(Window window) {
-        if(!windows.remove(window)) {
+        boolean contained = windowList.removeWindow(window);
+        if(!contained) {
             //Didn't contain this window
             return this;
         }
         window.setTextGUI(null);
-        stableOrderingOfWindows.remove(window);
-        windowManager.onRemoved(this, window, stableOrderingOfWindows);
-        changeWindow: if(activeWindow == window) {
-            //Go backward in reverse and find the first suitable window
-            for(int index = windows.size() - 1; index >= 0; index--) {
-                Window candidate = windows.get(index);
-                if(!candidate.getHints().contains(Window.Hint.NO_FOCUS)) {
-                    setActiveWindow(candidate);
-                    break changeWindow;
-                }
-            }
-            // No suitable window was found, so pass control back
-            // to the background pane
-            setActiveWindow(null);
-        }
+        windowManager.onRemoved(this, window, windowList.getWindowsInStableOrder());
         invalidate();
         return this;
     }
@@ -550,21 +526,18 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
 
     @Override
     public synchronized Collection<Window> getWindows() {
-        return Collections.unmodifiableList(new ArrayList<>(windows));
+        return windowList.getWindowsInZOrder();
     }
 
     @Override
     public synchronized MultiWindowTextGUI setActiveWindow(Window activeWindow) {
-        this.activeWindow = activeWindow;
-        if (activeWindow != null) {
-            moveToTop(activeWindow);
-        }
+        windowList.setActiveWindow(activeWindow);
         return this;
     }
 
     @Override
     public synchronized Window getActiveWindow() {
-        return activeWindow;
+        return windowList.getActiveWindow();
     }
 
     @Override
@@ -579,11 +552,13 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
 
     @Override
     public synchronized WindowBasedTextGUI moveToTop(Window window) {
-        if(!windows.contains(window)) {
-            throw new IllegalArgumentException("Window " + window + " isn't in MultiWindowTextGUI " + this);
-        }
-        windows.remove(window);
-        windows.add(window);
+        windowList.moveToTop(window);
+        invalidate();
+        return this;
+    }
+    
+    public synchronized WindowBasedTextGUI moveToBottom(Window window) {
+        windowList.moveToBottom(window);
         invalidate();
         return this;
     }
@@ -597,56 +572,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
      * @return Itself
      */
     public synchronized WindowBasedTextGUI cycleActiveWindow(boolean reverse) {
-        if(windows.isEmpty() || windows.size() == 1 || (activeWindow != null && activeWindow.getHints().contains(Window.Hint.MODAL))) {
-            return this;
-        }
-        Window originalActiveWindow = activeWindow;
-        Window nextWindow;
-        if(activeWindow == null) {
-            // Cycling out of active background pane
-            nextWindow = reverse ? windows.get(windows.size() - 1) : windows.get(0);
-        }
-        else {
-            // Switch to the next window
-            nextWindow = getNextWindow(reverse, activeWindow);
-        }
-
-        int noFocusWindows = 0;
-        while(nextWindow.getHints().contains(Window.Hint.NO_FOCUS)) {
-            ++noFocusWindows;
-            if(noFocusWindows == windows.size()) {
-                // All windows are NO_FOCUS, so give up
-                return this;
-            }
-            nextWindow = getNextWindow(reverse, nextWindow);
-            if(nextWindow == originalActiveWindow) {
-                return this;
-            }
-        }
-
-        if(reverse) {
-            moveToTop(nextWindow);
-        }
-        else if (originalActiveWindow != null) {
-            windows.remove(originalActiveWindow);
-            windows.add(0, originalActiveWindow);
-        }
-        setActiveWindow(nextWindow);
+        windowList.cycleActiveWindow(reverse);
         return this;
-    }
-
-    private Window getNextWindow(boolean reverse, Window window) {
-        int index = windows.indexOf(window);
-        if(reverse) {
-            if(++index >= windows.size()) {
-                index = 0;
-            }
-        }
-        else {
-            if(--index < 0) {
-                index = windows.size() - 1;
-            }
-        }
-        return windows.get(index);
     }
 }
