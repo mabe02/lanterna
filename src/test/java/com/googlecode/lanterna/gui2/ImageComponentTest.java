@@ -183,7 +183,6 @@ public class ImageComponentTest extends TestBase {
         
         
         
-        
         Panel mainPanel = new Panel();
         mainPanel.setLayoutManager(new GridLayout(2));
         mainPanel.addComponent(imageComponentX.withBorder(Borders.singleLine("x")));
