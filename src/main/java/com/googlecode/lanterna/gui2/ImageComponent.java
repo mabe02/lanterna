@@ -20,6 +20,7 @@ package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.*;
 import com.googlecode.lanterna.graphics.*;
+import com.googlecode.lanterna.input.*;
 
 /**
  * 
@@ -58,7 +59,7 @@ public class ImageComponent extends AbstractInteractableComponent {
     }
     
     @Override
-    public Result handleKeyStroke(com.googlecode.lanterna.input.KeyStroke keyStroke) {
+    public Result handleKeyStroke(KeyStroke keyStroke) {
         Result superResult = super.handleKeyStroke(keyStroke);
         
         // just arrows and focus move stuff
