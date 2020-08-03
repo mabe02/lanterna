@@ -312,6 +312,7 @@ public class Borders {
         List<Character> junctionFromBelowSingle = Arrays.asList(
                 Symbols.SINGLE_LINE_VERTICAL,
                 Symbols.BOLD_FROM_NORMAL_SINGLE_LINE_VERTICAL,
+                Symbols.BOLD_SINGLE_LINE_VERTICAL,
                 Symbols.SINGLE_LINE_CROSS,
                 Symbols.DOUBLE_LINE_HORIZONTAL_SINGLE_LINE_CROSS,
                 Symbols.SINGLE_LINE_BOTTOM_LEFT_CORNER,
@@ -337,6 +338,7 @@ public class Borders {
         List<Character> junctionFromAboveSingle = Arrays.asList(
                 Symbols.SINGLE_LINE_VERTICAL,
                 Symbols.BOLD_TO_NORMAL_SINGLE_LINE_VERTICAL,
+                Symbols.BOLD_SINGLE_LINE_VERTICAL,
                 Symbols.SINGLE_LINE_CROSS,
                 Symbols.DOUBLE_LINE_HORIZONTAL_SINGLE_LINE_CROSS,
                 Symbols.SINGLE_LINE_TOP_LEFT_CORNER,
@@ -362,6 +364,7 @@ public class Borders {
         List<Character> junctionFromLeftSingle = Arrays.asList(
                 Symbols.SINGLE_LINE_HORIZONTAL,
                 Symbols.BOLD_TO_NORMAL_SINGLE_LINE_HORIZONTAL,
+                Symbols.BOLD_SINGLE_LINE_HORIZONTAL,
                 Symbols.SINGLE_LINE_CROSS,
                 Symbols.DOUBLE_LINE_VERTICAL_SINGLE_LINE_CROSS,
                 Symbols.SINGLE_LINE_BOTTOM_LEFT_CORNER,
@@ -387,6 +390,7 @@ public class Borders {
         List<Character> junctionFromRightSingle = Arrays.asList(
                 Symbols.SINGLE_LINE_HORIZONTAL,
                 Symbols.BOLD_FROM_NORMAL_SINGLE_LINE_HORIZONTAL,
+                Symbols.BOLD_SINGLE_LINE_HORIZONTAL,
                 Symbols.SINGLE_LINE_CROSS,
                 Symbols.DOUBLE_LINE_VERTICAL_SINGLE_LINE_CROSS,
                 Symbols.SINGLE_LINE_BOTTOM_RIGHT_CORNER,
