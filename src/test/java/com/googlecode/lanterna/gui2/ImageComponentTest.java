@@ -21,10 +21,18 @@ package com.googlecode.lanterna.gui2;
 import com.googlecode.lanterna.*;
 import com.googlecode.lanterna.bundle.*;
 import com.googlecode.lanterna.graphics.*;
+import com.googlecode.lanterna.input.*;
 
 public class ImageComponentTest extends TestBase {
     public static void main(String[] args) throws Exception {
         new ImageComponentTest().run(args);
+    }
+    
+    static final class ExampleController {
+        ImageComponent selectedImageComponent;
+        public void setSelectedImage(TextImage image) {
+            selectedImageComponent.setTextImage(image);
+        }
     }
     
     static String[] IMAGE = new String[] {
@@ -51,42 +59,173 @@ public class ImageComponentTest extends TestBase {
         "xx                                                  xx",
         "-====================================================-"
     };
+    
+    static String[] IMAGE_BLANK = new String[] {
+        "-=================================-",
+        "x                                 x",
+        "x                                 x",
+        "x                                 x",
+        "x                                 x",
+        "x                                 x",
+        "x                                 x",
+        "x                                 x",
+        "x                                 x",
+        "x                                 x",
+        "x                                 x",
+        "x                                 x",
+        "x                                 x",
+        "x                                 x",
+        "x                                 x",
+        "x                                 x",
+        "x                                 x",
+        "x                                 x",
+        "x                                 x",
+        "x                                 x",
+        "x                                 x",
+        "x                                 x",
+        "x                                 x",
+        "-=================================-"
+    };
+    
+    static String[] IMAGE_X = new String[] {
+        "-=================================-",
+        "xx                               xx",
+        "xx  X                         X  xx",
+        "xx                               xx",
+        "xx     XXXXXXX       XXXXXXX     xx",
+        "xx     X:::::X       X:::::X     xx",
+        "xx     X:::::X       X:::::X     xx",
+        "xx     X::::::X     X::::::X     xx",
+        "xx     XXX:::::X   X:::::XXX     xx",
+        "xx        X:::::X X:::::X        xx",
+        "xx         X:::::X:::::X         xx",
+        "xx          X:::::::::X          xx",
+        "xx          X:::::::::X          xx",
+        "xx         X:::::X:::::X         xx",
+        "xx        X:::::X X:::::X        xx",
+        "xx     XXX:::::X   X:::::XXX     xx",
+        "xx     X::::::X     X::::::X     xx",
+        "xx     X:::::X       X:::::X     xx",
+        "xx     X:::::X       X:::::X     xx",
+        "xx     XXXXXXX       XXXXXXX     xx",
+        "xx                               xx",
+        "xx  X                         X  xx",
+        "xx                               xx",
+        "-=================================-"
+    };
+    
+    static String[] IMAGE_Y = new String[] {
+        "-=================================-",
+        "xx                               xx",
+        "xx  X                         X  xx",
+        "xx                               xx",
+        "xx     YYYYYYY       YYYYYYY     xx",
+        "xx     Y:::::Y       Y:::::Y     xx",
+        "xx     Y:::::Y       Y:::::Y     xx",
+        "xx     Y::::::Y     Y::::::Y     xx",
+        "xx     YYY:::::Y   Y:::::YYY     xx",
+        "xx        Y:::::Y Y:::::Y        xx",
+        "xx         Y:::::Y:::::Y         xx",
+        "xx          Y:::::::::Y          xx",
+        "xx           Y:::::::Y           xx",
+        "xx            Y:::::Y            xx",
+        "xx            Y:::::Y            xx",
+        "xx            Y:::::Y            xx",
+        "xx            Y:::::Y            xx",
+        "xx         YYYY:::::YYYY         xx",
+        "xx         Y:::::::::::Y         xx",
+        "xx         YYYYYYYYYYYYY         xx",
+        "xx                               xx",
+        "xx  X                         X  xx",
+        "xx                               xx",
+        "-=================================-"
+    };
+
+    
+    static String[] IMAGE_Z = new String[] {
+        "-=================================-",
+        "xx                               xx",
+        "xx  X                         X  xx",
+        "xx                               xx",
+        "xx     ZZZZZZZZZZZZZZZZZZZ       xx",
+        "xx     Z:::::::::::::::::Z       xx",
+        "xx     Z:::::::::::::::::Z       xx",
+        "xx     Z:::ZZZZZZZZ:::::Z        xx",
+        "xx     ZZZZZ     Z:::::Z         xx",
+        "xx             Z:::::Z           xx",
+        "xx            Z:::::Z            xx",
+        "xx           Z:::::Z             xx",
+        "xx          Z:::::Z              xx",
+        "xx         Z:::::Z               xx",
+        "xx        Z:::::Z                xx",
+        "xx     ZZZ:::::Z     ZZZZZ       xx",
+        "xx     Z::::::ZZZZZZZZ:::Z       xx",
+        "xx     Z:::::::::::::::::Z       xx",
+        "xx     Z:::::::::::::::::Z       xx",
+        "xx     ZZZZZZZZZZZZZZZZZZZ       xx",
+        "xx                               xx",
+        "xx  X                         X  xx",
+        "xx                               xx",
+        "-=================================-"
+    };
 
     @Override
     public void init(WindowBasedTextGUI textGUI) {
         final BasicWindow window = new BasicWindow("ImageComponentTest");
         window.setTheme(LanternaThemes.getRegisteredTheme("conqueror"));
 
-        ImageComponent unscrollable = makeImageComponent();
-        ScrollPanel both = new ScrollPanel(makeImageComponent(), true, true);
-        ScrollPanel vertical = new ScrollPanel(makeImageComponent(), false, true);
-        ScrollPanel horizontal = new ScrollPanel(makeImageComponent(), true, false);
+//        ImageComponent unscrollable = makeImageComponent();
+//        ScrollPanel both = new ScrollPanel(makeImageComponent(), true, true);
+//        ScrollPanel vertical = new ScrollPanel(makeImageComponent(), false, true);
+//        ScrollPanel horizontal = new ScrollPanel(makeImageComponent(), true, false);
+//        
+//        vertical.setPreferredSize(new TerminalSize( 24, 12));
+//        horizontal.setPreferredSize(new TerminalSize( 24, 12));
+//        both.setPreferredSize(new TerminalSize( 24, 12));
+
+        ExampleController controller = new ExampleController();
+        controller.selectedImageComponent = makeImageComponent(controller, IMAGE_BLANK);
         
-        vertical.setPreferredSize(new TerminalSize( 24, 12));
-        horizontal.setPreferredSize(new TerminalSize( 24, 12));
-        both.setPreferredSize(new TerminalSize( 24, 12));
-        
+        ImageComponent imageComponentX = makeImageComponent(controller, IMAGE_X);
+        ImageComponent imageComponentY = makeImageComponent(controller, IMAGE_Y);
+        ImageComponent imageComponentZ = makeImageComponent(controller, IMAGE_Z);
         
         Panel mainPanel = new Panel();
         mainPanel.setLayoutManager(new GridLayout(2));
-        mainPanel.addComponent(unscrollable.withBorder(Borders.singleLine("full size")));
-        mainPanel.addComponent(both.withBorder(Borders.singleLine("v & h scroll")));
-        mainPanel.addComponent(vertical.withBorder(Borders.singleLine("v scroll")));
-        mainPanel.addComponent(horizontal.withBorder(Borders.singleLine("h scroll")));
+
+//        mainPanel.addComponent(unscrollable.withBorder(Borders.singleLine("full size")));
+//        mainPanel.addComponent(both.withBorder(Borders.singleLine("v & h scroll")));
+//        mainPanel.addComponent(vertical.withBorder(Borders.singleLine("v scroll")));
+//        mainPanel.addComponent(horizontal.withBorder(Borders.singleLine("h scroll")));
+
+        mainPanel.addComponent(imageComponentX.withBorder(Borders.singleLine("x")));
+        mainPanel.addComponent(imageComponentY.withBorder(Borders.singleLine("y")));
+        mainPanel.addComponent(imageComponentZ.withBorder(Borders.singleLine("z")));
+        mainPanel.addComponent(controller.selectedImageComponent.withBorder(Borders.singleLine("selection")));
         
         window.setComponent(mainPanel);
         textGUI.addWindow(window);
     }
     
     
-    ImageComponent makeImageComponent() {
-        ImageComponent imageComponent = new ImageComponent();
-        TerminalSize imageSize = new TerminalSize(IMAGE[0].length(), IMAGE.length);
+
+    ImageComponent makeImageComponent(ExampleController controller, String[] image) {
+        TerminalSize imageSize = new TerminalSize(image[0].length(), image.length);
         TextImage textImage = new BasicTextImage(imageSize);
-        
-        for (int row = 0; row < IMAGE.length; row++) {
-            fillImageLine(textImage, row, IMAGE[row]);
+        for (int row = 0; row < image.length; row++) {
+            fillImageLine(textImage, row, image[row]);
         }
+        
+        ImageComponent imageComponent = new ImageComponent() {
+            @Override
+            public Result handleKeyStroke(KeyStroke keyStroke) {
+                if (isMouseDown(keyStroke)) {
+                    controller.setSelectedImage(textImage);
+                    return Result.HANDLED;
+                }
+                return super.handleKeyStroke(keyStroke);
+            }
+        };
         
         imageComponent.setTextImage(textImage);
         return imageComponent;
@@ -100,3 +239,4 @@ public class ImageComponentTest extends TestBase {
         }
     }
 }
+
