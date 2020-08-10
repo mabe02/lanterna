@@ -302,6 +302,9 @@ public class Panel extends AbstractComponent<Panel> implements Container {
 
         synchronized(components) {
             for(Component component : components) {
+                if(!component.isVisible()) {
+                    continue;
+                }
                 if(chooseNextAvailable) {
                     if(component instanceof Interactable && ((Interactable) component).isEnabled() && ((Interactable) component).isFocusable()) {
                         return (Interactable) component;
@@ -341,13 +344,16 @@ public class Panel extends AbstractComponent<Panel> implements Container {
     public Interactable previousFocus(Interactable fromThis) {
         boolean chooseNextAvailable = (fromThis == null);
 
-        List<Component> revComponents;
+        List<Component> reversedComponentList;
         synchronized(components) {
-            revComponents = new ArrayList<>(components);
+            reversedComponentList = new ArrayList<>(components);
         }
-        Collections.reverse(revComponents);
+        Collections.reverse(reversedComponentList);
 
-        for (Component component : revComponents) {
+        for (Component component : reversedComponentList) {
+            if (!component.isVisible()) {
+                continue;
+            }
             if (chooseNextAvailable) {
                 if (component instanceof Interactable && ((Interactable)component).isEnabled() && ((Interactable)component).isFocusable()) {
                     return (Interactable) component;
@@ -390,6 +396,9 @@ public class Panel extends AbstractComponent<Panel> implements Container {
     public void updateLookupMap(InteractableLookupMap interactableLookupMap) {
         synchronized(components) {
             for(Component component: components) {
+                if(!component.isVisible()) {
+                    continue;
+                }
                 if(component instanceof Container) {
                     ((Container)component).updateLookupMap(interactableLookupMap);
                 }

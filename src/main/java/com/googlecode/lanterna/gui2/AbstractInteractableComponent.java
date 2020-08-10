@@ -225,8 +225,21 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
         return isKeyboardActivationStroke || isMouseActivationStroke;
     }
     
-    public boolean isMouseMove(KeyStroke keyStroke) {
-        return keyStroke.getKeyType() == KeyType.MouseEvent && ((MouseAction)keyStroke).getActionType() == MouseActionType.MOVE;
+    public boolean isMouseDown(KeyStroke keyStroke) {
+        return keyStroke.getKeyType() == KeyType.MouseEvent && ((MouseAction)keyStroke).isMouseDown();
     }
+    
+    public boolean isMouseDrag(KeyStroke keyStroke) {
+        return keyStroke.getKeyType() == KeyType.MouseEvent && ((MouseAction)keyStroke).isMouseDrag();
+    }
+    
+    public boolean isMouseMove(KeyStroke keyStroke) {
+        return keyStroke.getKeyType() == KeyType.MouseEvent && ((MouseAction)keyStroke).isMouseMove();
+    }
+    
+    public boolean isMouseUp(KeyStroke keyStroke) {
+        return keyStroke.getKeyType() == KeyType.MouseEvent && ((MouseAction)keyStroke).isMouseUp();
+    }
+    
 	
 }

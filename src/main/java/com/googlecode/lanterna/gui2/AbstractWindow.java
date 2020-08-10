@@ -140,22 +140,59 @@ public abstract class AbstractWindow extends AbstractBasePane<Window> implements
         return handled;
     }
 
+    /**
+     * @see Window#toGlobal()
+     */
     @Override
+    @Deprecated
     public TerminalPosition toGlobal(TerminalPosition localPosition) {
+        return toGlobalFromContentRelative(localPosition);
+    }
+    
+    @Override
+    public TerminalPosition toGlobalFromContentRelative(TerminalPosition contentLocalPosition) {
+        if(contentLocalPosition == null) {
+            return null;
+        }
+        return lastKnownPosition.withRelative(contentOffset.withRelative(contentLocalPosition));
+    }
+    
+    @Override
+    @Deprecated
+    public TerminalPosition toGlobalFromDecoratedRelative(TerminalPosition localPosition) {
         if(localPosition == null) {
             return null;
         }
-        return lastKnownPosition.withRelative(contentOffset.withRelative(localPosition));
+        return lastKnownPosition.withRelative(localPosition);
     }
 
+    /**
+     * @see Window#fromGlobal()
+     */
     @Override
+    @Deprecated
     public TerminalPosition fromGlobal(TerminalPosition globalPosition) {
+        return fromGlobalToContentRelative(globalPosition);
+    }
+    
+    @Override
+    public TerminalPosition fromGlobalToContentRelative(TerminalPosition globalPosition) {
         if(globalPosition == null || lastKnownPosition == null) {
             return null;
         }
         return globalPosition.withRelative(
                 -lastKnownPosition.getColumn() - contentOffset.getColumn(),
                 -lastKnownPosition.getRow() - contentOffset.getRow());
+    }
+    
+    @Override
+    public TerminalPosition fromGlobalToDecoratedRelative(TerminalPosition globalPosition) {
+        if(globalPosition == null || lastKnownPosition == null) {
+            return null;
+        }
+        return globalPosition.withRelative(
+                -lastKnownPosition.getColumn(),
+                -lastKnownPosition.getRow());
     }
 
     @Override
