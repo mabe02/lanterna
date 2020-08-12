@@ -154,7 +154,7 @@ public class SplitPanel extends Panel {
             Theme theme = getTheme();
             ThemeDefinition themeDefinition = theme.getDefaultDefinition();
             ThemeStyle themeStyle = themeDefinition.getNormal();
-            textImage.setAll(new TextCharacter(isHorizontal ? Symbols.BOLD_SINGLE_LINE_VERTICAL : Symbols.BOLD_SINGLE_LINE_HORIZONTAL, themeStyle.getForeground(), themeStyle.getBackground()));
+            textImage.setAll(new TextCharacter(isHorizontal ? Symbols.SINGLE_LINE_VERTICAL : Symbols.SINGLE_LINE_HORIZONTAL, themeStyle.getForeground(), themeStyle.getBackground()));
             thumb.setTextImage(textImage);
             // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
             
@@ -221,3 +221,4 @@ public class SplitPanel extends Panel {
     }
     
 }
+
