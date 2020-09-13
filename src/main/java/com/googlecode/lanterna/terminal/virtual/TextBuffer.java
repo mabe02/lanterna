@@ -124,7 +124,7 @@ class TextBuffer {
         for (List<TextCharacter> line : lines) {
             StringBuilder b = new StringBuilder();
             for (TextCharacter c : line) {
-                b.append(c.getCharacter());
+                b.append(c.getCharacterString());
             }
             bo.append(b.toString().replaceFirst("\\s+$", ""));
             bo.append('\n');

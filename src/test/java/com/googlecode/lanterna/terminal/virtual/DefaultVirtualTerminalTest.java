@@ -91,11 +91,11 @@ public class DefaultVirtualTerminalTest {
         virtualTerminal.putCharacter(new TextCharacter('L'));
         virtualTerminal.putCharacter(new TextCharacter('O'));
         assertEquals(TerminalPosition.TOP_LEFT_CORNER.withColumn(5), virtualTerminal.getCursorPosition());
-        assertEquals('H', virtualTerminal.getCharacter(new TerminalPosition(0, 0)).getCharacter());
-        assertEquals('E', virtualTerminal.getCharacter(new TerminalPosition(1, 0)).getCharacter());
-        assertEquals('L', virtualTerminal.getCharacter(new TerminalPosition(2, 0)).getCharacter());
-        assertEquals('L', virtualTerminal.getCharacter(new TerminalPosition(3, 0)).getCharacter());
-        assertEquals('O', virtualTerminal.getCharacter(new TerminalPosition(4, 0)).getCharacter());
+        assertEquals('H', virtualTerminal.getCharacter(new TerminalPosition(0, 0)).getCharacterString().charAt(0));
+        assertEquals('E', virtualTerminal.getCharacter(new TerminalPosition(1, 0)).getCharacterString().charAt(0));
+        assertEquals('L', virtualTerminal.getCharacter(new TerminalPosition(2, 0)).getCharacterString().charAt(0));
+        assertEquals('L', virtualTerminal.getCharacter(new TerminalPosition(3, 0)).getCharacterString().charAt(0));
+        assertEquals('O', virtualTerminal.getCharacter(new TerminalPosition(4, 0)).getCharacterString().charAt(0));
 
         assertFalse(virtualTerminal.isWholeBufferDirtyThenReset());
         assertEquals(new TreeSet<>(Arrays.asList(
@@ -200,22 +200,22 @@ public class DefaultVirtualTerminalTest {
         virtualTerminal.putCharacter(new TextCharacter('画'));
         virtualTerminal.putCharacter(new TextCharacter('面'));
 
-        assertEquals('画', virtualTerminal.getCharacter(new TerminalPosition(0, 0)).getCharacter());
-        assertEquals('画', virtualTerminal.getCharacter(new TerminalPosition(1, 0)).getCharacter());
-        assertEquals('面', virtualTerminal.getCharacter(new TerminalPosition(2, 0)).getCharacter());
-        assertEquals('面', virtualTerminal.getCharacter(new TerminalPosition(3, 0)).getCharacter());
+        assertEquals('画', virtualTerminal.getCharacter(new TerminalPosition(0, 0)).getCharacterString().charAt(0));
+        assertEquals('画', virtualTerminal.getCharacter(new TerminalPosition(1, 0)).getCharacterString().charAt(0));
+        assertEquals('面', virtualTerminal.getCharacter(new TerminalPosition(2, 0)).getCharacterString().charAt(0));
+        assertEquals('面', virtualTerminal.getCharacter(new TerminalPosition(3, 0)).getCharacterString().charAt(0));
 
         virtualTerminal.setCursorPosition(new TerminalPosition(0, 0));
         virtualTerminal.putCharacter(new TextCharacter('Y'));
 
-        assertEquals('Y', virtualTerminal.getCharacter(new TerminalPosition(0, 0)).getCharacter());
+        assertEquals('Y', virtualTerminal.getCharacter(new TerminalPosition(0, 0)).getCharacterString().charAt(0));
         assertEquals(TextCharacter.DEFAULT_CHARACTER, virtualTerminal.getCharacter(new TerminalPosition(1, 0)));
 
         virtualTerminal.setCursorPosition(new TerminalPosition(3, 0));
         virtualTerminal.putCharacter(new TextCharacter('V'));
 
         assertEquals(TextCharacter.DEFAULT_CHARACTER, virtualTerminal.getCharacter(new TerminalPosition(2, 0)));
-        assertEquals('V', virtualTerminal.getCharacter(new TerminalPosition(3, 0)).getCharacter());
+        assertEquals('V', virtualTerminal.getCharacter(new TerminalPosition(3, 0)).getCharacterString().charAt(0));
     }
 
     @Test

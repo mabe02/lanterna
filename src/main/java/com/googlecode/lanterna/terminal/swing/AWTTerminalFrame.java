@@ -245,6 +245,11 @@ public class AWTTerminalFrame extends Frame implements IOSafeTerminal {
     }
 
     @Override
+    public void putString(String string) {
+        awtTerminal.putString(string);
+    }
+
+    @Override
     public TextGraphics newTextGraphics() {
         return awtTerminal.newTextGraphics();
     }

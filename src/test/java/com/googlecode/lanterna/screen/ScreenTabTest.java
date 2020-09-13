@@ -80,16 +80,16 @@ public class ScreenTabTest {
         screen.refresh();
 
         //Verify
-        if(' ' != screen.getBackCharacter(new TerminalPosition(20, 11)).getCharacter()) {
+        if(!screen.getBackCharacter(new TerminalPosition(20, 11)).is(' ')) {
             throw new IllegalStateException("Expected tab to be replaced with space");
         }
-        if('X' != screen.getBackCharacter(new TerminalPosition(21, 11)).getCharacter()) {
+        if(!screen.getBackCharacter(new TerminalPosition(21, 11)).is('X')) {
             throw new IllegalStateException("Expected X in back buffer");
         }
-        if(' ' != screen.getFrontCharacter(new TerminalPosition(20, 11)).getCharacter()) {
+        if(!screen.getFrontCharacter(new TerminalPosition(20, 11)).is(' ')) {
             throw new IllegalStateException("Expected tab to be replaced with space");
         }
-        if('X' != screen.getFrontCharacter(new TerminalPosition(21, 11)).getCharacter()) {
+        if(!screen.getFrontCharacter(new TerminalPosition(21, 11)).is('X')) {
             throw new IllegalStateException("Expected X in front buffer");
         }
     }

@@ -93,6 +93,19 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
     }
 
     /**
+     * {@inheritDoc}
+     *
+     * The {@code StreamBasedTerminal} class will attempt to translate some unicode characters to VT100 if the encoding
+     * attached to this {@code Terminal} isn't UTF-8.
+     */
+    @Override
+    public void putString(String string) throws IOException {
+        for (int i = 0; i < string.length(); i++) {
+            putCharacter(string.charAt(i));
+        }
+    }
+
+    /**
      * This method will write a list of bytes directly to the output stream of the terminal.
      * @param bytes Bytes to write to the terminal (synchronized)
      * @throws java.io.IOException If there was an underlying I/O error

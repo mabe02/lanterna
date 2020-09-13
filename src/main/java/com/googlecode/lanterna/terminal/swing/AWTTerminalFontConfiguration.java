@@ -244,8 +244,8 @@ public class AWTTerminalFontConfiguration {
      * @return Font which the {@code character} should be drawn using
      */
     Font getFontForCharacter(TextCharacter character) {
-        Font normalFont = getFontForCharacter(character.getCharacter());
-        if(boldMode == BoldMode.EVERYTHING || (boldMode == BoldMode.EVERYTHING_BUT_SYMBOLS && isNotASymbol(character.getCharacter()))) {
+        Font normalFont = getFontForCharacter(character.getCharacterString());
+        if(boldMode == BoldMode.EVERYTHING || (boldMode == BoldMode.EVERYTHING_BUT_SYMBOLS && isNotASymbol(character.getCharacterString().charAt(0)))) {
             if(character.isBold()) {
                 normalFont = normalFont.deriveFont(Font.BOLD);
             }
@@ -256,9 +256,9 @@ public class AWTTerminalFontConfiguration {
         return normalFont;
     }
 
-    private Font getFontForCharacter(char c) {
+    private Font getFontForCharacter(String string) {
         for(Font font: fontPriority) {
-            if(font.canDisplay(c)) {
+            if(font.canDisplayUpTo(string) == -1) {
                 return font;
             }
         }
