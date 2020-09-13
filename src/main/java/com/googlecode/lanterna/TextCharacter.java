@@ -102,6 +102,10 @@ public class TextCharacter {
         if(TerminalTextUtils.isControlCharacter(character) && character != '\t') {
             throw new IllegalArgumentException("Cannot create a TextCharacter from a control character (0x" + Integer.toHexString(character) + ")");
         }
+        if (!Boolean.getBoolean(TextCharacter.class.getName() + ".allowSurrogates") &&
+                Character.isHighSurrogate(character)) {
+            throw new IllegalArgumentException("TextCharacter with surrogate characters is not supported in lanterna 3.0");
+        }
 
         if(foregroundColor == null) {
             foregroundColor = TextColor.ANSI.DEFAULT;
