@@ -388,8 +388,10 @@ public class TextCharacter {
     }
 
     public boolean isDoubleWidth() {
-        // TODO: make this better to work with emoji and other complicated "characters"
-        return TerminalTextUtils.isCharDoubleWidth(character.charAt(0));
+        // TODO: make this better to work properly with emoji and other complicated "characters"
+        return TerminalTextUtils.isCharDoubleWidth(character.charAt(0)) ||
+                // If the character takes up more than one char, assume it's double width (unless thai)
+                (character.length() > 1 && !TerminalTextUtils.isCharThai(character.charAt(0)));
     }
 
     @SuppressWarnings("SimplifiableIfStatement")

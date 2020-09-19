@@ -94,7 +94,6 @@ public class TerminalTextUtils {
      * where it was contributed by user Rakesh N
      * @param c Character to test
      * @return {@code true} if the character is a CJK character
-     *
      */
     public static boolean isCharCJK(final char c) {
         Character.UnicodeBlock unicodeBlock = Character.UnicodeBlock.of(c);
@@ -113,6 +112,16 @@ public class TerminalTextUtils {
                 || (unicodeBlock == Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION)
                 || (unicodeBlock == Character.UnicodeBlock.ENCLOSED_CJK_LETTERS_AND_MONTHS)
                 || (unicodeBlock == Character.UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS && c < 0xFF61);    //The magic number here is the separating index between full-width and half-width
+    }
+
+    /**
+     * Given a character, is this character considered to be a Thai character?
+     * @param c Character to test
+     * @return {@code true} if the character is a Thai character
+     */
+    public static boolean isCharThai(char c) {
+        Character.UnicodeBlock unicodeBlock = Character.UnicodeBlock.of(c);
+        return unicodeBlock == Character.UnicodeBlock.THAI;
     }
 
     /**
