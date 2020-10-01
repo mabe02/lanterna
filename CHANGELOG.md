@@ -18,12 +18,12 @@
 * [**2.0.0**](#2.0.0)
 
 ## 3.0.0
-Lanterna 3 is a large, and probably final, update to the Lanterna library. Many parts have been completely rewritten and the parts not rewritten have been touched in at least some way. The reason for this major overhaul is to finally get it 'right' and fix all those API mistakes that have been highlighted over the years since Lanterna was first published.
+Lanterna 3 is a large, and probably final, update to the Lanterna library. Many parts have been completely rewritten and the parts not rewritten have been touched in at least some way. The  reason for this major overhaul is to finally get it 'right' and fix all those API mistakes that have been highlighted over the years since Lanterna was first published.
 
 This section can in no way summarize all the changes but will try to highlight some of the new features and redesigns.
 Please note that Lanterna 3 is **not** API compatible with Lanterna 2.X and earlier.
 
-**NOTE**: Lanterna 3 is still under development. The majority of the features below are implemented but not all.
+**NOTE**: Lanterna 3 is still under development. The majority of the features below are implemented but not at all.
 
 ## Added
 * Proper support for CJK characters and handling of them
