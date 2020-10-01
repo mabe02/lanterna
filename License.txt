@@ -127,7 +127,7 @@ the following:
 
   5. Combined Libraries.
 
-  You may place library facilities that are a work based on the
+  You may include library facilities that are a work based on the
 Library side by side in a single library together with other library
 facilities that are not Applications and are not covered by this
 License, and convey such a combined library under terms of your
