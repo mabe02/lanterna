@@ -1,4 +1,4 @@
-Lanterna
+Lanterna : An Amazing Libary
 ---
 
 ![Lanterna screenshot](http://mabe02.github.io/lanterna/resources/lanterna.png)
