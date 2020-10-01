@@ -1,4 +1,4 @@
-Lanterna
+Lanterna ( A Java Library)
 ---
 
 ![Lanterna screenshot](http://mabe02.github.io/lanterna/resources/lanterna.png)
