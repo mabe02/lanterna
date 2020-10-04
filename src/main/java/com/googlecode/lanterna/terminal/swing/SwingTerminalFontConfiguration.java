@@ -29,7 +29,16 @@ public class SwingTerminalFontConfiguration extends AWTTerminalFontConfiguration
      * @return A {@link SwingTerminal} font configuration object with default values set up
      */
     public static SwingTerminalFontConfiguration getDefault() {
-        return newInstance(filterMonospaced(selectDefaultFont()));
+        return newInstance(filterMonospaced(selectDefaultFont(DEFAULT_FONT_SIZE)));
+    }
+
+    /**
+     * Returns the default font settings except for a custom font size to use.
+     * @param fontSize Size of the font
+     * @return An {@link SwingTerminal} font configuration object with default values set up
+     */
+    public static SwingTerminalFontConfiguration getDefaultOfSize(int fontSize) {
+        return newInstance(filterMonospaced(selectDefaultFont(fontSize)));
     }
 
     /**
