@@ -41,6 +41,10 @@ import java.util.Set;
  * @author martin
  */
 public class AWTTerminalFontConfiguration {
+    /**
+     * The default font size used unless overridden
+     */
+    public static final int DEFAULT_FONT_SIZE = 14;
 
     /**
      * Controls how the SGR bold will take effect when enabled on a character. Mainly this is controlling if the 
@@ -75,41 +79,41 @@ public class AWTTerminalFontConfiguration {
             "AR PL UMing CN"
     )));
 
-    private static List<Font> getDefaultWindowsFonts() {
-        int fontSize = getFontSize();
+    private static List<Font> getDefaultWindowsFonts(int fontSize) {
+        int adjustedFontSize = getAdjustedFontSize(fontSize);
         return Collections.unmodifiableList(Arrays.asList(
-                new Font("Courier New", Font.PLAIN, fontSize), //Monospaced can look pretty bad on Windows, so let's override it
-                new Font("Monospaced", Font.PLAIN, fontSize)));
+                new Font("Courier New", Font.PLAIN, adjustedFontSize), //Monospaced can look pretty bad on Windows, so let's override it
+                new Font("Monospaced", Font.PLAIN, adjustedFontSize)));
     }
 
-    private static List<Font> getDefaultLinuxFonts() {
-        int fontSize = getFontSize();
+    private static List<Font> getDefaultLinuxFonts(int fontSize) {
+        int adjustedFontSize = getAdjustedFontSize(fontSize);
         return Collections.unmodifiableList(Arrays.asList(
-                new Font("DejaVu Sans Mono", Font.PLAIN, fontSize),
-                new Font("Monospaced", Font.PLAIN, fontSize),
+                new Font("DejaVu Sans Mono", Font.PLAIN, adjustedFontSize),
+                new Font("Monospaced", Font.PLAIN, adjustedFontSize),
                 //Below, these should be redundant (Monospaced is supposed to catch-all)
                 // but Java 6 seems to have issues with finding monospaced fonts sometimes
-                new Font("Ubuntu Mono", Font.PLAIN, fontSize),
-                new Font("FreeMono", Font.PLAIN, fontSize),
-                new Font("Liberation Mono", Font.PLAIN, fontSize),
-                new Font("VL Gothic Regular", Font.PLAIN, fontSize),
-                new Font("NanumGothic", Font.PLAIN, fontSize),
-                new Font("WenQuanYi Zen Hei Mono", Font.PLAIN, fontSize),
-                new Font("WenQuanYi Zen Hei", Font.PLAIN, fontSize),
-                new Font("AR PL UMing TW", Font.PLAIN, fontSize),
-                new Font("AR PL UMing HK", Font.PLAIN, fontSize),
-                new Font("AR PL UMing CN", Font.PLAIN, fontSize)));
+                new Font("Ubuntu Mono", Font.PLAIN, adjustedFontSize),
+                new Font("FreeMono", Font.PLAIN, adjustedFontSize),
+                new Font("Liberation Mono", Font.PLAIN, adjustedFontSize),
+                new Font("VL Gothic Regular", Font.PLAIN, adjustedFontSize),
+                new Font("NanumGothic", Font.PLAIN, adjustedFontSize),
+                new Font("WenQuanYi Zen Hei Mono", Font.PLAIN, adjustedFontSize),
+                new Font("WenQuanYi Zen Hei", Font.PLAIN, adjustedFontSize),
+                new Font("AR PL UMing TW", Font.PLAIN, adjustedFontSize),
+                new Font("AR PL UMing HK", Font.PLAIN, adjustedFontSize),
+                new Font("AR PL UMing CN", Font.PLAIN, adjustedFontSize)));
     }
 
-    private static List<Font> getDefaultFonts() {
-        int fontSize = getFontSize();
+    private static List<Font> getDefaultFonts(int fontSize) {
+        int adjustedFontSize = getAdjustedFontSize(fontSize);
         return Collections.unmodifiableList(Collections.singletonList(
-                new Font("Monospaced", Font.PLAIN, fontSize)));
+                new Font("Monospaced", Font.PLAIN, adjustedFontSize)));
     }
 
     // Here we check the screen resolution on the primary monitor and make a guess at if it's high-DPI or not
-    private static int getFontSize() {
-        int baseFontSize = 14;
+    private static int getAdjustedFontSize(int fontSize) {
+        int baseFontSize = fontSize;
         String[] javaVersion = System.getProperty("java.version", "1").split("\\.");
         if (System.getProperty("os.name", "").startsWith("Windows") && Integer.parseInt(javaVersion[0]) >= 9) {
             // Java 9+ reports itself as HiDPI-unaware on Windows and will be scaled by the OS
@@ -139,22 +143,32 @@ public class AWTTerminalFontConfiguration {
         }
     }
 
+
     /**
      * Returns the default font to use depending on the platform
      * @return Default font to use, system-dependent
      */
     protected static Font[] selectDefaultFont() {
+        return selectDefaultFont(DEFAULT_FONT_SIZE);
+    }
+
+    /**
+     * Returns the default font to use depending on the platform
+     * @param fontSize The size of the fonts to use
+     * @return Default font to use, system-dependent
+     */
+    protected static Font[] selectDefaultFont(int fontSize) {
         String osName = System.getProperty("os.name", "").toLowerCase();
         if(osName.contains("win")) {
-            List<Font> windowsFonts = getDefaultWindowsFonts();
+            List<Font> windowsFonts = getDefaultWindowsFonts(fontSize);
             return windowsFonts.toArray(new Font[0]);
         }
         else if(osName.contains("linux")) {
-            List<Font> linuxFonts = getDefaultLinuxFonts();
+            List<Font> linuxFonts = getDefaultLinuxFonts(fontSize);
             return linuxFonts.toArray(new Font[0]);
         }
         else {
-            List<Font> defaultFonts = getDefaultFonts();
+            List<Font> defaultFonts = getDefaultFonts(fontSize);
             return defaultFonts.toArray(new Font[0]);
         }
     }
@@ -164,7 +178,16 @@ public class AWTTerminalFontConfiguration {
      * @return An {@link AWTTerminal} font configuration object with default values set up
      */
     public static AWTTerminalFontConfiguration getDefault() {
-        return newInstance(filterMonospaced(selectDefaultFont()));
+        return newInstance(filterMonospaced(selectDefaultFont(DEFAULT_FONT_SIZE)));
+    }
+
+    /**
+     * Returns the default font settings except for a custom font size to use.
+     * @param fontSize Size of the font
+     * @return An {@link AWTTerminal} font configuration object with default values set up
+     */
+    public static AWTTerminalFontConfiguration getDefaultOfSize(int fontSize) {
+        return newInstance(filterMonospaced(selectDefaultFont(fontSize)));
     }
 
     /**
