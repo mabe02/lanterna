@@ -295,6 +295,11 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
     }
 
     @Override
+    public void putString(String string) {
+        terminalImplementation.putString(string);
+    }
+
+    @Override
     public void enableSGR(SGR sgr) {
         terminalImplementation.enableSGR(sgr);
     }

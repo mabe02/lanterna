@@ -51,6 +51,8 @@ public interface IOSafeTerminal extends Terminal {
     @Override
     void putCharacter(char c);
     @Override
+    void putString(String string);
+    @Override
     void enableSGR(SGR sgr);
     @Override
     void disableSGR(SGR sgr);

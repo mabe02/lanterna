@@ -276,6 +276,11 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
     }
 
     @Override
+    public void putString(String string) {
+        swingTerminal.putString(string);
+    }
+
+    @Override
     public TextGraphics newTextGraphics() {
         return swingTerminal.newTextGraphics();
     }

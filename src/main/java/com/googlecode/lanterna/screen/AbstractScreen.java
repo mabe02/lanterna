@@ -139,7 +139,7 @@ public abstract class AbstractScreen implements Screen {
     @Override
     public synchronized void setCharacter(int column, int row, TextCharacter screenCharacter) {
         //It would be nice if we didn't have to care about tabs at this level, but we have no such luxury
-        if(screenCharacter.getCharacter() == '\t') {
+        if(screenCharacter.is('\t')) {
             //Swap out the tab for a space
             screenCharacter = screenCharacter.withCharacter(' ');
 
