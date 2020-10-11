@@ -186,6 +186,7 @@ public abstract class UnixLikeTTYTerminal extends UnixLikeTerminal {
     }
 
     private String getSTTYCommand() {
-        return "/bin/stty";
+        return System.getProperty("com.googlecode.lanterna.terminal.UnixTerminal.sttyCommand",
+                    "/bin/stty");
     }
 }
