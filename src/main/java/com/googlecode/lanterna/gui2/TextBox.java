@@ -172,6 +172,13 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
         return this;
     }
 
+    /**
+     * Assigns a change listener for when the TextBox content has changed. This can be either by user interactions with
+     * the component or through programmatically adding and removing lines (there is a flag set on the callback to make
+     * it possible to distinguish between the two).
+     * @param textChangeListener Text change listener to invoke when the TextBox content has changed
+     * @return Itself
+     */
     public synchronized TextBox setTextChangeListener(TextChangeListener textChangeListener) {
         this.textChangeListener = textChangeListener;
         return this;
@@ -942,7 +949,18 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
         }
     }
 
+    /**
+     * Listener interface for when the {@link TextBox} content has changed. This can be either by user interactions with
+     * the component or through programmatically adding and removing lines (there is a flag set on the callback method
+     * to make it possible to distinguish between the two).
+     */
     public interface TextChangeListener {
+        /**
+         * Callback method invoked by the {@link TextBox} when the text content has changed
+         * @param newText The new content of the {@link TextBox}
+         * @param changedByUserInteraction If {@code true}, then the TextBox was modified through user interaction,
+         *                                 otherwise the content changed from a programmatical update.
+         */
         void onTextChanged(String newText, boolean changedByUserInteraction);
     }
 }
