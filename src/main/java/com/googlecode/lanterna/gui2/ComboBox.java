@@ -52,8 +52,11 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
          * This method is called whenever the user changes selection from one item to another in the combo box
          * @param selectedIndex Index of the item which is now selected
          * @param previousSelection Index of the item which was previously selected
+         * @param changedByUserInteraction If {@code true} then this selection change happened because of user
+         *                                 interaction with the combo box. If {@code false} then the selected
+         *                                 item was set programmatically.
          */
-        void onSelectionChanged(int selectedIndex, int previousSelection);
+        void onSelectionChanged(int selectedIndex, int previousSelection, boolean changedByUserInteraction);
     }
 
     private final List<V> items;
@@ -327,7 +330,11 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
      * @param selectedIndex Index of the item to select, or -1 if the selection should be cleared
      * @throws IndexOutOfBoundsException if the index is out of range
      */
-    public synchronized void setSelectedIndex(final int selectedIndex) {
+    public void setSelectedIndex(final int selectedIndex) {
+        setSelectedIndex(selectedIndex, false);
+    }
+
+    private synchronized void setSelectedIndex(final int selectedIndex, final boolean changedByUserInteraction) {
         if(items.size() <= selectedIndex || selectedIndex < -1) {
             throw new IndexOutOfBoundsException("Illegal argument to ComboBox.setSelectedIndex: " + selectedIndex);
         }
@@ -341,7 +348,7 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
         }
         runOnGUIThreadIfExistsOtherwiseRunDirect(() -> {
             for(Listener listener: listeners) {
-                listener.onSelectionChanged(selectedIndex, oldSelection);
+                listener.onSelectionChanged(selectedIndex, oldSelection, changedByUserInteraction);
             }
         });
         invalidate();
@@ -536,13 +543,13 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
 
             case ArrowDown:
                 if(selectedIndex < items.size() - 1) {
-                    setSelectedIndex(selectedIndex + 1);
+                    setSelectedIndex(selectedIndex + 1, true);
                 }
                 return Result.HANDLED;
 
             case ArrowUp:
                 if(selectedIndex > 0) {
-                    setSelectedIndex(selectedIndex - 1);
+                    setSelectedIndex(selectedIndex - 1, true);
                 }
                 return Result.HANDLED;
 
@@ -564,7 +571,7 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
                 V item = items.get(i);
                 final int index = i;
                 listBox.addItem(item.toString(), () -> {
-                    setSelectedIndex(index);
+                    setSelectedIndex(index, true);
                     close();
                 });
             }
