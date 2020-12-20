@@ -388,8 +388,8 @@ public interface Window extends BasePane {
 
     /**
      * @deprecated This is deprecated in favor of calling either of: {@code toGlobalFromContentRelative()} or {@code toGlobalFromDecoratedRelative()}.
-     * @see Window#toGlobalFromContentRelative()
-     * @see Window#toGlobalFromDecoratedRelative()
+     * @see Window#toGlobalFromContentRelative(TerminalPosition)
+     * @see Window#toGlobalFromDecoratedRelative(TerminalPosition) 
      */
     @Override
     @Deprecated
@@ -403,15 +403,15 @@ public interface Window extends BasePane {
     TerminalPosition toGlobalFromContentRelative(TerminalPosition localPosition);
     /**
      * Returns a position in the decorated window local coordinate space to global coordinates
-     * @param localPosition The local position to translate
+     * @param decoratedPosition The local position to translate
      * @return The local position translated to global coordinates
      */
     TerminalPosition toGlobalFromDecoratedRelative(TerminalPosition decoratedPosition);
 
     /**
      * @deprecated This is deprecated in favor of calling either of: {@code fromGlobalToContentRelative()} or {@code fromGlobalToDecoratedRelative()}
-     * @see Window#fromGlobalToContentRelative()
-     * @see Window#fromGlobalToDecoratedRelative()
+     * @see Window#fromGlobalToContentRelative(TerminalPosition) 
+     * @see Window#fromGlobalToDecoratedRelative(TerminalPosition) 
      */
     @Override
     @Deprecated

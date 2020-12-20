@@ -126,7 +126,6 @@ public class WindowList {
      * top. If {@code reverse} is set to {@code true} then the window at the bottom of the stack is moved up to the
      * front and the previous top window will be immediately below it
      * @param reverse Direction to cycle through the windows
-     * @return Itself
      */
     public void cycleActiveWindow(boolean reverse) {
         if(windows.isEmpty() || windows.size() == 1 || (activeWindow != null && activeWindow.getHints().contains(Window.Hint.MODAL))) {
