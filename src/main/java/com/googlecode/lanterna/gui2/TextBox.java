@@ -69,6 +69,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> implements S
     private Character mask;
     private Pattern validationPattern;
     private ScrollPanel scrollPanel = null;
+    private TextChangeListener textChangeListener;
 
     /**
      * Default constructor, this creates a single-line {@code TextBox} of size 10 which is initially empty
@@ -141,6 +142,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> implements S
         this.longestRow = 1;    //To fit the cursor
         this.mask = null;
         this.validationPattern = null;
+        this.textChangeListener = null;
         setText(initialContent);
 
         // Re-adjust caret position
@@ -227,6 +229,18 @@ public class TextBox extends AbstractInteractableComponent<TextBox> implements S
     }
 
     /**
+     * Assigns a change listener for when the TextBox content has changed. This can be either by user interactions with
+     * the component or through programmatically adding and removing lines (there is a flag set on the callback to make
+     * it possible to distinguish between the two).
+     * @param textChangeListener Text change listener to invoke when the TextBox content has changed
+     * @return Itself
+     */
+    public synchronized TextBox setTextChangeListener(TextChangeListener textChangeListener) {
+        this.textChangeListener = textChangeListener;
+        return this;
+    }
+
+    /**
      * Updates the text content of the {@code TextBox} to the supplied string.
      * @param text New text to assign to the {@code TextBox}
      * @return Itself
@@ -290,6 +304,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> implements S
         if(longestRow < lineWidth + 1) {
             longestRow = lineWidth + 1;
         }
+        fireOnTextChanged(false);
         invalidate();
         return this;
     }
@@ -326,6 +341,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> implements S
             // Update caret position
             setCaretPosition(caretPosition.minus(new TerminalPosition(0,1)));
         }
+        fireOnTextChanged(false);
         return this;
     }
 
@@ -554,21 +570,26 @@ public class TextBox extends AbstractInteractableComponent<TextBox> implements S
             return handleKeyStrokeReadOnly(keyStroke);
         }
         String line = lines.get(caretPosition.getRow());
+        boolean lineWasModified = false;
+        Result result = null;
         switch(keyStroke.getKeyType()) {
             case Character:
                 if(maxLineLength == -1 || maxLineLength > line.length() + 1) {
                     line = line.substring(0, caretPosition.getColumn()) + keyStroke.getCharacter() + line.substring(caretPosition.getColumn());
                     if(validated(line)) {
                         lines.set(caretPosition.getRow(), line);
+                        lineWasModified = true;
                         caretPosition = caretPosition.withRelativeColumn(1);
                     }
                 }
-                return Result.HANDLED;
+                result = Result.HANDLED;
+                break;
             case Backspace:
                 if(caretPosition.getColumn() > 0) {
                     line = line.substring(0, caretPosition.getColumn() - 1) + line.substring(caretPosition.getColumn());
                     if(validated(line)) {
                         lines.set(caretPosition.getRow(), line);
+                        lineWasModified = true;
                         caretPosition = caretPosition.withRelativeColumn(-1);
                     }
                 }
@@ -579,14 +600,17 @@ public class TextBox extends AbstractInteractableComponent<TextBox> implements S
                         caretPosition = caretPosition.withRelativeRow(-1);
                         caretPosition = caretPosition.withColumn(lines.get(caretPosition.getRow()).length());
                         lines.set(caretPosition.getRow(), concatenatedLines);
+                        lineWasModified = true;
                     }
                 }
-                return Result.HANDLED;
+                result = Result.HANDLED;
+                break;
             case Delete:
                 if(caretPosition.getColumn() < line.length()) {
                     line = line.substring(0, caretPosition.getColumn()) + line.substring(caretPosition.getColumn() + 1);
                     if(validated(line)) {
                         lines.set(caretPosition.getRow(), line);
+                        lineWasModified = true;
                     }
                 }
                 else if(style == Style.MULTI_LINE && caretPosition.getRow() < lines.size() - 1) {
@@ -594,9 +618,11 @@ public class TextBox extends AbstractInteractableComponent<TextBox> implements S
                     if(validated(concatenatedLines)) {
                         lines.set(caretPosition.getRow(), concatenatedLines);
                         lines.remove(caretPosition.getRow() + 1);
+                        lineWasModified = true;
                     }
                 }
-                return Result.HANDLED;
+                result = Result.HANDLED;
+                break;
             case ArrowLeft:
                 if(caretPosition.getColumn() > 0) {
                     caretPosition = caretPosition.withRelativeColumn(-1);
@@ -606,9 +632,10 @@ public class TextBox extends AbstractInteractableComponent<TextBox> implements S
                     caretPosition = caretPosition.withColumn(lines.get(caretPosition.getRow()).length());
                 }
                 else if(horizontalFocusSwitching) {
-                    return Result.MOVE_FOCUS_LEFT;
+                    result = Result.MOVE_FOCUS_LEFT;
                 }
-                return Result.HANDLED;
+                result = result == null ? Result.HANDLED : result;
+                break;
             case ArrowRight:
                 if(caretPosition.getColumn() < lines.get(caretPosition.getRow()).length()) {
                     caretPosition = caretPosition.withRelativeColumn(1);
@@ -618,31 +645,36 @@ public class TextBox extends AbstractInteractableComponent<TextBox> implements S
                     caretPosition = caretPosition.withColumn(0);
                 }
                 else if(horizontalFocusSwitching) {
-                    return Result.MOVE_FOCUS_RIGHT;
+                    result = Result.MOVE_FOCUS_RIGHT;
                 }
-                return Result.HANDLED;
+                result = result == null ? Result.HANDLED : result;
+                break;
             case ArrowUp:
                 if(canMoveCaretUp()) {
                     performMoveCaretUp();
                 }
                 else if(verticalFocusSwitching) {
-                    return Result.MOVE_FOCUS_UP;
+                    result = Result.MOVE_FOCUS_UP;
                 }
-                return Result.HANDLED;
+                result = result == null ? Result.HANDLED : result;
+                break;
             case ArrowDown:
                 if(canMoveCaretDown()) {
                     performMoveCaretDown();
                 }
                 else if(verticalFocusSwitching) {
-                    return Result.MOVE_FOCUS_DOWN;
+                    result = Result.MOVE_FOCUS_DOWN;
                 }
-                return Result.HANDLED;
+                result = result == null ? Result.HANDLED : result;
+                break;
             case End:
                 caretPosition = caretPosition.withColumn(line.length());
-                return Result.HANDLED;
+                result = Result.HANDLED;
+                break;
             case Enter:
                 if(style == Style.SINGLE_LINE) {
-                    return Result.MOVE_FOCUS_NEXT;
+                    result = Result.MOVE_FOCUS_NEXT;
+                    break;
                 }
                 String newLine = line.substring(caretPosition.getColumn());
                 String oldLine = line.substring(0, caretPosition.getColumn());
@@ -650,11 +682,14 @@ public class TextBox extends AbstractInteractableComponent<TextBox> implements S
                     lines.set(caretPosition.getRow(), oldLine);
                     lines.add(caretPosition.getRow() + 1, newLine);
                     caretPosition = caretPosition.withColumn(0).withRelativeRow(1);
+                    lineWasModified = true;
                 }
-                return Result.HANDLED;
+                result = Result.HANDLED;
+                break;
             case Home:
                 caretPosition = caretPosition.withColumn(0);
-                return Result.HANDLED;
+                result = Result.HANDLED;
+                break;
             case PageDown:
                 caretPosition = caretPosition.withRelativeRow(getSize().getRows());
                 if(caretPosition.getRow() > lines.size() - 1) {
@@ -663,7 +698,8 @@ public class TextBox extends AbstractInteractableComponent<TextBox> implements S
                 if(lines.get(caretPosition.getRow()).length() < caretPosition.getColumn()) {
                     caretPosition = caretPosition.withColumn(lines.get(caretPosition.getRow()).length());
                 }
-                return Result.HANDLED;
+                result = Result.HANDLED;
+                break;
             case PageUp:
                 caretPosition = caretPosition.withRelativeRow(-getSize().getRows());
                 if(caretPosition.getRow() < 0) {
@@ -672,14 +708,16 @@ public class TextBox extends AbstractInteractableComponent<TextBox> implements S
                 if(lines.get(caretPosition.getRow()).length() < caretPosition.getColumn()) {
                     caretPosition = caretPosition.withColumn(lines.get(caretPosition.getRow()).length());
                 }
-                return Result.HANDLED;
+                result = Result.HANDLED;
+                break;
             case MouseEvent:
                 if (!isFocused()) {
                     break;
                 }
                 if (isMouseMove(keyStroke)) {
                     // do nothing
-                    return Result.UNHANDLED;
+                    result = Result.UNHANDLED;
+                    break;
                 }
                 MouseAction mouseAction = (MouseAction) keyStroke;
                 MouseActionType actionType = mouseAction.getActionType();
@@ -700,16 +738,22 @@ public class TextBox extends AbstractInteractableComponent<TextBox> implements S
                         int minPositionAttempt = 0;
                         int maxPositionAttempt = newActiveLine.length();
                         newCaretPositionColumn = Math.max(minPositionAttempt, Math.min(newCaretPositionColumn, maxPositionAttempt));
-                        
+
                         caretPosition = caretPosition.with(new TerminalPosition(newCaretPositionColumn, newCaretPositionRow));
                     }
                 }
-                return Result.HANDLED;
-            default:
+                result = Result.HANDLED;
+                break;
         }
-        return super.handleKeyStroke(keyStroke);
+        if (result == null) {
+            result = super.handleKeyStroke(keyStroke);
+        }
+        else if (lineWasModified) {
+            fireOnTextChanged(true);
+        }
+        return result;
     }
-    
+
     private boolean canMoveCaretUp() {
         return caretPosition.getRow() > 0;
     }
@@ -782,6 +826,14 @@ public class TextBox extends AbstractInteractableComponent<TextBox> implements S
             default:
         }
         return super.handleKeyStroke(keyStroke);
+    }
+
+    private void fireOnTextChanged(boolean initiatedByUserInteraction) {
+        TextChangeListener textChangeListener = this.textChangeListener;
+        if (textChangeListener != null) {
+            String newText = getText();
+            textChangeListener.onTextChanged(newText, initiatedByUserInteraction);
+        }
     }
 
     /**
@@ -1008,5 +1060,20 @@ public class TextBox extends AbstractInteractableComponent<TextBox> implements S
                 graphics.putString(0, row, TerminalTextUtils.fitString(line, viewTopLeft.getColumn(), textAreaSize.getColumns()));
             }
         }
+    }
+
+    /**
+     * Listener interface for when the {@link TextBox} content has changed. This can be either by user interactions with
+     * the component or through programmatically adding and removing lines (there is a flag set on the callback method
+     * to make it possible to distinguish between the two).
+     */
+    public interface TextChangeListener {
+        /**
+         * Callback method invoked by the {@link TextBox} when the text content has changed
+         * @param newText The new content of the {@link TextBox}
+         * @param changedByUserInteraction If {@code true}, then the TextBox was modified through user interaction,
+         *                                 otherwise the content changed from a programmatical update.
+         */
+        void onTextChanged(String newText, boolean changedByUserInteraction);
     }
 }

@@ -190,6 +190,16 @@ public class IOSafeTerminalAdapter implements IOSafeTerminal {
     }
 
     @Override
+    public void putString(String string) {
+        try {
+            backend.putString(string);
+        }
+        catch(IOException e) {
+            exceptionHandler.onException(e);
+        }
+    }
+
+    @Override
     public TextGraphics newTextGraphics() {
         try {
             return backend.newTextGraphics();

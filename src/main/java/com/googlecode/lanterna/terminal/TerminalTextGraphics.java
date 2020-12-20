@@ -82,7 +82,7 @@ class TerminalTextGraphics extends AbstractTextGraphics {
                 terminal.setCursorPosition(position.getColumn(), position.getRow());
                 applyGraphicState(textCharacter);
             }
-            terminal.putCharacter(textCharacter.getCharacter());
+            terminal.putString(textCharacter.getCharacterString());
             if(manageCallStackSize.get() > 0) {
                 lastPosition = position.withRelativeColumn(1);
             }

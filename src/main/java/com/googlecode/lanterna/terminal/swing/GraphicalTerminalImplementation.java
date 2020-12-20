@@ -407,12 +407,12 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
             for(int column = 0; column < viewportSize.getColumns(); column++) {
                 TextCharacter textCharacter = bufferLine.getCharacterAt(column);
                 boolean atCursorLocation = cursorPosition.equals(column, rowNumber);
-                //If next position is the cursor location and this is a CJK character (i.e. cursor is on the padding),
+                //If next position is the cursor location and this is a double-width character (i.e. cursor is on the padding),
                 //consider this location the cursor position since otherwise the cursor will be skipped
                 if(!atCursorLocation &&
                         cursorPosition.getColumn() == column + 1 &&
                         cursorPosition.getRow() == rowNumber &&
-                        TerminalTextUtils.isCharCJK(textCharacter.getCharacter())) {
+                        textCharacter.isDoubleWidth()) {
                     atCursorLocation = true;
                 }
                 boolean isBlinking = textCharacter.getModifiers().contains(SGR.BLINK);
@@ -420,7 +420,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
                     foundBlinkingCharacters.set(true);
                 }
                 if(dirtyCellsLookupTable.isAllDirty() || dirtyCellsLookupTable.isDirty(rowNumber, column) || isBlinking) {
-                    int characterWidth = fontWidth * (TerminalTextUtils.isCharCJK(textCharacter.getCharacter()) ? 2 : 1);
+                    int characterWidth = fontWidth * (textCharacter.isDoubleWidth() ? 2 : 1);
                     Color foregroundColor = deriveTrueForegroundColor(textCharacter, atCursorLocation);
                     Color backgroundColor = deriveTrueBackgroundColor(textCharacter, atCursorLocation);
                     //Always draw if the cursor isn't blinking
@@ -445,7 +445,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
                             scrollOffsetFromTopInPixels,
                             drawCursor);
                 }
-                if(TerminalTextUtils.isCharCJK(textCharacter.getCharacter())) {
+                if(textCharacter.isDoubleWidth()) {
                     column++; //Skip the trailing space after a CJK character
                 }
             }
@@ -538,7 +538,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
         Font font = getFontForCharacter(character);
         g.setFont(font);
         FontMetrics fontMetrics = g.getFontMetrics();
-        g.drawString(Character.toString(character.getCharacter()), x, y + fontHeight - fontMetrics.getDescent() + 1);
+        g.drawString(character.getCharacterString(), x, y + fontHeight - fontMetrics.getDescent() + 1);
 
         if(character.isCrossedOut()) {
             //noinspection UnnecessaryLocalVariable
@@ -717,6 +717,11 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     @Override
     public synchronized void putCharacter(final char c) {
         virtualTerminal.putCharacter(c);
+    }
+
+    @Override
+    public void putString(String string) {
+        virtualTerminal.putString(string);
     }
 
     @Override

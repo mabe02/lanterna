@@ -336,7 +336,7 @@ public class BasicTextImage implements TextImage {
         sb.append('{').append(size.getColumns()).append('x').append(size.getRows()).append('}').append('\n');
         for (TextCharacter[] line : buffer) {
             for (TextCharacter tc : line) {
-                sb.append(tc.getCharacter());
+                sb.append(tc.getCharacterString());
             }
             sb.append('\n');
         }

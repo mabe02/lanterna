@@ -138,6 +138,30 @@ public interface Terminal extends InputProvider, Closeable {
     void putCharacter(char c) throws IOException;
 
     /**
+     * Prints a string to the terminal at the current cursor location. Please note that the cursor will then move
+     * one column to the right, so multiple calls to {@code putString} will print out a text string without the need
+     * to reposition the text cursor. If you reach the end of the line while putting characters using this method, you
+     * can expect the text cursor to move to the beginning of the next line.
+     * <p>
+     * You can output CJK (Chinese, Japanese, Korean) characters (as well as other regional scripts) but remember that
+     * the terminal that the user is using might not have the required font to render it. Also worth noticing is that
+     * CJK (and some others) characters tend to take up 2 columns per character, simply because they are a square in
+     * their construction as opposed to the somewhat rectangular shape we fit latin characters in. As it's very
+     * difficult to create a monospace font for CJK with a 2:1 height-width proportion, it seems like the implementers
+     * back in the days simply gave up and made each character take 2 column. It causes issues for the random terminal
+     * programmer because you can't really trust 1 character = 1 column, but I suppose it's "しょうがない".
+     * <p>
+     * If you try to print non-printable control characters, the terminal is likely to ignore them (all {@link Terminal}
+     * implementations bundled with Lanterna will).
+     * <p>
+     * You can use this method to place emoji characters on the terminal, since they take up more than one char with
+     * Java's built-in UTF16 encoding.
+     * @param string String to place on the terminal
+     * @throws java.io.IOException If there was an underlying I/O error
+     */
+    void putString(String string) throws IOException;
+
+    /**
      * Creates a new TextGraphics object that uses this Terminal directly when outputting. Keep in mind that you are
      * probably better off to switch to a Screen to make advanced text graphics more efficient. Also, this TextGraphics
      * implementation will not call {@code .flush()} after any operation, so you'll need to do that on your own.
