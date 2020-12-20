@@ -167,7 +167,8 @@ public class TextCharacter {
         }
         validateSingleCharacter(character);
 
-        this.character = character;
+        // intern the string so we don't waste more memory than necessary
+        this.character = character.intern();
         char firstCharacter = character.charAt(0);
 
         // Don't allow creating a TextCharacter containing a control character
