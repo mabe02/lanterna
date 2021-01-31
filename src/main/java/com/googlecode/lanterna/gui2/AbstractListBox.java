@@ -411,23 +411,6 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
                 verticalScrollBar.draw(graphics.newTextGraphics(
                         new TerminalPosition(graphics.getSize().getColumns() - 1, 0),
                         new TerminalSize(1, graphics.getSize().getRows())));
-                /*
-                graphics.putString(componentWidth - 1, 0, Symbols.ARROW_UP + "");
-
-                graphics.applyThemeStyle(themeDefinition.getInsensitive());
-                for(int i = 1; i < componentHeight - 1; i++)
-                    graphics.putString(componentWidth - 1, i, Symbols.BLOCK_MIDDLE + "");
-
-                graphics.applyThemeStyle(themeDefinition.getNormal());
-                graphics.putString(componentWidth - 1, componentHeight - 1, Symbols.ARROW_DOWN + "");
-
-                //Finally print the 'tick'
-                int scrollableSize = items.size() - componentHeight;
-                double position = (double)scrollTopIndex / ((double)scrollableSize);
-                int tickPosition = (int)(((double) componentHeight - 3.0) * position);
-                graphics.applyThemeStyle(themeDefinition.getInsensitive());
-                graphics.putString(componentWidth - 1, 1 + tickPosition, " ");
-                */
             }
         }
     }
