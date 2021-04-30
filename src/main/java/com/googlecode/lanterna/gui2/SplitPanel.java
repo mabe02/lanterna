@@ -111,6 +111,7 @@ public class SplitPanel extends Panel {
                 return Result.HANDLED;
             }
         };
+        imageComponent.setEnabled(false);
         
         return imageComponent;
     }
