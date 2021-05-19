@@ -38,7 +38,7 @@ import com.googlecode.lanterna.input.MouseActionType;
  * Size-wise, a {@code TextBox} should be hard-coded to a particular size, it's not good at guessing how large it should
  * be. You can do this through the constructor.
  */
-public class TextBox extends AbstractInteractableComponent<TextBox> {
+public class TextBox extends AbstractInteractableComponent<TextBox> implements ScrollableBox {
 
     /**
      * Enum value to force a {@code TextBox} to be either single line or multi line. This is usually auto-detected if
@@ -68,6 +68,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
     private int longestRow;
     private Character mask;
     private Pattern validationPattern;
+    private ScrollPanel scrollPanel = null;
     private TextChangeListener textChangeListener;
 
     /**
@@ -152,7 +153,60 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
         }
         setPreferredSize(preferredSize);
     }
-
+    
+    @Override
+    public void setIsWithinScrollPanel(ScrollPanel scrollPanel) {
+        this.scrollPanel = scrollPanel;
+        // when in scrollpanel, allow the renderer to determination full size
+        setPreferredSize(null);
+    }
+    @Override
+    public boolean isVerticalScrollCapable() {
+        return true;
+    }
+    @Override
+    public boolean isHorizontalScrollCapable() {
+        return true;
+    }
+    
+    public void pullViewportToOverlapCaret() {
+        if (scrollPanel != null) {
+            TerminalPosition pullAmount = calculatePull();
+            scrollPanel.doOffsetAmount(pullAmount);
+        }
+    }
+    @Override
+    public void pullSelectionIntoView() {
+        if (scrollPanel != null) {
+            TerminalPosition pullAmount = calculatePull();
+            setCaretPosition(caretPosition.plus(pullAmount));
+        }
+    }
+    private TerminalPosition calculatePull() {
+        int caretX = caretPosition.getColumn();
+        int caretY = caretPosition.getRow();
+        
+        TerminalPosition scrollOffset = scrollPanel.getScrollOffset();
+        int scrollX = scrollOffset.getColumn();
+        int scrollY = scrollOffset.getRow();
+        TerminalSize vp = scrollPanel.getViewportSize();
+        int dx = 0;
+        if (caretX < -scrollX) {
+            dx = -scrollX - caretX;
+        } else if (-scrollX + vp.getColumns() -1 < caretX) {
+            dx = -(caretX - (-scrollX + vp.getColumns() -1));
+        }
+        
+        int dy = 0;
+        if (caretY < -scrollY) {
+            dy = -scrollY - caretY;
+        } else if (-scrollY + vp.getRows() -1 < caretY) {
+            dy = -(caretY - (-scrollY + vp.getRows() -1));
+        }
+        
+        return new TerminalPosition(dx, dy);
+    }
+    
     /**
      * Sets a pattern on which the content of the text box is to be validated. For multi-line TextBox:s, the pattern is
      * checked against each line individually, not the content as a whole. Partial matchings will not be allowed, the
@@ -281,11 +335,11 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
         lines.remove(lineIndex);
         if (caretPosition.getRow() == lineIndex) {
             // Validate the caret can still stay in this position
-            setCaretPosition(caretPosition.getRow(), caretPosition.getColumn());
+            setCaretPosition(caretPosition);
         }
         else if (caretPosition.getRow() > lineIndex) {
             // Update caret position
-            setCaretPosition(caretPosition.getRow() - 1, caretPosition.getColumn());
+            setCaretPosition(caretPosition.minus(new TerminalPosition(0,1)));
         }
         fireOnTextChanged(false);
         return this;
@@ -330,7 +384,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
      * @return Itself
      */
     public synchronized TextBox setCaretPosition(int column) {
-        return setCaretPosition(getCaretPosition().getRow(), column);
+        return setCaretPosition(caretPosition.withColumn(column));
     }
 
     /**
@@ -338,23 +392,24 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
      * line component is not used. If one of the positions are out of bounds, it is automatically set back into range.
      * @param line Which line inside the {@link TextBox} to move the caret to (0 being the first line), ignored if the
      *             {@link TextBox} is single-line
-     * @param column  What column on the specified line to move the text caret to (0 being the first column)
+     * @param position What row & column to move the text caret to (0 being the first column)
      * @return Itself
      */
-    public synchronized TextBox setCaretPosition(int line, int column) {
-        if(line < 0) {
-            line = 0;
+    public synchronized TextBox setCaretPosition(TerminalPosition position) {
+        if (lines.size() == 0) {
+            // bail
+            caretPosition = new TerminalPosition(0, 0);
+            return this;
         }
-        else if(line >= lines.size()) {
-            line = lines.size() - 1;
-        }
-        if(column < 0) {
-            column = 0;
-        }
-        else if(column > lines.get(line).length()) {
-            column = lines.get(line).length();
-        }
-        caretPosition = caretPosition.withRow(line).withColumn(column);
+        
+        int x = position.getColumn();
+        int y = position.getRow();
+        
+        y = Math.max(0, Math.min(y, lines.size()-1));
+        x = Math.max(0, Math.min(x, lines.get(y).length()));
+        
+        caretPosition = new TerminalPosition(x, y);
+        //pullViewportToOverlapCaret();
         return this;
     }
 
@@ -503,6 +558,14 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
 
     @Override
     public synchronized Result handleKeyStroke(KeyStroke keyStroke) {
+        try {
+            return handleKeyStrokeAll(keyStroke);
+        } finally {
+            pullViewportToOverlapCaret();
+        }
+    }
+    
+    private Result handleKeyStrokeAll(KeyStroke keyStroke) {
         if(readOnly) {
             return handleKeyStrokeReadOnly(keyStroke);
         }
@@ -871,14 +934,15 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
             if(realTextArea.getRows() == 0 || realTextArea.getColumns() == 0) {
                 return;
             }
+            boolean inScrollPanel = component.scrollPanel != null;
             boolean drawVerticalScrollBar = false;
             boolean drawHorizontalScrollBar = false;
             int textBoxLineCount = component.getLineCount();
-            if(!hideScrollBars && textBoxLineCount > realTextArea.getRows() && realTextArea.getColumns() > 1) {
+            if(!inScrollPanel && !hideScrollBars && textBoxLineCount > realTextArea.getRows() && realTextArea.getColumns() > 1) {
                 realTextArea = realTextArea.withRelativeColumns(-1);
                 drawVerticalScrollBar = true;
             }
-            if(!hideScrollBars && component.longestRow > realTextArea.getColumns() && realTextArea.getRows() > 1) {
+            if(!inScrollPanel && !hideScrollBars && component.longestRow > realTextArea.getColumns() && realTextArea.getRows() > 1) {
                 realTextArea = realTextArea.withRelativeRows(-1);
                 drawHorizontalScrollBar = true;
                 if(textBoxLineCount > realTextArea.getRows() && !drawVerticalScrollBar) {
@@ -886,9 +950,11 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
                     drawVerticalScrollBar = true;
                 }
             }
-
-            drawTextArea(graphics.newTextGraphics(TerminalPosition.TOP_LEFT_CORNER, realTextArea), component);
-
+            if (inScrollPanel) {
+                drawTextArea(graphics, component);
+            } else {
+                drawTextArea(graphics.newTextGraphics(TerminalPosition.TOP_LEFT_CORNER, realTextArea), component);
+            }
             //Draw scrollbars, if any
             if(drawVerticalScrollBar) {
                 verticalScrollBar.onAdded(component.getParent());

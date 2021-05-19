@@ -446,15 +446,15 @@ public class DefaultTerminalFactory implements TerminalFactory {
 
     private Terminal createWindowsTerminal() throws IOException {
         try {
-            Class<?> nativeImplementation = Class.forName("com.googlecode.lanterna.terminal.WindowsTerminal");
+            Class<?> nativeImplementation = Class.forName("com.googlecode.lanterna.terminal.win32.WindowsTerminal");
             Constructor<?> constructor = nativeImplementation.getConstructor(InputStream.class, OutputStream.class, Charset.class, UnixLikeTTYTerminal.CtrlCBehaviour.class);
             return (Terminal)constructor.newInstance(inputStream, outputStream, charset, UnixLikeTTYTerminal.CtrlCBehaviour.CTRL_C_KILLS_APPLICATION);
         }
-        catch(Exception ignore) {
+        catch(Exception | NoClassDefFoundError ignore) {
             try {
                 return createCygwinTerminal(outputStream, inputStream, charset);
             } catch(IOException e) {
-                throw new IOException("To start java on Windows, use javaw! (see https://github.com/mabe02/lanterna/issues/335 )", e);
+                throw new IOException("To use Lanterna on Windows, either add JNA (and jna-platform) to the classpath or use javaw! (see https://github.com/mabe02/lanterna/issues/335)", e);
             }
         }
     }

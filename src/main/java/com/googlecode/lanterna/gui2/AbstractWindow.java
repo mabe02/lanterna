@@ -141,7 +141,7 @@ public abstract class AbstractWindow extends AbstractBasePane<Window> implements
     }
 
     /**
-     * @see Window#toGlobalFromContentRelative(TerminalPosition)  
+     * @see Window#toGlobalFromContentRelative(TerminalPosition)
      */
     @Override
     @Deprecated
@@ -167,7 +167,7 @@ public abstract class AbstractWindow extends AbstractBasePane<Window> implements
     }
 
     /**
-     * @see Window#fromGlobalToContentRelative(TerminalPosition)  
+     * @see Window#fromGlobalToContentRelative(TerminalPosition)
      */
     @Override
     @Deprecated

@@ -35,10 +35,12 @@ import com.googlecode.lanterna.input.MouseActionType;
  * @param <V> Type of items this list box contains
  * @author Martin
  */
-public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extends AbstractInteractableComponent<T> {
+public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extends AbstractInteractableComponent<T> implements ScrollableBox<T> {
     private final List<V> items;
     private int selectedIndex;
     private ListItemRenderer<V,T> listItemRenderer;
+    
+    protected ScrollPanel scrollPanel = null;
     protected TerminalPosition scrollOffset = new TerminalPosition(0, 0);
     
     /**
@@ -65,6 +67,90 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
         setListItemRenderer(createDefaultListItemRenderer());
     }
 
+    @Override
+    public void setIsWithinScrollPanel(ScrollPanel scrollPanel) {
+        this.scrollPanel = scrollPanel;
+    }
+    boolean isWithinScrollPanel() {
+        return scrollPanel != null;
+    }
+    void ifScrollPanelRedoOffset() {
+        if (isWithinScrollPanel()) {
+            scrollPanel.redoOffset();
+        }
+    }
+    
+    @Override
+    public boolean isVerticalScrollCapable() {
+        return true;
+    }
+    
+    private void doPageKeyboard(boolean isLess) {
+        if (scrollPanel != null) {
+            scrollPanel.doPageKeyboard(true, isLess);
+        } else {
+            doOffsetAmount(isLess, getSize().getRows());
+        }
+    }
+    private void doOffsetAmount(boolean isLess, int desiredMagnitude) {
+        int priorOffset = scrollOffset.getRow();
+        if (isLess && getSize() != null) {
+            adjustScrollOffset(desiredMagnitude);
+        } else if (!isLess && getSize() != null) {
+            adjustScrollOffset(-desiredMagnitude);
+        }
+        if (priorOffset == scrollOffset.getRow()) {
+            // scrolling stopped, start moving selection more
+            setSelectedIndex(selectedIndex + desiredMagnitude * (isLess ? -1 : 1));
+        }
+        pullSelectionIntoView();
+    }
+    @Override
+    public void pullSelectionIntoView() {
+        int offset = getScrollOffset();
+        int viewedRows = scrollPanel != null ? scrollPanel.getViewportSize().getRows() : getSize().getRows();
+        
+        int minViewableSelection = Math.max(0, -offset);
+        int maxViewableSelection = minViewableSelection + viewedRows;
+        if (selectedIndex < minViewableSelection) {
+            setSelectedIndex(minViewableSelection);
+        } else if(selectedIndex >= maxViewableSelection) {
+            setSelectedIndex(maxViewableSelection -1);
+        }
+    }
+    public void pullViewportToOverlapSelection() {
+        if (scrollPanel != null) {
+            int vOffset = scrollPanel.getScrollOffset().getRow();
+            TerminalSize vp = scrollPanel.getViewportSize();
+            if (selectedIndex < -vOffset) {
+                int distance = -vOffset - selectedIndex;
+                scrollPanel.doOffsetAmount(new TerminalPosition(0, distance));
+            } else if (-vOffset + vp.getRows() -1 < selectedIndex) {
+                int distance = selectedIndex - (-vOffset + vp.getRows() -1);
+                scrollPanel.doOffsetAmount(new TerminalPosition(0, -distance));
+            }
+        } else {
+            // TODO: not in ScrollPanel
+        }
+    }
+    int getScrollOffset() {
+        if (scrollPanel != null) {
+            return scrollPanel.getScrollOffset().getRow();
+        } else {
+            return scrollOffset.getRow();
+        }
+    }
+    
+    private void adjustScrollOffset(int verticalAmount) {
+        // scrollerOffset is negative
+        int min = Math.min(0, getSize().getRows() - getItemCount());
+        int max = 0;
+        
+        int goal = scrollOffset.getRow() + verticalAmount;
+        int offset = Math.max(min, Math.min(goal, max));
+        scrollOffset = scrollOffset.withRow(offset);
+    }
+    
     @Override
     protected InteractableRenderer<T> createDefaultRenderer() {
         return new DefaultListBoxRenderer<>();
@@ -121,34 +207,36 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
                     if(items.isEmpty() || selectedIndex == items.size() - 1) {
                         return Result.MOVE_FOCUS_DOWN;
                     }
-                    selectedIndex++;
+                    setSelectedIndex(getSelectedIndex() +1);
+                    pullViewportToOverlapSelection();
                     return Result.HANDLED;
 
                 case ArrowUp:
                     if(items.isEmpty() || selectedIndex == 0) {
                         return Result.MOVE_FOCUS_UP;
                     }
-                    selectedIndex--;
+                    setSelectedIndex(getSelectedIndex() -1);
+                    pullViewportToOverlapSelection();
                     return Result.HANDLED;
 
                 case Home:
-                    selectedIndex = 0;
+                    setSelectedIndex(0);
+                    pullViewportToOverlapSelection();
                     return Result.HANDLED;
 
                 case End:
-                    selectedIndex = items.size() - 1;
+                    setSelectedIndex(items.size() - 1);
+                    pullViewportToOverlapSelection();
                     return Result.HANDLED;
 
                 case PageUp:
-                    if(getSize() != null) {
-                        setSelectedIndex(getSelectedIndex() - getSize().getRows());
-                    }
+                    doPageKeyboard(true);
+                    pullViewportToOverlapSelection();
                     return Result.HANDLED;
 
                 case PageDown:
-                    if(getSize() != null) {
-                        setSelectedIndex(getSelectedIndex() + getSize().getRows());
-                    }
+                    doPageKeyboard(false);
+                    pullViewportToOverlapSelection();
                     return Result.HANDLED;
 
                 case Character:
@@ -161,7 +249,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
                     MouseActionType actionType = mouseAction.getActionType();
                     if (isMouseMove(keyStroke)) {
                         takeFocus();
-                        selectedIndex = getIndexByMouseAction(mouseAction);
+                        setSelectedIndex(getIndexByMouseAction(mouseAction));
                         return Result.HANDLED;
                     }
                     
@@ -171,14 +259,16 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
                     } else if (actionType == MouseActionType.SCROLL_UP) {
                         // relying on setSelectedIndex(index) to clip the index to valid values within range
                         setSelectedIndex(getSelectedIndex() -1);
+                        pullViewportToOverlapSelection();
                         return Result.HANDLED;
                     } else if (actionType == MouseActionType.SCROLL_DOWN) {
                         // relying on setSelectedIndex(index) to clip the index to valid values within range
                         setSelectedIndex(getSelectedIndex() +1);
+                        pullViewportToOverlapSelection();
                         return Result.HANDLED;
                     }
             
-                    selectedIndex = getIndexByMouseAction(mouseAction);
+                    setSelectedIndex(getIndexByMouseAction(mouseAction));
                     return super.handleKeyStroke(keyStroke);
                 default:
             }
@@ -198,7 +288,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
     protected int getIndexByMouseAction(MouseAction click) {
         int index = click.getPosition().getRow() - getGlobalPosition().getRow() - scrollOffset.getRow();
         
-        return Math.min(index, items.size() -1);
+        return Math.max(-1, Math.min(index, items.size() -1));
     }
 
     private boolean selectByCharacter(Character character) {
@@ -249,6 +339,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
         if(selectedIndex == -1) {
             selectedIndex = 0;
         }
+        ifScrollPanelRedoOffset();
         invalidate();
         return self();
     }
@@ -268,6 +359,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
         while(selectedIndex >= items.size()) {
             selectedIndex--;
         }
+        ifScrollPanelRedoOffset();
         invalidate();
         return existing;
     }
@@ -279,6 +371,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
     public synchronized T clearItems() {
         items.clear();
         selectedIndex = -1;
+        ifScrollPanelRedoOffset();
         invalidate();
         return self();
     }
@@ -345,9 +438,9 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
      * @param index Index of the item that should be currently selected
      * @return Itself
      */
+    @Override
     public synchronized T setSelectedIndex(int index) {
         selectedIndex = Math.max(0, Math.min(index, items.size() -1));
-        
         invalidate();
         return self();
     }
@@ -358,6 +451,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
      * implementations such as {@code CheckBoxList} where individual items have a certain checked/unchecked state.
      * @return The index of the currently selected row in the list box, or -1 if there are no items
      */
+    @Override
     public int getSelectedIndex() {
         return selectedIndex;
     }
@@ -369,11 +463,12 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
      * @return The currently selected item in the list box, or {@code null} if there are no items
      */
     public synchronized V getSelectedItem() {
-        if (selectedIndex == -1) {
-            return null;
-        } else {
-            return items.get(selectedIndex);
+        List<V> theItems = items;
+        int index = getSelectedIndex();
+        if (0 <= index && index < theItems.size()) {
+            return theItems.get(index);
         }
+        return null;
     }
 
     /**
@@ -417,11 +512,13 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
                     maxWidth = stringLengthInColumns;
                 }
             }
-            return new TerminalSize(maxWidth + 1, listBox.getItemCount());
+            int additionalWidth = listBox.isWithinScrollPanel() ? 0 : 1;
+            return new TerminalSize(maxWidth + additionalWidth, listBox.getItemCount());
         }
 
         @Override
         public void drawComponent(TextGUIGraphics graphics, T listBox) {
+            scrollTopIndex = - listBox.scrollOffset.getRow();
             //update the page size, used for page up and page down keys
             ThemeDefinition themeDefinition = listBox.getTheme().getDefinition(AbstractListBox.class);
             int componentHeight = graphics.getSize().getRows();
@@ -449,7 +546,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
 
             graphics.applyThemeStyle(themeDefinition.getNormal());
             graphics.fill(' ');
-
+            
             TerminalSize itemSize = graphics.getSize().withRows(1);
             for(int i = scrollTopIndex; i < items.size(); i++) {
                 if(i - scrollTopIndex >= componentHeight) {
@@ -465,7 +562,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
             }
 
             graphics.applyThemeStyle(themeDefinition.getNormal());
-            if(items.size() > componentHeight) {
+            if(!listBox.isWithinScrollPanel() && items.size() > componentHeight) {
                 verticalScrollBar.onAdded(listBox.getParent());
                 verticalScrollBar.setViewSize(componentHeight);
                 verticalScrollBar.setScrollMaximum(items.size());
@@ -523,7 +620,8 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
          */
         public void drawItem(TextGUIGraphics graphics, T listBox, int index, V item, boolean selected, boolean focused) {
             ThemeDefinition themeDefinition = listBox.getTheme().getDefinition(AbstractListBox.class);
-            if(selected && focused) {
+            
+            if (selected) {
                 graphics.applyThemeStyle(themeDefinition.getSelected());
             }
             else {
