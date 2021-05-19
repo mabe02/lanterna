@@ -221,7 +221,7 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
     
     /**
      * Returns the index of the first row that is currently visible.
-     * @returns the index of the first row that is currently visible
+     * @return the index of the first row that is currently visible
      */
     public int getFirstViewedRowIndex() {
         return getRenderer().getViewTopRow();
@@ -229,7 +229,7 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
     
     /**
      * Returns the index of the last row that is currently visible.
-     * @returns the index of the last row that is currently visible
+     * @return the index of the last row that is currently visible
      */
     public int getLastViewedRowIndex() {
         int visibleRows = getRenderer().getVisibleRowsOnLastDraw();

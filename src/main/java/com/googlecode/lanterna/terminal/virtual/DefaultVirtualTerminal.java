@@ -174,7 +174,7 @@ public class DefaultVirtualTerminal extends AbstractTerminal implements VirtualT
 
     @Override
     public synchronized void putString(String string) {
-        for (TextCharacter textCharacter: TextCharacter.fromString(string)) {
+        for (TextCharacter textCharacter: TextCharacter.fromString(string, activeForegroundColor, activeBackgroundColor, activeModifiers)) {
             putCharacter(textCharacter);
         }
     }

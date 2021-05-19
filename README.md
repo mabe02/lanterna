@@ -34,7 +34,7 @@ Lanterna is available on [Maven Central](http://search.maven.org/), through [Son
     <dependency>
         <groupId>com.googlecode.lanterna</groupId>
         <artifactId>lanterna</artifactId>
-        <version>3.0.4</version>
+        <version>3.1.1</version>
     </dependency>
 ```
 
@@ -48,9 +48,10 @@ Development Guide
 See [docs](docs/contents.md) for examples and guides.
 
 JavaDoc is available here:
- * http://mabe02.github.io/lanterna/apidocs/3.0/
+ * http://mabe02.github.io/lanterna/apidocs/3.1/
 
-The JavaDocs for the previous version (2.1) is also available here:
+The JavaDocs for the previous versions (2.1 and 3.0) are also available here:
 * http://mabe02.github.io/lanterna/apidocs/2.1/
+* http://mabe02.github.io/lanterna/apidocs/3.0/
 
 There is also a development guide and some tutorials available [right here on Github](https://github.com/mabe02/lanterna/blob/master/docs/contents.md).

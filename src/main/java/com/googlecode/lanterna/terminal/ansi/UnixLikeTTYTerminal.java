@@ -144,7 +144,7 @@ public abstract class UnixLikeTTYTerminal extends UnixLikeTerminal {
     }
 
     protected String runSTTYCommand(String... parameters) throws IOException {
-        List<String> commandLine = new ArrayList<>(Collections.singletonList(
+        List<String> commandLine = new ArrayList<>(Arrays.asList(
                 getSTTYCommand()));
         commandLine.addAll(Arrays.asList(parameters));
         return exec(commandLine.toArray(new String[0]));
@@ -174,8 +174,18 @@ public abstract class UnixLikeTTYTerminal extends UnixLikeTerminal {
         return builder.toString();
     }
 
-    private String getSTTYCommand() {
-        return System.getProperty("com.googlecode.lanterna.terminal.UnixTerminal.sttyCommand",
-                    "/bin/stty");
+    private String[] getSTTYCommand() {
+        String sttyOverride = System.getProperty("com.googlecode.lanterna.terminal.UnixTerminal.sttyCommand");
+        if (sttyOverride != null) {
+            return new String[] { sttyOverride };
+        }
+        else {
+            // Issue #519: this will hopefully be more portable across linux distributions
+            // Previously we hard-coded "/bin/stty" here
+            return new String[] {
+                    "/usr/bin/env",
+                    "stty"
+            };
+        }
     }
 }

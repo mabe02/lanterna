@@ -126,11 +126,10 @@ public class WindowList {
      * top. If {@code reverse} is set to {@code true} then the window at the bottom of the stack is moved up to the
      * front and the previous top window will be immediately below it
      * @param reverse Direction to cycle through the windows
-     * @return Itself
      */
-    public void cycleActiveWindow(boolean reverse) {
+    public WindowList cycleActiveWindow(boolean reverse) {
         if(windows.isEmpty() || windows.size() == 1 || (activeWindow != null && activeWindow.getHints().contains(Window.Hint.MODAL))) {
-            return;
+            return this;
         }
         Window originalActiveWindow = activeWindow;
         Window nextWindow;
@@ -147,11 +146,11 @@ public class WindowList {
             ++noFocusWindows;
             if(noFocusWindows == windows.size()) {
                 // All windows are NO_FOCUS, so give up
-                return;
+                return this;
             }
             nextWindow = getNextWindow(reverse, nextWindow);
             if(nextWindow == originalActiveWindow) {
-                return;
+                return this;
             }
         }
 
@@ -161,6 +160,7 @@ public class WindowList {
             moveToBottom(originalActiveWindow);
         }
         setActiveWindow(nextWindow);
+        return this;
     }
 
     private Window getNextWindow(boolean reverse, Window window) {

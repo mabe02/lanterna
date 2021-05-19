@@ -20,10 +20,12 @@ package com.googlecode.lanterna.graphics;
 
 import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.gui2.Button;
 import com.googlecode.lanterna.gui2.Component;
 import com.googlecode.lanterna.gui2.ComponentRenderer;
 import com.googlecode.lanterna.gui2.WindowDecorationRenderer;
 import com.googlecode.lanterna.gui2.WindowPostRenderer;
+import com.googlecode.lanterna.gui2.WindowShadowRenderer;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -58,6 +60,16 @@ public abstract class AbstractTheme implements Theme {
 
         rootNode.foregroundMap.put(STYLE_NORMAL, TextColor.ANSI.WHITE);
         rootNode.backgroundMap.put(STYLE_NORMAL, TextColor.ANSI.BLACK);
+        classloadStandardRenderersForGraal();
+    }
+
+    private void classloadStandardRenderersForGraal() {
+        // This will make graal know about these classes which would otherwise only
+        // be loaded through reflection
+        WindowShadowRenderer.class.toString();
+        Button.DefaultButtonRenderer.class.toString();
+        Button.FlatButtonRenderer.class.toString();
+        Button.BorderedButtonRenderer.class.toString();
     }
 
     protected boolean addStyle(String definition, String style, String value) {
