@@ -23,6 +23,7 @@ module com.googlecode.lanterna {
     exports com.googlecode.lanterna.gui2;
     exports com.googlecode.lanterna.gui2.dialogs;
     exports com.googlecode.lanterna.gui2.table;
+    exports com.googlecode.lanterna.gui2.menu;
     exports com.googlecode.lanterna.input;
     exports com.googlecode.lanterna.screen;
     exports com.googlecode.lanterna.terminal;
