@@ -424,7 +424,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
                     Color foregroundColor = deriveTrueForegroundColor(textCharacter, atCursorLocation);
                     Color backgroundColor = deriveTrueBackgroundColor(textCharacter, atCursorLocation);
                     //Always draw if the cursor isn't blinking
-                    boolean drawCursor = atCursorLocation && (!deviceConfiguration.isCursorBlinking() || blinkOn);    //If the cursor is blinking, only draw when blinkOn is true
+                    boolean drawCursor = atCursorLocation && cursorIsVisible && (!deviceConfiguration.isCursorBlinking() || blinkOn);    //If the cursor should be displayed and is blinking, only draw when blinkOn is true
 
                     // Visualize bell as all colors inverted
                     if(bellOn) {
