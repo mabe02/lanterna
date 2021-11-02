@@ -19,6 +19,7 @@
 package com.googlecode.lanterna;
 
 import java.awt.Color;
+import java.io.Serializable;
 import java.util.regex.Pattern;
 
 /**
@@ -30,7 +31,7 @@ import java.util.regex.Pattern;
  *
  * @author Martin
  */
-public interface TextColor {
+public interface TextColor extends Serializable {
     /**
      * Returns the byte sequence in between CSI and character 'm' that is used to enable this color as the foreground
      * color on an ANSI-compatible terminal.
