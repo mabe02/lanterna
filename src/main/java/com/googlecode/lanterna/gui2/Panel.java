@@ -288,7 +288,7 @@ public class Panel extends AbstractComponent<Panel> implements Container {
     public boolean isInvalid() {
         synchronized(components) {
             for(Component component: components) {
-                if(component.isInvalid()) {
+                if(component.isInvalid() && component.isVisible()) {
                     return true;
                 }
             }
