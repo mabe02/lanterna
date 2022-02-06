@@ -301,7 +301,7 @@ public class RadioBoxList<V> extends AbstractListBox<V, RadioBoxList<V>> {
                 graphics.putString(0, 0, brackets);
             }
 
-            String text = (item != null ? item : "<null>").toString();
+            String text = getLabel(listBox, index, item);
             graphics.putString(4, 0, text);
 
             boolean itemChecked = listBox.checkedIndex == index;
