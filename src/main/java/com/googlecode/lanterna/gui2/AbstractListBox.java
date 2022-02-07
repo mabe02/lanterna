@@ -241,11 +241,28 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
      * @return Itself
      */
     public synchronized T addItem(V item) {
+        return addItem(null, item);
+    }
+
+    /**
+     * Adds one more item to the list box, at the specified index or at the end.
+     * @param index where to insert the item; if null then at the end
+     * @param item Item to add to the list box
+     * @return Itself
+     */
+    public synchronized T addItem(Integer index, V item) {
         if(item == null) {
             return self();
         }
 
-        items.add(item);
+        if (index != null) {
+            items.add(index, item);
+            if (selectedIndex >= index) {
+                selectedIndex++;
+            }
+        } else {
+            items.add(item);
+        }
         if(selectedIndex == -1) {
             selectedIndex = 0;
         }
