@@ -37,7 +37,7 @@ public class Borders {
     }
 
     //Different ways to draw the border
-    private enum BorderStyle {
+    public enum BorderStyle {
         Solid,
         Bevel,
         ReverseBevel,
@@ -151,8 +151,8 @@ public class Borders {
         return new DoubleLine(title, BorderStyle.ReverseBevel);
     }
 
-    private static abstract class StandardBorder extends AbstractBorder {
-        private final String title;
+    public static abstract class StandardBorder extends AbstractBorder {
+        private String title;
         protected final BorderStyle borderStyle;
 
         protected StandardBorder(String title, BorderStyle borderStyle) {
@@ -165,6 +165,10 @@ public class Borders {
 
         public String getTitle() {
             return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
         }
 
         @Override
