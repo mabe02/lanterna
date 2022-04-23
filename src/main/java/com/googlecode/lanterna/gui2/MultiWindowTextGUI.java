@@ -387,7 +387,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
                 });
             }
             // clear popup menus if they clicked onto another window or missed all windows
-            if (priorActiveWindow != getActiveWindow() || !anyHit.get()) {
+            if (priorActiveWindow != null && ( priorActiveWindow != getActiveWindow() || !anyHit.get() ) ) {
                 if (priorActiveWindow.getHints().contains(Hint.MENU_POPUP)) {
                     priorActiveWindow.close();
                 }
