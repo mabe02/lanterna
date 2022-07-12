@@ -150,7 +150,7 @@ simpler `SameTextGUIThread`, which essentially hijacks the caller thread and use
 some stop condition is met. The absolutely simplest way to do this is to simply ask lanterna to display the
 window and wait for it to be closed. This will initiate the event loop and make the GUI functional. In the
 "Close" button above, we tied a call to the `close()` method on the Window object when the button is
-triggered, this will then break the even loop and our call finally returns.
+triggered, this will then break the event loop and our call finally returns.
 
     textGUI.addWindowAndWait(window);
 
