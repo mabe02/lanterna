@@ -4,7 +4,7 @@ Tutorial 3
 In the third tutorial, we will look at using the next layer available in Lanterna, which is built on top of the
 Terminal interface you saw in tutorial 1 and 2.
 
-A `Screen` works similar to double-buffered video memory, it has two surfaces than can be directly addressed and
+A `Screen` works similar to double-buffered video memory, it has two surfaces that can be directly addressed and
 modified and by calling a special method that content of the back-buffer is move to the front. Instead of pixels
 though, a `Screen` holds two text character surfaces (front and back) which corresponds to each "cell" in the
 terminal. You can freely modify the back "buffer" and you can read from the front "buffer", calling the
