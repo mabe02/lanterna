@@ -18,6 +18,7 @@
  */
 package com.googlecode.lanterna;
 
+import java.io.Serializable;
 import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,7 +32,7 @@ import java.util.Objects;
  * cannot be modified after creation.
  * @author Martin
  */
-public class TextCharacter {
+public class TextCharacter implements Serializable {
     private static EnumSet<SGR> toEnumSet(SGR... modifiers) {
         if(modifiers.length == 0) {
             return EnumSet.noneOf(SGR.class);

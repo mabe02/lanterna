@@ -196,7 +196,17 @@ public abstract class AbstractComponent<T extends Component> implements Componen
     public T setVisible(boolean visible) {
         if (this.visible != visible) {
             this.visible = visible;
-            invalidate();
+            if (visible) {
+                // This component is now visible, so mark it as invalid so it will be redrawn
+                invalidate();
+            }
+            else {
+                Container parent = getParent();
+                if (parent != null) {
+                    // This component is now invisible, so mark the parent container as needing to be redrawn
+                    parent.invalidate();
+                }
+            }
         }
         return self();
     }
