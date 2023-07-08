@@ -392,8 +392,21 @@ public class TextCharacter implements Serializable {
     public boolean isDoubleWidth() {
         // TODO: make this better to work properly with emoji and other complicated "characters"
         return TerminalTextUtils.isCharDoubleWidth(character.charAt(0)) ||
+                isEmoji(character) ||
                 // If the character takes up more than one char, assume it's double width (unless thai)
                 (character.length() > 1 && !TerminalTextUtils.isCharThai(character.charAt(0)));
+    }
+
+    private static boolean isEmoji(final String s) {
+        // This is really hard to do properly and would require an emoji library as a dependency, so here's a hack that
+        // basically assumes anything NOT a regular latin1/CJK/thai character is an emoji
+        char firstCharacter = s.charAt(0);
+        return s.length() > 1 ||
+                !(TerminalTextUtils.isCharCJK(firstCharacter) ||
+                        TerminalTextUtils.isPrintableCharacter(firstCharacter) ||
+                        TerminalTextUtils.isCharThai(firstCharacter) ||
+                        TerminalTextUtils.isCharCJK(firstCharacter) ||
+                        TerminalTextUtils.isControlCharacter(firstCharacter));
     }
 
     @SuppressWarnings("SimplifiableIfStatement")
