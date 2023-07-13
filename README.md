@@ -41,6 +41,14 @@ Lanterna is available on [Maven Central](http://search.maven.org/), through [Son
 Discussions
 ---
 There is a [google group](https://groups.google.com/forum/#!forum/lanterna-discuss) for discussions and announcements related to Lanterna.
+You are recommended to raise issues directly on Github though.
+
+
+Projects using Lanterna
+---
+Incomplete list of projects using Lanterna, feel free to let us know something we can add to this list:
+ * https://github.com/MultiMUD/clojure-lanterna
+ * https://github.com/datacron/project-lanterminal
 
 
 Development Guide
