@@ -315,7 +315,7 @@ public abstract class AbstractBasePane<T extends BasePane> implements BasePane {
             return;
         }
         if(focusedInteractable != null) {
-            focusedInteractable.onLeaveFocus(direction, focusedInteractable);
+            focusedInteractable.onLeaveFocus(direction, toFocus);
         }
         Interactable previous = focusedInteractable;
         focusedInteractable = toFocus;
