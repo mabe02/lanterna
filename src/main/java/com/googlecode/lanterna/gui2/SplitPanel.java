@@ -219,6 +219,15 @@ public class SplitPanel extends Panel {
         int total = Math.abs(left) + Math.abs(right);
         ratio = (double)left / (double)total;
     }
-    
+
+    public void setThumbVisible(boolean visible) {
+        thumb.setVisible(visible);
+
+        if (visible) {
+            this.setPreferredSize(null);
+        } else {
+            thumb.setPreferredSize(new TerminalSize(0, 0));
+        }
+    }
 }
 
