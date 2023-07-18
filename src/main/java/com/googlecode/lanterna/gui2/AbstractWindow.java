@@ -312,7 +312,6 @@ public abstract class AbstractWindow extends AbstractBasePane<Window> implements
         if(textGUI != null) {
             textGUI.removeWindow(this);
         }
-        setComponent(null);
     }
 
     @Override

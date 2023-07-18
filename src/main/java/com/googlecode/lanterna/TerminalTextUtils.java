@@ -126,7 +126,8 @@ public class TerminalTextUtils {
 
     /**
      * Checks if a character is expected to be taking up two columns if printed to a terminal. This will generally be
-     * {@code true} for CJK (Chinese, Japanese and Korean) characters.
+     * {@code true} for CJK (Chinese, Japanese and Korean) characters. Notice that emoji generally takes up more than a
+     * single char and can't be tested properly with this method.
      * @param c Character to test if it's double-width when printed to a terminal
      * @return {@code true} if this character is expected to be taking up two columns when printed to the terminal,
      * otherwise {@code false}
