@@ -52,8 +52,8 @@ public class TextCharacter implements Serializable {
         return fromString(string, TextColor.ANSI.DEFAULT, TextColor.ANSI.DEFAULT);
     }
 
-    public static TextCharacter[] fromCharacter(char c, TextColor foregroundColor, TextColor backgroundColor, SGR... modifiers) {
-        return fromString(Character.toString(c), foregroundColor, backgroundColor, modifiers);
+    public static TextCharacter fromCharacter(char c, TextColor foregroundColor, TextColor backgroundColor, SGR... modifiers) {
+        return fromString(Character.toString(c), foregroundColor, backgroundColor, modifiers)[0];
     }
 
     public static TextCharacter[] fromString(
