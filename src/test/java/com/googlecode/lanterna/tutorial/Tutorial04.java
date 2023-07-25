@@ -184,7 +184,11 @@ public class Tutorial04 {
         finally {
             if(screen != null) {
                 try {
-                    screen.stopScreen();
+                    /*
+                    The close() call here will restore the terminal by exiting from private mode which was done in
+                    the call to startScreen(), and also restore things like echo mode and intr
+                     */
+                    screen.close();
                 }
                 catch(IOException e) {
                     e.printStackTrace();

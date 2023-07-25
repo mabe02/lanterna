@@ -104,6 +104,7 @@ public class TerminalScreen extends AbstractScreen {
     @Override
     public void stopScreen() throws IOException {
         stopScreen(true);
+        terminal.close();
     }
     
     public synchronized void stopScreen(boolean flushInput) throws IOException {

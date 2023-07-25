@@ -59,9 +59,11 @@ public interface Screen extends InputProvider, Scrollable, Closeable {
     void startScreen() throws IOException;
 
     /**
-     * Same as calling {@link #stopScreen()}
+     * Same as calling {@link #stopScreen()} and then closing the underlying
+     * {@link com.googlecode.lanterna.terminal.Terminal} (where applicable), which will restore things like echo mode,
+     * icanon and other tty properties
      *
-     * @throws IOException if there was an underlying IO error when exiting from private mode
+     * @throws IOException if there was an underlying IO error when exiting from private mode or closing the terminal
      */
     @Override
     void close() throws IOException;
