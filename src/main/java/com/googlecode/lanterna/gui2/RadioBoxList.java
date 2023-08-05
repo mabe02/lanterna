@@ -83,7 +83,7 @@ public class RadioBoxList<V> extends AbstractListBox<V, RadioBoxList<V>> {
     public synchronized Result handleKeyStroke(KeyStroke keyStroke) {
         if (isKeyboardActivationStroke(keyStroke)) {
             setCheckedIndex(getSelectedIndex());
-        } else if (keyStroke.getKeyType() == KeyType.MouseEvent) {
+        } else if (keyStroke.getKeyType() == KeyType.MOUSE_EVENT) {
             MouseAction mouseAction = (MouseAction) keyStroke;
             MouseActionType actionType = mouseAction.getActionType();
             

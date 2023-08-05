@@ -56,11 +56,11 @@ public class MultiWindowManagerTest extends TestBase {
         contentArea.addComponent(new Button("Close", mainWindow::close));
         mainWindow.setComponent(contentArea);
         textGUI.addListener((textGUI1, keyStroke) -> {
-            if((keyStroke.isCtrlDown() && keyStroke.getKeyType() == KeyType.Tab) ||
+            if((keyStroke.isCtrlDown() && keyStroke.getKeyType() == KeyType.TAB) ||
                     keyStroke.getKeyType() == KeyType.F6) {
                 ((WindowBasedTextGUI) textGUI1).cycleActiveWindow(false);
             }
-            else if((keyStroke.isCtrlDown() && keyStroke.getKeyType() == KeyType.ReverseTab) ||
+            else if((keyStroke.isCtrlDown() && keyStroke.getKeyType() == KeyType.REVERSE_TAB) ||
                         keyStroke.getKeyType() == KeyType.F7) {
                 ((WindowBasedTextGUI) textGUI1).cycleActiveWindow(true);
             }
@@ -152,7 +152,7 @@ public class MultiWindowManagerTest extends TestBase {
             boolean handled = super.handleInput(key);
             if(!handled) {
                 switch(key.getKeyType()) {
-                    case ArrowDown:
+                    case ARROW_DOWN:
                         if(key.isAltDown()) {
                             setPosition(getPosition().withRelativeRow(1));
                         }
@@ -162,7 +162,7 @@ public class MultiWindowManagerTest extends TestBase {
                         }
                         handled = true;
                         break;
-                    case ArrowLeft:
+                    case ARROW_LEFT:
                         if(key.isAltDown()) {
                             setPosition(getPosition().withRelativeColumn(-1));
                         }
@@ -172,7 +172,7 @@ public class MultiWindowManagerTest extends TestBase {
                         }
                         handled = true;
                         break;
-                    case ArrowRight:
+                    case ARROW_RIGHT:
                         if(key.isAltDown()) {
                             setPosition(getPosition().withRelativeColumn(1));
                         }
@@ -182,7 +182,7 @@ public class MultiWindowManagerTest extends TestBase {
                         }
                         handled = true;
                         break;
-                    case ArrowUp:
+                    case ARROW_UP:
                         if(key.isAltDown()) {
                             setPosition(getPosition().withRelativeRow(-1));
                         }

@@ -30,7 +30,6 @@ import com.googlecode.lanterna.gui2.menu.MenuBar;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.input.MouseAction;
-import com.googlecode.lanterna.input.MouseActionType;
 
 /**
  * This abstract implementation of {@code BasePane} has the common code shared by all different concrete
@@ -117,7 +116,7 @@ public abstract class AbstractBasePane<T extends BasePane> implements BasePane {
 
     private boolean doHandleInput(KeyStroke key) {
         boolean result = false;
-        if(key.getKeyType() == KeyType.MouseEvent) {
+        if(key.getKeyType() == KeyType.MOUSE_EVENT) {
            return handleMouseInput((MouseAction) key);
         }
         Interactable.FocusChangeDirection direction = Interactable.FocusChangeDirection.TELEPORT; // Default
@@ -128,9 +127,9 @@ public abstract class AbstractBasePane<T extends BasePane> implements BasePane {
             MenuBar menuBar = getMenuBar();
             Component baseComponent = getComponent();
             switch (key.getKeyType()) {
-                case Tab:
-                case ArrowRight:
-                case ArrowDown:
+                case TAB:
+                case ARROW_RIGHT:
+                case ARROW_DOWN:
                     direction = Interactable.FocusChangeDirection.NEXT;
                     // First try the menu, then the actual component
                     nextFocus = menuBar.nextFocus(null);
@@ -143,9 +142,9 @@ public abstract class AbstractBasePane<T extends BasePane> implements BasePane {
                     }
                     break;
 
-                case ReverseTab:
-                case ArrowUp:
-                case ArrowLeft:
+                case REVERSE_TAB:
+                case ARROW_UP:
+                case ARROW_LEFT:
                     direction = Interactable.FocusChangeDirection.PREVIOUS;
                     if (baseComponent instanceof Container) {
                         nextFocus = ((Container) baseComponent).previousFocus(null);

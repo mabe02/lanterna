@@ -87,7 +87,7 @@ public class Issue452Test {
         assertTrue(singleLine.isFocused());
         // Click at 3rd position
         clickOnWithRelative(singleLine, 3, 0);
-        singleLine.handleInput(new KeyStroke(KeyType.Backspace));
+        singleLine.handleInput(new KeyStroke(KeyType.BACKSPACE));
         // 3rd position (3) should be deleted
         assertEquals("12456789", singleLine.getText());
     }
@@ -103,12 +103,12 @@ public class Issue452Test {
         assertTrue(multiLine.isFocused());
         // Click at 3rd position 1st row
         clickOnWithRelative(multiLine, 3, 0);
-        multiLine.handleInput(new KeyStroke(KeyType.Backspace));
+        multiLine.handleInput(new KeyStroke(KeyType.BACKSPACE));
         // 3rd position (3) should be deleted
         assertEquals("12456789\nabcdefgh", multiLine.getText());
         // Click at 5th position 2nd row
         clickOnWithRelative(multiLine, 5, 1);
-        multiLine.handleInput(new KeyStroke(KeyType.Backspace));
+        multiLine.handleInput(new KeyStroke(KeyType.BACKSPACE));
         // 5th position (e) should be deleted
         assertEquals("12456789\nabcdfgh", multiLine.getText());
     }

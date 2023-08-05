@@ -39,21 +39,21 @@ public class LinearLayout implements LayoutManager {
         /**
          * The component will be placed to the left (for vertical layouts) or top (for horizontal layouts)
          */
-        Beginning,
+        BEGINNING,
         /**
          * The component will be placed horizontally centered (for vertical layouts) or vertically centered (for
          * horizontal layouts)
          */
-        Center,
+        CENTER,
         /**
          * The component will be placed to the right (for vertical layouts) or bottom (for horizontal layouts)
          */
-        End,
+        END,
         /**
          * The component will be forced to take up all the horizontal space (for vertical layouts) or vertical space
          * (for horizontal layouts)
          */
-        Fill,
+        FILL,
     }
 
     /**
@@ -66,12 +66,12 @@ public class LinearLayout implements LayoutManager {
          * This is the default grow policy, the component will not become larger than the preferred size, even if the
          * container can offer more.
          */
-        None,
+        NONE,
         /**
          * With this grow policy, if the container has more space available then this component will be grown to fill
          * the extra space.
          */
-        CanGrow,
+        CAN_GROW,
     }
 
     private static class LinearLayoutData implements LayoutData {
@@ -93,7 +93,7 @@ public class LinearLayout implements LayoutManager {
      * @see Alignment
      */
     public static LayoutData createLayoutData(Alignment alignment) {
-        return createLayoutData(alignment, GrowPolicy.None);
+        return createLayoutData(alignment, GrowPolicy.NONE);
     }
 
     /**
@@ -232,7 +232,7 @@ public class LinearLayout implements LayoutManager {
                 component.setSize(TerminalSize.ZERO);
             }
             else {
-                Alignment alignment = Alignment.Beginning;
+                Alignment alignment = Alignment.BEGINNING;
                 LayoutData layoutData = component.getLayoutData();
                 if (layoutData instanceof LinearLayoutData) {
                     alignment = ((LinearLayoutData)layoutData).alignment;
@@ -242,21 +242,21 @@ public class LinearLayout implements LayoutManager {
                 TerminalSize decidedSize = new TerminalSize(
                         Math.min(availableHorizontalSpace, preferredSize.getColumns()),
                         Math.min(remainingVerticalSpace, preferredSize.getRows()));
-                if(alignment == Alignment.Fill) {
+                if(alignment == Alignment.FILL) {
                     decidedSize = decidedSize.withColumns(availableHorizontalSpace);
-                    alignment = Alignment.Beginning;
+                    alignment = Alignment.BEGINNING;
                 }
 
                 TerminalPosition position = component.getPosition();
                 position = position.withRow(area.getRows() - remainingVerticalSpace);
                 switch(alignment) {
-                    case End:
+                    case END:
                         position = position.withColumn(availableHorizontalSpace - decidedSize.getColumns());
                         break;
-                    case Center:
+                    case CENTER:
                         position = position.withColumn((availableHorizontalSpace - decidedSize.getColumns()) / 2);
                         break;
-                    case Beginning:
+                    case BEGINNING:
                     default:
                         position = position.withColumn(0);
                         break;
@@ -276,7 +276,7 @@ public class LinearLayout implements LayoutManager {
         int totalRequiredVerticalSpace = 0;
 
         for (Component component: components) {
-            Alignment alignment = Alignment.Beginning;
+            Alignment alignment = Alignment.BEGINNING;
             LayoutData layoutData = component.getLayoutData();
             if (layoutData instanceof LinearLayoutData) {
                 alignment = ((LinearLayoutData)layoutData).alignment;
@@ -286,7 +286,7 @@ public class LinearLayout implements LayoutManager {
             TerminalSize fittingSize = new TerminalSize(
                     Math.min(availableHorizontalSpace, preferredSize.getColumns()),
                     preferredSize.getRows());
-            if(alignment == Alignment.Fill) {
+            if(alignment == Alignment.FILL) {
                 fittingSize = fittingSize.withColumns(availableHorizontalSpace);
             }
 
@@ -325,7 +325,7 @@ public class LinearLayout implements LayoutManager {
                 for(Component component: components) {
                     final LinearLayoutData layoutData = (LinearLayoutData)component.getLayoutData();
                     final TerminalSize currentSize = fittingMap.get(component);
-                    if (layoutData != null && layoutData.growPolicy == GrowPolicy.CanGrow) {
+                    if (layoutData != null && layoutData.growPolicy == GrowPolicy.CAN_GROW) {
                         fittingMap.put(component, currentSize.withRelativeRows(1));
                         availableVerticalSpace--;
                         resizedOneComponent = true;
@@ -343,7 +343,7 @@ public class LinearLayout implements LayoutManager {
         // Assign the sizes and positions
         int topPosition = 0;
         for(Component component: components) {
-            Alignment alignment = Alignment.Beginning;
+            Alignment alignment = Alignment.BEGINNING;
             LayoutData layoutData = component.getLayoutData();
             if (layoutData instanceof LinearLayoutData) {
                 alignment = ((LinearLayoutData)layoutData).alignment;
@@ -353,13 +353,13 @@ public class LinearLayout implements LayoutManager {
             TerminalPosition position = component.getPosition();
             position = position.withRow(topPosition);
             switch(alignment) {
-                case End:
+                case END:
                     position = position.withColumn(availableHorizontalSpace - decidedSize.getColumns());
                     break;
-                case Center:
+                case CENTER:
                     position = position.withColumn((availableHorizontalSpace - decidedSize.getColumns()) / 2);
                     break;
-                case Beginning:
+                case BEGINNING:
                 default:
                     position = position.withColumn(0);
                     break;
@@ -380,7 +380,7 @@ public class LinearLayout implements LayoutManager {
                 component.setSize(TerminalSize.ZERO);
             }
             else {
-                Alignment alignment = Alignment.Beginning;
+                Alignment alignment = Alignment.BEGINNING;
                 LayoutData layoutData = component.getLayoutData();
                 if (layoutData instanceof LinearLayoutData) {
                     alignment = ((LinearLayoutData)layoutData).alignment;
@@ -390,21 +390,21 @@ public class LinearLayout implements LayoutManager {
                 TerminalSize decidedSize = new TerminalSize(
                         Math.min(remainingHorizontalSpace, preferredSize.getColumns()),
                         Math.min(availableVerticalSpace, preferredSize.getRows()));
-                if(alignment == Alignment.Fill) {
+                if(alignment == Alignment.FILL) {
                     decidedSize = decidedSize.withRows(availableVerticalSpace);
-                    alignment = Alignment.Beginning;
+                    alignment = Alignment.BEGINNING;
                 }
 
                 TerminalPosition position = component.getPosition();
                 position = position.withColumn(area.getColumns() - remainingHorizontalSpace);
                 switch(alignment) {
-                    case End:
+                    case END:
                         position = position.withRow(availableVerticalSpace - decidedSize.getRows());
                         break;
-                    case Center:
+                    case CENTER:
                         position = position.withRow((availableVerticalSpace - decidedSize.getRows()) / 2);
                         break;
-                    case Beginning:
+                    case BEGINNING:
                     default:
                         position = position.withRow(0);
                         break;
@@ -424,7 +424,7 @@ public class LinearLayout implements LayoutManager {
         int totalRequiredHorizontalSpace = 0;
 
         for (Component component: components) {
-            Alignment alignment = Alignment.Beginning;
+            Alignment alignment = Alignment.BEGINNING;
             LayoutData layoutData = component.getLayoutData();
             if (layoutData instanceof LinearLayoutData) {
                 alignment = ((LinearLayoutData)layoutData).alignment;
@@ -434,7 +434,7 @@ public class LinearLayout implements LayoutManager {
             TerminalSize fittingSize = new TerminalSize(
                     preferredSize.getColumns(),
                     Math.min(availableVerticalSpace, preferredSize.getRows()));
-            if(alignment == Alignment.Fill) {
+            if(alignment == Alignment.FILL) {
                 fittingSize = fittingSize.withRows(availableVerticalSpace);
             }
 
@@ -473,7 +473,7 @@ public class LinearLayout implements LayoutManager {
                 for(Component component: components) {
                     final LinearLayoutData layoutData = (LinearLayoutData)component.getLayoutData();
                     final TerminalSize currentSize = fittingMap.get(component);
-                    if (layoutData != null && layoutData.growPolicy == GrowPolicy.CanGrow) {
+                    if (layoutData != null && layoutData.growPolicy == GrowPolicy.CAN_GROW) {
                         fittingMap.put(component, currentSize.withRelativeColumns(1));
                         availableHorizontalSpace--;
                         resizedOneComponent = true;
@@ -491,7 +491,7 @@ public class LinearLayout implements LayoutManager {
         // Assign the sizes and positions
         int leftPosition = 0;
         for(Component component: components) {
-            Alignment alignment = Alignment.Beginning;
+            Alignment alignment = Alignment.BEGINNING;
             LayoutData layoutData = component.getLayoutData();
             if (layoutData instanceof LinearLayoutData) {
                 alignment = ((LinearLayoutData)layoutData).alignment;
@@ -501,13 +501,13 @@ public class LinearLayout implements LayoutManager {
             TerminalPosition position = component.getPosition();
             position = position.withColumn(leftPosition);
             switch(alignment) {
-                case End:
+                case END:
                     position = position.withRow(availableVerticalSpace - decidedSize.getRows());
                     break;
-                case Center:
+                case CENTER:
                     position = position.withRow((availableVerticalSpace - decidedSize.getRows()) / 2);
                     break;
-                case Beginning:
+                case BEGINNING:
                 default:
                     position = position.withRow(0);
                     break;

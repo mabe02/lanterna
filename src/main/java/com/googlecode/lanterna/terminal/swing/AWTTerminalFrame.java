@@ -190,7 +190,7 @@ public class AWTTerminalFrame extends Frame implements IOSafeTerminal {
         KeyStroke keyStroke = awtTerminal.pollInput();
         if(autoCloseTriggers.contains(TerminalEmulatorAutoCloseTrigger.CloseOnEscape) &&
                 keyStroke != null && 
-                keyStroke.getKeyType() == KeyType.Escape) {
+                keyStroke.getKeyType() == KeyType.ESCAPE) {
             dispose();
         }
         return keyStroke;

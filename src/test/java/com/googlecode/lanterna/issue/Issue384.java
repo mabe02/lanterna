@@ -46,7 +46,7 @@ public class Issue384 {
         window.setComponent(Panels.vertical(
                 table.withBorder(Borders.singleLineBevel("Table")),
                 buttonPanel));
-        table.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Fill));
+        table.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.FILL));
         textGUI.addWindow(window);
         textGUI.waitForWindowToClose(window);
         screen.stopScreen();
@@ -69,7 +69,7 @@ public class Issue384 {
             }
             tableRenderer.setExpandableColumns(EXPANDABLE_COLUMNS);
             dialogWindow.close();
-        }), LinearLayout.createLayoutData(LinearLayout.Alignment.End));
+        }), LinearLayout.createLayoutData(LinearLayout.Alignment.END));
         dialogWindow.setComponent(contentPanel);
         dialogWindow.showDialog(textGUI);
     }

@@ -221,7 +221,7 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
         KeyStroke keyStroke = swingTerminal.pollInput();
         if(autoCloseTriggers.contains(TerminalEmulatorAutoCloseTrigger.CloseOnEscape) &&
                 keyStroke != null && 
-                keyStroke.getKeyType() == KeyType.Escape) {
+                keyStroke.getKeyType() == KeyType.ESCAPE) {
             dispose();
         }
         return keyStroke;

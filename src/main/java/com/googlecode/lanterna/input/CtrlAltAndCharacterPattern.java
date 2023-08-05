@@ -52,7 +52,7 @@ public class CtrlAltAndCharacterPattern implements CharacterPattern {
             KeyStroke ks = new KeyStroke( ctrlCode, true, true);
             return new Matching( ks ); // yep
         } else if (ch == 0x7f || ch == 0x08) {
-            KeyStroke ks = new KeyStroke( KeyType.Backspace, false, true);
+            KeyStroke ks = new KeyStroke( KeyType.BACKSPACE, false, true);
             return new Matching( ks ); // yep
         } else {
             return null; // nope

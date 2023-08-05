@@ -35,12 +35,12 @@ public class DefaultKeyDecodingProfile implements KeyDecodingProfile {
     private static final List<CharacterPattern> COMMON_PATTERNS
             = new ArrayList<>(Arrays.asList(
             new CharacterPattern[]{
-                    new BasicCharacterPattern(new KeyStroke(KeyType.Escape), ESC_CODE),
-                    new BasicCharacterPattern(new KeyStroke(KeyType.Tab), '\t'),
-                    new BasicCharacterPattern(new KeyStroke(KeyType.Enter), '\n'),
-                    new BasicCharacterPattern(new KeyStroke(KeyType.Enter), '\r', '\u0000'), //OS X
-                    new BasicCharacterPattern(new KeyStroke(KeyType.Backspace), (char) 0x7f),
-                    new BasicCharacterPattern(new KeyStroke(KeyType.Backspace), (char) 0x08),
+                    new BasicCharacterPattern(new KeyStroke(KeyType.ESCAPE), ESC_CODE),
+                    new BasicCharacterPattern(new KeyStroke(KeyType.TAB), '\t'),
+                    new BasicCharacterPattern(new KeyStroke(KeyType.ENTER), '\n'),
+                    new BasicCharacterPattern(new KeyStroke(KeyType.ENTER), '\r', '\u0000'), //OS X
+                    new BasicCharacterPattern(new KeyStroke(KeyType.BACKSPACE), (char) 0x7f),
+                    new BasicCharacterPattern(new KeyStroke(KeyType.BACKSPACE), (char) 0x08),
                     new BasicCharacterPattern(new KeyStroke(KeyType.F1), ESC_CODE, '[', '[', 'A'), //Linux
                     new BasicCharacterPattern(new KeyStroke(KeyType.F2), ESC_CODE, '[', '[', 'B'), //Linux
                     new BasicCharacterPattern(new KeyStroke(KeyType.F3), ESC_CODE, '[', '[', 'C'), //Linux

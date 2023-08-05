@@ -74,7 +74,7 @@ public class Menu extends MenuItem {
             popupMenu.addWindowListener(new WindowListenerAdapter() {
                 @Override
                 public void onUnhandledInput(Window basePane, KeyStroke keyStroke, AtomicBoolean hasBeenHandled) {
-                    if (keyStroke.getKeyType() == KeyType.ArrowLeft) {
+                    if (keyStroke.getKeyType() == KeyType.ARROW_LEFT) {
                         int thisMenuIndex = menuBar.getChildrenList().indexOf(Menu.this);
                         if (thisMenuIndex > 0) {
                             popupMenu.close();
@@ -82,7 +82,7 @@ public class Menu extends MenuItem {
                             nextSelectedMenu.takeFocus();
                             nextSelectedMenu.onActivated();
                         }
-                    } else if (keyStroke.getKeyType() == KeyType.ArrowRight) {
+                    } else if (keyStroke.getKeyType() == KeyType.ARROW_RIGHT) {
                         int thisMenuIndex = menuBar.getChildrenList().indexOf(Menu.this);
                         if (thisMenuIndex >= 0 && thisMenuIndex < menuBar.getMenuCount() - 1) {
                             popupMenu.close();
@@ -97,7 +97,7 @@ public class Menu extends MenuItem {
         popupMenu.addWindowListener(new WindowListenerAdapter() {
             @Override
             public void onUnhandledInput(Window basePane, KeyStroke keyStroke, AtomicBoolean hasBeenHandled) {
-                if (keyStroke.getKeyType() == KeyType.Escape) {
+                if (keyStroke.getKeyType() == KeyType.ESCAPE) {
                     popupCancelled.set(true);
                     popupMenu.close();
                 }

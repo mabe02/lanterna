@@ -19,7 +19,6 @@
 package com.googlecode.lanterna.gui2;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 
 public class LinearLayoutTest extends TestBase {
@@ -38,13 +37,13 @@ public class LinearLayoutTest extends TestBase {
 
         for(int i = 0; i < 5; i++) {
             new Label("LABEL COMPONENT")
-                    .setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Beginning, LinearLayout.GrowPolicy.CanGrow))
+                    .setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.BEGINNING, LinearLayout.GrowPolicy.CAN_GROW))
                     .addTo(labelPanel);
         }
-        mainPanel.addComponent(labelPanel.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Beginning, LinearLayout.GrowPolicy.CanGrow)));
+        mainPanel.addComponent(labelPanel.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.BEGINNING, LinearLayout.GrowPolicy.CAN_GROW)));
 
         new Separator(Direction.HORIZONTAL)
-                .setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Fill))
+                .setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.FILL))
                 .addTo(mainPanel);
 
         mainPanel.addComponent(Panels.horizontal(

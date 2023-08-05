@@ -133,7 +133,7 @@ public abstract class AbstractWindow extends AbstractBasePane<Window> implements
     @Override
     public boolean handleInput(KeyStroke key) {
         boolean handled = super.handleInput(key);
-        if(!handled && closeWindowWithEscape && key.getKeyType() == KeyType.Escape) {
+        if(!handled && closeWindowWithEscape && key.getKeyType() == KeyType.ESCAPE) {
             close();
             return true;
         }

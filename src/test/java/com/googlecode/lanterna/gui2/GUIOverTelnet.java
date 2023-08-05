@@ -119,11 +119,11 @@ public class GUIOverTelnet {
 
                 @Override
                 public Result handleKeyStroke(KeyStroke keyStroke) {
-                    if(keyStroke.getKeyType() == KeyType.Tab ||
-                            keyStroke.getKeyType() == KeyType.ReverseTab) {
+                    if(keyStroke.getKeyType() == KeyType.TAB ||
+                            keyStroke.getKeyType() == KeyType.REVERSE_TAB) {
                         return super.handleKeyStroke(keyStroke);
                     }
-                    if(keyStroke.getKeyType() == KeyType.Character) {
+                    if(keyStroke.getKeyType() == KeyType.CHARACTER) {
                         text = "Character: " + keyStroke.getCharacter() + (keyStroke.isCtrlDown() ? " (ctrl)" : "") +
                                 (keyStroke.isAltDown() ? " (alt)" : "");
                     }

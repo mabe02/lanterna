@@ -53,7 +53,7 @@ public class MultiLabelTest {
             contentArea.addComponent(new Label("Here is an animated label:"));
             contentArea.addComponent(AnimatedLabel.createClassicSpinningLine());
             contentArea.addComponent(new EmptySpace());
-            contentArea.addComponent(new Button("Close", window::close).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center)));
+            contentArea.addComponent(new Button("Close", window::close).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.CENTER)));
 
             window.setComponent(contentArea);
             textGUI.addWindow(window);

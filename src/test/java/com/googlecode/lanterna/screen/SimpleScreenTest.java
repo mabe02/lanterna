@@ -56,26 +56,26 @@ public class SimpleScreenTest {
             KeyStroke keyStroke = screen.readInput();
             switch(keyStroke.getKeyType()) {
                 case EOF:
-                case Escape:
+                case ESCAPE:
                     break mainLoop;
 
-                case ArrowUp:
+                case ARROW_UP:
                     screen.setCursorPosition(screen.getCursorPosition().withRelativeRow(-1));
                     break;
 
-                case ArrowDown:
+                case ARROW_DOWN:
                     screen.setCursorPosition(screen.getCursorPosition().withRelativeRow(1));
                     break;
 
-                case ArrowLeft:
+                case ARROW_LEFT:
                     screen.setCursorPosition(screen.getCursorPosition().withRelativeColumn(-1));
                     break;
 
-                case ArrowRight:
+                case ARROW_RIGHT:
                     screen.setCursorPosition(screen.getCursorPosition().withRelativeColumn(1));
                     break;
 
-                case Character:
+                case CHARACTER:
                     if(keyStroke.isCtrlDown()) {
                         switch(keyStroke.getCharacter()) {
                             case 'k':

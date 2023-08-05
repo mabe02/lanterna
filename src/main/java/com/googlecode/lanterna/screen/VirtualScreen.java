@@ -220,21 +220,21 @@ public class VirtualScreen extends AbstractScreen {
         if(keyStroke == null) {
             return null;
         }
-        else if(keyStroke.isAltDown() && keyStroke.getKeyType() == KeyType.ArrowLeft) {
+        else if(keyStroke.isAltDown() && keyStroke.getKeyType() == KeyType.ARROW_LEFT) {
             if(viewportTopLeft.getColumn() > 0) {
                 viewportTopLeft = viewportTopLeft.withRelativeColumn(-1);
                 refresh();
                 return null;
             }
         }
-        else if(keyStroke.isAltDown() && keyStroke.getKeyType() == KeyType.ArrowRight) {
+        else if(keyStroke.isAltDown() && keyStroke.getKeyType() == KeyType.ARROW_RIGHT) {
             if(viewportTopLeft.getColumn() + viewportSize.getColumns() < getTerminalSize().getColumns()) {
                 viewportTopLeft = viewportTopLeft.withRelativeColumn(1);
                 refresh();
                 return null;
             }
         }
-        else if(keyStroke.isAltDown() && keyStroke.getKeyType() == KeyType.ArrowUp) {
+        else if(keyStroke.isAltDown() && keyStroke.getKeyType() == KeyType.ARROW_UP) {
             if(viewportTopLeft.getRow() > 0) {
                 viewportTopLeft = viewportTopLeft.withRelativeRow(-1);
                 realScreen.scrollLines(0,viewportSize.getRows()-1,-1);
@@ -242,7 +242,7 @@ public class VirtualScreen extends AbstractScreen {
                 return null;
             }
         }
-        else if(keyStroke.isAltDown() && keyStroke.getKeyType() == KeyType.ArrowDown) {
+        else if(keyStroke.isAltDown() && keyStroke.getKeyType() == KeyType.ARROW_DOWN) {
             if(viewportTopLeft.getRow() + viewportSize.getRows() < getTerminalSize().getRows()) {
                 viewportTopLeft = viewportTopLeft.withRelativeRow(1);
                 realScreen.scrollLines(0,viewportSize.getRows()-1,1);

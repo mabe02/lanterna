@@ -857,25 +857,25 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
             boolean ctrlDown = (e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0;
             boolean shiftDown = (e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0;
             if(e.getKeyCode() == KeyEvent.VK_ENTER) {
-                keyQueue.add(new KeyStroke(KeyType.Enter, ctrlDown, altDown, shiftDown));
+                keyQueue.add(new KeyStroke(KeyType.ENTER, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                keyQueue.add(new KeyStroke(KeyType.Escape, ctrlDown, altDown, shiftDown));
+                keyQueue.add(new KeyStroke(KeyType.ESCAPE, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
-                keyQueue.add(new KeyStroke(KeyType.Backspace, ctrlDown, altDown, shiftDown));
+                keyQueue.add(new KeyStroke(KeyType.BACKSPACE, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_LEFT) {
-                keyQueue.add(new KeyStroke(KeyType.ArrowLeft, ctrlDown, altDown, shiftDown));
+                keyQueue.add(new KeyStroke(KeyType.ARROW_LEFT, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                keyQueue.add(new KeyStroke(KeyType.ArrowRight, ctrlDown, altDown, shiftDown));
+                keyQueue.add(new KeyStroke(KeyType.ARROW_RIGHT, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_UP) {
-                keyQueue.add(new KeyStroke(KeyType.ArrowUp, ctrlDown, altDown, shiftDown));
+                keyQueue.add(new KeyStroke(KeyType.ARROW_UP, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_DOWN) {
-                keyQueue.add(new KeyStroke(KeyType.ArrowDown, ctrlDown, altDown, shiftDown));
+                keyQueue.add(new KeyStroke(KeyType.ARROW_DOWN, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_INSERT) {
                 // This could be a paste (shift+insert) if the clipboard is available
@@ -883,23 +883,23 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
                     pasteClipboardContent();
                 }
                 else {
-                    keyQueue.add(new KeyStroke(KeyType.Insert, ctrlDown, altDown, shiftDown));
+                    keyQueue.add(new KeyStroke(KeyType.INSERT, ctrlDown, altDown, shiftDown));
                 }
             }
             else if(e.getKeyCode() == KeyEvent.VK_DELETE) {
-                keyQueue.add(new KeyStroke(KeyType.Delete, ctrlDown, altDown, shiftDown));
+                keyQueue.add(new KeyStroke(KeyType.DELETE, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_HOME) {
-                keyQueue.add(new KeyStroke(KeyType.Home, ctrlDown, altDown, shiftDown));
+                keyQueue.add(new KeyStroke(KeyType.HOME, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_END) {
-                keyQueue.add(new KeyStroke(KeyType.End, ctrlDown, altDown, shiftDown));
+                keyQueue.add(new KeyStroke(KeyType.END, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_PAGE_UP) {
-                keyQueue.add(new KeyStroke(KeyType.PageUp, ctrlDown, altDown, shiftDown));
+                keyQueue.add(new KeyStroke(KeyType.PAGE_UP, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_PAGE_DOWN) {
-                keyQueue.add(new KeyStroke(KeyType.PageDown, ctrlDown, altDown, shiftDown));
+                keyQueue.add(new KeyStroke(KeyType.PAGE_DOWN, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_F1) {
                 keyQueue.add(new KeyStroke(KeyType.F1, ctrlDown, altDown, shiftDown));
@@ -939,10 +939,10 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
             }
             else if(e.getKeyCode() == KeyEvent.VK_TAB) {
                 if(e.isShiftDown()) {
-                    keyQueue.add(new KeyStroke(KeyType.ReverseTab, ctrlDown, altDown, false));
+                    keyQueue.add(new KeyStroke(KeyType.REVERSE_TAB, ctrlDown, altDown, false));
                 }
                 else {
-                    keyQueue.add(new KeyStroke(KeyType.Tab, ctrlDown, altDown, shiftDown));
+                    keyQueue.add(new KeyStroke(KeyType.TAB, ctrlDown, altDown, shiftDown));
                 }
             }
             else {

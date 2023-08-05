@@ -397,7 +397,7 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
     @Override
     public Result handleKeyStroke(KeyStroke keyStroke) {
         switch(keyStroke.getKeyType()) {
-            case ArrowUp:
+            case ARROW_UP:
                 if(selectedRow > 0) {
                     selectedRow--;
                 }
@@ -405,7 +405,7 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
                     return Result.MOVE_FOCUS_UP;
                 }
                 break;
-            case ArrowDown:
+            case ARROW_DOWN:
                 if(selectedRow < tableModel.getRowCount() - 1) {
                     selectedRow++;
                 }
@@ -413,24 +413,24 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
                     return Result.MOVE_FOCUS_DOWN;
                 }
                 break;
-            case PageUp:
+            case PAGE_UP:
                 if(getRenderer().getVisibleRowsOnLastDraw() > 0 && selectedRow > 0) {
                     selectedRow -= Math.min(getRenderer().getVisibleRowsOnLastDraw() - 1, selectedRow);
                 }
                 break;
-            case PageDown:
+            case PAGE_DOWN:
                 if(getRenderer().getVisibleRowsOnLastDraw() > 0 && selectedRow < tableModel.getRowCount() - 1) {
                     int toEndDistance = tableModel.getRowCount() - 1 - selectedRow;
                     selectedRow += Math.min(getRenderer().getVisibleRowsOnLastDraw() - 1, toEndDistance);
                 }
                 break;
-            case Home:
+            case HOME:
                 selectedRow = 0;
                 break;
-            case End:
+            case END:
                 selectedRow = tableModel.getRowCount() - 1;
                 break;
-            case ArrowLeft:
+            case ARROW_LEFT:
                 if(cellSelection && selectedColumn > 0) {
                     selectedColumn--;
                 }
@@ -438,7 +438,7 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
                     return Result.MOVE_FOCUS_LEFT;
                 }
                 break;
-            case ArrowRight:
+            case ARROW_RIGHT:
                 if(cellSelection && selectedColumn < tableModel.getColumnCount() - 1) {
                     selectedColumn++;
                 }
@@ -446,8 +446,8 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
                     return Result.MOVE_FOCUS_RIGHT;
                 }
                 break;
-            case Character:
-            case Enter:
+            case CHARACTER:
+            case ENTER:
                 if (isKeyboardActivationStroke(keyStroke)) {
                     Runnable runnable = selectAction;   //To avoid synchronizing
                     if(runnable != null) {
@@ -459,7 +459,7 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
                 } else {
                     return super.handleKeyStroke(keyStroke);
                 }
-            case MouseEvent:
+            case MOUSE_EVENT:
                 MouseAction action = (MouseAction)keyStroke;
                 MouseActionType actionType = action.getActionType();
                 if (actionType == MouseActionType.MOVE) {
@@ -475,7 +475,7 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
                 selectedRow = mouseRow;
                 selectedColumn = mouseColumn;
                 if (isDifferentCell) {
-                    return handleKeyStroke(new KeyStroke(KeyType.Enter));
+                    return handleKeyStroke(new KeyStroke(KeyType.ENTER));
                 }
                 break;
             default:

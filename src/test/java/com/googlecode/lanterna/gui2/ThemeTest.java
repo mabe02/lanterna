@@ -159,13 +159,13 @@ public class ThemeTest extends TestBase {
                                                     "Here is a very long line that doesn't fit")
                                                     .setReadOnly(true))))
         };
-        ActionListBox listBox = new ActionListBox(new TerminalSize(15, 7)).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        ActionListBox listBox = new ActionListBox(new TerminalSize(15, 7)).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.CENTER));
         for(ThemedComponentTestDialog themedComponentTestDialog: componentTestDialogs) {
             listBox.addItem(themedComponentTestDialog);
         }
         mainPanel.addComponent(listBox);
         mainPanel.addComponent(new EmptySpace());
-        mainPanel.addComponent(new Button(LocalizedString.Close.toString(), componentTestChooser::close).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.End)));
+        mainPanel.addComponent(new Button(LocalizedString.Close.toString(), componentTestChooser::close).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.END)));
 
         componentTestChooser.setComponent(mainPanel);
         textGUI.addWindowAndWait(componentTestChooser);
@@ -326,8 +326,8 @@ public class ThemeTest extends TestBase {
         window1.addWindowListener(new WindowListenerAdapter() {
             @Override
             public void onInput(Window basePane, KeyStroke keyStroke, AtomicBoolean deliverEvent) {
-                if(keyStroke.getKeyType() == KeyType.Tab ||
-                        keyStroke.getKeyType() == KeyType.ReverseTab) {
+                if(keyStroke.getKeyType() == KeyType.TAB ||
+                        keyStroke.getKeyType() == KeyType.REVERSE_TAB) {
                     textGUI.setActiveWindow(window2);
                     deliverEvent.set(false);
                 }
@@ -366,8 +366,8 @@ public class ThemeTest extends TestBase {
         window2.addWindowListener(new WindowListenerAdapter() {
             @Override
             public void onInput(Window basePane, KeyStroke keyStroke, AtomicBoolean deliverEvent) {
-                if(keyStroke.getKeyType() == KeyType.Tab ||
-                        keyStroke.getKeyType() == KeyType.ReverseTab) {
+                if(keyStroke.getKeyType() == KeyType.TAB ||
+                        keyStroke.getKeyType() == KeyType.REVERSE_TAB) {
                     textGUI.setActiveWindow(window1);
                     deliverEvent.set(false);
                 }
@@ -441,7 +441,7 @@ public class ThemeTest extends TestBase {
         mainPanel.addComponent(Panels.horizontal(
                 okButton,
                 cancelButton
-        ).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.End)));
+        ).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.END)));
 
         customThemeCreator.setComponent(mainPanel);
         okButton.takeFocus();

@@ -51,7 +51,7 @@ public class MenuPopupWindow extends AbstractWindow {
      */
     public void addMenuItem(MenuItem menuItem) {
         menuItemPanel.addComponent(menuItem);
-        menuItem.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Fill));
+        menuItem.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.FILL));
         if (menuItemPanel.getChildCount() == 1) {
             setFocusedInteractable(menuItem);
         }

@@ -66,7 +66,7 @@ public class MultiScreenTest {
                 if(keyStroke == null) {
                     Thread.sleep(1);
                 }
-                else if(keyStroke.getKeyType() == KeyType.Escape) {
+                else if(keyStroke.getKeyType() == KeyType.ESCAPE) {
                     break mainLoop;
                 }
                 else if(keyStroke.getCharacter() == ' ') {
@@ -81,7 +81,7 @@ public class MultiScreenTest {
                 if(keyStroke == null) {
                     Thread.sleep(1);
                 }
-                else if(keyStroke.getKeyType() == KeyType.Escape) {
+                else if(keyStroke.getKeyType() == KeyType.ESCAPE) {
                     break mainLoop;
                 }
                 else if(keyStroke.getCharacter() == ' ') {
