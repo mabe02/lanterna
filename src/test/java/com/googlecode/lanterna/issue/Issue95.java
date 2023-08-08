@@ -32,7 +32,7 @@ import javax.swing.WindowConstants;
  */
 public class Issue95 {
     public static void main(String[] args) throws InterruptedException, IOException {
-        SwingTerminalFrame terminal = new SwingTerminalFrame(TerminalEmulatorAutoCloseTrigger.CloseOnExitPrivateMode);
+        SwingTerminalFrame terminal = new SwingTerminalFrame(TerminalEmulatorAutoCloseTrigger.CLOSE_ON_EXIT_PRIVATE_MODE);
         terminal.setCursorVisible(false);
 
         Screen screen = new TerminalScreen(terminal);

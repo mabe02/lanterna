@@ -93,7 +93,7 @@ public class DefaultTerminalFactory implements TerminalFactory {
         this.inputTimeout = -1;
         this.autoOpenTerminalFrame = true;
         this.title = null;
-        this.autoCloseTriggers = EnumSet.of(TerminalEmulatorAutoCloseTrigger.CloseOnExitPrivateMode);
+        this.autoCloseTriggers = EnumSet.of(TerminalEmulatorAutoCloseTrigger.CLOSE_ON_EXIT_PRIVATE_MODE);
         this.mouseCaptureMode = null;
         this.unixTerminalCtrlCBehaviour = UnixTerminal.CtrlCBehaviour.CTRL_C_KILLS_APPLICATION;
 
