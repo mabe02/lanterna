@@ -50,23 +50,38 @@ public abstract class AbstractBorder extends AbstractComposite<Border> implement
 
     @Override
     public LayoutData getLayoutData() {
+        if(getComponent() == null) {
+            return super.getLayoutData();
+        }
         return getComponent().getLayoutData();
     }
 
     @Override
     public Border setLayoutData(LayoutData ld) {
-        getComponent().setLayoutData(ld);
+        if(getComponent() == null) {
+            super.setLayoutData(ld);
+        } else {
+            getComponent().setLayoutData(ld);
+        }
         return this;
     }
 
     @Override
     public TerminalPosition toBasePane(TerminalPosition position) {
-        return super.toBasePane(position).withRelative(getWrappedComponentTopLeftOffset());
+        TerminalPosition terminalPosition = super.toBasePane(position);
+        if(terminalPosition == null) {
+            return null;
+        }
+        return terminalPosition.withRelative(getWrappedComponentTopLeftOffset());
     }
 
     @Override
     public TerminalPosition toGlobal(TerminalPosition position) {
-        return super.toGlobal(position).withRelative(getWrappedComponentTopLeftOffset());
+        TerminalPosition terminalPosition = super.toGlobal(position);
+        if(terminalPosition == null) {
+            return null;
+        }
+        return terminalPosition.withRelative(getWrappedComponentTopLeftOffset());
     }
 
     private TerminalPosition getWrappedComponentTopLeftOffset() {
