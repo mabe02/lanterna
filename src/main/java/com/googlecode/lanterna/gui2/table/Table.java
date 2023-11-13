@@ -53,12 +53,18 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
      * @param columnLabels Creates one column per label in the array, must be more than one
      */
     public Table(String... columnLabels) {
-        if(columnLabels.length == 0) {
-            throw new IllegalArgumentException("Table needs at least one column");
-        }
+        this(new TableModel<>(columnLabels));
+    }
+
+    /**
+     * Creates a new {@code Table} with the specified table model
+     * @param tableModel Table model
+     */
+    public Table(final TableModel tableModel) {
         this.tableHeaderRenderer = new DefaultTableHeaderRenderer<>();
         this.tableCellRenderer = new DefaultTableCellRenderer<>();
-        this.tableModel = new TableModel<>(columnLabels);
+        this.tableModel = tableModel;
+
         this.selectAction = null;
         this.visibleColumns = 0;
         this.visibleRows = 0;
