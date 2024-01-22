@@ -107,7 +107,7 @@ public interface WinDef extends com.sun.jna.platform.win32.WinDef {
 
 		@Override
 		public String toString() {
-			return String.format("KEY_EVENT_RECORD(%s,%s,%s,%s,%s,%s)", bKeyDown, wRepeatCount, wVirtualKeyCode, wVirtualKeyCode, wVirtualScanCode, uChar, dwControlKeyState);
+			return String.format("KEY_EVENT_RECORD(%s,%s,%s,%s,%s,%s)", bKeyDown, wRepeatCount, wVirtualKeyCode, wVirtualScanCode, uChar, dwControlKeyState);
 		}
 	}
 
