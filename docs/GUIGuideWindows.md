@@ -113,8 +113,8 @@ even has a title. Here's how you can create a couple of panels, laying them out 
             Panel rightPanel = new Panel();
     
             horizontalPanel.addComponent(leftPanel);
-            horizontalPanel.addComponent(Borders.singleLineBevel(middlePanel, "Panel Title"));
-            horizontalPanel.addComponent(Borders.doubleLineBevel(rightPanel));
+            horizontalPanel.addComponent(middlePanel.withBorder(Borders.singleLineBevel("Panel Title")));
+            horizontalPanel.addComponent(rightPanel.withBorder(Borders.doubleLineBevel()));
     
             // This ultimately links in the panels as the window content 
             setComponent(horizontalPanel);
