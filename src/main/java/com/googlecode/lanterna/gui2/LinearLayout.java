@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 /**
@@ -271,7 +272,6 @@ public class LinearLayout implements LayoutManager {
     private void doFlexibleVerticalLayout(TerminalSize area, List<Component> components) {
         int availableVerticalSpace = area.getRows();
         int availableHorizontalSpace = area.getColumns();
-        List<Component> copyOfComponenets = new ArrayList<>(components);
         final Map<Component, TerminalSize> fittingMap = new IdentityHashMap<>();
         int totalRequiredVerticalSpace = 0;
 
@@ -300,20 +300,25 @@ public class LinearLayout implements LayoutManager {
 
         // If we can't fit everything, trim the down the size of the largest components until it fits
         if (availableVerticalSpace < totalRequiredVerticalSpace) {
-            copyOfComponenets.sort((o1, o2) -> {
+            List<Component> copyOfComponents = new ArrayList<>(components);
+            Collections.reverse(copyOfComponents);
+            copyOfComponents.sort((o1, o2) -> {
                 // Reverse sort
                 return -Integer.compare(fittingMap.get(o1).getRows(), fittingMap.get(o2).getRows());
             });
 
             while (availableVerticalSpace < totalRequiredVerticalSpace) {
-                int largestSize = fittingMap.get(copyOfComponenets.get(0)).getRows();
-                for (Component largeComponent: copyOfComponenets) {
+                int largestSize = fittingMap.get(copyOfComponents.get(0)).getRows();
+                for (Component largeComponent: copyOfComponents) {
                     TerminalSize currentSize = fittingMap.get(largeComponent);
                     if (largestSize > currentSize.getRows()) {
                         break;
                     }
                     fittingMap.put(largeComponent, currentSize.withRelativeRows(-1));
                     totalRequiredVerticalSpace--;
+                    if (availableHorizontalSpace >= totalRequiredVerticalSpace) {
+                        break;
+                    }
                 }
             }
         }
@@ -419,7 +424,6 @@ public class LinearLayout implements LayoutManager {
     private void doFlexibleHorizontalLayout(TerminalSize area, List<Component> components) {
         int availableVerticalSpace = area.getRows();
         int availableHorizontalSpace = area.getColumns();
-        List<Component> copyOfComponenets = new ArrayList<>(components);
         final Map<Component, TerminalSize> fittingMap = new IdentityHashMap<>();
         int totalRequiredHorizontalSpace = 0;
 
@@ -448,20 +452,25 @@ public class LinearLayout implements LayoutManager {
 
         // If we can't fit everything, trim the down the size of the largest components until it fits
         if (availableHorizontalSpace < totalRequiredHorizontalSpace) {
-            copyOfComponenets.sort((o1, o2) -> {
+            List<Component> copyOfComponents = new ArrayList<>(components);
+            Collections.reverse(copyOfComponents);
+            copyOfComponents.sort((o1, o2) -> {
                 // Reverse sort
                 return -Integer.compare(fittingMap.get(o1).getColumns(), fittingMap.get(o2).getColumns());
             });
 
             while (availableHorizontalSpace < totalRequiredHorizontalSpace) {
-                int largestSize = fittingMap.get(copyOfComponenets.get(0)).getColumns();
-                for (Component largeComponent: copyOfComponenets) {
+                int largestSize = fittingMap.get(copyOfComponents.get(0)).getColumns();
+                for (Component largeComponent: copyOfComponents) {
                     TerminalSize currentSize = fittingMap.get(largeComponent);
                     if (largestSize > currentSize.getColumns()) {
                         break;
                     }
                     fittingMap.put(largeComponent, currentSize.withRelativeColumns(-1));
                     totalRequiredHorizontalSpace--;
+                    if (availableHorizontalSpace >= totalRequiredHorizontalSpace) {
+                        break;
+                    }
                 }
             }
         }
