@@ -174,7 +174,7 @@ public abstract class UnixLikeTTYTerminal extends UnixLikeTerminal {
         return builder.toString();
     }
 
-    private String[] getSTTYCommand() {
+    protected String[] getSTTYCommand() {
         String sttyOverride = System.getProperty("com.googlecode.lanterna.terminal.UnixTerminal.sttyCommand");
         if (sttyOverride != null) {
             return new String[] { sttyOverride };
