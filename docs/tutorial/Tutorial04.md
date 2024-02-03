@@ -1,14 +1,14 @@
 Tutorial 4
 ---
 
-In this forth tutorial we will finally look at creating a multi-window text GUI, all based on text. Just like
+In this fourth tutorial we will finally look at creating a multi-window text GUI, all based on text. Just like
 the `Screen`-layer in the previous tutorial was based on the lower-level `Terminal` layer, the GUI classes we will
-use here are all build upon the Screen interface. Because of this, if you use these classes, you should never
+use here are all built upon the Screen interface. Because of this, if you use these classes, you should never
 interact with the underlying Screen that backs the GUI directly, as it might modify the screen in a way the
 GUI isn't aware of.
 
 The GUI system is designed around a background surface that is usually static, but can have components, and
-multiple windows. The recommended approach it to make all windows modal and not let the user switch between
+multiple windows. The recommended approach is to make all windows modal and not let the user switch between
 windows, but the latter can also be done. Components are added to windows by using a layout manager that
 determines the position of each component.
 
@@ -24,14 +24,13 @@ get a `Screen` like we did in the previous tutorial and start it so it puts the 
     screen.startScreen();
 
 There are a couple of different constructors to `MultiWindowTextGUI`, we are going to go with the defaults for
-most of these values. The one thing to consider is threading; with the default options, lanterna will use
-the calling thread for all UI operations which mean that you are basically letting the calling thread block
+most of these values. The one thing to consider is threading; with the default options, Lanterna will use
+the calling thread for all UI operations which means that you are basically letting the calling thread block
 until the GUI is shut down. There is a separate `TextGUIThread` implementation you can use if you'd like
 Lanterna to create a dedicated UI thread and not lock the caller. Just like with AWT and Swing, you should
-be scheduling any kind of UI operation to always run on the UI thread but lanterna tries to be best-effort
+be scheduling any kind of UI operation to always run on the UI thread but Lanterna tries to be best-effort
 if you attempt to mutate the GUI from another thread. Another default setting that will be applied is that
 the background of the GUI will be solid blue.
-
 
     final WindowBasedTextGUI textGUI = new MultiWindowTextGUI(screen);
 
@@ -147,10 +146,10 @@ option to fire off the GUI here and then later on decide when we want to stop it
 you need a dedicated UI thread to run all the GUI operations, usually done by passing in a
 `SeparateTextGUIThread` object when you create the `TextGUI`. In this tutorial, we are using the conceptually
 simpler `SameTextGUIThread`, which essentially hijacks the caller thread and uses it as the GUI thread until
-some stop condition is met. The absolutely simplest way to do this is to simply ask lanterna to display the
+some stop condition is met. The absolutely simplest way to do this is to simply ask Lanterna to display the
 window and wait for it to be closed. This will initiate the event loop and make the GUI functional. In the
 "Close" button above, we tied a call to the `close()` method on the Window object when the button is
-triggered, this will then break the even loop and our call finally returns.
+triggered, this will then break the event loop and our call finally returns.
 
     textGUI.addWindowAndWait(window);
 

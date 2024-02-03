@@ -9,7 +9,7 @@ functionality.
         try {
             terminal = defaultTerminalFactory.createTerminal();
 
-Most terminals and terminal emulators supports what's known as "private mode" which is a separate buffer for
+Most terminals and terminal emulators support what's known as "private mode" which is a separate buffer for
 the text content that does not support any scrolling. This is frequently used by text editors such as `nano`
 and `vi` in order to give a "fullscreen" view. When exiting from private mode, the previous content is usually
 restored, including the scrollback history. Emulators that don't support this properly might at least clear
@@ -18,7 +18,7 @@ the screen after exiting.
             terminal.enterPrivateMode();
             
 You can use the `enterPrivateMode()` to activate private mode, but you'll need to remember to also exit
-private mode afterwards so that you don't leave the terminal in a weird state when the application exists.
+private mode afterwards so that you don't leave the terminal in a weird state when the application exits.
 The usual `close()` at the end will do this automatically, but you can also manually call `exitPrivateMode()`
 and finally Lanterna will register a shutdown hook that tries to restore the terminal (including exiting
 private mode, if necessary) as well.
@@ -64,7 +64,7 @@ You still need to flush for changes to become visible
 You can attach a resize listener to your `Terminal` object, which will invoke a callback method (usually on a
 separate thread) when it is informed of the terminal emulator window changing size. Notice that maybe not
 all implementations supports this. The `UnixTerminal`, for example, relies on the `WINCH` signal being sent to
-the java process, which might not make it though if you remote shell isn't forwarding the signal properly.
+the java process, which might not make it though if your remote shell isn't forwarding the signal properly.
 
             terminal.addResizeListener(new TerminalResizeListener() {
                 @Override
