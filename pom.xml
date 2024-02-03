@@ -5,7 +5,7 @@
     <packaging>jar</packaging>
     <name>Lanterna</name>
     <description>Java library for creating text-based terminal GUIs</description>
-    <version>3.0.5</version>
+    <version>3.0.6-SNAPSHOT</version>
     <url>https://github.com/mabe02/lanterna</url>
 
     <licenses>
