@@ -50,6 +50,7 @@ class Issue595 {
             // POC
             final WaitingDialog waitingDialog = WaitingDialog.createDialog("TITLE", "TEXT");
             final ExecutorService executorService = Executors.newSingleThreadExecutor();
+            Thread.sleep(SLEEP_MILLIS);
             waitingDialog.showDialog(textGUI, false);
             CompletableFuture.runAsync(() -> {
                                  try {
