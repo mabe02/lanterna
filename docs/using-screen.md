@@ -63,7 +63,7 @@ The correct way to reset a `Screen` is to call `clear()` on it.
 ## Refreshing the screen
 As have been noted above, when you have been modifying your screen you need to call the `refresh()` method to make the 
 changes show up. This is because the `Screen` will keep an in-memory buffer of the terminal window. When you draw 
-strings to the screen, you actually modify the buffer and not the the real terminal. Calling `refresh()` will make the 
+strings to the screen, you actually modify the buffer and not the real terminal. Calling `refresh()` will make the 
 screen compare what's on the screen and what's in the buffer, and output commands to the underlying `Terminal` so that 
 the screen looks like the buffer. This way, you can print text on the same location over and over and in the end won't 
 waste anything when the changes are flushed to standard out (or whatever your terminal is using).
@@ -83,8 +83,8 @@ size since last time.
     }
 
 ## Manipulating the underlying terminal
-The only way a `Screen` can know what visible in the real terminal window is by remembering what the buffer looked like 
-before the last refresh. When you modify the underlying directly terminal, this buffer-memory will get out of sync and 
+The only way a `Screen` can know what is visible in the real terminal window is by remembering what the buffer looked like 
+before the last refresh. When you modify the underlying terminal directly, this buffer-memory will get out of sync and 
 the `refresh()` is likely to not properly update the content. So if you use `Screen`, a general rule of thumb is to 
 avoid operating on the `Terminal` you passed in when creating the `Screen`.  
 

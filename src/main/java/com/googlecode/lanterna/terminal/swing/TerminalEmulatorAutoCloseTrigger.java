@@ -26,10 +26,10 @@ public enum TerminalEmulatorAutoCloseTrigger {
     /**
      * Close the frame when exiting from private mode
      */
-    CloseOnExitPrivateMode,
+    CLOSE_ON_EXIT_PRIVATE_MODE,
     /**
      * Close if the user presses ESC key on the keyboard
      */
-    CloseOnEscape,
+    CLOSE_ON_ESCAPE,
     ;
 }

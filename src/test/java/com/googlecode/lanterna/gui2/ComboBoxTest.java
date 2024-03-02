@@ -99,7 +99,7 @@ public class ComboBoxTest extends TestBase {
         mainPanel.addComponent(new EmptySpace(TerminalSize.ONE));
         mainPanel.addComponent(comboBoxTimeZones.withBorder(Borders.singleLine("Large ComboBox")));
         mainPanel.addComponent(new EmptySpace(TerminalSize.ONE));
-        mainPanel.addComponent(new Separator(Direction.HORIZONTAL).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Fill)));
+        mainPanel.addComponent(new Separator(Direction.HORIZONTAL).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.FILL)));
         mainPanel.addComponent(new Button("OK", window::close));
         window.setComponent(mainPanel);
         textGUI.addWindow(window);

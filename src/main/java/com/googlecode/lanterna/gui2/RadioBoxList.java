@@ -83,7 +83,7 @@ public class RadioBoxList<V> extends AbstractListBox<V, RadioBoxList<V>> {
     public synchronized Result handleKeyStroke(KeyStroke keyStroke) {
         if (isKeyboardActivationStroke(keyStroke)) {
             setCheckedIndex(getSelectedIndex());
-        } else if (keyStroke.getKeyType() == KeyType.MouseEvent) {
+        } else if (keyStroke.getKeyType() == KeyType.MOUSE_EVENT) {
             MouseAction mouseAction = (MouseAction) keyStroke;
             MouseActionType actionType = mouseAction.getActionType();
             
@@ -252,13 +252,17 @@ public class RadioBoxList<V> extends AbstractListBox<V, RadioBoxList<V>> {
             return 1;
         }
 
+        protected String getItemText(RadioBoxList<V> listBox, int index, V item) {
+            return (item != null ? item : "<null>").toString();
+        }
+        
         @Override
         public String getLabel(RadioBoxList<V> listBox, int index, V item) {
             String check = " ";
             if(listBox.checkedIndex == index)
                 check = "o";
 
-            String text = (item != null ? item : "<null>").toString();
+            String text = getItemText(listBox, index, item);
             return "<" + check + "> " + text;
         }
 
@@ -301,7 +305,7 @@ public class RadioBoxList<V> extends AbstractListBox<V, RadioBoxList<V>> {
                 graphics.putString(0, 0, brackets);
             }
 
-            String text = (item != null ? item : "<null>").toString();
+            String text = getItemText(listBox, index, item);
             graphics.putString(4, 0, text);
 
             boolean itemChecked = listBox.checkedIndex == index;

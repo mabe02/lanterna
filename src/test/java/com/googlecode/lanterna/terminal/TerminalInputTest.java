@@ -45,7 +45,7 @@ public class TerminalInputTest {
                 continue;
             }
 
-            if(key.getKeyType() == KeyType.Escape || key.getKeyType() == KeyType.EOF) {
+            if(key.getKeyType() == KeyType.ESCAPE || key.getKeyType() == KeyType.EOF) {
                 break;
             }
 

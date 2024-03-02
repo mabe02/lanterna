@@ -80,10 +80,21 @@ public class TableModel<V> {
 
     /**
      * Default constructor, creates a new model with same number of columns as labels supplied
-     * @param columnLabels Labels for the column headers
+     * @param columnLabels Variable number of labels for the column headers
      */
     public TableModel(String... columnLabels) {
-        this.columns = new ArrayList<>(Arrays.asList(columnLabels));
+        this(Arrays.asList(columnLabels));
+    }
+
+    /**
+     * Creates a new model with same number of columns as labels supplied
+     * @param columnLabels List of labels for the column headers
+     */
+    public TableModel(List<String> columnLabels) {
+        if(columnLabels.isEmpty()) {
+            throw new IllegalArgumentException("Table model needs at least one column");
+        }
+        this.columns = new ArrayList<>(columnLabels);
         this.rows = new ArrayList<>();
         this.listeners = new ArrayList<>();
     }

@@ -188,9 +188,9 @@ public class AWTTerminalFrame extends Frame implements IOSafeTerminal {
             return new KeyStroke(KeyType.EOF);
         }
         KeyStroke keyStroke = awtTerminal.pollInput();
-        if(autoCloseTriggers.contains(TerminalEmulatorAutoCloseTrigger.CloseOnEscape) &&
+        if(autoCloseTriggers.contains(TerminalEmulatorAutoCloseTrigger.CLOSE_ON_ESCAPE) &&
                 keyStroke != null && 
-                keyStroke.getKeyType() == KeyType.Escape) {
+                keyStroke.getKeyType() == KeyType.ESCAPE) {
             dispose();
         }
         return keyStroke;
@@ -209,7 +209,7 @@ public class AWTTerminalFrame extends Frame implements IOSafeTerminal {
     @Override
     public void exitPrivateMode() {
         awtTerminal.exitPrivateMode();
-        if(autoCloseTriggers.contains(TerminalEmulatorAutoCloseTrigger.CloseOnExitPrivateMode)) {
+        if(autoCloseTriggers.contains(TerminalEmulatorAutoCloseTrigger.CLOSE_ON_EXIT_PRIVATE_MODE)) {
             dispose();
         }
     }

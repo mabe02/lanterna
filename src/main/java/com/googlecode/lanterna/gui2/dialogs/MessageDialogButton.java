@@ -34,36 +34,36 @@ public enum MessageDialogButton {
     /**
      * "Cancel"
      */
-    Cancel(LocalizedString.Cancel),
+    CANCEL(LocalizedString.Cancel),
     /**
      * "Yes"
      */
-    Yes(LocalizedString.Yes),
+    YES(LocalizedString.Yes),
     /**
      * "No"
      */
-    No(LocalizedString.No),
+    NO(LocalizedString.No),
     /**
      * "Close"
      */
-    Close(LocalizedString.Close),
+    CLOSE(LocalizedString.Close),
     /**
      * "Abort"
      */
-    Abort(LocalizedString.Abort),
+    ABORT(LocalizedString.Abort),
     /**
      * "Ignore"
      */
-    Ignore(LocalizedString.Ignore),
+    IGNORE(LocalizedString.Ignore),
     /**
      * "Retry"
      */
-    Retry(LocalizedString.Retry),
+    RETRY(LocalizedString.Retry),
 
     /**
      * "Continue"
      */
-    Continue(LocalizedString.Continue);
+    CONTINUE(LocalizedString.Continue);
 
     private final LocalizedString label;
 

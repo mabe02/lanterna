@@ -97,7 +97,7 @@ public class ActionListBox extends AbstractListBox<Runnable, ActionListBox> {
         if (isKeyboardActivationStroke(keyStroke)) {
             runSelectedItem();
             return Result.HANDLED;
-        } else if (keyStroke.getKeyType() == KeyType.MouseEvent) {
+        } else if (keyStroke.getKeyType() == KeyType.MOUSE_EVENT) {
             MouseAction mouseAction = (MouseAction) keyStroke;
             MouseActionType actionType = mouseAction.getActionType();
             

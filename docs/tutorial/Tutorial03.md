@@ -5,7 +5,7 @@ In the third tutorial, we will look at using the next layer available in Lantern
 Terminal interface you saw in tutorial 1 and 2.
 
 A `Screen` works similar to double-buffered video memory, it has two surfaces than can be directly addressed and
-modified and by calling a special method that content of the back-buffer is move to the front. Instead of pixels
+modified and by calling a special method the content of the back-buffer is move to the front. Instead of pixels
 though, a `Screen` holds two text character surfaces (front and back) which corresponds to each "cell" in the
 terminal. You can freely modify the back "buffer" and you can read from the front "buffer", calling the
 `refreshScreen()` method to copy content from the back buffer to the front buffer, which will make Lanterna also
@@ -54,7 +54,7 @@ move the content from the back buffer to the front buffer and refresh the screen
             screen.refresh();
 
 Now there should be completely random colored cells in the terminal (assuming your terminal (emulator)
-supports colors). Let's look at it for two seconds or until the user press a key.
+supports colors). Let's look at it for two seconds or until the user presses a key.
 
             long startTime = System.currentTimeMillis();
             while(System.currentTimeMillis() - startTime < 2000) {
@@ -83,7 +83,7 @@ result in an EOF `KeyStroke`.
 Screens will automatically listen and record size changes, but you have to let the `Screen` know when is
 a good time to update its internal buffers. Usually you should do this at the start of your "drawing"
 loop, if you have one. This ensures that the dimensions of the buffers stays constant and doesn't change
-while you are drawing content. The method `doReizeIfNecessary()` will check if the terminal has been
+while you are drawing content. The method `doResizeIfNecessary()` will check if the terminal has been
 resized since last time it was called (or since the screen was created if this is the first time
 calling) and update the buffer dimensions accordingly. It returns null if the terminal has not changed
 size since last time.

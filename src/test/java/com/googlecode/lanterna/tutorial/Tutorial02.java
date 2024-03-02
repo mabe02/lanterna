@@ -120,7 +120,7 @@ public class Tutorial02 {
             KeyType, while regular alphanumeric and symbol keys are all under KeyType.Character. Notice that tab and
             enter are not considered KeyType.Character but special types (KeyType.Tab and KeyType.Enter respectively)
              */
-            while(keyStroke.getKeyType() != KeyType.Escape) {
+            while(keyStroke.getKeyType() != KeyType.ESCAPE) {
                 textGraphics.drawLine(5, 4, terminal.getTerminalSize().getColumns() - 1, 4, ' ');
                 textGraphics.putString(5, 4, "Last Keystroke: ", SGR.BOLD);
                 textGraphics.putString(5 + "Last Keystroke: ".length(), 4, keyStroke.toString());

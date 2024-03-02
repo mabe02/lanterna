@@ -297,7 +297,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
 
     private KeyStroke filterMouseEvents(KeyStroke keyStroke) {
         //Remove bad input events from terminals that are not following the xterm protocol properly
-        if(keyStroke == null || keyStroke.getKeyType() != KeyType.MouseEvent) {
+        if(keyStroke == null || keyStroke.getKeyType() != KeyType.MOUSE_EVENT) {
             return keyStroke;
         }
 

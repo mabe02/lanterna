@@ -14,13 +14,13 @@ in Lanterna, a terminal is something that implements `Terminal` and with a corre
 entire stack (`Screen` and `TextGUI`) will work on top of it without any modifications. The regular implementation of
 `Terminal` can be thought of as the `UnixTerminal` class, which translates the interface calls on `Terminal` to the
 ANSI control sequences required to perform those operations, by default to `stdout` and reading from `stdin`. But 
-lanterna also contains a simple built-in terminal emulator that implements the `Terminal` interface, accessible through 
+Lanterna also contains a simple built-in terminal emulator that implements the `Terminal` interface, accessible through 
 `SwingTerminal` and `AWTTerminal` (and related helper classes) that will open a new window containing the terminal and
- each API call is directly mutating the internal state of this emulator. There is also a build-in telnet server that
+ each API call is directly mutating the internal state of this emulator. There is also a built-in Telnet server that
  presents incoming clients as a `Terminal` object that you can control.   
 
 ### Using `DefaultTerminalFactory` to choose implementation
-By using the `DefaultTerminalFactory` class, you can use some build-in code that tries to auto-detect the system 
+By using the `DefaultTerminalFactory` class, you can use some built-in code that tries to auto-detect the system 
 environment during runtime. The encoding will be picked up through the `file.encoding` system property (which is 
 automatically set by the JVM) and the type of `Terminal` implementation to use will be decided based on if the system 
 has a graphical environment (then use `SwingTerminal`) or not (then use `UnixTerminal`). The idea for this class is to 
@@ -49,7 +49,7 @@ On Windows, you need to use [javaw](http://pages.citebite.com/p6q0p5r4h7sny) to 
 Before you can print any text or start to move the cursor around, you should enter what's called the _private mode_. In 
 this mode the screen is cleared, scrolling is disabled and the previous content is stored away. When you exit private 
 mode, the previous content is restored and displayed on screen again as it was before private mode was entered. Some 
-systems/terminals doesn't support this mode at all, but will still perform some screen cleaning operations for you. 
+systems/terminals don't support this mode at all, but will still perform some screen cleaning operations for you. 
 It's always recommended to enter private mode when you start your GUI and exit when you finish.
 
 ### Example
@@ -64,7 +64,7 @@ appear at the text cursor position, it is very important to be able to move this
 
     terminal.setCursorPosition(10, 5);
 
-The first parameter is to which column (the first is 0) and the record to which row (again, first row is 0).
+The first parameter is the column (the first is 0) and the second parameter is the row (again, first row is 0).
 
 ## Get the size of the terminal
 In order to be able to make good decisions on moving the cursor, you might want to know how big the terminal is. The 
@@ -128,7 +128,7 @@ but avoid doing this as most terminal emulators won't understand them.
 More than color, you can also add certain styles to the text. How well this is supported depends completely on the 
 client terminal so results may vary. Typically at least bold mode is supported, but usually not rendering the text in 
 bold font but rather as a brighter color. These style modes are referred to as SGR and just like with colors the 
-terminal emulator will keep their state until you explicitly change it. The following SGR are available in lanterna as 
+terminal emulator will keep their state until you explicitly change it. The following SGR are available in Lanterna as 
 of version 3:
 
  * `BOLD` - text usually drawn in a brighter color rather than in bold font
@@ -168,7 +168,7 @@ interface when you have done all your operations.
 Finally, retrieving user input is necessary unless the GUI is totally hands-off. Normally, when the user presses a key, 
 it will be added to an input buffer awaiting retrieval. You can poll this buffer by calling `pollInput()` on the 
 `Terminal` object (blocking version also exists: `readInput()`), which will return you a `KeyStroke` object representing 
-the key pressed, or null is no key has been pressed. The `pollInput()` method is actually not directly on the `Terminal` 
+the key pressed, or null if no key has been pressed. The `pollInput()` method is actually not directly on the `Terminal` 
 interface, but on another interface, `InputProvider`, which the `Terminal` interface extends. To interpret the 
 `KeyStroke` returned, you first need to call `getKeyType()` which returns a `KeyType` enum value that tells you what 
 kind of key was pressed. The `KeyType` enum has the following values as of Lanterna 3:
@@ -212,14 +212,14 @@ kind of key was pressed. The `KeyType` enum has the following values as of Lante
  * MouseEvent
  * EOF
 
-If you get the type `KeyType.Character`, the key is then a alpha-numerical-symbol key and it can be retrieved using the 
+If you get the type `KeyType.Character`, the key is then an alpha-numerical-symbol key and it can be retrieved using the 
 `KeyStroke` object's `getCharacter()` method. At the moment, there is no way to detect when the shift-key is pressed, 
 you will see the result on `KeyStroke` objects read while the key is pressed though (characters will be in upper-case, 
 numbers will turn into symbols, etc). You can detect if CTRL and/or ALT keys were pressed down while the keystroke 
 happened, by using the `isAltDown()` and `isCtrlDown()` methods on `KeyStroke` (unfortunately, not all combinations
 can be detected because of ambiguities that sometimes occur; if you want to use special key combinations in your 
 program, please test with multiple terminals to make sure it's working as you intend). Unfortunately, you cannot detect 
-CTRL or ALT as individual keystrokes due to how the terminal is designed to work
+CTRL or ALT as individual keystrokes due to how the terminal is designed to work.
 
 ## Learn more
 To learn about how to use an abstraction API in Lanterna built on top of the terminal API described in this page, 

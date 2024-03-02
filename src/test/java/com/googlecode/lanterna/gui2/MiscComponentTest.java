@@ -65,7 +65,7 @@ public class MiscComponentTest extends TestBase {
         progressBar.setRenderer(new ProgressBar.LargeProgressBarRenderer());
         progressBar.setLabelFormat("%2.0f%%");
         rightPanel.addComponent(progressBar.withBorder(Borders.singleLine("ProgressBar")));
-        rightPanel.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Fill));
+        rightPanel.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.FILL));
 
         final Timer timer = new Timer("ProgressBar-timer", true);
         timer.schedule(new TimerTask() {
@@ -85,11 +85,11 @@ public class MiscComponentTest extends TestBase {
         contentArea.addComponent(Panels.horizontal(leftPanel, rightPanel));
         contentArea.addComponent(
                 new Separator(Direction.HORIZONTAL).setLayoutData(
-                        LinearLayout.createLayoutData(LinearLayout.Alignment.Fill)));
+                        LinearLayout.createLayoutData(LinearLayout.Alignment.FILL)));
         Button okButton = new Button("OK", () -> {
             window.close();
             timer.cancel();
-        }).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        }).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.CENTER));
         contentArea.addComponent(okButton);
         window.setComponent(contentArea);
         window.setFocusedInteractable(okButton);

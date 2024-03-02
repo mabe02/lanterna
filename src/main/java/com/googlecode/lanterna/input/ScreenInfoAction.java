@@ -31,7 +31,7 @@ public class ScreenInfoAction extends KeyStroke {
      * @param position the TerminalPosition reported from terminal
      */
     public ScreenInfoAction(TerminalPosition position) {
-        super(KeyType.CursorLocation);
+        super(KeyType.CURSOR_LOCATION);
         this.position = position;
     }
 

@@ -53,12 +53,18 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
      * @param columnLabels Creates one column per label in the array, must be more than one
      */
     public Table(String... columnLabels) {
-        if(columnLabels.length == 0) {
-            throw new IllegalArgumentException("Table needs at least one column");
-        }
+        this(new TableModel<>(columnLabels));
+    }
+
+    /**
+     * Creates a new {@code Table} with the specified table model
+     * @param tableModel Table model
+     */
+    public Table(final TableModel tableModel) {
         this.tableHeaderRenderer = new DefaultTableHeaderRenderer<>();
         this.tableCellRenderer = new DefaultTableCellRenderer<>();
-        this.tableModel = new TableModel<>(columnLabels);
+        this.tableModel = tableModel;
+
         this.selectAction = null;
         this.visibleColumns = 0;
         this.visibleRows = 0;
@@ -397,7 +403,7 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
     @Override
     public Result handleKeyStroke(KeyStroke keyStroke) {
         switch(keyStroke.getKeyType()) {
-            case ArrowUp:
+            case ARROW_UP:
                 if(selectedRow > 0) {
                     selectedRow--;
                 }
@@ -405,7 +411,7 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
                     return Result.MOVE_FOCUS_UP;
                 }
                 break;
-            case ArrowDown:
+            case ARROW_DOWN:
                 if(selectedRow < tableModel.getRowCount() - 1) {
                     selectedRow++;
                 }
@@ -413,24 +419,24 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
                     return Result.MOVE_FOCUS_DOWN;
                 }
                 break;
-            case PageUp:
+            case PAGE_UP:
                 if(getRenderer().getVisibleRowsOnLastDraw() > 0 && selectedRow > 0) {
                     selectedRow -= Math.min(getRenderer().getVisibleRowsOnLastDraw() - 1, selectedRow);
                 }
                 break;
-            case PageDown:
+            case PAGE_DOWN:
                 if(getRenderer().getVisibleRowsOnLastDraw() > 0 && selectedRow < tableModel.getRowCount() - 1) {
                     int toEndDistance = tableModel.getRowCount() - 1 - selectedRow;
                     selectedRow += Math.min(getRenderer().getVisibleRowsOnLastDraw() - 1, toEndDistance);
                 }
                 break;
-            case Home:
+            case HOME:
                 selectedRow = 0;
                 break;
-            case End:
+            case END:
                 selectedRow = tableModel.getRowCount() - 1;
                 break;
-            case ArrowLeft:
+            case ARROW_LEFT:
                 if(cellSelection && selectedColumn > 0) {
                     selectedColumn--;
                 }
@@ -438,7 +444,7 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
                     return Result.MOVE_FOCUS_LEFT;
                 }
                 break;
-            case ArrowRight:
+            case ARROW_RIGHT:
                 if(cellSelection && selectedColumn < tableModel.getColumnCount() - 1) {
                     selectedColumn++;
                 }
@@ -446,8 +452,8 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
                     return Result.MOVE_FOCUS_RIGHT;
                 }
                 break;
-            case Character:
-            case Enter:
+            case CHARACTER:
+            case ENTER:
                 if (isKeyboardActivationStroke(keyStroke)) {
                     Runnable runnable = selectAction;   //To avoid synchronizing
                     if(runnable != null) {
@@ -459,7 +465,7 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
                 } else {
                     return super.handleKeyStroke(keyStroke);
                 }
-            case MouseEvent:
+            case MOUSE_EVENT:
                 MouseAction action = (MouseAction)keyStroke;
                 MouseActionType actionType = action.getActionType();
                 if (actionType == MouseActionType.MOVE) {
@@ -475,7 +481,7 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
                 selectedRow = mouseRow;
                 selectedColumn = mouseColumn;
                 if (isDifferentCell) {
-                    return handleKeyStroke(new KeyStroke(KeyType.Enter));
+                    return handleKeyStroke(new KeyStroke(KeyType.ENTER));
                 }
                 break;
             default:

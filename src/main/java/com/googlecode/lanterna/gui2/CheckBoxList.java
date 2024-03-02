@@ -215,7 +215,7 @@ public class CheckBoxList<V> extends AbstractListBox<V, CheckBoxList<V>> {
         if (isKeyboardActivationStroke(keyStroke)) {
             toggleChecked(getSelectedIndex());
             return Result.HANDLED;
-        } else if (keyStroke.getKeyType() == KeyType.MouseEvent) {
+        } else if (keyStroke.getKeyType() == KeyType.MOUSE_EVENT) {
             MouseAction mouseAction = (MouseAction) keyStroke;
             MouseActionType actionType = mouseAction.getActionType();
             

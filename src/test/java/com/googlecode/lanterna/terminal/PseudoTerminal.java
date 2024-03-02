@@ -143,16 +143,16 @@ public class PseudoTerminal {
                             }
                             else {
                                 switch(keyStroke.getKeyType()) {
-                                    case Character:
+                                    case CHARACTER:
                                         writeCharacter(keyStroke.getCharacter());
                                         break;
-                                    case Enter:
+                                    case ENTER:
                                         writeCharacter('\n');
                                         break;
-                                    case Backspace:
+                                    case BACKSPACE:
                                         writeCharacter('\b');
                                         break;
-                                    case Tab:
+                                    case TAB:
                                         writeCharacter('\t');
                                         break;
                                     default:

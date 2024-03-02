@@ -105,58 +105,58 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
     public synchronized Result handleKeyStroke(KeyStroke keyStroke) {
         try {
             switch(keyStroke.getKeyType()) {
-                case Tab:
+                case TAB:
                     return Result.MOVE_FOCUS_NEXT;
 
-                case ReverseTab:
+                case REVERSE_TAB:
                     return Result.MOVE_FOCUS_PREVIOUS;
 
-                case ArrowRight:
+                case ARROW_RIGHT:
                     return Result.MOVE_FOCUS_RIGHT;
 
-                case ArrowLeft:
+                case ARROW_LEFT:
                     return Result.MOVE_FOCUS_LEFT;
 
-                case ArrowDown:
+                case ARROW_DOWN:
                     if(items.isEmpty() || selectedIndex == items.size() - 1) {
                         return Result.MOVE_FOCUS_DOWN;
                     }
                     selectedIndex++;
                     return Result.HANDLED;
 
-                case ArrowUp:
+                case ARROW_UP:
                     if(items.isEmpty() || selectedIndex == 0) {
                         return Result.MOVE_FOCUS_UP;
                     }
                     selectedIndex--;
                     return Result.HANDLED;
 
-                case Home:
+                case HOME:
                     selectedIndex = 0;
                     return Result.HANDLED;
 
-                case End:
+                case END:
                     selectedIndex = items.size() - 1;
                     return Result.HANDLED;
 
-                case PageUp:
+                case PAGE_UP:
                     if(getSize() != null) {
                         setSelectedIndex(getSelectedIndex() - getSize().getRows());
                     }
                     return Result.HANDLED;
 
-                case PageDown:
+                case PAGE_DOWN:
                     if(getSize() != null) {
                         setSelectedIndex(getSelectedIndex() + getSize().getRows());
                     }
                     return Result.HANDLED;
 
-                case Character:
+                case CHARACTER:
                     if(selectByCharacter(keyStroke.getCharacter())) {
                         return Result.HANDLED;
                     }
                     return Result.UNHANDLED;
-                case MouseEvent:
+                case MOUSE_EVENT:
                     MouseAction mouseAction = (MouseAction) keyStroke;
                     MouseActionType actionType = mouseAction.getActionType();
                     if (isMouseMove(keyStroke)) {
@@ -473,23 +473,6 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
                 verticalScrollBar.draw(graphics.newTextGraphics(
                         new TerminalPosition(graphics.getSize().getColumns() - 1, 0),
                         new TerminalSize(1, graphics.getSize().getRows())));
-                /*
-                graphics.putString(componentWidth - 1, 0, Symbols.ARROW_UP + "");
-
-                graphics.applyThemeStyle(themeDefinition.getInsensitive());
-                for(int i = 1; i < componentHeight - 1; i++)
-                    graphics.putString(componentWidth - 1, i, Symbols.BLOCK_MIDDLE + "");
-
-                graphics.applyThemeStyle(themeDefinition.getNormal());
-                graphics.putString(componentWidth - 1, componentHeight - 1, Symbols.ARROW_DOWN + "");
-
-                //Finally print the 'tick'
-                int scrollableSize = items.size() - componentHeight;
-                double position = (double)scrollTopIndex / ((double)scrollableSize);
-                int tickPosition = (int)(((double) componentHeight - 3.0) * position);
-                graphics.applyThemeStyle(themeDefinition.getInsensitive());
-                graphics.putString(componentWidth - 1, 1 + tickPosition, " ");
-                */
             }
         }
     }

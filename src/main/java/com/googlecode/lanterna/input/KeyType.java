@@ -35,22 +35,22 @@ public enum KeyType {
      * here is the enter key which could be expected to be returned as a '\n' character but is actually returned as a
      * separate {@code KeyType} (see below). Tab, backspace and some others works this way too.
      */
-    Character,
-    Escape,
-    Backspace,
-    ArrowLeft,
-    ArrowRight,
-    ArrowUp,
-    ArrowDown,
-    Insert,
-    Delete,
-    Home,
-    End,
-    PageUp,
-    PageDown,
-    Tab,
-    ReverseTab,
-    Enter,
+    CHARACTER,
+    ESCAPE,
+    BACKSPACE,
+    ARROW_LEFT,
+    ARROW_RIGHT,
+    ARROW_UP,
+    ARROW_DOWN,
+    INSERT,
+    DELETE,
+    HOME,
+    END,
+    PAGE_UP,
+    PAGE_DOWN,
+    TAB,
+    REVERSE_TAB,
+    ENTER,
     F1,
     F2,
     F3,
@@ -70,19 +70,19 @@ public enum KeyType {
     F17,
     F18,
     F19,
-    Unknown,
+    KEY_TYPE,
 
     //"Virtual" KeyStroke types
     /**
      * This value is only internally within Lanterna to understand where the cursor currently is, it's not expected to
      * be returned by the API to an input read call.
      */
-    CursorLocation,
+    CURSOR_LOCATION,
     /**
      * This type is not really a key stroke but actually a 'catch-all' for mouse related events. Please note that mouse
      * event capturing must first be enabled and many terminals don't suppose this extension at all.
      */
-    MouseEvent,
+    MOUSE_EVENT,
     /**
      * This value is returned when you try to read input and the input stream has been closed.
      */

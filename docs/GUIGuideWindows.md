@@ -4,15 +4,15 @@
 Normally, all windows you create in Lanterna are modal. That means, there is no window management involved. When you 
 create and show one window, it will overlap all other windows and exclusively take input from the user. This window will 
 remain in focus until either it's closed or another window is shown. There is no way to switch between windows without 
-closing the currently focused. 
+closing the currently focused one.
 
 However, Lanterna *does* support multi-windows mode where each window is not necessarily modal. Due to the nature of the
 terminal and how input works, there isn't any general standard for how to switch windows in a text console environment,
-and as such Lanterna only provides programmatic support for switching active window. You'll have to register key 
+and as such Lanterna only provides programmatic support for switching the active window. You'll have to register key 
 listeners and do the switching yourself if you want to support this.
 
 ## The `Window` class
-Like in Swing/AWT, you will probably want to subclass the `BasicWindow` class (implementing the `Window` interface)when
+Like in Swing/AWT, you will probably want to subclass the `BasicWindow` class (implementing the `Window` interface) when
 you create your own windows. This is not a strict requirement but can make it easier when coding. 
 
     public class MyWindow extends BasicWindow {
@@ -28,7 +28,7 @@ To show your window, you use the `WindowBasedTextGUI` object you have and call t
 
 This call will not block, the window is added to the GUI system and is ready to be drawn.
 
-If your GUI system is configured with the default same-thread mode, your thread is responsible for telling lanterna when
+If your GUI system is configured with the default same-thread mode, your thread is responsible for telling Lanterna when
 to draw the GUI to the `Screen`. There is a lower-level way of doing this (`TextGUIThread#processEventsAndUpdate()`) but
 here we will use something a little bit more intuitive:
 
@@ -41,7 +41,7 @@ We'll add an exit button further down.
 The window system uses a special `WindowManager` to figure out how to place the windows inside the screen. This has a 
 reasonable default which will place windows in a traditional cascading pattern. To tell the window manager that you
 would like something else for your window, rather than writing a custom window manager you can attach hints. There are
-also other hints which are interpreted by the GUI system itself rather than the window manager. As of lanterna 3, these
+also other hints which are interpreted by the GUI system itself rather than the window manager. As of Lanterna 3, these
 are the available hints, which you can find in `Window.Hint`:
 
 #### `NO_DECORATIONS`
@@ -53,7 +53,7 @@ With this hint, the `TextGUI` system should skip running any post-renderers for 
 window won't have any shadow.
 
 #### `NO_FOCUS`
-With this hint, the window should never receive focus by the window manager
+With this hint, the window should never receive focus by the window manager.
 
 #### `CENTERED`
 With this hint, the window wants to be at the center of the terminal instead of using the cascading layout which is the 
@@ -86,7 +86,7 @@ small space around it. This is different from `FULL_SCREEN` which takes all avai
 the background and any other window behind it.
 
 ## Adding components
-In order to make windows a bit useful, you'll need to add some components. Lanterna is using layout system greatly 
+In order to make windows a bit useful, you'll need to add some components. Lanterna uses a layout system greatly 
 inspired by SWT and Swing/AWT based on `LayoutManager` implementations that are attached to container components. A 
 window itself contains only one component so you probably want to set that component to a container of some sort so you
 can show more than one component inside the window. 
@@ -113,8 +113,8 @@ even has a title. Here's how you can create a couple of panels, laying them out 
             Panel rightPanel = new Panel();
     
             horizontalPanel.addComponent(leftPanel);
-            horizontalPanel.addComponent(Borders.singleLineBevel(middlePanel, "Panel Title"));
-            horizontalPanel.addComponent(Borders.doubleLineBevel(rightPanel));
+            horizontalPanel.addComponent(middlePanel.withBorder(Borders.singleLineBevel("Panel Title")));
+            horizontalPanel.addComponent(rightPanel.withBorder(Borders.doubleLineBevel()));
     
             // This ultimately links in the panels as the window content 
             setComponent(horizontalPanel);
@@ -146,7 +146,7 @@ Button is a component that the user can interact with, by pressing the return ke
 Upon creation, you'll assign a label and an Action to a button; the Action will be executed by the GUI system's event 
 processor when the user activates it. 
 
-To add a button that closes its window and thereby allow up to break out from the `waitUntilClosed()` invocation above,
+To add a button that closes its window and thereby allow us to break out from the `waitUntilClosed()` invocation above,
 here is a simple example:
 
     public class MyWindow extends BasicWindow {

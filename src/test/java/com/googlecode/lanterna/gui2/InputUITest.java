@@ -41,10 +41,10 @@ public class InputUITest extends TestBase {
 
             @Override
             protected Result handleKeyStroke(KeyStroke keyStroke) {
-                if (keyStroke.getKeyType() == KeyType.Tab) {
+                if (keyStroke.getKeyType() == KeyType.TAB) {
                     return super.handleKeyStroke(keyStroke);
                 }
-                if (keyStroke.getKeyType() == KeyType.Character) {
+                if (keyStroke.getKeyType() == KeyType.CHARACTER) {
                     lastKey = keyStroke.getCharacter() + "";
                 }
                 else {

@@ -82,6 +82,12 @@ public class TerminalScreen extends AbstractScreen {
     }
 
     @Override
+    public void close() throws IOException {
+        super.close();
+        terminal.close();
+    }
+
+    @Override
     public synchronized void startScreen() throws IOException {
         if(isStarted) {
             return;

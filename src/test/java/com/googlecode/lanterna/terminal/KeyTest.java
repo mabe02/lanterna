@@ -31,37 +31,37 @@ public class KeyTest {
     public void testFromVim() {
         {
             KeyStroke k = KeyStroke.fromString("a");
-            assertEquals(KeyType.Character, k.getKeyType());
+            assertEquals(KeyType.CHARACTER, k.getKeyType());
             assertEquals(new Character('a'), k.getCharacter());
             assertFalse(k.isCtrlDown());
             assertFalse(k.isAltDown());
         }
         {
             KeyStroke k = KeyStroke.fromString("<c-a>");
-            assertEquals(KeyType.Character, k.getKeyType());
+            assertEquals(KeyType.CHARACTER, k.getKeyType());
             assertEquals(new Character('a'), k.getCharacter());
             assertTrue(k.isCtrlDown());
             assertFalse(k.isAltDown());
         }
         {
             KeyStroke k = KeyStroke.fromString("<a-a>");
-            assertEquals(KeyType.Character, k.getKeyType());
+            assertEquals(KeyType.CHARACTER, k.getKeyType());
             assertEquals(new Character('a'), k.getCharacter());
             assertFalse(k.isCtrlDown());
             assertTrue(k.isAltDown());
         }
         {
             KeyStroke k = KeyStroke.fromString("<c-a-a>");
-            assertEquals(k.getKeyType(), KeyType.Character);
+            assertEquals(k.getKeyType(), KeyType.CHARACTER);
             assertEquals(new Character('a'), k.getCharacter());
             assertTrue(k.isCtrlDown());
             assertTrue(k.isAltDown());
         }
-        assertEquals(KeyType.ReverseTab, KeyStroke.fromString("<s-tab>").getKeyType());
-        assertEquals(KeyType.ReverseTab, KeyStroke.fromString("<S-tab>").getKeyType());
-        assertEquals(KeyType.ReverseTab, KeyStroke.fromString("<S-Tab>").getKeyType());
-        assertEquals(KeyType.Enter, KeyStroke.fromString("<cr>").getKeyType());
-        assertEquals(KeyType.PageUp, KeyStroke.fromString("<PageUp>").getKeyType());
+        assertEquals(KeyType.REVERSE_TAB, KeyStroke.fromString("<s-tab>").getKeyType());
+        assertEquals(KeyType.REVERSE_TAB, KeyStroke.fromString("<S-tab>").getKeyType());
+        assertEquals(KeyType.REVERSE_TAB, KeyStroke.fromString("<S-Tab>").getKeyType());
+        assertEquals(KeyType.ENTER, KeyStroke.fromString("<cr>").getKeyType());
+        assertEquals(KeyType.PAGE_UP, KeyStroke.fromString("<PageUp>").getKeyType());
     }
 
 }

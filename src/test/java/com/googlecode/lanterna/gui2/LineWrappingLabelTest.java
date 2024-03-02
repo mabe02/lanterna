@@ -75,20 +75,20 @@ public class LineWrappingLabelTest extends TestBase {
         textGUI.addListener((textGUI1, keyStroke) -> {
             if(keyStroke.isCtrlDown()) {
                 switch(keyStroke.getKeyType()) {
-                    case ArrowUp:
+                    case ARROW_UP:
                         if(windowSize.getRows() > 1) {
                             windowSize = windowSize.withRelativeRows(-1);
                             return true;
                         }
-                    case ArrowDown:
+                    case ARROW_DOWN:
                         windowSize = windowSize.withRelativeRows(1);
                         return true;
-                    case ArrowLeft:
+                    case ARROW_LEFT:
                         if(windowSize.getColumns() > 1) {
                             windowSize = windowSize.withRelativeColumns(-1);
                             return true;
                         }
-                    case ArrowRight:
+                    case ARROW_RIGHT:
                         windowSize = windowSize.withRelativeColumns(1);
                         return true;
                     default:

@@ -68,7 +68,7 @@ public class DynamicGridLayoutTest extends TestBase {
         mainPanel.addComponent(
                 new Separator(Direction.HORIZONTAL)
                 .setLayoutData(
-                        LinearLayout.createLayoutData(LinearLayout.Alignment.Fill)));
+                        LinearLayout.createLayoutData(LinearLayout.Alignment.FILL)));
         mainPanel.addComponent(controlPanel);
 
         window.setComponent(mainPanel);

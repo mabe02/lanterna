@@ -273,7 +273,12 @@ public class TelnetTerminal extends ANSITerminal {
 
             int oldTimeout = socket.getSoTimeout();
             if (!block) { socket.setSoTimeout(1); }
-            int readBytes = inputStream.read(workingBuffer, 0, maxFill);
+            int readBytes;
+            try {
+                readBytes = inputStream.read(workingBuffer, 0, maxFill);
+            } catch (java.net.SocketTimeoutException ste) {
+                readBytes = 0;
+            }
             if (!block) { socket.setSoTimeout(oldTimeout); }
 
             if (readBytes == -1) {

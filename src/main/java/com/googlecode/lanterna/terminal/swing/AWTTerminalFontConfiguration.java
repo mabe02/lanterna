@@ -135,7 +135,7 @@ public class AWTTerminalFontConfiguration {
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             if (ge.getMaximumWindowBounds().getWidth() > 4096) {
                 return baseFontSize * 4;
-            } else if (ge.getMaximumWindowBounds().getWidth() > 2048) {
+            } else if (ge.getMaximumWindowBounds().getWidth() > 2560) {
                 return baseFontSize * 2;
             } else {
                 return baseFontSize;

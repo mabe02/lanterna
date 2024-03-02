@@ -43,7 +43,7 @@ public class WindowsTerminal extends UnixLikeTerminal {
 	protected KeyDecodingProfile getDefaultKeyDecodingProfile() {
 		ArrayList<CharacterPattern> keyDecodingProfile = new ArrayList<CharacterPattern>();
 		// handle Key Code 13 as ENTER
-		keyDecodingProfile.add(new BasicCharacterPattern(new KeyStroke(KeyType.Enter), '\r'));
+		keyDecodingProfile.add(new BasicCharacterPattern(new KeyStroke(KeyType.ENTER), '\r'));
 		// handle everything else as per default
 		keyDecodingProfile.addAll(super.getDefaultKeyDecodingProfile().getPatterns());
 		return () -> keyDecodingProfile;

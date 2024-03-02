@@ -1,18 +1,18 @@
 Tutorial 1
 ---
 
-This is the first tutorial and entrypoint for learning more about how to use lanterna. We will use the lower
+This is the first tutorial and entrypoint for learning more about how to use Lanterna. We will use the lower
 layer in this tutorial to demonstrate how to move around the cursor and how to output text in different
 styles and color.
 
 First of all, we need to get hold of a Terminal object. This will be our main way of interacting with the
-terminal itself. There are a couple of implementation available and it's important you pick the correct one:
+terminal itself. There are a couple of implementations available and it's important you pick the correct one:
  * `UnixTerminal` - Uses ANSI escape codes through standard input/output to carry out the operations
  * `SwingTerminal` - Creates a Swing JComponent extending surface that is implementing a terminal emulator
  * `SwingTerminalFrame` - Creates a Swing JFrame containing a surface that is implementing a terminal emulator
  * `AWTTerminal` - Creates an AWT Component extending surface that is implementing a terminal emulator
  * `AWTTerminalFrame` - Creates an AWT Frame containing a surface that is implementing a terminal emulator
- * `TelnetTerminal` - Through TelnetTerminalServer, this allows you control the output to the client through the Terminal interface
+ * `TelnetTerminal` - Through TelnetTerminalServer, this allows you to control the output to the client through the Terminal interface
  * `VirtualTerminal` - Complete in-memory implementation
 
 If you intend to write a program that runs in a standard console, like for example on a remote server you're
@@ -21,7 +21,7 @@ the program in your IDE, you might have issues as the IDE's console probably doe
 codes correctly and the output is complete garbage. Because of this, you might want to use one of the graphical
 terminal emulators (Swing or AWT), which will open a new window when you run the program instead of writing to
 standard output, and then switch to UnixTerminal when the application is ready. In order to simplify this,
-lanterna provides a TerminalFactory with a DefaultTerminalFactory implementation that tries to figure out which
+Lanterna provides a TerminalFactory with a DefaultTerminalFactory implementation that tries to figure out which
 implementation to use. It's mainly checking for if the runtime system has a graphical frontend or not (i.e. if
 Java considers the system headless) and if Java is detecting a semi-standard terminal or not (checking if
 System.console() returns something), giving you either a terminal emulator or a UnixTerminal.
@@ -41,7 +41,7 @@ If we got a terminal emulator (probably Swing) then we are currently looking at 
 window at this point. If the code ran in another terminal emulator (putty, gnome-terminal, konsole, etc) by
 invoking java manually, there is yet no changes to the content.
 
-Let's print some text, this has the same as calling System.out.println("Hello");
+Let's print some text, this has the same effect as calling System.out.println("Hello");
 
         terminal.putCharacter('H');
         terminal.putCharacter('e');
@@ -54,11 +54,11 @@ Let's print some text, this has the same as calling System.out.println("Hello");
 Notice the flush() call above; it is necessary to finish off terminal output operations with a call to
 flush() both in the case of native terminal and the bundled terminal emulators. Lanterna's Unix terminal
 doesn't buffer the output by itself but one can assume the underlying I/O layer does. In the case of the
-terminal emulators bundled in lanterna, the flush call will signal a repaint to the underlying UI component.
+terminal emulators bundled in Lanterna, the flush call will signal a repaint to the underlying UI component.
 
         Thread.sleep(2000);
         
-At this point the cursor should be on start of the next line, immediately after the Hello that was just
+At this point the cursor should be at the start of the next line, immediately after the Hello that was just
 printed. Let's move the cursor to a new position, relative to the current position. Notice we still need to
 call flush() to ensure the change is immediately visible (i.e. the user can see the text cursor moved to the
 new position).
@@ -97,7 +97,7 @@ Now print text with these new colors
         terminal.flush();
         Thread.sleep(2000);
         
-In addition to colors, most terminals supports some sort of style that can be selectively enabled. The most
+In addition to colors, most terminals support some sort of style that can be selectively enabled. The most
 common one is bold mode, which on many terminal implementations (emulators and otherwise) is not actually
 using bold text at all but rather shifts the tint of the foreground color so it stands out a bit. Let's
 print the same text as above in bold mode to compare.

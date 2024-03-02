@@ -100,7 +100,7 @@ public class Tutorial03 {
              */
             while(true) {
                 KeyStroke keyStroke = screen.pollInput();
-                if(keyStroke != null && (keyStroke.getKeyType() == KeyType.Escape || keyStroke.getKeyType() == KeyType.EOF)) {
+                if(keyStroke != null && (keyStroke.getKeyType() == KeyType.ESCAPE || keyStroke.getKeyType() == KeyType.EOF)) {
                     break;
                 }
 
@@ -208,7 +208,7 @@ public class Tutorial03 {
                 try {
                     /*
                     The close() call here will restore the terminal by exiting from private mode which was done in
-                    the call to startScreen()
+                    the call to startScreen(), and also restore things like echo mode and intr
                      */
                     screen.close();
                 }

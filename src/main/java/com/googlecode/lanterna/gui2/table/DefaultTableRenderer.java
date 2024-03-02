@@ -67,10 +67,10 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
         verticalScrollBar = new ScrollBar(Direction.VERTICAL);
         horizontalScrollBar = new ScrollBar(Direction.HORIZONTAL);
 
-        headerVerticalBorderStyle = TableCellBorderStyle.None;
-        headerHorizontalBorderStyle = TableCellBorderStyle.EmptySpace;
-        cellVerticalBorderStyle = TableCellBorderStyle.None;
-        cellHorizontalBorderStyle = TableCellBorderStyle.EmptySpace;
+        headerVerticalBorderStyle = TableCellBorderStyle.NONE;
+        headerHorizontalBorderStyle = TableCellBorderStyle.EMPTY_SPACE;
+        cellVerticalBorderStyle = TableCellBorderStyle.NONE;
+        cellHorizontalBorderStyle = TableCellBorderStyle.EMPTY_SPACE;
 
         viewTopRow = 0;
         viewLeftColumn = 0;
@@ -147,8 +147,8 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
     }
 
     private boolean isHorizontallySpaced() {
-        return headerHorizontalBorderStyle != TableCellBorderStyle.None ||
-                cellHorizontalBorderStyle != TableCellBorderStyle.None;
+        return headerHorizontalBorderStyle != TableCellBorderStyle.NONE ||
+                cellHorizontalBorderStyle != TableCellBorderStyle.NONE;
     }
 
     /**
@@ -333,10 +333,10 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
         }
         preferredRowSize += headerSizeInRows;
 
-        if(headerVerticalBorderStyle != TableCellBorderStyle.None) {
+        if(headerVerticalBorderStyle != TableCellBorderStyle.NONE) {
             preferredRowSize++;    //Spacing between header and body
         }
-        if(cellVerticalBorderStyle != TableCellBorderStyle.None) {
+        if(cellVerticalBorderStyle != TableCellBorderStyle.NONE) {
             if(!rows.isEmpty()) {
                 preferredRowSize += Math.min(rows.size(), visibleRows) - 1; //Vertical space between cells
             }
@@ -508,7 +508,7 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
         List<Integer> visibleExpandableColumns = new ArrayList<>();
         for(int index = viewLeftColumn; index < endColumnIndex; index++) {
             horizontalSpaceRequirement += preferredColumnSizes.get(index);
-            if(headerHorizontalBorderStyle != TableCellBorderStyle.None && index < (endColumnIndex - 1)) {
+            if(headerHorizontalBorderStyle != TableCellBorderStyle.NONE && index < (endColumnIndex - 1)) {
                 horizontalSpaceRequirement += headerHorizontalBorderStyle.getSize();
             }
             if(expandableColumns.contains(index)) {
@@ -544,14 +544,14 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
             TerminalSize size = new TerminalSize(columnSizes.get(index), headerSizeInRows);
             tableHeaderRenderer.drawHeader(table, label, index, graphics.newTextGraphics(new TerminalPosition(leftPosition, 0), size));
             leftPosition += size.getColumns();
-            if(headerHorizontalBorderStyle != TableCellBorderStyle.None && index < (endColumnIndex - 1)) {
+            if(headerHorizontalBorderStyle != TableCellBorderStyle.NONE && index < (endColumnIndex - 1)) {
                 graphics.applyThemeStyle(theme.getDefinition(Table.class).getNormal());
                 graphics.setCharacter(leftPosition, 0, getVerticalCharacter(headerHorizontalBorderStyle));
                 leftPosition++;
             }
         }
 
-        if(headerVerticalBorderStyle != TableCellBorderStyle.None) {
+        if(headerVerticalBorderStyle != TableCellBorderStyle.NONE) {
             leftPosition = 0;
             int topPosition = headerSizeInRows;
             graphics.applyThemeStyle(theme.getDefinition(Table.class).getNormal());
@@ -694,7 +694,7 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
                 }
             }
             topPosition += preferredRowSizes.get(rowIndex);
-            if(cellVerticalBorderStyle != TableCellBorderStyle.None) {
+            if(cellVerticalBorderStyle != TableCellBorderStyle.NONE) {
                 leftPosition = 0;
                 graphics.applyThemeStyle(themeDefinition.getNormal());
                 for(int i = viewLeftColumn; i < Math.min(viewLeftColumn + renderColumns + 1, row.size()); i++) {
@@ -722,9 +722,9 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
 
     private char getHorizontalCharacter(TableCellBorderStyle style) {
         switch(style) {
-            case SingleLine:
+            case SINGLE_LINE:
                 return Symbols.SINGLE_LINE_HORIZONTAL;
-            case DoubleLine:
+            case DOUBLE_LINE:
                 return Symbols.DOUBLE_LINE_HORIZONTAL;
             default:
                 return ' ';
@@ -733,9 +733,9 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
 
     private char getVerticalCharacter(TableCellBorderStyle style) {
         switch(style) {
-            case SingleLine:
+            case SINGLE_LINE:
                 return Symbols.SINGLE_LINE_VERTICAL;
-            case DoubleLine:
+            case DOUBLE_LINE:
                 return Symbols.DOUBLE_LINE_VERTICAL;
             default:
                 return ' ';
@@ -743,12 +743,12 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
     }
 
     private char getJunctionCharacter(TableCellBorderStyle mainStyle, TableCellBorderStyle styleAbove, TableCellBorderStyle styleBelow) {
-        if(mainStyle == TableCellBorderStyle.SingleLine) {
-            if(styleAbove == TableCellBorderStyle.SingleLine) {
-                if(styleBelow == TableCellBorderStyle.SingleLine) {
+        if(mainStyle == TableCellBorderStyle.SINGLE_LINE) {
+            if(styleAbove == TableCellBorderStyle.SINGLE_LINE) {
+                if(styleBelow == TableCellBorderStyle.SINGLE_LINE) {
                     return Symbols.SINGLE_LINE_CROSS;
                 }
-                else if(styleBelow == TableCellBorderStyle.DoubleLine) {
+                else if(styleBelow == TableCellBorderStyle.DOUBLE_LINE) {
                     //There isn't any character for this, give upper side priority
                     return Symbols.SINGLE_LINE_T_UP;
                 }
@@ -756,12 +756,12 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
                     return Symbols.SINGLE_LINE_T_UP;
                 }
             }
-            else if(styleAbove == TableCellBorderStyle.DoubleLine) {
-                if(styleBelow == TableCellBorderStyle.SingleLine) {
+            else if(styleAbove == TableCellBorderStyle.DOUBLE_LINE) {
+                if(styleBelow == TableCellBorderStyle.SINGLE_LINE) {
                     //There isn't any character for this, give upper side priority
                     return Symbols.SINGLE_LINE_T_DOUBLE_UP;
                 }
-                else if(styleBelow == TableCellBorderStyle.DoubleLine) {
+                else if(styleBelow == TableCellBorderStyle.DOUBLE_LINE) {
                     return Symbols.DOUBLE_LINE_VERTICAL_SINGLE_LINE_CROSS;
                 }
                 else {
@@ -769,10 +769,10 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
                 }
             }
             else {
-                if(styleBelow == TableCellBorderStyle.SingleLine) {
+                if(styleBelow == TableCellBorderStyle.SINGLE_LINE) {
                     return Symbols.SINGLE_LINE_T_DOWN;
                 }
-                else if(styleBelow == TableCellBorderStyle.DoubleLine) {
+                else if(styleBelow == TableCellBorderStyle.DOUBLE_LINE) {
                     return Symbols.SINGLE_LINE_T_DOUBLE_DOWN;
                 }
                 else {
@@ -780,12 +780,12 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
                 }
             }
         }
-        else if(mainStyle == TableCellBorderStyle.DoubleLine) {
-            if(styleAbove == TableCellBorderStyle.SingleLine) {
-                if(styleBelow == TableCellBorderStyle.SingleLine) {
+        else if(mainStyle == TableCellBorderStyle.DOUBLE_LINE) {
+            if(styleAbove == TableCellBorderStyle.SINGLE_LINE) {
+                if(styleBelow == TableCellBorderStyle.SINGLE_LINE) {
                     return Symbols.DOUBLE_LINE_HORIZONTAL_SINGLE_LINE_CROSS;
                 }
-                else if(styleBelow == TableCellBorderStyle.DoubleLine) {
+                else if(styleBelow == TableCellBorderStyle.DOUBLE_LINE) {
                     //There isn't any character for this, give upper side priority
                     return Symbols.DOUBLE_LINE_T_SINGLE_UP;
                 }
@@ -793,12 +793,12 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
                     return Symbols.DOUBLE_LINE_T_SINGLE_UP;
                 }
             }
-            else if(styleAbove == TableCellBorderStyle.DoubleLine) {
-                if(styleBelow == TableCellBorderStyle.SingleLine) {
+            else if(styleAbove == TableCellBorderStyle.DOUBLE_LINE) {
+                if(styleBelow == TableCellBorderStyle.SINGLE_LINE) {
                     //There isn't any character for this, give upper side priority
                     return Symbols.DOUBLE_LINE_T_UP;
                 }
-                else if(styleBelow == TableCellBorderStyle.DoubleLine) {
+                else if(styleBelow == TableCellBorderStyle.DOUBLE_LINE) {
                     return Symbols.DOUBLE_LINE_CROSS;
                 }
                 else {
@@ -806,10 +806,10 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
                 }
             }
             else {
-                if(styleBelow == TableCellBorderStyle.SingleLine) {
+                if(styleBelow == TableCellBorderStyle.SINGLE_LINE) {
                     return Symbols.DOUBLE_LINE_T_SINGLE_DOWN;
                 }
-                else if(styleBelow == TableCellBorderStyle.DoubleLine) {
+                else if(styleBelow == TableCellBorderStyle.DOUBLE_LINE) {
                     return Symbols.DOUBLE_LINE_T_DOWN;
                 }
                 else {

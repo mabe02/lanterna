@@ -25,19 +25,19 @@ public enum TableCellBorderStyle {
     /**
      * There is no separation between table cells, they are drawn immediately next to each other
      */
-    None(0),
+    NONE(0),
     /**
      * There is a single space of separation between the cells, drawn as a single line
      */
-    SingleLine(1),
+    SINGLE_LINE(1),
     /**
      * There is a single space of separation between the cells, drawn as a double line
      */
-    DoubleLine(1),
+    DOUBLE_LINE(1),
     /**
      * There is a single space of separation between the cells, kept empty
      */
-    EmptySpace(1),
+    EMPTY_SPACE(1),
     ;
 
     private final int size;

@@ -70,7 +70,7 @@ public class TelnetTerminalTest {
                         KeyStroke key = terminal.pollInput();
                         if(key != null) {
                             System.out.println(key);
-                            if(key.getKeyType() == KeyType.Escape) {
+                            if(key.getKeyType() == KeyType.ESCAPE) {
                                 terminal.exitPrivateMode();
                                 return;
                             }

@@ -89,7 +89,7 @@ public class KeyStroke {
      * @param altDown Was alt held down when the main key was pressed?
      */
     public KeyStroke(Character character, boolean ctrlDown, boolean altDown) {
-        this(KeyType.Character, character, ctrlDown, altDown, false);
+        this(KeyType.CHARACTER, character, ctrlDown, altDown, false);
     }
 
     /**
@@ -103,22 +103,22 @@ public class KeyStroke {
      * @param shiftDown Was shift held down when the main key was pressed?
      */
     public KeyStroke(Character character, boolean ctrlDown, boolean altDown, boolean shiftDown) {
-        this(KeyType.Character, character, ctrlDown, altDown, shiftDown);
+        this(KeyType.CHARACTER, character, ctrlDown, altDown, shiftDown);
     }
     
     private KeyStroke(KeyType keyType, Character character, boolean ctrlDown, boolean altDown, boolean shiftDown) {
-        if(keyType == KeyType.Character && character == null) {
+        if(keyType == KeyType.CHARACTER && character == null) {
             throw new IllegalArgumentException("Cannot construct a KeyStroke with type KeyType.Character but no character information");
         }
         //Enforce character for some key types
         switch(keyType) {
-            case Backspace:
+            case BACKSPACE:
                 character = '\b';
                 break;
-            case Enter:
+            case ENTER:
                 character = '\n';
                 break;
-            case Tab:
+            case TAB:
                 character = '\t';
                 break;
             default:
@@ -265,10 +265,10 @@ public class KeyStroke {
         String keyStrLC = keyStr.toLowerCase();
         KeyStroke k;
         if (keyStr.length() == 1) {
-            k = new KeyStroke(KeyType.Character, keyStr.charAt(0), false, false, false);
+            k = new KeyStroke(KeyType.CHARACTER, keyStr.charAt(0), false, false, false);
         } else if (keyStr.startsWith("<") && keyStr.endsWith(">")) {
             if (keyStrLC.equals("<s-tab>")) {
-                k = new KeyStroke(KeyType.ReverseTab);
+                k = new KeyStroke(KeyType.REVERSE_TAB);
             } else if (keyStr.contains("-")) {
                 ArrayList<String> segments = new ArrayList<>(Arrays.asList(keyStr.substring(1, keyStr.length() - 1).split("-")));
                 if (segments.size() < 2) {
@@ -293,35 +293,35 @@ public class KeyStroke {
                 k = new KeyStroke(characterStr.charAt(0), ctrlPressed, altPressed);
             } else {
                 if (keyStrLC.startsWith("<esc")) {
-                    k = new KeyStroke(KeyType.Escape);
+                    k = new KeyStroke(KeyType.ESCAPE);
                 } else if (keyStrLC.equals("<cr>") || keyStrLC.equals("<enter>") || keyStrLC.equals("<return>")) {
-                    k = new KeyStroke(KeyType.Enter);
+                    k = new KeyStroke(KeyType.ENTER);
                 } else if (keyStrLC.equals("<bs>")) {
-                    k = new KeyStroke(KeyType.Backspace);
+                    k = new KeyStroke(KeyType.BACKSPACE);
                 } else if (keyStrLC.equals("<tab>")) {
-                    k = new KeyStroke(KeyType.Tab);
+                    k = new KeyStroke(KeyType.TAB);
                 } else if (keyStrLC.equals("<space>")) {
                     k = new KeyStroke(' ', false, false);
                 } else if (keyStrLC.equals("<up>")) {
-                    k = new KeyStroke(KeyType.ArrowUp);
+                    k = new KeyStroke(KeyType.ARROW_UP);
                 } else if (keyStrLC.equals("<down>")) {
-                    k = new KeyStroke(KeyType.ArrowDown);
+                    k = new KeyStroke(KeyType.ARROW_DOWN);
                 } else if (keyStrLC.equals("<left>")) {
-                    k = new KeyStroke(KeyType.ArrowLeft);
+                    k = new KeyStroke(KeyType.ARROW_LEFT);
                 } else if (keyStrLC.equals("<right>")) {
-                    k = new KeyStroke(KeyType.ArrowRight);
+                    k = new KeyStroke(KeyType.ARROW_RIGHT);
                 } else if (keyStrLC.equals("<insert>")) {
-                    k = new KeyStroke(KeyType.Insert);
+                    k = new KeyStroke(KeyType.INSERT);
                 } else if (keyStrLC.equals("<del>")) {
-                    k = new KeyStroke(KeyType.Delete);
+                    k = new KeyStroke(KeyType.DELETE);
                 } else if (keyStrLC.equals("<home>")) {
-                    k = new KeyStroke(KeyType.Home);
+                    k = new KeyStroke(KeyType.HOME);
                 } else if (keyStrLC.equals("<end>")) {
-                    k = new KeyStroke(KeyType.End);
+                    k = new KeyStroke(KeyType.END);
                 } else if (keyStrLC.equals("<pageup>")) {
-                    k = new KeyStroke(KeyType.PageUp);
+                    k = new KeyStroke(KeyType.PAGE_UP);
                 } else if (keyStrLC.equals("<pagedown>")) {
-                    k = new KeyStroke(KeyType.PageDown);
+                    k = new KeyStroke(KeyType.PAGE_DOWN);
                 } else if (keyStrLC.equals("<f1>")) {
                     k = new KeyStroke(KeyType.F1);
                 } else if (keyStrLC.equals("<f2>")) {

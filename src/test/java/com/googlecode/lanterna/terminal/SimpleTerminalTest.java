@@ -55,36 +55,36 @@ public class SimpleTerminalTest {
         while(true) {
             KeyStroke keyStroke = terminal.readInput();
             switch(keyStroke.getKeyType()) {
-                case Escape:
+                case ESCAPE:
                 case EOF:
                     break mainLoop;
 
-                case ArrowDown:
+                case ARROW_DOWN:
                     if(terminal.getTerminalSize().getRows() > cursorPosition.getRow() + 1) {
                         cursorPosition = cursorPosition.withRelativeRow(1);
                         terminal.setCursorPosition(cursorPosition.getColumn(), cursorPosition.getRow());
                     }
                     break;
-                case ArrowUp:
+                case ARROW_UP:
                     if(cursorPosition.getRow() > 0) {
                         cursorPosition = cursorPosition.withRelativeRow(-1);
                         terminal.setCursorPosition(cursorPosition.getColumn(), cursorPosition.getRow());
                     }
                     break;
-                case ArrowRight:
+                case ARROW_RIGHT:
                     if(cursorPosition.getColumn() + 1 < terminal.getTerminalSize().getColumns()) {
                         cursorPosition = cursorPosition.withRelativeColumn(1);
                         terminal.setCursorPosition(cursorPosition.getColumn(), cursorPosition.getRow());
                     }
                     break;
-                case ArrowLeft:
+                case ARROW_LEFT:
                     if(cursorPosition.getColumn() > 0) {
                         cursorPosition = cursorPosition.withRelativeColumn(-1);
                         terminal.setCursorPosition(cursorPosition.getColumn(), cursorPosition.getRow());
                     }
                     break;
 
-                case Character:
+                case CHARACTER:
                     switch(keyStroke.getCharacter()) {
                         case '?':
                             terminal.putCharacter('\n');

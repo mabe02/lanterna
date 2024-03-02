@@ -36,7 +36,7 @@ public class MouseAction extends KeyStroke {
      * @param position Where in the terminal is the mouse cursor located
      */
     public MouseAction(MouseActionType actionType, int button, TerminalPosition position) {
-        super(KeyType.MouseEvent, false, false);
+        super(KeyType.MOUSE_EVENT, false, false);
         this.actionType = actionType;
         this.button = button;
         this.position = position;

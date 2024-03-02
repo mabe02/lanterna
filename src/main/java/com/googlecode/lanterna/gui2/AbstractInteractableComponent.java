@@ -161,19 +161,19 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
         // Skip the keystroke if ctrl, alt or shift was down
         if(!keyStroke.isAltDown() && !keyStroke.isCtrlDown() && !keyStroke.isShiftDown()) {
             switch(keyStroke.getKeyType()) {
-                case ArrowDown:
+                case ARROW_DOWN:
                     return Result.MOVE_FOCUS_DOWN;
-                case ArrowLeft:
+                case ARROW_LEFT:
                     return Result.MOVE_FOCUS_LEFT;
-                case ArrowRight:
+                case ARROW_RIGHT:
                     return Result.MOVE_FOCUS_RIGHT;
-                case ArrowUp:
+                case ARROW_UP:
                     return Result.MOVE_FOCUS_UP;
-                case Tab:
+                case TAB:
                     return Result.MOVE_FOCUS_NEXT;
-                case ReverseTab:
+                case REVERSE_TAB:
                     return Result.MOVE_FOCUS_PREVIOUS;
-                case MouseEvent:
+                case MOUSE_EVENT:
                     if (isMouseMove(keyStroke)) {
                         // do nothing
                         return Result.UNHANDLED;
@@ -203,7 +203,7 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
     }
     
     public boolean isKeyboardActivationStroke(KeyStroke keyStroke) {
-        boolean isKeyboardActivation = (keyStroke.getKeyType() == KeyType.Character && keyStroke.getCharacter() == ' ') || keyStroke.getKeyType() == KeyType.Enter;
+        boolean isKeyboardActivation = (keyStroke.getKeyType() == KeyType.CHARACTER && keyStroke.getCharacter() == ' ') || keyStroke.getKeyType() == KeyType.ENTER;
         
         return isFocused() && isKeyboardActivation;
     }
@@ -226,19 +226,19 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
     }
     
     public boolean isMouseDown(KeyStroke keyStroke) {
-        return keyStroke.getKeyType() == KeyType.MouseEvent && ((MouseAction)keyStroke).isMouseDown();
+        return keyStroke.getKeyType() == KeyType.MOUSE_EVENT && ((MouseAction)keyStroke).isMouseDown();
     }
     
     public boolean isMouseDrag(KeyStroke keyStroke) {
-        return keyStroke.getKeyType() == KeyType.MouseEvent && ((MouseAction)keyStroke).isMouseDrag();
+        return keyStroke.getKeyType() == KeyType.MOUSE_EVENT && ((MouseAction)keyStroke).isMouseDrag();
     }
     
     public boolean isMouseMove(KeyStroke keyStroke) {
-        return keyStroke.getKeyType() == KeyType.MouseEvent && ((MouseAction)keyStroke).isMouseMove();
+        return keyStroke.getKeyType() == KeyType.MOUSE_EVENT && ((MouseAction)keyStroke).isMouseMove();
     }
     
     public boolean isMouseUp(KeyStroke keyStroke) {
-        return keyStroke.getKeyType() == KeyType.MouseEvent && ((MouseAction)keyStroke).isMouseUp();
+        return keyStroke.getKeyType() == KeyType.MOUSE_EVENT && ((MouseAction)keyStroke).isMouseUp();
     }
     
 	

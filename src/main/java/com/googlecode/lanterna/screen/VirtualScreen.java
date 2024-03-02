@@ -40,6 +40,7 @@ public class VirtualScreen extends AbstractScreen {
     private TerminalSize minimumSize;
     private TerminalPosition viewportTopLeft;
     private TerminalSize viewportSize;
+    private boolean scrollWithCTRL;
 
     /**
      * Creates a new VirtualScreen that wraps a supplied Screen. The screen passed in here should be the real screen
@@ -57,6 +58,7 @@ public class VirtualScreen extends AbstractScreen {
         this.minimumSize = screen.getTerminalSize();
         this.viewportTopLeft = TerminalPosition.TOP_LEFT_CORNER;
         this.viewportSize = minimumSize;
+        this.scrollWithCTRL = false;
     }
 
     /**
@@ -89,6 +91,15 @@ public class VirtualScreen extends AbstractScreen {
      */
     public TerminalSize getViewportSize() {
         return viewportSize;
+    }
+
+    /**
+     * When the viewport is too small, user can scroll using ALT + arrow keys, but ALT can be replaced by CTRL by
+     * calling this method.
+     * @param scrollOnCTRL Scroll using CTRL instead of ALT if set to {@code true}, ALT if {@code false}
+     */
+    public void setScrollOnCTRL(boolean scrollOnCTRL) {
+        this.scrollWithCTRL = scrollOnCTRL;
     }
 
     public void setViewportTopLeft(TerminalPosition position) {
@@ -220,21 +231,21 @@ public class VirtualScreen extends AbstractScreen {
         if(keyStroke == null) {
             return null;
         }
-        else if(keyStroke.isAltDown() && keyStroke.getKeyType() == KeyType.ArrowLeft) {
+        else if(isScrollTrigger(keyStroke) && keyStroke.getKeyType() == KeyType.ARROW_LEFT) {
             if(viewportTopLeft.getColumn() > 0) {
                 viewportTopLeft = viewportTopLeft.withRelativeColumn(-1);
                 refresh();
                 return null;
             }
         }
-        else if(keyStroke.isAltDown() && keyStroke.getKeyType() == KeyType.ArrowRight) {
+        else if(isScrollTrigger(keyStroke) && keyStroke.getKeyType() == KeyType.ARROW_RIGHT) {
             if(viewportTopLeft.getColumn() + viewportSize.getColumns() < getTerminalSize().getColumns()) {
                 viewportTopLeft = viewportTopLeft.withRelativeColumn(1);
                 refresh();
                 return null;
             }
         }
-        else if(keyStroke.isAltDown() && keyStroke.getKeyType() == KeyType.ArrowUp) {
+        else if(isScrollTrigger(keyStroke) && keyStroke.getKeyType() == KeyType.ARROW_UP) {
             if(viewportTopLeft.getRow() > 0) {
                 viewportTopLeft = viewportTopLeft.withRelativeRow(-1);
                 realScreen.scrollLines(0,viewportSize.getRows()-1,-1);
@@ -242,7 +253,7 @@ public class VirtualScreen extends AbstractScreen {
                 return null;
             }
         }
-        else if(keyStroke.isAltDown() && keyStroke.getKeyType() == KeyType.ArrowDown) {
+        else if(isScrollTrigger(keyStroke) && keyStroke.getKeyType() == KeyType.ARROW_DOWN) {
             if(viewportTopLeft.getRow() + viewportSize.getRows() < getTerminalSize().getRows()) {
                 viewportTopLeft = viewportTopLeft.withRelativeRow(1);
                 realScreen.scrollLines(0,viewportSize.getRows()-1,1);
@@ -250,7 +261,36 @@ public class VirtualScreen extends AbstractScreen {
                 return null;
             }
         }
+        else if(isScrollTrigger(keyStroke) && keyStroke.getKeyType() == KeyType.PAGE_UP) {
+            if(viewportTopLeft.getRow() > 0) {
+                int scroll = Math.min(viewportSize.getRows(), viewportTopLeft.getRow());
+                viewportTopLeft = viewportTopLeft.withRelativeRow(-scroll);
+                realScreen.scrollLines(0,viewportSize.getRows()-scroll,-scroll);
+                refresh();
+                return null;
+            }
+        }
+        else if(isScrollTrigger(keyStroke) && (keyStroke.getKeyType() == KeyType.PAGE_DOWN || isSpaceBarPress(keyStroke))) {
+            if(viewportTopLeft.getRow() + viewportSize.getRows() < getTerminalSize().getRows()) {
+                int scroll = viewportSize.getRows();
+                if (viewportTopLeft.getRow() + viewportSize.getRows() + scroll >= getTerminalSize().getRows()) {
+                    scroll = getTerminalSize().getRows() - viewportTopLeft.getRow() - viewportSize.getRows();
+                }
+                viewportTopLeft = viewportTopLeft.withRelativeRow(scroll);
+                realScreen.scrollLines(0,viewportSize.getRows()-scroll,scroll);
+                refresh();
+                return null;
+            }
+        }
         return keyStroke;
+    }
+
+    private static boolean isSpaceBarPress(KeyStroke keyStroke) {
+        return keyStroke.getKeyType() == KeyType.CHARACTER && keyStroke.getCharacter() == ' ';
+    }
+
+    private boolean isScrollTrigger(KeyStroke keyStroke) {
+        return scrollWithCTRL ? keyStroke.isCtrlDown() : keyStroke.isAltDown();
     }
 
     @Override

@@ -76,8 +76,10 @@ public class ScrollBar extends AbstractComponent<ScrollBar> {
         if(maximum < 0) {
             throw new IllegalArgumentException("Cannot set ScrollBar maximum to " + maximum);
         }
-        this.maximum = maximum;
-        invalidate();
+        if (this.maximum != maximum) {
+            this.maximum = maximum;
+            invalidate();
+        }
         return this;
     }
 
@@ -96,8 +98,11 @@ public class ScrollBar extends AbstractComponent<ScrollBar> {
      * @return Itself
      */
     public ScrollBar setScrollPosition(int position) {
-        this.position = Math.min(position, this.maximum);
-        invalidate();
+        int newPosition = Math.min(position, this.maximum);
+        if (this.position != newPosition) {
+            this.position = newPosition;
+            invalidate();
+        }
         return this;
     }
 

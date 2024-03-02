@@ -18,6 +18,7 @@
  */
 package com.googlecode.lanterna;
 
+import java.io.Serializable;
 import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,7 +32,7 @@ import java.util.Objects;
  * cannot be modified after creation.
  * @author Martin
  */
-public class TextCharacter {
+public class TextCharacter implements Serializable {
     private static EnumSet<SGR> toEnumSet(SGR... modifiers) {
         if(modifiers.length == 0) {
             return EnumSet.noneOf(SGR.class);
@@ -51,8 +52,8 @@ public class TextCharacter {
         return fromString(string, TextColor.ANSI.DEFAULT, TextColor.ANSI.DEFAULT);
     }
 
-    public static TextCharacter[] fromCharacter(char c, TextColor foregroundColor, TextColor backgroundColor, SGR... modifiers) {
-        return fromString(Character.toString(c), foregroundColor, backgroundColor, modifiers);
+    public static TextCharacter fromCharacter(char c, TextColor foregroundColor, TextColor backgroundColor, SGR... modifiers) {
+        return fromString(Character.toString(c), foregroundColor, backgroundColor, modifiers)[0];
     }
 
     public static TextCharacter[] fromString(
@@ -391,8 +392,21 @@ public class TextCharacter {
     public boolean isDoubleWidth() {
         // TODO: make this better to work properly with emoji and other complicated "characters"
         return TerminalTextUtils.isCharDoubleWidth(character.charAt(0)) ||
+                isEmoji(character) ||
                 // If the character takes up more than one char, assume it's double width (unless thai)
                 (character.length() > 1 && !TerminalTextUtils.isCharThai(character.charAt(0)));
+    }
+
+    private static boolean isEmoji(final String s) {
+        // This is really hard to do properly and would require an emoji library as a dependency, so here's a hack that
+        // basically assumes anything NOT a regular latin1/CJK/thai character is an emoji
+        char firstCharacter = s.charAt(0);
+        return s.length() > 1 ||
+                !(TerminalTextUtils.isCharCJK(firstCharacter) ||
+                        TerminalTextUtils.isPrintableCharacter(firstCharacter) ||
+                        TerminalTextUtils.isCharThai(firstCharacter) ||
+                        TerminalTextUtils.isCharCJK(firstCharacter) ||
+                        TerminalTextUtils.isControlCharacter(firstCharacter));
     }
 
     @SuppressWarnings("SimplifiableIfStatement")

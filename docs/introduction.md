@@ -1,7 +1,7 @@
 ## Introduction
 This document will give you a general introduction to how text terminals work and how Lanterna interacts with them. 
 In the sub-documents, you can find specific guides on how to program each one of the layers. 
-You are encouraged to read them all and in order to get the full picture.
+You are encouraged to read them all in order to get the full picture.
 
 ## About terminals
 ### TERM and terminfo 
@@ -30,7 +30,7 @@ standard input when those keys are pressed).
 ### Lanterna
 Lanterna will use the `xterm` standard as most terminals understand it, which is basically the standard 
 [ANSI escape codes](http://en.wikipedia.org/wiki/ANSI_escape_code). As notes in the previous passage explained, where terminals 
-diverge most from the `xterm` specification is in the escape codes for all the special keyboard keys. At the moment, Lantern 
+diverge most from the `xterm` specification is in the escape codes for all the special keyboard keys. At the moment, Lanterna 
 tries to accommodate for all of them by adding 'input profiles' for each known type. As new terminals (emulators) are 
 added, the profiles might need to be updated. So far, as a developer you shouldn't need to mess around with these 
 profiles as there are no key collisions and we'll try to add any popular terminal emulator out there. The idea is that 

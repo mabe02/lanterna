@@ -38,9 +38,9 @@ public class PrivateModeTest {
         boolean normalTerminal = true;
         printNormalTerminalText(terminal);
         KeyStroke keyStroke = null;
-        while(keyStroke == null || keyStroke.getKeyType() != KeyType.Escape) {
+        while(keyStroke == null || keyStroke.getKeyType() != KeyType.ESCAPE) {
             keyStroke = terminal.pollInput();
-            if(keyStroke != null && keyStroke.getKeyType() == KeyType.Character && keyStroke.getCharacter() == ' ') {
+            if(keyStroke != null && keyStroke.getKeyType() == KeyType.CHARACTER && keyStroke.getCharacter() == ' ') {
                 normalTerminal = !normalTerminal;
                 if(normalTerminal) {
                     terminal.exitPrivateMode();

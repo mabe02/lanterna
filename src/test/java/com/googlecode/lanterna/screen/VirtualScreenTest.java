@@ -52,7 +52,7 @@ public class VirtualScreenTest {
         while(true) {
             KeyStroke keyStroke = screen.pollInput();
             if(keyStroke != null) {
-                if(keyStroke.getKeyType() == KeyType.Escape) {
+                if(keyStroke.getKeyType() == KeyType.ESCAPE) {
                     break;
                 }
             }
