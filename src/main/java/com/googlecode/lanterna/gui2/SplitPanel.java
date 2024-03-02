@@ -118,30 +118,20 @@ public class SplitPanel extends Panel {
         
         @Override
         public TerminalSize getPreferredSize(List<Component> components) {
+            TerminalSize sizeA = compA.getPreferredSize();
+            int aWidth = sizeA.getColumns();
+            int aHeight = sizeA.getRows();
+            TerminalSize sizeB = compB.getPreferredSize();
+            int bWidth = sizeB.getColumns();
+            int bHeight = sizeB.getRows();
+            
             int tWidth = thumb.getPreferredSize().getColumns();
             int tHeight = thumb.getPreferredSize().getRows();
-
+            
             if (isHorizontal) {
                 return new TerminalSize(aWidth + tWidth + bWidth, Math.max(aHeight, Math.max(tHeight, bHeight)));
             } else {
                 return new TerminalSize(Math.max(aWidth, Math.max(tWidth, bWidth)), aHeight + tHeight + bHeight);
-            }
-        }
-
-        @Override
-        public void doLayout(TerminalSize area, List<Component> components) {
-            TerminalSize size = getSize();
-
-            
-            int tWidth = thumb.getPreferredSize().getColumns();
-            int tHeight = thumb.getPreferredSize().getRows();
-            
-            if (isHorizontal) {
-                TerminalSize result = new TerminalSize(aWidth + tWidth + bWidth, Math.max(aHeight, Math.max(tHeight, bHeight)));
-                return result;
-            } else {
-                TerminalSize result = new TerminalSize(Math.max(aWidth, Math.max(tWidth, bWidth)), aHeight + tHeight + bHeight);
-                return result;
             }
         }
         

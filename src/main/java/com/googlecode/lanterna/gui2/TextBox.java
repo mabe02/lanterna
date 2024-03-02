@@ -68,11 +68,8 @@ public class TextBox extends AbstractInteractableComponent<TextBox> implements S
     private int longestRow;
     private Character mask;
     private Pattern validationPattern;
-
-    private TextChangeListener textChangeListener;
-
-    private boolean isWithinScrollPanel = false;
     private ScrollPanel scrollPanel = null;
+    private TextChangeListener textChangeListener;
 
     /**
      * Default constructor, this creates a single-line {@code TextBox} of size 10 which is initially empty

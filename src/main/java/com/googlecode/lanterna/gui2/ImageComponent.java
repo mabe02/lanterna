@@ -29,14 +29,6 @@ import com.googlecode.lanterna.input.*;
 public class ImageComponent extends AbstractInteractableComponent {
     
     private TextImage textImage;
-
-/**
- * 
- * @author ginkoblongata
- */
-public class ImageComponent extends AbstractInteractableComponent {
-    
-    private TextImage textImage;
     
     public ImageComponent() {
         setTextImage(new BasicTextImage(0,0));
@@ -44,7 +36,6 @@ public class ImageComponent extends AbstractInteractableComponent {
     
     public void setTextImage(TextImage textImage) {
         this.textImage = textImage;
-        setPreferredSize(textImage.getSize());
         invalidate();
     }
     
@@ -58,7 +49,6 @@ public class ImageComponent extends AbstractInteractableComponent {
             @Override
             public TerminalSize getPreferredSize(ImageComponent panel) {
                 return textImage.getSize();
-       // ??    return ImageComponent.this.getPreferredSize();
             }
             @Override
             public TerminalPosition getCursorLocation(ImageComponent component) {
@@ -69,7 +59,6 @@ public class ImageComponent extends AbstractInteractableComponent {
     }
     
     @Override
-
     public Result handleKeyStroke(KeyStroke keyStroke) {
         Result superResult = super.handleKeyStroke(keyStroke);
         

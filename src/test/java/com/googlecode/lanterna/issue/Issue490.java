@@ -93,7 +93,7 @@ public class Issue490 {
         // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
         // instantiate ui components (no layout activities)
         logTextBox = new TextBox(new TerminalSize(80, 12));
-        logTextBox.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Fill));
+        logTextBox.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.FILL));
         Button clearLogButton = new Button("CLEAR LOG", () -> logTextBox.setText(""));
         
         ActionListBox themes = new ActionListBox(new TerminalSize(40, 62));
@@ -114,24 +114,6 @@ public class Issue490 {
         eachOf(245, i -> radioBoxList.addItem("radio item: " + i));
         
         CheckBoxList<String> checkboxList = new CheckBoxList<>();
-        eachOf(45, i -> checkboxList.addItem("heckboxList: " + i));
-//=======
-//        logTextBox = new TextBox(new TerminalSize(80, 10));
-//        logTextBox.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Fill));
-//        Button clearLogButton = new Button("CLEAR LOG", () -> logTextBox.setText(""));
-//        
-//        ActionListBox listBox = new ActionListBox();
-//        eachOf(200, i -> listBox.addItem("item: " + i, () -> log("item: " + i)));
-//        
-//        ActionListBox listBox2 = new ActionListBox();
-//        eachOf(200, i -> listBox2.addItem("item: " + i, () -> log("listBox2 item: " + i)));
-//        
-//        RadioBoxList radioBoxList = new RadioBoxList();
-//        eachOf(200, i -> radioBoxList.addItem("radio item: " + i));
-//        
-//        CheckBoxList<String> checkboxList = new CheckBoxList<>();
-//        eachOf(200, i -> checkboxList.addItem("heckboxList: " + i));
-//>>>>>>> 91107fdf (rough cut of ScrollPanel)
         eachOf(245, i -> checkboxList.addItem("heckboxList: " + i));
         
         
@@ -152,7 +134,7 @@ public class Issue490 {
         ui.addComponent(logTextBox.withBorder(Borders.singleLine("log")));
         
         Panel hpanel = new Panel(new GridLayout(100));
-        hpanel.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Fill));
+        hpanel.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.FILL));
         hpanel.addComponent(themes.withBorder(Borders.singleLine("themes")));
         hpanel.addComponent(listBox.withBorder(Borders.singleLine("listBox")));
         hpanel.addComponent(new ScrollPanel(listBox2).withBorder(Borders.singleLine("scrollPanel listBox")));
@@ -160,7 +142,7 @@ public class Issue490 {
         hpanel.addComponent(new ScrollPanel(checkboxList).withBorder(Borders.singleLine("scrollPanel checkbox")));
         
         Panel hpanel2 = new Panel(new GridLayout(100));
-        hpanel2.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Fill));
+        hpanel2.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.FILL));
         hpanel2.addComponent(listBox3.withBorder(Borders.singleLine("listBox3")));
         hpanel2.addComponent(radioBoxList2.withBorder(Borders.singleLine("radio list 2")));
         hpanel2.addComponent(checkboxList2.withBorder(Borders.singleLine("checkbox 2")));

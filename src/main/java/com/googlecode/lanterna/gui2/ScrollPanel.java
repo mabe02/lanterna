@@ -72,19 +72,8 @@ public class ScrollPanel extends Panel {
     protected TerminalPosition thumbMouseDownPosition = null;
     protected TerminalPosition offsetAtMouseDown = null;
     protected TerminalPosition thumbMouseDownMask = null;
-    //protected int selectedAtMouseDown = 0;
-    private final ScrollableBox scrollableBox;
     protected int selectedAtMouseDown = 0;
 
-    private final ScrollBar verticalScrollBar;
-    private final ScrollBar horizontalScrollBar;
-    
-    private final boolean isHorizontalScrollCapable;
-    private final boolean isVerticalScrollCapable;
-    private CenterViewPort centerViewPort;
-    
-    private final ScrollPanelLayoutManager scrollPanelLayoutManager;
-    
     /**
      * Default constructor, creates a new panel with no child components and by default set to a vertical
      * {@code LinearLayout} layout manager.
@@ -95,48 +84,6 @@ public class ScrollPanel extends Panel {
         this.isHorizontalScrollCapable = isHorizontalScrollCapable;
         this.isVerticalScrollCapable = isVerticalScrollCapable;
         
-
-        verticalScrollBar = new ScrollBar(Direction.VERTICAL, this);
-        horizontalScrollBar = new ScrollBar(Direction.HORIZONTAL, this);
-        scrollPanelLayoutManager = new ScrollPanelLayoutManager();
-        setLayoutManager(scrollPanelLayoutManager);
-        
-        centerViewPort = new CenterViewPort(scrollableComponent);
-        addComponent(centerViewPort, Location.CENTER);
-        
-        if (scrollableComponent instanceof ScrollableBox) {
-            ((ScrollableBox)scrollableComponent).setIsWithinScrollPanel(true);
-        }
-    }
-    
-    boolean isVerticalScrollVisible() {
-        boolean isVisible = scrollableComponent.getSize().getRows() >= getSize().getRows();
-        return isVerticalScrollCapable && isVisible;
-    }
-    boolean isHorizontalScrollVisible() {
-        boolean isVisible = scrollableComponent.getSize().getColumns() >= getSize().getColumns();
-        return isHorizontalScrollCapable && isVisible;
-    }
-    
-    void updateScrollerBars() {
-        if (isVerticalScrollVisible()) {
-            verticalScrollBar.setViewSize(verticalScrollBar.getSize().getRows());
-            verticalScrollBar.setScrollMaximum(scrollableComponent.getSize().getRows());
-            //verticalScrollBar.setScrollPosition(scrollableComponent.getVerticalScrollPosition());
-            verticalScrollBar.setScrollPosition(-scrollOffset.getRow());
-        }
-        if (isHorizontalScrollVisible()) {
-            horizontalScrollBar.setViewSize(horizontalScrollBar.getSize().getColumns());
-            horizontalScrollBar.setScrollMaximum(scrollableComponent.getSize().getColumns());
-            //horizontalScrollBar.setScrollPosition(scrollableComponent.getHorizontalScrollPosition());
-            horizontalScrollBar.setScrollPosition(-scrollOffset.getColumn());
-        }
-    }
-    
-    class ScrollPanelLayoutManager extends BorderLayout {
-
-    public ScrollPanel(ScrollableBox scrollableBox) {
-        this.scrollableBox = scrollableBox;
         verticalScrollBar = new ScrollBar(Direction.VERTICAL, this);
         horizontalScrollBar = new ScrollBar(Direction.HORIZONTAL, this);
         scrollPanelLayoutManager = new ScrollPanelLayoutManager();
@@ -195,26 +142,12 @@ public class ScrollPanel extends Panel {
         boolean priorLayoutHasHorizontalScrollVisible;
         
         public ScrollPanelLayoutManager() {
-//            priorLayoutHasVerticalScrollVisible = isVerticalScrollVisible();
-//            priorLayoutHasHorizontalScrollVisible = isHorizontalScrollVisible();
-            priorLayoutHasVerticalScrollVisible = scrollableBox.isVerticalScrollVisible();
-            priorLayoutHasHorizontalScrollVisible = scrollableBox.isHorizontalScrollVisible();
             priorLayoutHasVerticalScrollVisible = isVerticalScrollVisible();
             priorLayoutHasHorizontalScrollVisible = isHorizontalScrollVisible();
         }
         
         @Override
         public TerminalSize getPreferredSize(List<Component> components) {
-//            TerminalSize size = ScrollPanel.this.getPreferredSize();
-//            
-//            int columns = size.getColumns() + (isVerticalScrollVisible() ? 1 : 0);
-//            int rows = size.getRows() + (isHorizontalScrollVisible() ? 1 : 0);
-            TerminalSize size = scrollableBox.getPreferredSize();
-//            TerminalSize size = ScrollPanel.this.getPreferredSize();
-            
-            int columns = size.getColumns() + (isVerticalScrollVisible() ? 1 : 0);
-            int rows = size.getRows() + (isHorizontalScrollVisible() ? 1 : 0);
-            //TerminalSize size = ScrollPanel.this.getPreferredSize();
             TerminalSize size = super.getPreferredSize(components);
             int xpad = isVerticalScrollVisible() ? 1 : 0;
             int ypad = isHorizontalScrollVisible() ? 1 : 0;
@@ -229,25 +162,10 @@ public class ScrollPanel extends Panel {
            super.doLayout(area, components);
            
            updateScrollerBars();
-            //int width = area.getColumns();
-            //int height = area.getRows();
-            //
-            //if (priorLayoutHasVerticalScrollVisible) {
-            //    width--;
-            //}
-            //if (priorLayoutHasHorizontalScrollVisible) {
-            //    height--;
-            //}
-            //
-            //scrollableBox.setSize(
         }
         
         @Override
         public boolean hasChanged() {
-          //  boolean isVerticalScrollVisible = isVerticalScrollVisible();
-          //  boolean isHorizontalScrollVisible = isHorizontalScrollVisible();
-            boolean isVerticalScrollVisible = scrollableBox.isVerticalScrollVisible();
-            boolean isHorizontalScrollVisible = scrollableBox.isHorizontalScrollVisible();
             boolean isVerticalScrollVisible = isVerticalScrollVisible();
             boolean isHorizontalScrollVisible = isHorizontalScrollVisible();
             
@@ -262,7 +180,6 @@ public class ScrollPanel extends Panel {
             // other option would be to subclass the Renderer it seems
             // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
             if (true || isChanged) {
-            //if (isChanged) {
                 removeComponent(verticalScrollBar);
                 removeComponent(horizontalScrollBar);
                 if (isVerticalScrollVisible) {
@@ -472,5 +389,6 @@ Y8b  d8 `8b  d8' 88  V888    88    88 `88. `8b  d8' 88booo. 88booo. 88.     88 `
         
         return new TerminalPosition(dx, dy);
     }
+    
     
 }

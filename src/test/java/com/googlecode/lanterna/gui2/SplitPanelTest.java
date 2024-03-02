@@ -162,3 +162,4 @@ public class SplitPanelTest extends TestBase {
         }
     }
 }
+

@@ -22,7 +22,6 @@ import com.googlecode.lanterna.Symbols;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalRectangle;
-import com.googlecode.lanterna.TerminalRect;
 import com.googlecode.lanterna.graphics.ThemeDefinition;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
@@ -168,7 +167,7 @@ public class ScrollBar extends AbstractInteractableComponent<ScrollBar> {
 
     @Override
     public Result handleKeyStroke(KeyStroke keyStroke) {
-        if (keyStroke.getKeyType() == KeyType.MouseEvent) {
+        if (keyStroke.getKeyType() == KeyType.MOUSE_EVENT) {
             MouseAction mouseAction = (MouseAction) keyStroke;
             MouseActionType actionType = mouseAction.getActionType();
         
@@ -199,12 +198,6 @@ public class ScrollBar extends AbstractInteractableComponent<ScrollBar> {
                 if (isMouseDrag(keyStroke)) {
                     scrollPanel.thumbMouseDrag(isVertical, mouseAction.getPosition());
                 }
-                if (isMouseUp(keyStroke)) {
-                    scrollPanel.mouseUp();
-                }
-                if (isMouseDrag(keyStroke)) {
-                    scrollPanel.thumbMouseDrag(isVertical, mouseAction.getPosition());
-                }
             }
         }
         return Result.HANDLED;
@@ -213,6 +206,7 @@ public class ScrollBar extends AbstractInteractableComponent<ScrollBar> {
     public ScrollBarRenderer getScrollBarRenderer() {
         return (ScrollBarRenderer) getRenderer();
     }
+    
     @Override
     protected InteractableRenderer<ScrollBar> createDefaultRenderer() {
         return new DefaultScrollBarRenderer();
@@ -230,34 +224,8 @@ public class ScrollBar extends AbstractInteractableComponent<ScrollBar> {
         @Override
         public TerminalPosition getCursorLocation(ScrollBar component) {
             //todo, use real thing
-            //return null;
-            return new TerminalPosition(0,0);
-        }
-        
-        public abstract ScrollBarRects getScrollBarRects();
-    }
-    
-    public static class ScrollBarRects {
-        public final TerminalRectangle lessArrow;
-        public final TerminalRectangle moreArrow;
-        public final TerminalRectangle thumb;
-        public final TerminalRectangle thumbCenter;
-        public final TerminalRectangle pageLess;
-        public final TerminalRectangle pageMore;
-        
-        public ScrollBarRects(
-                TerminalRectangle lessArrow,
-                TerminalRectangle moreArrow,
-                TerminalRectangle thumb,
-                TerminalRectangle thumbCenter,
-                TerminalRectangle pageLess,
-                TerminalRectangle pageMore) {
-            this.lessArrow   = lessArrow;
-            this.moreArrow   = moreArrow;
-            this.thumb       = thumb;
-            this.thumbCenter = thumbCenter;
-            this.pageLess    = pageLess;
-            this.pageMore    = pageMore;
+            return null;
+            //return new TerminalPosition(0,0);
         }
         
         public abstract ScrollBarRects getScrollBarRects();
@@ -350,11 +318,6 @@ public class ScrollBar extends AbstractInteractableComponent<ScrollBar> {
             graphics.fillRectangle(thumbCenter.position, thumbCenter.size, getThumbCenterChar(component));
             //graphics.fillRectangle(pageLess.position, pageLess.size, 'a');
             //graphics.fillRectangle(pageMore.position, pageMore.size, 'b');
-        }
-        
-        @Override
-        public ScrollBarRects getScrollBarRects() {
-            return scrollBarRects;
         }
         
         @Override
