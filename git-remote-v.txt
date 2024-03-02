@@ -1,4 +1,0 @@
-origin	git@github.com:ginkoblongata/lanterna.git (fetch)
-origin	git@github.com:ginkoblongata/lanterna.git (push)
-upstream	https://github.com/mabe02/lanterna.git (fetch)
-upstream	https://github.com/mabe02/lanterna.git (push)
