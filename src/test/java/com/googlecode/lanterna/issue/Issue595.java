@@ -18,6 +18,7 @@
  */
 package com.googlecode.lanterna.issue;
 
+import com.googlecode.lanterna.gui2.AnimatedLabel;
 import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.dialogs.WaitingDialog;
@@ -25,39 +26,84 @@ import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
-public class Issue595 {
-    public static void main(String... args) throws IOException {
+public
+class Issue595 {
+    private static final int SLEEP_SECONDS = 5;
+    private static final long SLEEP_MILLIS = SLEEP_SECONDS * 1000L;
+
+    public static
+    void main (String... args) throws IOException {
+        int exit_code = 0;
         final DefaultTerminalFactory terminalFactory = new DefaultTerminalFactory();
-        final ExecutorService executorService = Executors.newSingleThreadExecutor();
         try (final Screen screen = terminalFactory.createScreen()) {
             screen.startScreen();
+            final WindowBasedTextGUI textGUI = new MultiWindowTextGUI(screen);
 
             // POC
-            final WindowBasedTextGUI textGUI = new MultiWindowTextGUI(screen);
             final WaitingDialog waitingDialog = WaitingDialog.createDialog("TITLE", "TEXT");
+            final ExecutorService executorService = Executors.newSingleThreadExecutor();
+            Thread.sleep(SLEEP_MILLIS);
             waitingDialog.showDialog(textGUI, false);
             CompletableFuture.runAsync(() -> {
-                        try {
-                            Thread.sleep(5000);
-                        } catch (final InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                            throw new RuntimeException(e);
-                        } finally {
-                            waitingDialog.close();
-                        }
-                    }, executorService)
-                    .exceptionally(e -> {
-                        throw new RuntimeException(e);
-                    });
+                                 try {
+                                     Thread.sleep(SLEEP_MILLIS);
+                                 } catch (final InterruptedException e) {
+                                     Thread.currentThread()
+                                           .interrupt();
+                                     throw new RuntimeException(e);
+                                 } finally {
+                                     waitingDialog.close();
+                                 }
+                             }, executorService)
+                             .exceptionally(e -> {
+                                 throw new RuntimeException(e);
+                             });
             waitingDialog.waitUntilClosed();
-            System.out.println("WAIT DIALOG CLOSED");
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
+
+            // Ensure Executor Thread Dead
+            executorService.shutdownNow();
+            if (!executorService.awaitTermination(SLEEP_SECONDS, TimeUnit.SECONDS)) {
+                throw new IllegalStateException("ExecutorService Unstoppable");
+            }
+
+            // Check for Animated Label Hanging Thread
+            final String animatedLabelName = AnimatedLabel.class.getSimpleName()
+                                                                .toLowerCase();
+            final Optional<Thread> optionalAnimatedLabelThread = Thread.getAllStackTraces()
+                                                                       .keySet()
+                                                                       .stream()
+                                                                       .filter(thread -> thread.getName()
+                                                                                               .toLowerCase()
+                                                                                               .contains(animatedLabelName))
+                                                                       .findAny();
+            if (!optionalAnimatedLabelThread.isPresent()) {
+                return;
+            }
+            final Thread thread = optionalAnimatedLabelThread.get();
+            thread.join(SLEEP_MILLIS);
+            if (thread.isAlive()) {
+                throw new IllegalStateException("AnimatedLabel Thread Waiting");
+            }
+
+        } catch (final Throwable e) {
+            if (e instanceof InterruptedException) {
+                Thread.currentThread()
+                      .interrupt();
+            }
+            ++exit_code;
+            final StringWriter stringWriter = new StringWriter();
+            e.printStackTrace(new PrintWriter(stringWriter));
+            System.err.print(stringWriter);
+        } finally {
+            System.exit(exit_code);
         }
-        executorService.shutdown();
     }
 }
