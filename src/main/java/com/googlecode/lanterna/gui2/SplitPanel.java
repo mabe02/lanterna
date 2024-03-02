@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
@@ -28,23 +28,27 @@ import java.util.*;
  * @author ginkoblongata
  */
 public class SplitPanel extends Panel {
-    
+
     private final Component compA;
     private final ImageComponent thumb;
     private final Component compB;
-    
+
     private boolean isHorizontal;
     private double ratio = 0.5;
-    
+
     public static SplitPanel ofHorizontal(Component left, Component right) {
         SplitPanel split = new SplitPanel(left, right, true);
         return split;
     }
+
     public static SplitPanel ofVertical(Component top, Component bottom) {
         SplitPanel split = new SplitPanel(top, bottom, false);
         return split;
     }
-    
+
+    /**
+     *
+     */
     protected SplitPanel(Component a, Component b, boolean isHorizontal) {
         this.compA = a;
         this.compB = b;
@@ -52,10 +56,12 @@ public class SplitPanel extends Panel {
         thumb = makeThumb();
         setLayoutManager(new ScrollPanelLayoutManager());
         setRatio(10, 10);
+
         addComponent(a);
         addComponent(thumb);
         addComponent(b);
     }
+
     ImageComponent makeThumb() {
         ImageComponent imageComponent = new ImageComponent() {
             TerminalSize aSize;
@@ -68,16 +74,15 @@ public class SplitPanel extends Panel {
                 if (!(keyStroke instanceof MouseAction)) {
                     return Result.UNHANDLED;
                 }
-                MouseAction mouse = (MouseAction)keyStroke;
-                if (mouse.isMouseDown()) {
+                MouseAction mouseAction = (MouseAction)keyStroke;
+                if (mouseAction.isMouseDown()) {
                     aSize = compA.getSize();
                     bSize = compB.getSize();
                     tSize = thumb.getSize();
-                    down = mouse.getPosition();
+                    down = mouseAction.getPosition();
                 }
-                if (mouse.isMouseDrag()) {
-                    drag = mouse.getPosition();
-                    
+                if (mouseAction.isMouseDrag()) {
+                    drag = mouseAction.getPosition();
                     // xxxxxxxxxxxxxxxxxxxxx
                     // this is a hack, should not be needed if the pane drag
                     // only on mouse down'd comp stuff was completely working
@@ -85,7 +90,7 @@ public class SplitPanel extends Panel {
                         down = drag;
                     }
                     // xxxxxxxxxxxxxxxxxxxxx
-                    
+
                     int delta = isHorizontal ? drag.minus(down).getColumn() : drag.minus(down).getRow();
                     // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
                     if (isHorizontal) {
@@ -99,23 +104,23 @@ public class SplitPanel extends Panel {
                     }
                     // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
                 }
-                if (mouse.isMouseUp()) {
+                if (mouseAction.isMouseUp()) {
                     down = null;
                     drag = null;
                 }
                 return Result.HANDLED;
             }
         };
-        
         return imageComponent;
     }
-    
+
     class ScrollPanelLayoutManager implements LayoutManager {
     
         public ScrollPanelLayoutManager() {
             
         }
-        
+
+
         @Override
         public TerminalSize getPreferredSize(List<Component> components) {
             TerminalSize sizeA = compA.getPreferredSize();
@@ -124,21 +129,21 @@ public class SplitPanel extends Panel {
             TerminalSize sizeB = compB.getPreferredSize();
             int bWidth = sizeB.getColumns();
             int bHeight = sizeB.getRows();
-            
+
             int tWidth = thumb.getPreferredSize().getColumns();
             int tHeight = thumb.getPreferredSize().getRows();
-            
+
             if (isHorizontal) {
                 return new TerminalSize(aWidth + tWidth + bWidth, Math.max(aHeight, Math.max(tHeight, bHeight)));
             } else {
                 return new TerminalSize(Math.max(aWidth, Math.max(tWidth, bWidth)), aHeight + tHeight + bHeight);
             }
         }
-        
+
         @Override
         public void doLayout(TerminalSize area, List<Component> components) {
             TerminalSize size = getSize();
-            
+
             // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
             // TODO: themed
             int length = isHorizontal ? size.getRows() : size.getColumns();
@@ -162,7 +167,14 @@ public class SplitPanel extends Panel {
             } else {
                 h -= tHeight;
             }
-            
+
+            TerminalSize compAPrevSize = compA.getSize();
+            TerminalSize compBPrevSize = compB.getSize();
+            TerminalSize thumbPrevSize = thumb.getSize();
+            TerminalPosition compAPrevPos = compA.getPosition();
+            TerminalPosition compBPrevPos = compB.getPosition();
+            TerminalPosition thumbPrevPos = thumb.getPosition();
+
             if (isHorizontal) {
                 int leftWidth = Math.max(0, (int)(w * ratio));
                 int leftHeight = Math.max(0, Math.min(compA.getPreferredSize().getRows(), h));
