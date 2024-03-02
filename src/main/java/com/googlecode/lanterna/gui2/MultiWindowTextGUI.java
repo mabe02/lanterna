@@ -420,6 +420,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
                 titleBarDragWindow = window;
                 originWindowPosition = titleBarDragWindow.getPosition();
                 dragStart = mouse.getPosition();
+                moveToTop(window);
             });
         }
         
