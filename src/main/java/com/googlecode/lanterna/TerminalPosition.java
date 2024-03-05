@@ -40,18 +40,18 @@ public class TerminalPosition implements Comparable<TerminalPosition> {
     /**
      * @return a new TerminalPosition instance with the supplied column and row
      */
-		public static final TerminalPosition of(int column, int row) {
-			if(column == 0 && row == 0) {
-          return OF_0x0;
-      } else if(column == 0 && row == 1) {
-          return OF_0x1;
-      } else if(column == 1 && row == 0) {
-          return OF_1x0;
-      } else if(column == 1 && row == 1) {
-          return OF_1x1;
-      }
-			return new TerminalPosition(column, row);
-		}
+    public static final TerminalPosition of(int column, int row) {
+        if(column == 0 && row == 0) {
+            return OF_0x0;
+        } else if(column == 0 && row == 1) {
+            return OF_0x1;
+        } else if(column == 1 && row == 0) {
+            return OF_1x0;
+        } else if(column == 1 && row == 1) {
+              return OF_1x1;
+        }
+        return new TerminalPosition(column, row);
+    }
 		/**
      * Returns a TerminalPositoin with the column and row supplied.
      * If either the column or row supplied is different than this instances column or row, then a new instance is returned.
