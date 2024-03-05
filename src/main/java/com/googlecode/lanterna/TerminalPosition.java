@@ -52,13 +52,13 @@ public class TerminalPosition implements Comparable<TerminalPosition> {
         }
         return new TerminalPosition(column, row);
     }
-		/**
+    /**
      * Returns a TerminalPositoin with the column and row supplied.
      * If either the column or row supplied is different than this instances column or row, then a new instance is returned.
      * If both column and row are the same as this instance's column and row, then this instance is returned.
      * @return Either this instance, or a new instance if column/row are different than this instance's column/row.
      */
-		public TerminalPosition as(int column, int row) {
+    public TerminalPosition as(int column, int row) {
         return (column != this.column || row != this.row) ? of(column, row) : this;
     }
     /**
