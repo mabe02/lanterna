@@ -39,7 +39,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
     private final List<V> items;
     private int selectedIndex;
     private ListItemRenderer<V,T> listItemRenderer;
-    protected TerminalPosition scrollOffset = new TerminalPosition(0, 0);
+    protected TerminalPosition scrollOffset = TerminalPosition.OF_0x0;
     
     /**
      * This constructor sets up the component so it has no preferred size but will ask to be as big as the list is. If
@@ -403,7 +403,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
             if(columnAccordingToRenderer == -1) {
                 return null;
             }
-            return new TerminalPosition(columnAccordingToRenderer, selectedIndex - scrollTopIndex);
+            return TerminalPosition.of(columnAccordingToRenderer, selectedIndex - scrollTopIndex);
         }
 
         @Override
@@ -445,7 +445,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
                 scrollTopIndex = items.size() - componentHeight;
             }
             
-            listBox.scrollOffset = new TerminalPosition(0, -scrollTopIndex);
+            listBox.scrollOffset = TerminalPosition.of(0, -scrollTopIndex);
 
             graphics.applyThemeStyle(themeDefinition.getNormal());
             graphics.fill(' ');
@@ -456,7 +456,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
                     break;
                 }
                 listItemRenderer.drawItem(
-                        graphics.newTextGraphics(new TerminalPosition(0, i - scrollTopIndex), itemSize),
+                        graphics.newTextGraphics(TerminalPosition.of(0, i - scrollTopIndex), itemSize),
                         listBox,
                         i,
                         items.get(i),
@@ -471,7 +471,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
                 verticalScrollBar.setScrollMaximum(items.size());
                 verticalScrollBar.setScrollPosition(scrollTopIndex);
                 verticalScrollBar.draw(graphics.newTextGraphics(
-                        new TerminalPosition(graphics.getSize().getColumns() - 1, 0),
+                        TerminalPosition.of(graphics.getSize().getColumns() - 1, 0),
                         new TerminalSize(1, graphics.getSize().getRows())));
             }
         }

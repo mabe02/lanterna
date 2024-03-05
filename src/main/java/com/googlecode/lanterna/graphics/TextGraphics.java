@@ -54,7 +54,7 @@ public interface TextGraphics extends StyleSet<TextGraphics> {
     /**
      * Creates a new TextGraphics of the same type as this one, using the same underlying subsystem. Using this method,
      * you need to specify a section of the current TextGraphics valid area that this new TextGraphic shall be
-     * restricted to. If you call <code>newTextGraphics(TerminalPosition.TOP_LEFT_CORNER, textGraphics.getSize())</code>
+     * restricted to. If you call <code>newTextGraphics(TerminalPosition.of(0, 0), textGraphics.getSize())</code>
      * then the resulting object will be identical to this one, but having a separated state for colors, position and
      * modifiers.
      * @param topLeftCorner Position of this TextGraphics's writable area that is to become the top-left corner (0x0) of
@@ -281,7 +281,7 @@ public interface TextGraphics extends StyleSet<TextGraphics> {
     /**
      * Takes a TextImage and draws it on the surface this TextGraphics is targeting, given the coordinates on the target
      * that is specifying where the top-left corner of the image should be drawn. This is equivalent of calling
-     * {@code drawImage(topLeft, image, TerminalPosition.TOP_LEFT_CORNER, image.getSize()}.
+     * {@code drawImage(topLeft, image, TerminalPosition.of(0, 0), image.getSize()}.
      * @param topLeft Position of the top-left corner of the image on the target
      * @param image Image to draw
      * @return Itself

@@ -175,7 +175,7 @@ public class CheckBox extends AbstractInteractableComponent<CheckBox> {
      * of a "[ ]" block which will contain a "X" inside it if the check box has toggle status on
      */
     public static class DefaultCheckBoxRenderer extends CheckBoxRenderer {
-        private static final TerminalPosition CURSOR_LOCATION = new TerminalPosition(1, 0);
+        private static final TerminalPosition CURSOR_LOCATION = TerminalPosition.OF_1x0;
         @Override
         public TerminalPosition getCursorLocation(CheckBox component) {
             if(component.getThemeDefinition().isCursorVisible()) {

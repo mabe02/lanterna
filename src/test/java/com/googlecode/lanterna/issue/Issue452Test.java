@@ -55,7 +55,7 @@ public class Issue452Test {
         content = new Panel(new GridLayout(GRID_WIDTH));
         GridLayout gridLayout = (GridLayout) content.getLayoutManager();
         gridLayout.setVerticalSpacing(1);
-        window.setPosition(TerminalPosition.TOP_LEFT_CORNER);
+        window.setPosition(TerminalPosition.OF_0x0);
         window.setComponent(content);
     }
 
@@ -269,7 +269,7 @@ public class Issue452Test {
      * Clicks at position
      */
     private MouseAction clickAt(int column, int row) {
-        return new MouseAction(MouseActionType.CLICK_DOWN, 1, new TerminalPosition(column, row));
+        return new MouseAction(MouseActionType.CLICK_DOWN, 1, TerminalPosition.of(column, row));
     }
 
     /**

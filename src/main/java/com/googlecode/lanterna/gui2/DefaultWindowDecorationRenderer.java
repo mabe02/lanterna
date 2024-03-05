@@ -69,8 +69,8 @@ public class DefaultWindowDecorationRenderer implements WindowDecorationRenderer
         else {
             graphics.applyThemeStyle(themeDefinition.getPreLight());
         }
-        graphics.drawLine(new TerminalPosition(0, drawableArea.getRows() - 2), new TerminalPosition(0, 1), verticalLine);
-        graphics.drawLine(new TerminalPosition(1, 0), new TerminalPosition(drawableArea.getColumns() - 2, 0), horizontalLine);
+        graphics.drawLine(TerminalPosition.of(0, drawableArea.getRows() - 2), TerminalPosition.OF_0x1, verticalLine);
+        graphics.drawLine(TerminalPosition.OF_1x0, TerminalPosition.of(drawableArea.getColumns() - 2, 0), horizontalLine);
         graphics.setCharacter(0, 0, topLeftCorner);
         graphics.setCharacter(0, drawableArea.getRows() - 1, bottomLeftCorner);
 
@@ -87,12 +87,12 @@ public class DefaultWindowDecorationRenderer implements WindowDecorationRenderer
 
         graphics.applyThemeStyle(themeDefinition.getNormal());
         graphics.drawLine(
-                new TerminalPosition(drawableArea.getColumns() - 1, 1),
-                new TerminalPosition(drawableArea.getColumns() - 1, drawableArea.getRows() - 2),
+                TerminalPosition.of(drawableArea.getColumns() - 1, 1),
+                TerminalPosition.of(drawableArea.getColumns() - 1, drawableArea.getRows() - 2),
                 verticalLine);
         graphics.drawLine(
-                new TerminalPosition(1, drawableArea.getRows() - 1),
-                new TerminalPosition(drawableArea.getColumns() - 2, drawableArea.getRows() - 1),
+                TerminalPosition.of(1, drawableArea.getRows() - 1),
+                TerminalPosition.of(drawableArea.getColumns() - 2, drawableArea.getRows() - 1),
                 horizontalLine);
 
         graphics.setCharacter(drawableArea.getColumns() - 1, 0, topRightCorner);
@@ -109,7 +109,7 @@ public class DefaultWindowDecorationRenderer implements WindowDecorationRenderer
         }
 
         return graphics.newTextGraphics(
-                new TerminalPosition(1, 1),
+                TerminalPosition.OF_1x1,
                 drawableArea
                         // Make sure we don't make the new graphic's area smaller than 0
                         .withRelativeColumns(-(Math.min(2, drawableArea.getColumns())))
@@ -133,10 +133,8 @@ public class DefaultWindowDecorationRenderer implements WindowDecorationRenderer
                 .max(new TerminalSize(titleWidth + minPadding, 1));  //Make sure the title fits!
     }
 
-    private static final TerminalPosition OFFSET = new TerminalPosition(1, 1);
-
     @Override
     public TerminalPosition getOffset(Window window) {
-        return OFFSET;
+        return TerminalPosition.OF_1x1;
     }
 }

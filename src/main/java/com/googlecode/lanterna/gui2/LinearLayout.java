@@ -229,7 +229,7 @@ public class LinearLayout implements LayoutManager {
         int availableHorizontalSpace = area.getColumns();
         for(Component component: components) {
             if(remainingVerticalSpace <= 0) {
-                component.setPosition(TerminalPosition.TOP_LEFT_CORNER);
+                component.setPosition(TerminalPosition.OF_0x0);
                 component.setSize(TerminalSize.ZERO);
             }
             else {
@@ -381,7 +381,7 @@ public class LinearLayout implements LayoutManager {
         int availableVerticalSpace = area.getRows();
         for(Component component: components) {
             if(remainingHorizontalSpace <= 0) {
-                component.setPosition(TerminalPosition.TOP_LEFT_CORNER);
+                component.setPosition(TerminalPosition.OF_0x0);
                 component.setSize(TerminalSize.ZERO);
             }
             else {

@@ -107,7 +107,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
         restoreCursorPosition();
         TerminalPosition terminalPosition = waitForCursorPositionReport();
         if (terminalPosition == null) {
-            terminalPosition = new TerminalPosition(80,24);
+            terminalPosition = TerminalPosition.of(80,24);
         }
         return new TerminalSize(terminalPosition.getColumn(), terminalPosition.getRow());
     }
@@ -270,7 +270,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
         // ANSI terminal positions are 1-indexed so top-left corner is 1x1 instead of 0x0, that's why we need to adjust it here
         TerminalPosition terminalPosition = waitForCursorPositionReport();
         if (terminalPosition == null) {
-            terminalPosition = TerminalPosition.OFFSET_1x1;
+            terminalPosition = TerminalPosition.OF_1x1;
         }
         return terminalPosition.withRelative(-1, -1);
     }

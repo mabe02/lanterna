@@ -40,7 +40,7 @@ public class WindowManagerTest extends TestBase {
             super.prepareWindow(screenSize, window);
 
             window.setDecoratedSize(window.getPreferredSize().withRelative(12, 10));
-            window.setPosition(new TerminalPosition(
+            window.setPosition(TerminalPosition.of(
                     screenSize.getColumns() - window.getDecoratedSize().getColumns() - 1,
                     screenSize.getRows() - window.getDecoratedSize().getRows() - 1
             ));

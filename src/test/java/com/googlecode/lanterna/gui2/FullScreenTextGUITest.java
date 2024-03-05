@@ -90,36 +90,36 @@ public class FullScreenTextGUITest {
             BIOSButton button14 = new BIOSButton("Exit Without Saving", "僕の事が思い出せなくても泣かないでね");
             
             button1.setSize(new TerminalSize(35, 1));
-            button1.setPosition(new TerminalPosition(3, 3));
+            button1.setPosition(TerminalPosition.of(3, 3));
             button2.setSize(new TerminalSize(35, 1));
-            button2.setPosition(new TerminalPosition(3, 5));
+            button2.setPosition(TerminalPosition.of(3, 5));
             button3.setSize(new TerminalSize(35, 1));
-            button3.setPosition(new TerminalPosition(3, 7));
+            button3.setPosition(TerminalPosition.of(3, 7));
             button4.setSize(new TerminalSize(35, 1));
-            button4.setPosition(new TerminalPosition(3, 9));
+            button4.setPosition(TerminalPosition.of(3, 9));
             button5.setSize(new TerminalSize(35, 1));
-            button5.setPosition(new TerminalPosition(3, 11));
+            button5.setPosition(TerminalPosition.of(3, 11));
             button6.setSize(new TerminalSize(35, 1));
-            button6.setPosition(new TerminalPosition(3, 13));
+            button6.setPosition(TerminalPosition.of(3, 13));
             button7.setSize(new TerminalSize(35, 1));
-            button7.setPosition(new TerminalPosition(3, 15));
+            button7.setPosition(TerminalPosition.of(3, 15));
             
             button8.setSize(new TerminalSize(35, 1));
-            button8.setPosition(new TerminalPosition(43, 3));
+            button8.setPosition(TerminalPosition.of(43, 3));
             button9.setSize(new TerminalSize(35, 1));
-            button9.setPosition(new TerminalPosition(43, 5));
+            button9.setPosition(TerminalPosition.of(43, 5));
             button10.setSize(new TerminalSize(35, 1));
-            button10.setPosition(new TerminalPosition(43, 7));
+            button10.setPosition(TerminalPosition.of(43, 7));
             button11.setSize(new TerminalSize(35, 1));
-            button11.setPosition(new TerminalPosition(43, 9));
+            button11.setPosition(TerminalPosition.of(43, 9));
             button12.setSize(new TerminalSize(35, 1));
-            button12.setPosition(new TerminalPosition(43, 11));
+            button12.setPosition(TerminalPosition.of(43, 11));
             button13.setSize(new TerminalSize(35, 1));
-            button13.setPosition(new TerminalPosition(43, 13));
+            button13.setPosition(TerminalPosition.of(43, 13));
             button14.setSize(new TerminalSize(35, 1));
-            button14.setPosition(new TerminalPosition(43, 15));
+            button14.setPosition(TerminalPosition.of(43, 15));
             
-            helpLabel.setPosition(new TerminalPosition(2, 22));
+            helpLabel.setPosition(TerminalPosition.of(2, 22));
             helpLabel.setSize(new TerminalSize(76, 1));
             addComponent(helpLabel);
             for(BIOSButton button: Arrays.asList(button1, button2, button3, button4, button5, button6, button7, button8, button9, button10, button11, button12, button13, button14)) {
@@ -184,7 +184,7 @@ public class FullScreenTextGUITest {
                     graphics.setBackgroundColor(TextColor.ANSI.BLACK).fill(' ');
                     
                     //Draw the background image
-                    graphics.drawImage(TerminalPosition.TOP_LEFT_CORNER, background);
+                    graphics.drawImage(TerminalPosition.OF_0x0, background);
                     
                     //Then draw all the child components
                     panelRenderer.drawComponent(graphics, BIOS.this);

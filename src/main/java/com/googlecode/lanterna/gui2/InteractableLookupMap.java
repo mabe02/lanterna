@@ -57,7 +57,7 @@ public class InteractableLookupMap {
      * @param interactable Interactable to add to the lookup map
      */
     public synchronized void add(Interactable interactable) {
-        TerminalPosition topLeft = interactable.toBasePane(TerminalPosition.TOP_LEFT_CORNER);
+        TerminalPosition topLeft = interactable.toBasePane(TerminalPosition.OF_0x0);
         TerminalSize size = interactable.getSize();
         interactables.add(interactable);
         int index = interactables.size() - 1;
@@ -121,10 +121,10 @@ public class InteractableLookupMap {
             // If the currently active interactable component is not showing the cursor, use the top-left position
             // instead if we're going up, or the bottom-left position if we're going down
             if(isDown) {
-                startPosition = new TerminalPosition(0, interactable.getSize().getRows() - 1);
+                startPosition = TerminalPosition.of(0, interactable.getSize().getRows() - 1);
             }
             else {
-                startPosition = TerminalPosition.TOP_LEFT_CORNER;
+                startPosition = TerminalPosition.OF_0x0;
             }
         }
         else {
@@ -144,9 +144,9 @@ public class InteractableLookupMap {
         }
         Set<Interactable> disqualified = getDisqualifiedInteractables(startPosition, true);
         TerminalSize size = getSize();
-        int maxShiftLeft = interactable.toBasePane(TerminalPosition.TOP_LEFT_CORNER).getColumn();
+        int maxShiftLeft = interactable.toBasePane(TerminalPosition.OF_0x0).getColumn();
         maxShiftLeft = Math.max(maxShiftLeft, 0);
-        int maxShiftRight = interactable.toBasePane(new TerminalPosition(interactable.getSize().getColumns() - 1, 0)).getColumn();
+        int maxShiftRight = interactable.toBasePane(TerminalPosition.of(interactable.getSize().getColumns() - 1, 0)).getColumn();
         maxShiftRight = Math.min(maxShiftRight, size.getColumns() - 1);
         int maxShift = Math.max(startPosition.getColumn() - maxShiftLeft, maxShiftRight - startPosition.getRow());
         for (int searchRow = startPosition.getRow() + directionTerm;
@@ -201,10 +201,10 @@ public class InteractableLookupMap {
             // If the currently active interactable component is not showing the cursor, use the top-left position
             // instead if we're going left, or the top-right position if we're going right
             if(isRight) {
-                startPosition = new TerminalPosition(interactable.getSize().getColumns() - 1, 0);
+                startPosition = TerminalPosition.of(interactable.getSize().getColumns() - 1, 0);
             }
             else {
-                startPosition = TerminalPosition.TOP_LEFT_CORNER;
+                startPosition = TerminalPosition.OF_0x0;
             }
         }
         else {
@@ -224,9 +224,9 @@ public class InteractableLookupMap {
         }
         Set<Interactable> disqualified = getDisqualifiedInteractables(startPosition, false);
         TerminalSize size = getSize();
-        int maxShiftUp = interactable.toBasePane(TerminalPosition.TOP_LEFT_CORNER).getRow();
+        int maxShiftUp = interactable.toBasePane(TerminalPosition.OF_0x0).getRow();
         maxShiftUp = Math.max(maxShiftUp, 0);
-        int maxShiftDown = interactable.toBasePane(new TerminalPosition(0, interactable.getSize().getRows() - 1)).getRow();
+        int maxShiftDown = interactable.toBasePane(TerminalPosition.of(0, interactable.getSize().getRows() - 1)).getRow();
         maxShiftDown = Math.min(maxShiftDown, size.getRows() - 1);
         int maxShift = Math.max(startPosition.getRow() - maxShiftUp, maxShiftDown - startPosition.getRow());
         for(int searchColumn = startPosition.getColumn() + directionTerm;

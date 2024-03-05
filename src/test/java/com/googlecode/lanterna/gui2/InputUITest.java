@@ -68,7 +68,7 @@ public class InputUITest extends TestBase {
                     @Override
                     public TerminalPosition getCursorLocation(Component component) {
                         TerminalSize adjustedSize = component.getSize().withRelative(-1, -1);
-                        return new TerminalPosition(adjustedSize.getColumns(), adjustedSize.getRows());
+                        return TerminalPosition.of(adjustedSize.getColumns(), adjustedSize.getRows());
                     }
 
                     @Override

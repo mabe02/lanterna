@@ -47,13 +47,24 @@ public class TerminalRectangle {
      * @param height number of rows
      */
     public TerminalRectangle(int x, int y, int width, int height) {
-        position = new TerminalPosition(x, y);
+        position = TerminalPosition.of(x, y);
         size = new TerminalSize(width, height);
         
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
+        this.xAndWidth = x + width;
+        this.yAndHeight = y + height;
+    }
+    public TerminalRectangle(TerminalPosition position, TerminalSize size) {
+        this.position = position;
+        this.size = size;
+
+        this.x = position.getColumn();
+        this.y = position.getRow();
+        this.width = size.getColumns();
+        this.height = size.getRows();
         this.xAndWidth = x + width;
         this.yAndHeight = y + height;
     }
@@ -94,7 +105,10 @@ public class TerminalRectangle {
         return whenContains(p.getColumn(), p.getRow(), op);
     }
     public boolean whenContains(int x, int y, Runnable op) {
-        if (this.x <= x && x < this.xAndWidth && this.y <= y && y < this.yAndHeight) {
+        return whenContains(this.x, this.y, width, height, x, y, op);
+    }
+		public static final boolean whenContains(int rx, int ry, int rw, int rh, int x, int y, Runnable op) {
+        if (rx <= x && x < (rx + rw) && ry <= y && y < (ry + rh)) {
             op.run();
             return true;
         }

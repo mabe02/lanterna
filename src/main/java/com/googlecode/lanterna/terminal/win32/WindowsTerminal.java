@@ -130,7 +130,7 @@ public class WindowsTerminal extends UnixLikeTerminal {
 		Wincon.INSTANCE.GetConsoleScreenBufferInfo(CONSOLE_OUTPUT.getHandle(), screenBufferInfo);
 		int column = screenBufferInfo.dwCursorPosition.X - screenBufferInfo.srWindow.Left;
 		int row = screenBufferInfo.dwCursorPosition.Y - screenBufferInfo.srWindow.Top;
-		return new TerminalPosition(column, row);
+		return TerminalPosition.of(column, row);
 	}
 
 	private int getConsoleInputMode() {

@@ -276,12 +276,12 @@ public class ThemeTest extends TestBase {
         final BasicWindow window1 = new BasicWindow("Theme: bigsnake");
         window1.setHints(Collections.singletonList(Window.Hint.FIXED_POSITION));
         window1.setTheme(LanternaThemes.getRegisteredTheme(themes.get(windowThemeIndex[0])));
-        window1.setPosition(new TerminalPosition(2, 1));
+        window1.setPosition(TerminalPosition.of(2, 1));
 
         final BasicWindow window2 = new BasicWindow("Theme: conqueror");
         window2.setHints(Collections.singletonList(Window.Hint.FIXED_POSITION));
         window2.setTheme(LanternaThemes.getRegisteredTheme(themes.get(windowThemeIndex[1])));
-        window2.setPosition(new TerminalPosition(30, 1));
+        window2.setPosition(TerminalPosition.of(30, 1));
 
         final Panel leftHolder = new Panel().setPreferredSize(new TerminalSize(15, 4));
         final Panel rightHolder = new Panel().setPreferredSize(new TerminalSize(15, 4));

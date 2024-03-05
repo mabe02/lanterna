@@ -40,7 +40,7 @@ public class ScreenResizeTest {
     public ScreenResizeTest(String[] args) throws InterruptedException, IOException {
         screen = new TestTerminalFactory(args).createScreen();
         screen.startScreen();
-        screen.setCursorPosition(new TerminalPosition(0, 0));
+        screen.setCursorPosition(TerminalPosition.of(0, 0));
         putStrings("Initial setup, please resize the window");
 
         long now = System.currentTimeMillis();

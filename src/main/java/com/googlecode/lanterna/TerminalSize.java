@@ -28,8 +28,12 @@ public class TerminalSize {
     public static final TerminalSize ZERO = new TerminalSize(0, 0);
     public static final TerminalSize ONE = new TerminalSize(1, 1);
 
-    private final int columns;
-    private final int rows;
+    public final int columns;
+    public final int rows;
+
+    public static final TerminalSize of(int columns, int rows) {
+        return new TerminalSize(columns, rows);
+    }
 
     /**
      * Creates a new terminal size representation with a given width (columns) and height (rows)
@@ -165,6 +169,35 @@ public class TerminalSize {
                 .withRows(Math.min(rows, other.rows));
     }
 
+    public TerminalSize plus(TerminalSize other) {
+        return plus(other.columns, other.rows);
+    }
+    public TerminalSize minus(TerminalSize other) {
+        return minus(other.columns, other.rows);
+    }
+    public TerminalSize multiply(TerminalSize other) {
+        return multiply(other.columns, other.rows);
+    }
+    public TerminalSize divide(TerminalSize denominator) {
+        return divide(denominator.columns, denominator.rows);
+    }
+    public TerminalSize plus(int columns, int rows) {
+        return of(this.columns + columns, this.rows + rows);
+    }
+    public TerminalSize minus(int columns, int rows) {
+        return of(this.columns - columns, this.rows - rows);
+    }
+    public TerminalSize multiply(int columns, int rows) {
+        return of(this.columns * columns, this.rows * rows);
+    }
+    public TerminalSize divide(int columnsDenominator, int rowsDenominator) {
+        return of(columns / columnsDenominator, rows / rowsDenominator);
+    }
+    public TerminalSize plus(int amount)        { return plus(amount, amount); }
+    public TerminalSize minus(int amount)       { return minus(amount, amount); }
+    public TerminalSize multiply(int amount)    { return multiply(amount, amount); }
+    public TerminalSize divide(int denominator) { return divide(denominator, denominator); }
+
     /**
      * Returns itself if it is equal to the supplied size, otherwise the supplied size. You can use this if you have a
      * size field which is frequently recalculated but often resolves to the same size; it will keep the same object
@@ -177,6 +210,16 @@ public class TerminalSize {
             return this;
         }
         return size;
+    }
+
+    /**
+     * x dimension, when d is zero
+     * y dimension, when d is not zero
+     *
+     * @return either getColumns() for x dimension or getRows() for y dimension
+    */
+    public int getDimension(int d) {
+        return d == 0 ? getColumns() : getRows();
     }
 
     @Override

@@ -476,7 +476,7 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
     
     protected void showPopup(KeyStroke keyStroke) {
         popupWindow = new PopupWindow();
-        popupWindow.setPosition(toGlobal(new TerminalPosition(0, 1)));
+        popupWindow.setPosition(toGlobal(TerminalPosition.OF_0x1));
         ((WindowBasedTextGUI) getTextGUI()).addWindow(popupWindow);
         ((WindowBasedTextGUI) getTextGUI()).setActiveWindow(popupWindow);
     }
@@ -627,7 +627,7 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
         public TerminalPosition getCursorLocation(ComboBox<V> comboBox) {
             if(comboBox.isDropDownFocused()) {
                 if(comboBox.getThemeDefinition().isCursorVisible()) {
-                    return new TerminalPosition(comboBox.getSize().getColumns() - 1, 0);
+                    return TerminalPosition.of(comboBox.getSize().getColumns() - 1, 0);
                 }
                 else {
                     return null;
@@ -636,7 +636,7 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
             else {
                 int textInputPosition = comboBox.getTextInputPosition();
                 int textInputColumn = TerminalTextUtils.getColumnWidth(comboBox.getText().substring(0, textInputPosition));
-                return new TerminalPosition(textInputColumn - textVisibleLeftPosition, 0);
+                return TerminalPosition.of(textInputColumn - textVisibleLeftPosition, 0);
             }
         }
 

@@ -458,7 +458,7 @@ public class GridLayout implements LayoutManager {
 
         //Ok, all constraints are in place, we can start placing out components. To simplify, do it horizontally first
         //and vertically after
-        TerminalPosition tableCellTopLeft = TerminalPosition.TOP_LEFT_CORNER;
+        TerminalPosition tableCellTopLeft = TerminalPosition.OF_0x0;
         for(int y = 0; y < table.length; y++) {
             tableCellTopLeft = tableCellTopLeft.withColumn(0);
             for(int x = 0; x < table[y].length; x++) {

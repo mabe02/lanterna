@@ -160,7 +160,7 @@ public class Button extends AbstractInteractableComponent<Button> {
         @Override
         public TerminalPosition getCursorLocation(Button button) {
             if(button.getThemeDefinition().isCursorVisible()) {
-                return new TerminalPosition(1 + getLabelShift(button, button.getSize()), 0);
+                return TerminalPosition.of(1 + getLabelShift(button, button.getSize()), 0);
             }
             else {
                 return null;

@@ -112,7 +112,7 @@ public class GUIOverTelnet {
 
                         @Override
                         public TerminalPosition getCursorLocation(Component component) {
-                            return TerminalPosition.TOP_LEFT_CORNER;
+                            return TerminalPosition.OF_0x0;
                         }
                     };
                 }

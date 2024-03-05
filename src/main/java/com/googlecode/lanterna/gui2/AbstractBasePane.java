@@ -461,9 +461,9 @@ public abstract class AbstractBasePane<T extends BasePane> implements BasePane {
                 public void drawComponent(TextGUIGraphics graphics, Container component) {
                     if (!(menuBar instanceof EmptyMenuBar)) {
                         int menuBarHeight = menuBar.getPreferredSize().getRows();
-                        TextGUIGraphics menuGraphics = graphics.newTextGraphics(TerminalPosition.TOP_LEFT_CORNER, graphics.getSize().withRows(menuBarHeight));
+                        TextGUIGraphics menuGraphics = graphics.newTextGraphics(TerminalPosition.OF_0x0, graphics.getSize().withRows(menuBarHeight));
                         menuBar.draw(menuGraphics);
-                        graphics = graphics.newTextGraphics(TerminalPosition.TOP_LEFT_CORNER.withRelativeRow(menuBarHeight), graphics.getSize().withRelativeRows(-menuBarHeight));
+                        graphics = graphics.newTextGraphics(TerminalPosition.of(0, menuBarHeight), graphics.getSize().withRelativeRows(-menuBarHeight));
                     }
 
                     Component subComponent = getComponent();

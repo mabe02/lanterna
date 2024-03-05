@@ -197,7 +197,7 @@ public class Borders {
 
         @Override
         public TerminalPosition getWrappedComponentTopLeftOffset() {
-            return TerminalPosition.OFFSET_1x1;
+            return TerminalPosition.OF_1x1;
         }
 
         @Override
@@ -234,11 +234,11 @@ public class Borders {
             }
             graphics.setCharacter(0, drawableArea.getRows() - 1, bottomLeftCorner);
             if(drawableArea.getRows() > 2) {
-                graphics.drawLine(new TerminalPosition(0, drawableArea.getRows() - 2), new TerminalPosition(0, 1), verticalLine);
+                graphics.drawLine(TerminalPosition.of(0, drawableArea.getRows() - 2), TerminalPosition.OF_0x1, verticalLine);
             }
             graphics.setCharacter(0, 0, topLeftCorner);
             if(drawableArea.getColumns() > 2) {
-                graphics.drawLine(new TerminalPosition(1, 0), new TerminalPosition(drawableArea.getColumns() - 2, 0), horizontalLine);
+                graphics.drawLine(TerminalPosition.OF_1x0, TerminalPosition.of(drawableArea.getColumns() - 2, 0), horizontalLine);
             }
 
             if(borderStyle == BorderStyle.ReverseBevel) {
@@ -249,14 +249,14 @@ public class Borders {
             }
             graphics.setCharacter(drawableArea.getColumns() - 1, 0, topRightCorner);
             if(drawableArea.getRows() > 2) {
-                graphics.drawLine(new TerminalPosition(drawableArea.getColumns() - 1, 1),
-                        new TerminalPosition(drawableArea.getColumns() - 1, drawableArea.getRows() - 2),
+                graphics.drawLine(TerminalPosition.of(drawableArea.getColumns() - 1, 1),
+                        TerminalPosition.of(drawableArea.getColumns() - 1, drawableArea.getRows() - 2),
                         verticalLine);
             }
             graphics.setCharacter(drawableArea.getColumns() - 1, drawableArea.getRows() - 1, bottomRightCorner);
             if(drawableArea.getColumns() > 2) {
-                graphics.drawLine(new TerminalPosition(1, drawableArea.getRows() - 1),
-                        new TerminalPosition(drawableArea.getColumns() - 2, drawableArea.getRows() - 1),
+                graphics.drawLine(TerminalPosition.of(1, drawableArea.getRows() - 1),
+                        TerminalPosition.of(drawableArea.getColumns() - 2, drawableArea.getRows() - 1),
                         horizontalLine);
             }
 

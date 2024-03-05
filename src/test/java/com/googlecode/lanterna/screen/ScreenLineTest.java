@@ -74,9 +74,9 @@ public class ScreenLineTest {
             TerminalPosition p1;
             TerminalPosition p2;
             if(circle) {
-                p1 = new TerminalPosition(size.getColumns() / 2, size.getRows() / 2);
+                p1 = TerminalPosition.of(size.getColumns() / 2, size.getRows() / 2);
                 if(CIRCLE_LAST_POSITION == null) {
-                    CIRCLE_LAST_POSITION = new TerminalPosition(0, 0);
+                    CIRCLE_LAST_POSITION = TerminalPosition.of(0, 0);
                 }
                 else if(CIRCLE_LAST_POSITION.getRow() == 0) {
                     if(CIRCLE_LAST_POSITION.getColumn() < size.getColumns() - 1) {
@@ -105,8 +105,8 @@ public class ScreenLineTest {
                 p2 = CIRCLE_LAST_POSITION;
             }
             else {
-                p1 = new TerminalPosition(random.nextInt(size.getColumns()), random.nextInt(size.getRows()));
-                p2 = new TerminalPosition(random.nextInt(size.getColumns()), random.nextInt(size.getRows()));
+                p1 = TerminalPosition.of(random.nextInt(size.getColumns()), random.nextInt(size.getRows()));
+                p2 = TerminalPosition.of(random.nextInt(size.getColumns()), random.nextInt(size.getRows()));
             }
             textGraphics.setBackgroundColor(color);
             textGraphics.drawLine(p1, p2, ' ');

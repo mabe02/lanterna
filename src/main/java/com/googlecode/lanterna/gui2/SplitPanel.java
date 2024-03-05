@@ -207,9 +207,9 @@ public class SplitPanel extends Panel {
                 thumb.setSize(thumb.getPreferredSize());
                 compB.setSize(new TerminalSize(rightWidth, rightHeight));
 
-                compA.setPosition(new TerminalPosition(0, 0));
-                thumb.setPosition(new TerminalPosition(leftWidth, h / 2 - tHeight / 2));
-                compB.setPosition(new TerminalPosition(leftWidth + tWidth, 0));
+                compA.setPosition(TerminalPosition.of(0, 0));
+                thumb.setPosition(TerminalPosition.of(leftWidth, h / 2 - tHeight / 2));
+                compB.setPosition(TerminalPosition.of(leftWidth + tWidth, 0));
             } else {
                 int leftWidth = Math.max(0, Math.min(compA.getPreferredSize().getColumns(), w));
                 int leftHeight = Math.max(0, (int) (h * ratio));
@@ -221,9 +221,9 @@ public class SplitPanel extends Panel {
                 thumb.setSize(thumb.getPreferredSize());
                 compB.setSize(new TerminalSize(rightWidth, rightHeight));
 
-                compA.setPosition(new TerminalPosition(0, 0));
-                thumb.setPosition(new TerminalPosition(w / 2 - tWidth / 2, leftHeight));
-                compB.setPosition(new TerminalPosition(0, leftHeight + tHeight));
+                compA.setPosition(TerminalPosition.of(0, 0));
+                thumb.setPosition(TerminalPosition.of(w / 2 - tWidth / 2, leftHeight));
+                compB.setPosition(TerminalPosition.of(0, leftHeight + tHeight));
             }
 
             hasChanged = !compAPrevPos.equals(compA.getPosition()) ||

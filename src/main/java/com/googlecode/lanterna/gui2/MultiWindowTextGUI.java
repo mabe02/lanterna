@@ -265,7 +265,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
                 }
                 TextGUIGraphics windowGraphics = new DefaultTextGUIGraphics(this, textImage.newTextGraphics());
                 TextGUIGraphics insideWindowDecorationsGraphics = windowGraphics;
-                TerminalPosition contentOffset = TerminalPosition.TOP_LEFT_CORNER;
+                TerminalPosition contentOffset = TerminalPosition.OF_0x0;
                 if (!window.getHints().contains(Window.Hint.NO_DECORATIONS)) {
                     WindowDecorationRenderer decorationRenderer = windowManager.getWindowDecorationRenderer(window);
                     insideWindowDecorationsGraphics = decorationRenderer.draw(this, windowGraphics, window);
@@ -439,7 +439,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
             int dx = mp.getColumn() - dragStart.getColumn();
             int dy = mp.getRow() - dragStart.getRow();
             changeWindowHintsForDragged(titleBarDragWindow);
-            titleBarDragWindow.setPosition(new TerminalPosition(wp.getColumn() + dx, wp.getRow() + dy));
+            titleBarDragWindow.setPosition(TerminalPosition.of(wp.getColumn() + dx, wp.getRow() + dy));
             // TODO ? any additional children popups (shown menus, etc) should also be moved (or just closed)
         }
         

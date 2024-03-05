@@ -119,8 +119,8 @@ public class FatWindowDecorationRenderer implements WindowDecorationRenderer {
         }
     }
 
-    private static final TerminalPosition OFFSET_WITH_TITLE = new TerminalPosition(1, 3);
-    private static final TerminalPosition OFFSET_WITHOUT_TITLE = new TerminalPosition(1, 1);
+    private static final TerminalPosition OFFSET_WITH_TITLE = TerminalPosition.of(1, 3);
+    private static final TerminalPosition OFFSET_WITHOUT_TITLE = TerminalPosition.of(1, 1);
 
     @Override
     public TerminalPosition getOffset(Window window) {
