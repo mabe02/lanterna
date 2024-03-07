@@ -35,8 +35,8 @@ public class TerminalPosition implements Comparable<TerminalPosition> {
     public static final TerminalPosition OF_1x0 = new TerminalPosition(1, 0);
     public static final TerminalPosition OF_1x1 = new TerminalPosition(1, 1);
 
-    private final int column;
-    private final int row;
+    public final int column;
+    public final int row;
     /**
      * @return a new TerminalPosition instance with the supplied column and row
      */
@@ -53,7 +53,7 @@ public class TerminalPosition implements Comparable<TerminalPosition> {
         return new TerminalPosition(column, row);
     }
     /**
-     * Returns a TerminalPositoin with the column and row supplied.
+     * Returns a TerminalPosition with the column and row supplied.
      * If either the column or row supplied is different than this instances column or row, then a new instance is returned.
      * If both column and row are the same as this instance's column and row, then this instance is returned.
      * @return Either this instance, or a new instance if column/row are different than this instance's column/row.
@@ -98,21 +98,21 @@ public class TerminalPosition implements Comparable<TerminalPosition> {
         return row;
     }
     /**
-     * Creates a new TerminalPosition object representing a position with the same column index as this but with a
-     * supplied row index.
-     * @param row Index of the row for the new position
-     * @return A TerminalPosition object with the same column as this but with a specified row index
-     */
-    public TerminalPosition withRow(int row) {
-        return as(column, row);
-    }
-    /**
      * Creates a new TerminalPosition object representing a position with the same row index as this but with a
      * supplied column index.
      * @param column Index of the column for the new position
      * @return A TerminalPosition object with the same row as this but with a specified column index
      */
     public TerminalPosition withColumn(int column) {
+        return as(column, row);
+    }
+    /**
+     * Creates a new TerminalPosition object representing a position with the same column index as this but with a
+     * supplied row index.
+     * @param row Index of the row for the new position
+     * @return A TerminalPosition object with the same column as this but with a specified row index
+     */
+    public TerminalPosition withRow(int row) {
         return as(column, row);
     }
     /**
@@ -221,13 +221,13 @@ public class TerminalPosition implements Comparable<TerminalPosition> {
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 23 * hash + this.row;
         hash = 23 * hash + this.column;
+        hash = 23 * hash + this.row;
         return hash;
     }
 
-    public boolean equals(int columnIndex, int rowIndex) {
-        return column == columnIndex && row == rowIndex;
+    public boolean equals(int column, int row) {
+        return this.column == column && this.row == row;
     }
 
     @Override
