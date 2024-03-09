@@ -117,7 +117,7 @@ public class WindowsTerminal extends UnixLikeTerminal {
 		Wincon.INSTANCE.GetConsoleScreenBufferInfo(CONSOLE_OUTPUT.getHandle(), screenBufferInfo);
 		int columns = screenBufferInfo.srWindow.Right - screenBufferInfo.srWindow.Left + 1;
 		int rows = screenBufferInfo.srWindow.Bottom - screenBufferInfo.srWindow.Top + 1;
-		return new TerminalSize(columns, rows);
+		return TerminalSize.of(columns, rows);
 	}
 
 	@Override
@@ -130,7 +130,7 @@ public class WindowsTerminal extends UnixLikeTerminal {
 		Wincon.INSTANCE.GetConsoleScreenBufferInfo(CONSOLE_OUTPUT.getHandle(), screenBufferInfo);
 		int column = screenBufferInfo.dwCursorPosition.X - screenBufferInfo.srWindow.Left;
 		int row = screenBufferInfo.dwCursorPosition.Y - screenBufferInfo.srWindow.Top;
-		return new TerminalPosition(column, row);
+		return TerminalPosition.of(column, row);
 	}
 
 	private int getConsoleInputMode() {

@@ -63,7 +63,7 @@ public abstract class AbstractTerminal implements Terminal {
      * @param rows Number of rows in the new size
      */
     protected synchronized void onResized(int columns, int rows) {
-        onResized(new TerminalSize(columns, rows));
+        onResized(TerminalSize.of(columns, rows));
     }
 
     /**

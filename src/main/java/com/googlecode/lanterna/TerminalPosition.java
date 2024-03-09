@@ -28,17 +28,50 @@ package com.googlecode.lanterna;
 public class TerminalPosition implements Comparable<TerminalPosition> {
 
     /**
-     * Constant for the top-left corner (0x0)
+     * Constants for less objects memory churn, these are from the top-left corner (column x row)
      */
-    public static final TerminalPosition TOP_LEFT_CORNER = new TerminalPosition(0, 0);
+    public static final TerminalPosition OF_0x0 = new TerminalPosition(0, 0);
+    public static final TerminalPosition OF_0x1 = new TerminalPosition(0, 1);
+    public static final TerminalPosition OF_1x0 = new TerminalPosition(1, 0);
+    public static final TerminalPosition OF_1x1 = new TerminalPosition(1, 1);
+
+    // one of the benefits of immutable: ease of usage
+    public final int column;
+    public final int row;
     /**
-     * Constant for the 1x1 position (one offset in both directions from top-left)
+     * @return a TerminalPosition instance with the supplied column and row
      */
-    public static final TerminalPosition OFFSET_1x1 = new TerminalPosition(1, 1);
-
-    private final int row;
-    private final int column;
-
+    public static final TerminalPosition of(int column, int row) {
+        if(column == 0 && row == 0) {
+            return OF_0x0;
+        } else if(column == 0 && row == 1) {
+            return OF_0x1;
+        } else if(column == 1 && row == 0) {
+            return OF_1x0;
+        } else if(column == 1 && row == 1) {
+              return OF_1x1;
+        }
+        return new TerminalPosition(column, row);
+    }
+    /**
+     * Returns a TerminalPosition with the column and row supplied.
+     * If either the column or row supplied is different than this instances column or row, then a new instance is returned.
+     * If both column and row are the same as this instance's column and row, then this instance is returned.
+     * @return Either this instance, or a new instance if column/row are different than this instance's column/row.
+     */
+    public TerminalPosition as(int column, int row) {
+        return (column == this.column && row == this.row) ? this : of(column, row);
+    }
+    /**
+     * Returns itself if it is equal to the supplied position, otherwise the supplied position. You can use this if you
+     * have a position field which is frequently recalculated but often resolves to the same; it will keep the same
+     * object in memory instead of swapping it out every cycle.
+     * @param position Position you want to return
+     * @return Itself if this position equals the position passed in, otherwise the position passed in
+     */
+    public TerminalPosition as(TerminalPosition position) {
+        return position == null ? this : as(position.column, position.row);
+    }
     /**
      * Creates a new TerminalPosition object, which represents a location on the screen. There is no check to verify
      * that the position you specified is within the size of the current terminal and you can specify negative positions
@@ -48,10 +81,9 @@ public class TerminalPosition implements Comparable<TerminalPosition> {
      * @param row Row of the location, or the "y" coordinate, zero indexed (the first row is 0)
      */
     public TerminalPosition(int column, int row) {
-        this.row = row;
         this.column = column;
+        this.row = row;
     }
-
     /**
      * Returns the index of the column this position is representing, zero indexed (the first column has index 0).
      * @return Index of the column this position has
@@ -59,7 +91,6 @@ public class TerminalPosition implements Comparable<TerminalPosition> {
     public int getColumn() {
         return column;
     }
-
     /**
      * Returns the index of the row this position is representing, zero indexed (the first row has index 0)
      * @return Index of the row this position has
@@ -67,84 +98,64 @@ public class TerminalPosition implements Comparable<TerminalPosition> {
     public int getRow() {
         return row;
     }
-
     /**
-     * Creates a new TerminalPosition object representing a position with the same column index as this but with a
-     * supplied row index.
-     * @param row Index of the row for the new position
-     * @return A TerminalPosition object with the same column as this but with a specified row index
-     */
-    public TerminalPosition withRow(int row) {
-        if(row == 0 && this.column == 0) {
-            return TOP_LEFT_CORNER;
-        }
-        return new TerminalPosition(this.column, row);
-    }
-
-    /**
-     * Creates a new TerminalPosition object representing a position with the same row index as this but with a
-     * supplied column index.
-     * @param column Index of the column for the new position
-     * @return A TerminalPosition object with the same row as this but with a specified column index
+     * Obtain a TerminalPosition with the supplied column and the same row as this instance.
+     * @param column Index of the column for the resulting TerminalPosition
+     * @return a TerminalPosition object with the same row as this but with a specified column index
      */
     public TerminalPosition withColumn(int column) {
-        if(column == 0 && this.row == 0) {
-            return TOP_LEFT_CORNER;
-        }
-        return new TerminalPosition(column, this.row);
+        return as(column, row);
     }
-
     /**
-     * Creates a new TerminalPosition object representing a position on the same row, but with a column offset by a
-     * supplied value. Calling this method with delta 0 will return this, calling it with a positive delta will return
-     * a terminal position <i>delta</i> number of columns to the right and for negative numbers the same to the left.
+     * Obtain a TerminalPosition object with this instance's column and the supplied row.
+     * @param row Index of the row for the new position
+     * @return a TerminalPosition object with the same column as this but with a specified row index
+     */
+    public TerminalPosition withRow(int row) {
+        return as(column, row);
+    }
+    /**
+     * Obtain a TerminalPosition with a column offset by the supplied delta and the same row as this instance.
+     * Calling this method with delta 0 will return this, calling it with a positive delta will return
+     * a TerminalPosition <i>delta</i> number of columns to the right and for negative numbers the same to the left.
      * @param delta Column offset
-     * @return New terminal position based off this one but with an applied offset
+     * @return a TerminalPosition based off this one but with an applied offset
      */
     public TerminalPosition withRelativeColumn(int delta) {
-        if(delta == 0) {
-            return this;
-        }
-        return withColumn(column + delta);
+        return plus(delta, 0);
     }
-
     /**
-     * Creates a new TerminalPosition object representing a position on the same column, but with a row offset by a
-     * supplied value. Calling this method with delta 0 will return this, calling it with a positive delta will return
-     * a terminal position <i>delta</i> number of rows to the down and for negative numbers the same up.
+     * Obtain a TerminalPosition with the same column as this instance and a row which is this instance's row offset
+     * by the supplied delta.
+     * Calling this method with delta 0 will return this, calling it with a positive delta will return
+     * a TerminalPosition <i>delta</i> number of rows to the down and for negative numbers the same up.
      * @param delta Row offset
-     * @return New terminal position based off this one but with an applied offset
+     * @return a TerminalPosition based off this one but with an applied offset
      */
     public TerminalPosition withRelativeRow(int delta) {
-        if(delta == 0) {
-            return this;
-        }
-        return withRow(row + delta);
+        return plus(0, delta);
     }
-
     /**
-     * Creates a new TerminalPosition object that is 'translated' by an amount of rows and columns specified by another
+     * Obtain a TerminalPosition that is 'translated' by an amount of rows and columns specified by another
      * TerminalPosition. Same as calling
      * <code>withRelativeRow(translate.getRow()).withRelativeColumn(translate.getColumn())</code>
      * @param translate How many columns and rows to translate
-     * @return New TerminalPosition that is the result of the original with added translation
+     * @return a TerminalPosition that is the result of the original with added translation
      */
     public TerminalPosition withRelative(TerminalPosition translate) {
-        return withRelative(translate.getColumn(), translate.getRow());
+        return plus(translate);
     }
-
     /**
-     * Creates a new TerminalPosition object that is 'translated' by an amount of rows and columns specified by the two
+     * Obtain a TerminalPosition that is 'translated' by an amount of rows and columns specified by the two
      * parameters. Same as calling
      * <code>withRelativeRow(deltaRow).withRelativeColumn(deltaColumn)</code>
-     * @param deltaColumn How many columns to move from the current position in the new TerminalPosition
-     * @param deltaRow How many rows to move from the current position in the new TerminalPosition
-     * @return New TerminalPosition that is the result of the original position with added translation
+     * @param deltaColumn How many columns to move from the current position in the resulting TerminalPosition
+     * @param deltaRow How many rows to move from the current position in the resulting TerminalPosition
+     * @return a TerminalPosition that is the result of the original position with added translation
      */
     public TerminalPosition withRelative(int deltaColumn, int deltaRow) {
-        return withRelativeRow(deltaRow).withRelativeColumn(deltaColumn);
+        return plus(deltaColumn, deltaRow);
     }
-
     /**
      * Returns itself if it is equal to the supplied position, otherwise the supplied position. You can use this if you
      * have a position field which is frequently recalculated but often resolves to the same; it will keep the same
@@ -153,60 +164,53 @@ public class TerminalPosition implements Comparable<TerminalPosition> {
      * @return Itself if this position equals the position passed in, otherwise the position passed in
      */
     public TerminalPosition with(TerminalPosition position) {
-        if(equals(position)) {
-            return this;
-        }
-        return position;
+        return as(position);
     }
-
-    public TerminalPosition plus(TerminalPosition position) {
-        return withRelative(position);
+    public TerminalPosition plus(TerminalPosition other) {
+        return plus(other.column, other.row);
     }
-    
-    public TerminalPosition minus(TerminalPosition position) {
-        return withRelative(-position.getColumn(), -position.getRow());
+    public TerminalPosition minus(TerminalPosition other) {
+        return minus(other.column, other.row);
     }
-    
-    public TerminalPosition multiply(TerminalPosition position) {
-        return new TerminalPosition(column * position.column, row * position.row);
+    public TerminalPosition multiply(TerminalPosition other) {
+        return multiply(other.column, other.row);
     }
-    
     public TerminalPosition divide(TerminalPosition denominator) {
-        return new TerminalPosition(column / denominator.column, row / denominator.row);
+        return divide(denominator.column, denominator.row);
     }
+    public TerminalPosition plus(int column, int row) {
+        return as(this.column + column, this.row + row);
+    }
+    public TerminalPosition minus(int column, int row) {
+        return as(this.column - column, this.row - row);
+    }
+    public TerminalPosition multiply(int column, int row) {
+        return as(this.column * column, this.row * row);
+    }
+    public TerminalPosition divide(int columnsDenominator, int rowsDenominator) {
+        return as(column / columnsDenominator, row / rowsDenominator);
+    }
+    public TerminalPosition plus(int amount)        { return plus(amount, amount); }
+    public TerminalPosition minus(int amount)       { return minus(amount, amount); }
+    public TerminalPosition multiply(int amount)    { return multiply(amount, amount); }
+    public TerminalPosition divide(int denominator) { return divide(denominator, denominator); }
     
     public TerminalPosition abs() {
-        int x = Math.abs(column);
-        int y = Math.abs(row);
-        return new TerminalPosition(x, y);
+        return as(Math.abs(column), Math.abs(row));
     }
     
     public TerminalPosition min(TerminalPosition position) {
-        int x = Math.min(column, position.column);
-        int y = Math.min(row, position.row);
-        return new TerminalPosition(x, y);
+        return as(Math.min(column, position.column), Math.min(row, position.row));
     }
     
     public TerminalPosition max(TerminalPosition position) {
-        int x = Math.max(column, position.column);
-        int y = Math.max(row, position.row);
-        return new TerminalPosition(x, y);
+        return as(Math.max(column, position.column), Math.max(row, position.row));
     }
 
     @Override
-    public int compareTo(TerminalPosition o) {
-        if(row < o.row) {
-            return -1;
-        }
-        else if(row == o.row) {
-            if(column < o.column) {
-                return -1;
-            }
-            else if(column == o.column) {
-                return 0;
-            }
-        }
-        return 1;
+    public int compareTo(TerminalPosition other) {
+        int result = Integer.compare(row, other.row);
+        return result != 0 ? result : Integer.compare(column, other.column);
     }
 
     @Override
@@ -217,25 +221,21 @@ public class TerminalPosition implements Comparable<TerminalPosition> {
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 23 * hash + this.row;
         hash = 23 * hash + this.column;
+        hash = 23 * hash + this.row;
         return hash;
     }
 
-    public boolean equals(int columnIndex, int rowIndex) {
-        return this.column == columnIndex &&
-                this.row == rowIndex;
+    public boolean equals(int column, int row) {
+        return this.column == column && this.row == row;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final TerminalPosition other = (TerminalPosition) obj;
-        return this.row == other.row && this.column == other.column;
+        return obj != null
+            && obj.getClass() == getClass()
+            && ((TerminalPosition) obj).column == column
+            && ((TerminalPosition) obj).row == row
+            ;
     }
 }

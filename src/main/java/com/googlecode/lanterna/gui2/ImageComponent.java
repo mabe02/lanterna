@@ -44,7 +44,7 @@ public class ImageComponent extends AbstractInteractableComponent {
         return new InteractableRenderer<ImageComponent>() {
             @Override
             public void drawComponent(TextGUIGraphics graphics, ImageComponent panel) {
-                graphics.drawImage(TerminalPosition.TOP_LEFT_CORNER, textImage);
+                graphics.drawImage(TerminalPosition.OF_0x0, textImage);
             }
             @Override
             public TerminalSize getPreferredSize(ImageComponent panel) {

@@ -73,7 +73,7 @@ public class Separator extends AbstractComponent<Separator> {
     public static class DefaultSeparatorRenderer extends SeparatorRenderer {
         @Override
         public TerminalSize getPreferredSize(Separator component) {
-            return TerminalSize.ONE;
+            return TerminalSize.OF_1x1;
         }
 
         @Override

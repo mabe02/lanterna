@@ -125,7 +125,7 @@ public class MenuItem extends AbstractInteractableComponent<MenuItem> {
             if (component instanceof Menu && !(component.getParent() instanceof MenuBar)) {
                 preferredWidth += 2;
             }
-            return TerminalSize.ONE.withColumns(preferredWidth);
+            return TerminalSize.OF_1x1.withColumns(preferredWidth);
         }
 
         @Override

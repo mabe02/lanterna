@@ -52,7 +52,7 @@ public class DialogsTextGUIBasicTest {
             dialogsListBox.addItem("Multi-line input", () -> {
                 String result = new TextInputDialogBuilder()
                         .setTitle("Multi-line editor")
-                        .setTextBoxSize(new TerminalSize(35, 5))
+                        .setTextBoxSize(TerminalSize.of(35, 5))
                         .build()
                         .showDialog(textGUI);
                 System.out.println("Result was: " + result);
@@ -94,7 +94,7 @@ public class DialogsTextGUIBasicTest {
                     .showDialog(textGUI));
 
             mainPanel.addComponent(dialogsListBox);
-            mainPanel.addComponent(new EmptySpace(TerminalSize.ONE));
+            mainPanel.addComponent(new EmptySpace(TerminalSize.OF_1x1));
             mainPanel.addComponent(new Button("Exit", window::close));
             window.setComponent(mainPanel);
 

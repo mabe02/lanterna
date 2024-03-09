@@ -109,7 +109,7 @@ public class MenuTest extends TestBase {
             return new ComponentRenderer<MultiColorComponent>() {
                 @Override
                 public TerminalSize getPreferredSize(MultiColorComponent component) {
-                    return new TerminalSize(40, 15);
+                    return TerminalSize.of(40, 15);
                 }
 
                 @Override

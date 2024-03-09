@@ -62,7 +62,7 @@ class TerminalTextGraphics extends AbstractTextGraphics {
 
     @Override
     public TextGraphics setCharacter(int columnIndex, int rowIndex, TextCharacter textCharacter) {
-        return setCharacter(new TerminalPosition(columnIndex, rowIndex), textCharacter);
+        return setCharacter(TerminalPosition.of(columnIndex, rowIndex), textCharacter);
     }
 
     @Override
@@ -96,7 +96,7 @@ class TerminalTextGraphics extends AbstractTextGraphics {
 
     @Override
     public TextCharacter getCharacter(int column, int row) {
-        return getCharacter(new TerminalPosition(column, row));
+        return getCharacter(TerminalPosition.of(column, row));
     }
 
     @Override

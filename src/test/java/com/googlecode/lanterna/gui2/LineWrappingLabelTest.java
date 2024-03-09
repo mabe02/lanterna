@@ -48,7 +48,7 @@ public class LineWrappingLabelTest extends TestBase {
     private TerminalSize windowSize;
 
     public LineWrappingLabelTest() {
-        windowSize = new TerminalSize(70, 15);
+        windowSize = TerminalSize.of(70, 15);
     }
 
     @Override

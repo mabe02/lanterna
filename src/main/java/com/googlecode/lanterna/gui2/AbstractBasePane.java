@@ -50,7 +50,7 @@ public abstract class AbstractBasePane<T extends BasePane> implements BasePane {
     protected AbstractBasePane() {
         this.contentHolder = new ContentHolder();
         this.listeners = new CopyOnWriteArrayList<>();
-        this.interactableLookupMap = new InteractableLookupMap(new TerminalSize(80, 25));
+        this.interactableLookupMap = new InteractableLookupMap(TerminalSize.of(80, 25));
         this.invalid = false;
         this.strictFocusChange = false;
         this.enableDirectionBasedMovements = true;
@@ -452,7 +452,7 @@ public abstract class AbstractBasePane<T extends BasePane> implements BasePane {
                 public TerminalSize getPreferredSize(Container component) {
                     Component subComponent = getComponent();
                     if(subComponent == null) {
-                        return TerminalSize.ZERO;
+                        return TerminalSize.OF_0x0;
                     }
                     return subComponent.getPreferredSize();
                 }
@@ -461,9 +461,9 @@ public abstract class AbstractBasePane<T extends BasePane> implements BasePane {
                 public void drawComponent(TextGUIGraphics graphics, Container component) {
                     if (!(menuBar instanceof EmptyMenuBar)) {
                         int menuBarHeight = menuBar.getPreferredSize().getRows();
-                        TextGUIGraphics menuGraphics = graphics.newTextGraphics(TerminalPosition.TOP_LEFT_CORNER, graphics.getSize().withRows(menuBarHeight));
+                        TextGUIGraphics menuGraphics = graphics.newTextGraphics(TerminalPosition.OF_0x0, graphics.getSize().withRows(menuBarHeight));
                         menuBar.draw(menuGraphics);
-                        graphics = graphics.newTextGraphics(TerminalPosition.TOP_LEFT_CORNER.withRelativeRow(menuBarHeight), graphics.getSize().withRelativeRows(-menuBarHeight));
+                        graphics = graphics.newTextGraphics(TerminalPosition.of(0, menuBarHeight), graphics.getSize().withRelativeRows(-menuBarHeight));
                     }
 
                     Component subComponent = getComponent();

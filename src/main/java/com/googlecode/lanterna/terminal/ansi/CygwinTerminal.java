@@ -73,14 +73,14 @@ public class CygwinTerminal extends UnixLikeTTYTerminal {
             String stty = runSTTYCommand("-a");
             Matcher matcher = STTY_SIZE_PATTERN.matcher(stty);
             if(matcher.matches()) {
-                return new TerminalSize(Integer.parseInt(matcher.group(2)), Integer.parseInt(matcher.group(1)));
+                return TerminalSize.of(Integer.parseInt(matcher.group(2)), Integer.parseInt(matcher.group(1)));
             }
             else {
-                return new TerminalSize(80, 24);
+                return TerminalSize.of(80, 24);
             }
         }
         catch(Throwable e) {
-            return new TerminalSize(80, 24);
+            return TerminalSize.of(80, 24);
         }
     }
 
