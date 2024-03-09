@@ -107,7 +107,7 @@ public class TerminalRectangle {
     public boolean whenContains(int x, int y, Runnable op) {
         return whenContains(this.x, this.y, width, height, x, y, op);
     }
-		public static final boolean whenContains(int rx, int ry, int rw, int rh, int x, int y, Runnable op) {
+    public static final boolean whenContains(int rx, int ry, int rw, int rh, int x, int y, Runnable op) {
         if (rx <= x && x < (rx + rw) && ry <= y && y < (ry + rh)) {
             op.run();
             return true;
