@@ -194,16 +194,6 @@ public class TerminalSize implements Comparable<TerminalSize> {
     public TerminalSize with(TerminalSize size) {
         return as(size);
     }
-
-    /**
-     * x dimension, when d is zero
-     * y dimension, when d is not zero
-     *
-     * @return either getColumns() for x dimension or getRows() for y dimension
-    */
-    public int getDimension(int d) {
-        return d == 0 ? getColumns() : getRows();
-    }
     
     @Override
     public int compareTo(TerminalSize other) {
