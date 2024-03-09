@@ -642,7 +642,7 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
 
         @Override
         public TerminalSize getPreferredSize(final ComboBox<V> comboBox) {
-            TerminalSize size = TerminalSize.ONE.withColumns(
+            TerminalSize size = TerminalSize.OF_1x1.withColumns(
                     (comboBox.getItemCount() == 0 ? TerminalTextUtils.getColumnWidth(comboBox.getText()) : 0) + 2);
             //noinspection SynchronizationOnLocalVariableOrMethodParameter
             synchronized(comboBox) {

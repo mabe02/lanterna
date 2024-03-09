@@ -48,7 +48,7 @@ public class InteractableLookupMap {
     }
 
     TerminalSize getSize() {
-        if (lookupMap.length==0) { return TerminalSize.ZERO; }
+        if (lookupMap.length==0) { return TerminalSize.OF_0x0; }
         return new TerminalSize(lookupMap[0].length, lookupMap.length);
     }
 

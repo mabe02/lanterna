@@ -237,7 +237,7 @@ public class FileDialog extends DialogWindow {
     private class FileSystemLocationLabel extends Label {
         public FileSystemLocationLabel() {
             super("");
-            setPreferredSize(TerminalSize.ONE);
+            setPreferredSize(TerminalSize.OF_1x1);
         }
 
         @Override

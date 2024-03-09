@@ -386,7 +386,7 @@ public class GridLayout implements LayoutManager {
 
     @Override
     public TerminalSize getPreferredSize(List<Component> components) {
-        TerminalSize preferredSize = TerminalSize.ZERO;
+        TerminalSize preferredSize = TerminalSize.OF_0x0;
         if(components.isEmpty()) {
             return preferredSize.withRelative(
                     leftMarginSize + rightMarginSize,
@@ -417,7 +417,7 @@ public class GridLayout implements LayoutManager {
         Component[][] table = buildTable(components);
         table = eliminateUnusedRowsAndColumns(table);
 
-        if(area.equals(TerminalSize.ZERO) ||
+        if(area.equals(TerminalSize.OF_0x0) ||
                 table.length == 0 ||
                 area.getColumns() <= leftMarginSize + rightMarginSize + ((table[0].length - 1) * horizontalSpacing) ||
                 area.getRows() <= bottomMarginSize + topMarginSize + ((table.length - 1) * verticalSpacing)) {

@@ -452,7 +452,7 @@ public abstract class AbstractBasePane<T extends BasePane> implements BasePane {
                 public TerminalSize getPreferredSize(Container component) {
                     Component subComponent = getComponent();
                     if(subComponent == null) {
-                        return TerminalSize.ZERO;
+                        return TerminalSize.OF_0x0;
                     }
                     return subComponent.getPreferredSize();
                 }

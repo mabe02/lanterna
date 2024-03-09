@@ -31,7 +31,7 @@ public class DefaultTableHeaderRenderer<V> implements TableHeaderRenderer<V> {
     @Override
     public TerminalSize getPreferredSize(Table<V> table, String label, int columnIndex) {
         if(label == null) {
-            return TerminalSize.ZERO;
+            return TerminalSize.OF_0x0;
         }
         return new TerminalSize(TerminalTextUtils.getColumnWidth(label), 1);
     }

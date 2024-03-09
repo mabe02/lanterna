@@ -58,7 +58,7 @@ public class ListSelectDialog<T> extends DialogWindow {
                         .setRightMarginSize(1));
         if(description != null) {
             mainPanel.addComponent(new Label(description));
-            mainPanel.addComponent(new EmptySpace(TerminalSize.ONE));
+            mainPanel.addComponent(new EmptySpace(TerminalSize.OF_1x1));
         }
         listBox.setLayoutData(
                 GridLayout.createLayoutData(
@@ -67,7 +67,7 @@ public class ListSelectDialog<T> extends DialogWindow {
                         true,
                         false))
                 .addTo(mainPanel);
-        mainPanel.addComponent(new EmptySpace(TerminalSize.ONE));
+        mainPanel.addComponent(new EmptySpace(TerminalSize.OF_1x1));
 
         if(canCancel) {
             Panel buttonPanel = new Panel();

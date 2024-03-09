@@ -68,7 +68,7 @@ public class DrawImageTest {
         screenGraphics.drawImage(TerminalPosition.of(1, 7), image, TerminalPosition.of(0, 0), image.getSize().withRelativeColumns(10));
 
         //0 size should draw nothing
-        screenGraphics.drawImage(TerminalPosition.of(8, 7), image, TerminalPosition.of(0, 0), TerminalSize.ZERO);
+        screenGraphics.drawImage(TerminalPosition.of(8, 7), image, TerminalPosition.of(0, 0), TerminalSize.OF_0x0);
 
         //Drawing with a negative source image offset will move the target position
         screenGraphics.drawImage(TerminalPosition.of(8, 7), image, TerminalPosition.of(-2, -2), image.getSize());

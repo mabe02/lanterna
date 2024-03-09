@@ -45,7 +45,7 @@ public class Label extends AbstractComponent<Label> {
      */
     public Label(String text) {
         this.lines = null;
-        this.labelSize = TerminalSize.ZERO;
+        this.labelSize = TerminalSize.OF_0x0;
         this.labelWidth = 0;
         this.foregroundColor = null;
         this.backgroundColor = null;
@@ -109,7 +109,7 @@ public class Label extends AbstractComponent<Label> {
      */
     protected TerminalSize getBounds(String[] lines, TerminalSize currentBounds) {
         if(currentBounds == null) {
-            currentBounds = TerminalSize.ZERO;
+            currentBounds = TerminalSize.OF_0x0;
         }
         currentBounds = currentBounds.withRows(lines.length);
         if(labelWidth == null || labelWidth == 0) {

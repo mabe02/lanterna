@@ -94,7 +94,7 @@ public class DialogsTextGUIBasicTest {
                     .showDialog(textGUI));
 
             mainPanel.addComponent(dialogsListBox);
-            mainPanel.addComponent(new EmptySpace(TerminalSize.ONE));
+            mainPanel.addComponent(new EmptySpace(TerminalSize.OF_1x1));
             mainPanel.addComponent(new Button("Exit", window::close));
             window.setComponent(mainPanel);
 

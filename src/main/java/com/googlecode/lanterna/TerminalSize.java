@@ -24,149 +24,134 @@ package com.googlecode.lanterna;
  *
  * @author Martin
  */
-public class TerminalSize {
-    public static final TerminalSize ZERO = new TerminalSize(0, 0);
-    public static final TerminalSize ONE = new TerminalSize(1, 1);
+public class TerminalSize implements Comparable<TerminalSize> {
+
+    public static final TerminalSize OF_0x0 = new TerminalSize(0, 0);
+    public static final TerminalSize OF_0x1 = new TerminalSize(0, 1);
+    public static final TerminalSize OF_1x0 = new TerminalSize(1, 0);
+    public static final TerminalSize OF_1x1 = new TerminalSize(1, 1);
 
     public final int columns;
     public final int rows;
 
     public static final TerminalSize of(int columns, int rows) {
+        if(columns == 0 && rows == 0) {
+            return OF_0x0;
+        } else if(columns == 0 && rows == 1) {
+            return OF_0x1;
+        } else if(columns == 1 && rows == 0) {
+            return OF_1x0;
+        } else if(columns == 1 && rows == 1) {
+              return OF_1x1;
+        }
         return new TerminalSize(columns, rows);
     }
-
+    public TerminalSize as(int columns, int rows) {
+        return (columns == this.columns && rows == this.rows) ? this : of(columns, rows);
+    }
+    public TerminalSize as(TerminalSize size) {
+        return size == null ? null : as(size.columns, size.rows);
+    }
     /**
      * Creates a new terminal size representation with a given width (columns) and height (rows)
-     * @param columns Width, in number of columns
-     * @param rows Height, in number of columns
+     * @param columns Width as number of columns
+     * @param rows Height as number or rows
      */
     public TerminalSize(int columns, int rows) {
         if (columns < 0 || rows < 0) {
             throw new IllegalArgumentException("TerminalSize dimensions cannot be less than 0: [columns: " + columns + ", rows: " + rows + "]");
         }
-        
         this.columns = columns;
         this.rows = rows;
     }
-
     /**
-     * @return Returns the width of this size representation, in number of columns
+     * @return Width, number of columns, of this size representation
      */
     public int getColumns() {
         return columns;
     }
-
     /**
-     * Creates a new size based on this size, but with a different width
-     * @param columns Width of the new size, in columns
-     * @return New size based on this one, but with a new width
-     */
-    public TerminalSize withColumns(int columns) {
-        if(this.columns == columns) {
-            return this;
-        }
-        if(columns == 0 && this.rows == 0) {
-            return ZERO;
-        }
-        return new TerminalSize(columns, this.rows);
-    }
-
-
-    /**
-     * @return Returns the height of this size representation, in number of rows
+     * @return Height, number of rows, of this size representation
      */
     public int getRows() {
         return rows;
     }
-
     /**
-     * Creates a new size based on this size, but with a different height
-     * @param rows Height of the new size, in rows
-     * @return New size based on this one, but with a new height
+     * Obtain a TerminalSize with the supplied number of columns and this instance's number of rows
+     * @param columns Width as number of columns for the resulting TerminalSize
+     * @return a TerminalSize with the supplied number of columns and this instance's number of rows
+     */
+    public TerminalSize withColumns(int columns) {
+        return as(columns, rows);
+    }
+    /**
+     * Obtain a TerminalSize with this instance's number of columns and the supplied number of rows
+     * @param rows Height as number of rows for the resulting TerminalSize
+     * @return a TerminalSize with this instance's number of columns and the supplied number of rows
      */
     public TerminalSize withRows(int rows) {
-        if(this.rows == rows) {
-            return this;
-        }
-        if(rows == 0 && this.columns == 0) {
-            return ZERO;
-        }
-        return new TerminalSize(this.columns, rows);
+        return as(columns, rows);
     }
-
     /**
-     * Creates a new TerminalSize object representing a size with the same number of rows, but with a column size offset by a
+     * Obtain a TerminalSize with the same number of rows, but with a columns size offset by a
      * supplied value. Calling this method with delta 0 will return this, calling it with a positive delta will return
      * a terminal size <i>delta</i> number of columns wider and for negative numbers shorter.
      * @param delta Column offset
-     * @return New terminal size based off this one but with an applied transformation
+     * @return a TerminalSize based off this one but with an applied transformation
      */
     public TerminalSize withRelativeColumns(int delta) {
-        if(delta == 0) {
-            return this;
-        }
         // Prevent going below 0 (which would throw an exception)
         return withColumns(Math.max(0, columns + delta));
     }
-
     /**
-     * Creates a new TerminalSize object representing a size with the same number of columns, but with a row size offset by a
+     * Obtain a TerminalSize with the same number of columns, but with a row size offset by a
      * supplied value. Calling this method with delta 0 will return this, calling it with a positive delta will return
      * a terminal size <i>delta</i> number of rows longer and for negative numbers shorter.
      * @param delta Row offset
-     * @return New terminal size based off this one but with an applied transformation
+     * @return a TerminalSize based off this one but with an applied transformation
      */
     public TerminalSize withRelativeRows(int delta) {
-        if(delta == 0) {
-            return this;
-        }
         // Prevent going below 0 (which would throw an exception)
         return withRows(Math.max(0, rows + delta));
     }
-
     /**
-     * Creates a new TerminalSize object representing a size based on this object's size but with a delta applied.
+     * Obtain a TerminalSize based on this object's size but with a delta applied.
      * This is the same as calling
      * <code>withRelativeColumns(delta.getColumns()).withRelativeRows(delta.getRows())</code>
      * @param delta Column and row offset
-     * @return New terminal size based off this one but with an applied resize
+     * @return a TerminalSize based off this one but with an applied resize
      */
     public TerminalSize withRelative(TerminalSize delta) {
-        return withRelative(delta.getColumns(), delta.getRows());
+        return plus(delta);
     }
-
     /**
-     * Creates a new TerminalSize object representing a size based on this object's size but with a delta applied.
+     * Obtain a TerminalSize based on this object's size but with a delta applied.
      * This is the same as calling
      * <code>withRelativeColumns(deltaColumns).withRelativeRows(deltaRows)</code>
-     * @param deltaColumns How many extra columns the new TerminalSize will have (negative values are allowed)
-     * @param deltaRows How many extra rows the new TerminalSize will have (negative values are allowed)
+     * @param deltaColumns How many extra columns the new TerminalSize will have (negative delta values are allowed)
+     * @param deltaRows How many extra rows the new TerminalSize will have (negative delta values are allowed)
      * @return New terminal size based off this one but with an applied resize
      */
     public TerminalSize withRelative(int deltaColumns, int deltaRows) {
-        return withRelativeRows(deltaRows).withRelativeColumns(deltaColumns);
+        return plus(deltaColumns, deltaRows);
     }
-
     /**
-     * Takes a different TerminalSize and returns a new TerminalSize that has the largest dimensions of the two,
-     * measured separately. So calling 3x5 on a 5x3 will return 5x5.
-     * @param other Other TerminalSize to compare with
-     * @return TerminalSize that combines the maximum width between the two and the maximum height
+     * Obtain a TerminalSize having the max columns and max rows of this instance and the supplied one.
+     * Example: calling 3x5 on a 5x3 will return 5x5.
+     * @param other TerminalSize to compare with
+     * @return a TerminalSize that combines the maximum width and maximum height between the two
      */
     public TerminalSize max(TerminalSize other) {
-        return withColumns(Math.max(columns, other.columns))
-                .withRows(Math.max(rows, other.rows));
+        return as(Math.max(columns, other.columns), Math.max(rows, other.rows));
     }
-
     /**
-     * Takes a different TerminalSize and returns a new TerminalSize that has the smallest dimensions of the two,
-     * measured separately. So calling 3x5 on a 5x3 will return 3x3.
-     * @param other Other TerminalSize to compare with
-     * @return TerminalSize that combines the minimum width between the two and the minimum height
+     * Obtain a TerminalSize having the min columns and min rows of this instance and the supplied one.
+     * Example: calling 3x5 on a 5x3 will return 3x3.
+     * @param other TerminalSize to compare with
+     * @return a TerminalSize that combines the minimum width and minimum height between the two
      */
     public TerminalSize min(TerminalSize other) {
-        return withColumns(Math.min(columns, other.columns))
-                .withRows(Math.min(rows, other.rows));
+        return as(Math.min(columns, other.columns), Math.min(rows, other.rows));
     }
 
     public TerminalSize plus(TerminalSize other) {
@@ -182,16 +167,16 @@ public class TerminalSize {
         return divide(denominator.columns, denominator.rows);
     }
     public TerminalSize plus(int columns, int rows) {
-        return of(this.columns + columns, this.rows + rows);
+        return as(this.columns + columns, this.rows + rows);
     }
     public TerminalSize minus(int columns, int rows) {
-        return of(this.columns - columns, this.rows - rows);
+        return as(this.columns - columns, this.rows - rows);
     }
     public TerminalSize multiply(int columns, int rows) {
-        return of(this.columns * columns, this.rows * rows);
+        return as(this.columns * columns, this.rows * rows);
     }
     public TerminalSize divide(int columnsDenominator, int rowsDenominator) {
-        return of(columns / columnsDenominator, rows / rowsDenominator);
+        return as(columns / columnsDenominator, rows / rowsDenominator);
     }
     public TerminalSize plus(int amount)        { return plus(amount, amount); }
     public TerminalSize minus(int amount)       { return minus(amount, amount); }
@@ -206,10 +191,7 @@ public class TerminalSize {
      * @return Itself if this size equals the size passed in, otherwise the size passed in
      */
     public TerminalSize with(TerminalSize size) {
-        if(equals(size)) {
-            return this;
-        }
-        return size;
+        return as(size);
     }
 
     /**
@@ -221,6 +203,15 @@ public class TerminalSize {
     public int getDimension(int d) {
         return d == 0 ? getColumns() : getRows();
     }
+    
+    @Override
+    public int compareTo(TerminalSize other) {
+        return Integer.compare(columns * rows, other.columns * other.rows);
+    }
+
+    public boolean equals(int columns, int rows) {
+        return this.columns == columns && this.rows == rows;
+    }
 
     @Override
     public String toString() {
@@ -229,16 +220,11 @@ public class TerminalSize {
 
     @Override
     public boolean equals(Object obj) {
-        if(this == obj) {
-            return true;
-        }
-        if (!(obj instanceof TerminalSize)) {
-            return false;
-        }
-
-        TerminalSize other = (TerminalSize) obj;
-        return columns == other.columns
-                && rows == other.rows;
+        return obj != null
+            && obj.getClass() == getClass()
+            && ((TerminalSize) obj).columns == columns
+            && ((TerminalSize) obj).rows == rows
+            ;
     }
 
     @Override

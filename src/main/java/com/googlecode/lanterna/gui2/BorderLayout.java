@@ -154,7 +154,7 @@ public class BorderLayout implements LayoutManager {
         for(Component component: components) {
             if(component.isVisible() && !layout.containsValue(component)) {
                 component.setPosition(TerminalPosition.OF_0x0);
-                component.setSize(TerminalSize.ZERO);
+                component.setSize(TerminalSize.OF_0x0);
             }
         }
     }

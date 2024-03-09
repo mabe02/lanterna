@@ -66,8 +66,8 @@ public class GridLayoutTest extends TestBase {
 
         Panel contentPanel = new Panel();
         contentPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
-        contentPanel.addComponent(Panels.horizontal(leftGridPanel, new EmptySpace(TerminalSize.ONE), rightGridPanel));
-        contentPanel.addComponent(new EmptySpace(TerminalSize.ONE));
+        contentPanel.addComponent(Panels.horizontal(leftGridPanel, new EmptySpace(TerminalSize.OF_1x1), rightGridPanel));
+        contentPanel.addComponent(new EmptySpace(TerminalSize.OF_1x1));
         contentPanel.addComponent(Panels.horizontal(
                 new Button("Toggle Visible Component", () -> visibilityToggleableComponent.setVisible(!visibilityToggleableComponent.isVisible())),
                 new Button("Close", window::close)

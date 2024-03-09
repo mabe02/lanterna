@@ -186,7 +186,7 @@ public class Borders {
             Component wrappedComponent = border.getComponent();
             TerminalSize preferredSize;
             if (wrappedComponent == null) {
-                preferredSize = TerminalSize.ZERO;
+                preferredSize = TerminalSize.OF_0x0;
             } else {
                 preferredSize = wrappedComponent.getPreferredSize();
             }

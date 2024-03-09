@@ -221,7 +221,7 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
         preferredRowSizes.clear();
 
         if(tableModel.getColumnCount() == 0) {
-            return TerminalSize.ZERO;
+            return TerminalSize.OF_0x0;
         }
 
         // Adjust view port if necessary (although this is only for the preferred size calculation, we don't actually

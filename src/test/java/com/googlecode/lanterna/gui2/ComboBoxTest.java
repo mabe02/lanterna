@@ -59,7 +59,7 @@ public class ComboBoxTest extends TestBase {
                 comboBoxReadOnly.withBorder(Borders.singleLine("Read-only")),
                 comboBoxEditable.withBorder(Borders.singleLine("Editable")),
                 comboBoxCJK.withBorder(Borders.singleLine("CJK"))));
-        mainPanel.addComponent(new EmptySpace(TerminalSize.ONE));
+        mainPanel.addComponent(new EmptySpace(TerminalSize.OF_1x1));
 
         final TextBox textBoxNewItem = new TextBox(new TerminalSize(20, 1));
         Button buttonAddItem = new Button("Add", () -> {
@@ -96,9 +96,9 @@ public class ComboBoxTest extends TestBase {
                         Panels.horizontal(textBoxSetSelectedItem, buttonSetSelectedItem))
                     .withBorder(Borders.singleLineBevel("Modify Content")));
 
-        mainPanel.addComponent(new EmptySpace(TerminalSize.ONE));
+        mainPanel.addComponent(new EmptySpace(TerminalSize.OF_1x1));
         mainPanel.addComponent(comboBoxTimeZones.withBorder(Borders.singleLine("Large ComboBox")));
-        mainPanel.addComponent(new EmptySpace(TerminalSize.ONE));
+        mainPanel.addComponent(new EmptySpace(TerminalSize.OF_1x1));
         mainPanel.addComponent(new Separator(Direction.HORIZONTAL).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.FILL)));
         mainPanel.addComponent(new Button("OK", window::close));
         window.setComponent(mainPanel);

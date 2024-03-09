@@ -208,11 +208,11 @@ public class DynamicGridLayoutTest extends TestBase {
             contentPane.addComponent(textBoxBottomMargin);
 
             contentPane.addComponent(
-                    new EmptySpace(TerminalSize.ONE).setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2)));
+                    new EmptySpace(TerminalSize.OF_1x1).setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2)));
             contentPane.addComponent(
                     new Separator(Direction.HORIZONTAL).setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2)));
             contentPane.addComponent(
-                    new EmptySpace(TerminalSize.ONE).setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2)));
+                    new EmptySpace(TerminalSize.OF_1x1).setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2)));
 
             Button okButton = new Button("OK", () -> {
                 gridLayout.setHorizontalSpacing(Integer.parseInt(textBoxHorizontalSpacing.getTextOrDefault("0")));
@@ -255,7 +255,7 @@ public class DynamicGridLayoutTest extends TestBase {
             contentPane.addComponent(radioBoxesHorizontalAlignment);
 
             contentPane.addComponent(
-                    new EmptySpace(TerminalSize.ONE).setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2)));
+                    new EmptySpace(TerminalSize.OF_1x1).setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2)));
 
             contentPane.addComponent(new Label("Vertical alignment:"));
             final RadioBoxList<GridLayout.Alignment> radioBoxesVerticalAlignment = new RadioBoxList<>();
@@ -267,7 +267,7 @@ public class DynamicGridLayoutTest extends TestBase {
             contentPane.addComponent(radioBoxesVerticalAlignment);
 
             contentPane.addComponent(
-                    new EmptySpace(TerminalSize.ONE).setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2)));
+                    new EmptySpace(TerminalSize.OF_1x1).setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2)));
 
             contentPane.addComponent(new Label("Grab extra horizontal space:"));
             final CheckBox checkBoxGrabExtraHorizontalSpace = new CheckBox("");
@@ -280,7 +280,7 @@ public class DynamicGridLayoutTest extends TestBase {
             contentPane.addComponent(checkBoxGrabExtraVerticalSpace);
 
             contentPane.addComponent(
-                    new EmptySpace(TerminalSize.ONE).setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2)));
+                    new EmptySpace(TerminalSize.OF_1x1).setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2)));
 
             Pattern numberPattern = Pattern.compile("[1-9][0-9]*");
 
@@ -295,11 +295,11 @@ public class DynamicGridLayoutTest extends TestBase {
             contentPane.addComponent(textBoxVerticalSpan);
 
             contentPane.addComponent(
-                    new EmptySpace(TerminalSize.ONE).setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2)));
+                    new EmptySpace(TerminalSize.OF_1x1).setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2)));
             contentPane.addComponent(
                     new Separator(Direction.HORIZONTAL).setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2)));
             contentPane.addComponent(
-                    new EmptySpace(TerminalSize.ONE).setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2)));
+                    new EmptySpace(TerminalSize.OF_1x1).setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2)));
 
             Button okButton = new Button("OK", () -> {
                 component.setLayoutData(

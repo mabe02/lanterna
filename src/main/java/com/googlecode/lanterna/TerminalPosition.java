@@ -38,7 +38,7 @@ public class TerminalPosition implements Comparable<TerminalPosition> {
     public final int column;
     public final int row;
     /**
-     * @return a new TerminalPosition instance with the supplied column and row
+     * @return a TerminalPosition instance with the supplied column and row
      */
     public static final TerminalPosition of(int column, int row) {
         if(column == 0 && row == 0) {
@@ -59,7 +59,7 @@ public class TerminalPosition implements Comparable<TerminalPosition> {
      * @return Either this instance, or a new instance if column/row are different than this instance's column/row.
      */
     public TerminalPosition as(int column, int row) {
-        return (column != this.column || row != this.row) ? of(column, row) : this;
+        return (column == this.column && row == this.row) ? this : of(column, row);
     }
     /**
      * Returns itself if it is equal to the supplied position, otherwise the supplied position. You can use this if you
@@ -98,60 +98,59 @@ public class TerminalPosition implements Comparable<TerminalPosition> {
         return row;
     }
     /**
-     * Creates a new TerminalPosition object representing a position with the same row index as this but with a
-     * supplied column index.
-     * @param column Index of the column for the new position
-     * @return A TerminalPosition object with the same row as this but with a specified column index
+     * Obtain a TerminalPosition with the supplied column and the same row as this instance.
+     * @param column Index of the column for the resulting TerminalPosition
+     * @return a TerminalPosition object with the same row as this but with a specified column index
      */
     public TerminalPosition withColumn(int column) {
         return as(column, row);
     }
     /**
-     * Creates a new TerminalPosition object representing a position with the same column index as this but with a
-     * supplied row index.
+     * Obtain a TerminalPosition object with this instance's column and the supplied row.
      * @param row Index of the row for the new position
-     * @return A TerminalPosition object with the same column as this but with a specified row index
+     * @return a TerminalPosition object with the same column as this but with a specified row index
      */
     public TerminalPosition withRow(int row) {
         return as(column, row);
     }
     /**
-     * Creates a new TerminalPosition object representing a position on the same row, but with a column offset by a
-     * supplied value. Calling this method with delta 0 will return this, calling it with a positive delta will return
-     * a terminal position <i>delta</i> number of columns to the right and for negative numbers the same to the left.
+     * Obtain a TerminalPosition with a column offset by the supplied delta and the same row as this instance.
+     * Calling this method with delta 0 will return this, calling it with a positive delta will return
+     * a TerminalPosition <i>delta</i> number of columns to the right and for negative numbers the same to the left.
      * @param delta Column offset
-     * @return New terminal position based off this one but with an applied offset
+     * @return a TerminalPosition based off this one but with an applied offset
      */
     public TerminalPosition withRelativeColumn(int delta) {
         return plus(delta, 0);
     }
     /**
-     * Creates a new TerminalPosition object representing a position on the same column, but with a row offset by a
-     * supplied value. Calling this method with delta 0 will return this, calling it with a positive delta will return
-     * a terminal position <i>delta</i> number of rows to the down and for negative numbers the same up.
+     * Obtain a TerminalPosition with the same column as this instance and a row which is this instance's row offset
+     * by the supplied delta.
+     * Calling this method with delta 0 will return this, calling it with a positive delta will return
+     * a TerminalPosition <i>delta</i> number of rows to the down and for negative numbers the same up.
      * @param delta Row offset
-     * @return New terminal position based off this one but with an applied offset
+     * @return a TerminalPosition based off this one but with an applied offset
      */
     public TerminalPosition withRelativeRow(int delta) {
         return plus(0, delta);
     }
     /**
-     * Creates a new TerminalPosition object that is 'translated' by an amount of rows and columns specified by another
+     * Obtain a TerminalPosition that is 'translated' by an amount of rows and columns specified by another
      * TerminalPosition. Same as calling
      * <code>withRelativeRow(translate.getRow()).withRelativeColumn(translate.getColumn())</code>
      * @param translate How many columns and rows to translate
-     * @return New TerminalPosition that is the result of the original with added translation
+     * @return a TerminalPosition that is the result of the original with added translation
      */
     public TerminalPosition withRelative(TerminalPosition translate) {
         return plus(translate);
     }
     /**
-     * Creates a new TerminalPosition object that is 'translated' by an amount of rows and columns specified by the two
+     * Obtain a TerminalPosition that is 'translated' by an amount of rows and columns specified by the two
      * parameters. Same as calling
      * <code>withRelativeRow(deltaRow).withRelativeColumn(deltaColumn)</code>
-     * @param deltaColumn How many columns to move from the current position in the new TerminalPosition
-     * @param deltaRow How many rows to move from the current position in the new TerminalPosition
-     * @return New TerminalPosition that is the result of the original position with added translation
+     * @param deltaColumn How many columns to move from the current position in the resulting TerminalPosition
+     * @param deltaRow How many rows to move from the current position in the resulting TerminalPosition
+     * @return a TerminalPosition that is the result of the original position with added translation
      */
     public TerminalPosition withRelative(int deltaColumn, int deltaRow) {
         return plus(deltaColumn, deltaRow);

@@ -230,7 +230,7 @@ public class LinearLayout implements LayoutManager {
         for(Component component: components) {
             if(remainingVerticalSpace <= 0) {
                 component.setPosition(TerminalPosition.OF_0x0);
-                component.setSize(TerminalSize.ZERO);
+                component.setSize(TerminalSize.OF_0x0);
             }
             else {
                 Alignment alignment = Alignment.BEGINNING;
@@ -382,7 +382,7 @@ public class LinearLayout implements LayoutManager {
         for(Component component: components) {
             if(remainingHorizontalSpace <= 0) {
                 component.setPosition(TerminalPosition.OF_0x0);
-                component.setSize(TerminalSize.ZERO);
+                component.setSize(TerminalSize.OF_0x0);
             }
             else {
                 Alignment alignment = Alignment.BEGINNING;

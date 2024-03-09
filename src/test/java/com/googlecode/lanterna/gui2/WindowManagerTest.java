@@ -23,7 +23,7 @@ public class WindowManagerTest extends TestBase {
         final Window mainWindow = new BasicWindow("Window Manager Test");
         Panel contentArea = new Panel();
         contentArea.setLayoutManager(new LinearLayout(Direction.VERTICAL));
-        contentArea.addComponent(new EmptySpace(TerminalSize.ONE));
+        contentArea.addComponent(new EmptySpace(TerminalSize.OF_1x1));
         contentArea.addComponent(new Button("Close", new Runnable() {
             @Override
             public void run() {

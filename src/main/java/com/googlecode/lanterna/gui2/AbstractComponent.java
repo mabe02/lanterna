@@ -76,7 +76,7 @@ public abstract class AbstractComponent<T extends Component> implements Componen
      * Default constructor
      */
     public AbstractComponent() {
-        size = TerminalSize.ZERO;
+        size = TerminalSize.OF_0x0;
         position = TerminalPosition.OF_0x0;
         explicitPreferredSize = null;
         layoutData = null;

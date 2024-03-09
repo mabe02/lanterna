@@ -214,7 +214,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
         if (getScreen() instanceof VirtualScreen) {
             // If the user has passed in a virtual screen, we should calculate the minimum size required and tell it.
             // Previously the constructor always wrapped the screen in a VirtualScreen, but now we need to check.
-            TerminalSize minimumTerminalSize = TerminalSize.ZERO;
+            TerminalSize minimumTerminalSize = TerminalSize.OF_0x0;
             for (Window window : getWindows()) {
                 if (window.isVisible()) {
                     if (window.getHints().contains(Window.Hint.FULL_SCREEN) ||
@@ -464,7 +464,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
     public synchronized WindowBasedTextGUI addWindow(Window window) {
         //To protect against NPE if the user forgot to set a content component
         if(window.getComponent() == null) {
-            window.setComponent(new EmptySpace(TerminalSize.ONE));
+            window.setComponent(new EmptySpace(TerminalSize.OF_1x1));
         }
 
         if(window.getTextGUI() != null) {
