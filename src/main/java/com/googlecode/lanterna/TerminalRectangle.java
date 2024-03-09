@@ -48,7 +48,7 @@ public class TerminalRectangle {
      */
     public TerminalRectangle(int x, int y, int width, int height) {
         position = TerminalPosition.of(x, y);
-        size = new TerminalSize(width, height);
+        size = TerminalSize.of(width, height);
         
         this.x = x;
         this.y = y;

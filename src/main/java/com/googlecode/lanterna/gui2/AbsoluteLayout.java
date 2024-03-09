@@ -34,8 +34,7 @@ public class AbsoluteLayout implements LayoutManager {
     public TerminalSize getPreferredSize(List<Component> components) {
         TerminalSize size = TerminalSize.OF_0x0;
         for(Component component: components) {
-            size = size.max(
-                    new TerminalSize(
+            size = size.max(TerminalSize.of(
                             component.getPosition().getColumn() + component.getSize().getColumns(),
                             component.getPosition().getRow() + component.getSize().getRows()));
                     

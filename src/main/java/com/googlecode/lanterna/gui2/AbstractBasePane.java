@@ -50,7 +50,7 @@ public abstract class AbstractBasePane<T extends BasePane> implements BasePane {
     protected AbstractBasePane() {
         this.contentHolder = new ContentHolder();
         this.listeners = new CopyOnWriteArrayList<>();
-        this.interactableLookupMap = new InteractableLookupMap(new TerminalSize(80, 25));
+        this.interactableLookupMap = new InteractableLookupMap(TerminalSize.of(80, 25));
         this.invalid = false;
         this.strictFocusChange = false;
         this.enableDirectionBasedMovements = true;

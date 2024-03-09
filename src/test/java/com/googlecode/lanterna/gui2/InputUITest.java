@@ -73,7 +73,7 @@ public class InputUITest extends TestBase {
 
                     @Override
                     public TerminalSize getPreferredSize(Component component) {
-                        return new TerminalSize(70, 5);
+                        return TerminalSize.of(70, 5);
                     }
 
                     @Override

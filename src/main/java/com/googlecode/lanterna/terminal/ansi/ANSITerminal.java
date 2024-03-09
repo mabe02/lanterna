@@ -109,7 +109,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
         if (terminalPosition == null) {
             terminalPosition = TerminalPosition.of(80,24);
         }
-        return new TerminalSize(terminalPosition.getColumn(), terminalPosition.getRow());
+        return TerminalSize.of(terminalPosition.getColumn(), terminalPosition.getRow());
     }
 
     @Override

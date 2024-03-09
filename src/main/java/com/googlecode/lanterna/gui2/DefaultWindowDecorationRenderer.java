@@ -130,7 +130,7 @@ public class DefaultWindowDecorationRenderer implements WindowDecorationRenderer
         return contentAreaSize
                 .withRelativeColumns(2)
                 .withRelativeRows(2)
-                .max(new TerminalSize(titleWidth + minPadding, 1));  //Make sure the title fits!
+                .max(TerminalSize.of(titleWidth + minPadding, 1));  //Make sure the title fits!
     }
 
     @Override

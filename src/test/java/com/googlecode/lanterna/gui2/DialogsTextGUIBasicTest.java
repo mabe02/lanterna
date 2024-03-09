@@ -52,7 +52,7 @@ public class DialogsTextGUIBasicTest {
             dialogsListBox.addItem("Multi-line input", () -> {
                 String result = new TextInputDialogBuilder()
                         .setTitle("Multi-line editor")
-                        .setTextBoxSize(new TerminalSize(35, 5))
+                        .setTextBoxSize(TerminalSize.of(35, 5))
                         .build()
                         .showDialog(textGUI);
                 System.out.println("Result was: " + result);

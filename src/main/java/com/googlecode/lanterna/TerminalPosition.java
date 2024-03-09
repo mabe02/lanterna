@@ -35,6 +35,7 @@ public class TerminalPosition implements Comparable<TerminalPosition> {
     public static final TerminalPosition OF_1x0 = new TerminalPosition(1, 0);
     public static final TerminalPosition OF_1x1 = new TerminalPosition(1, 1);
 
+    // one of the benefits of immutable: ease of usage
     public final int column;
     public final int row;
     /**

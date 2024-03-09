@@ -31,6 +31,7 @@ public class TerminalSize implements Comparable<TerminalSize> {
     public static final TerminalSize OF_1x0 = new TerminalSize(1, 0);
     public static final TerminalSize OF_1x1 = new TerminalSize(1, 1);
 
+    // one of the benefits of immutable: ease of usage
     public final int columns;
     public final int rows;
 
@@ -65,20 +66,20 @@ public class TerminalSize implements Comparable<TerminalSize> {
         this.rows = rows;
     }
     /**
-     * @return Width, number of columns, of this size representation
+     * @return Width, the number of columns of this TerminalSize
      */
     public int getColumns() {
         return columns;
     }
     /**
-     * @return Height, number of rows, of this size representation
+     * @return Height, the number of rows of this TerminalSize
      */
     public int getRows() {
         return rows;
     }
     /**
      * Obtain a TerminalSize with the supplied number of columns and this instance's number of rows
-     * @param columns Width as number of columns for the resulting TerminalSize
+     * @param columns, the number of columns, or Width, of the resulting TerminalSize
      * @return a TerminalSize with the supplied number of columns and this instance's number of rows
      */
     public TerminalSize withColumns(int columns) {
@@ -86,7 +87,7 @@ public class TerminalSize implements Comparable<TerminalSize> {
     }
     /**
      * Obtain a TerminalSize with this instance's number of columns and the supplied number of rows
-     * @param rows Height as number of rows for the resulting TerminalSize
+     * @param rows, the number or rows, or Height, of the resulting TerminalSize
      * @return a TerminalSize with this instance's number of columns and the supplied number of rows
      */
     public TerminalSize withRows(int rows) {
@@ -95,9 +96,9 @@ public class TerminalSize implements Comparable<TerminalSize> {
     /**
      * Obtain a TerminalSize with the same number of rows, but with a columns size offset by a
      * supplied value. Calling this method with delta 0 will return this, calling it with a positive delta will return
-     * a terminal size <i>delta</i> number of columns wider and for negative numbers shorter.
+     * a TerminalSize <i>delta</i> number of columns wider and for negative numbers shorter.
      * @param delta Column offset
-     * @return a TerminalSize based off this one but with an applied transformation
+     * @return a TerminalSize based off this one but with an applied translation
      */
     public TerminalSize withRelativeColumns(int delta) {
         // Prevent going below 0 (which would throw an exception)
@@ -106,9 +107,9 @@ public class TerminalSize implements Comparable<TerminalSize> {
     /**
      * Obtain a TerminalSize with the same number of columns, but with a row size offset by a
      * supplied value. Calling this method with delta 0 will return this, calling it with a positive delta will return
-     * a terminal size <i>delta</i> number of rows longer and for negative numbers shorter.
+     * a TerminalSize <i>delta</i> number of rows longer and for negative numbers shorter.
      * @param delta Row offset
-     * @return a TerminalSize based off this one but with an applied transformation
+     * @return a TerminalSize resulting from translating this instance by the supplied delta rows
      */
     public TerminalSize withRelativeRows(int delta) {
         // Prevent going below 0 (which would throw an exception)
@@ -128,9 +129,9 @@ public class TerminalSize implements Comparable<TerminalSize> {
      * Obtain a TerminalSize based on this object's size but with a delta applied.
      * This is the same as calling
      * <code>withRelativeColumns(deltaColumns).withRelativeRows(deltaRows)</code>
-     * @param deltaColumns How many extra columns the new TerminalSize will have (negative delta values are allowed)
-     * @param deltaRows How many extra rows the new TerminalSize will have (negative delta values are allowed)
-     * @return New terminal size based off this one but with an applied resize
+     * @param deltaColumns How many extra columns the resulting TerminalSize will have (negative delta values are allowed)
+     * @param deltaRows How many extra rows the resulting TerminalSize will have (negative delta values are allowed)
+     * @return a TerminalSize based off this one but with an applied resize
      */
     public TerminalSize withRelative(int deltaColumns, int deltaRows) {
         return plus(deltaColumns, deltaRows);

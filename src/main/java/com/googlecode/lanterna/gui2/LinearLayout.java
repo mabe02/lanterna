@@ -177,7 +177,7 @@ public class LinearLayout implements LayoutManager {
             height += preferredSize.getRows();
         }
         height += spacing * (components.size() - 1);
-        return new TerminalSize(maxWidth, Math.max(0, height));
+        return TerminalSize.of(maxWidth, Math.max(0, height));
     }
 
     private TerminalSize getPreferredSizeHorizontally(List<Component> components) {
@@ -191,7 +191,7 @@ public class LinearLayout implements LayoutManager {
             width += preferredSize.getColumns();
         }
         width += spacing * (components.size() - 1);
-        return new TerminalSize(Math.max(0,width), maxHeight);
+        return TerminalSize.of(Math.max(0,width), maxHeight);
     }
 
     @Override
@@ -240,7 +240,7 @@ public class LinearLayout implements LayoutManager {
                 }
 
                 TerminalSize preferredSize = component.getPreferredSize();
-                TerminalSize decidedSize = new TerminalSize(
+                TerminalSize decidedSize = TerminalSize.of(
                         Math.min(availableHorizontalSpace, preferredSize.getColumns()),
                         Math.min(remainingVerticalSpace, preferredSize.getRows()));
                 if(alignment == Alignment.FILL) {
@@ -283,7 +283,7 @@ public class LinearLayout implements LayoutManager {
             }
 
             TerminalSize preferredSize = component.getPreferredSize();
-            TerminalSize fittingSize = new TerminalSize(
+            TerminalSize fittingSize = TerminalSize.of(
                     Math.min(availableHorizontalSpace, preferredSize.getColumns()),
                     preferredSize.getRows());
             if(alignment == Alignment.FILL) {
@@ -392,7 +392,7 @@ public class LinearLayout implements LayoutManager {
                 }
 
                 TerminalSize preferredSize = component.getPreferredSize();
-                TerminalSize decidedSize = new TerminalSize(
+                TerminalSize decidedSize = TerminalSize.of(
                         Math.min(remainingHorizontalSpace, preferredSize.getColumns()),
                         Math.min(availableVerticalSpace, preferredSize.getRows()));
                 if(alignment == Alignment.FILL) {
@@ -435,7 +435,7 @@ public class LinearLayout implements LayoutManager {
             }
 
             TerminalSize preferredSize = component.getPreferredSize();
-            TerminalSize fittingSize = new TerminalSize(
+            TerminalSize fittingSize = TerminalSize.of(
                     preferredSize.getColumns(),
                     Math.min(availableVerticalSpace, preferredSize.getRows()));
             if(alignment == Alignment.FILL) {

@@ -120,7 +120,7 @@ public class Tutorial04 {
             List<String> timezonesAsStrings = new ArrayList<>(Arrays.asList(TimeZone.getAvailableIDs()));
             ComboBox<String> readOnlyComboBox = new ComboBox<>(timezonesAsStrings);
             readOnlyComboBox.setReadOnly(true);
-            readOnlyComboBox.setPreferredSize(new TerminalSize(20, 1));
+            readOnlyComboBox.setPreferredSize(TerminalSize.of(20, 1));
             contentPanel.addComponent(readOnlyComboBox);
 
             contentPanel.addComponent(new Label("Editable Combo Box (filled)"));

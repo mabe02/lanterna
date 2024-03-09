@@ -58,7 +58,7 @@ public class DefaultVirtualTerminal extends AbstractTerminal implements VirtualT
      * Creates a new virtual terminal with an initial size set
      */
     public DefaultVirtualTerminal() {
-        this(new TerminalSize(80, 24));
+        this(TerminalSize.of(80, 24));
     }
 
     /**

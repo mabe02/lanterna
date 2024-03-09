@@ -78,7 +78,7 @@ public class GUIOverTelnet {
             }).withBorder(Borders.singleLine("This is a button")));
 
 
-            final TextBox textBox = new TextBox(new TerminalSize(20, 4)) {
+            final TextBox textBox = new TextBox(TerminalSize.of(20, 4)) {
                 @Override
                 public Result handleKeyStroke(KeyStroke keyStroke) {
                     try {
@@ -102,7 +102,7 @@ public class GUIOverTelnet {
                     return new InteractableRenderer() {
                         @Override
                         public TerminalSize getPreferredSize(Component component) {
-                            return new TerminalSize(30, 1);
+                            return TerminalSize.of(30, 1);
                         }
 
                         @Override

@@ -109,13 +109,13 @@ public class FatWindowDecorationRenderer implements WindowDecorationRenderer {
             return contentAreaSize
                     .withRelativeColumns(2)
                     .withRelativeRows(4)
-                    .max(new TerminalSize(TerminalTextUtils.getColumnWidth(window.getTitle()) + 4, 1));  //Make sure the title fits!
+                    .max(TerminalSize.of(TerminalTextUtils.getColumnWidth(window.getTitle()) + 4, 1));  //Make sure the title fits!
         }
         else {
             return contentAreaSize
                     .withRelativeColumns(2)
                     .withRelativeRows(2)
-                    .max(new TerminalSize(3, 1));
+                    .max(TerminalSize.of(3, 1));
         }
     }
 

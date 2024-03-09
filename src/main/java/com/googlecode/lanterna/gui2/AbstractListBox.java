@@ -417,7 +417,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
                     maxWidth = stringLengthInColumns;
                 }
             }
-            return new TerminalSize(maxWidth + 1, listBox.getItemCount());
+            return TerminalSize.of(maxWidth + 1, listBox.getItemCount());
         }
 
         @Override
@@ -472,7 +472,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
                 verticalScrollBar.setScrollPosition(scrollTopIndex);
                 verticalScrollBar.draw(graphics.newTextGraphics(
                         TerminalPosition.of(graphics.getSize().getColumns() - 1, 0),
-                        new TerminalSize(1, graphics.getSize().getRows())));
+                        TerminalSize.of(1, graphics.getSize().getRows())));
             }
         }
     }

@@ -72,7 +72,7 @@ public class DefaultWindowManager implements WindowManager {
             this.lastKnownScreenSize = initialScreenSize;
         }
         else {
-            this.lastKnownScreenSize = new TerminalSize(80, 24);
+            this.lastKnownScreenSize = TerminalSize.of(80, 24);
         }
     }
 

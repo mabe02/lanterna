@@ -648,7 +648,7 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
             synchronized(comboBox) {
                 for(int i = 0; i < comboBox.getItemCount(); i++) {
                     V item = comboBox.getItem(i);
-                    size = size.max(new TerminalSize(TerminalTextUtils.getColumnWidth(item.toString()) + 2 + 1, 1));   // +1 to add a single column of space
+                    size = size.max(TerminalSize.of(TerminalTextUtils.getColumnWidth(item.toString()) + 2 + 1, 1));   // +1 to add a single column of space
                 }
             }
             return size;

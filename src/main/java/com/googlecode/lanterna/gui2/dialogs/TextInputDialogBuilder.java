@@ -53,7 +53,7 @@ public class TextInputDialogBuilder extends AbstractDialogBuilder<TextInputDialo
     protected TextInputDialog buildDialog() {
         TerminalSize size = textBoxSize;
         if ((initialContent == null || initialContent.trim().equals("")) && size == null) {
-            size = new TerminalSize(40, 1);
+            size = TerminalSize.of(40, 1);
         }
         return new TextInputDialog(
                 title,

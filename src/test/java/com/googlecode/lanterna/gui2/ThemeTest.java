@@ -63,7 +63,7 @@ public class ThemeTest extends TestBase {
         mainPanel.addComponent(new EmptySpace());
         ThemedComponentTestDialog[] componentTestDialogs = new ThemedComponentTestDialog[]{
                 new ThemedComponentTestDialog(textGUI, "ActionListBox",
-                        new ActionListBox(new TerminalSize(15, 5))
+                        new ActionListBox(TerminalSize.of(15, 5))
                                 .addItem(new NullRunnable("Item #1"))
                                 .addItem(new NullRunnable("Item #2"))
                                 .addItem(new NullRunnable("Item #3"))
@@ -80,16 +80,16 @@ public class ThemeTest extends TestBase {
                 new ThemedComponentTestDialog(textGUI, "Borders",
                         new Panel()
                                 .setLayoutManager(new GridLayout(4))
-                                .addComponent(new EmptySpace(new TerminalSize(4, 2)).withBorder(Borders.singleLine()))
-                                .addComponent(new EmptySpace(new TerminalSize(4, 2)).withBorder(Borders.singleLineBevel()))
-                                .addComponent(new EmptySpace(new TerminalSize(4, 2)).withBorder(Borders.doubleLine()))
-                                .addComponent(new EmptySpace(new TerminalSize(4, 2)).withBorder(Borders.doubleLineBevel()))),
+                                .addComponent(new EmptySpace(TerminalSize.of(4, 2)).withBorder(Borders.singleLine()))
+                                .addComponent(new EmptySpace(TerminalSize.of(4, 2)).withBorder(Borders.singleLineBevel()))
+                                .addComponent(new EmptySpace(TerminalSize.of(4, 2)).withBorder(Borders.doubleLine()))
+                                .addComponent(new EmptySpace(TerminalSize.of(4, 2)).withBorder(Borders.doubleLineBevel()))),
                 new ThemedComponentTestDialog(textGUI, "Button",
                         new Button("This is a button")),
                 new ThemedComponentTestDialog(textGUI, "CheckBox",
                         new CheckBox("This is a checkbox")),
                 new ThemedComponentTestDialog(textGUI, "CheckBoxList",
-                        new CheckBoxList<String>(new TerminalSize(15, 5))
+                        new CheckBoxList<String>(TerminalSize.of(15, 5))
                                 .addItem("Item #1")
                                 .addItem("Item #2")
                                 .addItem("Item #3")
@@ -102,15 +102,15 @@ public class ThemeTest extends TestBase {
                         new Panel()
                                 .addComponent(new ComboBox<>("Editable", "Item #2", "Item #3", "Item #4", "Item #5", "Item #6", "Item #7")
                                         .setReadOnly(false)
-                                        .setPreferredSize(new TerminalSize(12, 1)))
+                                        .setPreferredSize(TerminalSize.of(12, 1)))
                                 .addComponent(new EmptySpace())
                                 .addComponent(new ComboBox<>("Read-only", "Item #2", "Item #3", "Item #4", "Item #5", "Item #6", "Item #7")
                                         .setReadOnly(true)
-                                        .setPreferredSize(new TerminalSize(12, 1)))),
+                                        .setPreferredSize(TerminalSize.of(12, 1)))),
                 new ThemedComponentTestDialog(textGUI, "Label",
                         new Label("This is a label")),
                 new ThemedComponentTestDialog(textGUI, "RadioBoxList",
-                        new RadioBoxList<String>(new TerminalSize(15, 5))
+                        new RadioBoxList<String>(TerminalSize.of(15, 5))
                                 .addItem("Item #1")
                                 .addItem("Item #2")
                                 .addItem("Item #3")
@@ -126,13 +126,13 @@ public class ThemeTest extends TestBase {
                 new ThemedComponentTestDialog(textGUI, "ScrollBar",
                         new Panel()
                                 .setLayoutManager(new GridLayout(2))
-                                .addComponent(new ScrollBar(Direction.HORIZONTAL).setPreferredSize(new TerminalSize(6, 1)))
-                                .addComponent(new ScrollBar(Direction.VERTICAL).setPreferredSize(new TerminalSize(1, 6)))),
+                                .addComponent(new ScrollBar(Direction.HORIZONTAL).setPreferredSize(TerminalSize.of(6, 1)))
+                                .addComponent(new ScrollBar(Direction.VERTICAL).setPreferredSize(TerminalSize.of(1, 6)))),
                 new ThemedComponentTestDialog(textGUI, "Separator",
                         new Panel()
                                 .setLayoutManager(new GridLayout(2))
-                                .addComponent(new Separator(Direction.HORIZONTAL).setPreferredSize(new TerminalSize(6, 1)))
-                                .addComponent(new Separator(Direction.VERTICAL).setPreferredSize(new TerminalSize(1, 6)))),
+                                .addComponent(new Separator(Direction.HORIZONTAL).setPreferredSize(TerminalSize.of(6, 1)))
+                                .addComponent(new Separator(Direction.VERTICAL).setPreferredSize(TerminalSize.of(1, 6)))),
                 new ThemedComponentTestDialog(textGUI, "Table",
                         new Table<String>("Column #1", "Column #2", "Column #3")
                                 .setTableModel(
@@ -146,20 +146,20 @@ public class ThemeTest extends TestBase {
                                 .addComponent(
                                         Panels.horizontal(
                                                 new TextBox("Single-line text box")
-                                                        .setPreferredSize(new TerminalSize(15, 1)),
+                                                        .setPreferredSize(TerminalSize.of(15, 1)),
                                                 new TextBox("Single-line read-only")
-                                                        .setPreferredSize(new TerminalSize(15, 1))
+                                                        .setPreferredSize(TerminalSize.of(15, 1))
                                                         .setReadOnly(true)))
                                 .addComponent(new EmptySpace())
                                 .addComponent(
                                         Panels.horizontal(
-                                            new TextBox(new TerminalSize(15, 5), "Multi\nline\ntext\nbox\nHere is a very long line that doesn't fit")
+                                            new TextBox(TerminalSize.of(15, 5), "Multi\nline\ntext\nbox\nHere is a very long line that doesn't fit")
                                                     .setVerticalFocusSwitching(false),
-                                            new TextBox(new TerminalSize(15, 5), "Multi\nline\nread-only\ntext\nbox\n" +
+                                            new TextBox(TerminalSize.of(15, 5), "Multi\nline\nread-only\ntext\nbox\n" +
                                                     "Here is a very long line that doesn't fit")
                                                     .setReadOnly(true))))
         };
-        ActionListBox listBox = new ActionListBox(new TerminalSize(15, 7)).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.CENTER));
+        ActionListBox listBox = new ActionListBox(TerminalSize.of(15, 7)).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.CENTER));
         for(ThemedComponentTestDialog themedComponentTestDialog: componentTestDialogs) {
             listBox.addItem(themedComponentTestDialog);
         }
@@ -283,8 +283,8 @@ public class ThemeTest extends TestBase {
         window2.setTheme(LanternaThemes.getRegisteredTheme(themes.get(windowThemeIndex[1])));
         window2.setPosition(TerminalPosition.of(30, 1));
 
-        final Panel leftHolder = new Panel().setPreferredSize(new TerminalSize(15, 4));
-        final Panel rightHolder = new Panel().setPreferredSize(new TerminalSize(15, 4));
+        final Panel leftHolder = new Panel().setPreferredSize(TerminalSize.of(15, 4));
+        final Panel rightHolder = new Panel().setPreferredSize(TerminalSize.of(15, 4));
         GridLayout layoutManager = new GridLayout(1);
         leftHolder.setLayoutManager(layoutManager);
         rightHolder.setLayoutManager(layoutManager);

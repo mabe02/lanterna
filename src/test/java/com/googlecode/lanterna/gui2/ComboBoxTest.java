@@ -53,7 +53,7 @@ public class ComboBoxTest extends TestBase {
         comboBoxCJK.addItem("ウィキペディアは誰でも編集できるフリー百科事典です");
         comboBoxCJK.addItem("위키백과는 전 세계 여러 언어로 만들어 나가는 자유 백과사전으로, 누구나 참여하실 수 있습니다.");
         comboBoxCJK.addItem("This is a string without double-width characters");
-        comboBoxCJK.setPreferredSize(new TerminalSize(13, 1));
+        comboBoxCJK.setPreferredSize(TerminalSize.of(13, 1));
 
         mainPanel.addComponent(Panels.horizontal(
                 comboBoxReadOnly.withBorder(Borders.singleLine("Read-only")),
@@ -61,14 +61,14 @@ public class ComboBoxTest extends TestBase {
                 comboBoxCJK.withBorder(Borders.singleLine("CJK"))));
         mainPanel.addComponent(new EmptySpace(TerminalSize.OF_1x1));
 
-        final TextBox textBoxNewItem = new TextBox(new TerminalSize(20, 1));
+        final TextBox textBoxNewItem = new TextBox(TerminalSize.of(20, 1));
         Button buttonAddItem = new Button("Add", () -> {
             comboBoxEditable.addItem(textBoxNewItem.getText());
             comboBoxReadOnly.addItem(textBoxNewItem.getText());
             textBoxNewItem.setText("");
             window.setFocusedInteractable(textBoxNewItem);
         });
-        final TextBox textBoxSetSelectedIndex = new TextBox(new TerminalSize(20, 1), "0");
+        final TextBox textBoxSetSelectedIndex = new TextBox(TerminalSize.of(20, 1), "0");
         textBoxSetSelectedIndex.setValidationPattern(Pattern.compile("-?[0-9]+"));
         Button buttonSetSelectedIndex = new Button("Set Selected Index", () -> {
             try {
@@ -79,7 +79,7 @@ public class ComboBoxTest extends TestBase {
                 MessageDialog.showMessageDialog(textGUI, e.getClass().getName(), e.getMessage(), MessageDialogButton.OK);
             }
         });
-        final TextBox textBoxSetSelectedItem = new TextBox(new TerminalSize(20, 1));
+        final TextBox textBoxSetSelectedItem = new TextBox(TerminalSize.of(20, 1));
         Button buttonSetSelectedItem = new Button("Set Selected Item", () -> {
             try {
                 comboBoxEditable.setSelectedItem(textBoxSetSelectedItem.getText());

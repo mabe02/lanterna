@@ -41,11 +41,11 @@ public class DrawImageTest {
         TextGraphics textGraphics = image.newTextGraphics();
         textGraphics.drawRectangle(
                 TerminalPosition.OF_0x0,
-                new TerminalSize(5, 5),
+                TerminalSize.of(5, 5),
                 imageCharacter.withBackgroundColor(TextColor.ANSI.RED));
         textGraphics.drawRectangle(
                 TerminalPosition.OF_1x1,
-                new TerminalSize(3, 3),
+                TerminalSize.of(3, 3),
                 imageCharacter.withBackgroundColor(TextColor.ANSI.MAGENTA));
         textGraphics.setCharacter(2, 2,
                 imageCharacter.withBackgroundColor(TextColor.ANSI.CYAN));

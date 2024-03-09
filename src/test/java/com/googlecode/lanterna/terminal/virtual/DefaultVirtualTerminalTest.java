@@ -42,7 +42,7 @@ public class DefaultVirtualTerminalTest {
     public void initialTerminalStateIsAsExpected() {
         assertEquals(TerminalPosition.OF_0x0, virtualTerminal.getCursorPosition());
         TerminalSize terminalSize = virtualTerminal.getTerminalSize();
-        assertEquals(new TerminalSize(80, 24), terminalSize);
+        assertEquals(TerminalSize.of(80, 24), terminalSize);
 
         for(int row = 0; row < terminalSize.getRows(); row++) {
             for(int column = 0; column < terminalSize.getColumns(); column++) {
@@ -112,7 +112,7 @@ public class DefaultVirtualTerminalTest {
 
     @Test
     public void clearAllMarksEverythingAsDirtyAndEverythingInTheTerminalIsReplacedWithDefaultCharacter() {
-        virtualTerminal.setTerminalSize(new TerminalSize(10, 5));
+        virtualTerminal.setTerminalSize(TerminalSize.of(10, 5));
         assertEquals(TerminalPosition.OF_0x0, virtualTerminal.getCursorPosition());
         virtualTerminal.putCharacter(new TextCharacter('H'));
         virtualTerminal.putCharacter(new TextCharacter('E'));
@@ -134,7 +134,7 @@ public class DefaultVirtualTerminalTest {
 
     @Test
     public void replacingAllContentTriggersWholeTerminalIsDirty() {
-        virtualTerminal.setTerminalSize(new TerminalSize(5, 3));
+        virtualTerminal.setTerminalSize(TerminalSize.of(5, 3));
         assertEquals(TerminalPosition.OF_0x0, virtualTerminal.getCursorPosition());
         virtualTerminal.putCharacter(new TextCharacter('H'));
         virtualTerminal.putCharacter(new TextCharacter('E'));
@@ -157,7 +157,7 @@ public class DefaultVirtualTerminalTest {
 
     @Test
     public void tooLongLinesWrap() {
-        virtualTerminal.setTerminalSize(new TerminalSize(5, 5));
+        virtualTerminal.setTerminalSize(TerminalSize.of(5, 5));
         assertEquals(TerminalPosition.OF_0x0, virtualTerminal.getCursorPosition());
         virtualTerminal.putCharacter(new TextCharacter('H'));
         virtualTerminal.putCharacter(new TextCharacter('E'));
@@ -175,7 +175,7 @@ public class DefaultVirtualTerminalTest {
 
     @Test
     public void makeSureDoubleWidthCharactersWrapProperly() {
-        virtualTerminal.setTerminalSize(new TerminalSize(9, 5));
+        virtualTerminal.setTerminalSize(TerminalSize.of(9, 5));
         assertEquals(TerminalPosition.OF_0x0, virtualTerminal.getCursorPosition());
         virtualTerminal.putCharacter(new TextCharacter('こ'));
         virtualTerminal.putCharacter(new TextCharacter('ん'));
@@ -196,7 +196,7 @@ public class DefaultVirtualTerminalTest {
 
     @Test
     public void overwritingDoubleWidthCharactersEraseTheOtherHalf() {
-        virtualTerminal.setTerminalSize(new TerminalSize(5, 5));
+        virtualTerminal.setTerminalSize(TerminalSize.of(5, 5));
         virtualTerminal.putCharacter(new TextCharacter('画'));
         virtualTerminal.putCharacter(new TextCharacter('面'));
 
@@ -220,7 +220,7 @@ public class DefaultVirtualTerminalTest {
 
     @Test
     public void testCursorPositionUpdatesWhenTerminalSizeChanges() {
-        virtualTerminal.setTerminalSize(new TerminalSize(3, 3));
+        virtualTerminal.setTerminalSize(TerminalSize.of(3, 3));
         virtualTerminal.putCharacter('\n');
         virtualTerminal.putCharacter('\n');
         assertEquals(TerminalPosition.of(0, 2), virtualTerminal.getCursorPosition());
@@ -230,29 +230,29 @@ public class DefaultVirtualTerminalTest {
         assertEquals(TerminalPosition.of(0, 2), virtualTerminal.getCursorPosition());
 
         // Shrink viewport
-        virtualTerminal.setTerminalSize(new TerminalSize(3, 2));
+        virtualTerminal.setTerminalSize(TerminalSize.of(3, 2));
         assertEquals(TerminalPosition.of(0, 1), virtualTerminal.getCursorPosition());
 
         // Restore
-        virtualTerminal.setTerminalSize(new TerminalSize(3, 3));
+        virtualTerminal.setTerminalSize(TerminalSize.of(3, 3));
         assertEquals(TerminalPosition.of(0, 2), virtualTerminal.getCursorPosition());
 
         // Enlarge
-        virtualTerminal.setTerminalSize(new TerminalSize(3, 4));
+        virtualTerminal.setTerminalSize(TerminalSize.of(3, 4));
         assertEquals(TerminalPosition.of(0, 3), virtualTerminal.getCursorPosition());
-        virtualTerminal.setTerminalSize(new TerminalSize(3, 5));
+        virtualTerminal.setTerminalSize(TerminalSize.of(3, 5));
         assertEquals(TerminalPosition.of(0, 4), virtualTerminal.getCursorPosition());
 
         // We've reached the total size of the buffer, enlarging it further shouldn't affect the cursor position
-        virtualTerminal.setTerminalSize(new TerminalSize(3, 6));
+        virtualTerminal.setTerminalSize(TerminalSize.of(3, 6));
         assertEquals(TerminalPosition.of(0, 4), virtualTerminal.getCursorPosition());
-        virtualTerminal.setTerminalSize(new TerminalSize(3, 7));
+        virtualTerminal.setTerminalSize(TerminalSize.of(3, 7));
         assertEquals(TerminalPosition.of(0, 4), virtualTerminal.getCursorPosition());
     }
 
     @Test
     public void textScrollingOutOfTheBacklogDisappears() {
-        virtualTerminal.setTerminalSize(new TerminalSize(10, 3));
+        virtualTerminal.setTerminalSize(TerminalSize.of(10, 3));
         // Backlog of 1, meaning viewport size + 1 row
         virtualTerminal.setBacklogSize(1);
         putString("Line 1\n");
@@ -280,7 +280,7 @@ public class DefaultVirtualTerminalTest {
         assertEquals(TerminalPosition.of(0, 3), virtualTerminal.getCursorBufferPosition());
 
         // Make terminal bigger
-        virtualTerminal.setTerminalSize(new TerminalSize(10, 4));
+        virtualTerminal.setTerminalSize(TerminalSize.of(10, 4));
 
         // Now "Line 2" should be the top row
         assertLineEquals("Line 2", 0);
@@ -291,7 +291,7 @@ public class DefaultVirtualTerminalTest {
         assertEquals(TerminalPosition.of(0, 3), virtualTerminal.getCursorBufferPosition());
 
         // Make it even bigger
-        virtualTerminal.setTerminalSize(new TerminalSize(10, 5));
+        virtualTerminal.setTerminalSize(TerminalSize.of(10, 5));
 
         // Should make no difference, the viewport will add an empty row at the end, because there is nothing in the
         // backlog to insert at the top
@@ -306,7 +306,7 @@ public class DefaultVirtualTerminalTest {
 
     @Test
     public void backlogTrimmingAdjustsCursorPositionAndDirtyCells() {
-        virtualTerminal.setTerminalSize(new TerminalSize(80, 3));
+        virtualTerminal.setTerminalSize(TerminalSize.of(80, 3));
         virtualTerminal.setBacklogSize(0);
         virtualTerminal.putCharacter(fromChar('A'));
         virtualTerminal.setCursorPosition(TerminalPosition.of(1, 1));
@@ -338,7 +338,7 @@ public class DefaultVirtualTerminalTest {
     @Test
     public void testPrivateMode() {
         final int ROWS = 5;
-        virtualTerminal.setTerminalSize(new TerminalSize(20, ROWS));
+        virtualTerminal.setTerminalSize(TerminalSize.of(20, ROWS));
         for(int i = 1; i <= ROWS + 2; i++) {
             putString("Line " + i + "\n");
         }
@@ -372,7 +372,7 @@ public class DefaultVirtualTerminalTest {
     @Test
     public void testForEachLine() {
         final int ROWS = 40;
-        virtualTerminal.setTerminalSize(new TerminalSize(10, 5));
+        virtualTerminal.setTerminalSize(TerminalSize.of(10, 5));
         for(int i = 1; i <= ROWS; i++) {
             putString("Line " + i + "\n");
         }
@@ -486,7 +486,7 @@ public class DefaultVirtualTerminalTest {
 
         virtualTerminal.flush();
         virtualTerminal.bell();
-        virtualTerminal.setTerminalSize(new TerminalSize(40, 10));
+        virtualTerminal.setTerminalSize(TerminalSize.of(40, 10));
         assertEquals(0, flushCounter.get());
         assertEquals(0, bellCounter.get());
         assertEquals(0, resizeCounter.get());
@@ -495,7 +495,7 @@ public class DefaultVirtualTerminalTest {
         virtualTerminal.addVirtualTerminalListener(listener);
         virtualTerminal.flush();
         virtualTerminal.bell();
-        virtualTerminal.setTerminalSize(new TerminalSize(80, 20));
+        virtualTerminal.setTerminalSize(TerminalSize.of(80, 20));
         assertEquals(1, flushCounter.get());
         assertEquals(1, bellCounter.get());
         assertEquals(1, resizeCounter.get());
@@ -507,7 +507,7 @@ public class DefaultVirtualTerminalTest {
         virtualTerminal.removeVirtualTerminalListener(listener);
         virtualTerminal.flush();
         virtualTerminal.bell();
-        virtualTerminal.setTerminalSize(new TerminalSize(40, 10));
+        virtualTerminal.setTerminalSize(TerminalSize.of(40, 10));
         virtualTerminal.close();
         assertEquals(1, flushCounter.get());
         assertEquals(1, bellCounter.get());
@@ -517,7 +517,7 @@ public class DefaultVirtualTerminalTest {
 
     @Test
     public void settingCursorOutsideOfTerminalWindowWillBeAdjusted() {
-        virtualTerminal.setTerminalSize(new TerminalSize(10, 5));
+        virtualTerminal.setTerminalSize(TerminalSize.of(10, 5));
         virtualTerminal.setCursorPosition(20, 10);
         assertEquals(TerminalPosition.of(9, 4), virtualTerminal.getCursorPosition());
 
@@ -530,7 +530,7 @@ public class DefaultVirtualTerminalTest {
 
     @Test
     public void puttingCharacterInLastColumnDoesntMoveCursorToNextLine() {
-        virtualTerminal.setTerminalSize(new TerminalSize(10, 5));
+        virtualTerminal.setTerminalSize(TerminalSize.of(10, 5));
         virtualTerminal.setCursorPosition(8, 2);
         assertEquals(TerminalPosition.of(8, 2), virtualTerminal.getCursorPosition());
         virtualTerminal.putCharacter('A');

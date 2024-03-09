@@ -192,7 +192,7 @@ public class CheckBox extends AbstractInteractableComponent<CheckBox> {
             if(!component.label.isEmpty()) {
                 width += 1 + TerminalTextUtils.getColumnWidth(component.label);
             }
-            return new TerminalSize(width, 1);
+            return TerminalSize.of(width, 1);
         }
 
         @Override

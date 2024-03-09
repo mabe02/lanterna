@@ -150,7 +150,7 @@ public class Tutorial03 {
                  */
                 String sizeLabel = "Terminal Size: " + terminalSize;
                 TerminalPosition labelBoxTopLeft = TerminalPosition.of(1, 1);
-                TerminalSize labelBoxSize = new TerminalSize(sizeLabel.length() + 2, 3);
+                TerminalSize labelBoxSize = TerminalSize.of(sizeLabel.length() + 2, 3);
                 TerminalPosition labelBoxTopRightCorner = labelBoxTopLeft.withRelativeColumn(labelBoxSize.getColumns() - 1);
                 TextGraphics textGraphics = screen.newTextGraphics();
                 //This isn't really needed as we are overwriting everything below anyway, but just for demonstrative purpose

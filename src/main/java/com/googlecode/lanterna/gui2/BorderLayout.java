@@ -98,7 +98,7 @@ public class BorderLayout implements LayoutManager {
                     Math.max(
                         layout.containsKey(Location.TOP) ? layout.get(Location.TOP).getPreferredSize().getColumns() : 0,
                         layout.containsKey(Location.BOTTOM) ? layout.get(Location.BOTTOM).getPreferredSize().getColumns() : 0));
-        return new TerminalSize(preferredWidth, preferredHeight);
+        return TerminalSize.of(preferredWidth, preferredHeight);
     }
 
     @Override
@@ -116,7 +116,7 @@ public class BorderLayout implements LayoutManager {
             Component topComponent = layout.get(Location.TOP);
             topComponentHeight = Math.min(topComponent.getPreferredSize().getRows(), availableVerticalSpace);
             topComponent.setPosition(TerminalPosition.OF_0x0);
-            topComponent.setSize(new TerminalSize(availableHorizontalSpace, topComponentHeight));
+            topComponent.setSize(TerminalSize.of(availableHorizontalSpace, topComponentHeight));
             availableVerticalSpace -= topComponentHeight;
         }
 
@@ -125,7 +125,7 @@ public class BorderLayout implements LayoutManager {
             Component bottomComponent = layout.get(Location.BOTTOM);
             int bottomComponentHeight = Math.min(bottomComponent.getPreferredSize().getRows(), availableVerticalSpace);
             bottomComponent.setPosition(TerminalPosition.of(0, area.getRows() - bottomComponentHeight));
-            bottomComponent.setSize(new TerminalSize(availableHorizontalSpace, bottomComponentHeight));
+            bottomComponent.setSize(TerminalSize.of(availableHorizontalSpace, bottomComponentHeight));
             availableVerticalSpace -= bottomComponentHeight;
         }
 
@@ -134,20 +134,20 @@ public class BorderLayout implements LayoutManager {
             Component leftComponent = layout.get(Location.LEFT);
             leftComponentWidth = Math.min(leftComponent.getPreferredSize().getColumns(), availableHorizontalSpace);
             leftComponent.setPosition(TerminalPosition.of(0, topComponentHeight));
-            leftComponent.setSize(new TerminalSize(leftComponentWidth, availableVerticalSpace));
+            leftComponent.setSize(TerminalSize.of(leftComponentWidth, availableVerticalSpace));
             availableHorizontalSpace -= leftComponentWidth;
         }
         if(layout.containsKey(Location.RIGHT)) {
             Component rightComponent = layout.get(Location.RIGHT);
             int rightComponentWidth = Math.min(rightComponent.getPreferredSize().getColumns(), availableHorizontalSpace);
             rightComponent.setPosition(TerminalPosition.of(area.getColumns() - rightComponentWidth, topComponentHeight));
-            rightComponent.setSize(new TerminalSize(rightComponentWidth, availableVerticalSpace));
+            rightComponent.setSize(TerminalSize.of(rightComponentWidth, availableVerticalSpace));
             availableHorizontalSpace -= rightComponentWidth;
         }
         if(layout.containsKey(Location.CENTER)) {
             Component centerComponent = layout.get(Location.CENTER);
             centerComponent.setPosition(TerminalPosition.of(leftComponentWidth, topComponentHeight));
-            centerComponent.setSize(new TerminalSize(availableHorizontalSpace, availableVerticalSpace));
+            centerComponent.setSize(TerminalSize.of(availableHorizontalSpace, availableVerticalSpace));
         }
         
         //Set the remaining components to 0x0

@@ -104,7 +104,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
         //This is kind of meaningless since we don't know how large the
         //component is at this point, but we should set it to something
         if(initialTerminalSize == null) {
-            initialTerminalSize = new TerminalSize(80, 24);
+            initialTerminalSize = TerminalSize.of(80, 24);
         }
         this.virtualTerminal = new DefaultVirtualTerminal(initialTerminalSize);
         this.keyQueue = new LinkedBlockingQueue<>();

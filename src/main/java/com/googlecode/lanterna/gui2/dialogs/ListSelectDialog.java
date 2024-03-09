@@ -137,7 +137,7 @@ public class ListSelectDialog<T> extends DialogWindow {
             width = Math.max(width, TerminalTextUtils.getColumnWidth(item.toString()));
         }
         width += 2;
-        return showDialog(textGUI, title, description, new TerminalSize(width, listBoxHeight), items);
+        return showDialog(textGUI, title, description, TerminalSize.of(width, listBoxHeight), items);
     }
 
     /**

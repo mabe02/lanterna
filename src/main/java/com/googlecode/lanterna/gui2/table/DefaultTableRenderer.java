@@ -358,7 +358,7 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
             }
         }
 
-        cachedSize = new TerminalSize(preferredColumnSize, preferredRowSize);
+        cachedSize = TerminalSize.of(preferredColumnSize, preferredRowSize);
         return cachedSize;
     }
 
@@ -541,7 +541,7 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
         int endColumnIndex = Math.min(headers.size(), viewLeftColumn + visibleColumns);
         for(int index = viewLeftColumn; index < endColumnIndex; index++) {
             String label = headers.get(index);
-            TerminalSize size = new TerminalSize(columnSizes.get(index), headerSizeInRows);
+            TerminalSize size = TerminalSize.of(columnSizes.get(index), headerSizeInRows);
             tableHeaderRenderer.drawHeader(table, label, index, graphics.newTextGraphics(TerminalPosition.of(leftPosition, 0), size));
             leftPosition += size.getColumns();
             if(headerHorizontalBorderStyle != TableCellBorderStyle.NONE && index < (endColumnIndex - 1)) {
@@ -672,7 +672,7 @@ public class DefaultTableRenderer<V> implements TableRenderer<V> {
                 }
                 V cell = row.get(columnIndex);
                 TerminalPosition cellPosition = TerminalPosition.of(leftPosition, topPosition);
-                TerminalSize cellArea = new TerminalSize(columnSizes.get(columnIndex), preferredRowSizes.get(rowIndex));
+                TerminalSize cellArea = TerminalSize.of(columnSizes.get(columnIndex), preferredRowSizes.get(rowIndex));
                 tableCellRenderer.drawCell(table, cell, columnIndex, rowIndex, graphics.newTextGraphics(cellPosition, cellArea));
                 leftPosition += cellArea.getColumns();
 

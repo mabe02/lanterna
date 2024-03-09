@@ -33,7 +33,7 @@ public class DefaultTableHeaderRenderer<V> implements TableHeaderRenderer<V> {
         if(label == null) {
             return TerminalSize.OF_0x0;
         }
-        return new TerminalSize(TerminalTextUtils.getColumnWidth(label), 1);
+        return TerminalSize.of(TerminalTextUtils.getColumnWidth(label), 1);
     }
 
     @Override

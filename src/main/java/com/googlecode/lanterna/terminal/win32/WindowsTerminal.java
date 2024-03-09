@@ -117,7 +117,7 @@ public class WindowsTerminal extends UnixLikeTerminal {
 		Wincon.INSTANCE.GetConsoleScreenBufferInfo(CONSOLE_OUTPUT.getHandle(), screenBufferInfo);
 		int columns = screenBufferInfo.srWindow.Right - screenBufferInfo.srWindow.Left + 1;
 		int rows = screenBufferInfo.srWindow.Bottom - screenBufferInfo.srWindow.Top + 1;
-		return new TerminalSize(columns, rows);
+		return TerminalSize.of(columns, rows);
 	}
 
 	@Override

@@ -74,7 +74,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
      * Default constructor, this creates a single-line {@code TextBox} of size 10 which is initially empty
      */
     public TextBox() {
-        this(new TerminalSize(10, 1), "", Style.SINGLE_LINE);
+        this(TerminalSize.of(10, 1), "", Style.SINGLE_LINE);
     }
 
     /**
@@ -148,7 +148,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
         this.caretPosition = TerminalPosition.of(getLine(0).length(), 0);
 
         if (preferredSize == null) {
-            preferredSize = new TerminalSize(Math.max(10, longestRow), lines.size());
+            preferredSize = TerminalSize.of(Math.max(10, longestRow), lines.size());
         }
         setPreferredSize(preferredSize);
     }
@@ -852,7 +852,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
 
         @Override
         public TerminalSize getPreferredSize(TextBox component) {
-            return new TerminalSize(component.longestRow, component.lines.size());
+            return TerminalSize.of(component.longestRow, component.lines.size());
         }
 
         /**
@@ -897,7 +897,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
                 verticalScrollBar.setScrollPosition(viewTopLeft.getRow());
                 verticalScrollBar.draw(graphics.newTextGraphics(
                         TerminalPosition.of(graphics.getSize().getColumns() - 1, 0),
-                        new TerminalSize(1, graphics.getSize().getRows() - (drawHorizontalScrollBar ? 1 : 0))));
+                        TerminalSize.of(1, graphics.getSize().getRows() - (drawHorizontalScrollBar ? 1 : 0))));
             }
             if(drawHorizontalScrollBar) {
                 horizontalScrollBar.onAdded(component.getParent());
@@ -906,7 +906,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
                 horizontalScrollBar.setScrollPosition(viewTopLeft.getColumn());
                 horizontalScrollBar.draw(graphics.newTextGraphics(
                         TerminalPosition.of(0, graphics.getSize().getRows() - 1),
-                        new TerminalSize(graphics.getSize().getColumns() - (drawVerticalScrollBar ? 1 : 0), 1)));
+                        TerminalSize.of(graphics.getSize().getColumns() - (drawVerticalScrollBar ? 1 : 0), 1)));
             }
         }
 

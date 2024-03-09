@@ -65,7 +65,7 @@ public class Issue452Test {
     void displayForRenderering(Component component) throws Exception {
         // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
         // making use of the drawing routines in the renderer to know the size this thing is
-        Terminal terminal = new DefaultVirtualTerminal(new TerminalSize(100, 100));
+        Terminal terminal = new DefaultVirtualTerminal(TerminalSize.of(100, 100));
         TerminalScreen screen = new TerminalScreen(terminal);
         screen.startScreen();
         WindowBasedTextGUI textGUI = new MultiWindowTextGUI(screen);

@@ -169,7 +169,7 @@ public class Button extends AbstractInteractableComponent<Button> {
 
         @Override
         public TerminalSize getPreferredSize(Button button) {
-            return new TerminalSize(Math.max(8, TerminalTextUtils.getColumnWidth(button.getLabel()) + 2), 1);
+            return TerminalSize.of(Math.max(8, TerminalTextUtils.getColumnWidth(button.getLabel()) + 2), 1);
         }
 
         @Override
@@ -231,7 +231,7 @@ public class Button extends AbstractInteractableComponent<Button> {
 
         @Override
         public TerminalSize getPreferredSize(Button component) {
-            return new TerminalSize(TerminalTextUtils.getColumnWidth(component.getLabel()), 1);
+            return TerminalSize.of(TerminalTextUtils.getColumnWidth(component.getLabel()), 1);
         }
 
         @Override
@@ -262,7 +262,7 @@ public class Button extends AbstractInteractableComponent<Button> {
 
         @Override
         public TerminalSize getPreferredSize(Button component) {
-            return new TerminalSize(TerminalTextUtils.getColumnWidth(component.getLabel()) + 5, 4);
+            return TerminalSize.of(TerminalTextUtils.getColumnWidth(component.getLabel()) + 5, 4);
         }
 
         @Override
