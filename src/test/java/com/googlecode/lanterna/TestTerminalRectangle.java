@@ -24,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertThrows;
 
 /**
  * @author ginkoblongata
@@ -75,18 +76,74 @@ public class TestTerminalRectangle {
     }
     
     @Test
+    public void test_withX() {
+        assertTrue(tr(0, 0, 12, 13).withX(3).equals(3, 0, 12, 13));
+        assertTrue(tr(0, 0, 12, 13).withX(-3).equals(-3, 0, 12, 13));
+    }
+    @Test
+    public void test_withY() {
+        assertTrue(tr(0, 0, 12, 13).withY(5).equals(0, 5, 12, 13));
+        assertTrue(tr(0, 0, 12, 13).withY(-5).equals(0, -5, 12, 13));
+    }
+    @Test
     public void test_withWidth() {
-        TerminalRectangle a = tr(0, 0, 35, 40);
-        assertTrue(a.width() == 35);
-        assertTrue(a.withWidth(20).equals(0, 0, 20, 40));
+        assertTrue(tr(0, 0, 35, 40).withWidth(20).equals(0, 0, 20, 40));
+        // TerminalSize cannot be negative
+        assertThrows(Exception.class, () -> tr(0, 0, 35, 40).withWidth(-100));
     }
     @Test
     public void test_withHeight() {
-        TerminalRectangle a = tr(0, 0, 35, 40);
-        assertTrue(a.height() == 40);
-        assertTrue(a.withHeight(15).equals(0, 0, 35, 15));
+        assertTrue(tr(0, 0, 35, 40).withHeight(15).equals(0, 0, 35, 15));
+        // TerminalSize cannot be negative
+        assertThrows(Exception.class, () -> tr(0, 0, 35, 40).withHeight(-100));
+    }
+    @Test
+    public void test_withPosition() {
+        assertTrue(tr(0, 0, 35, 40).withPosition(15, 13).equals(15, 13, 35, 40));
+        assertTrue(tr(0, 0, 35, 40).withPosition(TerminalPosition.of(15, 13)).equals(15, 13, 35, 40));
+    }
+    @Test
+    public void test_withSize() {
+        assertTrue(tr(1, 2, 35, 40).withSize(15, 16).equals(1, 2, 15, 16));
+        assertTrue(tr(1, 2, 35, 40).withSize(TerminalSize.of(15, 16)).equals(1, 2, 15, 16));
+        assertThrows(Exception.class, () -> tr(0, 0, 35, 40).withSize(5, -5));
+        assertThrows(Exception.class, () -> tr(0, 0, 35, 40).withSize(-5, 5));
+        assertThrows(Exception.class, () -> tr(0, 0, 35, 40).withSize(TerminalSize.of(4, -4)));
+        assertThrows(Exception.class, () -> tr(0, 0, 35, 40).withSize(TerminalSize.of(-4, 4)));
     }
     
+    @Test
+    public void test_whenContains() {
+        String[] text = new String[1];
+
+        text[0] = "";
+        assertTrue(tr(10, 10, 5, 5).whenContains(12, 12, () -> text[0] = "inside"));
+        assertEquals(text[0], "inside");
+
+        text[0] = "";
+        assertTrue(tr(10, 10, 5, 5).whenContains(10, 10, () -> text[0] = "inside"));
+        assertEquals(text[0], "inside");
+
+        text[0] = "";
+        assertFalse(tr(10, 10, 5, 5).whenContains(15, 15, () -> text[0] = "<-outside->"));
+        assertEquals(text[0], "");
+
+        text[0] = "";
+        assertFalse(tr(10, 10, 5, 5).whenContains(9, 12, () -> text[0] = "<-left->"));
+        assertEquals(text[0], "");
+
+        text[0] = "";
+        assertFalse(tr(10, 10, 5, 5).whenContains(15, 12, () -> text[0] = "<-right->"));
+        assertEquals(text[0], "");
+
+        text[0] = "";
+        assertFalse(tr(10, 10, 5, 5).whenContains(12, 9, () -> text[0] = "<-above->"));
+        assertEquals(text[0], "");
+
+        text[0] = "";
+        assertFalse(tr(10, 10, 5, 5).whenContains(12, 15, () -> text[0] = "<-below->"));
+        assertEquals(text[0], "");
+    }
     
     @Test
     public void test_hashCode() {
@@ -103,9 +160,11 @@ public class TestTerminalRectangle {
         assertNotSameSystemIdentityHashCode(a, b);
         assertTrue(a.equals(b));
         assertTrue(a.equals(0, 0, 8, 9));
-        TerminalRectangle c = tr(0,0, 4, 9);
+        assertTrue(a.equals(TerminalPosition.of(0, 0), TerminalSize.of(8, 9)));
+        TerminalRectangle c = tr(0, 0, 4, 9);
         assertFalse(c.equals(a));
         assertFalse(c.equals(0, 0, 5, 9));
+        assertFalse(c.equals(TerminalPosition.of(0, 0), TerminalSize.of(5, 9)));
     }
 
 }

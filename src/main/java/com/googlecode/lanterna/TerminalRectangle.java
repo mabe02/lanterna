@@ -79,8 +79,25 @@ public class TerminalRectangle {
         this.size = size;
     }
     /**
-     * Obtain a TerminalRectangle based on this rect, but with the supplied width
-     * @param Width of the resulting rect, in columns
+     * Obtain a TerminalRectangle based on this TerminalRectangle, but with the supplied x position
+     * @param x position of the resulting TerminalRectangle
+     * @return a TerminalRectangle based on this one, but with the supplied x position
+     */
+    public TerminalRectangle withX(int x) {
+        return TerminalRectangle.of(position.withColumn(x), size);
+    }
+    /**
+     * Obtain a TerminalRectangle based on this TerminalRectangle, but with the supplied y position
+     * @param y position of the resulting TerminalRectangle
+     * @return a TerminalRectangle based on this one, but with the supplied y position
+     */
+    public TerminalRectangle withY(int y) {
+        return TerminalRectangle.of(position.withRow(y), size);
+    }
+
+    /**
+     * Obtain a TerminalRectangle based on this TerminalRectangle, but with the supplied width
+     * @param Width of the resulting TerminalRectangle, in columns
      * @return a TerminalRectangle based on this one, but with the supplied width
      */
     public TerminalRectangle withWidth(int width) {
@@ -94,6 +111,41 @@ public class TerminalRectangle {
     public TerminalRectangle withHeight(int height) {
         return TerminalRectangle.of(position, size.withRows(height));
     }
+    /**
+     * Obtain a TerminalRectangle based on this TerminalRectangle, but with the supplied position
+     * @param position of the resulting TerminalRectangle
+     * @return a TerminalRectangle based on this one, but with the supplied position
+     */
+    public TerminalRectangle withPosition(TerminalPosition position) {
+        return TerminalRectangle.of(position, size);
+    }
+    /**
+     * Obtain a TerminalRectangle based on this TerminalRectangle, but with the supplied position
+     * @param x position of the resulting TerminalRectangle
+     * @param y position of the resulting TerminalRectangle
+     * @return a TerminalRectangle based on this one, but with the supplied position
+     */
+    public TerminalRectangle withPosition(int x, int y) {
+        return TerminalRectangle.of(x, y, size.getColumns(), size.getRows());
+    }
+    /**
+     * Obtain a TerminalRectangle based on this TerminalRectangle, but with the supplied size
+     * @param size of the resulting TerminalRectangle
+     * @return a TerminalRectangle based on this one, but with the supplied size
+     */
+    public TerminalRectangle withSize(TerminalSize size) {
+        return TerminalRectangle.of(position, size);
+    }
+    /**
+     * Obtain a TerminalRectangle based on this TerminalRectangle, but with the supplied size
+     * @param columns size of the resulting TerminalRectangle
+     * @param rows size of the resulting TerminalRectangle
+     * @return a TerminalRectangle based on this one, but with the supplied size
+     */
+    public TerminalRectangle withSize(int columns, int rows) {
+        return TerminalRectangle.of(position.getColumn(), position.getRow(), columns, rows);
+    }
+
     public boolean whenContains(TerminalPosition p, Runnable op) {
         return whenContains(p.getColumn(), p.getRow(), op);
     }
