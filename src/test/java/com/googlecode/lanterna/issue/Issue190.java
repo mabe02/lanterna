@@ -30,7 +30,7 @@ import java.util.Arrays;
 public class Issue190 {
     public static void main(String[] args) throws IOException {
         DefaultTerminalFactory factory = new DefaultTerminalFactory();
-        factory.setInitialTerminalSize(new TerminalSize(150,50));
+        factory.setInitialTerminalSize(TerminalSize.of(150,50));
         factory.setTerminalEmulatorTitle("name");
         Terminal terminal = factory.createTerminal();
         TerminalScreen screen = new TerminalScreen(terminal);

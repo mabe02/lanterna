@@ -41,7 +41,7 @@ public class FileDialogBuilder extends AbstractDialogBuilder<FileDialogBuilder, 
     public FileDialogBuilder() {
         super("FileDialog");
         actionLabel = LocalizedString.OK.toString();
-        suggestedSize = new TerminalSize(45, 10);
+        suggestedSize = TerminalSize.of(45, 10);
         showHiddenDirectories = false;
         selectedFile = null;
     }

@@ -214,7 +214,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
         if (getScreen() instanceof VirtualScreen) {
             // If the user has passed in a virtual screen, we should calculate the minimum size required and tell it.
             // Previously the constructor always wrapped the screen in a VirtualScreen, but now we need to check.
-            TerminalSize minimumTerminalSize = TerminalSize.ZERO;
+            TerminalSize minimumTerminalSize = TerminalSize.OF_0x0;
             for (Window window : getWindows()) {
                 if (window.isVisible()) {
                     if (window.getHints().contains(Window.Hint.FULL_SCREEN) ||
@@ -265,7 +265,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
                 }
                 TextGUIGraphics windowGraphics = new DefaultTextGUIGraphics(this, textImage.newTextGraphics());
                 TextGUIGraphics insideWindowDecorationsGraphics = windowGraphics;
-                TerminalPosition contentOffset = TerminalPosition.TOP_LEFT_CORNER;
+                TerminalPosition contentOffset = TerminalPosition.OF_0x0;
                 if (!window.getHints().contains(Window.Hint.NO_DECORATIONS)) {
                     WindowDecorationRenderer decorationRenderer = windowManager.getWindowDecorationRenderer(window);
                     insideWindowDecorationsGraphics = decorationRenderer.draw(this, windowGraphics, window);
@@ -439,7 +439,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
             int dx = mp.getColumn() - dragStart.getColumn();
             int dy = mp.getRow() - dragStart.getRow();
             changeWindowHintsForDragged(titleBarDragWindow);
-            titleBarDragWindow.setPosition(new TerminalPosition(wp.getColumn() + dx, wp.getRow() + dy));
+            titleBarDragWindow.setPosition(TerminalPosition.of(wp.getColumn() + dx, wp.getRow() + dy));
             // TODO ? any additional children popups (shown menus, etc) should also be moved (or just closed)
         }
         
@@ -464,7 +464,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
     public synchronized WindowBasedTextGUI addWindow(Window window) {
         //To protect against NPE if the user forgot to set a content component
         if(window.getComponent() == null) {
-            window.setComponent(new EmptySpace(TerminalSize.ONE));
+            window.setComponent(new EmptySpace(TerminalSize.OF_1x1));
         }
 
         if(window.getTextGUI() != null) {

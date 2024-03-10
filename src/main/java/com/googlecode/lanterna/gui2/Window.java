@@ -187,9 +187,7 @@ public interface Window extends BasePane {
      * @return the decorated size and position of the window
      */
     default TerminalRectangle getBounds() {
-        TerminalPosition position = getPosition();
-        TerminalSize size = getDecoratedSize();
-        return new TerminalRectangle(position.getColumn(), position.getRow(), size.getColumns(), size.getRows());
+        return TerminalRectangle.of(getPosition(), getDecoratedSize());
     }
     
     /**

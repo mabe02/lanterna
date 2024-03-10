@@ -32,7 +32,7 @@ public abstract class AbstractBorder extends AbstractComposite<Border> implement
     public void setComponent(Component component) {
         super.setComponent(component);
         if(component != null) {
-            component.setPosition(TerminalPosition.TOP_LEFT_CORNER);
+            component.setPosition(TerminalPosition.OF_0x0);
         }
     }
 

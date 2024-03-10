@@ -53,7 +53,7 @@ public class DynamicGridLayoutTest extends TestBase {
         gridPanel.setLayoutManager(gridLayout);
 
         for(int i = 0; i < 16; i++) {
-            gridPanel.addComponent(new EmptySpace(getRandomColor(), new TerminalSize(4, 1)));
+            gridPanel.addComponent(new EmptySpace(getRandomColor(), TerminalSize.of(4, 1)));
         }
 
         Panel controlPanel = new Panel();
@@ -103,7 +103,7 @@ public class DynamicGridLayoutTest extends TestBase {
                 if(sizeString == null) {
                     return;
                 }
-                TerminalSize size = new TerminalSize(Integer.parseInt(sizeString.split("x")[0]), Integer.parseInt(sizeString.split("x")[1]));
+                TerminalSize size = TerminalSize.of(Integer.parseInt(sizeString.split("x")[0]), Integer.parseInt(sizeString.split("x")[1]));
                 component = componentType == SelectableComponentType.Block ? new EmptySpace(getRandomColor(), size) : new TextBox(size);
                 break;
 
@@ -141,7 +141,7 @@ public class DynamicGridLayoutTest extends TestBase {
         gridPanel.setLayoutManager(newGridLayout(columns.intValue()));
         //noinspection ConstantConditions
         for(int i = 0; i < prepopulate.intValue(); i++) {
-            gridPanel.addComponent(new EmptySpace(getRandomColor(), new TerminalSize(4, 1)));
+            gridPanel.addComponent(new EmptySpace(getRandomColor(), TerminalSize.of(4, 1)));
         }
     }
 
@@ -208,11 +208,11 @@ public class DynamicGridLayoutTest extends TestBase {
             contentPane.addComponent(textBoxBottomMargin);
 
             contentPane.addComponent(
-                    new EmptySpace(TerminalSize.ONE).setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2)));
+                    new EmptySpace(TerminalSize.OF_1x1).setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2)));
             contentPane.addComponent(
                     new Separator(Direction.HORIZONTAL).setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2)));
             contentPane.addComponent(
-                    new EmptySpace(TerminalSize.ONE).setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2)));
+                    new EmptySpace(TerminalSize.OF_1x1).setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2)));
 
             Button okButton = new Button("OK", () -> {
                 gridLayout.setHorizontalSpacing(Integer.parseInt(textBoxHorizontalSpacing.getTextOrDefault("0")));
@@ -255,7 +255,7 @@ public class DynamicGridLayoutTest extends TestBase {
             contentPane.addComponent(radioBoxesHorizontalAlignment);
 
             contentPane.addComponent(
-                    new EmptySpace(TerminalSize.ONE).setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2)));
+                    new EmptySpace(TerminalSize.OF_1x1).setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2)));
 
             contentPane.addComponent(new Label("Vertical alignment:"));
             final RadioBoxList<GridLayout.Alignment> radioBoxesVerticalAlignment = new RadioBoxList<>();
@@ -267,7 +267,7 @@ public class DynamicGridLayoutTest extends TestBase {
             contentPane.addComponent(radioBoxesVerticalAlignment);
 
             contentPane.addComponent(
-                    new EmptySpace(TerminalSize.ONE).setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2)));
+                    new EmptySpace(TerminalSize.OF_1x1).setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2)));
 
             contentPane.addComponent(new Label("Grab extra horizontal space:"));
             final CheckBox checkBoxGrabExtraHorizontalSpace = new CheckBox("");
@@ -280,26 +280,26 @@ public class DynamicGridLayoutTest extends TestBase {
             contentPane.addComponent(checkBoxGrabExtraVerticalSpace);
 
             contentPane.addComponent(
-                    new EmptySpace(TerminalSize.ONE).setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2)));
+                    new EmptySpace(TerminalSize.OF_1x1).setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2)));
 
             Pattern numberPattern = Pattern.compile("[1-9][0-9]*");
 
             contentPane.addComponent(new Label("Horizontal span:"));
-            final TextBox textBoxHorizontalSpan = new TextBox(new TerminalSize(5, 1), gridLayoutData.horizontalSpan + "");
+            final TextBox textBoxHorizontalSpan = new TextBox(TerminalSize.of(5, 1), gridLayoutData.horizontalSpan + "");
             textBoxHorizontalSpan.setValidationPattern(numberPattern);
             contentPane.addComponent(textBoxHorizontalSpan);
 
             contentPane.addComponent(new Label("Vertical span:"));
-            final TextBox textBoxVerticalSpan = new TextBox(new TerminalSize(5, 1), gridLayoutData.verticalSpan + "");
+            final TextBox textBoxVerticalSpan = new TextBox(TerminalSize.of(5, 1), gridLayoutData.verticalSpan + "");
             textBoxVerticalSpan.setValidationPattern(numberPattern);
             contentPane.addComponent(textBoxVerticalSpan);
 
             contentPane.addComponent(
-                    new EmptySpace(TerminalSize.ONE).setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2)));
+                    new EmptySpace(TerminalSize.OF_1x1).setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2)));
             contentPane.addComponent(
                     new Separator(Direction.HORIZONTAL).setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2)));
             contentPane.addComponent(
-                    new EmptySpace(TerminalSize.ONE).setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2)));
+                    new EmptySpace(TerminalSize.OF_1x1).setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2)));
 
             Button okButton = new Button("OK", () -> {
                 component.setLayoutData(

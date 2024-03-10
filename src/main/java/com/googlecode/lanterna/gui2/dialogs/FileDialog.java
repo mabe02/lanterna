@@ -96,7 +96,7 @@ public class FileDialog extends DialogWindow {
                         1))
                 .addTo(contentPane);
 
-        fileListBox = new ActionListBox(new TerminalSize(unitWidth * 2, unitHeight));
+        fileListBox = new ActionListBox(TerminalSize.of(unitWidth * 2, unitHeight));
         fileListBox.withBorder(Borders.singleLine())
                 .setLayoutData(GridLayout.createLayoutData(
                         GridLayout.Alignment.BEGINNING,
@@ -104,7 +104,7 @@ public class FileDialog extends DialogWindow {
                         false,
                         false))
                 .addTo(contentPane);
-        directoryListBox = new ActionListBox(new TerminalSize(unitWidth, unitHeight));
+        directoryListBox = new ActionListBox(TerminalSize.of(unitWidth, unitHeight));
         directoryListBox.withBorder(Borders.singleLine())
                 .addTo(contentPane);
 
@@ -237,7 +237,7 @@ public class FileDialog extends DialogWindow {
     private class FileSystemLocationLabel extends Label {
         public FileSystemLocationLabel() {
             super("");
-            setPreferredSize(TerminalSize.ONE);
+            setPreferredSize(TerminalSize.OF_1x1);
         }
 
         @Override

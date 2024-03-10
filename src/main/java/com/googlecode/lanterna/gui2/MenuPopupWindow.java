@@ -38,7 +38,7 @@ public class MenuPopupWindow extends AbstractWindow {
     public MenuPopupWindow(Component parent) {
         setHints(Arrays.asList(Hint.MODAL, Hint.MENU_POPUP, Hint.FIXED_POSITION));
         if (parent != null) {
-            TerminalPosition menuPositionGlobal = parent.toGlobal(TerminalPosition.TOP_LEFT_CORNER);
+            TerminalPosition menuPositionGlobal = parent.toGlobal(TerminalPosition.OF_0x0);
             setPosition(menuPositionGlobal.withRelative(0, 1));
         }
         menuItemPanel = new Panel(new LinearLayout(Direction.VERTICAL));

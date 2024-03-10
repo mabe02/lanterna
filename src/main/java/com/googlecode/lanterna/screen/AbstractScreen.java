@@ -65,7 +65,7 @@ public abstract class AbstractScreen implements Screen {
         this.frontBuffer = new ScreenBuffer(initialSize, defaultCharacter);
         this.backBuffer = new ScreenBuffer(initialSize, defaultCharacter);
         this.defaultCharacter = defaultCharacter;
-        this.cursorPosition = new TerminalPosition(0, 0);
+        this.cursorPosition = TerminalPosition.OF_0x0;
         this.tabBehaviour = TabBehaviour.ALIGN_TO_COLUMN_4;
         this.terminalSize = initialSize;
         this.latestResizeRequest = null;

@@ -93,7 +93,7 @@ public class Issue409 {
 
         public CyclingThemesTextBox() {
             super("Cycling themes: default");
-            setPreferredSize(new TerminalSize(40, 1));
+            setPreferredSize(TerminalSize.of(40, 1));
             systemThemes = new ArrayList<>(LanternaThemes.getRegisteredThemes());
             index = 0;
         }

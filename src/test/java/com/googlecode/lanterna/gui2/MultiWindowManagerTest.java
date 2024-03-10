@@ -52,7 +52,7 @@ public class MultiWindowManagerTest extends TestBase {
             buttonToggleVirtualScreen.setLabel("Virtual Screen: " + (virtualScreenEnabled ? "Enabled" : "Disabled"));
         });
         contentArea.addComponent(buttonToggleVirtualScreen);
-        contentArea.addComponent(new EmptySpace(TerminalSize.ONE));
+        contentArea.addComponent(new EmptySpace(TerminalSize.OF_1x1));
         contentArea.addComponent(new Button("Close", mainWindow::close));
         mainWindow.setComponent(contentArea);
         textGUI.addListener((textGUI1, keyStroke) -> {
@@ -121,12 +121,12 @@ public class MultiWindowManagerTest extends TestBase {
             Panel contentArea = new Panel();
             contentArea.setLayoutManager(new GridLayout(1));
             contentArea.addComponent(statsTableContainer);
-            contentArea.addComponent(new EmptySpace(TerminalSize.ONE));
+            contentArea.addComponent(new EmptySpace(TerminalSize.OF_1x1));
             contentArea.addComponent(
                     new Label(
                             "Move window with ALT+Arrow\n" +
                             "Resize window with CTRL+Arrow"));
-            contentArea.addComponent(new EmptySpace(TerminalSize.ONE).setLayoutData(
+            contentArea.addComponent(new EmptySpace(TerminalSize.OF_1x1).setLayoutData(
                     GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.FILL, true, true)));
             contentArea.addComponent(
                     Panels.horizontal(
@@ -204,7 +204,7 @@ public class MultiWindowManagerTest extends TestBase {
             return new ComponentRenderer<EmptySpace>() {
                 @Override
                 public TerminalSize getPreferredSize(EmptySpace component) {
-                    return TerminalSize.ONE;
+                    return TerminalSize.OF_1x1;
                 }
 
                 @Override

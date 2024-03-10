@@ -24,7 +24,7 @@ public class TableUnitTests {
 
     @Before
     public void setUp() throws IOException {
-        TerminalSize size = new TerminalSize(30, 24);
+        TerminalSize size = TerminalSize.of(30, 24);
         terminal = new DefaultVirtualTerminal(size);
         TerminalScreen screen = new TerminalScreen(terminal);
         screen.startScreen();

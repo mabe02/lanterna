@@ -122,14 +122,14 @@ public class SplitPanelTest extends TestBase {
         ImageComponent right = makeImageComponent(IMAGE_Y);
         //SplitPanel splitH = SplitPanel.ofHorizontal(left.withBorder(Borders.singleLine("left")), right.withBorder(Borders.singleLine("right")));
         SplitPanel splitH = SplitPanel.ofHorizontal(left, right);
-        splitH.setPreferredSize(new TerminalSize(40, 40));
+        splitH.setPreferredSize(TerminalSize.of(40, 40));
         splitH.setRatio(45, 35);
         
         ImageComponent top = makeImageComponent(IMAGE_Y);
         ImageComponent bottom = makeImageComponent(IMAGE_Z);
         //SplitPanel splitV = SplitPanel.ofVertical(top.withBorder(Borders.singleLine("top")), bottom.withBorder(Borders.singleLine("bottom")));
         SplitPanel splitV = SplitPanel.ofVertical(top, bottom);
-        splitV.setPreferredSize(new TerminalSize(40, 40));
+        splitV.setPreferredSize(TerminalSize.of(40, 40));
         splitV.setRatio(20, 80);
         
         Panel mainPanel = new Panel();
@@ -143,7 +143,7 @@ public class SplitPanelTest extends TestBase {
     
     ImageComponent makeImageComponent(String[] image) {
         ImageComponent imageComponent = new ImageComponent();
-        TerminalSize imageSize = new TerminalSize(image[0].length(), image.length);
+        TerminalSize imageSize = TerminalSize.of(image[0].length(), image.length);
         TextImage textImage = new BasicTextImage(imageSize);
         
         for (int row = 0; row < image.length; row++) {

@@ -104,15 +104,15 @@ public class ScreenTriangleTest {
                 int y1 = (size.getRows() / 2) + (int) (Math.sin(rad + oneThirdOf2PI) * triangleSize);
                 int x2 = (size.getColumns() / 2) + (int) (Math.cos(rad + twoThirdsOf2PI) * triangleSize);
                 int y2 = (size.getRows() / 2) + (int) (Math.sin(rad + twoThirdsOf2PI) * triangleSize);
-                p1 = new TerminalPosition(x0, y0);
-                p2 = new TerminalPosition(x1, y1);
-                p3 = new TerminalPosition(x2, y2);
+                p1 = TerminalPosition.of(x0, y0);
+                p2 = TerminalPosition.of(x1, y1);
+                p3 = TerminalPosition.of(x2, y2);
                 rad += Math.PI / 90.0;
             }
             else {
-                p1 = new TerminalPosition(random.nextInt(size.getColumns()), random.nextInt(size.getRows()));
-                p2 = new TerminalPosition(random.nextInt(size.getColumns()), random.nextInt(size.getRows()));
-                p3 = new TerminalPosition(random.nextInt(size.getColumns()), random.nextInt(size.getRows()));
+                p1 = TerminalPosition.of(random.nextInt(size.getColumns()), random.nextInt(size.getRows()));
+                p2 = TerminalPosition.of(random.nextInt(size.getColumns()), random.nextInt(size.getRows()));
+                p3 = TerminalPosition.of(random.nextInt(size.getColumns()), random.nextInt(size.getRows()));
             }
 
             graphics.setBackgroundColor(color);

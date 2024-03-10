@@ -29,8 +29,7 @@ public class DrawRectangle {
 		screen.startScreen();
 		screen.clear();
 
-		tGraphics.drawRectangle(
-			new TerminalPosition(3,3), new TerminalSize(10,10), '*');
+		tGraphics.drawRectangle(TerminalPosition.of(3,3), TerminalSize.of(10,10), '*');
 		screen.refresh();
 
 		screen.readInput();

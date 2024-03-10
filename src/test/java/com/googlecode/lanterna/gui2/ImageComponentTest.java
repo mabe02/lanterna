@@ -197,7 +197,7 @@ public class ImageComponentTest extends TestBase {
     
     
     ImageComponent makeImageComponent(ExampleController controller, String[] image) {
-        TerminalSize imageSize = new TerminalSize(image[0].length(), image.length);
+        TerminalSize imageSize = TerminalSize.of(image[0].length(), image.length);
         TextImage textImage = new BasicTextImage(imageSize);
         for (int row = 0; row < image.length; row++) {
             fillImageLine(textImage, row, image[row]);

@@ -189,7 +189,7 @@ public class MenuBar extends AbstractComponent<MenuBar> implements Container {
                 totalWidth += preferredSize.getColumns();
             }
             totalWidth += EXTRA_PADDING;
-            return new TerminalSize(totalWidth, maxHeight);
+            return TerminalSize.of(totalWidth, maxHeight);
         }
 
         @Override

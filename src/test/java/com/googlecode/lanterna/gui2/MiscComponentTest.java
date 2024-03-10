@@ -41,8 +41,8 @@ public class MiscComponentTest extends TestBase {
         }
 
         Panel textBoxPanel = new Panel();
-        textBoxPanel.addComponent(Panels.horizontal(new Label("Normal:   "), new TextBox(new TerminalSize(12, 1), "Text")));
-        textBoxPanel.addComponent(Panels.horizontal(new Label("Password: "), new TextBox(new TerminalSize(12, 1), "Text").setMask('*')));
+        textBoxPanel.addComponent(Panels.horizontal(new Label("Normal:   "), new TextBox(TerminalSize.of(12, 1), "Text")));
+        textBoxPanel.addComponent(Panels.horizontal(new Label("Password: "), new TextBox(TerminalSize.of(12, 1), "Text").setMask('*')));
 
         Panel buttonPanel = new Panel();
         buttonPanel.addComponent(new Button("Enable spacing", () -> {
@@ -56,7 +56,7 @@ public class MiscComponentTest extends TestBase {
 
         Panel rightPanel = new Panel();
         textBoxPanel = new Panel();
-        TextBox readOnlyTextArea = new TextBox(new TerminalSize(16, 8));
+        TextBox readOnlyTextArea = new TextBox(TerminalSize.of(16, 8));
         readOnlyTextArea.setReadOnly(true);
         readOnlyTextArea.setText(TestUtils.downloadGPL());
         textBoxPanel.addComponent(readOnlyTextArea);
