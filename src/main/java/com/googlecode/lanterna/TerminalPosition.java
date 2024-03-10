@@ -35,22 +35,21 @@ public class TerminalPosition implements Comparable<TerminalPosition> {
     public static final TerminalPosition OF_1x0 = new TerminalPosition(1, 0);
     public static final TerminalPosition OF_1x1 = new TerminalPosition(1, 1);
 
-    // one of the benefits of immutable: ease of usage
-    public final int column;
-    public final int row;
+    private final int column;
+    private final int row;
+    
+    public int x() { return column; }
+    public int y() { return row; }
+    
     /**
      * @return a TerminalPosition instance with the supplied column and row
      */
     public static final TerminalPosition of(int column, int row) {
-        if(column == 0 && row == 0) {
-            return OF_0x0;
-        } else if(column == 0 && row == 1) {
-            return OF_0x1;
-        } else if(column == 1 && row == 0) {
-            return OF_1x0;
-        } else if(column == 1 && row == 1) {
-              return OF_1x1;
-        }
+        if (OF_0x0.equals(column, row)) { return OF_0x0; }
+        if (OF_0x1.equals(column, row)) { return OF_0x1; }
+        if (OF_1x0.equals(column, row)) { return OF_1x0; }
+        if (OF_1x1.equals(column, row)) { return OF_1x1; }
+        
         return new TerminalPosition(column, row);
     }
     /**
@@ -60,7 +59,7 @@ public class TerminalPosition implements Comparable<TerminalPosition> {
      * @return Either this instance, or a new instance if column/row are different than this instance's column/row.
      */
     public TerminalPosition as(int column, int row) {
-        return (column == this.column && row == this.row) ? this : of(column, row);
+        return equals(column, row) ? this : of(column, row);
     }
     /**
      * Returns itself if it is equal to the supplied position, otherwise the supplied position. You can use this if you
@@ -70,7 +69,7 @@ public class TerminalPosition implements Comparable<TerminalPosition> {
      * @return Itself if this position equals the position passed in, otherwise the position passed in
      */
     public TerminalPosition as(TerminalPosition position) {
-        return position == null ? this : as(position.column, position.row);
+        return position == null ? null : as(position.column, position.row);
     }
     /**
      * Creates a new TerminalPosition object, which represents a location on the screen. There is no check to verify

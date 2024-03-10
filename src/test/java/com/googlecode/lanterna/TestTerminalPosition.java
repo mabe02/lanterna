@@ -44,8 +44,8 @@ public class TestTerminalPosition {
     public void test_instantiation() {
         assertTrue(tp(12, 14).getColumn() == 12);
         assertTrue(tp(12, 14).getRow() == 14);
-        assertTrue(tp(12, 14).column == 12);
-        assertTrue(tp(12, 14).row == 14);
+        assertTrue(tp(12, 14).x() == 12);
+        assertTrue(tp(12, 14).y() == 14);
     }
     @Test
     public void testSystemIdentityHashCodeSame() {

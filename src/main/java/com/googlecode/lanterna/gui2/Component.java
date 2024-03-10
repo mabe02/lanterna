@@ -37,7 +37,7 @@ public interface Component extends TextGUIElement {
      * @return the TerminalPosition and TerminalSize as a TerminalRectangle
      */
     default TerminalRectangle getBounds() {
-        return new TerminalRectangle(getPosition(), getSize());
+        return TerminalRectangle.of(getPosition(), getSize());
     }
     /**
      * Returns the top-left corner of this component, measured from its parent.

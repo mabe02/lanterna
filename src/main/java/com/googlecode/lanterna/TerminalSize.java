@@ -31,24 +31,22 @@ public class TerminalSize implements Comparable<TerminalSize> {
     public static final TerminalSize OF_1x0 = new TerminalSize(1, 0);
     public static final TerminalSize OF_1x1 = new TerminalSize(1, 1);
 
-    // one of the benefits of immutable: ease of usage
-    public final int columns;
-    public final int rows;
+    private final int columns;
+    private final int rows;
+    
+    public int width() { return columns; }
+    public int height() { return rows; }
 
     public static final TerminalSize of(int columns, int rows) {
-        if(columns == 0 && rows == 0) {
-            return OF_0x0;
-        } else if(columns == 0 && rows == 1) {
-            return OF_0x1;
-        } else if(columns == 1 && rows == 0) {
-            return OF_1x0;
-        } else if(columns == 1 && rows == 1) {
-              return OF_1x1;
-        }
+        if (OF_0x0.equals(columns, rows)) { return OF_0x0; }
+        if (OF_0x1.equals(columns, rows)) { return OF_0x1; }
+        if (OF_1x0.equals(columns, rows)) { return OF_1x0; }
+        if (OF_1x1.equals(columns, rows)) { return OF_1x1; }
+        
         return new TerminalSize(columns, rows);
     }
     public TerminalSize as(int columns, int rows) {
-        return (columns == this.columns && rows == this.rows) ? this : of(columns, rows);
+        return equals(columns, rows) ? this : of(columns, rows);
     }
     public TerminalSize as(TerminalSize size) {
         return size == null ? null : as(size.columns, size.rows);

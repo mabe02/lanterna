@@ -55,6 +55,6 @@ public interface WindowDecorationRenderer {
     
     
     default TerminalRectangle getTitleBarRectangle(Window window) {
-        return new TerminalRectangle(0, 0, window.getDecoratedSize().getColumns(), getOffset(window).getRow());
+        return TerminalRectangle.of(0, 0, window.getDecoratedSize().getColumns(), getOffset(window).getRow());
     }
 }
