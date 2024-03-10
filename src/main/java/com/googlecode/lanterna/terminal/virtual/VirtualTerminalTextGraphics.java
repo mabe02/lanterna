@@ -39,7 +39,7 @@ class VirtualTerminalTextGraphics extends AbstractTextGraphics {
     @Override
     public TextGraphics setCharacter(int column, int row, TextCharacter textCharacter) {
         TerminalSize size = getSize();
-        TerminalRectangle.whenContains(0, 0, size.columns, size.rows, column, row, () -> {
+        TerminalRectangle.whenContains(0, 0, size.width(), size.height(), column, row, () -> {
             synchronized (virtualTerminal) {
                 virtualTerminal.setCursorPosition(TerminalPosition.of(column, row));
                 virtualTerminal.putCharacter(textCharacter);

@@ -31,9 +31,11 @@ public class TerminalSize implements Comparable<TerminalSize> {
     public static final TerminalSize OF_1x0 = new TerminalSize(1, 0);
     public static final TerminalSize OF_1x1 = new TerminalSize(1, 1);
 
-    // one of the benefits of immutable: ease of usage
-    public final int columns;
-    public final int rows;
+    private final int columns;
+    private final int rows;
+    
+    public int width() { return columns; }
+    public int height() { return rows; }
 
     public static final TerminalSize of(int columns, int rows) {
         if (OF_0x0.equals(columns, rows)) { return OF_0x0; }

@@ -44,8 +44,8 @@ public class TestTerminalSize {
     public void test_instantiation() {
         assertTrue(ts(12, 14).getColumns() == 12);
         assertTrue(ts(12, 14).getRows() == 14);
-        assertTrue(ts(12, 14).columns == 12);
-        assertTrue(ts(12, 14).rows == 14);
+        assertTrue(ts(12, 14).width() == 12);
+        assertTrue(ts(12, 14).height() == 14);
     }
     @Test
     public void testSystemIdentityHashCodeSame() {

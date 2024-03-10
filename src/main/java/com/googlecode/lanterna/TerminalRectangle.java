@@ -40,10 +40,10 @@ public class TerminalRectangle {
     
     public TerminalPosition position() { return position; }
     public TerminalSize size()         { return size; }
-    public int x()                     { return position.getColumn(); }
-    public int y()                     { return position.getRow(); }
-    public int width()                 { return size.getColumns(); }
-    public int height()                { return size.getRows(); }
+    public int x()                     { return position.x(); }
+    public int y()                     { return position.y(); }
+    public int width()                 { return size.width(); }
+    public int height()                { return size.height(); }
     
     /**
      * Obtain a TerminalRectangle with the supplied x y position and the supplied width and height.
@@ -126,7 +126,7 @@ public class TerminalRectangle {
      * @return a TerminalRectangle based on this one, but with the supplied position
      */
     public TerminalRectangle withPosition(int x, int y) {
-        return TerminalRectangle.of(x, y, size.getColumns(), size.getRows());
+        return TerminalRectangle.of(x, y, size.width(), size.height());
     }
     /**
      * Obtain a TerminalRectangle based on this TerminalRectangle, but with the supplied size
@@ -138,16 +138,16 @@ public class TerminalRectangle {
     }
     /**
      * Obtain a TerminalRectangle based on this TerminalRectangle, but with the supplied size
-     * @param columns size of the resulting TerminalRectangle
-     * @param rows size of the resulting TerminalRectangle
+     * @param width number of columns of the resulting TerminalRectangle
+     * @param height number of rows of the resulting TerminalRectangle
      * @return a TerminalRectangle based on this one, but with the supplied size
      */
-    public TerminalRectangle withSize(int columns, int rows) {
-        return TerminalRectangle.of(position.getColumn(), position.getRow(), columns, rows);
+    public TerminalRectangle withSize(int width, int height) {
+        return TerminalRectangle.of(position.x(), position.y(), width, height);
     }
 
     public boolean whenContains(TerminalPosition p, Runnable op) {
-        return whenContains(p.getColumn(), p.getRow(), op);
+        return whenContains(p.x(), p.y(), op);
     }
     public boolean whenContains(int x, int y, Runnable op) {
         return whenContains(x(), y(), width(), height(), x, y, op);
