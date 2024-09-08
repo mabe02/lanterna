@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2020 Martin Berglund
+ * Copyright (C) 2010-2024 Martin Berglund
  * Author celyo (github)
  */
 package com.googlecode.lanterna.issue;
