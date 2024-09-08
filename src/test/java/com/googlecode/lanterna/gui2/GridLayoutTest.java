@@ -34,40 +34,40 @@ public class GridLayoutTest extends TestBase {
 
         Panel leftGridPanel = new Panel();
         leftGridPanel.setLayoutManager(new GridLayout(4));
-        leftGridPanel.addComponent(new EmptySpace(TextColor.ANSI.BLACK, new TerminalSize(4, 2)));
-        leftGridPanel.addComponent(new EmptySpace(TextColor.ANSI.BLUE, new TerminalSize(4, 2)));
-        EmptySpace visibilityToggleableComponent = new EmptySpace(TextColor.ANSI.CYAN, new TerminalSize(4, 2));
+        leftGridPanel.addComponent(new EmptySpace(TextColor.ANSI.BLACK, TerminalSize.of(4, 2)));
+        leftGridPanel.addComponent(new EmptySpace(TextColor.ANSI.BLUE, TerminalSize.of(4, 2)));
+        EmptySpace visibilityToggleableComponent = new EmptySpace(TextColor.ANSI.CYAN, TerminalSize.of(4, 2));
         leftGridPanel.addComponent(visibilityToggleableComponent);
-        leftGridPanel.addComponent(new EmptySpace(TextColor.ANSI.GREEN, new TerminalSize(4, 2)));
+        leftGridPanel.addComponent(new EmptySpace(TextColor.ANSI.GREEN, TerminalSize.of(4, 2)));
 
-        leftGridPanel.addComponent(new EmptySpace(TextColor.ANSI.MAGENTA, new TerminalSize(4, 2))
+        leftGridPanel.addComponent(new EmptySpace(TextColor.ANSI.MAGENTA, TerminalSize.of(4, 2))
                 .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.BEGINNING, GridLayout.Alignment.CENTER, true, false, 4, 1)));
-        leftGridPanel.addComponent(new EmptySpace(TextColor.ANSI.RED, new TerminalSize(4, 2))
+        leftGridPanel.addComponent(new EmptySpace(TextColor.ANSI.RED, TerminalSize.of(4, 2))
                 .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER, GridLayout.Alignment.CENTER, true, false, 4, 1)));
-        leftGridPanel.addComponent(new EmptySpace(TextColor.ANSI.YELLOW, new TerminalSize(4, 2))
+        leftGridPanel.addComponent(new EmptySpace(TextColor.ANSI.YELLOW, TerminalSize.of(4, 2))
                 .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.END, GridLayout.Alignment.CENTER, true, false, 4, 1)));
-        leftGridPanel.addComponent(new EmptySpace(TextColor.ANSI.BLACK, new TerminalSize(4, 2))
+        leftGridPanel.addComponent(new EmptySpace(TextColor.ANSI.BLACK, TerminalSize.of(4, 2))
                 .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.CENTER, true, false, 4, 1)));
 
         Panel rightGridPanel = new Panel();
         rightGridPanel.setLayoutManager(new GridLayout(5));
-        rightGridPanel.addComponent(new EmptySpace(TextColor.ANSI.BLACK, new TerminalSize(4, 2)));
-        rightGridPanel.addComponent(new EmptySpace(TextColor.ANSI.MAGENTA, new TerminalSize(4, 2))
+        rightGridPanel.addComponent(new EmptySpace(TextColor.ANSI.BLACK, TerminalSize.of(4, 2)));
+        rightGridPanel.addComponent(new EmptySpace(TextColor.ANSI.MAGENTA, TerminalSize.of(4, 2))
                 .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER, GridLayout.Alignment.BEGINNING, false, true, 1, 4)));
-        rightGridPanel.addComponent(new EmptySpace(TextColor.ANSI.RED, new TerminalSize(4, 2))
+        rightGridPanel.addComponent(new EmptySpace(TextColor.ANSI.RED, TerminalSize.of(4, 2))
                 .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER, GridLayout.Alignment.CENTER, false, true, 1, 4)));
-        rightGridPanel.addComponent(new EmptySpace(TextColor.ANSI.YELLOW, new TerminalSize(4, 2))
+        rightGridPanel.addComponent(new EmptySpace(TextColor.ANSI.YELLOW, TerminalSize.of(4, 2))
                 .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER, GridLayout.Alignment.END, false, true, 1, 4)));
-        rightGridPanel.addComponent(new EmptySpace(TextColor.ANSI.BLACK, new TerminalSize(4, 2))
+        rightGridPanel.addComponent(new EmptySpace(TextColor.ANSI.BLACK, TerminalSize.of(4, 2))
                 .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER, GridLayout.Alignment.FILL, false, true, 1, 4)));
-        rightGridPanel.addComponent(new EmptySpace(TextColor.ANSI.BLUE, new TerminalSize(4, 2)));
-        rightGridPanel.addComponent(new EmptySpace(TextColor.ANSI.CYAN, new TerminalSize(4, 2)));
-        rightGridPanel.addComponent(new EmptySpace(TextColor.ANSI.GREEN, new TerminalSize(4, 2)));
+        rightGridPanel.addComponent(new EmptySpace(TextColor.ANSI.BLUE, TerminalSize.of(4, 2)));
+        rightGridPanel.addComponent(new EmptySpace(TextColor.ANSI.CYAN, TerminalSize.of(4, 2)));
+        rightGridPanel.addComponent(new EmptySpace(TextColor.ANSI.GREEN, TerminalSize.of(4, 2)));
 
         Panel contentPanel = new Panel();
         contentPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
-        contentPanel.addComponent(Panels.horizontal(leftGridPanel, new EmptySpace(TerminalSize.ONE), rightGridPanel));
-        contentPanel.addComponent(new EmptySpace(TerminalSize.ONE));
+        contentPanel.addComponent(Panels.horizontal(leftGridPanel, new EmptySpace(TerminalSize.OF_1x1), rightGridPanel));
+        contentPanel.addComponent(new EmptySpace(TerminalSize.OF_1x1));
         contentPanel.addComponent(Panels.horizontal(
                 new Button("Toggle Visible Component", () -> visibilityToggleableComponent.setVisible(!visibilityToggleableComponent.isVisible())),
                 new Button("Close", window::close)

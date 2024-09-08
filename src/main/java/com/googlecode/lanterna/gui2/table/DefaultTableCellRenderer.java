@@ -39,7 +39,7 @@ public class DefaultTableCellRenderer<V> implements TableCellRenderer<V> {
                 maxWidth = length;
             }
         }
-        return new TerminalSize(maxWidth, lines.length);
+        return TerminalSize.of(maxWidth, lines.length);
     }
 
     @Override

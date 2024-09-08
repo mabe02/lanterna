@@ -72,8 +72,8 @@ public class ScreenRectangleTest {
                 color = new TextColor.Indexed(random.nextInt(256));
             }
 
-            TerminalPosition topLeft = new TerminalPosition(random.nextInt(size.getColumns()), random.nextInt(size.getRows()));
-            TerminalSize rectangleSize = new TerminalSize(random.nextInt(size.getColumns() - topLeft.getColumn()), random.nextInt(size.getRows() - topLeft.getRow()));
+            TerminalPosition topLeft = TerminalPosition.of(random.nextInt(size.getColumns()), random.nextInt(size.getRows()));
+            TerminalSize rectangleSize = TerminalSize.of(random.nextInt(size.getColumns() - topLeft.getColumn()), random.nextInt(size.getRows() - topLeft.getRow()));
 
             textGraphics.setBackgroundColor(color);
             if(useFilled) {

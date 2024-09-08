@@ -109,18 +109,18 @@ public class FatWindowDecorationRenderer implements WindowDecorationRenderer {
             return contentAreaSize
                     .withRelativeColumns(2)
                     .withRelativeRows(4)
-                    .max(new TerminalSize(TerminalTextUtils.getColumnWidth(window.getTitle()) + 4, 1));  //Make sure the title fits!
+                    .max(TerminalSize.of(TerminalTextUtils.getColumnWidth(window.getTitle()) + 4, 1));  //Make sure the title fits!
         }
         else {
             return contentAreaSize
                     .withRelativeColumns(2)
                     .withRelativeRows(2)
-                    .max(new TerminalSize(3, 1));
+                    .max(TerminalSize.of(3, 1));
         }
     }
 
-    private static final TerminalPosition OFFSET_WITH_TITLE = new TerminalPosition(1, 3);
-    private static final TerminalPosition OFFSET_WITHOUT_TITLE = new TerminalPosition(1, 1);
+    private static final TerminalPosition OFFSET_WITH_TITLE = TerminalPosition.of(1, 3);
+    private static final TerminalPosition OFFSET_WITHOUT_TITLE = TerminalPosition.of(1, 1);
 
     @Override
     public TerminalPosition getOffset(Window window) {

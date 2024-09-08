@@ -74,7 +74,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
      * Default constructor, this creates a single-line {@code TextBox} of size 10 which is initially empty
      */
     public TextBox() {
-        this(new TerminalSize(10, 1), "", Style.SINGLE_LINE);
+        this(TerminalSize.of(10, 1), "", Style.SINGLE_LINE);
     }
 
     /**
@@ -136,7 +136,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
         this.caretWarp = false;
         this.verticalFocusSwitching = true;
         this.horizontalFocusSwitching = (style == Style.SINGLE_LINE);
-        this.caretPosition = TerminalPosition.TOP_LEFT_CORNER;
+        this.caretPosition = TerminalPosition.OF_0x0;
         this.maxLineLength = -1;
         this.longestRow = 1;    //To fit the cursor
         this.mask = null;
@@ -145,10 +145,10 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
         setText(initialContent);
 
         // Re-adjust caret position
-        this.caretPosition = TerminalPosition.TOP_LEFT_CORNER.withColumn(getLine(0).length());
+        this.caretPosition = TerminalPosition.of(getLine(0).length(), 0);
 
         if (preferredSize == null) {
-            preferredSize = new TerminalSize(Math.max(10, longestRow), lines.size());
+            preferredSize = TerminalSize.of(Math.max(10, longestRow), lines.size());
         }
         setPreferredSize(preferredSize);
     }
@@ -676,7 +676,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
                         int maxPositionAttempt = newActiveLine.length();
                         newCaretPositionColumn = Math.max(minPositionAttempt, Math.min(newCaretPositionColumn, maxPositionAttempt));
 
-                        caretPosition = caretPosition.with(new TerminalPosition(newCaretPositionColumn, newCaretPositionRow));
+                        caretPosition = caretPosition.with(TerminalPosition.of(newCaretPositionColumn, newCaretPositionRow));
                     }
                 }
                 result = Result.HANDLED;
@@ -749,10 +749,10 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
                 getRenderer().setViewTopLeft(getRenderer().getViewTopLeft().withRelativeRow(1));
                 return Result.HANDLED;
             case HOME:
-                getRenderer().setViewTopLeft(TerminalPosition.TOP_LEFT_CORNER);
+                getRenderer().setViewTopLeft(TerminalPosition.OF_0x0);
                 return Result.HANDLED;
             case END:
-                getRenderer().setViewTopLeft(TerminalPosition.TOP_LEFT_CORNER.withRow(getLineCount() - getSize().getRows()));
+                getRenderer().setViewTopLeft(TerminalPosition.of(0, getLineCount() - getSize().getRows()));
                 return Result.HANDLED;
             case PAGE_DOWN:
                 getRenderer().setViewTopLeft(getRenderer().getViewTopLeft().withRelativeRow(getSize().getRows()));
@@ -797,7 +797,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
          * Default constructor
          */
         public DefaultTextBoxRenderer() {
-            viewTopLeft = TerminalPosition.TOP_LEFT_CORNER;
+            viewTopLeft = TerminalPosition.OF_0x0;
             verticalScrollBar = new ScrollBar(Direction.VERTICAL);
             horizontalScrollBar = new ScrollBar(Direction.HORIZONTAL);
             hideScrollBars = false;
@@ -852,7 +852,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
 
         @Override
         public TerminalSize getPreferredSize(TextBox component) {
-            return new TerminalSize(component.longestRow, component.lines.size());
+            return TerminalSize.of(component.longestRow, component.lines.size());
         }
 
         /**
@@ -887,7 +887,7 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
                 }
             }
 
-            drawTextArea(graphics.newTextGraphics(TerminalPosition.TOP_LEFT_CORNER, realTextArea), component);
+            drawTextArea(graphics.newTextGraphics(TerminalPosition.OF_0x0, realTextArea), component);
 
             //Draw scrollbars, if any
             if(drawVerticalScrollBar) {
@@ -896,8 +896,8 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
                 verticalScrollBar.setScrollMaximum(textBoxLineCount);
                 verticalScrollBar.setScrollPosition(viewTopLeft.getRow());
                 verticalScrollBar.draw(graphics.newTextGraphics(
-                        new TerminalPosition(graphics.getSize().getColumns() - 1, 0),
-                        new TerminalSize(1, graphics.getSize().getRows() - (drawHorizontalScrollBar ? 1 : 0))));
+                        TerminalPosition.of(graphics.getSize().getColumns() - 1, 0),
+                        TerminalSize.of(1, graphics.getSize().getRows() - (drawHorizontalScrollBar ? 1 : 0))));
             }
             if(drawHorizontalScrollBar) {
                 horizontalScrollBar.onAdded(component.getParent());
@@ -905,8 +905,8 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
                 horizontalScrollBar.setScrollMaximum(component.longestRow - 1);
                 horizontalScrollBar.setScrollPosition(viewTopLeft.getColumn());
                 horizontalScrollBar.draw(graphics.newTextGraphics(
-                        new TerminalPosition(0, graphics.getSize().getRows() - 1),
-                        new TerminalSize(graphics.getSize().getColumns() - (drawVerticalScrollBar ? 1 : 0), 1)));
+                        TerminalPosition.of(0, graphics.getSize().getRows() - 1),
+                        TerminalSize.of(graphics.getSize().getColumns() - (drawVerticalScrollBar ? 1 : 0), 1)));
             }
         }
 

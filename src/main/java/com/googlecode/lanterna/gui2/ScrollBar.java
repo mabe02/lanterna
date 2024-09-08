@@ -152,7 +152,7 @@ public class ScrollBar extends AbstractComponent<ScrollBar> {
     public static abstract class ScrollBarRenderer implements ComponentRenderer<ScrollBar> {
         @Override
         public TerminalSize getPreferredSize(ScrollBar component) {
-            return TerminalSize.ONE;
+            return TerminalSize.OF_1x1;
         }
     }
 

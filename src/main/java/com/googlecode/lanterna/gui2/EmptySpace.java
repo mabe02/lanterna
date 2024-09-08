@@ -35,7 +35,7 @@ public class EmptySpace extends AbstractComponent<EmptySpace> {
      * Creates an EmptySpace with size 1x1 and a default color chosen from the theme
      */
     public EmptySpace() {
-        this(null, TerminalSize.ONE);
+        this(null, TerminalSize.OF_1x1);
     }
 
     /**
@@ -43,7 +43,7 @@ public class EmptySpace extends AbstractComponent<EmptySpace> {
      * @param color Color to use (null will make it use the theme)
      */
     public EmptySpace(TextColor color) {
-        this(color, TerminalSize.ONE);
+        this(color, TerminalSize.OF_1x1);
     }
 
     /**

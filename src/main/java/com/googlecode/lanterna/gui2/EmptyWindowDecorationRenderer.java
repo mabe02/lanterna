@@ -38,6 +38,6 @@ public class EmptyWindowDecorationRenderer implements WindowDecorationRenderer {
 
     @Override
     public TerminalPosition getOffset(Window window) {
-        return TerminalPosition.TOP_LEFT_CORNER;
+        return TerminalPosition.OF_0x0;
     }
 }

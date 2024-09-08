@@ -476,7 +476,7 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
     
     protected void showPopup(KeyStroke keyStroke) {
         popupWindow = new PopupWindow();
-        popupWindow.setPosition(toGlobal(new TerminalPosition(0, 1)));
+        popupWindow.setPosition(toGlobal(TerminalPosition.OF_0x1));
         ((WindowBasedTextGUI) getTextGUI()).addWindow(popupWindow);
         ((WindowBasedTextGUI) getTextGUI()).setActiveWindow(popupWindow);
     }
@@ -627,7 +627,7 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
         public TerminalPosition getCursorLocation(ComboBox<V> comboBox) {
             if(comboBox.isDropDownFocused()) {
                 if(comboBox.getThemeDefinition().isCursorVisible()) {
-                    return new TerminalPosition(comboBox.getSize().getColumns() - 1, 0);
+                    return TerminalPosition.of(comboBox.getSize().getColumns() - 1, 0);
                 }
                 else {
                     return null;
@@ -636,19 +636,19 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
             else {
                 int textInputPosition = comboBox.getTextInputPosition();
                 int textInputColumn = TerminalTextUtils.getColumnWidth(comboBox.getText().substring(0, textInputPosition));
-                return new TerminalPosition(textInputColumn - textVisibleLeftPosition, 0);
+                return TerminalPosition.of(textInputColumn - textVisibleLeftPosition, 0);
             }
         }
 
         @Override
         public TerminalSize getPreferredSize(final ComboBox<V> comboBox) {
-            TerminalSize size = TerminalSize.ONE.withColumns(
+            TerminalSize size = TerminalSize.OF_1x1.withColumns(
                     (comboBox.getItemCount() == 0 ? TerminalTextUtils.getColumnWidth(comboBox.getText()) : 0) + 2);
             //noinspection SynchronizationOnLocalVariableOrMethodParameter
             synchronized(comboBox) {
                 for(int i = 0; i < comboBox.getItemCount(); i++) {
                     V item = comboBox.getItem(i);
-                    size = size.max(new TerminalSize(TerminalTextUtils.getColumnWidth(item.toString()) + 2 + 1, 1));   // +1 to add a single column of space
+                    size = size.max(TerminalSize.of(TerminalTextUtils.getColumnWidth(item.toString()) + 2 + 1, 1));   // +1 to add a single column of space
                 }
             }
             return size;

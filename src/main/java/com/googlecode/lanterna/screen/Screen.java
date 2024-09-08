@@ -80,7 +80,7 @@ public interface Screen extends InputProvider, Scrollable, Closeable {
     /**
      * Erases all the characters on the screen, effectively giving you a blank area. The default background color will
      * be used. This is effectively the same as calling 
-     * <pre>fill(TerminalPosition.TOP_LEFT_CORNER, getSize(), TextColor.ANSI.Default)</pre>.
+     * <pre>fill(TerminalPosition.of(0, 0), getSize(), TextColor.ANSI.Default)</pre>.
      * <p>
      * Please note that calling this method will only affect the back buffer, you need to call refresh to make the 
      * change visible.

@@ -65,7 +65,7 @@ public class TextInputDialog extends DialogWindow {
         if(description != null) {
             mainPanel.addComponent(new Label(description));
         }
-        mainPanel.addComponent(new EmptySpace(TerminalSize.ONE));
+        mainPanel.addComponent(new EmptySpace(TerminalSize.OF_1x1));
         textBox.setLayoutData(
                 GridLayout.createLayoutData(
                         GridLayout.Alignment.FILL,
@@ -73,7 +73,7 @@ public class TextInputDialog extends DialogWindow {
                         true,
                         false))
                 .addTo(mainPanel);
-        mainPanel.addComponent(new EmptySpace(TerminalSize.ONE));
+        mainPanel.addComponent(new EmptySpace(TerminalSize.OF_1x1));
         buttonPanel.setLayoutData(
                 GridLayout.createLayoutData(
                         GridLayout.Alignment.END,

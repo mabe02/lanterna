@@ -56,7 +56,7 @@ public class MessageDialog extends DialogWindow {
                         .setLeftMarginSize(1)
                         .setRightMarginSize(1));
         mainPanel.addComponent(new Label(text));
-        mainPanel.addComponent(new EmptySpace(TerminalSize.ONE));
+        mainPanel.addComponent(new EmptySpace(TerminalSize.OF_1x1));
         buttonPanel.setLayoutData(
                 GridLayout.createLayoutData(
                         GridLayout.Alignment.END,

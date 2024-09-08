@@ -60,9 +60,9 @@ public abstract class AbstractComposite<T extends Container> extends AbstractCom
             if (getBasePane() != null) {
                 MenuBar menuBar = getBasePane().getMenuBar();
                 if (menuBar == null || menuBar.isEmptyMenuBar()) {
-                    component.setPosition(TerminalPosition.TOP_LEFT_CORNER);
+                    component.setPosition(TerminalPosition.OF_0x0);
                 } else {
-                    component.setPosition(TerminalPosition.TOP_LEFT_CORNER.withRelativeRow(1));
+                    component.setPosition(TerminalPosition.OF_0x1);
                 }
             }
             invalidate();

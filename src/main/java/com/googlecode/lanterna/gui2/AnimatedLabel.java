@@ -68,7 +68,7 @@ public class AnimatedLabel extends Label {
         super(firstFrameText);
         frames = new ArrayList<>();
         currentFrame = 0;
-        combinedMaximumPreferredSize = TerminalSize.ZERO;
+        combinedMaximumPreferredSize = TerminalSize.OF_0x0;
 
         String[] lines = splitIntoMultipleLines(firstFrameText);
         frames.add(lines);

@@ -18,6 +18,7 @@
  */
 package com.googlecode.lanterna.terminal.virtual;
 
+import com.googlecode.lanterna.TerminalRectangle;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextCharacter;
@@ -36,16 +37,14 @@ class VirtualTerminalTextGraphics extends AbstractTextGraphics {
     }
 
     @Override
-    public TextGraphics setCharacter(int columnIndex, int rowIndex, TextCharacter textCharacter) {
+    public TextGraphics setCharacter(int column, int row, TextCharacter textCharacter) {
         TerminalSize size = getSize();
-        if(columnIndex < 0 || columnIndex >= size.getColumns() ||
-                rowIndex < 0 || rowIndex >= size.getRows()) {
-            return this;
-        }
-        synchronized(virtualTerminal) {
-            virtualTerminal.setCursorPosition(new TerminalPosition(columnIndex, rowIndex));
-            virtualTerminal.putCharacter(textCharacter);
-        }
+        TerminalRectangle.whenContains(0, 0, size.width(), size.height(), column, row, () -> {
+            synchronized (virtualTerminal) {
+                virtualTerminal.setCursorPosition(TerminalPosition.of(column, row));
+                virtualTerminal.putCharacter(textCharacter);
+            }
+        });
         return this;
     }
 
@@ -56,7 +55,7 @@ class VirtualTerminalTextGraphics extends AbstractTextGraphics {
 
     @Override
     public TextCharacter getCharacter(int column, int row) {
-        return getCharacter(new TerminalPosition(column, row));
+        return getCharacter(TerminalPosition.of(column, row));
     }
 
     @Override

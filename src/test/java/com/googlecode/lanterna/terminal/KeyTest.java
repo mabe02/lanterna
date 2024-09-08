@@ -32,28 +32,28 @@ public class KeyTest {
         {
             KeyStroke k = KeyStroke.fromString("a");
             assertEquals(KeyType.CHARACTER, k.getKeyType());
-            assertEquals(new Character('a'), k.getCharacter());
+            assertEquals(Character.valueOf('a'), k.getCharacter());
             assertFalse(k.isCtrlDown());
             assertFalse(k.isAltDown());
         }
         {
             KeyStroke k = KeyStroke.fromString("<c-a>");
             assertEquals(KeyType.CHARACTER, k.getKeyType());
-            assertEquals(new Character('a'), k.getCharacter());
+            assertEquals(Character.valueOf('a'), k.getCharacter());
             assertTrue(k.isCtrlDown());
             assertFalse(k.isAltDown());
         }
         {
             KeyStroke k = KeyStroke.fromString("<a-a>");
             assertEquals(KeyType.CHARACTER, k.getKeyType());
-            assertEquals(new Character('a'), k.getCharacter());
+            assertEquals(Character.valueOf('a'), k.getCharacter());
             assertFalse(k.isCtrlDown());
             assertTrue(k.isAltDown());
         }
         {
             KeyStroke k = KeyStroke.fromString("<c-a-a>");
             assertEquals(k.getKeyType(), KeyType.CHARACTER);
-            assertEquals(new Character('a'), k.getCharacter());
+            assertEquals(Character.valueOf('a'), k.getCharacter());
             assertTrue(k.isCtrlDown());
             assertTrue(k.isAltDown());
         }

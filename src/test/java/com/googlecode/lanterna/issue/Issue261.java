@@ -47,7 +47,7 @@ public class Issue261 {
         panel.addComponent(new Label("Surname"));
         panel.addComponent(new TextBox());
 
-        panel.addComponent(new EmptySpace(new TerminalSize(0,0))); // Empty space underneath labels
+        panel.addComponent(new EmptySpace(TerminalSize.of(0,0))); // Empty space underneath labels
         panel.addComponent(new Button("Submit"));
 
         // Create gui and start gui
@@ -55,7 +55,7 @@ public class Issue261 {
 
         // Create window to hold the panel
         BasicWindow window = new BasicWindow();
-        window.setFixedSize(new TerminalSize(500, 700));
+        window.setFixedSize(TerminalSize.of(500, 700));
         window.setComponent(panel);
 
         gui.addWindowAndWait(window);

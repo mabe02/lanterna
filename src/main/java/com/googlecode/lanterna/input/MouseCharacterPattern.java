@@ -112,7 +112,7 @@ public class MouseCharacterPattern implements CharacterPattern {
         // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
         
         
-        TerminalPosition pos = new TerminalPosition( seq.get(4) - 33, seq.get(5) - 33 );
+        TerminalPosition pos = TerminalPosition.of( seq.get(4) - 33, seq.get(5) - 33 );
 
         MouseAction ma = new MouseAction(actionType, button, pos );
         return new Matching( ma ); // yep
