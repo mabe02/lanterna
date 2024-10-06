@@ -26,10 +26,13 @@ import com.googlecode.lanterna.terminal.ansi.TelnetTerminalServer;
 import com.googlecode.lanterna.terminal.ansi.UnixLikeTTYTerminal;
 import com.googlecode.lanterna.terminal.ansi.UnixTerminal;
 import com.googlecode.lanterna.terminal.swing.*;
+
+import java.io.Console;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.util.EnumSet;
@@ -109,7 +112,7 @@ public class DefaultTerminalFactory implements TerminalFactory {
         //   "explicit preference", "no alternative",
         //       ("because we can" - unless "rather not")
         if (forceTextTerminal || isAwtHeadless() ||
-                (System.console() != null && !preferTerminalEmulator) ) {
+                (hasTerminal() && !preferTerminalEmulator) ) {
             return createHeadlessTerminal();
         }
         else {
@@ -492,5 +495,25 @@ public class DefaultTerminalFactory implements TerminalFactory {
      */
     private static boolean isOperatingSystemWindows() {
         return System.getProperty("os.name", "").toLowerCase().startsWith("windows");
+    }
+
+    private static boolean hasTerminal() {
+        // Prior to Java 22, the test was System.console() != null but now things have changed:
+        // https://www.oracle.com/java/technologies/javase/22-relnote-issues.html#JDK-8308591
+        // We need to check if the Console.isTerminal() method is available and rely on that if so
+        Console console = System.console();
+        return console != null && isTerminalCheckJDK22(console);
+    }
+
+    private static boolean isTerminalCheckJDK22(Console console) {
+        try {
+            // Don't want to require Java 22 so we need to check this by reflection
+            Method isTerminal = Console.class.getMethod("isTerminal");
+            return (Boolean)isTerminal.invoke(console);
+        } catch (NoSuchMethodException e) {
+            return true;  // This is normal and expected for pre-22 JVM
+        } catch (InvocationTargetException | IllegalAccessException e) {
+            return true;  // This is unexpected, but return true here too, just in case
+        }
     }
 }
