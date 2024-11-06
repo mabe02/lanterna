@@ -70,7 +70,16 @@ public abstract class BundleLocator {
      * @return the instance of the bundle.
      */
     private ResourceBundle getBundle(Locale locale) {
-        return ResourceBundle.getBundle(bundleName, locale, loader, new UTF8Control());
+        try {
+            return ResourceBundle.getBundle(bundleName, locale, loader, new UTF8Control());
+        } catch (UnsupportedOperationException e) {
+            /*
+             * Custom Control implementations aren't supported with named modules. Since
+             * java 9 property bundles use utf-8 as default encoding so we can just load the
+             * bundle with the default Control.
+             */
+            return ResourceBundle.getBundle(bundleName, locale, loader);
+        }
     }
 
     // Taken from:
