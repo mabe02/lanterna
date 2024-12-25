@@ -164,9 +164,8 @@ public class AnimatedLabel extends Label {
         @Override
         public void run() {
             AnimatedLabel animatedLabel = labelRef.get();
-            if(animatedLabel == null) {
-                cancel();
-                canCloseTimer();
+            if(animatedLabel == null || animatedLabel.getTextGUI() == null) {
+                removeTaskFromTimer(animatedLabel);
             }
             else {
                 if(animatedLabel.getBasePane() == null) {
