@@ -38,7 +38,7 @@ public class ListBoxTest extends TestBase {
         Panel horizontalPanel = new Panel();
         horizontalPanel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
 
-        TerminalSize size = new TerminalSize(14, 10);
+        TerminalSize size = TerminalSize.of(14, 10);
         CheckBoxList<String> checkBoxList = new CheckBoxList<>(size);
         RadioBoxList<String> radioBoxList = new RadioBoxList<>(size);
         ActionListBox actionListBox = new ActionListBox(size);

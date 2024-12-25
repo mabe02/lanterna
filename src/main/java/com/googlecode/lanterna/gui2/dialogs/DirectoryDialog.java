@@ -93,10 +93,10 @@ public class DirectoryDialog extends DialogWindow {
 
         int unitHeight = dialogSize.getRows();
 
-        dirListBox = new ActionListBox(new TerminalSize(dialogSize.getColumns(), unitHeight));
+        dirListBox = new ActionListBox(TerminalSize.of(dialogSize.getColumns(), unitHeight));
         dirsPane.addComponent(dirListBox.withBorder(Borders.singleLine()), Location.CENTER);
 
-        dirBox = new TextBox(new TerminalSize(dialogSize.getColumns(), 1));
+        dirBox = new TextBox(TerminalSize.of(dialogSize.getColumns(), 1));
         dirsPane.addComponent(dirBox.withBorder(Borders.singleLine()), Location.BOTTOM);
 
         Panel panelButtons = new Panel(new GridLayout(2));

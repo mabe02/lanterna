@@ -248,13 +248,13 @@ public class ProgressBar extends AbstractComponent<ProgressBar> {
         public TerminalSize getPreferredSize(ProgressBar component) {
             int preferredWidth = component.getPreferredWidth();
             if(preferredWidth > 0) {
-                return new TerminalSize(preferredWidth, 1);
+                return TerminalSize.of(preferredWidth, 1);
             }
             else if(component.getLabelFormat() != null && !component.getLabelFormat().trim().isEmpty()) {
-                return new TerminalSize(TerminalTextUtils.getColumnWidth(String.format(component.getLabelFormat(), 100.0f)) + 2, 1);
+                return TerminalSize.of(TerminalTextUtils.getColumnWidth(String.format(component.getLabelFormat(), 100.0f)) + 2, 1);
             }
             else {
-                return new TerminalSize(10, 1);
+                return TerminalSize.of(10, 1);
             }
         }
 
@@ -322,10 +322,10 @@ public class ProgressBar extends AbstractComponent<ProgressBar> {
         public TerminalSize getPreferredSize(ProgressBar component) {
             int preferredWidth = component.getPreferredWidth();
             if(preferredWidth > 0) {
-                return new TerminalSize(preferredWidth, 3);
+                return TerminalSize.of(preferredWidth, 3);
             }
             else {
-                return new TerminalSize(42, 3);
+                return TerminalSize.of(42, 3);
             }
         }
 

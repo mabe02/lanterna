@@ -30,9 +30,9 @@ public class Issue387 {
 
             Panel panel = new Panel();
             panel.addComponent(new TextBox());
-            panel.addComponent(new EmptySpace(new TerminalSize(15, 1)));
+            panel.addComponent(new EmptySpace(TerminalSize.of(15, 1)));
             panel.addComponent(table);
-            panel.addComponent(new EmptySpace(new TerminalSize(15, 1)));
+            panel.addComponent(new EmptySpace(TerminalSize.of(15, 1)));
             panel.addComponent(new TextBox());
 
             window.setComponent(panel);

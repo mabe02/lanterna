@@ -120,7 +120,7 @@ public abstract class AbstractTextGraphics implements TextGraphics {
 
     @Override
     public TextGraphics fill(char c) {
-        fillRectangle(TerminalPosition.TOP_LEFT_CORNER, getSize(), c);
+        fillRectangle(TerminalPosition.OF_0x0, getSize(), c);
         return this;
     }
 
@@ -158,7 +158,7 @@ public abstract class AbstractTextGraphics implements TextGraphics {
 
     @Override
     public TextGraphics drawLine(int fromX, int fromY, int toX, int toY, TextCharacter character) {
-        return drawLine(new TerminalPosition(fromX, fromY), new TerminalPosition(toX, toY), character);
+        return drawLine(TerminalPosition.of(fromX, fromY), TerminalPosition.of(toX, toY), character);
     }
 
     @Override
@@ -207,7 +207,7 @@ public abstract class AbstractTextGraphics implements TextGraphics {
 
     @Override
     public TextGraphics drawImage(TerminalPosition topLeft, TextImage image) {
-        return drawImage(topLeft, image, TerminalPosition.TOP_LEFT_CORNER, image.getSize());
+        return drawImage(topLeft, image, TerminalPosition.OF_0x0, image.getSize());
     }
 
     @Override

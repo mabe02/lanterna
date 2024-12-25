@@ -48,7 +48,7 @@ public class DirectoryDialogBuilder extends AbstractDialogBuilder<DirectoryDialo
     public DirectoryDialogBuilder() {
         super("DirectoryDialog");
         actionLabel = LocalizedString.OK.toString();
-        suggestedSize = new TerminalSize(45, 10);
+        suggestedSize = TerminalSize.of(45, 10);
         showHiddenDirectories = false;
         selectedDir = null;
     }
