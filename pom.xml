@@ -24,10 +24,11 @@
     </properties>
 
     <scm>
-        <connection>scm:git:https://github.com/mabe02/lanterna.git</connection>
-        <developerConnection>scm:git:https://github.com/mabe02/lanterna.git</developerConnection>
+        <connection>scm:git:git@github.com:mabe02/lanterna.git</connection>
+        <developerConnection>scm:git:git@github.com:mabe02/lanterna.git</developerConnection>
         <url>https://github.com/mabe02/lanterna</url>
-    </scm>
+      <tag>HEAD</tag>
+  </scm>
 
     <dependencies>
         <dependency>
