@@ -261,11 +261,14 @@ public abstract class AbstractTextGraphics implements TextGraphics {
     @Override
     public TextGraphics putString(int column, int row, String string) {
         string = prepareStringForPut(column, string);
-        int offset = 0;
-        for(int i = 0; i < string.length(); i++) {
-            char character = string.charAt(i);
-            setCharacter(column + offset, row, newTextCharacter(character));
-            offset += getOffsetToNextCharacter(character);
+        TextCharacter[] textCharacters = TextCharacter.fromString(string, foregroundColor, backgroundColor, activeModifiers);
+        int previousDoubleCharacterCount = 0;
+        for (int i = 0; i < textCharacters.length; i++) {
+            TextCharacter textCharacter = textCharacters[i];
+            setCharacter(column + i + previousDoubleCharacterCount, row, textCharacter);
+            if (textCharacter.isDoubleWidth()) {
+                previousDoubleCharacterCount++;
+            }
         }
         return this;
     }
