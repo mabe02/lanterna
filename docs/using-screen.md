@@ -12,54 +12,54 @@ your back buffer and the visible screen.
 In order to use the Screen layer, you will need a `com.googlecode.lanterna.screen.Screen` object. Just like the 
 `Terminal` object was the basis for all operations in the lowest layer, you will use the `Screen` object here. To create 
 a `Screen` object, you'll need an already existing `Terminal`. Create the `Screen` like this:
-
+```java
     Screen screen = new TerminalScreen(terminal);
-
+```
 ### Using the `DefaultTerminalFactory`
 Just like with the Terminal layer, you can also use the `DefaultTerminalFactory` class to quickly create a `Screen`. 
 Please see JavaDoc documentation for more information about the `DefaultTerminalFactory` class.
-
+```java
     Screen screen = new DefaultTerminalFactory().createScreen();
-
+```
 ## Start the screen
 Instead of the notion of _private mode_, using the Screen layer requires you to _start_ the screen before you use it. 
 In the same way you can also stop the screen when the application is done (or at least doesn't need the screen anymore).
-
+```java
     screen.startScreen();
     
     // do text GUI application logic here until done
 
     screen.stopScreen();
-
+```
 ## Drawing text ##
 The `Screen` object exposes a `setCharacter(..)` method that will put a certain character at a certain position with 
 certain attributes (color and style). It's very straight-forward:
-
+```java
     screen.setCharacter(10, 5, new TextCharacter('!', TextColor.ANSI.RED, TextColor.ANSI.GREEN));
-    
+```
 When drawing full strings, it's easier to use the `TextGraphics` helper interface instead.
-
+```java
     TextGraphics textGraphics = screen.newTextGraphics();
     textGraphics.setForegroundColor(TextColor.ANSI.RED);
     textGraphics.setBackgroundColor(TextColor.ANSI.GREEN);
     textGraphics.putString(10, 5, "Hello Lanterna!");
-
+```
 After writing text to the screen, in order to make it show up you have to call the `refresh()` method.
-
+```java
     screen.refresh();
-
+```
 ## Reading input from the keyboard
 The Screen also exposes the `pollInput()` and `readInput()` methods from `InputProvider`, which in this case will be 
 delegated to the underlying terminal. Please read the section on keyboard input in [Direct terminal access](using-terminal.md).
 
 ## Clearing the screen
 The correct way to reset a `Screen` is to call `clear()` on it.
-
+```java
     //Let's say the terminal contains some random characters...
     screen.clear();
     screen.refresh();
     //The terminal is now blank to the user
-
+```
 ## Refreshing the screen
 As have been noted above, when you have been modifying your screen you need to call the `refresh()` method to make the 
 changes show up. This is because the `Screen` will keep an in-memory buffer of the terminal window. When you draw 
@@ -76,11 +76,12 @@ while you are drawing content. The method doReizeIfNecessary() will check if the
 resized since last time it was called (or since the screen was created if this is the first time
 calling) and update the buffer dimensions accordingly. It returns null if the terminal has not changed
 size since last time.
-
+```java
     TerminalSize newSize = screen.doResizeIfNecessary();
     if(newSize != null) {
         terminalSize = newSize;
     }
+```
 
 ## Manipulating the underlying terminal
 The only way a `Screen` can know what is visible in the real terminal window is by remembering what the buffer looked like 
