@@ -566,6 +566,10 @@ public interface TextColor extends Serializable {
         private final int green;
         private final int blue;
 
+        public static RGB fromAWTColor(Color awtColor) {
+            return new RGB(awtColor.getRed(), awtColor.getGreen(), awtColor.getBlue());
+        }
+
         /**
          * This class can be used to specify a color in 24-bit color space (RGB with 8-bit resolution per color). Please be
          * aware that only a few terminal support 24-bit color control codes, please avoid using this class unless you know
