@@ -116,6 +116,15 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
     }
 
     /**
+     * Returns the wrapped SwingTerminal which is holding the actual terminal content. This can be useful if you want to
+     * add custom Swing listeners to it, etc.
+     * @return The inner SwingTerminal
+     */
+    public SwingTerminal getSwingTerminal() {
+        return swingTerminal;
+    }
+
+    /**
      * Returns the current font configuration. Note that it is immutable and cannot be changed.
      * @return This {@link SwingTerminalFrame}'s current font configuration
      */

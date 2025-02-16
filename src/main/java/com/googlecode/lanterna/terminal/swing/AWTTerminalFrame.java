@@ -124,6 +124,15 @@ public class AWTTerminalFrame extends Frame implements IOSafeTerminal {
     }
 
     /**
+     * Returns the wrapped AWTTerminal which is holding the actual terminal content. This can be useful if you want to
+     * add custom AWT listeners to it, etc.
+     * @return The inner AWTTerminal
+     */
+    public AWTTerminal getAWTTerminal() {
+        return awtTerminal;
+    }
+
+    /**
      * Returns the current font configuration. Note that it is immutable and cannot be changed.
      * @return This {@link AWTTerminalFrame}'s current font configuration
      */
