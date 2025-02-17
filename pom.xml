@@ -92,25 +92,38 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.2.0</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>test-jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <archive>
-                        <manifestEntries>
-                            <Multi-Release>true</Multi-Release>
-                        </manifestEntries>
-                    </archive>
-                </configuration>
-            </plugin>
+			<plugin>
+				<groupId>biz.aQute.bnd</groupId>
+				<artifactId>bnd-maven-plugin</artifactId>
+				<version>7.1.0</version>		
+				<extensions>true</extensions>
+				<executions>
+					<execution>
+						<id>jar</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<bnd><![CDATA[
+							
+						Bundle-SymbolicName: com.googlecode.lanterna
+						Multi-Release: true
+						
+						Import-Package: \
+						  com.sun.jna*;resolution:=optional
+
+						Export-Package: com.googlecode.lanterna*
+						]]></bnd>
+						</configuration>
+					</execution>
+					<execution>
+						<id>test-jar</id>
+						<goals>
+							<goal>test-jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
