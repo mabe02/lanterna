@@ -44,9 +44,9 @@ public class VirtualScreenTest {
 
         TextGraphics textGraphics = screen.newTextGraphics();
         textGraphics.setBackgroundColor(TextColor.ANSI.GREEN);
-        textGraphics.fillTriangle(new TerminalPosition(40, 0), new TerminalPosition(25,19), new TerminalPosition(65, 19), ' ');
+        textGraphics.fillTriangle(TerminalPosition.of(40, 0), TerminalPosition.of(25,19), TerminalPosition.of(65, 19), ' ');
         textGraphics.setBackgroundColor(TextColor.ANSI.RED);
-        textGraphics.drawRectangle(TerminalPosition.TOP_LEFT_CORNER, screen.getTerminalSize(), ' ');
+        textGraphics.drawRectangle(TerminalPosition.OF_0x0, screen.getTerminalSize(), ' ');
         screen.refresh();
 
         while(true) {

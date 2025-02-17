@@ -70,12 +70,12 @@ public class ScrollBarTest extends TestBase {
         controlPanel.addComponent(new Label("Vertical view size:")).addComponent(textBoxVerticalSize);
         controlPanel.addComponent(new Label("Vertical scroll position:")).addComponent(textBoxVerticalPosition);
         controlPanel.addComponent(new Label("Vertical scroll max:")).addComponent(textBoxVerticalMax);
-        controlPanel.addComponent(new EmptySpace(TerminalSize.ONE)).addComponent(new EmptySpace(TerminalSize.ONE));
+        controlPanel.addComponent(new EmptySpace(TerminalSize.OF_1x1)).addComponent(new EmptySpace(TerminalSize.OF_1x1));
         controlPanel.addComponent(new Label("Horizontal tracker grows:")).addComponent(checkHorizontalTrackerGrow);
         controlPanel.addComponent(new Label("Horizontal view size:")).addComponent(textBoxHorizontalSize);
         controlPanel.addComponent(new Label("Horizontal scroll position:")).addComponent(textBoxHorizontalPosition);
         controlPanel.addComponent(new Label("Horizontal scroll max:")).addComponent(textBoxHorizontalMax);
-        controlPanel.addComponent(new EmptySpace(TerminalSize.ONE)).addComponent(new EmptySpace(TerminalSize.ONE));
+        controlPanel.addComponent(new EmptySpace(TerminalSize.OF_1x1)).addComponent(new EmptySpace(TerminalSize.OF_1x1));
         controlPanel.addComponent(buttonRefresh);
         contentPanel.addComponent(closeButton);
 

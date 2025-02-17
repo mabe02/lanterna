@@ -18,6 +18,7 @@
  */
 package com.googlecode.lanterna.gui2;
 
+import com.googlecode.lanterna.TerminalRectangle;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.graphics.Theme;
@@ -30,6 +31,14 @@ import com.googlecode.lanterna.graphics.ThemeDefinition;
  * @author Martin
  */
 public interface Component extends TextGUIElement {
+
+    /**
+     *
+     * @return the TerminalPosition and TerminalSize as a TerminalRectangle
+     */
+    default TerminalRectangle getBounds() {
+        return TerminalRectangle.of(getPosition(), getSize());
+    }
     /**
      * Returns the top-left corner of this component, measured from its parent.
      * @return Position of this component
@@ -38,7 +47,7 @@ public interface Component extends TextGUIElement {
     
     /**
      * Returns the top-left corner of this component in global coordinates space
-     * using {@link TerminalPosition#TOP_LEFT_CORNER} with
+     * using {@link TerminalPosition#OF_0x0} with
      * {@link #toGlobal(TerminalPosition)}
      * 
      * @return global position of this component

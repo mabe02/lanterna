@@ -60,7 +60,7 @@ public abstract class AbstractWindow extends AbstractBasePane<Window> implements
         this.title = title;
         this.textGUI = null;
         this.visible = true;
-        this.contentOffset = TerminalPosition.TOP_LEFT_CORNER;
+        this.contentOffset = TerminalPosition.OF_0x0;
         this.lastKnownPosition = null;
         this.lastKnownSize = null;
         this.lastKnownDecoratedSize = null;

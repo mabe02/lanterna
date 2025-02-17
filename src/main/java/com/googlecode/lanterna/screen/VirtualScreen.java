@@ -56,7 +56,7 @@ public class VirtualScreen extends AbstractScreen {
         this.frameRenderer = new DefaultFrameRenderer();
         this.realScreen = screen;
         this.minimumSize = screen.getTerminalSize();
-        this.viewportTopLeft = TerminalPosition.TOP_LEFT_CORNER;
+        this.viewportTopLeft = TerminalPosition.OF_0x0;
         this.viewportSize = minimumSize;
         this.scrollWithCTRL = false;
     }
@@ -163,7 +163,7 @@ public class VirtualScreen extends AbstractScreen {
         TerminalSize newVirtualSize = minimumSize.max(realTerminalSize);
         if(newVirtualSize.equals(realTerminalSize)) {
             viewportSize = realTerminalSize;
-            viewportTopLeft = TerminalPosition.TOP_LEFT_CORNER;
+            viewportTopLeft = TerminalPosition.OF_0x0;
         }
         else {
             TerminalSize newViewportSize = frameRenderer.getViewportSize(realTerminalSize, newVirtualSize);
@@ -324,7 +324,7 @@ public class VirtualScreen extends AbstractScreen {
 
         /**
          * Where in the virtual screen should the top-left position of the viewport be? To draw the viewport from the
-         * top-left position of the screen, return 0x0 (or TerminalPosition.TOP_LEFT_CORNER) here.
+         * top-left position of the screen, return 0x0 (or TerminalPosition.OF_0x0) here.
          * @return Position of the top-left corner of the viewport inside the screen
          */
         TerminalPosition getViewportOffset();
@@ -357,7 +357,7 @@ public class VirtualScreen extends AbstractScreen {
 
         @Override
         public TerminalPosition getViewportOffset() {
-            return TerminalPosition.TOP_LEFT_CORNER;
+            return TerminalPosition.OF_0x0;
         }
 
         @Override
@@ -381,16 +381,16 @@ public class VirtualScreen extends AbstractScreen {
             int scrollable = viewportSize.getColumns() - horizontalSize - 1;
             int horizontalPosition = (int)((double)scrollable * ((double)virtualScrollPosition.getColumn() / (double)(virtualSize.getColumns() - viewportSize.getColumns())));
             graphics.drawLine(
-                    new TerminalPosition(horizontalPosition, graphics.getSize().getRows() - 2),
-                    new TerminalPosition(horizontalPosition + horizontalSize, graphics.getSize().getRows() - 2),
+                    TerminalPosition.of(horizontalPosition, graphics.getSize().getRows() - 2),
+                    TerminalPosition.of(horizontalPosition + horizontalSize, graphics.getSize().getRows() - 2),
                     Symbols.BLOCK_MIDDLE);
 
             int verticalSize = (int)(((double)(viewportSize.getRows()) / (double)virtualSize.getRows()) * (viewportSize.getRows()));
             scrollable = viewportSize.getRows() - verticalSize - 1;
             int verticalPosition = (int)((double)scrollable * ((double)virtualScrollPosition.getRow() / (double)(virtualSize.getRows() - viewportSize.getRows())));
             graphics.drawLine(
-                    new TerminalPosition(graphics.getSize().getColumns() - 1, verticalPosition),
-                    new TerminalPosition(graphics.getSize().getColumns() - 1, verticalPosition + verticalSize),
+                    TerminalPosition.of(graphics.getSize().getColumns() - 1, verticalPosition),
+                    TerminalPosition.of(graphics.getSize().getColumns() - 1, verticalPosition + verticalSize),
                     Symbols.BLOCK_MIDDLE);
         }
     }

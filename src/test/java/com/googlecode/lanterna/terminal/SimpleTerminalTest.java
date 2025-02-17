@@ -159,7 +159,7 @@ public class SimpleTerminalTest {
     }
 
     private static TerminalPosition resetCursorPositionAfterHelp(Terminal terminal) throws IOException {
-        TerminalPosition cursorPosition = new TerminalPosition(0, 10);
+        TerminalPosition cursorPosition = TerminalPosition.of(0, 10);
         terminal.setCursorPosition(cursorPosition.getColumn(), cursorPosition.getRow());
         return cursorPosition;
     }

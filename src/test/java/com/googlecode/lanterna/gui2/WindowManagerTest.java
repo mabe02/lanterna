@@ -23,7 +23,7 @@ public class WindowManagerTest extends TestBase {
         final Window mainWindow = new BasicWindow("Window Manager Test");
         Panel contentArea = new Panel();
         contentArea.setLayoutManager(new LinearLayout(Direction.VERTICAL));
-        contentArea.addComponent(new EmptySpace(TerminalSize.ONE));
+        contentArea.addComponent(new EmptySpace(TerminalSize.OF_1x1));
         contentArea.addComponent(new Button("Close", new Runnable() {
             @Override
             public void run() {
@@ -40,7 +40,7 @@ public class WindowManagerTest extends TestBase {
             super.prepareWindow(screenSize, window);
 
             window.setDecoratedSize(window.getPreferredSize().withRelative(12, 10));
-            window.setPosition(new TerminalPosition(
+            window.setPosition(TerminalPosition.of(
                     screenSize.getColumns() - window.getDecoratedSize().getColumns() - 1,
                     screenSize.getRows() - window.getDecoratedSize().getRows() - 1
             ));

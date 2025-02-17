@@ -72,7 +72,7 @@ public class DefaultWindowManager implements WindowManager {
             this.lastKnownScreenSize = initialScreenSize;
         }
         else {
-            this.lastKnownScreenSize = new TerminalSize(80, 24);
+            this.lastKnownScreenSize = TerminalSize.of(80, 24);
         }
     }
 
@@ -108,18 +108,18 @@ public class DefaultWindowManager implements WindowManager {
             //Don't place the window, assume the position is already set
         }
         else if(allWindows.isEmpty()) {
-            window.setPosition(TerminalPosition.OFFSET_1x1);
+            window.setPosition(TerminalPosition.OF_1x1);
         }
         else if(window.getHints().contains(Window.Hint.CENTERED)) {
             int left = (lastKnownScreenSize.getColumns() - expectedDecoratedSize.getColumns()) / 2;
             int top = (lastKnownScreenSize.getRows() - expectedDecoratedSize.getRows()) / 2;
-            window.setPosition(new TerminalPosition(left, top));
+            window.setPosition(TerminalPosition.of(left, top));
         }
         else {
             TerminalPosition nextPosition = allWindows.get(allWindows.size() - 1).getPosition().withRelative(2, 1);
             if(nextPosition.getColumn() + expectedDecoratedSize.getColumns() > lastKnownScreenSize.getColumns() ||
                     nextPosition.getRow() + expectedDecoratedSize.getRows() > lastKnownScreenSize.getRows()) {
-                nextPosition = TerminalPosition.OFFSET_1x1;
+                nextPosition = TerminalPosition.of(1, 1);
             }
             window.setPosition(nextPosition);
         }
@@ -164,11 +164,11 @@ public class DefaultWindowManager implements WindowManager {
         TerminalPosition position = window.getPosition();
 
         if(window.getHints().contains(Window.Hint.FULL_SCREEN)) {
-            position = TerminalPosition.TOP_LEFT_CORNER;
+            position = TerminalPosition.OF_0x0;
             size = screenSize;
         }
         else if(window.getHints().contains(Window.Hint.EXPANDED)) {
-            position = TerminalPosition.OFFSET_1x1;
+            position = TerminalPosition.OF_1x1;
             size = screenSize.withRelative(
                     -Math.min(4, screenSize.getColumns()),
                     -Math.min(3, screenSize.getRows()));
@@ -195,7 +195,7 @@ public class DefaultWindowManager implements WindowManager {
             if(window.getHints().contains(Window.Hint.CENTERED)) {
                 int left = (lastKnownScreenSize.getColumns() - size.getColumns()) / 2;
                 int top = (lastKnownScreenSize.getRows() - size.getRows()) / 2;
-                position = new TerminalPosition(left, top);
+                position = TerminalPosition.of(left, top);
             }
         }
 

@@ -36,7 +36,7 @@ public class Issue274 {
         Panel menubar = new Panel();
         menubar.setLayoutManager(new LinearLayout(Direction.HORIZONTAL).setSpacing(1));
 
-        TextBox text = new TextBox(new TerminalSize(10,10),TextBox.Style.MULTI_LINE);
+        TextBox text = new TextBox(TerminalSize.of(10,10),TextBox.Style.MULTI_LINE);
         menubar.addComponent(text);
 
         menubar.addComponent(new Button("Open", () -> {

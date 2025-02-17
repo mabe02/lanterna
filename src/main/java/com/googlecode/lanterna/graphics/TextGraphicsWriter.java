@@ -24,7 +24,7 @@ public class TextGraphicsWriter implements StyleSet<TextGraphicsWriter> {
     public TextGraphicsWriter(TextGraphics backend) {
         this.backend = backend;
         setStyleFrom( backend );
-        cursorPosition = new TerminalPosition(0, 0);
+        cursorPosition = TerminalPosition.OF_0x0;
     }
 
     public TextGraphicsWriter putString(String string) {

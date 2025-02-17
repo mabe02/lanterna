@@ -52,7 +52,7 @@ public class Issue216 {
         tableModel.addRow("hi");
         panel.addComponent(table);
 
-        panel.addComponent(new EmptySpace(new TerminalSize(0,0))); // Empty space underneath labels
+        panel.addComponent(new EmptySpace(TerminalSize.of(0,0))); // Empty space underneath labels
         panel.addComponent(new Button("Submit", () -> {
             tableModel.addRow("haiiii");
             //table.invalidate();

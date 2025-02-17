@@ -42,7 +42,7 @@ public class BasicTextImage implements TextImage {
      * @param rows Size of the image in number of rows
      */
     public BasicTextImage(int columns, int rows) {
-        this(new TerminalSize(columns, rows));
+        this(TerminalSize.of(columns, rows));
     }
     
     /**

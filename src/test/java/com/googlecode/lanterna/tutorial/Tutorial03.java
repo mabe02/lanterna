@@ -124,7 +124,7 @@ public class Tutorial03 {
                     /*
                     We pick a random location
                      */
-                        TerminalPosition cellToModify = new TerminalPosition(
+                        TerminalPosition cellToModify = TerminalPosition.of(
                                 random.nextInt(terminalSize.getColumns()),
                                 random.nextInt(terminalSize.getRows()));
 
@@ -149,8 +149,8 @@ public class Tutorial03 {
                 box with information on the size of the terminal window
                  */
                 String sizeLabel = "Terminal Size: " + terminalSize;
-                TerminalPosition labelBoxTopLeft = new TerminalPosition(1, 1);
-                TerminalSize labelBoxSize = new TerminalSize(sizeLabel.length() + 2, 3);
+                TerminalPosition labelBoxTopLeft = TerminalPosition.of(1, 1);
+                TerminalSize labelBoxSize = TerminalSize.of(sizeLabel.length() + 2, 3);
                 TerminalPosition labelBoxTopRightCorner = labelBoxTopLeft.withRelativeColumn(labelBoxSize.getColumns() - 1);
                 TextGraphics textGraphics = screen.newTextGraphics();
                 //This isn't really needed as we are overwriting everything below anyway, but just for demonstrative purpose

@@ -76,8 +76,8 @@ public abstract class AbstractComponent<T extends Component> implements Componen
      * Default constructor
      */
     public AbstractComponent() {
-        size = TerminalSize.ZERO;
-        position = TerminalPosition.TOP_LEFT_CORNER;
+        size = TerminalSize.OF_0x0;
+        position = TerminalPosition.OF_0x0;
         explicitPreferredSize = null;
         layoutData = null;
         visible = true;
@@ -233,7 +233,7 @@ public abstract class AbstractComponent<T extends Component> implements Componen
     
     @Override
     public TerminalPosition getGlobalPosition() {
-        return toGlobal(TerminalPosition.TOP_LEFT_CORNER);
+        return toGlobal(TerminalPosition.OF_0x0);
     }
     
     @Override

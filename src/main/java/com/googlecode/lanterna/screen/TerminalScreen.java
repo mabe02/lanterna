@@ -198,13 +198,13 @@ public class TerminalScreen extends AbstractScreen {
                 TextCharacter backBufferCharacter = getBackBuffer().getCharacterAt(x, y);
                 TextCharacter frontBufferCharacter = getFrontBuffer().getCharacterAt(x, y);
                 if(!backBufferCharacter.equals(frontBufferCharacter)) {
-                    updateMap.put(new TerminalPosition(x, y), backBufferCharacter);
+                    updateMap.put(TerminalPosition.of(x, y), backBufferCharacter);
                 }
                 if(backBufferCharacter.isDoubleWidth()) {
                     x++;    //Skip the trailing padding
                 } else if (frontBufferCharacter.isDoubleWidth()) {
                     if (x+1 < terminalSize.getColumns()) {
-                        updateMap.put(new TerminalPosition(x+1, y), frontBufferCharacter.withCharacter(' '));
+                        updateMap.put(TerminalPosition.of(x+1, y), frontBufferCharacter.withCharacter(' '));
                     }
                 }
             }
