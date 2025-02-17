@@ -25,24 +25,25 @@ Lanterna provides a TerminalFactory with a DefaultTerminalFactory implementation
 implementation to use. It's mainly checking for if the runtime system has a graphical frontend or not (i.e. if
 Java considers the system headless) and if Java is detecting a semi-standard terminal or not (checking if
 System.console() returns something), giving you either a terminal emulator or a UnixTerminal.
-
+```java
     DefaultTerminalFactory defaultTerminalFactory = new DefaultTerminalFactory();
+```
     
 The DefaultTerminalFactory can be further tweaked, but we'll leave it with default settings in this tutorial.
-
+```java
     Terminal terminal = null;
     try {
-
+```
 Let the factory do its magic and figure out which implementation to use by calling createTerminal()
-
+```java
         terminal = defaultTerminalFactory.createTerminal();
-    
+```
 If we got a terminal emulator (probably Swing) then we are currently looking at an empty terminal emulator
 window at this point. If the code ran in another terminal emulator (putty, gnome-terminal, konsole, etc) by
 invoking java manually, there is yet no changes to the content.
 
 Let's print some text, this has the same effect as calling System.out.println("Hello");
-
+```java
         terminal.putCharacter('H');
         terminal.putCharacter('e');
         terminal.putCharacter('l');
@@ -50,14 +51,14 @@ Let's print some text, this has the same effect as calling System.out.println("H
         terminal.putCharacter('o');
         terminal.putCharacter('\n');
         terminal.flush();
-
+```
 Notice the flush() call above; it is necessary to finish off terminal output operations with a call to
 flush() both in the case of native terminal and the bundled terminal emulators. Lanterna's Unix terminal
 doesn't buffer the output by itself but one can assume the underlying I/O layer does. In the case of the
 terminal emulators bundled in Lanterna, the flush call will signal a repaint to the underlying UI component.
-
+```java
         Thread.sleep(2000);
-        
+```      
 At this point the cursor should be at the start of the next line, immediately after the Hello that was just
 printed. Let's move the cursor to a new position, relative to the current position. Notice we still need to
 call flush() to ensure the change is immediately visible (i.e. the user can see the text cursor moved to the
@@ -66,20 +67,20 @@ One thing to notice here is that if you are running this in a 'proper' terminal 
 at the bottom line, it won't actually move the text up. Attempts at setting the cursor position outside the
 terminal bounds are usually rounded to the first/last column/row. If you run into this, please clear the
 terminal content so the cursor is at the top again before running this code.
-
+```java
         TerminalPosition startPosition = terminal.getCursorPosition();
         terminal.setCursorPosition(startPosition.withRelativeColumn(3).withRelativeRow(2));
         terminal.flush();
         Thread.sleep(2000);
-        
+```    
 Let's continue by changing the color of the text printed. This doesn't change any currently existing text,
 it will only take effect on whatever we print after this.
-
+```java
         terminal.setBackgroundColor(TextColor.ANSI.BLUE);
         terminal.setForegroundColor(TextColor.ANSI.YELLOW);
-        
+```   
 Now print text with these new colors
-
+```java
         terminal.putCharacter('Y');
         terminal.putCharacter('e');
         terminal.putCharacter('l');
@@ -96,7 +97,7 @@ Now print text with these new colors
         terminal.putCharacter('e');
         terminal.flush();
         Thread.sleep(2000);
-        
+```   
 In addition to colors, most terminals support some sort of style that can be selectively enabled. The most
 common one is bold mode, which on many terminal implementations (emulators and otherwise) is not actually
 using bold text at all but rather shifts the tint of the foreground color so it stands out a bit. Let's
@@ -105,7 +106,7 @@ print the same text as above in bold mode to compare.
 Notice that startPosition has the same value as when we retrieved it with getTerminalSize(), the
 TerminalPosition class is immutable and calling the with* methods will return a copy. So the following
 setCursorPosition(..) call will put us exactly one row below the previous row.
-
+```java
         terminal.setCursorPosition(startPosition.withRelativeColumn(3).withRelativeRow(3));
         terminal.flush();
         Thread.sleep(2000);
@@ -126,9 +127,9 @@ setCursorPosition(..) call will put us exactly one row below the previous row.
         terminal.putCharacter('e');
         terminal.flush();
         Thread.sleep(2000);
-        
+```
 Ok, that's enough for now. Let's reset colors and SGR modifiers and move down one more line
-
+```java
         terminal.resetColorAndSGR();
         terminal.setCursorPosition(terminal.getCursorPosition().withColumn(0).withRelativeRow(1));
         terminal.putCharacter('D');
@@ -139,9 +140,9 @@ Ok, that's enough for now. Let's reset colors and SGR modifiers and move down on
         terminal.flush();
     
         Thread.sleep(2000);
-        
+```
 Beep and exit
-
+```java
         terminal.bell();
         terminal.flush();
         Thread.sleep(200);
@@ -152,11 +153,11 @@ Beep and exit
     finally {
         if(terminal != null) {
             try {
-            
+```
 Closing the terminal doesn't always do something, but if you run the Swing or AWT bundled terminal
 emulators for example, it will close the window and allow this application to terminate. Calling it
 on a UnixTerminal will not have any affect.
-
+```java
                 terminal.close();
             }
             catch(IOException e) {
@@ -164,7 +165,7 @@ on a UnixTerminal will not have any affect.
             }
         }
     }
-
+```
 The full code to this tutorial is available in the [test section of the source code](https://github.com/mabe02/lanterna/blob/master/src/test/java/com/googlecode/lanterna/tutorial/Tutorial01.java)
 
 [Move on to tutorial 2](Tutorial02.md)
