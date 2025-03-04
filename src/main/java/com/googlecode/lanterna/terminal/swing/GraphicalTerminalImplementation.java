@@ -1003,11 +1003,8 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
             int rotation = e.getWheelRotation();
             if(rotation > 0){
                 keyQueue.add(new MouseAction(MouseActionType.SCROLL_DOWN, 5, new TerminalPosition(e.getX()/getFontWidth(), e.getY()/getFontHeight())));
-                //keyQueue.add(new KeyStroke(KeyType.PAGE_DOWN,false,false,false));
             } else {
                 keyQueue.add(new MouseAction(MouseActionType.SCROLL_UP, 4, new TerminalPosition(e.getX()/getFontWidth(), e.getY()/getFontHeight())));
-                //keyQueue.add(new KeyStroke(KeyType.PAGE_UP,false,false,false));
-
             }
         }
     }
