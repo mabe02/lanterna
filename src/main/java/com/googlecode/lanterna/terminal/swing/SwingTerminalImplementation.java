@@ -72,6 +72,7 @@ class SwingTerminalImplementation extends GraphicalTerminalImplementation {
                 SwingTerminalImplementation.this.component.requestFocusInWindow();
             }
         });
+        component.addMouseWheelListener(new TerminalMouseListener());
         component.addHierarchyListener(e -> {
             if(e.getChangeFlags() == HierarchyEvent.DISPLAYABILITY_CHANGED) {
                 if(e.getChanged().isDisplayable()) {

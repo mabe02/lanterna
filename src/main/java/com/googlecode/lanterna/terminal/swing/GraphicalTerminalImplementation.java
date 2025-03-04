@@ -24,6 +24,8 @@ import com.googlecode.lanterna.input.DefaultKeyDecodingProfile;
 import com.googlecode.lanterna.input.InputDecoder;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
+import com.googlecode.lanterna.input.MouseAction;
+import com.googlecode.lanterna.input.MouseActionType;
 import com.googlecode.lanterna.terminal.IOSafeTerminal;
 import com.googlecode.lanterna.terminal.TerminalResizeListener;
 import com.googlecode.lanterna.terminal.virtual.DefaultVirtualTerminal;
@@ -960,12 +962,52 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
 
     // This is mostly unimplemented, we could hook more of this into ExtendedTerminal's mouse functions
     protected class TerminalMouseListener extends MouseAdapter {
+        private int convertButton(int awtButton)
+        {
+            int button=0;
+            switch (awtButton) {
+                case MouseEvent.BUTTON1:
+                    button=1;
+                    break;
+                case MouseEvent.BUTTON2:
+                    button=3;
+                    break;
+                case MouseEvent.BUTTON3:
+                    button=2;
+                    break;
+                default:
+                    break;
+            }
+            return button;
+        }
+
         @Override
         public void mouseClicked(MouseEvent e) {
             if(MouseInfo.getNumberOfButtons() > 2 &&
                     e.getButton() == MouseEvent.BUTTON2 &&
                     deviceConfiguration.isClipboardAvailable()) {
                 pasteSelectionContent();
+            } else {
+
+                keyQueue.add(new MouseAction(MouseActionType.CLICK_DOWN, convertButton(e.getButton()), new TerminalPosition(e.getX()/getFontWidth(), e.getY()/getFontHeight())));
+            }
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            keyQueue.add(new MouseAction(MouseActionType.CLICK_RELEASE, convertButton(e.getButton()), new TerminalPosition(e.getX()/getFontWidth(), e.getY()/getFontHeight())));
+        }
+
+        @Override
+        public void mouseWheelMoved(MouseWheelEvent e){
+            int rotation = e.getWheelRotation();
+            if(rotation > 0){
+                keyQueue.add(new MouseAction(MouseActionType.SCROLL_DOWN, 5, new TerminalPosition(e.getX()/getFontWidth(), e.getY()/getFontHeight())));
+                //keyQueue.add(new KeyStroke(KeyType.PAGE_DOWN,false,false,false));
+            } else {
+                keyQueue.add(new MouseAction(MouseActionType.SCROLL_UP, 4, new TerminalPosition(e.getX()/getFontWidth(), e.getY()/getFontHeight())));
+                //keyQueue.add(new KeyStroke(KeyType.PAGE_UP,false,false,false));
+
             }
         }
     }
