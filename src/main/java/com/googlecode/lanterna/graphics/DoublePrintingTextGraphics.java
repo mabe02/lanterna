@@ -18,6 +18,7 @@
  */
 package com.googlecode.lanterna.graphics;
 
+import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.TerminalSize;
 
@@ -30,6 +31,8 @@ import com.googlecode.lanterna.TerminalSize;
  * and compare it when running with the --square parameter and without.
  */
 public class DoublePrintingTextGraphics extends AbstractTextGraphics {
+    private static final TerminalPosition MULTIPLIER = new TerminalPosition(2, 1);
+
     private final TextGraphics underlyingTextGraphics;
 
     /**
@@ -59,5 +62,10 @@ public class DoublePrintingTextGraphics extends AbstractTextGraphics {
     public TerminalSize getSize() {
         TerminalSize size = underlyingTextGraphics.getSize();
         return size.withColumns(size.getColumns() / 2);
+    }
+
+    @Override
+    public TerminalPosition toScreenPosition(TerminalPosition pos) {
+        return underlyingTextGraphics.toScreenPosition(pos.multiply(MULTIPLIER));
     }
 }

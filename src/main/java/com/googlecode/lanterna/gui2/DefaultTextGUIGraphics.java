@@ -278,4 +278,8 @@ public class DefaultTextGUIGraphics implements TextGUIGraphics {
         return this;
     }
 
+    @Override
+    public TerminalPosition toScreenPosition(TerminalPosition pos) {
+        return backend.toScreenPosition(pos);
+    }
 }

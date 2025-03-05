@@ -47,7 +47,16 @@ class NullTextGraphics implements TextGraphics {
         this.tabBehaviour = TabBehaviour.ALIGN_TO_COLUMN_4;
         this.activeModifiers = EnumSet.noneOf(SGR.class);
     }
-
+    
+    /**
+     * The default implementation just returns null, as this Graphics never writes anywhere.
+     * @param pos position to translate
+     * @return null
+     */
+    public TerminalPosition toScreenPosition(TerminalPosition pos) {
+        return null;
+    }
+    
     @Override
     public TerminalSize getSize() {
         return size;
