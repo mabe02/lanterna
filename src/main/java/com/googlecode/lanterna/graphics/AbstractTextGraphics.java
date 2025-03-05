@@ -331,6 +331,29 @@ public abstract class AbstractTextGraphics implements TextGraphics {
     public TextCharacter getCharacter(TerminalPosition position) {
         return getCharacter(position.getColumn(), position.getRow());
     }
+    
+    /**
+     * Returns screen coordinates of top-left corner of this TextGraphics.
+     * The default implementation returns {@link TerminalPosition#TOP_LEFT_CORNER}.
+     * Subclasses that offset the graphics must override this method.
+     * 
+     * @return screen coordinates of top-left corner.
+     */
+    protected TerminalPosition getScreenLocation() {
+        return TerminalPosition.TOP_LEFT_CORNER;
+    }
+
+    @Override
+    public TerminalPosition toScreenPosition(TerminalPosition pos) {
+        TerminalPosition max = getScreenLocation().plus(
+                new TerminalPosition(getSize().getColumns() - 1, getSize().getRows() - 1));
+        TerminalPosition loc = getScreenLocation().plus(pos);
+        if (loc.getColumn() > max.getColumn() || loc.getRow() > max.getRow()) {
+            return null;
+        } else {
+            return loc;
+        }
+    }
 
     @Override
     public TextGraphics newTextGraphics(TerminalPosition topLeftCorner, TerminalSize size) throws IllegalArgumentException {
@@ -343,7 +366,7 @@ public abstract class AbstractTextGraphics implements TextGraphics {
             //do anything because it is impossible to change anything anyway
             return new NullTextGraphics(size);
         }
-        return new SubTextGraphics(this, topLeftCorner, size);
+        return new SubTextGraphics(this, topLeftCorner, getScreenLocation(), size);
     }
 
     private TextCharacter newTextCharacter(char character) {
