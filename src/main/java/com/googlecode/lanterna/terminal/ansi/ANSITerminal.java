@@ -373,9 +373,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
             writeCSISequenceToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'0', (byte)'3', (byte)l_or_h);
             break;
         }
-        if(getCharset().equals(StandardCharsets.UTF_8)) {
-            writeCSISequenceToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'0', (byte)'5', (byte)l_or_h);
-        }
+        writeCSISequenceToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'0', (byte)'6', (byte)l_or_h);
     }
 
     @Override
