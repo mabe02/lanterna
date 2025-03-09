@@ -990,7 +990,13 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
             } else {
 
                 keyQueue.add(new MouseAction(MouseActionType.CLICK_DOWN, convertButton(e.getButton()), new TerminalPosition(e.getX()/getFontWidth(), e.getY()/getFontHeight())));
+                keyQueue.add(new MouseAction(MouseActionType.CLICK_RELEASE, convertButton(e.getButton()), new TerminalPosition(e.getX()/getFontWidth(), e.getY()/getFontHeight())));
             }
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            keyQueue.add(new MouseAction(MouseActionType.CLICK_DOWN, convertButton(e.getButton()), new TerminalPosition(e.getX()/getFontWidth(), e.getY()/getFontHeight())));
         }
 
         @Override
@@ -1006,6 +1012,16 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
             } else {
                 keyQueue.add(new MouseAction(MouseActionType.SCROLL_UP, 4, new TerminalPosition(e.getX()/getFontWidth(), e.getY()/getFontHeight())));
             }
+        }
+
+        @Override
+        public void mouseMoved(MouseEvent e) {
+            keyQueue.add(new MouseAction(MouseActionType.MOVE, 0, new TerminalPosition(e.getX()/getFontWidth(), e.getY()/getFontHeight())));
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            keyQueue.add(new MouseAction(MouseActionType.DRAG, convertButton(e.getButton()), new TerminalPosition(e.getX()/getFontWidth(), e.getY()/getFontHeight())));
         }
     }
 

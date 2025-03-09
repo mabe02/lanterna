@@ -70,6 +70,7 @@ class AWTTerminalImplementation extends GraphicalTerminalImplementation {
             }
         });
         component.addMouseWheelListener(new TerminalMouseListener());
+        component.addMouseMotionListener(new TerminalMouseListener());
 
         component.addHierarchyListener(e -> {
             if(e.getChangeFlags() == HierarchyEvent.DISPLAYABILITY_CHANGED) {
