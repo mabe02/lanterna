@@ -69,6 +69,8 @@ class AWTTerminalImplementation extends GraphicalTerminalImplementation {
                 AWTTerminalImplementation.this.component.requestFocusInWindow();
             }
         });
+        component.addMouseWheelListener(new TerminalMouseListener());
+        component.addMouseMotionListener(new TerminalMouseListener());
 
         component.addHierarchyListener(e -> {
             if(e.getChangeFlags() == HierarchyEvent.DISPLAYABILITY_CHANGED) {
