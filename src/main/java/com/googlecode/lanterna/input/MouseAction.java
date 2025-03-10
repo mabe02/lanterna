@@ -43,6 +43,23 @@ public class MouseAction extends KeyStroke {
     }
 
     /**
+     * Constructs a MouseAction based on an action type, a button and a location on the screen
+     * @param actionType The kind of mouse event
+     * @param button Which button is involved (no button = 0, left button = 1, middle (wheel) button = 2,
+     *               right button = 3, scroll wheel up = 4, scroll wheel down = 5)
+     * @param position Where in the terminal is the mouse cursor located
+     * @param ctrlDown Whether the control key was pressed when this event was generated
+     * @param altDown Whether the alt key was pressed when this event was generated
+     * @param shiftDown Whether the shift key was pressed when this event was generated
+     */
+    public MouseAction(MouseActionType actionType, int button, TerminalPosition position, boolean ctrlDown, boolean altDown, boolean shiftDown) {
+        super(KeyType.MOUSE_EVENT, ctrlDown, altDown, shiftDown);
+        this.actionType = actionType;
+        this.button = button;
+        this.position = position;
+    }
+
+    /**
      * Returns the mouse action type so the caller can determine which kind of action was performed.
      * @return The action type of the mouse event
      */
@@ -74,19 +91,19 @@ public class MouseAction extends KeyStroke {
     public TerminalPosition getPosition() {
         return position;
     }
-    
+
     public boolean isMouseDown() {
         return actionType == MouseActionType.CLICK_DOWN;
     }
-    
+
     public boolean isMouseDrag() {
         return actionType == MouseActionType.DRAG;
     }
-    
+
     public boolean isMouseMove() {
         return actionType == MouseActionType.MOVE;
     }
-    
+
     public boolean isMouseUp() {
         return actionType == MouseActionType.CLICK_RELEASE;
     }
