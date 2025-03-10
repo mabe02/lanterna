@@ -372,6 +372,12 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
         case CLICK_RELEASE_DRAG_MOVE:
             writeCSISequenceToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'0', (byte)'3', (byte)l_or_h);
             break;
+        case CLICK_AUTODETECT:
+            writeCSISequenceToTerminal((byte)'?', (byte)'9', (byte)l_or_h);
+            writeCSISequenceToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'0', (byte)'0', (byte)l_or_h);
+            writeCSISequenceToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'0', (byte)'2', (byte)l_or_h);
+            writeCSISequenceToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'0', (byte)'3', (byte)l_or_h);
+            break;
         }
         writeCSISequenceToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'0', (byte)'6', (byte)l_or_h);
     }
