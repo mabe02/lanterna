@@ -21,6 +21,7 @@ package com.googlecode.lanterna.terminal.swing;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.terminal.MouseCaptureMode;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -33,6 +34,7 @@ import java.util.Collections;
 class AWTTerminalImplementation extends GraphicalTerminalImplementation {
     private final Component component;
     private final AWTTerminalFontConfiguration fontConfiguration;
+    private MouseAdapter mouseListener;
 
     /**
      * Creates a new {@code AWTTerminalImplementation}
@@ -62,15 +64,9 @@ class AWTTerminalImplementation extends GraphicalTerminalImplementation {
         component.setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, Collections.<AWTKeyStroke>emptySet());
 
         component.addKeyListener(new TerminalInputListener());
-        component.addMouseListener(new TerminalMouseListener() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                AWTTerminalImplementation.this.component.requestFocusInWindow();
-            }
-        });
-        component.addMouseWheelListener(new TerminalMouseListener());
-        component.addMouseMotionListener(new TerminalMouseListener());
+
+        //Mouse support
+        updateMouseCaptureMode(this.mouseCaptureMode);
 
         component.addHierarchyListener(e -> {
             if(e.getChangeFlags() == HierarchyEvent.DISPLAYABILITY_CHANGED) {
@@ -82,6 +78,27 @@ class AWTTerminalImplementation extends GraphicalTerminalImplementation {
                 }
             }
         });
+    }
+
+    @Override
+    protected void updateMouseCaptureMode(MouseCaptureMode mouseCaptureMode)
+    {
+        if(this.mouseListener!=null)
+        {
+            component.removeMouseListener(this.mouseListener);
+            component.removeMouseWheelListener(this.mouseListener);
+            component.removeMouseMotionListener(this.mouseListener);
+        }
+        this.mouseListener=new TerminalMouseListener(this.mouseCaptureMode) {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                AWTTerminalImplementation.this.component.requestFocusInWindow();
+            }
+        };
+        component.addMouseListener(this.mouseListener);
+        component.addMouseWheelListener(this.mouseListener);
+        component.addMouseMotionListener(this.mouseListener);
     }
 
     public AWTTerminalFontConfiguration getFontConfiguration() {

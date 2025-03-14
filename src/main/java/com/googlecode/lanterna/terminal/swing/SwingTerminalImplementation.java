@@ -20,6 +20,7 @@ package com.googlecode.lanterna.terminal.swing;
 
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextCharacter;
+import com.googlecode.lanterna.terminal.MouseCaptureMode;
 
 import javax.swing.*;
 import java.awt.*;
@@ -33,6 +34,7 @@ class SwingTerminalImplementation extends GraphicalTerminalImplementation {
 
     private final JComponent component;
     private final SwingTerminalFontConfiguration fontConfiguration;
+    private MouseAdapter mouseListener;
 
     /**
      * Creates a new {@code SwingTerminalImplementation}
@@ -65,15 +67,10 @@ class SwingTerminalImplementation extends GraphicalTerminalImplementation {
         component.setDoubleBuffered(true);
 
         component.addKeyListener(new TerminalInputListener());
-        component.addMouseListener(new TerminalMouseListener() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                SwingTerminalImplementation.this.component.requestFocusInWindow();
-            }
-        });
-        component.addMouseWheelListener(new TerminalMouseListener());
-        component.addMouseMotionListener(new TerminalMouseListener());
+
+        //Mouse support
+        updateMouseCaptureMode(this.mouseCaptureMode);
+
         component.addHierarchyListener(e -> {
             if(e.getChangeFlags() == HierarchyEvent.DISPLAYABILITY_CHANGED) {
                 if(e.getChanged().isDisplayable()) {
@@ -86,6 +83,26 @@ class SwingTerminalImplementation extends GraphicalTerminalImplementation {
         });
     }
 
+    @Override
+    protected void updateMouseCaptureMode(MouseCaptureMode mouseCaptureMode)
+    {
+        if(this.mouseListener!=null)
+        {
+            component.removeMouseListener(this.mouseListener);
+            component.removeMouseWheelListener(this.mouseListener);
+            component.removeMouseMotionListener(this.mouseListener);
+        }
+        this.mouseListener=new TerminalMouseListener(this.mouseCaptureMode) {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                SwingTerminalImplementation.this.component.requestFocusInWindow();
+            }
+        };
+        component.addMouseListener(this.mouseListener);
+        component.addMouseWheelListener(this.mouseListener);
+        component.addMouseMotionListener(this.mouseListener);
+    }
 
     /**
      * Returns the current font configuration. Note that it is immutable and cannot be changed.
