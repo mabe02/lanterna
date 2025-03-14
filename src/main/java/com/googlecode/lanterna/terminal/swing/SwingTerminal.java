@@ -25,6 +25,7 @@ import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.terminal.IOSafeTerminal;
+import com.googlecode.lanterna.terminal.MouseCaptureMode;
 import com.googlecode.lanterna.terminal.TerminalResizeListener;
 
 import javax.swing.*;
@@ -235,6 +236,11 @@ public class SwingTerminal extends JComponent implements IOSafeTerminal {
      */
     public void addInput(KeyStroke keyStroke) {
         terminalImplementation.addInput(keyStroke);
+    }
+
+    public void setMouseCaptureMode(MouseCaptureMode mouseCaptureMode)
+    {
+        terminalImplementation.setMouseCaptureMode(mouseCaptureMode);
     }
 
     @Override

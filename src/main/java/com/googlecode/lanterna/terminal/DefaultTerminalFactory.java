@@ -38,10 +38,10 @@ import java.nio.charset.Charset;
 import java.util.EnumSet;
 
 /**
- * This TerminalFactory implementation uses a simple auto-detection mechanism for figuring out which terminal 
+ * This TerminalFactory implementation uses a simple auto-detection mechanism for figuring out which terminal
  * implementation to create based on characteristics of the system the program is running on.
  * <p>
- * Note that for all systems with a graphical environment present, the SwingTerminalFrame will be chosen. You can 
+ * Note that for all systems with a graphical environment present, the SwingTerminalFrame will be chosen. You can
  * suppress this by calling setForceTextTerminal(true) on this factory.
  * @author martin
  */
@@ -68,10 +68,10 @@ public class DefaultTerminalFactory implements TerminalFactory {
     private AWTTerminalFontConfiguration fontConfiguration;
     private MouseCaptureMode mouseCaptureMode;
     private UnixTerminal.CtrlCBehaviour unixTerminalCtrlCBehaviour;
-    
+
     /**
      * Creates a new DefaultTerminalFactory with all properties set to their defaults
-     */   
+     */
     public DefaultTerminalFactory() {
         this(DEFAULT_OUTPUT_STREAM, DEFAULT_INPUT_STREAM, DEFAULT_CHARSET);
     }
@@ -87,7 +87,7 @@ public class DefaultTerminalFactory implements TerminalFactory {
         this.outputStream = outputStream;
         this.inputStream = inputStream;
         this.charset = charset;
-        
+
         this.forceTextTerminal = false;
         this.preferTerminalEmulator = false;
         this.forceAWTOverSwing = false;
@@ -105,7 +105,7 @@ public class DefaultTerminalFactory implements TerminalFactory {
         this.deviceConfiguration = null;
         this.fontConfiguration = null;
     }
-    
+
     @Override
     public Terminal createTerminal() throws IOException {
         // 3 different reasons for tty-based terminal:
@@ -154,9 +154,19 @@ public class DefaultTerminalFactory implements TerminalFactory {
     public Terminal createTerminalEmulator() {
         Terminal terminal;
         if (!forceAWTOverSwing && hasSwing()) {
-            terminal = createSwingTerminal();
+            SwingTerminalFrame stf = createSwingTerminal();
+            if(mouseCaptureMode!=null)
+            {
+                stf.getSwingTerminal().setMouseCaptureMode(mouseCaptureMode);
+            }
+            terminal = stf;
         } else {
-            terminal = createAWTTerminal();
+            AWTTerminalFrame atf = createAWTTerminal();
+            if(mouseCaptureMode!=null)
+            {
+                atf.getAWTTerminal().setMouseCaptureMode(mouseCaptureMode);
+            }
+            terminal = atf;
         }
 
         if (autoOpenTerminalFrame) {
@@ -344,7 +354,7 @@ public class DefaultTerminalFactory implements TerminalFactory {
     }
 
     /**
-     * Controls whether a SwingTerminalFrame shall be automatically shown (.setVisible(true)) immediately after 
+     * Controls whether a SwingTerminalFrame shall be automatically shown (.setVisible(true)) immediately after
      * creation. If {@code false}, you will manually need to call {@code .setVisible(true)} on the JFrame to actually
      * see the terminal window. Default for this value is {@code true}.
      * @param autoOpenTerminalFrame Automatically open SwingTerminalFrame after creation
@@ -354,7 +364,7 @@ public class DefaultTerminalFactory implements TerminalFactory {
         this.autoOpenTerminalFrame = autoOpenTerminalFrame;
         return this;
     }
-    
+
     /**
      * Sets the title to use on created SwingTerminalFrames created by this factory
      * @param title Title to use on created SwingTerminalFrames created by this factory
@@ -461,7 +471,7 @@ public class DefaultTerminalFactory implements TerminalFactory {
             }
         }
     }
-    
+
     private Terminal createCygwinTerminal(OutputStream outputStream, InputStream inputStream, Charset charset) throws IOException {
         CygwinTerminal cygTerminal = new CygwinTerminal(inputStream, outputStream, charset);
         if(inputTimeout >= 0) {
