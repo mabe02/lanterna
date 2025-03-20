@@ -24,7 +24,10 @@ import com.googlecode.lanterna.input.DefaultKeyDecodingProfile;
 import com.googlecode.lanterna.input.InputDecoder;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
+import com.googlecode.lanterna.input.MouseAction;
+import com.googlecode.lanterna.input.MouseActionType;
 import com.googlecode.lanterna.terminal.IOSafeTerminal;
+import com.googlecode.lanterna.terminal.MouseCaptureMode;
 import com.googlecode.lanterna.terminal.TerminalResizeListener;
 import com.googlecode.lanterna.terminal.virtual.DefaultVirtualTerminal;
 
@@ -71,6 +74,8 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     private int lastBufferUpdateScrollPosition;
     private int lastComponentWidth;
     private int lastComponentHeight;
+
+    protected MouseCaptureMode mouseCaptureMode;
 
     // We use two different data structures to optimize drawing
     //  * A list of modified characters since the last draw (stored in VirtualTerminal)
@@ -815,6 +820,15 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
         virtualTerminal.removeResizeListener(listener);
     }
 
+    public void setMouseCaptureMode(MouseCaptureMode mouseCaptureMode) {
+        this.mouseCaptureMode = mouseCaptureMode;
+        updateMouseCaptureMode(mouseCaptureMode);
+    }
+
+    protected void updateMouseCaptureMode(MouseCaptureMode mouseCaptureMode) {
+        // Let the AWT and Swing implementations do the job here
+    }
+
     ///////////
     // Remaining are private internal classes used by SwingTerminal
     ///////////
@@ -960,12 +974,88 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
 
     // This is mostly unimplemented, we could hook more of this into ExtendedTerminal's mouse functions
     protected class TerminalMouseListener extends MouseAdapter {
+        private MouseCaptureMode mouseCaptureMode=null;
+
+        public TerminalMouseListener() {
+            super();
+        }
+
+        public TerminalMouseListener(MouseCaptureMode mouseCaptureMode)
+        {
+            super();
+            this.mouseCaptureMode=mouseCaptureMode;
+        }
+
+        private int convertButton(int awtButton)
+        {
+            int button=0;
+            switch (awtButton) {
+                case MouseEvent.BUTTON1:
+                    button=1;
+                    break;
+                case MouseEvent.BUTTON2:
+                    button=3;
+                    break;
+                case MouseEvent.BUTTON3:
+                    button=2;
+                    break;
+                default:
+                    break;
+            }
+            return button;
+        }
+
         @Override
         public void mouseClicked(MouseEvent e) {
             if(MouseInfo.getNumberOfButtons() > 2 &&
                     e.getButton() == MouseEvent.BUTTON2 &&
                     deviceConfiguration.isClipboardAvailable()) {
                 pasteSelectionContent();
+            }
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            if(mouseCaptureMode!=null)
+            {
+                keyQueue.add(new MouseAction(MouseActionType.CLICK_DOWN, convertButton(e.getButton()), new TerminalPosition(e.getX()/getFontWidth(), e.getY()/getFontHeight()),e.isControlDown(),e.isAltDown(),e.isShiftDown()));
+            }
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            if(mouseCaptureMode!=null)
+            {
+                keyQueue.add(new MouseAction(MouseActionType.CLICK_RELEASE, convertButton(e.getButton()), new TerminalPosition(e.getX()/getFontWidth(), e.getY()/getFontHeight()),e.isControlDown(),e.isAltDown(),e.isShiftDown()));
+            }
+        }
+
+        @Override
+        public void mouseWheelMoved(MouseWheelEvent e){
+            if(mouseCaptureMode!=null)
+            {
+                int rotation = e.getWheelRotation();
+                if(rotation > 0){
+                    keyQueue.add(new MouseAction(MouseActionType.SCROLL_DOWN, 5, new TerminalPosition(e.getX()/getFontWidth(), e.getY()/getFontHeight()),e.isControlDown(),e.isAltDown(),e.isShiftDown()));
+                } else {
+                    keyQueue.add(new MouseAction(MouseActionType.SCROLL_UP, 4, new TerminalPosition(e.getX()/getFontWidth(), e.getY()/getFontHeight()),e.isControlDown(),e.isAltDown(),e.isShiftDown()));
+                }
+            }
+        }
+
+        @Override
+        public void mouseMoved(MouseEvent e) {
+            if(mouseCaptureMode==MouseCaptureMode.CLICK_RELEASE_DRAG_MOVE || mouseCaptureMode==MouseCaptureMode.CLICK_AUTODETECT)
+            {
+                keyQueue.add(new MouseAction(MouseActionType.MOVE, 0, new TerminalPosition(e.getX()/getFontWidth(), e.getY()/getFontHeight()),e.isControlDown(),e.isAltDown(),e.isShiftDown()));
+            }
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            if(mouseCaptureMode==MouseCaptureMode.CLICK_RELEASE_DRAG || mouseCaptureMode==MouseCaptureMode.CLICK_RELEASE_DRAG_MOVE || mouseCaptureMode==MouseCaptureMode.CLICK_AUTODETECT)
+            {
+                keyQueue.add(new MouseAction(MouseActionType.DRAG, convertButton(e.getButton()), new TerminalPosition(e.getX()/getFontWidth(), e.getY()/getFontHeight()),e.isControlDown(),e.isAltDown(),e.isShiftDown()));
             }
         }
     }
