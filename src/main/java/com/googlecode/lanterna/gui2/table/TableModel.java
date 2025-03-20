@@ -145,6 +145,20 @@ public class TableModel<V> {
     }
 
     /**
+     * Returns a column from the table as a list of the cell data
+     * @param index Index of the column to return
+     * @return Row from the table as a list of the cell data
+     */
+    public synchronized List<V> getColumn(int index) {
+        List<V> columnData = new ArrayList<>();
+        for (int row = 0; row < getRowCount(); row++) {
+            columnData.add(getCell(index, row));
+        }
+        return columnData;
+    }
+    
+
+    /**
      * Adds a new row to the table model at the end. This may update the selection to make sure the same row is selected.
      * @param values Data to associate with the new row, mapped column by column in order
      * @return Itself
