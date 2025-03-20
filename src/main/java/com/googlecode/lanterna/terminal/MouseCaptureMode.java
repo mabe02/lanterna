@@ -53,7 +53,7 @@ public enum MouseCaptureMode {
      * or not.
      */
     CLICK_RELEASE_DRAG_MOVE,
-        /**
+    /**
      * Sends all previous flags, as the terminal will handle only the ones it supports and ignore others
      */
     CLICK_AUTODETECT,
