@@ -49,6 +49,7 @@ Projects using Lanterna
 Incomplete list of projects using Lanterna, feel free to let us know something we can add to this list:
  * https://github.com/MultiMUD/clojure-lanterna
  * https://github.com/datacron/project-lanterminal
+ * https://github.com/gabrieljones/ScaLaMatrixRain
 
 
 Development Guide
