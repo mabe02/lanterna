@@ -27,20 +27,20 @@ has a graphical environment (then use `SwingTerminal`) or not (then use `UnixTer
 help you create an application that works on both a graphical system and a headless system without requiring any change 
 of configuration or recompilation. Also, if you are on a system with a windowing environment but want to force a 
 text-based (`stdout`/`stdin`) terminal, you can pass the following option to the JRE:
-
+```bash
     java -Djava.awt.headless=true  ...
-
+```
 While not exposed on the `TerminalFactory` interface (that `DefaultTerminalFactory` implements), 
 `DefaultTerminalFactory` has a number of extra methods you can use to further customize the terminals it creates.
 
 #### Example
-
+```java
     Terminal terminal = new DefaultTerminalFactory(System.out, System.in, Charset.forName("UTF8")).createTerminal();
-
+```
 or you can do just this which will use `stdout`, `stdin` and the platform encoding.  
-
+```java
     Terminal terminal = new DefaultTerminalFactory().createTerminal();
-
+```
 ###### Note:
 On Windows, you need to use [javaw](http://pages.citebite.com/p6q0p5r4h7sny) to start your application or
 `IOException` will be thrown while invoking `DefaultTerminalFactory.createTerminal()`, see mabe02/lanterna#335.
@@ -53,33 +53,33 @@ systems/terminals don't support this mode at all, but will still perform some sc
 It's always recommended to enter private mode when you start your GUI and exit when you finish.
 
 ### Example
-
+```java
     terminal.enterPrivateMode();
-    ...
+...
     terminal.exitPrivateMode();
-
+```
 ## Moving the cursor
 When you start your GUI, you can never make any assumptions on where the text cursor is. Since text printing will always
 appear at the text cursor position, it is very important to be able to move this around. Here is how you do it:
-
+```java
     terminal.setCursorPosition(10, 5);
-
+```
 The first parameter is the column (the first is 0) and the second parameter is the row (again, first row is 0).
 
 ## Get the size of the terminal
 In order to be able to make good decisions on moving the cursor, you might want to know how big the terminal is. The 
 `Terminal` object will expose a `getTerminalSize()` method that will do precisely this.
-
+```java
     TerminalSize screenSize = terminal.getTerminalSize();
 
     //Place the cursor in the bottom right corner
     terminal.setCursorPosition(screenSize.getColumns() - 1, screenSize.getRows() - 1);
-
+```
 
 ## Printing text
 Printing text is another very useful operation, it's simple enough but a bit limited as you have to print character by 
 character.
-
+```java
     terminal.setCursorPosition(10, 5);
     terminal.putCharacter('H');
     terminal.putCharacter('e');
@@ -88,6 +88,7 @@ character.
     terminal.putCharacter('o');
     terminal.putCharacter('!');
     terminal.setCursorPosition(0, 0);
+```
 
 Notice that just like when you type in text manually, the cursor position will move one column to the right for every 
 character you put. What happens after you put a character on the last column is undefined and may differ between 
@@ -115,7 +116,7 @@ xterm color extensions supported by some terminal emulators which you can use th
 but avoid doing this as most terminal emulators won't understand them.
 
 ### Example
-
+```java
     terminal.setForegroundColor(TextColor.ANSI.RED);
     terminal.setBackgroundColor(TextColor.ANSI.BLUE);
 
@@ -123,6 +124,7 @@ but avoid doing this as most terminal emulators won't understand them.
 
     terminal.setForegroundColor(TextColor.ANSI.DEFAULT);
     terminal.setBackgroundColor(TextColor.ANSI.DEFAULT);
+```
 
 ## Using text styles
 More than color, you can also add certain styles to the text. How well this is supported depends completely on the 
@@ -143,12 +145,13 @@ background color. Not widely supported but your users will love it!
  * `ITALIC` - Italic (cursive) text mode. Some terminals seem to support it, but rarely encountered in use 
 
 Here is how you apply the SGR states:
-
+```java
     terminal.enableSGR(SGR.BOLD);
-    
+
     //Draw text highlighted
-    
+
     terminal.disableSGR(SGR.BOLD);   //or terminal.resetColorAndSGR()
+```
 
 The `Terminal` interface method `resetColorAndSGR()` is the preferred way to reset all colors and SGR states.
 
@@ -156,9 +159,9 @@ The `Terminal` interface method `resetColorAndSGR()` is the preferred way to res
 If you want to completely reset the screen, you can use the `clearScreen()` method. This will (probably) remove all 
 characters on the screen and replace them with the empty character (' ') having `TextColor.ANSI.DEFAULT` set as 
 background.
-
+```java
     terminal.clearScreen();
-
+```
 
 ## Flushing
 To be sure that the text has been sent to the client terminal, you should call the `flush()` method on the `Terminal` 

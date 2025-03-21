@@ -1,7 +1,7 @@
 # Using Maven #
 
 If you want to use the Lanterna library through [Apache Maven](http://maven.apache.org), it's very easy to do. Just put this dependency in your `pom.xml`:
-```
+```xml
     <dependencies>
     ...
         <dependency>
@@ -17,7 +17,7 @@ Adjust the version number as required (I'm probably not going to remember to upd
 
 ## Using snapshot releases ##
 If you want to try a snapshot release of Lanterna through Maven, you'll need to add the Sonatype OSS snapshot repository to you project `pom.xml` or your global Maven settings. I have not tested this, but according to [this](https://github.com/thucydides-webtests/thucydides/wiki/Getting-Started) site, you can add it to your user's `settings.xml` (or, probably easier, to your project `pom.xml`):
-```
+```xml
            <repositories>
            ...
                 <repository>
