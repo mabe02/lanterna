@@ -50,6 +50,10 @@ import java.util.concurrent.locks.ReentrantLock;
  * @author Martin
  */
 public abstract class StreamBasedTerminal extends AbstractTerminal {
+    /**
+     * Timeout for detecting the terminal size, in milliseconds. Default value is 5000.
+     */
+    private static final int TERMINAL_SIZE_TIMEOUT = Integer.getInteger("com.googlecode.lanterna.streamTerminalSizeTimeout", 5000);
 
     private static final Charset UTF8_REFERENCE = StandardCharsets.UTF_8;
 
@@ -180,7 +184,7 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
         long startTime = System.currentTimeMillis();
         TerminalPosition cursorPosition = lastReportedCursorPosition;
         while(cursorPosition == null) {
-            if(System.currentTimeMillis() - startTime > 5000) {
+            if(System.currentTimeMillis() - startTime > TERMINAL_SIZE_TIMEOUT) {
                 //throw new IllegalStateException("Terminal didn't send any position report for 5 seconds, please file a bug with a reproduce!");
                 return null;
             }
