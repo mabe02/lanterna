@@ -18,6 +18,7 @@
  */
 package com.googlecode.lanterna.gui2.table;
 
+import java.sql.*;
 import java.util.*;
 
 /**
@@ -366,4 +367,111 @@ public class TableModel<V> {
         listeners.remove(listener);
         return this;
     }
+
+
+    /**
+     * loads tableModel object from a SQL database
+     * expects an index column at col 1 and does not return it in the new tableModel
+     * @param conn jdbc connection using any SQL jdbc driver
+     * conn will close after data has been retrieved
+     * @param tableName the SQL table to query
+     * @param getIndex boolean  true if the table should be returned with the first (ie index)
+     *                 column false if not
+     * @return TableModel<V>
+     */
+
+    public void fromSQL(Connection conn, String tableName, Boolean getIndex) throws SQLException {
+        try (Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM [" + tableName + "]")) {
+
+            this.clear();
+            ResultSetMetaData metaData = rs.getMetaData();
+            int columnCount = metaData.getColumnCount();
+            int rowCount = 0;
+            while (rs.next()) {
+                rowCount++;
+            }
+
+            int Col = 2;
+            if (getIndex = true) {
+                Col = 1;
+            }else {
+                Col = 2;
+            }
+
+            for (int i = Col; i <= columnCount; i++) { // i=2 to avoid picking up col 1 ie the index or LANTERNA_ROW_ID from toSQL()
+                String[] values = new String[columnCount];
+                for(int j = 1; j <= (rowCount); j++) {
+                    values[j] = rs.getString(i);
+                }
+                this.addColumn(metaData.getColumnName(i), (V[]) values);
+            }
+
+        } catch (SQLException e) {
+            throw new SQLException(e);
+        } finally {
+            conn.close();
+        }
+    }
+
+
+    /**
+     * saves a tableModel to SQL database where each column from the table will be type TEXT with one type INTEGER as the first for an index
+     * @param conn jdbc connection using any SQL jdbc driver
+     * conn will close after data has been inserted
+     * @param tableName the SQL table name to save as
+     * CAUTION will overwrite any current table of that name
+     */
+
+    public void toSQL(Connection conn , String tableName) throws SQLException {
+
+        Statement stmt = conn.createStatement();
+        stmt.execute("DROP TABLE IF EXISTS [" + tableName + "]");
+
+        StringBuilder tableBuilder = new StringBuilder();
+        tableBuilder.append("CREATE TABLE IF NOT EXISTS [")
+                .append(tableName)
+                .append("] (")
+                .append("LANTERNA_ROW_ID INTEGER PRIMARY KEY AUTOINCREMENT, ");
+
+        int columnCount = this.getColumnCount();
+        int rowCount = this.getRowCount();
+
+        for (int i = 0; i < columnCount; i++) {
+            tableBuilder.append("[").append(this.getColumnLabel(i)).append("]");
+            tableBuilder.append(" TEXT");
+            if (i < columnCount - 1) {
+                tableBuilder.append(", ");
+            }
+        }
+        tableBuilder.append(");");
+        stmt.execute(tableBuilder.toString());
+
+        for (int j = 0; j < rowCount; j++) {
+            StringBuilder insertSQL = new StringBuilder("INSERT INTO [" + tableName + "] (");
+            //header names
+            for (int i = 0; i < columnCount; i++) {
+                insertSQL.append("[").append(this.getColumnLabel(i)).append("]");
+                if (i < columnCount - 1) {
+                    insertSQL.append(" ,");
+                }
+            }
+            insertSQL.append(")");
+            //values
+            insertSQL.append(" VALUES (");
+            for (int i = 0; i < columnCount; i++) {
+                insertSQL.append("'").append(this.getCell(i , j)).append("'");
+                if (i < columnCount - 1) {
+                    insertSQL.append(" ,");
+                }
+            }
+            insertSQL.append(")");
+            stmt.execute(String.valueOf(insertSQL));
+        }
+        conn.close();
+    }
+
+
 }
+
+
