@@ -9,10 +9,17 @@ import com.googlecode.lanterna.terminal.virtual.DefaultVirtualTerminal;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 public class TableUnitTests {
 
@@ -221,6 +228,40 @@ public class TableUnitTests {
                 "A4 B4                        ▼");
     }
 
+    @Test
+    public void tableModelSQL() throws SQLException {
+        String[] headers = new String[10];
+        for (int i = 0; i < headers.length; i++) {
+            headers[i] =  "test" + i;
+        }
+        table = new Table<>(headers);
+        model = table.getTableModel();
+
+        for (int i = 0; i < headers.length; i++) { // add row data
+            String[] data = new String[headers.length];
+            for (int j = 0; j < headers.length; j++) {
+                data[j] = (j +"x " + i + "y " + "testdata-randomcell-" + Math.random());
+            }
+            model.addRow(data);
+        }
+        Connection conn = DriverManager.getConnection(getSqliteDatabaseURL());
+        model.toSQL(conn, "testTable");
+
+        Table testTable = new Table<>("");
+        Connection conn2 = DriverManager.getConnection(getSqliteDatabaseURL());
+        TableModel testTableModel = new TableModel("");
+        testTableModel.fromSQL(conn2, "testTable", false);
+        testTable.setTableModel(testTableModel);
+
+        for (int i = 0; i < testTableModel.getRowCount(); i++) {
+            assertEquals(model.getRow(i), testTableModel.getRow(i));
+            assertEquals(model.getColumnCount(), testTableModel.getColumnCount());
+            assertEquals(model.getRows(), testTableModel.getRows());
+            assertEquals(model.getColumn(1), testTableModel.getColumn(1));
+            assertNotEquals(model.getColumn(2), testTableModel.getColumn(1));
+        }
+    }
+
     // ---------------- END OF TESTS ----------------
 
     private void addFourRows() {
@@ -250,4 +291,23 @@ public class TableUnitTests {
     private String stripTrailingNewlines(String s) {
         return s.replaceAll("(?s)[\\s\n]+$", "");
     }
+
+
+    public static String getJarDir() {
+        String path = TableUnitTests.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        String decodedPath;
+        try {
+            decodedPath = URLDecoder.decode(path, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            return "";
+        }
+        File file = new File(decodedPath);
+        return file.getParent();
+    }
+
+    public static String getSqliteDatabaseURL() {
+        return ("jdbc:sqlite:" + getJarDir() + File.separator + "testDb.db");
+    }
+
+
 }
