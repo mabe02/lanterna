@@ -18,6 +18,9 @@
  */
 package com.googlecode.lanterna.gui2.table;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.*;
 
 /**
@@ -366,4 +369,61 @@ public class TableModel<V> {
         listeners.remove(listener);
         return this;
     }
+
+    /**
+     * saves a tableModel to SQL database where each column from the table will be type TEXT with one type INTEGER as the first for an index
+     * @param conn jdbc connection using any SQL jdbc driver
+     * conn will close after data has been inserted
+     * @param tableName the SQL table name to save as
+     * CAUTION will overwrite any current table of that name
+     */
+
+    public void toSQL(Connection conn , String tableName) throws SQLException {
+
+        Statement stmt = conn.createStatement();
+        stmt.execute("DROP TABLE IF EXISTS [" + tableName + "]");
+
+        StringBuilder tableBuilder = new StringBuilder();
+        tableBuilder.append("CREATE TABLE IF NOT EXISTS [")
+                .append(tableName)
+                .append("] (")
+                .append("LANTERNA_ROW_ID INTEGER PRIMARY KEY AUTOINCREMENT, ");
+
+        int columnCount = this.getColumnCount();
+        int rowCount = this.getRowCount();
+
+        for (int i = 0; i < columnCount; i++) {
+            tableBuilder.append("[").append(this.getColumnLabel(i)).append("]");
+            tableBuilder.append(" TEXT");
+            if (i < columnCount - 1) {
+                tableBuilder.append(", ");
+            }
+        }
+        tableBuilder.append(");");
+        stmt.execute(tableBuilder.toString());
+
+        for (int j = 0; j < rowCount; j++) {
+            StringBuilder insertSQL = new StringBuilder("INSERT INTO [" + tableName + "] (");
+            //header names
+            for (int i = 0; i < columnCount; i++) {
+                insertSQL.append("[").append(this.getColumnLabel(i)).append("]");
+                if (i < columnCount - 1) {
+                    insertSQL.append(" ,");
+                }
+            }
+            insertSQL.append(")");
+            //values
+            insertSQL.append(" VALUES (");
+            for (int i = 0; i < columnCount; i++) {
+                insertSQL.append("'").append(this.getCell(i , j)).append("'");
+                if (i < columnCount - 1) {
+                    insertSQL.append(" ,");
+                }
+            }
+            insertSQL.append(")");
+            stmt.execute(String.valueOf(insertSQL));
+        }
+        conn.close();
+    }
+
 }
