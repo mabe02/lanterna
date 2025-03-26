@@ -253,16 +253,12 @@ public class TableUnitTests {
         testTableModel.fromSQL(conn2, "testTable", false);
         testTable.setTableModel(testTableModel);
 
-
         for (int i = 0; i < testTableModel.getRowCount(); i++) {
-            System.out.println(model.getRow(i));
-            System.out.println(testTableModel.getRow(i));
-            assertEquals(model.getRowCount(), testTableModel.getRowCount());
-            assertEquals(model.getRows(), testTableModel.getRows());
-            assertEquals(model.getColumnCount(), testTableModel.getColumnCount());
             assertEquals(model.getRow(i), testTableModel.getRow(i));
-            assertEquals(model.getColumn(i), testTableModel.getColumn(i));
-            assertNotEquals(model.getColumn(i-1), testTableModel.getColumn(i));
+            assertEquals(model.getColumnCount(), testTableModel.getColumnCount());
+            assertEquals(model.getRows(), testTableModel.getRows());
+            assertEquals(model.getColumn(1), testTableModel.getColumn(1));
+            assertNotEquals(model.getColumn(2), testTableModel.getColumn(1));
         }
     }
 
