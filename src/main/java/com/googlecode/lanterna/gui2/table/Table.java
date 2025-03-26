@@ -18,14 +18,15 @@
  */
 package com.googlecode.lanterna.gui2.table;
 
-import java.util.List;
-
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.gui2.AbstractInteractableComponent;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.input.MouseAction;
 import com.googlecode.lanterna.input.MouseActionType;
+
+import java.sql.*;
+import java.util.List;
 
 /**
  * The table class is an interactable component that displays a grid of cells containing data along with a header of
@@ -525,4 +526,87 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
         return column;
     }
 
+    /**
+     * saves table to SQL database where each column from the table will be type TEXT with one type INTEGER as the first for an index
+     * @param conn jdbc connection using a jdbc driver
+     * conn will close after data has been inserted
+     * @param tableName the SQL table name to save as
+     * CAUTION will overwrite any current table of that name
+     */
+
+    public void toSQL(Connection conn , String tableName) throws SQLException {
+        Statement stmt = conn.createStatement();
+        stmt.execute("DROP TABLE IF EXISTS [" + tableName + "]");
+
+        StringBuilder tableBuilder = new StringBuilder();
+        tableBuilder.append("CREATE TABLE IF NOT EXISTS [")
+                .append(tableName)
+                .append("] (")
+                .append("LANTERNA_ROW_ID INTEGER PRIMARY KEY AUTOINCREMENT, ");
+
+        int columnCount = this.getTableModel().getColumnCount();
+        int rowCount = this.getTableModel().getRowCount();
+
+        for (int i = 0; i < columnCount; i++) {
+            tableBuilder.append("[").append(this.getTableModel().getColumnLabel(i)).append("]");
+            tableBuilder.append(" TEXT");
+            if (i < columnCount - 1) {
+                tableBuilder.append(", ");
+            }
+        }
+        tableBuilder.append(");");
+        stmt.execute(tableBuilder.toString());
+
+        for (int j = 0; j < rowCount; j++) {
+            StringBuilder insertSQL = new StringBuilder("INSERT INTO [" + tableName + "] (");
+            //header names
+            for (int i = 0; i < columnCount; i++) {
+                insertSQL.append("[").append(this.getTableModel().getColumnLabel(i)).append("]");
+                if (i < columnCount - 1) {
+                    insertSQL.append(" ,");
+                }
+            }
+            insertSQL.append(")");
+            //values
+            insertSQL.append(" VALUES (");
+            for (int i = 0; i < columnCount; i++) {
+                insertSQL.append("'").append(this.getTableModel().getCell(i , j)).append("'");
+                if (i < columnCount - 1) {
+                    insertSQL.append(" ,");
+                }
+            }
+            insertSQL.append(")");
+            stmt.execute(String.valueOf(insertSQL));
+        }
+        conn.close();
+    }
+
+    /**
+     * retrieves a table from a SQL database where each column from the table will be type TEXT with one type INTEGER as the first for an index
+     * @param conn jdbc connection using a jdbc driver
+     * conn will close after data has been inserted
+     * @param tableName the SQL table to retreive
+     */
+    public void fromSQL(Connection conn, String tableName) throws SQLException {
+        this.getTableModel().clear();
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery("SELECT * FROM " + "[" + tableName + "]");
+        ResultSetMetaData metaData = rs.getMetaData();
+        int columnCount = metaData.getColumnCount();
+
+        String[] headers = new String[columnCount];
+        for (int i = 1; i <= columnCount; i++) {
+            headers[i - 1] = metaData.getColumnName(i);
+        }
+        Table<V> tableData = new Table<>(headers);
+
+        while (rs.next()) {
+            Object[] rowArray = new Object[columnCount];
+            for (int i = 1; i <= columnCount; i++) {
+                rowArray[i - 1] = rs.getString(i);
+            }
+            tableData.getTableModel().addRow((V[]) rowArray);
+        }
+        this.setTableModel(tableData.getTableModel());
+    }
 }
