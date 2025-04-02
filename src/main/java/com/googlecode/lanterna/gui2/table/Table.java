@@ -585,8 +585,7 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
      * retrieves a table from a SQL database where each column from the table will be type TEXT with one type INTEGER as the first for an index
      * @param conn jdbc connection using a jdbc driver
      * conn will close after data has been inserted
-     * @param tableName the SQL table name to save as
-     * CAUTION will overwrite any current table of that name
+     * @param tableName the SQL table to retreive
      */
     public void fromSQL(Connection conn, String tableName) throws SQLException {
         this.getTableModel().clear();
