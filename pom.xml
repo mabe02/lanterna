@@ -59,12 +59,6 @@
             <type>pom</type>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.xerial</groupId>
-            <artifactId>sqlite-jdbc</artifactId>
-            <version>3.49.1.0</version>
-<!--            <scope>test</scope>-->
-        </dependency>
     </dependencies>
 
     <build>
