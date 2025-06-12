@@ -42,7 +42,7 @@ or you can do just this which will use `stdout`, `stdin` and the platform encodi
     Terminal terminal = new DefaultTerminalFactory().createTerminal();
 
 ###### Note:
-On Windows, you need to use [javaw](http://pages.citebite.com/p6q0p5r4h7sny) to start your application or
+On Windows, you need to use [javaw](https://docs.oracle.com/en/java/javase/11/tools/java.html) to start your application or
 `IOException` will be thrown while invoking `DefaultTerminalFactory.createTerminal()`, see mabe02/lanterna#335.
 
 ## Entering and exiting private mode
