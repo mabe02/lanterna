@@ -21,6 +21,7 @@ package com.googlecode.lanterna.gui2;
 import com.googlecode.lanterna.TestTerminalFactory;
 import com.googlecode.lanterna.bundle.LanternaThemes;
 import com.googlecode.lanterna.screen.Screen;
+import com.googlecode.lanterna.terminal.MouseCaptureMode;
 
 import java.io.IOException;
 
@@ -30,7 +31,7 @@ import java.io.IOException;
  */
 public abstract class TestBase {
     void run(String[] args) throws IOException, InterruptedException {
-        Screen screen = new TestTerminalFactory(args).createScreen();
+        Screen screen = new TestTerminalFactory(args).setMouseCaptureMode(MouseCaptureMode.CLICK_AUTODETECT).createScreen();
         screen.startScreen();
         MultiWindowTextGUI textGUI = createTextGUI(screen);
         String theme = extractTheme(args);
