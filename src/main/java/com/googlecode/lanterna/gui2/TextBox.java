@@ -27,6 +27,7 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TerminalTextUtils;
 import com.googlecode.lanterna.graphics.ThemeDefinition;
 import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.input.MouseAction;
 import com.googlecode.lanterna.input.MouseActionType;
 
@@ -659,26 +660,23 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
                 MouseAction mouseAction = (MouseAction) keyStroke;
                 MouseActionType actionType = mouseAction.getActionType();
                 if (actionType == MouseActionType.SCROLL_UP) {
-                    if (canMoveCaretUp()) {
-                        performMoveCaretUp();
-                    }
+                	return handleKeyStrokeReadOnly(new KeyStroke(KeyType.ARROW_UP));
                 } else if (actionType == MouseActionType.SCROLL_DOWN) {
-                    if (canMoveCaretDown()) {
-                        performMoveCaretDown();
-                    }
-                } else {
-                    TerminalPosition offset = getRenderer().getViewTopLeft();
-                    int newCaretPositionColumn = mouseAction.getPosition().getColumn() - getGlobalPosition().getColumn() + offset.getColumn();
-                    int newCaretPositionRow = mouseAction.getPosition().getRow() - getGlobalPosition().getRow() + offset.getRow();
-                    if (newCaretPositionRow >= 0 && newCaretPositionRow < lines.size()) {
-                        String newActiveLine = lines.get(newCaretPositionRow);
-                        int minPositionAttempt = 0;
-                        int maxPositionAttempt = newActiveLine.length();
-                        newCaretPositionColumn = Math.max(minPositionAttempt, Math.min(newCaretPositionColumn, maxPositionAttempt));
-
-                        caretPosition = caretPosition.with(new TerminalPosition(newCaretPositionColumn, newCaretPositionRow));
-                    }
+                	return handleKeyStrokeReadOnly(new KeyStroke(KeyType.ARROW_DOWN));
                 }
+                
+                TerminalPosition offset = getRenderer().getViewTopLeft();
+                int newCaretPositionColumn = mouseAction.getPosition().getColumn() - getGlobalPosition().getColumn() + offset.getColumn();
+                int newCaretPositionRow = mouseAction.getPosition().getRow() - getGlobalPosition().getRow() + offset.getRow();
+                if (newCaretPositionRow >= 0 && newCaretPositionRow < lines.size()) {
+                    String newActiveLine = lines.get(newCaretPositionRow);
+                    int minPositionAttempt = 0;
+                    int maxPositionAttempt = newActiveLine.length();
+                    newCaretPositionColumn = Math.max(minPositionAttempt, Math.min(newCaretPositionColumn, maxPositionAttempt));
+
+                    caretPosition = caretPosition.with(new TerminalPosition(newCaretPositionColumn, newCaretPositionRow));
+                }
+                
                 result = Result.HANDLED;
                 break;
         }
@@ -760,6 +758,19 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
             case PAGE_UP:
                 getRenderer().setViewTopLeft(getRenderer().getViewTopLeft().withRelativeRow(-getSize().getRows()));
                 return Result.HANDLED;
+            case MOUSE_EVENT:
+            	// Not focused
+                if (!isFocused()) { break; }
+                
+                // Only handle Scrollup or down actions
+                MouseAction mouseAction = (MouseAction) keyStroke;
+                MouseActionType actionType = mouseAction.getActionType();
+                if (actionType == MouseActionType.SCROLL_UP) {
+                	 return handleKeyStrokeReadOnly(new KeyStroke(KeyType.ARROW_UP));
+                } else if (actionType == MouseActionType.SCROLL_DOWN) {
+                	return handleKeyStrokeReadOnly(new KeyStroke(KeyType.ARROW_DOWN));
+                }     
+                return Result.HANDLED;							
             default:
         }
         return super.handleKeyStroke(keyStroke);

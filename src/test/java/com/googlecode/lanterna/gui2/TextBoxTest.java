@@ -39,8 +39,8 @@ public class TextBoxTest extends TestBase {
         leftPanel.addComponent(new TextBox("Some text").withBorder(Borders.singleLine("With init")));
         leftPanel.addComponent(new TextBox(new TerminalSize(10, 1), "Here is some text that is too long to fit in the text box").withBorder(Borders.singleLine("Long text")));
         leftPanel.addComponent(new TextBox("password").setMask('*').withBorder(Borders.singleLine("Password")));
-
         rightPanel.addComponent(new TextBox(new TerminalSize(15, 5),
+        		"This is a normal TextBox.  The mouse handling should work when focused.\n" +
                 "Well here we are again\n" +
                 "It's always such a pleasure\n" +
                 "Remember when you tried\n" +
@@ -50,7 +50,18 @@ public class TextBoxTest extends TestBase {
                 "私は笑っていませんが\n" +
                 "状況を振り返ると\n" +
                 "自分のやさしさに驚くほどです").withBorder(Borders.singleLine()));
-
+        rightPanel.addComponent(new TextBox(new TerminalSize(15, 5),
+        		"This is a read-only TextBox.  The mouse handling should continue to work when focused.\n" +
+                "Well here we are again\n" +
+                "It's always such a pleasure\n" +
+                "Remember when you tried\n" +
+                "to kill me twice?\n" +
+                "\n" +
+                "あのときは笑いが止まりませんでしたね\n" +
+                "私は笑っていませんが\n" +
+                "状況を振り返ると\n" +
+                "自分のやさしさに驚くほどです").setReadOnly(true).withBorder(Borders.singleLine()));
+        
         mainPanel.addComponent(leftPanel.withBorder(Borders.singleLine("Single line")));
         mainPanel.addComponent(rightPanel.withBorder(Borders.singleLine("Multiline")));
 
