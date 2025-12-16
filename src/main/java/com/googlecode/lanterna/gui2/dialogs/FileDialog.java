@@ -18,13 +18,25 @@
  */
 package com.googlecode.lanterna.gui2.dialogs;
 
-import com.googlecode.lanterna.TerminalTextUtils;
-import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.gui2.*;
-
 import java.io.File;
 import java.util.Arrays;
 import java.util.Comparator;
+
+import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TerminalTextUtils;
+import com.googlecode.lanterna.gui2.ActionListBox;
+import com.googlecode.lanterna.gui2.Borders;
+import com.googlecode.lanterna.gui2.Button;
+import com.googlecode.lanterna.gui2.Direction;
+import com.googlecode.lanterna.gui2.GridLayout;
+import com.googlecode.lanterna.gui2.Label;
+import com.googlecode.lanterna.gui2.LocalizedString;
+import com.googlecode.lanterna.gui2.Panel;
+import com.googlecode.lanterna.gui2.Panels;
+import com.googlecode.lanterna.gui2.Separator;
+import com.googlecode.lanterna.gui2.TextBox;
+import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
+import com.googlecode.lanterna.input.KeyStroke;
 
 /**
  * Dialog that allows the user to iterate the file system and pick file to open/save
@@ -129,10 +141,10 @@ public class FileDialog extends DialogWindow {
                                 1))
                 .addTo(contentPane);
 
-        okButton = new Button(actionLabel, new OkHandler());
+        okButton = new Button(actionLabel, new OkHandler()).setAccelerator(new KeyStroke('o', false, true));
         Panels.grid(2,
                 okButton,
-                new Button(LocalizedString.Cancel.toString(), new CancelHandler()))
+                new Button(LocalizedString.Cancel.toString(), new CancelHandler()).setAccelerator(new KeyStroke('c', false, true)))
                 .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.END, GridLayout.Alignment.CENTER, false, false, 2, 1))
                 .addTo(contentPane);
 

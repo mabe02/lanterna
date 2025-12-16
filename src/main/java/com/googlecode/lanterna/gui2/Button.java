@@ -27,7 +27,6 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TerminalTextUtils;
 import com.googlecode.lanterna.graphics.ThemeDefinition;
 import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.input.KeyType;
 
 /**
  * Simple labeled button that the user can trigger by pressing the Enter or the Spacebar key on the keyboard when the
@@ -81,12 +80,21 @@ public class Button extends AbstractInteractableComponent<Button> {
         return getRenderer().getCursorLocation(this);
     }
 
+    public Button setAccelerator(KeyStroke keyStroke)
+    {
+    	return super.setAccelerator(keyStroke);
+    }
+    
+    public KeyStroke getAccelerator() { return super.getAccelerator(); };
+    
     @Override
     public synchronized Result handleKeyStroke(KeyStroke keyStroke) {
-        if (isActivationStroke(keyStroke)) {
+        if (isActivationStroke(keyStroke) || isKeyboardAcceleratorStroke(keyStroke)) 
+        {
+        	getBasePane().setFocusedInteractable(this);
             triggerActions();
             return Result.HANDLED;
-        }
+        }        
         return super.handleKeyStroke(keyStroke);
     }
 

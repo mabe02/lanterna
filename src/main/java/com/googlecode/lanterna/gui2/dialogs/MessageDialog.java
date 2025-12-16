@@ -19,7 +19,13 @@
 package com.googlecode.lanterna.gui2.dialogs;
 
 import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.gui2.*;
+import com.googlecode.lanterna.gui2.Button;
+import com.googlecode.lanterna.gui2.EmptySpace;
+import com.googlecode.lanterna.gui2.GridLayout;
+import com.googlecode.lanterna.gui2.Label;
+import com.googlecode.lanterna.gui2.Panel;
+import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
+import com.googlecode.lanterna.input.KeyStroke;
 
 /**
  * Simple message dialog that displays a message and has optional selection/confirmation buttons
@@ -47,7 +53,7 @@ public class MessageDialog extends DialogWindow {
             buttonPanel.addComponent(new Button(button.toString(), () -> {
                 result = button;
                 close();
-            }));
+            }).setAccelerator(new KeyStroke(button.getAcceleratorCharacter(), false, true)));
         }
 
         Panel mainPanel = new Panel();

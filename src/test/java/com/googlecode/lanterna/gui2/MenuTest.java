@@ -18,6 +18,9 @@
  */
 package com.googlecode.lanterna.gui2;
 
+import java.io.File;
+import java.io.IOException;
+
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.dialogs.FileDialogBuilder;
@@ -26,9 +29,7 @@ import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 import com.googlecode.lanterna.gui2.menu.Menu;
 import com.googlecode.lanterna.gui2.menu.MenuBar;
 import com.googlecode.lanterna.gui2.menu.MenuItem;
-
-import java.io.File;
-import java.io.IOException;
+import com.googlecode.lanterna.input.KeyStroke;
 
 public class MenuTest extends TestBase {
     public static void main(String[] args) throws IOException, InterruptedException {
@@ -49,38 +50,42 @@ public class MenuTest extends TestBase {
         MenuBar menubar = new MenuBar();
         window.setMenuBar(menubar);
 
-        // "File" menu
-        Menu menuFile = new Menu("File");
+        // "File" menu w/Accelerator Set
+        Menu menuFile = new Menu("File").setAccelerator(new KeyStroke('f', false, true));
         menubar.add(menuFile);
         menuFile.add(new MenuItem("Open...", () -> {
             File file = new FileDialogBuilder().build().showDialog(textGUI);
             if (file != null)
                 MessageDialog.showMessageDialog(
                         textGUI, "Open", "Selected file:\n" + file, MessageDialogButton.OK);
-        }));
-        menuFile.add(new MenuItem("Exit", window::close));
+        }).setAccelerator(new KeyStroke('o', false, false)));
+        menuFile.add(new MenuItem("Exit", window::close).setAccelerator(new KeyStroke('x', false, false)));
 
-        Menu countryMenu = new Menu("Country");
+        // Menu w/accelerator set
+        Menu countryMenu = new Menu("Country").setAccelerator(new KeyStroke('c', false, true));
         menubar.add(countryMenu);
 
-        Menu germanySubMenu = new Menu("Germany");
+        // Menu w/accelerator not set
+        Menu germanySubMenu = new Menu("Germany").setAccelerator(new KeyStroke('g', false, false));
         countryMenu.add(germanySubMenu);
         for (String state: GERMANY_STATES) {
             germanySubMenu.add(new MenuItem(state, DO_NOTHING));
         }
-        Menu japanSubMenu = new Menu("Japan");
+        
+        // Menu w/accelerator set
+        Menu japanSubMenu = new Menu("Japan").setAccelerator(new KeyStroke('j', false, false));
         countryMenu.add(japanSubMenu);
         for (String prefecture: JAPAN_PREFECTURES) {
             japanSubMenu.add(new MenuItem(prefecture, DO_NOTHING));
         }
 
-        // "Help" menu
-        Menu menuHelp = new Menu("Help");
+        // "Help" menu w/accelerator set
+        Menu menuHelp = new Menu("Help").setAccelerator(new KeyStroke('h', false, true));
         menubar.add(menuHelp);
         menuHelp.add(new MenuItem("Homepage", () -> MessageDialog.showMessageDialog(
-                textGUI, "Homepage", "https://github.com/mabe02/lanterna", MessageDialogButton.OK)));
+                textGUI, "Homepage", "https://github.com/mabe02/lanterna", MessageDialogButton.OK)).setAccelerator(new KeyStroke('h', false, false)));
         menuHelp.add(new MenuItem("About", () -> MessageDialog.showMessageDialog(
-                textGUI, "About", "Lanterna drop-down menu", MessageDialogButton.OK)));
+                textGUI, "About", "Lanterna drop-down menu", MessageDialogButton.OK)).setAccelerator(new KeyStroke('a', false, false)));
 
         // Create textGUI and start textGUI
         textGUI.addWindow(window);

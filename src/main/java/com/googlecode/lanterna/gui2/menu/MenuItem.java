@@ -29,9 +29,6 @@ import com.googlecode.lanterna.gui2.InteractableRenderer;
 import com.googlecode.lanterna.gui2.TextGUIGraphics;
 import com.googlecode.lanterna.gui2.Window;
 import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.input.KeyType;
-import com.googlecode.lanterna.input.MouseAction;
-import com.googlecode.lanterna.input.MouseActionType;
 
 /**
  * This class is a single item that appears in a {@link Menu} with an optional action attached to it
@@ -71,6 +68,13 @@ public class MenuItem extends AbstractInteractableComponent<MenuItem> {
         return label;
     }
 
+    public MenuItem setAccelerator(KeyStroke keyStroke)
+    {
+    	return super.setAccelerator(keyStroke);
+    }
+    
+    public KeyStroke getAccelerator() { return super.getAccelerator(); };
+    
     @Override
     protected InteractableRenderer<MenuItem> createDefaultRenderer() {
         return new DefaultMenuItemRenderer();
@@ -88,7 +92,9 @@ public class MenuItem extends AbstractInteractableComponent<MenuItem> {
 
     @Override
     protected Result handleKeyStroke(KeyStroke keyStroke) {
-        if (isActivationStroke(keyStroke)) {
+    	if (isActivationStroke(keyStroke) || isKeyboardAcceleratorStroke(keyStroke)) {
+    		takeFocus();
+    		
             if (onActivated()) {
                 BasePane basePane = getBasePane();
                 if (basePane instanceof Window && ((Window) basePane).getHints().contains(Window.Hint.MENU_POPUP)) {
@@ -96,12 +102,13 @@ public class MenuItem extends AbstractInteractableComponent<MenuItem> {
                 }
             }
             return Result.HANDLED;
-        } else if (isMouseMove(keyStroke)) {
+        }
+        else if (isMouseMove(keyStroke)) {
             takeFocus();
             return Result.HANDLED;
-        } else {
-            return super.handleKeyStroke(keyStroke);
-        }
+        } 
+    	
+        return super.handleKeyStroke(keyStroke);
     }
 
     /**
