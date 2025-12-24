@@ -18,11 +18,20 @@
  */
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.*;
-import com.googlecode.lanterna.graphics.*;
-import com.googlecode.lanterna.input.*;
+import java.util.List;
 
-import java.util.*;
+import com.googlecode.lanterna.SGR;
+import com.googlecode.lanterna.Symbols;
+import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TextCharacter;
+import com.googlecode.lanterna.graphics.BasicTextImage;
+import com.googlecode.lanterna.graphics.TextImage;
+import com.googlecode.lanterna.graphics.Theme;
+import com.googlecode.lanterna.graphics.ThemeDefinition;
+import com.googlecode.lanterna.graphics.ThemeStyle;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.MouseAction;
 
 /**
  * @author ginkoblongata
@@ -71,54 +80,113 @@ public class SplitPanel extends Panel {
             TerminalPosition drag = null;
 
             @Override
-            public Result handleKeyStroke(KeyStroke keyStroke) {
-                Result result;
-                if (keyStroke instanceof MouseAction) {
-                    result = handleMouseAction((MouseAction) keyStroke);
-                }
-                // TODO: Implement keyboard based resizing
-                else {
-                    result = super.handleKeyStroke(keyStroke);
-                }
+            public Result handleKeyStroke(KeyStroke keyStroke) 
+            {    
+            	Result result = null;            	
+            	switch(keyStroke.getKeyType()) 
+            	{
+                case ARROW_UP:
+                    if(!isHorizontal) {
+                    	aSize = compA.getSize();
+	                    bSize = compB.getSize();
+	                    tSize = thumb.getSize();
+	                    
+                    	resize(-1);
+                    	result = Result.HANDLED;
+                    }
+                    else result = Result.MOVE_FOCUS_UP;
+                    break;
+                    
+                case ARROW_DOWN:
+                    if(!isHorizontal) {
+                    	aSize = compA.getSize();
+	                    bSize = compB.getSize();
+	                    tSize = thumb.getSize();
+                    	resize(1);
+                    	result = Result.HANDLED;
+                    }
+                    else result = Result.MOVE_FOCUS_DOWN;
+                    break;
+                    
+                case ARROW_LEFT:
+                    if(isHorizontal) {
+                    	aSize = compA.getSize();
+	                    bSize = compB.getSize();
+	                    tSize = thumb.getSize();
+                    	resize(-1);
+                    	result = Result.HANDLED;
+                    }
+                    else result = Result.MOVE_FOCUS_LEFT;
+                    break;
+                    
+                case ARROW_RIGHT:
+                    if(isHorizontal) {
+                    	aSize = compA.getSize();
+	                    bSize = compB.getSize();
+	                    tSize = thumb.getSize();
+                    	resize(1);
+                    	result = Result.HANDLED;
+                    }
+                    else result = Result.MOVE_FOCUS_LEFT;
+                    break;
+            	
+                case MOUSE_EVENT:
+                    if (!isFocused()) {
+                        return super.handleKeyStroke(keyStroke);
+                    }
+
+                	MouseAction action = (MouseAction)keyStroke;                                        
+                	if (action.isMouseDown()) {
+  	                  aSize = compA.getSize();
+  	                  bSize = compB.getSize();
+  	                  tSize = thumb.getSize();
+  	                  down = action.getPosition();
+	  	            }
+                	
+	  	            if (action.isMouseDrag()) {
+	  	            	drag = action.getPosition();
+  	
+	  	                  // xxxxxxxxxxxxxxxxxxxxx
+	  	                  // this is a hack, should not be needed if the pane drag
+	  	                  // only on mouse down'd comp stuff was completely working
+	  	                  if (down == null) {
+	  	                      down = drag;
+	  	                  }
+	  	                  // xxxxxxxxxxxxxxxxxxxxx
+	  	
+	  	                  int delta = isHorizontal ? drag.minus(down).getColumn() : drag.minus(down).getRow();
+	  	                  resize(delta);	  	                
+	  	            }
+	  	            
+	  	            if (action.isMouseUp()) {
+	  	            	down = null;
+	  	            	drag = null;
+	  	            }
+  	              
+  	              	result = Result.HANDLED;
+  	              	break;
+                	
+            		default: result = super.handleKeyStroke(keyStroke);            		
+            	}
+                
                 return result;
             }
-
-            private Result handleMouseAction(MouseAction mouseAction) {
-                if (mouseAction.isMouseDown()) {
-                    aSize = compA.getSize();
-                    bSize = compB.getSize();
-                    tSize = thumb.getSize();
-                    down = mouseAction.getPosition();
-                }
-                if (mouseAction.isMouseDrag()) {
-                    drag = mouseAction.getPosition();
-
-                    // xxxxxxxxxxxxxxxxxxxxx
-                    // this is a hack, should not be needed if the pane drag
-                    // only on mouse down'd comp stuff was completely working
-                    if (down == null) {
-                        down = drag;
-                    }
-                    // xxxxxxxxxxxxxxxxxxxxx
-
-                    int delta = isHorizontal ? drag.minus(down).getColumn() : drag.minus(down).getRow();
-                    // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-                    if (isHorizontal) {
-                        int a = Math.max(1, tSize.getColumns() + aSize.getColumns() + delta);
-                        int b = Math.max(1, bSize.getColumns() - delta);
-                        setRatio(a, b);
-                    } else {
-                        int a = Math.max(1, tSize.getRows() + aSize.getRows() + delta);
-                        int b = Math.max(1, bSize.getRows() - delta);
-                        setRatio(a, b);
-                    }
-                    // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-                }
-                if (mouseAction.isMouseUp()) {
-                    down = null;
-                    drag = null;
-                }
-                return Result.HANDLED;
+                        
+            private void resize(int delta)
+            {
+            	if (tSize == null || aSize == null || bSize == null) return;
+            	
+            	// xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                 if (isHorizontal) {
+                     int a = Math.max(1, tSize.getColumns() + aSize.getColumns() + delta);
+                     int b = Math.max(1, bSize.getColumns() - delta);
+                     setRatio(a, b);
+                 } else {
+                     int a = Math.max(1, tSize.getRows() + aSize.getRows() + delta);
+                     int b = Math.max(1, bSize.getRows() - delta);
+                     setRatio(a, b);
+                 }                      
+                 // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
             }
         };
         return imageComponent;
@@ -131,7 +199,6 @@ public class SplitPanel extends Panel {
         public ScrollPanelLayoutManager() {
             hasChanged = true;
         }
-
 
         @Override
         public TerminalSize getPreferredSize(List<Component> components) {
@@ -154,11 +221,8 @@ public class SplitPanel extends Panel {
 
         @Override
         public void doLayout(TerminalSize area, List<Component> components) {
-            TerminalSize size = getSize();
-
             // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-            // TODO: themed
-            int length = isHorizontal ? size.getRows() : size.getColumns();
+            int length = isHorizontal ? area.getRows() : area.getColumns();
             TerminalSize tsize = new TerminalSize(isHorizontal ? 1 : length, !isHorizontal ? 1 : length);
             TextImage textImage = new BasicTextImage(tsize);
             Theme theme = getTheme();
@@ -180,8 +244,8 @@ public class SplitPanel extends Panel {
             int tWidth = thumb.getPreferredSize().getColumns();
             int tHeight = thumb.getPreferredSize().getRows();
 
-            int w = size.getColumns();
-            int h = size.getRows();
+            int w = area.getColumns();
+            int h = area.getRows();
 
             if (isHorizontal) {
                 w -= tWidth;
@@ -198,10 +262,10 @@ public class SplitPanel extends Panel {
 
             if (isHorizontal) {
                 int leftWidth = Math.max(0, (int) (w * ratio));
-                int leftHeight = Math.max(0, Math.min(compA.getPreferredSize().getRows(), h));
+                int leftHeight = Math.max(0, h);
 
                 int rightWidth = Math.max(0, w - leftWidth);
-                int rightHeight = Math.max(0, Math.min(compB.getPreferredSize().getRows(), h));
+                int rightHeight = Math.max(0, h);
 
                 compA.setSize(new TerminalSize(leftWidth, leftHeight));
                 thumb.setSize(thumb.getPreferredSize());
@@ -211,10 +275,10 @@ public class SplitPanel extends Panel {
                 thumb.setPosition(new TerminalPosition(leftWidth, h / 2 - tHeight / 2));
                 compB.setPosition(new TerminalPosition(leftWidth + tWidth, 0));
             } else {
-                int leftWidth = Math.max(0, Math.min(compA.getPreferredSize().getColumns(), w));
+                int leftWidth = Math.max(0, w);
                 int leftHeight = Math.max(0, (int) (h * ratio));
 
-                int rightWidth = Math.max(0, Math.min(compB.getPreferredSize().getColumns(), w));
+                int rightWidth = Math.max(0, w);
                 int rightHeight = Math.max(0, h - leftHeight);
 
                 compA.setSize(new TerminalSize(leftWidth, leftHeight));
@@ -253,6 +317,7 @@ public class SplitPanel extends Panel {
             int total = Math.abs(left) + Math.abs(right);
             ratio = (double) left / (double) total;
         }
+        invalidate();
     }
 
     public void setThumbVisible(boolean visible) {
