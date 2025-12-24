@@ -107,6 +107,7 @@ public class SplitPanel extends Panel {
                     }
                     else result = Result.MOVE_FOCUS_DOWN;
                     break;
+                    
                 case ARROW_LEFT:
                     if(isHorizontal) {
                     	aSize = compA.getSize();
@@ -220,11 +221,8 @@ public class SplitPanel extends Panel {
 
         @Override
         public void doLayout(TerminalSize area, List<Component> components) {
-            TerminalSize size = getSize();
-
             // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-            // TODO: themed
-            int length = isHorizontal ? size.getRows() : size.getColumns();
+            int length = isHorizontal ? area.getRows() : area.getColumns();
             TerminalSize tsize = new TerminalSize(isHorizontal ? 1 : length, !isHorizontal ? 1 : length);
             TextImage textImage = new BasicTextImage(tsize);
             Theme theme = getTheme();
@@ -246,8 +244,8 @@ public class SplitPanel extends Panel {
             int tWidth = thumb.getPreferredSize().getColumns();
             int tHeight = thumb.getPreferredSize().getRows();
 
-            int w = size.getColumns();
-            int h = size.getRows();
+            int w = area.getColumns();
+            int h = area.getRows();
 
             if (isHorizontal) {
                 w -= tWidth;
@@ -264,10 +262,10 @@ public class SplitPanel extends Panel {
 
             if (isHorizontal) {
                 int leftWidth = Math.max(0, (int) (w * ratio));
-                int leftHeight = Math.max(0, Math.min(compA.getPreferredSize().getRows(), h));
+                int leftHeight = Math.max(0, h);
 
                 int rightWidth = Math.max(0, w - leftWidth);
-                int rightHeight = Math.max(0, Math.min(compB.getPreferredSize().getRows(), h));
+                int rightHeight = Math.max(0, h);
 
                 compA.setSize(new TerminalSize(leftWidth, leftHeight));
                 thumb.setSize(thumb.getPreferredSize());
@@ -277,10 +275,10 @@ public class SplitPanel extends Panel {
                 thumb.setPosition(new TerminalPosition(leftWidth, h / 2 - tHeight / 2));
                 compB.setPosition(new TerminalPosition(leftWidth + tWidth, 0));
             } else {
-                int leftWidth = Math.max(0, Math.min(compA.getPreferredSize().getColumns(), w));
+                int leftWidth = Math.max(0, w);
                 int leftHeight = Math.max(0, (int) (h * ratio));
 
-                int rightWidth = Math.max(0, Math.min(compB.getPreferredSize().getColumns(), w));
+                int rightWidth = Math.max(0, w);
                 int rightHeight = Math.max(0, h - leftHeight);
 
                 compA.setSize(new TerminalSize(leftWidth, leftHeight));
