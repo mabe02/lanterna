@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2024 Martin Berglund
+ * Copyright (C) 2010-2026 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
 
@@ -32,7 +32,18 @@ public class SimpleWindowManagerTest extends TestBase {
     public static void main(String[] args) throws IOException, InterruptedException {
         new SimpleWindowManagerTest().run(args);
     }
-
+    /*
+        ┌──Choose test─────────────────────┐
+        │<Centered window>                 │
+        │<Undecorated window>              │
+        │<Undecorated + Centered window>   │
+        │<Full-screen window>              │
+        │<Undecorated + Full-screen window>│
+        │<Expanded window>                 │
+        │<Undecorated + Expanded window>   │
+        │<Close >                          │
+        └──────────────────────────────────┘
+    */
     @Override
     public void init(final WindowBasedTextGUI textGUI) {
         final Window mainWindow = new BasicWindow("Choose test");
@@ -79,7 +90,7 @@ public class SimpleWindowManagerTest extends TestBase {
 
             Panel content = new Panel();
             content.setLayoutManager(new BorderLayout());
-            TextBox textBox = new TextBox(TestUtils.downloadGPL(), TextBox.Style.MULTI_LINE);
+            TextBox textBox = new TextBox(TestUtils.someText(), TextBox.Style.MULTI_LINE);
             textBox.setLayoutData(BorderLayout.Location.CENTER);
             textBox.setReadOnly(true);
             content.addComponent(textBox);
@@ -97,7 +108,7 @@ public class SimpleWindowManagerTest extends TestBase {
 
             Panel content = new Panel();
             content.setLayoutManager(new BorderLayout());
-            TextBox textBox = new TextBox(TestUtils.downloadGPL(), TextBox.Style.MULTI_LINE);
+            TextBox textBox = new TextBox(TestUtils.someText(), TextBox.Style.MULTI_LINE);
             textBox.setLayoutData(BorderLayout.Location.CENTER);
             textBox.setReadOnly(true);
             content.addComponent(textBox);
