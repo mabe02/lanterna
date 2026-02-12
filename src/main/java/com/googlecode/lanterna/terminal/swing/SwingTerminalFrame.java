@@ -113,6 +113,7 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
         getContentPane().add(swingTerminal, BorderLayout.CENTER);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setBackground(Color.BLACK); //This will reduce white flicker when resizing the window
+        pack();
     }
 
     /**
