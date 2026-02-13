@@ -80,7 +80,7 @@ public class SplitPanel extends Panel {
             int total = Math.abs(a) + Math.abs(b);
             ratio = (double) a / (double) total;
         }
-        hasChanged |= ratio != r;
+        hasChanged = ratio != r;
         if (hasChanged) {
             invalidate();
         }
@@ -246,7 +246,7 @@ public class SplitPanel extends Panel {
                 thumb.setPosition(TerminalPosition.of(w / 2 - tWidth / 2, leftHeight));
                 compB.setPosition(TerminalPosition.of(0, leftHeight + tHeight));
             }
-            hasChanged |= !rectangles.equals(components.stream().map(c -> c.getBounds()).collect(Collectors.toList()));
+            hasChanged = !rectangles.equals(components.stream().map(c -> c.getBounds()).collect(Collectors.toList()));
         }
     }
 
