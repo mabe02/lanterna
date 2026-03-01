@@ -77,6 +77,11 @@ public class DelegatingThemeDefinition implements ThemeDefinition {
     }
 
     @Override
+    public int getIntegerProperty(String name, int defaultValue) {
+        return themeDefinition.getIntegerProperty(name, defaultValue);
+    }
+
+    @Override
     public boolean getBooleanProperty(String name, boolean defaultValue) {
         return themeDefinition.getBooleanProperty(name, defaultValue);
     }

@@ -285,6 +285,20 @@ public abstract class AbstractTheme implements Theme {
         }
 
         @Override
+        public int getIntegerProperty(String name, int defaultValue) {
+            String propertyValue = node.propertyMap.get(name);
+            if(propertyValue == null) {
+                if(node == rootNode) {
+                    return defaultValue;
+                }
+                else {
+                    return new DefinitionImpl(node.parent).getIntegerProperty(name, defaultValue);
+                }
+            }
+            return Integer.parseInt(propertyValue);
+        }
+
+        @Override
         public boolean getBooleanProperty(String name, boolean defaultValue) {
             String propertyValue = node.propertyMap.get(name);
             if(propertyValue == null) {

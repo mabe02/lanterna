@@ -319,6 +319,15 @@ public class SimpleTheme implements Theme {
             return this;
         }
 
+        public synchronized int getIntegerProperty(String name, int defaultValue) {
+            return Integer.parseInt(properties.getProperty(name, Integer.toString(defaultValue)));
+        }
+
+        public synchronized Definition setIntegerProperty(String name, int value) {
+            properties.setProperty(name, Integer.toString(value));
+            return this;
+        }
+
         @Override
         public synchronized boolean getBooleanProperty(String name, boolean defaultValue) {
             return Boolean.parseBoolean(properties.getProperty(name, Boolean.toString(defaultValue)));

@@ -90,6 +90,15 @@ public interface ThemeDefinition {
     boolean getBooleanProperty(String name, boolean defaultValue);
 
     /**
+     * Retrieves a custom integer property, if one is available by this name. Will return a supplied default value if
+     * no such property could be found within this {@link ThemeDefinition}.
+     * @param name Name of the integer property to look up
+     * @param defaultValue What to return if the there is no property with this name
+     * @return The property value stored in this theme definition, parsed as a integer
+     */
+    int getIntegerProperty(String name, int defaultValue);
+
+    /**
      * Asks the theme definition for this component if the theme thinks that the text cursor should be visible or not.
      * Note that certain components might have a visible state depending on the context and the current data set, in
      * those cases it can use {@link #getBooleanProperty(String, boolean)} to allow themes more fine-grained control
