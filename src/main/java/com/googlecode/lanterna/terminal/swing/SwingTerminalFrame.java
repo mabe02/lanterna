@@ -106,7 +106,11 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
     private SwingTerminalFrame(String title, SwingTerminal swingTerminal, TerminalEmulatorAutoCloseTrigger... autoCloseTriggers) {
         super(title != null ? title : "SwingTerminalFrame");
         this.swingTerminal = swingTerminal;
-        this.autoCloseTriggers = EnumSet.copyOf(Arrays.asList(autoCloseTriggers));
+        if (autoCloseTriggers != null && autoCloseTriggers.length > 0)
+        {
+        	this.autoCloseTriggers = EnumSet.copyOf(Arrays.asList(autoCloseTriggers));
+        }
+        else this.autoCloseTriggers = null;
         this.disposed = false;
 
         getContentPane().setLayout(new BorderLayout());
@@ -228,9 +232,11 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
             return new KeyStroke(KeyType.EOF);
         }
         KeyStroke keyStroke = swingTerminal.pollInput();
-        if(autoCloseTriggers.contains(TerminalEmulatorAutoCloseTrigger.CLOSE_ON_ESCAPE) &&
-                keyStroke != null && 
-                keyStroke.getKeyType() == KeyType.ESCAPE) {
+        if(autoCloseTriggers != null && 
+           autoCloseTriggers.contains(TerminalEmulatorAutoCloseTrigger.CLOSE_ON_ESCAPE) &&
+           keyStroke != null && 
+           keyStroke.getKeyType() == KeyType.ESCAPE) 
+        {
             dispose();
         }
         return keyStroke;
@@ -249,7 +255,9 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
     @Override
     public void exitPrivateMode() {
         swingTerminal.exitPrivateMode();
-        if(autoCloseTriggers.contains(TerminalEmulatorAutoCloseTrigger.CLOSE_ON_EXIT_PRIVATE_MODE)) {
+        if(autoCloseTriggers != null && 
+           autoCloseTriggers.contains(TerminalEmulatorAutoCloseTrigger.CLOSE_ON_EXIT_PRIVATE_MODE)) 
+        {
             dispose();
         }
     }
