@@ -215,7 +215,7 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
             isMouseActivation = action.getActionType() == MouseActionType.CLICK_DOWN;
         }
         
-        return isMouseActivation;
+        return isFocused() && isMouseActivation;
     }
     
     public boolean isActivationStroke(KeyStroke keyStroke) {

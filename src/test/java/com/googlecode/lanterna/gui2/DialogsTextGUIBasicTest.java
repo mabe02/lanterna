@@ -22,6 +22,7 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TestTerminalFactory;
 import com.googlecode.lanterna.gui2.dialogs.*;
 import com.googlecode.lanterna.screen.Screen;
+import com.googlecode.lanterna.terminal.MouseCaptureMode;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,7 +34,7 @@ import java.util.regex.Pattern;
  */
 public class DialogsTextGUIBasicTest {
     public static void main(String[] args) throws IOException {
-        Screen screen = new TestTerminalFactory(args).createScreen();
+        Screen screen = new TestTerminalFactory(args).setMouseCaptureMode(MouseCaptureMode.CLICK_AUTODETECT).createScreen();
         screen.startScreen();
         final WindowBasedTextGUI textGUI = new MultiWindowTextGUI(screen);
         try {

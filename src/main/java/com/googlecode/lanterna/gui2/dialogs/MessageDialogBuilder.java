@@ -46,6 +46,7 @@ public class MessageDialogBuilder {
         this.buttons = new ArrayList<>();
         this.extraWindowHints = new HashSet<>();
         this.extraWindowHints.add(Window.Hint.CENTERED);
+        this.extraWindowHints.add(Window.Hint.MODAL);        
     }
 
     /**

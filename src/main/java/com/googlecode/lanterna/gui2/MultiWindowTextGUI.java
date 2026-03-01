@@ -382,8 +382,14 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
             List<Window> snapshot = new ArrayList<>(getWindows());
             for (Window w : snapshot) {
                 w.getBounds().whenContains(mouse.getPosition(), () -> {
-                    setActiveWindow(w);
-                    anyHit.set(true);
+                	// Only change active window if the active MODAL dialog or if 
+                	// window is not MODAL 
+                	if (!priorActiveWindow.getHints().contains(Hint.MODAL) ||
+                		(priorActiveWindow.getHints().contains(Hint.MODAL) && w == priorActiveWindow))
+                	{
+                		setActiveWindow(w);
+                		anyHit.set(true);
+                	}                	
                 });
             }
             // clear popup menus if they clicked onto another window or missed all windows
