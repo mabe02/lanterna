@@ -130,7 +130,18 @@ public class MenuBar extends AbstractComponent<MenuBar> implements Container {
     }
 
     @Override
-    public boolean handleInput(KeyStroke key) {
+    public boolean handleInput(KeyStroke key) 
+    {
+    	// Process top level menus
+    	for (Menu mnu : menus)
+    	{   		
+    		// Check to see if handled by accelerator 
+    		if (mnu.isKeyboardAcceleratorStroke(key))
+    		{    			
+    			mnu.handleKeyStroke(key);
+    			return true;
+    		}
+    	}    	
         return false;
     }
 

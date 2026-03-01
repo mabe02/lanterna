@@ -44,8 +44,13 @@ public class InputUITest extends TestBase {
                 if (keyStroke.getKeyType() == KeyType.TAB) {
                     return super.handleKeyStroke(keyStroke);
                 }
-                if (keyStroke.getKeyType() == KeyType.CHARACTER) {
-                    lastKey = keyStroke.getCharacter() + "";
+                if (keyStroke.getKeyType() == KeyType.CHARACTER) 
+                {
+                	if (keyStroke.getCharacter().equals(' '))
+                	{
+                		lastKey = "SPACE";
+                	}
+                	else lastKey = keyStroke.getCharacter() + "";
                 }
                 else {
                     lastKey = keyStroke.getKeyType().toString();

@@ -20,6 +20,10 @@
 
 package com.googlecode.lanterna.gui2.dialogs;
 
+import java.io.File;
+import java.util.Arrays;
+import java.util.Comparator;
+
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.ActionListBox;
 import com.googlecode.lanterna.gui2.BorderLayout;
@@ -32,10 +36,7 @@ import com.googlecode.lanterna.gui2.LocalizedString;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.TextBox;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
-
-import java.io.File;
-import java.util.Arrays;
-import java.util.Comparator;
+import com.googlecode.lanterna.input.KeyStroke;
 
 /**
  * Dialog that allows the user to iterate the file system and pick directory.
@@ -101,8 +102,8 @@ public class DirectoryDialog extends DialogWindow {
 
         Panel panelButtons = new Panel(new GridLayout(2));
         panelButtons.setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.END, GridLayout.Alignment.CENTER, false, false, 2, 1));
-        panelButtons.addComponent(new Button(actionLabel, new OkHandler()));
-        panelButtons.addComponent(new Button(LocalizedString.Cancel.toString(), new CancelHandler()));
+        panelButtons.addComponent(new Button(actionLabel, new OkHandler()).setAccelerator(new KeyStroke('s', false, true)));
+        panelButtons.addComponent(new Button(LocalizedString.Cancel.toString(), new CancelHandler()).setAccelerator(new KeyStroke('c', false, true)));
         contentPane.addComponent(panelButtons, Location.BOTTOM);
 
         if (selectedObject.isFile()) {

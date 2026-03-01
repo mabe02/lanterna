@@ -58,6 +58,17 @@ public class Menu extends MenuItem {
         return this;
     }
 
+    public List<MenuItem> getSubMenus()
+    {
+    	return new ArrayList<>(subItems);	
+    }
+    
+    public Menu setAccelerator(KeyStroke keyStroke)
+    {
+    	super.setAccelerator(keyStroke);
+    	return this;
+    }
+        
     @Override
     protected boolean onActivated() {
         boolean result = true;
@@ -89,6 +100,16 @@ public class Menu extends MenuItem {
                             Menu nextSelectedMenu = menuBar.getMenu(thisMenuIndex + 1);
                             nextSelectedMenu.takeFocus();
                             nextSelectedMenu.onActivated();
+                        }
+                    }
+                    
+                    // Check if accelerator for c
+                    for (MenuItem menuItem : subItems) 
+                    {
+                        if (menuItem.isEnabled() && menuItem.isKeyboardAcceleratorStroke(keyStroke))
+                        {
+                        	Result result = menuItem.handleKeyStroke(keyStroke);                        	
+                        	if (result == Result.HANDLED) break;
                         }
                     }
                 }

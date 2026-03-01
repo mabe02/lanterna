@@ -100,7 +100,12 @@ public abstract class AbstractBasePane<T extends BasePane> implements BasePane {
 
         // Now try to deliver the event to the focused component
         boolean handled = doHandleInput(key);
-
+        if (!handled)
+        {
+        	// Now try to deliver the event as an accelerator to unfocused components
+        	handled = doHandleAccelerator(key);
+        }
+        
         // If it wasn't handled, fire the listeners and decide what to report to the TextGUI
         if(!handled) {
             AtomicBoolean hasBeenHandled = new AtomicBoolean(false);
@@ -111,9 +116,42 @@ public abstract class AbstractBasePane<T extends BasePane> implements BasePane {
         }
         return handled;
     }
-
+    
     abstract T self();
 
+    private boolean doHandleAccelerator(KeyStroke key) 
+    {
+    	if (key.getKeyType() == KeyType.MOUSE_EVENT) return false;
+    		    	
+    	MenuBar menuBar = getMenuBar();
+    	
+    	// Check menu accelerators
+    	if (menuBar != null && menuBar.handleInput(key)) return true;              	
+
+    	// Check on base component    	    	
+    	return handleAccelerator(contentHolder, key);
+    }
+    
+    private boolean handleAccelerator(Container container, KeyStroke key)
+    {    	
+    	// Check unfocused buttons
+    	for (Component child : container.getChildren())
+    	{
+    		if (child instanceof Button)
+    		{
+    			Button btn = (Button) child;
+        		if (btn.handleInput(key) == Result.HANDLED) return true;
+    		}
+    		
+    		if (child instanceof Container && ((Container)child).getChildCount() > 0)
+    		{
+    			if (handleAccelerator((Container)child, key)) return true;
+    		}
+    	}	
+
+    	return false;
+    }
+    
     private boolean doHandleInput(KeyStroke key) {
         boolean result = false;
         if(key.getKeyType() == KeyType.MOUSE_EVENT) {

@@ -19,6 +19,7 @@
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.input.KeyStroke;
 
 import java.io.IOException;
 
@@ -55,7 +56,7 @@ public class ListBoxTest extends TestBase {
         window.setComponent(
                 Panels.vertical(
                         horizontalPanel,
-                        new Button("OK", window::close)));
+                        new Button("OK", window::close).setAccelerator(new KeyStroke('o', false, true))));
         textGUI.addWindow(window);
     }
 }

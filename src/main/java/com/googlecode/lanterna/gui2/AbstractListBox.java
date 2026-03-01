@@ -152,7 +152,8 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
                     return Result.HANDLED;
 
                 case CHARACTER:
-                    if(selectByCharacter(keyStroke.getCharacter())) {
+                	// Only check is Alt and Ctrl keys are not pressed signaling a possible accelerator key
+                    if(!keyStroke.isAltDown() && !keyStroke.isCtrlDown() && selectByCharacter(keyStroke.getCharacter())) {
                         return Result.HANDLED;
                     }
                     return Result.UNHANDLED;

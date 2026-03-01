@@ -30,47 +30,50 @@ public enum MessageDialogButton {
     /**
      * "OK"
      */
-    OK(LocalizedString.OK),
+    OK(LocalizedString.OK, 'o'),
     /**
      * "Cancel"
      */
-    CANCEL(LocalizedString.Cancel),
+    CANCEL(LocalizedString.Cancel, 'c'),
     /**
      * "Yes"
      */
-    YES(LocalizedString.Yes),
+    YES(LocalizedString.Yes, 'y'),
     /**
      * "No"
      */
-    NO(LocalizedString.No),
+    NO(LocalizedString.No, 'n'),
     /**
      * "Close"
      */
-    CLOSE(LocalizedString.Close),
+    CLOSE(LocalizedString.Close, 'x'),
     /**
      * "Abort"
      */
-    ABORT(LocalizedString.Abort),
+    ABORT(LocalizedString.Abort, 'a'),
     /**
      * "Ignore"
      */
-    IGNORE(LocalizedString.Ignore),
+    IGNORE(LocalizedString.Ignore, 'i'),
     /**
      * "Retry"
      */
-    RETRY(LocalizedString.Retry),
+    RETRY(LocalizedString.Retry, 'r'),
 
     /**
      * "Continue"
      */
-    CONTINUE(LocalizedString.Continue);
+    CONTINUE(LocalizedString.Continue, 'c');
 
     private final LocalizedString label;
+    private final char acceleratorChar;
 
-    MessageDialogButton(final LocalizedString label) {
+    MessageDialogButton(final LocalizedString label, char acceleratorChar) {
         this.label = label;
+        this.acceleratorChar = acceleratorChar;
     }
 
+    public char getAcceleratorCharacter() { return acceleratorChar; }
     @Override
     public String toString() {
         return label.toString();

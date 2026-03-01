@@ -36,6 +36,7 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
     private InputFilter inputFilter;
     private boolean inFocus;
     private boolean enabled;
+    private KeyStroke accelerator;    
 
     /**
      * Default constructor
@@ -81,6 +82,14 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
         //By default no action
     }
 
+    protected synchronized T setAccelerator(KeyStroke keyStroke)
+    {
+    	this.accelerator = keyStroke;
+    	return self();
+    }
+    
+    protected synchronized KeyStroke getAccelerator() { return this.accelerator; };
+    
     /**
      * {@inheritDoc}
      * <p>
@@ -190,7 +199,7 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
     public TerminalPosition getCursorLocation() {
         return getRenderer().getCursorLocation(self());
     }
-
+    
     @Override
     public InputFilter getInputFilter() {
         return inputFilter;
@@ -206,6 +215,13 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
         boolean isKeyboardActivation = (keyStroke.getKeyType() == KeyType.CHARACTER && keyStroke.getCharacter() == ' ') || keyStroke.getKeyType() == KeyType.ENTER;
         
         return isFocused() && isKeyboardActivation;
+    }
+    
+    public boolean isKeyboardAcceleratorStroke(KeyStroke keyStroke) 
+    {
+    	if (accelerator == null) return false;
+    	
+        return isEnabled() && accelerator.equals(keyStroke);
     }
     
     public boolean isMouseActivationStroke(KeyStroke keyStroke) {
