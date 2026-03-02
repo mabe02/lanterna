@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2024 Martin Berglund
+ * Copyright (C) 2010-2026 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
 
@@ -25,6 +25,31 @@ public class PanelTest extends TestBase {
         new PanelTest().run(args);
     }
 
+/*
+     ┌──Grid layout test─────────────────────────┐
+     │┌─Main────────────────────────────────────┐│
+     ││┌─Left─────────────┐ ┌─Right────────────┐││
+     │││┌────────────────┐│ │┌─B──────────────┐│││
+     ││││<Panel 1 Button>││ ││<Panel 1 Button>││││
+     │││└────────────────┘│ ││┌─A─┐           ││││
+     │││┌─Title──────────┐│ ││└───┘           ││││
+     ││││<Panel 2 Button>││ ││┌─Some Text─┐   ││││
+     │││└────────────────┘│ ││└───────────┘   ││││
+     │││╔════════════════╗│ │└────────────────┘│││
+     │││║<Panel 3 Button>║│ │┌─Title──────────┐│││
+     │││╚════════════════╝│ ││<Panel 2 Button>││││
+     │││╔═Title══════════╗│ │└────────────────┘│││
+     │││║<Panel 4 Button>║│ │╔════════════════╗│││
+     │││╚════════════════╝│ │║<Panel 3 Button>║│││
+     ││└──────────────────┘ │╚════════════════╝│││
+     ││                     │╔═Title══════════╗│││
+     ││                     │║<Panel 4 Button>║│││
+     ││                     │╚════════════════╝│││
+     ││                     └──────────────────┘││
+     │└─────────────────────────────────────────┘│
+     │<  OK  >                                   │
+     └───────────────────────────────────────────┘
+*/
     @Override
     public void init(WindowBasedTextGUI textGUI) {
         final BasicWindow window = new BasicWindow("Grid layout test");

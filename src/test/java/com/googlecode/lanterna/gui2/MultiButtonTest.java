@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2024 Martin Berglund
+ * Copyright (C) 2010-2026 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
 
@@ -24,29 +24,35 @@ import com.googlecode.lanterna.screen.Screen;
 
 import java.io.IOException;
 
-public class MultiButtonTest {
-    public static void main(String[] args) throws IOException {
-        Screen screen = new TestTerminalFactory(args).createScreen();
-        screen.startScreen();
-        MultiWindowTextGUI textGUI = new MultiWindowTextGUI(screen);
-        textGUI.setEOFWhenNoWindows(true);
-        try {
-            final BasicWindow window = new BasicWindow("Button test");
-            Panel contentArea = new Panel();
-            contentArea.setLayoutManager(new LinearLayout(Direction.VERTICAL));
-            contentArea.addComponent(new Button(""));
-            contentArea.addComponent(new Button("TRE"));
-            contentArea.addComponent(new Button("Button"));
-            contentArea.addComponent(new Button("Another button"));
-            contentArea.addComponent(new EmptySpace(new TerminalSize(5, 1)));
-            //contentArea.addComponent(new Button("Here is a\nmulti-line\ntext segment that is using \\n"));
-            contentArea.addComponent(new Button("OK", window::close));
+public class MultiButtonTest extends TestBase {
+    public static void main(String[] args) throws IOException, InterruptedException {
+        new MultiButtonTest().run(args);
+    }
+    
+    /*                 
+     ┌──Button test───┐
+     │<      >        │
+     │< TRE  >        │
+     │<Button>        │
+     │<Another button>│
+     │                │
+     │<  OK  >        │
+     └────────────────┘
+    */
+    @Override
+    public void init(final WindowBasedTextGUI textGui) {
+        final BasicWindow window = new BasicWindow("Button test");
+        Panel contentArea = new Panel();
+        contentArea.setLayoutManager(new LinearLayout(Direction.VERTICAL));
+        contentArea.addComponent(new Button("", () -> log("blank button clicked")));
+        contentArea.addComponent(new Button("TRE", () -> log("TRE button clicked")));
+        contentArea.addComponent(new Button("Button", () -> log("'Button' button clicked")));
+        contentArea.addComponent(new Button("Another button", () -> log("'Another' button clicked")));
+        contentArea.addComponent(new EmptySpace(new TerminalSize(5, 1)));
+        //contentArea.addComponent(new Button("Here is a\nmulti-line\ntext segment that is using \\n"));
+        contentArea.addComponent(new Button("OK", window::close));
 
-            window.setComponent(contentArea);
-            textGUI.addWindowAndWait(window);
-        }
-        finally {
-            screen.stopScreen();
-        }
+        window.setComponent(contentArea);
+        textGUI.addWindow(window);
     }
 }
