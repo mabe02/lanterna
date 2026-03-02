@@ -22,6 +22,8 @@ import com.googlecode.lanterna.*;
 import com.googlecode.lanterna.bundle.*;
 import com.googlecode.lanterna.graphics.*;
 
+import java.util.Arrays;
+
 /**
  * 
  * @author ginkoblongata
@@ -116,6 +118,8 @@ public class SplitPanelTest extends TestBase {
     @Override
     public void init(WindowBasedTextGUI textGUI) {
         final BasicWindow window = new BasicWindow("SplitPanelTest");
+        // needs to work both full screen and windowed
+        //window.setHints(Arrays.asList(Window.Hint.FULL_SCREEN));
         window.setTheme(LanternaThemes.getRegisteredTheme("businessmachine"));
 
         ImageComponent left = makeImageComponent(IMAGE_X);
@@ -133,10 +137,35 @@ public class SplitPanelTest extends TestBase {
         splitV.setRatio(20, 80);
         
         Panel mainPanel = new Panel();
-        mainPanel.setLayoutManager(new GridLayout(2));
+        mainPanel.setLayoutManager(new BorderLayout());
         SplitPanel splitboth = SplitPanel.ofHorizontal(splitH.withBorder(Borders.singleLine("horiontal split")), splitV.withBorder(Borders.singleLine("vertical split")));
-        mainPanel.addComponent(splitboth);
         
+        Panel pnlTextV = new Panel();
+        pnlTextV.setLayoutManager(new BorderLayout());
+        {
+        	String txt = "This is a multiline text box on the bottom of the vertical SplitPanel that should expand to take up the extra space.";
+        	TextBox txtLogs = new TextBox(txt, TextBox.Style.MULTI_LINE);         	
+        	txtLogs.setHorizontalFocusSwitching(false);
+        	txtLogs.setVerticalFocusSwitching(false);
+        	
+        	pnlTextV.addComponent(txtLogs, BorderLayout.Location.CENTER);
+        }
+                
+        SplitPanel splitLeft = SplitPanel.ofVertical(splitboth.withBorder(Borders.singleLine()), pnlTextV.withBorder(Borders.singleLine()));
+        Panel pnlTextH = new Panel();
+        pnlTextH.setLayoutManager(new BorderLayout());
+        {
+        	String txt = "This is a multiline text box on the bottom of the horizontal SplitPanel that should expand to take up the extra space.";
+        	TextBox txtLogs = new TextBox(txt, TextBox.Style.MULTI_LINE);         	
+        	txtLogs.setHorizontalFocusSwitching(false);
+        	txtLogs.setVerticalFocusSwitching(false);
+        	
+        	pnlTextH.addComponent(txtLogs, BorderLayout.Location.CENTER);
+        }
+        
+        SplitPanel splitMain = SplitPanel.ofHorizontal(splitLeft.withBorder(Borders.singleLine("Left Component")), pnlTextH.withBorder(Borders.singleLine("Right Component")));
+        mainPanel.addComponent(splitMain, BorderLayout.Location.CENTER);        
+
         window.setComponent(mainPanel);
         textGUI.addWindow(window);
     }

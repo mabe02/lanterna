@@ -20,6 +20,7 @@ package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TerminalRectangle;
 import com.googlecode.lanterna.bundle.LanternaThemes;
 import com.googlecode.lanterna.graphics.Theme;
 import com.googlecode.lanterna.graphics.ThemeDefinition;
@@ -67,6 +68,7 @@ public abstract class AbstractComponent<T extends Component> implements Componen
     private TerminalSize size;
     private TerminalSize explicitPreferredSize;   //This is keeping the value set by the user (if setPreferredSize() is used)
     private TerminalPosition position;
+    private TerminalRectangle bounds;
     private Theme themeOverride;
     private LayoutData layoutData;
     private boolean visible;
@@ -76,8 +78,9 @@ public abstract class AbstractComponent<T extends Component> implements Componen
      * Default constructor
      */
     public AbstractComponent() {
-        size = TerminalSize.ZERO;
-        position = TerminalPosition.TOP_LEFT_CORNER;
+        size = TerminalSize.of(0, 0);
+        position = TerminalPosition.of(0, 0);
+        bounds = TerminalRectangle.of(0, 0);
         explicitPreferredSize = null;
         layoutData = null;
         visible = true;
@@ -220,6 +223,12 @@ public abstract class AbstractComponent<T extends Component> implements Componen
         return getRenderer().getPreferredSize(self());
     }
 
+    @Override
+    public TerminalRectangle getBounds() {
+        bounds = bounds.as(getPosition(), getSize());
+        return bounds;
+    }
+    
     @Override
     public synchronized T setPosition(TerminalPosition position) {
         this.position = position;

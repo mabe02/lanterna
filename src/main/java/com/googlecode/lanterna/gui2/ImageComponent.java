@@ -38,6 +38,9 @@ public class ImageComponent extends AbstractInteractableComponent {
         this.textImage = textImage;
         invalidate();
     }
+    public TextImage getTextImage() {
+        return textImage;
+    }
     
     @Override
     public InteractableRenderer<ImageComponent> createDefaultRenderer() {
