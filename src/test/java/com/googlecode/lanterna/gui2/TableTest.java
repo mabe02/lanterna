@@ -18,20 +18,23 @@
  */
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.SGR;
-import com.googlecode.lanterna.TextColor;
-import com.googlecode.lanterna.gui2.dialogs.*;
-import com.googlecode.lanterna.gui2.table.DefaultTableCellRenderer;
-import com.googlecode.lanterna.gui2.table.DefaultTableRenderer;
-import com.googlecode.lanterna.gui2.table.Table;
-import com.googlecode.lanterna.gui2.table.TableCellBorderStyle;
-import com.googlecode.lanterna.gui2.table.TableModel;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
+
+import com.googlecode.lanterna.SGR;
+import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
+import com.googlecode.lanterna.gui2.dialogs.ListSelectDialogBuilder;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
+import com.googlecode.lanterna.gui2.dialogs.TextInputDialogBuilder;
+import com.googlecode.lanterna.gui2.table.DefaultTableCellRenderer;
+import com.googlecode.lanterna.gui2.table.DefaultTableRenderer;
+import com.googlecode.lanterna.gui2.table.Table;
+import com.googlecode.lanterna.gui2.table.TableCellBorderStyle;
+import com.googlecode.lanterna.gui2.table.TableModel;
 
 /**
  * Test for the Table component
@@ -62,6 +65,34 @@ public class TableTest extends TestBase {
                 }
             }
         });
+        table.setSelectAction(new Runnable() {
+        	public void run()
+        	{
+    			int rowIdx = table.getSelectedRow();				    
+    			if (table.getTableModel().getRowCount() > 0)
+    			{				        				
+        			List<String> row = table.getTableModel().getRow(rowIdx);
+        			if (row != null)
+        			{
+        				StringBuilder sb = new StringBuilder();        				
+        				sb.append(String.format("Row Selected(%d)->", rowIdx + 1));
+        				
+        				int rows = table.getTableModel().getColumnCount();
+        				for (int idx = 0; idx<rows; idx++)
+        				{
+        					if (idx > 0) sb.append("->");
+        					sb.append(String.format("Col%d:[%s]", idx + 1, row.get(idx)));
+        				}
+        				sb.append(System.lineSeparator());
+        				
+        				System.out.print(sb.toString());
+        				
+        				MessageDialog.showMessageDialog(textGUI, "Selected Row Data", sb.toString());        				
+        			}
+    			}
+        	}	                	
+        });        
+                
         final TableModel<String> model = table.getTableModel();
         for (int i = 1; i < 30; i++) {
             model.addRow("Row" + i, "Row" + i, "Row" + i);
