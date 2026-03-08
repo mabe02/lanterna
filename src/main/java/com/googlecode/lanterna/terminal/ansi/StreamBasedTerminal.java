@@ -104,8 +104,12 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
      */
     @Override
     public void putString(String string) throws IOException {
-        for (int i = 0; i < string.length(); i++) {
-            putCharacter(string.charAt(i));
+        if (UTF8_REFERENCE == terminalCharset) {
+            writeToTerminal(string.getBytes(terminalCharset));
+        } else {
+            for (int i = 0; i < string.length(); i++) {
+                putCharacter(string.charAt(i));
+            }
         }
     }
 
