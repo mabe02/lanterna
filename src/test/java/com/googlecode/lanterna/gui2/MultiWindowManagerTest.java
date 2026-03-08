@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2024 Martin Berglund
+ * Copyright (C) 2010-2026 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
 
@@ -39,6 +39,25 @@ public class MultiWindowManagerTest extends TestBase {
     private boolean virtualScreenEnabled = true;
     private Button buttonToggleVirtualScreen;
 
+/*
+    ┌───────────────────────┐
+    │ Multi Window Test     │
+    ├───────────────────────┤
+    │Add new window         │
+    │Virtual Screen: Enabled│
+    │                       │   ┌───────────────────────────────┐
+    │Close                  │   │ Window #1                     │
+    └───────────────────────┘   ├───────────────────────────────┤
+                                │  Position:   [36:32]          │
+                                │  Size:       {31x8}           │
+                                │  Auto-sized: true             │
+                                │                               │
+                                │ Move window with ALT+Arrow    │
+                                │ Resize window with CTRL+Arrow │
+                                │                               │
+                                │ Toggle auto-sized Close       │
+                                └───────────────────────────────┘
+*/
     @Override
     public void init(final WindowBasedTextGUI textGUI) {
         textGUI.getBackgroundPane().setComponent(new BackgroundComponent());

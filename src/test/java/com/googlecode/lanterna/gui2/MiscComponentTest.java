@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2024 Martin Berglund
+ * Copyright (C) 2010-2026 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
 
@@ -30,6 +30,27 @@ public class MiscComponentTest extends TestBase {
         new MiscComponentTest().run(args);
     }
 
+    /*
+        ┌──Grid layout test──────────────────────────┐
+        │┌─CheckBoxes────┐         ┌─Read-only──────┐│
+        ││[x] Checkbox #1│         │...............▲││
+        ││[ ] Checkbox #2│         │ This file is p█││
+        ││[x] Checkbox #3│         │...............█││
+        ││[x] Checkbox #4│         │ lanterna is fr▒││
+        │└───────────────┘         │ it under the t▒││
+        │┌─TextBoxes─────────────┐ │ the Free Softw▒││
+        ││Normal:    Text........│ │ (at your optio▼││
+        ││Password:  ****........│ │◄██▒▒▒▒▒▒▒▒▒▒▒► ││
+        │└───────────────────────┘ └────────────────┘│
+        │┌─Buttons────────┐        ┌─ProgressBar────┐│
+        ││<Enable spacing>│        │ 0      50   100││
+        |└────────────────┘        | |████| |     | ||
+        │                          │ └┴┴┴┴┴┴┴┴┴┴┴┴┘ ││
+        │                          └────────────────┘│
+        ├────────────────────────────────────────────┤
+        │                  <  OK  >                  │
+        └────────────────────────────────────────────┘
+    */
     @Override
     public void init(WindowBasedTextGUI textGUI) {
         final BasicWindow window = new BasicWindow("Grid layout test");
@@ -58,7 +79,7 @@ public class MiscComponentTest extends TestBase {
         textBoxPanel = new Panel();
         TextBox readOnlyTextArea = new TextBox(new TerminalSize(16, 8));
         readOnlyTextArea.setReadOnly(true);
-        readOnlyTextArea.setText(TestUtils.downloadGPL());
+        readOnlyTextArea.setText(TestUtils.someText());
         textBoxPanel.addComponent(readOnlyTextArea);
         rightPanel.addComponent(textBoxPanel.withBorder(Borders.singleLine("Read-only")));
         final ProgressBar progressBar = new ProgressBar(0, 100, 16);

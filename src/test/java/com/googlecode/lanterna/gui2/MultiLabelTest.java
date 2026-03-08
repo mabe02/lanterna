@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2024 Martin Berglund
+ * Copyright (C) 2010-2026 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
 
@@ -26,50 +26,56 @@ import com.googlecode.lanterna.screen.Screen;
 
 import java.io.IOException;
 
-public class MultiLabelTest {
+public class MultiLabelTest extends TestBase {
     public static void main(String[] args) throws IOException, InterruptedException {
-        Screen screen = new TestTerminalFactory(args).createScreen();
-        screen.startScreen();
-        WindowBasedTextGUI textGUI = new MultiWindowTextGUI(screen);
-        try {
-            final BasicWindow window = new BasicWindow("Label test");
-            Panel contentArea = new Panel();
-            contentArea.setLayoutManager(new LinearLayout(Direction.VERTICAL));
-            contentArea.addComponent(new Label("This is a single line label"));
-            contentArea.addComponent(new Label("This is another label on the second line"));
-            contentArea.addComponent(new EmptySpace(new TerminalSize(5, 1)));
-            contentArea.addComponent(new Label("Here is a\nmulti-line\ntext segment that is using \\n"));
-            Label label = new Label("We can change foreground color...");
-            label.setForegroundColor(TextColor.ANSI.BLUE);
-            contentArea.addComponent(label);
-            label = new Label("...and background color...");
-            label.setBackgroundColor(TextColor.ANSI.MAGENTA);
-            contentArea.addComponent(label);
-            label = new Label("...and add custom SGR styles!");
-            label.addStyle(SGR.BOLD);
-            label.addStyle(SGR.UNDERLINE);
-            contentArea.addComponent(label);
-            contentArea.addComponent(new EmptySpace(new TerminalSize(5, 1)));
-            contentArea.addComponent(new Label("Here is an animated label:"));
-            contentArea.addComponent(AnimatedLabel.createClassicSpinningLine());
-            contentArea.addComponent(new EmptySpace());
-            contentArea.addComponent(new Button("Close", window::close).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.CENTER)));
+        new MultiLabelTest().run(args);
+    }
+    /*
+        ┌────────────────────────────────────────┐
+        │ Label test                             │
+        ├────────────────────────────────────────┤
+        │This is a single line label             │
+        │This is another label on the second line│
+        │                                        │
+        │Here is a                               │
+        │multi-line                              │
+        │text segment that is using \n           │
+        │We can change foreground color...       │
+        │...and background color...              │
+        │...and add custom SGR styles!           │
+        │                                        │
+        │Here is an animated label:              │
+        |\                                       |
+        |                                        |
+        |                 Close                  |
+        └────────────────────────────────────────┘
+    */
+    @Override
+    public void init(final WindowBasedTextGUI textGUI) {
+        final BasicWindow window = new BasicWindow("Label test");
+        Panel contentArea = new Panel();
+        contentArea.setLayoutManager(new LinearLayout(Direction.VERTICAL));
+        contentArea.addComponent(new Label("This is a single line label"));
+        contentArea.addComponent(new Label("This is another label on the second line"));
+        contentArea.addComponent(new EmptySpace(new TerminalSize(5, 1)));
+        contentArea.addComponent(new Label("Here is a\nmulti-line\ntext segment that is using \\n"));
+        Label label = new Label("We can change foreground color...");
+        label.setForegroundColor(TextColor.ANSI.BLUE);
+        contentArea.addComponent(label);
+        label = new Label("...and background color...");
+        label.setBackgroundColor(TextColor.ANSI.MAGENTA);
+        contentArea.addComponent(label);
+        label = new Label("...and add custom SGR styles!");
+        label.addStyle(SGR.BOLD);
+        label.addStyle(SGR.UNDERLINE);
+        contentArea.addComponent(label);
+        contentArea.addComponent(new EmptySpace(new TerminalSize(5, 1)));
+        contentArea.addComponent(new Label("Here is an animated label:"));
+        contentArea.addComponent(AnimatedLabel.createClassicSpinningLine());
+        contentArea.addComponent(new EmptySpace());
+        contentArea.addComponent(new Button("Close", window::close).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.CENTER)));
 
-            window.setComponent(contentArea);
-            textGUI.addWindow(window);
-            textGUI.updateScreen();
-            while(!textGUI.getWindows().isEmpty()) {
-                textGUI.processInput();
-                if(textGUI.isPendingUpdate()) {
-                    textGUI.updateScreen();
-                }
-                else {
-                    Thread.sleep(1);
-                }
-            }
-        }
-        finally {
-            screen.stopScreen();
-        }
+        window.setComponent(contentArea);
+        textGUI.addWindow(window);
     }
 }
