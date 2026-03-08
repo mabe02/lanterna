@@ -61,7 +61,10 @@ public class Tutorial03 {
             TerminalSize terminalSize = screen.getTerminalSize();
             for(int column = 0; column < terminalSize.getColumns(); column++) {
                 for(int row = 0; row < terminalSize.getRows(); row++) {
-                    screen.setCharacter(column, row, TextCharacter.fromCharacter(' ', TextColor.ANSI.DEFAULT, TextColor.ANSI.values()[random.nextInt(TextColor.ANSI.values().length)])[0]);
+                    screen.setCharacter(column, row, TextCharacter.fromCharacter(
+                            ' ',
+                            TextColor.ANSI.DEFAULT,
+                            TextColor.ANSI.values()[random.nextInt(TextColor.ANSI.values().length)]));
                 }
             }
 
