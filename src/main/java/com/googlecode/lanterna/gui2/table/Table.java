@@ -60,7 +60,7 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
      * Creates a new {@code Table} with the specified table model
      * @param tableModel Table model
      */
-    public Table(final TableModel tableModel) {
+    public Table(final TableModel<V> tableModel) {
         this.tableHeaderRenderer = new DefaultTableHeaderRenderer<>();
         this.tableCellRenderer = new DefaultTableCellRenderer<>();
         this.tableModel = tableModel;
@@ -465,25 +465,45 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
                 } else {
                     return super.handleKeyStroke(keyStroke);
                 }
-            case MOUSE_EVENT:
-                MouseAction action = (MouseAction)keyStroke;
-                MouseActionType actionType = action.getActionType();
-                if (actionType == MouseActionType.MOVE) {
-                    // do nothing
+            case MOUSE_EVENT:            	  
+            	 if (!isFocused()) 
+                 {
+            		// If table is not in focus, pass on
+                    return super.handleKeyStroke(keyStroke);
+                 }
+            	 
+                 if (isMouseMove(keyStroke)) {
+                     // do nothing
                     return Result.UNHANDLED;
-                } 
-                if (!isFocused()) {
-                    super.handleKeyStroke(keyStroke);
-                }
-                int mouseRow = getRowByMouseAction((MouseAction) keyStroke);
-                int mouseColumn = getColumnByMouseAction((MouseAction) keyStroke);
-                boolean isDifferentCell = mouseRow != selectedRow || mouseColumn != selectedColumn;
-                selectedRow = mouseRow;
-                selectedColumn = mouseColumn;
-                if (isDifferentCell) {
-                    return handleKeyStroke(new KeyStroke(KeyType.ENTER));
-                }
-                break;
+                 }
+                 
+                 MouseAction action = (MouseAction)keyStroke;
+                 MouseActionType actionType = action.getActionType();
+                 
+                 // Handle - scrolling or mouse movement
+                 switch(actionType)
+                 {    
+                 // do nothing, desired action has been performed already on CLICK_DOWN and DRAG
+                 case CLICK_RELEASE : return Result.HANDLED;
+                 
+                 //  Call ArrowUp key so same behavior is performed
+                 case SCROLL_UP : return handleKeyStroke(new KeyStroke(KeyType.ARROW_UP));
+                 
+                 // Call ArrowDown key so same behavior is performed
+                 case SCROLL_DOWN :	 return handleKeyStroke(new KeyStroke(KeyType.ARROW_DOWN));
+                	 
+                 default : 
+                     int mouseRow = getRowByMouseAction((MouseAction) keyStroke);
+                     int mouseColumn = getColumnByMouseAction((MouseAction) keyStroke);
+                     boolean isDifferentCell = mouseRow != selectedRow || mouseColumn != selectedColumn;
+                     selectedRow = mouseRow;
+                     selectedColumn = mouseColumn;
+                     if (!isDifferentCell) {
+                         return handleKeyStroke(new KeyStroke(KeyType.ENTER));
+                     }
+                	 break;
+                 }                 
+                 break;
             default:
                 return super.handleKeyStroke(keyStroke);
         }
@@ -500,7 +520,7 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
     protected int getRowByMouseAction(MouseAction mouseAction) {
         int minPossible = getFirstViewedRowIndex();
         int maxPossible = getLastViewedRowIndex();
-        int mouseSpecified = mouseAction.getPosition().getRow() - getGlobalPosition().getRow() - 1;
+        int mouseSpecified = mouseAction.getPosition().getRow() - getGlobalPosition().getRow() + getRenderer().getViewTopRow() - 1;
         
         return Math.max(minPossible, Math.min(mouseSpecified, maxPossible));
     }
