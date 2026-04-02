@@ -77,7 +77,9 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
         else {
             this.terminalCharset = terminalCharset;
         }
-        this.inputDecoder = new InputDecoder(new InputStreamReader(this.terminalInput, this.terminalCharset));
+        this.inputDecoder = new InputDecoder(new InputStreamReader(
+                new com.googlecode.lanterna.input.MouseTranslatingInputStream(this.terminalInput),
+                this.terminalCharset));
         this.keyQueue = new LinkedList<>();
         this.readLock = new ReentrantLock();
         this.lastReportedCursorPosition = null;
