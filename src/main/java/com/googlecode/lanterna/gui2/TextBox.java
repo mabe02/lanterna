@@ -30,6 +30,11 @@ import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.MouseAction;
 import com.googlecode.lanterna.input.MouseActionType;
 
+import com.googlecode.lanterna.gui2.textbox.TextBoxClipboard;
+import com.googlecode.lanterna.gui2.textbox.TextBoxSelectionModel;
+import com.googlecode.lanterna.gui2.textbox.TextBoxUndoStack;
+
+
 /**
  * This component keeps a text content that is editable by the user. A TextBox can be single line or multiline and lets
  * the user navigate the cursor in the text area by using the arrow keys, page up, page down, home and end. For
@@ -69,6 +74,12 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
     private Character mask;
     private Pattern validationPattern;
     private TextChangeListener textChangeListener;
+
+
+    private final TextBoxSelectionModel selectionModel = new TextBoxSelectionModel();
+    private final TextBoxUndoStack undoStack = new TextBoxUndoStack(50);
+    private final TextBoxClipboard clipboard = new TextBoxClipboard();
+
 
     /**
      * Default constructor, this creates a single-line {@code TextBox} of size 10 which is initially empty
@@ -1010,4 +1021,60 @@ public class TextBox extends AbstractInteractableComponent<TextBox> {
          */
         void onTextChanged(String newText, boolean changedByUserInteraction);
     }
+
+
+    // ===== Phase 3 — Delegators to extracted collaborators =====
+
+    public void clearSelection() {
+        selectionModel.clearSelection();
+    }
+
+    public void setSelection(int start, int end) {
+        selectionModel.setSelection(start, end);
+    }
+
+    public boolean isSelectionActive() {
+        return selectionModel.isSelectionActive();
+    }
+
+    public int getSelectionStart() {
+        return selectionModel.getSelectionStart();
+    }
+
+    public int getSelectionEnd() {
+        return selectionModel.getSelectionEnd();
+    }
+
+    public String getSelectedText() {
+        return selectionModel.extractSelected(getText());
+    }
+
+    protected void recordUndoState(String previousState) {
+        undoStack.recordChange(previousState);
+    }
+
+    protected String performUndo() {
+        return undoStack.popUndo();
+    }
+
+    protected String performRedo() {
+        return undoStack.popRedo();
+    }
+
+    protected boolean canUndo() {
+        return undoStack.canUndo();
+    }
+
+    protected boolean canRedo() {
+        return undoStack.canRedo();
+    }
+
+    protected String readClipboard() {
+        return clipboard.read();
+    }
+
+    protected boolean writeClipboard(String text) {
+        return clipboard.write(text);
+    }
+
 }
