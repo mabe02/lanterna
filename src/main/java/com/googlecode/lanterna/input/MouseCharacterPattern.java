@@ -93,12 +93,12 @@ public class MouseCharacterPattern implements CharacterPattern {
                 } else  {
                     button = 5;
                 }
-            } else if((item & 0x2) != 0) {
-                button = 3;
-            } else if((item & 0x1) != 0) {
-                button = 1;
-            } else if((item & 0x1) == 0) {
-                button = 2;
+            } else if((item & 0x3) == 2) {
+                button = 3;  // right
+            } else if((item & 0x3) == 1) {
+                button = 2;  // middle
+            } else {
+                button = 1;  // left
             }
 
             // Get the modifier keys (it seems that they do not are always reported correctly depending on the terminal)
@@ -127,9 +127,9 @@ public class MouseCharacterPattern implements CharacterPattern {
             // Get the move and drag actions
             if((item & 0x20) != 0)
             {
-                if((item & 0x3) != 0)
+                if((item & 0x3) == 3)
                 {
-                    // In move mode, the bits 0, 1 are set in addition to the 6th bit
+                    // button bits 11 with motion flag = no button held = MOVE
                     actionType=MouseActionType.MOVE;
                     button=0;
                 } else {
