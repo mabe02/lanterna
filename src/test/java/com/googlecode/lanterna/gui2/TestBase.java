@@ -22,6 +22,7 @@ import com.googlecode.lanterna.*;
 import com.googlecode.lanterna.graphics.*;
 import com.googlecode.lanterna.bundle.*;
 import com.googlecode.lanterna.screen.Screen;
+import com.googlecode.lanterna.terminal.MouseCaptureMode;
 
 import java.io.IOException;
 import java.util.*;
@@ -177,7 +178,7 @@ public abstract class TestBase {
     }
 
     void run(String[] args) throws IOException, InterruptedException {
-        Screen screen = new TestTerminalFactory(args).createScreen();
+        Screen screen = new TestTerminalFactory(args).setMouseCaptureMode(MouseCaptureMode.CLICK_AUTODETECT).createScreen();
         screen.startScreen();
         textGUI = createTextGUI(screen);
         textGUI.setBlockingIO(false);
