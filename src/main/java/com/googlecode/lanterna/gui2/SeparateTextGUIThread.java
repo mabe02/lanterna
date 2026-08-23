@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  * 
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,13 +14,14 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
 
 import java.io.EOFException;
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Default implementation of TextGUIThread, this class runs the GUI event processing on a dedicated thread. The GUI
@@ -79,6 +80,11 @@ public class SeparateTextGUIThread extends AbstractTextGUIThread implements Asyn
     }
 
     @Override
+    public void waitForStop(long time, TimeUnit unit) throws InterruptedException {
+        waitLatch.await(time, unit);
+    }
+
+    @Override
     public State getState() {
         return state;
     }
@@ -120,6 +126,12 @@ public class SeparateTextGUIThread extends AbstractTextGUIThread implements Asyn
                 }
                 catch(EOFException e) {
                     stop();
+                    if (textGUI instanceof WindowBasedTextGUI) {
+                        // Close all windows on EOF
+                        for (Window window: ((WindowBasedTextGUI) textGUI).getWindows()) {
+                            window.close();
+                        }
+                    }
                     break; //Break out quickly from the main loop
                 }
                 catch(IOException e) {

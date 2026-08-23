@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna.terminal;
 
@@ -55,7 +55,7 @@ class TerminalTextGraphics extends AbstractTextGraphics {
         this.terminal = terminal;
         this.terminalSize = terminal.getTerminalSize();
         this.manageCallStackSize = new AtomicInteger(0);
-        this.writeHistory = new HashMap<TerminalPosition, TextCharacter>();
+        this.writeHistory = new HashMap<>();
         this.lastCharacter = null;
         this.lastPosition = null;
     }
@@ -82,7 +82,7 @@ class TerminalTextGraphics extends AbstractTextGraphics {
                 terminal.setCursorPosition(position.getColumn(), position.getRow());
                 applyGraphicState(textCharacter);
             }
-            terminal.putCharacter(textCharacter.getCharacter());
+            terminal.putString(textCharacter.getCharacterString());
             if(manageCallStackSize.get() > 0) {
                 lastPosition = position.withRelativeColumn(1);
             }

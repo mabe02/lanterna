@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  * 
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
 
@@ -172,6 +172,21 @@ public class GridLayout implements LayoutManager {
                 grabExtraVerticalSpace,
                 horizontalSpan,
                 verticalSpan);
+    }
+
+    /**
+     * This is a shortcut method that will create a grid layout data object that will expand its cell as much as is can
+     * horizontally and make the component occupy the whole area horizontally and center it vertically, spanning 1 cell.
+     * @return Layout data object with the specified span and horizontally expanding as much as it can
+     */
+    public static LayoutData createHorizontallyFilledLayoutData() {
+        return createLayoutData(
+                Alignment.FILL,
+                Alignment.CENTER,
+                true,
+                false,
+                1,
+                1);
     }
 
     /**
@@ -413,8 +428,8 @@ public class GridLayout implements LayoutManager {
         //Adjust area to the margins
         area = area.withRelative(-leftMarginSize - rightMarginSize, -topMarginSize - bottomMarginSize);
 
-        Map<Component, TerminalSize> sizeMap = new IdentityHashMap<Component, TerminalSize>();
-        Map<Component, TerminalPosition> positionMap = new IdentityHashMap<Component, TerminalPosition>();
+        Map<Component, TerminalSize> sizeMap = new IdentityHashMap<>();
+        Map<Component, TerminalPosition> positionMap = new IdentityHashMap<>();
 
         //Figure out each column first, this can be done independently of the row heights
         int[] columnWidths = getPreferredColumnWidths(table);
@@ -455,7 +470,7 @@ public class GridLayout implements LayoutManager {
 
                     int availableHorizontalSpace = 0;
                     int availableVerticalSpace = 0;
-                    for (int i = 0; i < layoutData.horizontalSpan; i++) {
+                    for (int i = 0; i < layoutData.horizontalSpan && x + i < columnWidths.length; i++) {
                         availableHorizontalSpace += columnWidths[x + i] + (i > 0 ? horizontalSpacing : 0);
                     }
                     for (int i = 0; i < layoutData.verticalSpan; i++) {
@@ -512,7 +527,7 @@ public class GridLayout implements LayoutManager {
     private int[] getPreferredColumnWidths(Component[][] table) {
         //actualNumberOfColumns may be different from this.numberOfColumns since some columns may have been eliminated
         int actualNumberOfColumns = table[0].length;
-        int columnWidths[] = new int[actualNumberOfColumns];
+        int[] columnWidths = new int[actualNumberOfColumns];
 
         //Start by letting all span = 1 columns take what they need
         for(Component[] row: table) {
@@ -537,9 +552,10 @@ public class GridLayout implements LayoutManager {
                     continue;
                 }
                 GridLayoutData layoutData = getLayoutData(component);
-                if(layoutData.horizontalSpan > 1) {
+                int horizontalSpan = Math.min(layoutData.horizontalSpan, actualNumberOfColumns - i);
+                if(horizontalSpan > 1) {
                     int accumWidth = 0;
-                    for(int j = i; j < i + layoutData.horizontalSpan; j++) {
+                    for(int j = i; j < i + horizontalSpan; j++) {
                         accumWidth += columnWidths[j];
                     }
 
@@ -549,14 +565,14 @@ public class GridLayout implements LayoutManager {
                         do {
                             columnWidths[i + columnOffset++]++;
                             accumWidth++;
-                            if(columnOffset == layoutData.horizontalSpan) {
+                            if(columnOffset == horizontalSpan) {
                                 columnOffset = 0;
                             }
                         }
                         while(preferredWidth > accumWidth);
                     }
                 }
-                i += layoutData.horizontalSpan;
+                i += horizontalSpan;
             }
         }
         return columnWidths;
@@ -564,7 +580,7 @@ public class GridLayout implements LayoutManager {
 
     private int[] getPreferredRowHeights(Component[][] table) {
         int numberOfRows = table.length;
-        int rowHeights[] = new int[numberOfRows];
+        int[] rowHeights = new int[numberOfRows];
 
         //Start by letting all span = 1 rows take what they need
         int rowIndex = 0;
@@ -583,7 +599,7 @@ public class GridLayout implements LayoutManager {
 
         //Next, do span > 1 and enlarge if necessary
         for(int x = 0; x < numberOfColumns; x++) {
-            for(int y = 0; y < numberOfRows && y < table.length; ) {
+            for(int y = 0; y < numberOfRows; ) {
                 if(x >= table[y].length) {
                     y++;
                     continue;
@@ -620,32 +636,38 @@ public class GridLayout implements LayoutManager {
     }
 
     private Set<Integer> getExpandableColumns(Component[][] table) {
-        Set<Integer> expandableColumns = new TreeSet<Integer>();
+        Set<Integer> expandableColumns = new TreeSet<>();
+        Component previousComponent = null;
         for(Component[] row: table) {
             for (int i = 0; i < row.length; i++) {
-                if(row[i] == null) {
+                if(row[i] == null || row[i] == previousComponent) {
                     continue;
                 }
                 GridLayoutData layoutData = getLayoutData(row[i]);
                 if(layoutData.grabExtraHorizontalSpace) {
                     expandableColumns.add(i);
                 }
+                previousComponent = row[i];
             }
         }
         return expandableColumns;
     }
 
     private Set<Integer> getExpandableRows(Component[][] table) {
-        Set<Integer> expandableRows = new TreeSet<Integer>();
-        for(int rowIndex = 0; rowIndex < table.length; rowIndex++) {
-            Component[] row = table[rowIndex];
-            for(Component cell : row) {
-                if(cell == null) {
-                    continue;
-                }
-                GridLayoutData layoutData = getLayoutData(cell);
-                if(layoutData.grabExtraVerticalSpace) {
-                    expandableRows.add(rowIndex);
+        Set<Integer> expandableRows = new TreeSet<>();
+        Component previousComponent = null;
+        if(table.length > 0) {
+            for (int columnIndex = 0; columnIndex < table[0].length; columnIndex++) {
+                for (int rowIndex = 0; rowIndex < table.length; rowIndex++) {
+                    Component cell = table[rowIndex][columnIndex];
+                    if (cell == null || cell == previousComponent) {
+                        continue;
+                    }
+                    GridLayoutData layoutData = getLayoutData(cell);
+                    if (layoutData.grabExtraVerticalSpace) {
+                        expandableRows.add(rowIndex);
+                    }
+                    previousComponent = cell;
                 }
             }
         }
@@ -664,7 +686,7 @@ public class GridLayout implements LayoutManager {
                     columnWidths[columnOffset]--;
                     totalWidth--;
                 }
-                if(++columnOffset == numberOfColumns) {
+                if(++columnOffset == columnWidths.length) {
                     columnOffset = 0;
                 }
             }
@@ -717,13 +739,13 @@ public class GridLayout implements LayoutManager {
     }
 
     private Component[][] buildTable(List<Component> components) {
-        List<Component[]> rows = new ArrayList<Component[]>();
-        List<int[]> hspans = new ArrayList<int[]>();
-        List<int[]> vspans = new ArrayList<int[]>();
+        List<Component[]> rows = new ArrayList<>();
+        List<int[]> hspans = new ArrayList<>();
+        List<int[]> vspans = new ArrayList<>();
 
         int rowCount = 0;
         int rowsExtent = 1;
-        Queue<Component> toBePlaced = new LinkedList<Component>(components);
+        Queue<Component> toBePlaced = new LinkedList<>(components);
         while(!toBePlaced.isEmpty() || rowCount < rowsExtent) {
             //Start new row
             Component[] row = new Component[numberOfColumns];
@@ -771,8 +793,8 @@ public class GridLayout implements LayoutManager {
         }
         //Could make this into a Set, but I doubt there will be any real gain in performance as these are probably going
         //to be very small.
-        List<Integer> rowsToRemove = new ArrayList<Integer>();
-        List<Integer> columnsToRemove = new ArrayList<Integer>();
+        List<Integer> rowsToRemove = new ArrayList<>();
+        List<Integer> columnsToRemove = new ArrayList<>();
 
         final int tableRows = table.length;
         final int tableColumns = table[0].length;
@@ -781,7 +803,7 @@ public class GridLayout implements LayoutManager {
         columnLoop:
         for(int column = tableColumns - 1; column > 0; column--) {
             for(Component[] row : table) {
-                if(row[column] != row[column - 1]) {
+                if(row[column] != null) {
                     continue columnLoop;
                 }
             }
@@ -792,7 +814,7 @@ public class GridLayout implements LayoutManager {
         rowLoop:
         for(int row = tableRows - 1; row > 0; row--) {
             for(int column = 0; column < tableColumns; column++) {
-                if(table[row][column] != table[row - 1][column]) {
+                if(table[row][column] != null) {
                     continue rowLoop;
                 }
             }

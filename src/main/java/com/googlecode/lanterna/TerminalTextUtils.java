@@ -1,6 +1,6 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
- * 
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
+ *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,8 +13,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
- * Copyright (C) 2010-2017 Martin Berglund
+ *
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna;
 
@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.googlecode.lanterna.graphics.StyleSet;
+import com.googlecode.lanterna.screen.TabBehaviour;
 
 /**
  * This class contains a number of utility methods for analyzing characters and strings in a terminal context. The main
@@ -31,7 +32,7 @@ import com.googlecode.lanterna.graphics.StyleSet;
  * (Chinese, Japanese, Korean) and other special symbols. This class assumes those are all double-width and in case the
  * terminal (-emulator) chooses to draw them (somehow) as single-column then all the calculations in this class will be
  * wrong. It seems safe to assume what this class considers double-width really is taking up two columns though.
- * 
+ *
  * @author Martin
  */
 public class TerminalTextUtils {
@@ -93,7 +94,6 @@ public class TerminalTextUtils {
      * where it was contributed by user Rakesh N
      * @param c Character to test
      * @return {@code true} if the character is a CJK character
-     *
      */
     public static boolean isCharCJK(final char c) {
         Character.UnicodeBlock unicodeBlock = Character.UnicodeBlock.of(c);
@@ -115,8 +115,19 @@ public class TerminalTextUtils {
     }
 
     /**
+     * Given a character, is this character considered to be a Thai character?
+     * @param c Character to test
+     * @return {@code true} if the character is a Thai character
+     */
+    public static boolean isCharThai(char c) {
+        Character.UnicodeBlock unicodeBlock = Character.UnicodeBlock.of(c);
+        return unicodeBlock == Character.UnicodeBlock.THAI;
+    }
+
+    /**
      * Checks if a character is expected to be taking up two columns if printed to a terminal. This will generally be
-     * {@code true} for CJK (Chinese, Japanese and Korean) characters.
+     * {@code true} for CJK (Chinese, Japanese and Korean) characters. Notice that emoji generally takes up more than a
+     * single char and can't be tested properly with this method.
      * @param c Character to test if it's double-width when printed to a terminal
      * @return {@code true} if this character is expected to be taking up two columns when printed to the terminal,
      * otherwise {@code false}
@@ -169,7 +180,7 @@ public class TerminalTextUtils {
      * be if printed in a terminal. If the string only contains non-CJK characters then the returned value will be same
      * as {@code stringCharacterIndex}, but if there are CJK characters the value will be different due to CJK
      * characters taking up two columns in width. If the character at the index in the string is a CJK character itself,
-     * the returned value will be the index of the left-side of character.
+     * the returned value will be the index of the left-side of character. The tab character is counted as four spaces.
      * @param s String to translate the index from
      * @param stringCharacterIndex Index within the string to get the terminal column index of
      * @return Index of the character inside the String at {@code stringCharacterIndex} when it has been writted to a
@@ -177,12 +188,36 @@ public class TerminalTextUtils {
      * @throws StringIndexOutOfBoundsException if the index given is outside the String length or negative
      */
     public static int getColumnIndex(String s, int stringCharacterIndex) throws StringIndexOutOfBoundsException {
+        return getColumnIndex(s, stringCharacterIndex, TabBehaviour.CONVERT_TO_FOUR_SPACES, -1);
+    }
+
+    /**
+     * Given a string and a character index inside that string, find out what the column index of that character would
+     * be if printed in a terminal. If the string only contains non-CJK characters then the returned value will be same
+     * as {@code stringCharacterIndex}, but if there are CJK characters the value will be different due to CJK
+     * characters taking up two columns in width. If the character at the index in the string is a CJK character itself,
+     * the returned value will be the index of the left-side of character.
+     * @param s String to translate the index from
+     * @param stringCharacterIndex Index within the string to get the terminal column index of
+     * @param tabBehaviour The behavior to use when encountering the tab character
+     * @param firstCharacterColumnPosition Where on the screen the first character in the string would be printed, this
+     *                                     applies only when you have an alignment-based {@link TabBehaviour}
+     * @return Index of the character inside the String at {@code stringCharacterIndex} when it has been writted to a
+     * terminal
+     * @throws StringIndexOutOfBoundsException if the index given is outside the String length or negative
+     */
+    public static int getColumnIndex(String s, int stringCharacterIndex, TabBehaviour tabBehaviour, int firstCharacterColumnPosition) throws StringIndexOutOfBoundsException {
         int index = 0;
         for(int i = 0; i < stringCharacterIndex; i++) {
-            if(isCharCJK(s.charAt(i))) {
+            if(s.charAt(i) == '\t') {
+                index += tabBehaviour.getTabReplacement(firstCharacterColumnPosition).length();
+            }
+            else {
+                if (isCharCJK(s.charAt(i))) {
+                    index++;
+                }
                 index++;
             }
-            index++;
         }
         return index;
     }
@@ -285,8 +320,8 @@ public class TerminalTextUtils {
             return Arrays.asList(lines);
         }
 
-        List<String> result = new ArrayList<String>();
-        LinkedList<String> linesToBeWrapped = new LinkedList<String>(Arrays.asList(lines));
+        List<String> result = new ArrayList<>();
+        LinkedList<String> linesToBeWrapped = new LinkedList<>(Arrays.asList(lines));
         while(!linesToBeWrapped.isEmpty()) {
             String row = linesToBeWrapped.removeFirst();
             int rowWidth = getColumnWidth(row);
@@ -320,7 +355,7 @@ public class TerminalTextUtils {
                     //   - first char is whitespace
                     // either way: put it in row before break to prevent infinite loop.
                     characterIndex = Math.max( characterIndex, 1); // at least 1 char
-                    
+
                     //Ok, split the row, add it to the result and continue processing the second half on a new line
                     result.add(row.substring(0, characterIndex));
                     while(characterIndex < row.length() &&
@@ -336,22 +371,38 @@ public class TerminalTextUtils {
         return result;
     }
 
+    private static Integer[] mapCodesToIntegerArray(String[] codes) {
+        Integer[] result = new Integer[codes.length];
+        for (int i = 0; i < result.length; i++) {
+            if (codes[i].isEmpty()) {
+                result[i] = 0;
+            } else {
+                try {
+                    // An empty string is equivalent to 0.
+                    // Warning: too large values could throw an Exception!
+                    result[i] = Integer.parseInt(codes[i]);
+                } catch (NumberFormatException ignored) {
+                    throw new IllegalArgumentException("Unknown CSI code " + codes[i]);
+                }
+            }
+        }
+        return result;
+    }
+
     public static void updateModifiersFromCSICode(
             String controlSequence,
             StyleSet<?> target,
             StyleSet<?> original) {
-    
+
         char controlCodeType = controlSequence.charAt(controlSequence.length() - 1);
         controlSequence = controlSequence.substring(2, controlSequence.length() - 1);
-        String[] codes = controlSequence.split(";");
-    
+        Integer[] codes = mapCodesToIntegerArray(controlSequence.split(";"));
+
         TextColor[] palette = TextColor.ANSI.values();
-    
+
         if(controlCodeType == 'm') { // SGRs
-            for (String s : codes) {
-                // An empty string is equivalent to 0.
-                // Warning: too large values could throw an Exception!
-                int code = s.isEmpty() ? 0 : Integer.parseInt(s);
+            for (int i = 0; i < codes.length; i++) {
+                int code = codes[i];
                 switch (code) {
                 case 0:
                     target.setStyleFrom(original);
@@ -387,8 +438,26 @@ public class TerminalTextUtils {
                 case 27:
                     target.disableModifiers(SGR.REVERSE);
                     break;
+                case 38:
+                    if (i + 2 < codes.length && codes[i + 1] == 5) {
+                        target.setForegroundColor(new TextColor.Indexed(codes[i + 2]));
+                        i += 2;
+                    } else if (i + 4 < codes.length && codes[i + 1] == 2) {
+                        target.setForegroundColor(new TextColor.RGB(codes[i + 2], codes[i + 3], codes[i + 4]));
+                        i += 4;
+                    }
+                    break;
                 case 39:
                     target.setForegroundColor(original.getForegroundColor());
+                    break;
+                case 48:
+                    if (i + 2 < codes.length && codes[i + 1] == 5) {
+                        target.setBackgroundColor(new TextColor.Indexed(codes[i + 2]));
+                        i += 2;
+                    } else if (i + 4 < codes.length && codes[i + 1] == 2) {
+                        target.setBackgroundColor(new TextColor.RGB(codes[i + 2], codes[i + 3], codes[i + 4]));
+                        i += 4;
+                    }
                     break;
                 case 49:
                     target.setBackgroundColor(original.getBackgroundColor());

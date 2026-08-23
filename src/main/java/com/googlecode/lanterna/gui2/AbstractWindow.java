@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  * 
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,11 +14,12 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2024 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.gui2.menu.MenuBar;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.input.KeyType;
@@ -65,7 +66,7 @@ public abstract class AbstractWindow extends AbstractBasePane<Window> implements
         this.lastKnownDecoratedSize = null;
         this.closeWindowWithEscape = false;
 
-        this.hints = new HashSet<Hint>();
+        this.hints = new HashSet<>();
     }
 
     /**
@@ -119,6 +120,7 @@ public abstract class AbstractWindow extends AbstractBasePane<Window> implements
     public void setVisible(boolean visible) {
         this.visible = visible;
     }
+
     @Override
     public void draw(TextGUIGraphics graphics) {
         if(!graphics.getSize().equals(lastKnownSize)) {
@@ -131,23 +133,50 @@ public abstract class AbstractWindow extends AbstractBasePane<Window> implements
     @Override
     public boolean handleInput(KeyStroke key) {
         boolean handled = super.handleInput(key);
-        if(!handled && closeWindowWithEscape && key.getKeyType() == KeyType.Escape) {
+        if(!handled && closeWindowWithEscape && key.getKeyType() == KeyType.ESCAPE) {
             close();
             return true;
         }
         return handled;
     }
 
+    /**
+     * @see Window#toGlobalFromContentRelative(TerminalPosition)
+     */
     @Override
+    @Deprecated
     public TerminalPosition toGlobal(TerminalPosition localPosition) {
+        return toGlobalFromContentRelative(localPosition);
+    }
+    
+    @Override
+    public TerminalPosition toGlobalFromContentRelative(TerminalPosition contentLocalPosition) {
+        if(contentLocalPosition == null) {
+            return null;
+        }
+        return lastKnownPosition.withRelative(contentOffset.withRelative(contentLocalPosition));
+    }
+    
+    @Override
+    @Deprecated
+    public TerminalPosition toGlobalFromDecoratedRelative(TerminalPosition localPosition) {
         if(localPosition == null) {
             return null;
         }
-        return lastKnownPosition.withRelative(contentOffset.withRelative(localPosition));
+        return lastKnownPosition.withRelative(localPosition);
     }
 
+    /**
+     * @see Window#fromGlobalToContentRelative(TerminalPosition)
+     */
     @Override
+    @Deprecated
     public TerminalPosition fromGlobal(TerminalPosition globalPosition) {
+        return fromGlobalToContentRelative(globalPosition);
+    }
+    
+    @Override
+    public TerminalPosition fromGlobalToContentRelative(TerminalPosition globalPosition) {
         if(globalPosition == null || lastKnownPosition == null) {
             return null;
         }
@@ -155,15 +184,32 @@ public abstract class AbstractWindow extends AbstractBasePane<Window> implements
                 -lastKnownPosition.getColumn() - contentOffset.getColumn(),
                 -lastKnownPosition.getRow() - contentOffset.getRow());
     }
+    
+    @Override
+    public TerminalPosition fromGlobalToDecoratedRelative(TerminalPosition globalPosition) {
+        if(globalPosition == null || lastKnownPosition == null) {
+            return null;
+        }
+        return globalPosition.withRelative(
+                -lastKnownPosition.getColumn(),
+                -lastKnownPosition.getRow());
+    }
 
     @Override
     public TerminalSize getPreferredSize() {
-        return contentHolder.getPreferredSize();
+        TerminalSize preferredSize = contentHolder.getPreferredSize();
+        MenuBar menuBar = getMenuBar();
+        if (menuBar.getMenuCount() > 0) {
+            TerminalSize menuPreferredSize = menuBar.getPreferredSize();
+            preferredSize = preferredSize.withRelativeRows(menuPreferredSize.getRows())
+                    .withColumns(Math.max(menuPreferredSize.getColumns(), preferredSize.getColumns()));
+        }
+        return preferredSize;
     }
 
     @Override
     public void setHints(Collection<Hint> hints) {
-        this.hints = new HashSet<Hint>(hints);
+        this.hints = new HashSet<>(hints);
         invalidate();
     }
 
@@ -220,8 +266,15 @@ public abstract class AbstractWindow extends AbstractBasePane<Window> implements
     }
 
     @Override
+    @Deprecated
     public void setSize(TerminalSize size) {
         setSize(size, true);
+    }
+
+    @Override
+    public void setFixedSize(TerminalSize size) {
+        hints.add(Hint.FIXED_SIZE);
+        setSize(size);
     }
 
     private void setSize(TerminalSize size, boolean invalidate) {
@@ -259,7 +312,6 @@ public abstract class AbstractWindow extends AbstractBasePane<Window> implements
         if(textGUI != null) {
             textGUI.removeWindow(this);
         }
-        setComponent(null);
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2024 Martin Berglund
  */
 package com.googlecode.lanterna.input;
 
@@ -66,12 +66,12 @@ public class EscapeSequenceCharacterPattern implements CharacterPattern {
      *  Map of recognized "standard pattern" sequences:<br>
      *   e.g.: 24 -&gt; F12 : "Esc [ <b>24</b> ~"
      */
-    protected final Map<Integer, KeyType>   stdMap = new HashMap<Integer, KeyType>();
+    protected final Map<Integer, KeyType>   stdMap = new HashMap<>();
     /**
      *  Map of recognized "finish pattern" sequences:<br>
      *   e.g.: 'A' -&gt; ArrowUp : "Esc [ <b>A</b>"
      */
-    protected final Map<Character, KeyType> finMap = new HashMap<Character, KeyType>();
+    protected final Map<Character, KeyType> finMap = new HashMap<>();
     /**
      *  A flag to control, whether an Esc-prefix for an Esc-sequence is to be treated
      *  as Alt-pressed. Some Terminals (e.g. putty) report the Alt-modifier like that.<p>
@@ -85,26 +85,26 @@ public class EscapeSequenceCharacterPattern implements CharacterPattern {
      * Create an instance with a standard set of mappings.
      */
     public EscapeSequenceCharacterPattern() {
-        finMap.put('A', KeyType.ArrowUp);
-        finMap.put('B', KeyType.ArrowDown);
-        finMap.put('C', KeyType.ArrowRight);
-        finMap.put('D', KeyType.ArrowLeft);
-        finMap.put('E', KeyType.Unknown); // gnome-terminal center key on numpad
-        finMap.put('G', KeyType.Unknown); // putty center key on numpad
-        finMap.put('H', KeyType.Home);
-        finMap.put('F', KeyType.End);
+        finMap.put('A', KeyType.ARROW_UP);
+        finMap.put('B', KeyType.ARROW_DOWN);
+        finMap.put('C', KeyType.ARROW_RIGHT);
+        finMap.put('D', KeyType.ARROW_LEFT);
+        finMap.put('E', KeyType.KEY_TYPE); // gnome-terminal center key on numpad
+        finMap.put('G', KeyType.KEY_TYPE); // putty center key on numpad
+        finMap.put('H', KeyType.HOME);
+        finMap.put('F', KeyType.END);
         finMap.put('P', KeyType.F1);
         finMap.put('Q', KeyType.F2);
         finMap.put('R', KeyType.F3);
         finMap.put('S', KeyType.F4);
-        finMap.put('Z', KeyType.ReverseTab);
+        finMap.put('Z', KeyType.REVERSE_TAB);
 
-        stdMap.put(1,  KeyType.Home);
-        stdMap.put(2,  KeyType.Insert);
-        stdMap.put(3,  KeyType.Delete);
-        stdMap.put(4,  KeyType.End);
-        stdMap.put(5,  KeyType.PageUp);
-        stdMap.put(6,  KeyType.PageDown);
+        stdMap.put(1,  KeyType.HOME);
+        stdMap.put(2,  KeyType.INSERT);
+        stdMap.put(3,  KeyType.DELETE);
+        stdMap.put(4,  KeyType.END);
+        stdMap.put(5,  KeyType.PAGE_UP);
+        stdMap.put(6,  KeyType.PAGE_DOWN);
         stdMap.put(11, KeyType.F1);
         stdMap.put(12, KeyType.F2);
         stdMap.put(13, KeyType.F3);
@@ -144,6 +144,8 @@ public class EscapeSequenceCharacterPattern implements CharacterPattern {
             bShift = (mods & SHIFT) != 0;
             bAlt   = (mods & ALT)   != 0;
             bCtrl  = (mods & CTRL)  != 0;
+        } else if (mods == -1 && key == KeyType.F3) {
+            return new KeyStroke.RealF3();
         }
         return new KeyStroke( key , bCtrl, bAlt, bShift);
     }
@@ -161,15 +163,19 @@ public class EscapeSequenceCharacterPattern implements CharacterPattern {
      */
     protected KeyStroke getKeyStrokeRaw(char first,int num1,int num2,char last,boolean bEsc) {
         KeyType kt;
-        boolean bPuttyCtrl = false;
+        boolean bPuttyCtrl = false, bRealF3 = false;
         if (last == '~' && stdMap.containsKey(num1)) {
             kt = stdMap.get(num1);
         } else if (finMap.containsKey(last)) {
             kt = finMap.get(last);
-            // Putty sends ^[OA for ctrl arrow-up, ^[[A for plain arrow-up:
-            // but only for A-D -- other ^[O... sequences are just plain keys
-            if (first == 'O' && last >= 'A' && last <= 'D') { bPuttyCtrl = true; }
-            // if we ever stumble into "keypad-mode", then it will end up inverted.
+            if (first == 'O') {
+                // Putty sends ^[OA for ctrl arrow-up, ^[[A for plain arrow-up:
+                // but only for A-D -- other ^[O... sequences are just plain keys
+                // if we ever stumble into "keypad-mode", then it will end up inverted.
+                if (last >= 'A' && last <= 'D') { bPuttyCtrl = true; }
+                // ^[OR is a "real" F3 Key, ^[[1;1R may be F3 or a CursorLocation report!
+                if (last == 'R') { bRealF3 = true; }
+            }
         } else {
             kt = null; // unknown key.
         }
@@ -181,6 +187,9 @@ public class EscapeSequenceCharacterPattern implements CharacterPattern {
         if (bPuttyCtrl) {
             if (mods >= 0) { mods |= CTRL; }
             else { mods = CTRL; }
+        }
+        if (bRealF3) {
+            mods = -1;
         }
         return getKeyStroke( kt, mods );
     }

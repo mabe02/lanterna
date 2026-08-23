@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,15 +14,17 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.TerminalPosition;
-import com.googlecode.lanterna.input.KeyStroke;
-
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
+
+import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.gui2.menu.MenuBar;
+import com.googlecode.lanterna.input.KeyStroke;
 
 /**
  * This abstract implementation contains common code for the different {@code Composite} implementations. A
@@ -52,10 +54,17 @@ public abstract class AbstractComposite<T extends Container> extends AbstractCom
         if(oldComponent != null) {
             removeComponent(oldComponent);
         }
-        if(component != null) {
+        if (component != null) {
             this.component = component;
             component.onAdded(this);
-            component.setPosition(TerminalPosition.TOP_LEFT_CORNER);
+            if (getBasePane() != null) {
+                MenuBar menuBar = getBasePane().getMenuBar();
+                if (menuBar == null || menuBar.isEmptyMenuBar()) {
+                    component.setPosition(TerminalPosition.TOP_LEFT_CORNER);
+                } else {
+                    component.setPosition(TerminalPosition.TOP_LEFT_CORNER.withRelativeRow(1));
+                }
+            }
             invalidate();
         }
     }
@@ -71,13 +80,18 @@ public abstract class AbstractComposite<T extends Container> extends AbstractCom
     }
 
     @Override
-    public Collection<Component> getChildren() {
+    public List<Component> getChildrenList() {
         if(component != null) {
             return Collections.singletonList(component);
         }
         else {
             return Collections.emptyList();
         }
+    }
+
+    @Override
+    public Collection<Component> getChildren() {
+        return getChildrenList();
     }
 
     @Override
@@ -114,7 +128,10 @@ public abstract class AbstractComposite<T extends Container> extends AbstractCom
     @Override
     public Interactable nextFocus(Interactable fromThis) {
         if(fromThis == null && getComponent() instanceof Interactable) {
-            return (Interactable)getComponent();
+            Interactable interactable = (Interactable) getComponent();
+            if(interactable.isEnabled()) {
+                return interactable;
+            }
         }
         else if(getComponent() instanceof Container) {
             return ((Container)getComponent()).nextFocus(fromThis);
@@ -125,7 +142,10 @@ public abstract class AbstractComposite<T extends Container> extends AbstractCom
     @Override
     public Interactable previousFocus(Interactable fromThis) {
         if(fromThis == null && getComponent() instanceof Interactable) {
-            return (Interactable)getComponent();
+            Interactable interactable = (Interactable) getComponent();
+            if(interactable.isEnabled()) {
+                return interactable;
+            }
         }
         else if(getComponent() instanceof Container) {
             return ((Container)getComponent()).previousFocus(fromThis);

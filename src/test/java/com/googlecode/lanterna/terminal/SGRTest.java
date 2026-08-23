@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2024 Martin Berglund
  */
 
 package com.googlecode.lanterna.terminal;
@@ -65,6 +65,8 @@ public class SGRTest {
         textGraphics.putString(10, 16, string);
         textGraphics.disableModifiers(SGR.REVERSE);
         rawTerminal.setCursorPosition(0, 0);
+        textGraphics.setForegroundColor(TextColor.ANSI.RED_BRIGHT);
+        textGraphics.putString(10, 18, string);
         rawTerminal.flush();
         try {
             while(rawTerminal.pollInput() == null) {

@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2024 Martin Berglund
  */
 package com.googlecode.lanterna.terminal.swing;
 
@@ -24,10 +24,12 @@ import com.googlecode.lanterna.input.DefaultKeyDecodingProfile;
 import com.googlecode.lanterna.input.InputDecoder;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
+import com.googlecode.lanterna.input.MouseAction;
+import com.googlecode.lanterna.input.MouseActionType;
 import com.googlecode.lanterna.terminal.IOSafeTerminal;
+import com.googlecode.lanterna.terminal.MouseCaptureMode;
 import com.googlecode.lanterna.terminal.TerminalResizeListener;
 import com.googlecode.lanterna.terminal.virtual.DefaultVirtualTerminal;
-import com.googlecode.lanterna.terminal.virtual.VirtualTerminal;
 
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -73,6 +75,8 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     private int lastComponentWidth;
     private int lastComponentHeight;
 
+    protected MouseCaptureMode mouseCaptureMode;
+
     // We use two different data structures to optimize drawing
     //  * A list of modified characters since the last draw (stored in VirtualTerminal)
     //  * A backbuffer with the graphics content
@@ -108,7 +112,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
             initialTerminalSize = new TerminalSize(80, 24);
         }
         this.virtualTerminal = new DefaultVirtualTerminal(initialTerminalSize);
-        this.keyQueue = new LinkedBlockingQueue<KeyStroke>();
+        this.keyQueue = new LinkedBlockingQueue<>();
         this.deviceConfiguration = deviceConfiguration;
         this.colorConfiguration = colorConfiguration;
         this.scrollController = scrollController;
@@ -130,6 +134,14 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
 
 
         virtualTerminal.setBacklogSize(deviceConfiguration.getLineBufferScrollbackSize());
+    }
+
+    TerminalEmulatorDeviceConfiguration getDeviceConfiguration() {
+        return deviceConfiguration;
+    }
+
+    TerminalEmulatorColorConfiguration getColorConfiguration() {
+        return colorConfiguration;
     }
 
     ///////////
@@ -396,54 +408,50 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
             }
         }
 
-        virtualTerminal.forEachLine(firstVisibleRowIndex, lastVisibleRowIndex, new VirtualTerminal.BufferWalker() {
-            @Override
-            public void onLine(int rowNumber, VirtualTerminal.BufferLine bufferLine) {
-                for(int column = 0; column < viewportSize.getColumns(); column++) {
-                    TextCharacter textCharacter = bufferLine.getCharacterAt(column);
-                    boolean atCursorLocation = cursorPosition.equals(column, rowNumber);
-                    //If next position is the cursor location and this is a CJK character (i.e. cursor is on the padding),
-                    //consider this location the cursor position since otherwise the cursor will be skipped
-                    if(!atCursorLocation &&
-                            cursorPosition.getColumn() == column + 1 &&
-                            cursorPosition.getRow() == rowNumber &&
-                            TerminalTextUtils.isCharCJK(textCharacter.getCharacter())) {
-                        atCursorLocation = true;
-                    }
-                    boolean isBlinking = textCharacter.getModifiers().contains(SGR.BLINK);
-                    if(isBlinking) {
-                        foundBlinkingCharacters.set(true);
-                    }
-                    if(dirtyCellsLookupTable.isAllDirty() || dirtyCellsLookupTable.isDirty(rowNumber, column) || isBlinking) {
-                        int characterWidth = fontWidth * (TerminalTextUtils.isCharCJK(textCharacter.getCharacter()) ? 2 : 1);
-                        Color foregroundColor = deriveTrueForegroundColor(textCharacter, atCursorLocation);
-                        Color backgroundColor = deriveTrueBackgroundColor(textCharacter, atCursorLocation);
-                        boolean drawCursor = atCursorLocation &&
-                                (!deviceConfiguration.isCursorBlinking() ||     //Always draw if the cursor isn't blinking
-                                        (deviceConfiguration.isCursorBlinking() && blinkOn));    //If the cursor is blinking, only draw when blinkOn is true
+        virtualTerminal.forEachLine(firstVisibleRowIndex, lastVisibleRowIndex, (rowNumber, bufferLine) -> {
+            for(int column = 0; column < viewportSize.getColumns(); column++) {
+                TextCharacter textCharacter = bufferLine.getCharacterAt(column);
+                boolean atCursorLocation = cursorPosition.equals(column, rowNumber);
+                //If next position is the cursor location and this is a double-width character (i.e. cursor is on the padding),
+                //consider this location the cursor position since otherwise the cursor will be skipped
+                if(!atCursorLocation &&
+                        cursorPosition.getColumn() == column + 1 &&
+                        cursorPosition.getRow() == rowNumber &&
+                        textCharacter.isDoubleWidth()) {
+                    atCursorLocation = true;
+                }
+                boolean isBlinking = textCharacter.getModifiers().contains(SGR.BLINK);
+                if(isBlinking) {
+                    foundBlinkingCharacters.set(true);
+                }
+                if(dirtyCellsLookupTable.isAllDirty() || dirtyCellsLookupTable.isDirty(rowNumber, column) || isBlinking) {
+                    int characterWidth = fontWidth * (textCharacter.isDoubleWidth() ? 2 : 1);
+                    Color foregroundColor = deriveTrueForegroundColor(textCharacter, atCursorLocation);
+                    Color backgroundColor = deriveTrueBackgroundColor(textCharacter, atCursorLocation);
+                    //Always draw if the cursor isn't blinking
+                    boolean drawCursor = atCursorLocation && cursorIsVisible && (!deviceConfiguration.isCursorBlinking() || blinkOn);    //If the cursor should be displayed and is blinking, only draw when blinkOn is true
 
-                        // Visualize bell as all colors inverted
-                        if(bellOn) {
-                            Color temp = foregroundColor;
-                            foregroundColor = backgroundColor;
-                            backgroundColor = temp;
-                        }
+                    // Visualize bell as all colors inverted
+                    if(bellOn) {
+                        Color temp = foregroundColor;
+                        foregroundColor = backgroundColor;
+                        backgroundColor = temp;
+                    }
 
-                        drawCharacter(backbufferGraphics,
-                                textCharacter,
-                                column,
-                                rowNumber,
-                                foregroundColor,
-                                backgroundColor,
-                                fontWidth,
-                                fontHeight,
-                                characterWidth,
-                                scrollOffsetFromTopInPixels,
-                                drawCursor);
-                    }
-                    if(TerminalTextUtils.isCharCJK(textCharacter.getCharacter())) {
-                        column++; //Skip the trailing space after a CJK character
-                    }
+                    drawCharacter(backbufferGraphics,
+                            textCharacter,
+                            column,
+                            rowNumber,
+                            foregroundColor,
+                            backgroundColor,
+                            fontWidth,
+                            fontHeight,
+                            characterWidth,
+                            scrollOffsetFromTopInPixels,
+                            drawCursor);
+                }
+                if(textCharacter.isDoubleWidth()) {
+                    column++; //Skip the trailing space after a CJK character
                 }
             }
         });
@@ -535,7 +543,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
         Font font = getFontForCharacter(character);
         g.setFont(font);
         FontMetrics fontMetrics = g.getFontMetrics();
-        g.drawString(Character.toString(character.getCharacter()), x, y + fontHeight - fontMetrics.getDescent() + 1);
+        g.drawString(character.getCharacterString(), x, y + fontHeight - fontMetrics.getDescent() + 1);
 
         if(character.isCrossedOut()) {
             //noinspection UnnecessaryLocalVariable
@@ -717,6 +725,11 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
     }
 
     @Override
+    public void putString(String string) {
+        virtualTerminal.putString(string);
+    }
+
+    @Override
     public TextGraphics newTextGraphics() {
         return virtualTerminal.newTextGraphics();
     }
@@ -807,10 +820,19 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
         virtualTerminal.removeResizeListener(listener);
     }
 
+    public void setMouseCaptureMode(MouseCaptureMode mouseCaptureMode) {
+        this.mouseCaptureMode = mouseCaptureMode;
+        updateMouseCaptureMode(mouseCaptureMode);
+    }
+
+    protected void updateMouseCaptureMode(MouseCaptureMode mouseCaptureMode) {
+        // Let the AWT and Swing implementations do the job here
+    }
+
     ///////////
     // Remaining are private internal classes used by SwingTerminal
     ///////////
-    private static final Set<Character> TYPED_KEYS_TO_IGNORE = new HashSet<Character>(Arrays.asList('\n', '\t', '\r', '\b', '\33', (char)127));
+    private static final Set<Character> TYPED_KEYS_TO_IGNORE = new HashSet<>(Arrays.asList('\n', '\t', '\r', '\b', '\33', (char) 127));
 
     /**
      * Class that translates AWT key events into Lanterna {@link KeyStroke}
@@ -849,25 +871,25 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
             boolean ctrlDown = (e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0;
             boolean shiftDown = (e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0;
             if(e.getKeyCode() == KeyEvent.VK_ENTER) {
-                keyQueue.add(new KeyStroke(KeyType.Enter, ctrlDown, altDown, shiftDown));
+                keyQueue.add(new KeyStroke(KeyType.ENTER, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                keyQueue.add(new KeyStroke(KeyType.Escape, ctrlDown, altDown, shiftDown));
+                keyQueue.add(new KeyStroke(KeyType.ESCAPE, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
-                keyQueue.add(new KeyStroke(KeyType.Backspace, ctrlDown, altDown, shiftDown));
+                keyQueue.add(new KeyStroke(KeyType.BACKSPACE, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_LEFT) {
-                keyQueue.add(new KeyStroke(KeyType.ArrowLeft, ctrlDown, altDown, shiftDown));
+                keyQueue.add(new KeyStroke(KeyType.ARROW_LEFT, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                keyQueue.add(new KeyStroke(KeyType.ArrowRight, ctrlDown, altDown, shiftDown));
+                keyQueue.add(new KeyStroke(KeyType.ARROW_RIGHT, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_UP) {
-                keyQueue.add(new KeyStroke(KeyType.ArrowUp, ctrlDown, altDown, shiftDown));
+                keyQueue.add(new KeyStroke(KeyType.ARROW_UP, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_DOWN) {
-                keyQueue.add(new KeyStroke(KeyType.ArrowDown, ctrlDown, altDown, shiftDown));
+                keyQueue.add(new KeyStroke(KeyType.ARROW_DOWN, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_INSERT) {
                 // This could be a paste (shift+insert) if the clipboard is available
@@ -875,23 +897,23 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
                     pasteClipboardContent();
                 }
                 else {
-                    keyQueue.add(new KeyStroke(KeyType.Insert, ctrlDown, altDown, shiftDown));
+                    keyQueue.add(new KeyStroke(KeyType.INSERT, ctrlDown, altDown, shiftDown));
                 }
             }
             else if(e.getKeyCode() == KeyEvent.VK_DELETE) {
-                keyQueue.add(new KeyStroke(KeyType.Delete, ctrlDown, altDown, shiftDown));
+                keyQueue.add(new KeyStroke(KeyType.DELETE, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_HOME) {
-                keyQueue.add(new KeyStroke(KeyType.Home, ctrlDown, altDown, shiftDown));
+                keyQueue.add(new KeyStroke(KeyType.HOME, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_END) {
-                keyQueue.add(new KeyStroke(KeyType.End, ctrlDown, altDown, shiftDown));
+                keyQueue.add(new KeyStroke(KeyType.END, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_PAGE_UP) {
-                keyQueue.add(new KeyStroke(KeyType.PageUp, ctrlDown, altDown, shiftDown));
+                keyQueue.add(new KeyStroke(KeyType.PAGE_UP, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_PAGE_DOWN) {
-                keyQueue.add(new KeyStroke(KeyType.PageDown, ctrlDown, altDown, shiftDown));
+                keyQueue.add(new KeyStroke(KeyType.PAGE_DOWN, ctrlDown, altDown, shiftDown));
             }
             else if(e.getKeyCode() == KeyEvent.VK_F1) {
                 keyQueue.add(new KeyStroke(KeyType.F1, ctrlDown, altDown, shiftDown));
@@ -931,10 +953,10 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
             }
             else if(e.getKeyCode() == KeyEvent.VK_TAB) {
                 if(e.isShiftDown()) {
-                    keyQueue.add(new KeyStroke(KeyType.ReverseTab, ctrlDown, altDown, shiftDown));
+                    keyQueue.add(new KeyStroke(KeyType.REVERSE_TAB, ctrlDown, altDown, false));
                 }
                 else {
-                    keyQueue.add(new KeyStroke(KeyType.Tab, ctrlDown, altDown, shiftDown));
+                    keyQueue.add(new KeyStroke(KeyType.TAB, ctrlDown, altDown, shiftDown));
                 }
             }
             else {
@@ -944,7 +966,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
                     if(!shiftDown) {
                         character = Character.toLowerCase(character);
                     }
-                    keyQueue.add(new KeyStroke(character, ctrlDown, altDown, shiftDown));
+                    keyQueue.add(new KeyStroke(character, true, true, shiftDown));
                 }
             }
         }
@@ -952,12 +974,88 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
 
     // This is mostly unimplemented, we could hook more of this into ExtendedTerminal's mouse functions
     protected class TerminalMouseListener extends MouseAdapter {
+        private MouseCaptureMode mouseCaptureMode=null;
+
+        public TerminalMouseListener() {
+            super();
+        }
+
+        public TerminalMouseListener(MouseCaptureMode mouseCaptureMode)
+        {
+            super();
+            this.mouseCaptureMode=mouseCaptureMode;
+        }
+
+        private int convertButton(int awtButton)
+        {
+            int button=0;
+            switch (awtButton) {
+                case MouseEvent.BUTTON1:
+                    button=1;
+                    break;
+                case MouseEvent.BUTTON2:
+                    button=3;
+                    break;
+                case MouseEvent.BUTTON3:
+                    button=2;
+                    break;
+                default:
+                    break;
+            }
+            return button;
+        }
+
         @Override
         public void mouseClicked(MouseEvent e) {
             if(MouseInfo.getNumberOfButtons() > 2 &&
                     e.getButton() == MouseEvent.BUTTON2 &&
                     deviceConfiguration.isClipboardAvailable()) {
                 pasteSelectionContent();
+            }
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            if(mouseCaptureMode!=null)
+            {
+                keyQueue.add(new MouseAction(MouseActionType.CLICK_DOWN, convertButton(e.getButton()), new TerminalPosition(e.getX()/getFontWidth(), e.getY()/getFontHeight()),e.isControlDown(),e.isAltDown(),e.isShiftDown()));
+            }
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            if(mouseCaptureMode!=null)
+            {
+                keyQueue.add(new MouseAction(MouseActionType.CLICK_RELEASE, convertButton(e.getButton()), new TerminalPosition(e.getX()/getFontWidth(), e.getY()/getFontHeight()),e.isControlDown(),e.isAltDown(),e.isShiftDown()));
+            }
+        }
+
+        @Override
+        public void mouseWheelMoved(MouseWheelEvent e){
+            if(mouseCaptureMode!=null)
+            {
+                int rotation = e.getWheelRotation();
+                if(rotation > 0){
+                    keyQueue.add(new MouseAction(MouseActionType.SCROLL_DOWN, 5, new TerminalPosition(e.getX()/getFontWidth(), e.getY()/getFontHeight()),e.isControlDown(),e.isAltDown(),e.isShiftDown()));
+                } else {
+                    keyQueue.add(new MouseAction(MouseActionType.SCROLL_UP, 4, new TerminalPosition(e.getX()/getFontWidth(), e.getY()/getFontHeight()),e.isControlDown(),e.isAltDown(),e.isShiftDown()));
+                }
+            }
+        }
+
+        @Override
+        public void mouseMoved(MouseEvent e) {
+            if(mouseCaptureMode==MouseCaptureMode.CLICK_RELEASE_DRAG_MOVE || mouseCaptureMode==MouseCaptureMode.CLICK_AUTODETECT)
+            {
+                keyQueue.add(new MouseAction(MouseActionType.MOVE, 0, new TerminalPosition(e.getX()/getFontWidth(), e.getY()/getFontHeight()),e.isControlDown(),e.isAltDown(),e.isShiftDown()));
+            }
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            if(mouseCaptureMode==MouseCaptureMode.CLICK_RELEASE_DRAG || mouseCaptureMode==MouseCaptureMode.CLICK_RELEASE_DRAG_MOVE || mouseCaptureMode==MouseCaptureMode.CLICK_AUTODETECT)
+            {
+                keyQueue.add(new MouseAction(MouseActionType.DRAG, convertButton(e.getButton()), new TerminalPosition(e.getX()/getFontWidth(), e.getY()/getFontHeight()),e.isControlDown(),e.isAltDown(),e.isShiftDown()));
             }
         }
     }
@@ -1005,7 +1103,7 @@ abstract class GraphicalTerminalImplementation implements IOSafeTerminal {
         private boolean allDirty;
 
         DirtyCellsLookupTable() {
-            table = new ArrayList<BitSet>();
+            table = new ArrayList<>();
             firstRowIndex = -1;
             allDirty = false;
         }

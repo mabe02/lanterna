@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2024 Martin Berglund
  */
 package com.googlecode.lanterna.terminal.ansi;
 
@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Class containing graphics code for ANSI compliant text terminals and terminal emulators. All the methods inside of
@@ -296,7 +297,7 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
 
     private KeyStroke filterMouseEvents(KeyStroke keyStroke) {
         //Remove bad input events from terminals that are not following the xterm protocol properly
-        if(keyStroke == null || keyStroke.getKeyType() != KeyType.MouseEvent) {
+        if(keyStroke == null || keyStroke.getKeyType() != KeyType.MOUSE_EVENT) {
             return keyStroke;
         }
 
@@ -326,12 +327,12 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
     }
 
     @Override
-    public void pushTitle() throws IOException {
+    public void pushTitle() {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @Override
-    public void popTitle() throws IOException {
+    public void popTitle() {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
@@ -371,10 +372,14 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
         case CLICK_RELEASE_DRAG_MOVE:
             writeCSISequenceToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'0', (byte)'3', (byte)l_or_h);
             break;
+        case CLICK_AUTODETECT:
+            writeCSISequenceToTerminal((byte)'?', (byte)'9', (byte)l_or_h);
+            writeCSISequenceToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'0', (byte)'0', (byte)l_or_h);
+            writeCSISequenceToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'0', (byte)'2', (byte)l_or_h);
+            writeCSISequenceToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'0', (byte)'3', (byte)l_or_h);
+            break;
         }
-        if(getCharset().equals(Charset.forName("UTF-8"))) {
-            writeCSISequenceToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'0', (byte)'5', (byte)l_or_h);
-        }
+        writeCSISequenceToTerminal((byte)'?', (byte)'1', (byte)'0', (byte)'0', (byte)'6', (byte)l_or_h);
     }
 
     @Override

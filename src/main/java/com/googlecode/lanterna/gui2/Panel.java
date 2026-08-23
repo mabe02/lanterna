@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  * 
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,11 +14,12 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.input.KeyStroke;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,6 +39,7 @@ public class Panel extends AbstractComponent<Panel> implements Container {
     private final List<Component> components;
     private LayoutManager layoutManager;
     private TerminalSize cachedPreferredSize;
+    private TextColor fillColorOverride;
 
     /**
      * Default constructor, creates a new panel with no child components and by default set to a vertical
@@ -51,7 +53,7 @@ public class Panel extends AbstractComponent<Panel> implements Container {
         if(layoutManager == null) {
             layoutManager = new AbsoluteLayout();
         }
-        this.components = new ArrayList<Component>();
+        this.components = new ArrayList<>();
         this.layoutManager = layoutManager;
         this.cachedPreferredSize = null;
     }
@@ -64,6 +66,18 @@ public class Panel extends AbstractComponent<Panel> implements Container {
      * @return Itself
      */
     public Panel addComponent(Component component) {
+        return addComponent(Integer.MAX_VALUE, component);
+    }
+
+    /**
+     * Adds a new child component to the panel. Where within the panel the child will be displayed is up to the layout
+     * manager assigned to this panel. If the component has already been added to another panel, it will first be
+     * removed from that panel before added to this one.
+     * @param component Child component to add to this panel
+     * @param index At what index to add the component among the existing components
+     * @return Itself
+     */
+    public Panel addComponent(int index, Component component) {
         if(component == null) {
             throw new IllegalArgumentException("Cannot add null component");
         }
@@ -74,7 +88,13 @@ public class Panel extends AbstractComponent<Panel> implements Container {
             if(component.getParent() != null) {
                 component.getParent().removeComponent(component);
             }
-            components.add(component);
+            if (index > components.size()) {
+                index = components.size();
+            }
+            else if (index < 0) {
+                index = 0;
+            }
+            components.add(index, component);
         }
         component.onAdded(this);
         invalidate();
@@ -132,7 +152,7 @@ public class Panel extends AbstractComponent<Panel> implements Container {
      */
     public Panel removeAllComponents() {
         synchronized(components) {
-            for(Component component : new ArrayList<Component>(components)) {
+            for(Component component : new ArrayList<>(components)) {
                 removeComponent(component);
             }
         }
@@ -156,6 +176,25 @@ public class Panel extends AbstractComponent<Panel> implements Container {
     }
 
     /**
+     * Returns the color used to override the default background color from the theme, if set. Otherwise {@code null} is
+     * returned and whatever theme is assigned will be used to derive the fill color.
+     * @return The color, if any, used to fill the panel's unused space instead of the theme's color
+     */
+    public TextColor getFillColorOverride() {
+        return fillColorOverride;
+    }
+
+    /**
+     * Sets an override color to be used instead of the theme's color for Panels when drawing unused space. If called
+     * with {@code null}, it will reset back to the theme's color.
+     * @param fillColor Color to draw the unused space with instead of what the theme definition says, no {@code null}
+     *                  to go back to the theme definition
+     */
+    public void setFillColorOverride(TextColor fillColor) {
+        this.fillColorOverride = fillColor;
+    }
+
+    /**
      * Returns the layout manager assigned to this panel
      * @return Layout manager assigned to this panel
      */
@@ -172,41 +211,69 @@ public class Panel extends AbstractComponent<Panel> implements Container {
 
     @Override
     public Collection<Component> getChildren() {
+        return getChildrenList();
+    }
+
+    @Override
+    public List<Component> getChildrenList() {
         synchronized(components) {
-            return new ArrayList<Component>(components);
+            return new ArrayList<>(components);
         }
     }
 
     @Override
     protected ComponentRenderer<Panel> createDefaultRenderer() {
-        return new ComponentRenderer<Panel>() {
+        return new DefaultPanelRenderer();
+    }
 
-            @Override
-            public TerminalSize getPreferredSize(Panel component) {
-                synchronized(components) {
-                    cachedPreferredSize = layoutManager.getPreferredSize(components);
-                }
-                return cachedPreferredSize;
+    public class DefaultPanelRenderer implements ComponentRenderer<Panel> {
+        private boolean fillAreaBeforeDrawingComponents = true;
+
+        /**
+         * If setting this to {@code false} (default is {@code true}), the {@link Panel} will not reset it's drawable
+         * area with the space character ' ' before drawing all the components. Usually you <b>do</b> want to reset this
+         * area before drawing but you might have a custom renderer that has prepared the area already and just want the
+         * panel renderer to layout and draw the components in the panel without touching the existing content. One such
+         * example is the {@code FullScreenTextGUITest}.
+         * @param fillAreaBeforeDrawingComponents Should the panels area be cleared before drawing components?
+         */
+        public void setFillAreaBeforeDrawingComponents(boolean fillAreaBeforeDrawingComponents) {
+            this.fillAreaBeforeDrawingComponents = fillAreaBeforeDrawingComponents;
+        }
+
+        @Override
+        public TerminalSize getPreferredSize(Panel component) {
+            synchronized(components) {
+                cachedPreferredSize = layoutManager.getPreferredSize(components);
+            }
+            return cachedPreferredSize;
+        }
+
+        @Override
+        public void drawComponent(TextGUIGraphics graphics, Panel panel) {
+            if(isInvalid()) {
+                layout(graphics.getSize());
             }
 
-            @Override
-            public void drawComponent(TextGUIGraphics graphics, Panel component) {
-                if(isInvalid()) {
-                    layout(graphics.getSize());
-                }
-
+            if (fillAreaBeforeDrawingComponents) {
                 // Reset the area
                 graphics.applyThemeStyle(getThemeDefinition().getNormal());
+                if (fillColorOverride != null) {
+                    graphics.setBackgroundColor(fillColorOverride);
+                }
                 graphics.fill(' ');
+            }
 
-                synchronized(components) {
-                    for(Component child: components) {
-                        TextGUIGraphics componentGraphics = graphics.newTextGraphics(child.getPosition(), child.getSize());
-                        child.draw(componentGraphics);
+            synchronized(components) {
+                for(Component child: components) {
+                    if (!child.isVisible()) {
+                        continue;
                     }
+                    TextGUIGraphics componentGraphics = graphics.newTextGraphics(child.getPosition(), child.getSize());
+                    child.draw(componentGraphics);
                 }
             }
-        };
+        }
     }
 
     @Override
@@ -221,7 +288,7 @@ public class Panel extends AbstractComponent<Panel> implements Container {
     public boolean isInvalid() {
         synchronized(components) {
             for(Component component: components) {
-                if(component.isInvalid()) {
+                if(component.isVisible() && component.isInvalid()) {
                     return true;
                 }
             }
@@ -235,6 +302,9 @@ public class Panel extends AbstractComponent<Panel> implements Container {
 
         synchronized(components) {
             for(Component component : components) {
+                if(!component.isVisible()) {
+                    continue;
+                }
                 if(chooseNextAvailable) {
                     if(component instanceof Interactable && ((Interactable) component).isEnabled() && ((Interactable) component).isFocusable()) {
                         return (Interactable) component;
@@ -274,13 +344,16 @@ public class Panel extends AbstractComponent<Panel> implements Container {
     public Interactable previousFocus(Interactable fromThis) {
         boolean chooseNextAvailable = (fromThis == null);
 
-        List<Component> revComponents = new ArrayList<Component>();
+        List<Component> reversedComponentList;
         synchronized(components) {
-            revComponents.addAll(components);
+            reversedComponentList = new ArrayList<>(components);
         }
-        Collections.reverse(revComponents);
+        Collections.reverse(reversedComponentList);
 
-        for (Component component : revComponents) {
+        for (Component component : reversedComponentList) {
+            if (!component.isVisible()) {
+                continue;
+            }
             if (chooseNextAvailable) {
                 if (component instanceof Interactable && ((Interactable)component).isEnabled() && ((Interactable)component).isFocusable()) {
                     return (Interactable) component;
@@ -323,6 +396,9 @@ public class Panel extends AbstractComponent<Panel> implements Container {
     public void updateLookupMap(InteractableLookupMap interactableLookupMap) {
         synchronized(components) {
             for(Component component: components) {
+                if(!component.isVisible()) {
+                    continue;
+                }
                 if(component instanceof Container) {
                     ((Container)component).updateLookupMap(interactableLookupMap);
                 }

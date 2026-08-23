@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,14 +14,18 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2024 Martin Berglund
  */
 package com.googlecode.lanterna.gui2.table;
 
-import com.googlecode.lanterna.gui2.*;
-import com.googlecode.lanterna.input.KeyStroke;
-
 import java.util.List;
+
+import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.gui2.AbstractInteractableComponent;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
+import com.googlecode.lanterna.input.MouseAction;
+import com.googlecode.lanterna.input.MouseActionType;
 
 /**
  * The table class is an interactable component that displays a grid of cells containing data along with a header of
@@ -40,8 +44,6 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
     private boolean cellSelection;
     private int visibleRows;
     private int visibleColumns;
-    private int viewTopRow;
-    private int viewLeftColumn;
     private int selectedRow;
     private int selectedColumn;
     private boolean escapeByArrowKey;
@@ -51,17 +53,21 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
      * @param columnLabels Creates one column per label in the array, must be more than one
      */
     public Table(String... columnLabels) {
-        if(columnLabels.length == 0) {
-            throw new IllegalArgumentException("Table needs at least one column");
-        }
-        this.tableHeaderRenderer = new DefaultTableHeaderRenderer<V>();
-        this.tableCellRenderer = new DefaultTableCellRenderer<V>();
-        this.tableModel = new TableModel<V>(columnLabels);
+        this(new TableModel<>(columnLabels));
+    }
+
+    /**
+     * Creates a new {@code Table} with the specified table model
+     * @param tableModel Table model
+     */
+    public Table(final TableModel tableModel) {
+        this.tableHeaderRenderer = new DefaultTableHeaderRenderer<>();
+        this.tableCellRenderer = new DefaultTableCellRenderer<>();
+        this.tableModel = tableModel;
+
         this.selectAction = null;
         this.visibleColumns = 0;
         this.visibleRows = 0;
-        this.viewTopRow = 0;
-        this.viewLeftColumn = 0;
         this.cellSelection = false;
         this.selectedRow = 0;
         this.selectedColumn = -1;
@@ -70,11 +76,23 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
         this.tableModelListener = new TableModel.Listener<V>() {
             @Override
             public void onRowAdded(TableModel<V> model, int index) {
+                if (index <= selectedRow) {
+                    selectedRow = Math.min(model.getRowCount() - 1, selectedRow + 1);
+                }
                 invalidate();
             }
 
             @Override
             public void onRowRemoved(TableModel<V> model, int index, List<V> oldRow) {
+                if (index < selectedRow) {
+                    selectedRow = Math.max(0, selectedRow-1);
+                } else {
+                    // We may have deleted the selected row
+                    int rowCount = model.getRowCount();
+                    if (selectedRow > rowCount - 1) {
+                        selectedRow = Math.max(0, rowCount - 1);
+                    }
+                }
                 invalidate();
             }
 
@@ -196,25 +214,22 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
         return visibleRows;
     }
 
+    
     /**
-     * Returns the index of the row that is currently the first row visible. This is always 0 unless scrolling has been
-     * enabled and either the user or the software (through {@code setViewTopRow(..)}) has scrolled down.
-     * @return Index of the row that is currently the first row visible
+     * Returns the index of the first row that is currently visible.
+     * @return the index of the first row that is currently visible
      */
-    public int getViewTopRow() {
-        return viewTopRow;
+    public int getFirstViewedRowIndex() {
+        return getRenderer().getViewTopRow();
     }
-
+    
     /**
-     * Sets the view row offset for the first row to display in the table. Calling this with 0 will make the first row
-     * in the model be the first visible row in the table.
-     *
-     * @param viewTopRow Index of the row that is currently the first row visible
-     * @return Itself
+     * Returns the index of the last row that is currently visible.
+     * @return the index of the last row that is currently visible
      */
-    public synchronized Table<V> setViewTopRow(int viewTopRow) {
-        this.viewTopRow = viewTopRow;
-        return this;
+    public int getLastViewedRowIndex() {
+        int visibleRows = getRenderer().getVisibleRowsOnLastDraw();
+        return Math.min(getRenderer().getViewTopRow() + visibleRows -1, tableModel.getRowCount() -1);
     }
 
     /**
@@ -222,9 +237,11 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
      * been enabled and either the user or the software (through {@code setViewLeftColumn(..)}) has scrolled to the
      * right.
      * @return Index of the column that is currently the first column visible
+     * @deprecated Use the table renderers method instead
      */
+    @Deprecated
     public int getViewLeftColumn() {
-        return viewLeftColumn;
+        return getRenderer().getViewLeftColumn();
     }
 
     /**
@@ -233,9 +250,11 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
      *
      * @param viewLeftColumn Index of the column that is currently the first column visible
      * @return Itself
+     * @deprecated Use the table renderers method instead
      */
+    @Deprecated
     public synchronized Table<V> setViewLeftColumn(int viewLeftColumn) {
-        this.viewLeftColumn = viewLeftColumn;
+        getRenderer().setViewLeftColumn(viewLeftColumn);
         return this;
     }
 
@@ -256,7 +275,6 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
     public synchronized Table<V> setSelectedColumn(int selectedColumn) {
         if(cellSelection) {
             this.selectedColumn = selectedColumn;
-            ensureSelectedItemIsVisible();
         }
         return this;
     }
@@ -275,8 +293,16 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
      * @return Itself
      */
     public synchronized Table<V> setSelectedRow(int selectedRow) {
+        if (selectedRow < 0) {
+            throw new IllegalArgumentException("selectedRow must be >= 0 but was " + selectedRow);
+        }
+        int rowCount = tableModel.getRowCount();
+        if (rowCount == 0) {
+            selectedRow = 0;
+        } else if (selectedRow > rowCount - 1) {
+            selectedRow = rowCount - 1;
+        }
         this.selectedRow = selectedRow;
-        ensureSelectedItemIsVisible();
         return this;
     }
 
@@ -306,9 +332,9 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
     }
 
     /**
-     * Assigns an action to run whenever the user presses the enter key while focused on the table. If called with
+     * Assigns an action to run whenever the user presses the enter or space key while focused on the table. If called with
      * {@code null}, no action will be run.
-     * @param selectAction Action to perform when user presses the enter key
+     * @param selectAction Action to perform when user presses the enter or space key
      * @return Itself
      */
     public synchronized Table<V> setSelectAction(Runnable selectAction) {
@@ -342,7 +368,7 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
 
     @Override
     protected TableRenderer<V> createDefaultRenderer() {
-        return new DefaultTableRenderer<V>();
+        return new DefaultTableRenderer<>();
     }
 
     @Override
@@ -353,7 +379,7 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
     @Override
     public Result handleKeyStroke(KeyStroke keyStroke) {
         switch(keyStroke.getKeyType()) {
-            case ArrowUp:
+            case ARROW_UP:
                 if(selectedRow > 0) {
                     selectedRow--;
                 }
@@ -361,7 +387,7 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
                     return Result.MOVE_FOCUS_UP;
                 }
                 break;
-            case ArrowDown:
+            case ARROW_DOWN:
                 if(selectedRow < tableModel.getRowCount() - 1) {
                     selectedRow++;
                 }
@@ -369,7 +395,24 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
                     return Result.MOVE_FOCUS_DOWN;
                 }
                 break;
-            case ArrowLeft:
+            case PAGE_UP:
+                if(getRenderer().getVisibleRowsOnLastDraw() > 0 && selectedRow > 0) {
+                    selectedRow -= Math.min(getRenderer().getVisibleRowsOnLastDraw() - 1, selectedRow);
+                }
+                break;
+            case PAGE_DOWN:
+                if(getRenderer().getVisibleRowsOnLastDraw() > 0 && selectedRow < tableModel.getRowCount() - 1) {
+                    int toEndDistance = tableModel.getRowCount() - 1 - selectedRow;
+                    selectedRow += Math.min(getRenderer().getVisibleRowsOnLastDraw() - 1, toEndDistance);
+                }
+                break;
+            case HOME:
+                selectedRow = 0;
+                break;
+            case END:
+                selectedRow = tableModel.getRowCount() - 1;
+                break;
+            case ARROW_LEFT:
                 if(cellSelection && selectedColumn > 0) {
                     selectedColumn--;
                 }
@@ -377,7 +420,7 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
                     return Result.MOVE_FOCUS_LEFT;
                 }
                 break;
-            case ArrowRight:
+            case ARROW_RIGHT:
                 if(cellSelection && selectedColumn < tableModel.getColumnCount() - 1) {
                     selectedColumn++;
                 }
@@ -385,37 +428,76 @@ public class Table<V> extends AbstractInteractableComponent<Table<V>> {
                     return Result.MOVE_FOCUS_RIGHT;
                 }
                 break;
-            case Enter:
-                Runnable runnable = selectAction;   //To avoid synchronizing
-                if(runnable != null) {
-                    runnable.run();
+            case CHARACTER:
+            case ENTER:
+                if (isKeyboardActivationStroke(keyStroke)) {
+                    Runnable runnable = selectAction;   //To avoid synchronizing
+                    if(runnable != null) {
+                        runnable.run();
+                    } else {
+                        return Result.HANDLED;
+                    }
+                    break;
+                } else {
+                    return super.handleKeyStroke(keyStroke);
                 }
-                else {
-                    return Result.MOVE_FOCUS_NEXT;
+            case MOUSE_EVENT:
+                MouseAction action = (MouseAction)keyStroke;
+                MouseActionType actionType = action.getActionType();
+                if (actionType == MouseActionType.MOVE) {
+                    // do nothing
+                    return Result.UNHANDLED;
+                } 
+                if (!isFocused()) {
+                    super.handleKeyStroke(keyStroke);
+                }
+                int mouseRow = getRowByMouseAction((MouseAction) keyStroke);
+                int mouseColumn = getColumnByMouseAction((MouseAction) keyStroke);
+                boolean isDifferentCell = mouseRow != selectedRow || mouseColumn != selectedColumn;
+                selectedRow = mouseRow;
+                selectedColumn = mouseColumn;
+                if (isDifferentCell) {
+                    return handleKeyStroke(new KeyStroke(KeyType.ENTER));
                 }
                 break;
             default:
                 return super.handleKeyStroke(keyStroke);
         }
-        ensureSelectedItemIsVisible();
         invalidate();
         return Result.HANDLED;
     }
-
-    private void ensureSelectedItemIsVisible() {
-        if(visibleRows > 0 && selectedRow < viewTopRow) {
-            viewTopRow = selectedRow;
+    
+    /**
+     * By converting {@link TerminalPosition}s to
+     * {@link #toGlobal(TerminalPosition)} gets row clicked on by mouse action.
+     * 
+     * @return row of a table that was clicked on with {@link MouseAction}
+     */
+    protected int getRowByMouseAction(MouseAction mouseAction) {
+        int minPossible = getFirstViewedRowIndex();
+        int maxPossible = getLastViewedRowIndex();
+        int mouseSpecified = mouseAction.getPosition().getRow() - getGlobalPosition().getRow() - 1;
+        
+        return Math.max(minPossible, Math.min(mouseSpecified, maxPossible));
+    }
+    
+    /**
+     * By converting {@link TerminalPosition}s to
+     * {@link #toGlobal(TerminalPosition)} and by comparing widths of column
+     * headers, gets column clicked on by mouse action.
+     * 
+     * @return row of a table that was clicked on with {@link MouseAction}
+     */
+    protected int getColumnByMouseAction(MouseAction mouseAction) {
+        int maxColumnIndex = tableModel.getColumnCount() -1;
+        int column = 0;
+        int columnSize = tableHeaderRenderer.getPreferredSize(this, tableModel.getColumnLabel(column), column).getColumns();
+        int globalColumnMoused = mouseAction.getPosition().getColumn() - getGlobalPosition().getColumn();
+        while (globalColumnMoused - columnSize - 1 >= 0 && column < maxColumnIndex) {
+            globalColumnMoused -= columnSize;
+            column++;
+            columnSize = tableHeaderRenderer.getPreferredSize(this, tableModel.getColumnLabel(column), column).getColumns();
         }
-        else if(visibleRows > 0 && selectedRow >= viewTopRow + visibleRows) {
-            viewTopRow = Math.max(0, selectedRow - visibleRows + 1);
-        }
-        if(selectedColumn != -1) {
-            if(visibleColumns > 0 && selectedColumn < viewLeftColumn) {
-                viewLeftColumn = selectedColumn;
-            }
-            else if(visibleColumns > 0 && selectedColumn >= viewLeftColumn + visibleColumns) {
-                viewLeftColumn = Math.max(0, selectedColumn - visibleColumns + 1);
-            }
-        }
+        return column;
     }
 }

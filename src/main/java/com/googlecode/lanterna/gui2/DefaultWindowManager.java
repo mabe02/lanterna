@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
 
@@ -153,7 +153,6 @@ public class DefaultWindowManager implements WindowManager {
      * @param window Window to prepare decorated size and position for
      */
     protected void prepareWindow(TerminalSize screenSize, Window window) {
-        WindowDecorationRenderer decorationRenderer = getWindowDecorationRenderer(window);
         TerminalSize contentAreaSize;
         if(window.getHints().contains(Window.Hint.FIXED_SIZE)) {
             contentAreaSize = window.getSize();
@@ -161,7 +160,7 @@ public class DefaultWindowManager implements WindowManager {
         else {
             contentAreaSize = window.getPreferredSize();
         }
-        TerminalSize size = decorationRenderer.getDecoratedSize(window, contentAreaSize);
+        TerminalSize size = getWindowDecorationRenderer(window).getDecoratedSize(window, contentAreaSize);
         TerminalPosition position = window.getPosition();
 
         if(window.getHints().contains(Window.Hint.FULL_SCREEN)) {

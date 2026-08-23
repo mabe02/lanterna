@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  * 
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,20 +14,25 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2024 Martin Berglund
  */
 package com.googlecode.lanterna;
 
+import java.io.Serializable;
+import java.text.BreakIterator;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents a single character with additional metadata such as colors and modifiers. This class is immutable and
  * cannot be modified after creation.
  * @author Martin
  */
-public class TextCharacter {
+public class TextCharacter implements Serializable {
     private static EnumSet<SGR> toEnumSet(SGR... modifiers) {
         if(modifiers.length == 0) {
             return EnumSet.noneOf(SGR.class);
@@ -39,7 +44,46 @@ public class TextCharacter {
 
     public static final TextCharacter DEFAULT_CHARACTER = new TextCharacter(' ', TextColor.ANSI.DEFAULT, TextColor.ANSI.DEFAULT);
 
-    private final char character;
+    public static TextCharacter[] fromCharacter(char c) {
+        return fromString(Character.toString(c));
+    }
+
+    public static TextCharacter[] fromString(String string) {
+        return fromString(string, TextColor.ANSI.DEFAULT, TextColor.ANSI.DEFAULT);
+    }
+
+    public static TextCharacter fromCharacter(char c, TextColor foregroundColor, TextColor backgroundColor, SGR... modifiers) {
+        return fromString(Character.toString(c), foregroundColor, backgroundColor, modifiers)[0];
+    }
+
+    public static TextCharacter[] fromString(
+            String string,
+            TextColor foregroundColor,
+            TextColor backgroundColor,
+            SGR... modifiers) {
+        return fromString(string, foregroundColor, backgroundColor, toEnumSet(modifiers));
+    }
+
+    public static TextCharacter[] fromString(
+            String string,
+            TextColor foregroundColor,
+            TextColor backgroundColor,
+            EnumSet<SGR> modifiers) {
+
+        BreakIterator breakIterator = BreakIterator.getCharacterInstance();
+        breakIterator.setText(string);
+        List<TextCharacter> result = new ArrayList<>();
+        for (int begin = 0, end = 0; (end = breakIterator.next()) != BreakIterator.DONE; begin = breakIterator.current()) {
+            result.add(new TextCharacter(string.substring(begin, end), foregroundColor, backgroundColor, modifiers));
+        }
+        return result.toArray(new TextCharacter[0]);
+    }
+
+    /**
+     * The "character" might not fit in a Java 16-bit char (emoji and other types) so we store it in a String
+     * as of 3.1 instead.
+     */
+    private final String character;
     private final TextColor foregroundColor;
     private final TextColor backgroundColor;
     private final EnumSet<SGR> modifiers;  //This isn't immutable, but we should treat it as such and not expose it!
@@ -47,7 +91,9 @@ public class TextCharacter {
     /**
      * Creates a {@code ScreenCharacter} based on a supplied character, with default colors and no extra modifiers.
      * @param character Physical character to use
+     * @deprecated Use fromCharacter instead
      */
+    @Deprecated
     public TextCharacter(char character) {
         this(character, TextColor.ANSI.DEFAULT, TextColor.ANSI.DEFAULT);
     }
@@ -55,12 +101,14 @@ public class TextCharacter {
     /**
      * Copies another {@code ScreenCharacter}
      * @param character screenCharacter to copy from
+     * @deprecated TextCharacters are immutable so you shouldn't need to call this
      */
+    @Deprecated
     public TextCharacter(TextCharacter character) {
-        this(character.getCharacter(),
+        this(character.getCharacterString(),
                 character.getForegroundColor(), 
                 character.getBackgroundColor(),
-                character.getModifiers().toArray(new SGR[character.getModifiers().size()]));
+                EnumSet.copyOf(character.getModifiers()));
     }
 
     /**
@@ -69,8 +117,10 @@ public class TextCharacter {
      * @param foregroundColor Foreground color the character has
      * @param backgroundColor Background color the character has
      * @param styles Optional list of modifiers to apply when drawing the character
+     * @deprecated Use fromCharacter instead
      */
     @SuppressWarnings("WeakerAccess")
+    @Deprecated
     public TextCharacter(
             char character,
             TextColor foregroundColor,
@@ -89,18 +139,43 @@ public class TextCharacter {
      * @param foregroundColor Foreground color the character has
      * @param backgroundColor Background color the character has
      * @param modifiers Set of modifiers to apply when drawing the character
+     * @deprecated Use fromCharacter instead
      */
+    @Deprecated
     public TextCharacter(
             char character,
             TextColor foregroundColor,
             TextColor backgroundColor,
             EnumSet<SGR> modifiers) {
+        this(Character.toString(character), foregroundColor, backgroundColor, modifiers);
+    }
+
+    /**
+     * Creates a new {@code ScreenCharacter} based on a physical character, color information and a set of modifiers.
+     * @param character Physical character to refer to
+     * @param foregroundColor Foreground color the character has
+     * @param backgroundColor Background color the character has
+     * @param modifiers Set of modifiers to apply when drawing the character
+     */
+    private TextCharacter(
+            String character,
+            TextColor foregroundColor,
+            TextColor backgroundColor,
+            EnumSet<SGR> modifiers) {
+
+        if (character.isEmpty()) {
+            throw new IllegalArgumentException("Cannot create TextCharacter from an empty string");
+        }
+        validateSingleCharacter(character);
+
+        // intern the string so we don't waste more memory than necessary
+        this.character = character.intern();
+        char firstCharacter = character.charAt(0);
 
         // Don't allow creating a TextCharacter containing a control character
         // For backward-compatibility, do allow tab for now
-        // TODO: In lanterna 3.1, don't allow tab
-        if(TerminalTextUtils.isControlCharacter(character) && character != '\t') {
-            throw new IllegalArgumentException("Cannot create a TextCharacter from a control character (0x" + Integer.toHexString(character) + ")");
+        if(TerminalTextUtils.isControlCharacter(firstCharacter) && firstCharacter != '\t') {
+            throw new IllegalArgumentException("Cannot create a TextCharacter from a control character (0x" + Integer.toHexString(firstCharacter) + ")");
         }
 
         if(foregroundColor == null) {
@@ -110,19 +185,47 @@ public class TextCharacter {
             backgroundColor = TextColor.ANSI.DEFAULT;
         }
 
-        this.character = character;
         this.foregroundColor = foregroundColor;
         this.backgroundColor = backgroundColor;
         this.modifiers = EnumSet.copyOf(modifiers);
     }
 
+    private void validateSingleCharacter(String character) {
+        BreakIterator breakIterator = BreakIterator.getCharacterInstance();
+        breakIterator.setText(character);
+        String firstCharacter = null;
+        for (int begin = 0, end = 0; (end = breakIterator.next()) != BreakIterator.DONE; begin = breakIterator.current()) {
+            if (firstCharacter == null) {
+                firstCharacter = character.substring(begin, end);
+            }
+            else {
+                throw new IllegalArgumentException("Invalid String for TextCharacter, can only have one logical character");
+            }
+        }
+    }
+
+    public boolean is(char otherCharacter) {
+        return otherCharacter == character.charAt(0) && character.length() == 1;
+    }
+
     /**
      * The actual character this TextCharacter represents
      * @return character of the TextCharacter
+     * @deprecated This won't work with advanced characters like emoji
      */
+    @Deprecated
     public char getCharacter() {
+        return character.charAt(0);
+    }
+
+    /**
+     * Returns the character this TextCharacter represents as a String. This is not returning a char
+     * @return
+     */
+    public String getCharacterString() {
         return character;
     }
+
 
     /**
      * Foreground color specified for this TextCharacter
@@ -211,7 +314,7 @@ public class TextCharacter {
      */
     @SuppressWarnings("SameParameterValue")
     public TextCharacter withCharacter(char character) {
-        if(this.character == character) {
+        if(this.character.equals(Character.toString(character))) {
             return this;
         }
         return new TextCharacter(character, foregroundColor, backgroundColor, modifiers);
@@ -287,7 +390,23 @@ public class TextCharacter {
     }
 
     public boolean isDoubleWidth() {
-        return TerminalTextUtils.isCharDoubleWidth(character);
+        // TODO: make this better to work properly with emoji and other complicated "characters"
+        return TerminalTextUtils.isCharDoubleWidth(character.charAt(0)) ||
+                isEmoji(character) ||
+                // If the character takes up more than one char, assume it's double width (unless thai)
+                (character.length() > 1 && !TerminalTextUtils.isCharThai(character.charAt(0)));
+    }
+
+    private static boolean isEmoji(final String s) {
+        // This is really hard to do properly and would require an emoji library as a dependency, so here's a hack that
+        // basically assumes anything NOT a regular latin1/CJK/thai character is an emoji
+        char firstCharacter = s.charAt(0);
+        return s.length() > 1 ||
+                !(TerminalTextUtils.isCharCJK(firstCharacter) ||
+                        TerminalTextUtils.isPrintableCharacter(firstCharacter) ||
+                        TerminalTextUtils.isCharThai(firstCharacter) ||
+                        TerminalTextUtils.isCharCJK(firstCharacter) ||
+                        TerminalTextUtils.isControlCharacter(firstCharacter));
     }
 
     @SuppressWarnings("SimplifiableIfStatement")
@@ -300,22 +419,22 @@ public class TextCharacter {
             return false;
         }
         final TextCharacter other = (TextCharacter) obj;
-        if(this.character != other.character) {
+        if(!Objects.equals(this.character, other.character)) {
             return false;
         }
-        if(this.foregroundColor != other.foregroundColor && (this.foregroundColor == null || !this.foregroundColor.equals(other.foregroundColor))) {
+        if(!Objects.equals(this.foregroundColor, other.foregroundColor)) {
             return false;
         }
-        if(this.backgroundColor != other.backgroundColor && (this.backgroundColor == null || !this.backgroundColor.equals(other.backgroundColor))) {
+        if(!Objects.equals(this.backgroundColor, other.backgroundColor)) {
             return false;
         }
-        return !(this.modifiers != other.modifiers && (this.modifiers == null || !this.modifiers.equals(other.modifiers)));
+        return Objects.equals(this.modifiers, other.modifiers);
     }
 
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 37 * hash + this.character;
+        hash = 37 * hash + this.character.hashCode();
         hash = 37 * hash + (this.foregroundColor != null ? this.foregroundColor.hashCode() : 0);
         hash = 37 * hash + (this.backgroundColor != null ? this.backgroundColor.hashCode() : 0);
         hash = 37 * hash + (this.modifiers != null ? this.modifiers.hashCode() : 0);

@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2026 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
 
@@ -30,6 +30,27 @@ public class MiscComponentTest extends TestBase {
         new MiscComponentTest().run(args);
     }
 
+    /*
+        ┌──Grid layout test──────────────────────────┐
+        │┌─CheckBoxes────┐         ┌─Read-only──────┐│
+        ││[x] Checkbox #1│         │...............▲││
+        ││[ ] Checkbox #2│         │ This file is p█││
+        ││[x] Checkbox #3│         │...............█││
+        ││[x] Checkbox #4│         │ lanterna is fr▒││
+        │└───────────────┘         │ it under the t▒││
+        │┌─TextBoxes─────────────┐ │ the Free Softw▒││
+        ││Normal:    Text........│ │ (at your optio▼││
+        ││Password:  ****........│ │◄██▒▒▒▒▒▒▒▒▒▒▒► ││
+        │└───────────────────────┘ └────────────────┘│
+        │┌─Buttons────────┐        ┌─ProgressBar────┐│
+        ││<Enable spacing>│        │ 0      50   100││
+        |└────────────────┘        | |████| |     | ||
+        │                          │ └┴┴┴┴┴┴┴┴┴┴┴┴┘ ││
+        │                          └────────────────┘│
+        ├────────────────────────────────────────────┤
+        │                  <  OK  >                  │
+        └────────────────────────────────────────────┘
+    */
     @Override
     public void init(WindowBasedTextGUI textGUI) {
         final BasicWindow window = new BasicWindow("Grid layout test");
@@ -45,12 +66,9 @@ public class MiscComponentTest extends TestBase {
         textBoxPanel.addComponent(Panels.horizontal(new Label("Password: "), new TextBox(new TerminalSize(12, 1), "Text").setMask('*')));
 
         Panel buttonPanel = new Panel();
-        buttonPanel.addComponent(new Button("Enable spacing", new Runnable() {
-            @Override
-            public void run() {
-                LinearLayout layoutManager = (LinearLayout) leftPanel.getLayoutManager();
-                layoutManager.setSpacing(layoutManager.getSpacing() == 0 ? 1 : 0);
-            }
+        buttonPanel.addComponent(new Button("Enable spacing", () -> {
+            LinearLayout layoutManager = (LinearLayout) leftPanel.getLayoutManager();
+            layoutManager.setSpacing(layoutManager.getSpacing() == 0 ? 1 : 0);
         }));
 
         leftPanel.addComponent(checkBoxPanel.withBorder(Borders.singleLine("CheckBoxes")));
@@ -61,14 +79,14 @@ public class MiscComponentTest extends TestBase {
         textBoxPanel = new Panel();
         TextBox readOnlyTextArea = new TextBox(new TerminalSize(16, 8));
         readOnlyTextArea.setReadOnly(true);
-        readOnlyTextArea.setText(TestUtils.downloadGPL());
+        readOnlyTextArea.setText(TestUtils.someText());
         textBoxPanel.addComponent(readOnlyTextArea);
         rightPanel.addComponent(textBoxPanel.withBorder(Borders.singleLine("Read-only")));
         final ProgressBar progressBar = new ProgressBar(0, 100, 16);
         progressBar.setRenderer(new ProgressBar.LargeProgressBarRenderer());
         progressBar.setLabelFormat("%2.0f%%");
         rightPanel.addComponent(progressBar.withBorder(Borders.singleLine("ProgressBar")));
-        rightPanel.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Fill));
+        rightPanel.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.FILL));
 
         final Timer timer = new Timer("ProgressBar-timer", true);
         timer.schedule(new TimerTask() {
@@ -88,14 +106,11 @@ public class MiscComponentTest extends TestBase {
         contentArea.addComponent(Panels.horizontal(leftPanel, rightPanel));
         contentArea.addComponent(
                 new Separator(Direction.HORIZONTAL).setLayoutData(
-                        LinearLayout.createLayoutData(LinearLayout.Alignment.Fill)));
-        Button okButton = new Button("OK", new Runnable() {
-            @Override
-            public void run() {
-                window.close();
-                timer.cancel();
-            }
-        }).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+                        LinearLayout.createLayoutData(LinearLayout.Alignment.FILL)));
+        Button okButton = new Button("OK", () -> {
+            window.close();
+            timer.cancel();
+        }).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.CENTER));
         contentArea.addComponent(okButton);
         window.setComponent(contentArea);
         window.setFocusedInteractable(okButton);

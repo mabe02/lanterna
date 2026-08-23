@@ -10,14 +10,15 @@ import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalTextUtils;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.screen.ScreenTranslator;
 import com.googlecode.lanterna.screen.TabBehaviour;
 import com.googlecode.lanterna.screen.WrapBehaviour;
 
-public class TextGraphicsWriter implements StyleSet<TextGraphicsWriter> {
+public class TextGraphicsWriter implements StyleSet<TextGraphicsWriter>, ScreenTranslator {
     private final TextGraphics backend;
     private TerminalPosition cursorPosition;
     private TextColor foregroundColor, backgroundColor;
-    private EnumSet<SGR> style = EnumSet.noneOf(SGR.class);
+    private final EnumSet<SGR> style = EnumSet.noneOf(SGR.class);
     private WrapBehaviour wrapBehaviour = WrapBehaviour.WORD;
     private boolean styleable = true;
     
@@ -147,13 +148,17 @@ public class TextGraphicsWriter implements StyleSet<TextGraphicsWriter> {
     // may consist of differently styled parts. This class describes one such
     // part.
     private static class WordPart extends StyleSet.Set {
-        String word; int wordlen;
+        private final String word;
+        private final int wordlen;
+
         WordPart(String word, int wordlen, StyleSet<?> style) {
             this.word = word; this.wordlen = wordlen;
             setStyleFrom(style);
         }
     }
-    private List<WordPart> chunk_queue = new ArrayList<WordPart>();
+
+    private final List<WordPart> chunk_queue = new ArrayList<>();
+
     private void stash(StringBuilder word, int wordlen) {
         if (word.length() > 0) {
             WordPart chunk = new WordPart(word.toString(),wordlen, this);
@@ -288,5 +293,17 @@ public class TextGraphicsWriter implements StyleSet<TextGraphicsWriter> {
      */
     public void setStyleable(boolean styleable) {
         this.styleable = styleable;
+    }
+
+    /**
+     * Translates a position into screen coordinates. If {@code null} is specified for position,
+     * the cursor location is translated to screen coordinates.
+     * 
+     * @param pos position to translate, pass {@code null} for {@link #getCursorPosition()}.
+     * @return screen (absolute) position.
+     */
+    @Override
+    public TerminalPosition toScreenPosition(TerminalPosition pos) {
+        return backend.toScreenPosition(pos != null ? pos : getCursorPosition());
     }
 }

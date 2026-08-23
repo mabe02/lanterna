@@ -14,7 +14,7 @@ public class Issue305 {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws IOException, InterruptedException{
+    public static void main(String[] args) throws IOException {
         Terminal terminal = new DefaultTerminalFactory().createTerminal();
         System.out.println("Class: " + terminal.getClass());
 

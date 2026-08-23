@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2024 Martin Berglund
  */
 package com.googlecode.lanterna.terminal.swing;
 
@@ -106,7 +106,11 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
     private SwingTerminalFrame(String title, SwingTerminal swingTerminal, TerminalEmulatorAutoCloseTrigger... autoCloseTriggers) {
         super(title != null ? title : "SwingTerminalFrame");
         this.swingTerminal = swingTerminal;
-        this.autoCloseTriggers = EnumSet.copyOf(Arrays.asList(autoCloseTriggers));
+        if (autoCloseTriggers != null && autoCloseTriggers.length > 0)
+        {
+        	this.autoCloseTriggers = EnumSet.copyOf(Arrays.asList(autoCloseTriggers));
+        }
+        else this.autoCloseTriggers = null;
         this.disposed = false;
 
         getContentPane().setLayout(new BorderLayout());
@@ -114,9 +118,39 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setBackground(Color.BLACK); //This will reduce white flicker when resizing the window
         pack();
+    }
 
-        //Put input focus on the terminal component by default
-        swingTerminal.requestFocusInWindow();
+    /**
+     * Returns the wrapped SwingTerminal which is holding the actual terminal content. This can be useful if you want to
+     * add custom Swing listeners to it, etc.
+     * @return The inner SwingTerminal
+     */
+    public SwingTerminal getSwingTerminal() {
+        return swingTerminal;
+    }
+
+    /**
+     * Returns the current font configuration. Note that it is immutable and cannot be changed.
+     * @return This {@link SwingTerminalFrame}'s current font configuration
+     */
+    public SwingTerminalFontConfiguration getFontConfiguration() {
+        return swingTerminal.getFontConfiguration();
+    }
+
+    /**
+     * Returns this terminal emulator's color configuration. Note that it is immutable and cannot be changed.
+     * @return This {@link SwingTerminalFrame}'s color configuration
+     */
+    public TerminalEmulatorColorConfiguration getColorConfiguration() {
+        return swingTerminal.getColorConfiguration();
+    }
+
+    /**
+     * Returns this terminal emulator's device configuration. Note that it is immutable and cannot be changed.
+     * @return This {@link SwingTerminalFrame}'s device configuration
+     */
+    public TerminalEmulatorDeviceConfiguration getDeviceConfiguration() {
+        return swingTerminal.getDeviceConfiguration();
     }
 
     /**
@@ -158,6 +192,23 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
         super.dispose();
         disposed = true;
     }
+    
+    @Override
+    public void pack() {
+        super.pack();
+        disposed = false;
+    }
+
+    @Override
+    public void setVisible(boolean visible) {
+        if (visible) {
+            pack();
+
+            //Put input focus on the terminal component by default
+            swingTerminal.requestFocusInWindow();
+        }
+        super.setVisible(visible);
+    }
 
     @Override
     public void close() {
@@ -182,9 +233,11 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
             return new KeyStroke(KeyType.EOF);
         }
         KeyStroke keyStroke = swingTerminal.pollInput();
-        if(autoCloseTriggers.contains(TerminalEmulatorAutoCloseTrigger.CloseOnEscape) &&
-                keyStroke != null && 
-                keyStroke.getKeyType() == KeyType.Escape) {
+        if(autoCloseTriggers != null &&
+           autoCloseTriggers.contains(TerminalEmulatorAutoCloseTrigger.CLOSE_ON_ESCAPE) &&
+           keyStroke != null &&
+           keyStroke.getKeyType() == KeyType.ESCAPE)
+        {
             dispose();
         }
         return keyStroke;
@@ -203,7 +256,9 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
     @Override
     public void exitPrivateMode() {
         swingTerminal.exitPrivateMode();
-        if(autoCloseTriggers.contains(TerminalEmulatorAutoCloseTrigger.CloseOnExitPrivateMode)) {
+        if(autoCloseTriggers != null &&
+           autoCloseTriggers.contains(TerminalEmulatorAutoCloseTrigger.CLOSE_ON_EXIT_PRIVATE_MODE))
+        {
             dispose();
         }
     }
@@ -236,6 +291,11 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
     @Override
     public void putCharacter(char c) {
         swingTerminal.putCharacter(c);
+    }
+
+    @Override
+    public void putString(String string) {
+        swingTerminal.putString(string);
     }
 
     @Override

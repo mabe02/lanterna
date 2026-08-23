@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2024 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
 
@@ -36,7 +36,8 @@ public class GridLayoutTest extends TestBase {
         leftGridPanel.setLayoutManager(new GridLayout(4));
         leftGridPanel.addComponent(new EmptySpace(TextColor.ANSI.BLACK, new TerminalSize(4, 2)));
         leftGridPanel.addComponent(new EmptySpace(TextColor.ANSI.BLUE, new TerminalSize(4, 2)));
-        leftGridPanel.addComponent(new EmptySpace(TextColor.ANSI.CYAN, new TerminalSize(4, 2)));
+        EmptySpace visibilityToggleableComponent = new EmptySpace(TextColor.ANSI.CYAN, new TerminalSize(4, 2));
+        leftGridPanel.addComponent(visibilityToggleableComponent);
         leftGridPanel.addComponent(new EmptySpace(TextColor.ANSI.GREEN, new TerminalSize(4, 2)));
 
         leftGridPanel.addComponent(new EmptySpace(TextColor.ANSI.MAGENTA, new TerminalSize(4, 2))
@@ -67,12 +68,10 @@ public class GridLayoutTest extends TestBase {
         contentPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
         contentPanel.addComponent(Panels.horizontal(leftGridPanel, new EmptySpace(TerminalSize.ONE), rightGridPanel));
         contentPanel.addComponent(new EmptySpace(TerminalSize.ONE));
-        contentPanel.addComponent(new Button("Close", new Runnable() {
-            @Override
-            public void run() {
-                window.close();
-            }
-        }));
+        contentPanel.addComponent(Panels.horizontal(
+                new Button("Toggle Visible Component", () -> visibilityToggleableComponent.setVisible(!visibilityToggleableComponent.isVisible())),
+                new Button("Close", window::close)
+        ));
         window.setComponent(contentPanel);
         textGUI.addWindow(window);
     }

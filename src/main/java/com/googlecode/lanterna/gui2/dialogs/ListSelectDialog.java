@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna.gui2.dialogs;
 
@@ -48,12 +48,7 @@ public class ListSelectDialog<T> extends DialogWindow {
 
         ActionListBox listBox = new ActionListBox(listBoxPreferredSize);
         for(final T item: content) {
-            listBox.addItem(item.toString(), new Runnable() {
-                @Override
-                public void run() {
-                    onSelect(item);
-                }
-            });
+            listBox.addItem(item.toString(), () -> onSelect(item));
         }
 
         Panel mainPanel = new Panel();
@@ -77,12 +72,7 @@ public class ListSelectDialog<T> extends DialogWindow {
         if(canCancel) {
             Panel buttonPanel = new Panel();
             buttonPanel.setLayoutManager(new GridLayout(2).setHorizontalSpacing(1));
-            buttonPanel.addComponent(new Button(LocalizedString.Cancel.toString(), new Runnable() {
-                @Override
-                public void run() {
-                    onCancel();
-                }
-            }).setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER, GridLayout.Alignment.CENTER, true, false)));
+            buttonPanel.addComponent(new Button(LocalizedString.Cancel.toString(), this::onCancel).setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER, GridLayout.Alignment.CENTER, true, false)));
             buttonPanel.setLayoutData(
                     GridLayout.createLayoutData(
                             GridLayout.Alignment.END,
@@ -125,6 +115,7 @@ public class ListSelectDialog<T> extends DialogWindow {
      * @param <T> Type of items in the dialog
      * @return The selected item or {@code null} if cancelled
      */
+    @SafeVarargs
     public static <T> T showDialog(WindowBasedTextGUI textGUI, String title, String description, T... items) {
         return showDialog(textGUI, title, description, null, items);
     }
@@ -139,6 +130,7 @@ public class ListSelectDialog<T> extends DialogWindow {
      * @param <T> Type of items in the dialog
      * @return The selected item or {@code null} if cancelled
      */
+    @SafeVarargs
     public static <T> T showDialog(WindowBasedTextGUI textGUI, String title, String description, int listBoxHeight, T... items) {
         int width = 0;
         for(T item: items) {
@@ -158,6 +150,7 @@ public class ListSelectDialog<T> extends DialogWindow {
      * @param <T> Type of items in the dialog
      * @return The selected item or {@code null} if cancelled
      */
+    @SafeVarargs
     public static <T> T showDialog(WindowBasedTextGUI textGUI, String title, String description, TerminalSize listBoxSize, T... items) {
         ListSelectDialog<T> listSelectDialog = new ListSelectDialogBuilder<T>()
                 .setTitle(title)

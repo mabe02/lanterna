@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2024 Martin Berglund
  */
 package com.googlecode.lanterna.issue;
 
@@ -55,7 +55,7 @@ public class Issue261 {
 
         // Create window to hold the panel
         BasicWindow window = new BasicWindow();
-        window.setSize(new TerminalSize(500, 700));
+        window.setFixedSize(new TerminalSize(500, 700));
         window.setComponent(panel);
 
         gui.addWindowAndWait(window);

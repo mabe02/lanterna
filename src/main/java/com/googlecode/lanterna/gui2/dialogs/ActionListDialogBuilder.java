@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna.gui2.dialogs;
 
@@ -44,7 +44,7 @@ public class ActionListDialogBuilder extends AbstractDialogBuilder<ActionListDia
         this.listBoxSize = null;
         this.canCancel = true;
         this.closeAutomatically = true;
-        this.actions = new ArrayList<Runnable>();
+        this.actions = new ArrayList<>();
     }
 
     @Override
@@ -150,7 +150,7 @@ public class ActionListDialogBuilder extends AbstractDialogBuilder<ActionListDia
      * @return Copy of the internal list of actions currently inside this builder
      */
     public List<Runnable> getActions() {
-        return new ArrayList<Runnable>(actions);
+        return new ArrayList<>(actions);
     }
 
     /**

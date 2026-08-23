@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna.gui2.dialogs;
 
@@ -41,7 +41,7 @@ public class ListSelectDialogBuilder<T> extends AbstractDialogBuilder<ListSelect
         super("ListSelectDialog");
         this.listBoxSize = null;
         this.canCancel = true;
-        this.content = new ArrayList<T>();
+        this.content = new ArrayList<>();
     }
 
     @Override
@@ -51,7 +51,7 @@ public class ListSelectDialogBuilder<T> extends AbstractDialogBuilder<ListSelect
 
     @Override
     protected ListSelectDialog<T> buildDialog() {
-        return new ListSelectDialog<T>(
+        return new ListSelectDialog<>(
                 title,
                 description,
                 listBoxSize,
@@ -112,7 +112,8 @@ public class ListSelectDialogBuilder<T> extends AbstractDialogBuilder<ListSelect
      * @param items Items to add to the list box
      * @return Itself
      */
-    public ListSelectDialogBuilder<T> addListItems(T... items) {
+    @SafeVarargs
+    public final ListSelectDialogBuilder<T> addListItems(T... items) {
         this.content.addAll(Arrays.asList(items));
         return this;
     }
@@ -122,6 +123,6 @@ public class ListSelectDialogBuilder<T> extends AbstractDialogBuilder<ListSelect
      * @return Copy of the list of items in the list box
      */
     public List<T> getListItems() {
-        return new ArrayList<T>(content);
+        return new ArrayList<>(content);
     }
 }

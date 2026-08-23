@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2024 Martin Berglund
  */
 package com.googlecode.lanterna.input;
 
@@ -36,7 +36,24 @@ public class MouseAction extends KeyStroke {
      * @param position Where in the terminal is the mouse cursor located
      */
     public MouseAction(MouseActionType actionType, int button, TerminalPosition position) {
-        super(KeyType.MouseEvent, false, false);
+        super(KeyType.MOUSE_EVENT, false, false);
+        this.actionType = actionType;
+        this.button = button;
+        this.position = position;
+    }
+
+    /**
+     * Constructs a MouseAction based on an action type, a button and a location on the screen
+     * @param actionType The kind of mouse event
+     * @param button Which button is involved (no button = 0, left button = 1, middle (wheel) button = 2,
+     *               right button = 3, scroll wheel up = 4, scroll wheel down = 5)
+     * @param position Where in the terminal is the mouse cursor located
+     * @param ctrlDown Whether the control key was pressed when this event was generated
+     * @param altDown Whether the alt key was pressed when this event was generated
+     * @param shiftDown Whether the shift key was pressed when this event was generated
+     */
+    public MouseAction(MouseActionType actionType, int button, TerminalPosition position, boolean ctrlDown, boolean altDown, boolean shiftDown) {
+        super(KeyType.MOUSE_EVENT, ctrlDown, altDown, shiftDown);
         this.actionType = actionType;
         this.button = button;
         this.position = position;
@@ -73,6 +90,22 @@ public class MouseAction extends KeyStroke {
      */
     public TerminalPosition getPosition() {
         return position;
+    }
+
+    public boolean isMouseDown() {
+        return actionType == MouseActionType.CLICK_DOWN;
+    }
+
+    public boolean isMouseDrag() {
+        return actionType == MouseActionType.DRAG;
+    }
+
+    public boolean isMouseMove() {
+        return actionType == MouseActionType.MOVE;
+    }
+
+    public boolean isMouseUp() {
+        return actionType == MouseActionType.CLICK_RELEASE;
     }
 
     @Override

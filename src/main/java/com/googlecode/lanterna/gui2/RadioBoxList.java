@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  * 
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,18 +14,20 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2024 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
+
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.graphics.ThemeDefinition;
 import com.googlecode.lanterna.graphics.ThemeStyle;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
-
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import com.googlecode.lanterna.input.MouseAction;
+import com.googlecode.lanterna.input.MouseActionType;
 
 /**
  * The list box will display a number of items, of which one and only one can be marked as selected.
@@ -68,20 +70,39 @@ public class RadioBoxList<V> extends AbstractListBox<V, RadioBoxList<V>> {
      */
     public RadioBoxList(TerminalSize preferredSize) {
         super(preferredSize);
-        this.listeners = new CopyOnWriteArrayList<Listener>();
+        this.listeners = new CopyOnWriteArrayList<>();
         this.checkedIndex = -1;
     }
 
     @Override
     protected ListItemRenderer<V,RadioBoxList<V>> createDefaultListItemRenderer() {
-        return new RadioBoxListItemRenderer<V>();
+        return new RadioBoxListItemRenderer<>();
     }
 
     @Override
     public synchronized Result handleKeyStroke(KeyStroke keyStroke) {
-        if(keyStroke.getKeyType() == KeyType.Enter ||
-                (keyStroke.getKeyType() == KeyType.Character && keyStroke.getCharacter() == ' ')) {
-            setCheckedIndex( getSelectedIndex() );
+        if (isKeyboardActivationStroke(keyStroke)) {
+            setCheckedIndex(getSelectedIndex());
+        } else if (keyStroke.getKeyType() == KeyType.MOUSE_EVENT) {
+            MouseAction mouseAction = (MouseAction) keyStroke;
+            MouseActionType actionType = mouseAction.getActionType();
+            
+            if (isMouseMove(keyStroke)
+                    || actionType == MouseActionType.CLICK_RELEASE
+                    || actionType == MouseActionType.SCROLL_UP
+                    || actionType == MouseActionType.SCROLL_DOWN) {
+                return super.handleKeyStroke(keyStroke);
+            }
+            
+            // includes mouse drag
+            int existingIndex = getSelectedIndex();
+            int newIndex = getIndexByMouseAction(mouseAction);
+            if (existingIndex != newIndex || !isFocused()) {
+                Result result = super.handleKeyStroke(keyStroke);
+                setCheckedIndex(getSelectedIndex());
+                return result;
+            }
+            setCheckedIndex(getSelectedIndex());
             return Result.HANDLED;
         }
         return super.handleKeyStroke(keyStroke);
@@ -213,12 +234,9 @@ public class RadioBoxList<V> extends AbstractListBox<V, RadioBoxList<V>> {
         final int previouslyChecked = checkedIndex;
         this.checkedIndex = index;
         invalidate();
-        runOnGUIThreadIfExistsOtherwiseRunDirect(new Runnable() {
-            @Override
-            public void run() {
-                for(Listener listener: listeners) {
-                    listener.onSelectionChanged(checkedIndex, previouslyChecked);
-                }
+        runOnGUIThreadIfExistsOtherwiseRunDirect(() -> {
+            for(Listener listener: listeners) {
+                listener.onSelectionChanged(checkedIndex, previouslyChecked);
             }
         });
     }
@@ -234,13 +252,17 @@ public class RadioBoxList<V> extends AbstractListBox<V, RadioBoxList<V>> {
             return 1;
         }
 
+        protected String getItemText(RadioBoxList<V> listBox, int index, V item) {
+            return (item != null ? item : "<null>").toString();
+        }
+        
         @Override
         public String getLabel(RadioBoxList<V> listBox, int index, V item) {
             String check = " ";
             if(listBox.checkedIndex == index)
                 check = "o";
 
-            String text = (item != null ? item : "<null>").toString();
+            String text = getItemText(listBox, index, item);
             return "<" + check + "> " + text;
         }
 
@@ -283,7 +305,7 @@ public class RadioBoxList<V> extends AbstractListBox<V, RadioBoxList<V>> {
                 graphics.putString(0, 0, brackets);
             }
 
-            String text = (item != null ? item : "<null>").toString();
+            String text = getItemText(listBox, index, item);
             graphics.putString(4, 0, text);
 
             boolean itemChecked = listBox.checkedIndex == index;

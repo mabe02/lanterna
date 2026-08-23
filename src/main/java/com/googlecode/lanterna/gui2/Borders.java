@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  * 
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
 
@@ -277,8 +277,6 @@ public class Borders {
             }
 
             wrappedComponent.draw(graphics.newTextGraphics(getWrappedComponentTopLeftOffset(), getWrappedComponentSize(drawableArea)));
-
-
             joinLinesWithFrame(graphics);
         }
 
@@ -314,6 +312,7 @@ public class Borders {
         List<Character> junctionFromBelowSingle = Arrays.asList(
                 Symbols.SINGLE_LINE_VERTICAL,
                 Symbols.BOLD_FROM_NORMAL_SINGLE_LINE_VERTICAL,
+                Symbols.BOLD_SINGLE_LINE_VERTICAL,
                 Symbols.SINGLE_LINE_CROSS,
                 Symbols.DOUBLE_LINE_HORIZONTAL_SINGLE_LINE_CROSS,
                 Symbols.SINGLE_LINE_BOTTOM_LEFT_CORNER,
@@ -339,6 +338,7 @@ public class Borders {
         List<Character> junctionFromAboveSingle = Arrays.asList(
                 Symbols.SINGLE_LINE_VERTICAL,
                 Symbols.BOLD_TO_NORMAL_SINGLE_LINE_VERTICAL,
+                Symbols.BOLD_SINGLE_LINE_VERTICAL,
                 Symbols.SINGLE_LINE_CROSS,
                 Symbols.DOUBLE_LINE_HORIZONTAL_SINGLE_LINE_CROSS,
                 Symbols.SINGLE_LINE_TOP_LEFT_CORNER,
@@ -364,6 +364,7 @@ public class Borders {
         List<Character> junctionFromLeftSingle = Arrays.asList(
                 Symbols.SINGLE_LINE_HORIZONTAL,
                 Symbols.BOLD_TO_NORMAL_SINGLE_LINE_HORIZONTAL,
+                Symbols.BOLD_SINGLE_LINE_HORIZONTAL,
                 Symbols.SINGLE_LINE_CROSS,
                 Symbols.DOUBLE_LINE_VERTICAL_SINGLE_LINE_CROSS,
                 Symbols.SINGLE_LINE_BOTTOM_LEFT_CORNER,
@@ -389,6 +390,7 @@ public class Borders {
         List<Character> junctionFromRightSingle = Arrays.asList(
                 Symbols.SINGLE_LINE_HORIZONTAL,
                 Symbols.BOLD_FROM_NORMAL_SINGLE_LINE_HORIZONTAL,
+                Symbols.BOLD_SINGLE_LINE_HORIZONTAL,
                 Symbols.SINGLE_LINE_CROSS,
                 Symbols.DOUBLE_LINE_VERTICAL_SINGLE_LINE_CROSS,
                 Symbols.SINGLE_LINE_BOTTOM_RIGHT_CORNER,
@@ -421,8 +423,8 @@ public class Borders {
             }
             TextCharacter neighbourCharacter = graphics.getCharacter(column, upperRow + 1);
             if(neighbourCharacter != null) {
-                char neighbour = neighbourCharacter.getCharacter();
-                if(borderCharacter.getCharacter() == Symbols.SINGLE_LINE_HORIZONTAL) {
+                char neighbour = neighbourCharacter.getCharacterString().charAt(0);
+                if(borderCharacter.is(Symbols.SINGLE_LINE_HORIZONTAL)) {
                     if(junctionFromBelowSingle.contains(neighbour)) {
                         graphics.setCharacter(column, upperRow, borderCharacter.withCharacter(Symbols.SINGLE_LINE_T_DOWN));
                     }
@@ -430,7 +432,7 @@ public class Borders {
                         graphics.setCharacter(column, upperRow, borderCharacter.withCharacter(Symbols.SINGLE_LINE_T_DOUBLE_DOWN));
                     }
                 }
-                else if(borderCharacter.getCharacter() == Symbols.DOUBLE_LINE_HORIZONTAL) {
+                else if(borderCharacter.is(Symbols.DOUBLE_LINE_HORIZONTAL)) {
                     if(junctionFromBelowSingle.contains(neighbour)) {
                         graphics.setCharacter(column, upperRow, borderCharacter.withCharacter(Symbols.DOUBLE_LINE_T_SINGLE_DOWN));
                     }
@@ -447,8 +449,8 @@ public class Borders {
             }
             neighbourCharacter = graphics.getCharacter(column, lowerRow - 1);
             if(neighbourCharacter != null) {
-                char neighbour = neighbourCharacter.getCharacter();
-                if(borderCharacter.getCharacter() == Symbols.SINGLE_LINE_HORIZONTAL) {
+                char neighbour = neighbourCharacter.getCharacterString().charAt(0);
+                if(borderCharacter.is(Symbols.SINGLE_LINE_HORIZONTAL)) {
                     if(junctionFromAboveSingle.contains(neighbour)) {
                         graphics.setCharacter(column, lowerRow, borderCharacter.withCharacter(Symbols.SINGLE_LINE_T_UP));
                     }
@@ -456,7 +458,7 @@ public class Borders {
                         graphics.setCharacter(column, lowerRow, borderCharacter.withCharacter(Symbols.SINGLE_LINE_T_DOUBLE_UP));
                     }
                 }
-                else if(borderCharacter.getCharacter() == Symbols.DOUBLE_LINE_HORIZONTAL) {
+                else if(borderCharacter.is(Symbols.DOUBLE_LINE_HORIZONTAL)) {
                     if(junctionFromAboveSingle.contains(neighbour)) {
                         graphics.setCharacter(column, lowerRow, borderCharacter.withCharacter(Symbols.DOUBLE_LINE_T_SINGLE_UP));
                     }
@@ -476,8 +478,8 @@ public class Borders {
             }
             TextCharacter neighbourCharacter = graphics.getCharacter(leftRow + 1, row);
             if(neighbourCharacter != null) {
-                char neighbour = neighbourCharacter.getCharacter();
-                if(borderCharacter.getCharacter() == Symbols.SINGLE_LINE_VERTICAL) {
+                char neighbour = neighbourCharacter.getCharacterString().charAt(0);
+                if(borderCharacter.is(Symbols.SINGLE_LINE_VERTICAL)) {
                     if(junctionFromRightSingle.contains(neighbour)) {
                         graphics.setCharacter(leftRow, row, borderCharacter.withCharacter(Symbols.SINGLE_LINE_T_RIGHT));
                     }
@@ -485,7 +487,7 @@ public class Borders {
                         graphics.setCharacter(leftRow, row, borderCharacter.withCharacter(Symbols.SINGLE_LINE_T_DOUBLE_RIGHT));
                     }
                 }
-                else if(borderCharacter.getCharacter() == Symbols.DOUBLE_LINE_VERTICAL) {
+                else if(borderCharacter.is(Symbols.DOUBLE_LINE_VERTICAL)) {
                     if(junctionFromRightSingle.contains(neighbour)) {
                         graphics.setCharacter(leftRow, row, borderCharacter.withCharacter(Symbols.DOUBLE_LINE_T_SINGLE_RIGHT));
                     }
@@ -502,8 +504,8 @@ public class Borders {
             }
             neighbourCharacter = graphics.getCharacter(rightRow - 1, row);
             if(neighbourCharacter != null) {
-                char neighbour = neighbourCharacter.getCharacter();
-                if(borderCharacter.getCharacter() == Symbols.SINGLE_LINE_VERTICAL) {
+                char neighbour = neighbourCharacter.getCharacterString().charAt(0);
+                if(borderCharacter.is(Symbols.SINGLE_LINE_VERTICAL)) {
                     if(junctionFromLeftSingle.contains(neighbour)) {
                         graphics.setCharacter(rightRow, row, borderCharacter.withCharacter(Symbols.SINGLE_LINE_T_LEFT));
                     }
@@ -511,7 +513,7 @@ public class Borders {
                         graphics.setCharacter(rightRow, row, borderCharacter.withCharacter(Symbols.SINGLE_LINE_T_DOUBLE_LEFT));
                     }
                 }
-                else if(borderCharacter.getCharacter() == Symbols.DOUBLE_LINE_VERTICAL) {
+                else if(borderCharacter.is(Symbols.DOUBLE_LINE_VERTICAL)) {
                     if(junctionFromLeftSingle.contains(neighbour)) {
                         graphics.setCharacter(rightRow, row, borderCharacter.withCharacter(Symbols.DOUBLE_LINE_T_SINGLE_LEFT));
                     }

@@ -40,8 +40,10 @@ over the years, since lanterna was first published.
 14. [Message dialogs](examples/gui/message_dialogs.md)
 15. [Text Input dialogs](examples/gui/text_input_dialogs.md)
 16. [File dialogs](examples/gui/file_dialogs.md)
-17. [Action list dialogs](examples/gui/action_list_dialogs.md)
-18. [Tables](examples/gui/tables.md)
+17. [Directory dialogs](examples/gui/dir_dialogs.md)
+18. [Action list dialogs](examples/gui/action_list_dialogs.md)
+19. [Tables](examples/gui/tables.md)
+20. [Menus](examples/gui/menus.md)
 
 ## Changes
 1. [2.0.0](ChangesFrom1to2.md)
@@ -60,4 +62,4 @@ over the years, since lanterna was first published.
 1. [3.0.0](ChangesFrom2to3.md)
 
 ## About the name ##
-Originally named "lantern", Google code didn't allow the project to be registered under this name since [there is already a project on SourceForce with this name](http://sourceforge.net/projects/lantern). That project hasn't been updated since 2003 though...
+Originally named "lantern", Google code didn't allow the project to be registered under this name since [there is already a project on SourceForge with this name](http://sourceforge.net/projects/lantern). That project hasn't been updated since 2003 though...

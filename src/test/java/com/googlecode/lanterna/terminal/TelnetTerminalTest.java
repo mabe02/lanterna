@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2024 Martin Berglund
  */
 package com.googlecode.lanterna.terminal;
 
@@ -25,7 +25,7 @@ import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.ansi.TelnetTerminal;
 import com.googlecode.lanterna.terminal.ansi.TelnetTerminalServer;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Random;
 
 /**
@@ -34,7 +34,7 @@ import java.util.Random;
  */
 public class TelnetTerminalTest {
     public static void main(String[] args) throws IOException {
-        TelnetTerminalServer server = new TelnetTerminalServer(1024, Charset.forName("utf-8"));
+        TelnetTerminalServer server = new TelnetTerminalServer(1024, StandardCharsets.UTF_8);
         //noinspection InfiniteLoopStatement
         while(true) {
             TelnetTerminal telnetTerminal = server.acceptConnection();
@@ -56,12 +56,9 @@ public class TelnetTerminalTest {
                     Random random = new Random();
                     terminal.enterPrivateMode();
                     terminal.clearScreen();
-                    terminal.addResizeListener(new TerminalResizeListener() {
-                        @Override
-                        public void onResized(Terminal terminal, TerminalSize newSize) {
-                            System.err.println("Resized to " + newSize);
-                            size = newSize;
-                        }
+                    terminal.addResizeListener((terminal1, newSize) -> {
+                        System.err.println("Resized to " + newSize);
+                        size = newSize;
                     });
                     size = terminal.getTerminalSize();
 
@@ -73,7 +70,7 @@ public class TelnetTerminalTest {
                         KeyStroke key = terminal.pollInput();
                         if(key != null) {
                             System.out.println(key);
-                            if(key.getKeyType() == KeyType.Escape) {
+                            if(key.getKeyType() == KeyType.ESCAPE) {
                                 terminal.exitPrivateMode();
                                 return;
                             }

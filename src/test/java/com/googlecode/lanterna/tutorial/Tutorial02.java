@@ -1,14 +1,12 @@
 package com.googlecode.lanterna.tutorial;
 
 import com.googlecode.lanterna.SGR;
-import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
-import com.googlecode.lanterna.terminal.TerminalResizeListener;
 
 import java.io.IOException;
 
@@ -90,22 +88,19 @@ public class Tutorial02 {
             all implementations supports this. The UnixTerminal, for example, relies on the WINCH signal being sent to
             the java process, which might not make it though if you remote shell isn't forwarding the signal properly.
              */
-            terminal.addResizeListener(new TerminalResizeListener() {
-                @Override
-                public void onResized(Terminal terminal, TerminalSize newSize) {
-                    // Be careful here though, this is likely running on a separate thread. Lanterna is threadsafe in
-                    // a best-effort way so while it shouldn't blow up if you call terminal methods on multiple threads,
-                    // it might have unexpected behavior if you don't do any external synchronization
-                    textGraphics.drawLine(5, 3, newSize.getColumns() - 1, 3, ' ');
-                    textGraphics.putString(5, 3, "Terminal Size: ", SGR.BOLD);
-                    textGraphics.putString(5 + "Terminal Size: ".length(), 3, newSize.toString());
-                    try {
-                        terminal.flush();
-                    }
-                    catch(IOException e) {
-                        // Not much we can do here
-                        throw new RuntimeException(e);
-                    }
+            terminal.addResizeListener((terminal1, newSize) -> {
+                // Be careful here though, this is likely running on a separate thread. Lanterna is threadsafe in
+                // a best-effort way so while it shouldn't blow up if you call terminal methods on multiple threads,
+                // it might have unexpected behavior if you don't do any external synchronization
+                textGraphics.drawLine(5, 3, newSize.getColumns() - 1, 3, ' ');
+                textGraphics.putString(5, 3, "Terminal Size: ", SGR.BOLD);
+                textGraphics.putString(5 + "Terminal Size: ".length(), 3, newSize.toString());
+                try {
+                    terminal1.flush();
+                }
+                catch(IOException e) {
+                    // Not much we can do here
+                    throw new RuntimeException(e);
                 }
             });
 
@@ -125,7 +120,7 @@ public class Tutorial02 {
             KeyType, while regular alphanumeric and symbol keys are all under KeyType.Character. Notice that tab and
             enter are not considered KeyType.Character but special types (KeyType.Tab and KeyType.Enter respectively)
              */
-            while(keyStroke.getKeyType() != KeyType.Escape) {
+            while(keyStroke.getKeyType() != KeyType.ESCAPE) {
                 textGraphics.drawLine(5, 4, terminal.getTerminalSize().getColumns() - 1, 4, ' ');
                 textGraphics.putString(5, 4, "Last Keystroke: ", SGR.BOLD);
                 textGraphics.putString(5 + "Last Keystroke: ".length(), 4, keyStroke.toString());

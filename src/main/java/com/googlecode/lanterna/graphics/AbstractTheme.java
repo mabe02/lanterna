@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,16 +14,18 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna.graphics;
 
 import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.gui2.Button;
 import com.googlecode.lanterna.gui2.Component;
 import com.googlecode.lanterna.gui2.ComponentRenderer;
 import com.googlecode.lanterna.gui2.WindowDecorationRenderer;
 import com.googlecode.lanterna.gui2.WindowPostRenderer;
+import com.googlecode.lanterna.gui2.WindowShadowRenderer;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -58,6 +60,16 @@ public abstract class AbstractTheme implements Theme {
 
         rootNode.foregroundMap.put(STYLE_NORMAL, TextColor.ANSI.WHITE);
         rootNode.backgroundMap.put(STYLE_NORMAL, TextColor.ANSI.BLACK);
+        classloadStandardRenderersForGraal();
+    }
+
+    private void classloadStandardRenderersForGraal() {
+        // This will make graal know about these classes which would otherwise only
+        // be loaded through reflection
+        WindowShadowRenderer.class.toString();
+        Button.DefaultButtonRenderer.class.toString();
+        Button.FlatButtonRenderer.class.toString();
+        Button.BorderedButtonRenderer.class.toString();
     }
 
     protected boolean addStyle(String definition, String style, String value) {
@@ -104,7 +116,7 @@ public abstract class AbstractTheme implements Theme {
 
     @Override
     public ThemeDefinition getDefinition(Class<?> clazz) {
-        LinkedList<Class<?>> hierarchy = new LinkedList<Class<?>>();
+        LinkedList<Class<?>> hierarchy = new LinkedList<>();
         while(clazz != null && clazz != Object.class) {
             hierarchy.addFirst(clazz);
             clazz = clazz.getSuperclass();
@@ -138,11 +150,7 @@ public abstract class AbstractTheme implements Theme {
         }
         try {
             return Class.forName(className).newInstance();
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
+        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
@@ -154,7 +162,7 @@ public abstract class AbstractTheme implements Theme {
      * @return List of redundant theme entries
      */
     public List<String> findRedundantDeclarations() {
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         for(ThemeTreeNode node: rootNode.childMap.values()) {
             findRedundantDeclarations(result, node);
         }
@@ -277,6 +285,20 @@ public abstract class AbstractTheme implements Theme {
         }
 
         @Override
+        public int getIntegerProperty(String name, int defaultValue) {
+            String propertyValue = node.propertyMap.get(name);
+            if(propertyValue == null) {
+                if(node == rootNode) {
+                    return defaultValue;
+                }
+                else {
+                    return new DefinitionImpl(node.parent).getIntegerProperty(name, defaultValue);
+                }
+            }
+            return Integer.parseInt(propertyValue);
+        }
+
+        @Override
         public boolean getBooleanProperty(String name, boolean defaultValue) {
             String propertyValue = node.propertyMap.get(name);
             if(propertyValue == null) {
@@ -379,12 +401,12 @@ public abstract class AbstractTheme implements Theme {
         private ThemeTreeNode(Class<?> clazz, ThemeTreeNode parent) {
             this.clazz = clazz;
             this.parent = parent;
-            this.childMap = new HashMap<Class<?>, ThemeTreeNode>();
-            this.foregroundMap = new HashMap<String, TextColor>();
-            this.backgroundMap = new HashMap<String, TextColor>();
-            this.sgrMap = new HashMap<String, EnumSet<SGR>>();
-            this.characterMap = new HashMap<String, Character>();
-            this.propertyMap = new HashMap<String, String>();
+            this.childMap = new HashMap<>();
+            this.foregroundMap = new HashMap<>();
+            this.backgroundMap = new HashMap<>();
+            this.sgrMap = new HashMap<>();
+            this.characterMap = new HashMap<>();
+            this.propertyMap = new HashMap<>();
             this.cursorVisible = true;
             this.renderer = null;
         }
@@ -397,33 +419,34 @@ public abstract class AbstractTheme implements Theme {
             }
             String styleComponent = matcher.group(1);
             String group = matcher.groupCount() > 2 ? matcher.group(3) : null;
-            if(styleComponent.toLowerCase().trim().equals("foreground")) {
-                foregroundMap.put(getCategory(group), parseValue(value));
-            }
-            else if(styleComponent.toLowerCase().trim().equals("background")) {
-                backgroundMap.put(getCategory(group), parseValue(value));
-            }
-            else if(styleComponent.toLowerCase().trim().equals("sgr")) {
-                sgrMap.put(getCategory(group), parseSGR(value));
-            }
-            else if(styleComponent.toLowerCase().trim().equals("char")) {
-                characterMap.put(getCategory(group), value.isEmpty() ? ' ' : value.charAt(0));
-            }
-            else if(styleComponent.toLowerCase().trim().equals("cursor")) {
-                cursorVisible = Boolean.parseBoolean(value);
-            }
-            else if(styleComponent.toLowerCase().trim().equals("property")) {
-                propertyMap.put(getCategory(group), value.isEmpty() ? null : value.trim());
-            }
-            else if(styleComponent.toLowerCase().trim().equals("renderer")) {
-                renderer = value.trim().isEmpty() ? null : value.trim();
-            }
-            else if(styleComponent.toLowerCase().trim().equals("postrenderer") ||
-                    styleComponent.toLowerCase().trim().equals("windowdecoration")) {
-                // Don't do anything with this now, we might use it later
-            }
-            else {
-                throw new IllegalArgumentException("Unknown style component \"" + styleComponent + "\" in style \"" + style + "\"");
+            switch (styleComponent.toLowerCase().trim()) {
+                case "foreground":
+                    foregroundMap.put(getCategory(group), parseValue(value));
+                    break;
+                case "background":
+                    backgroundMap.put(getCategory(group), parseValue(value));
+                    break;
+                case "sgr":
+                    sgrMap.put(getCategory(group), parseSGR(value));
+                    break;
+                case "char":
+                    characterMap.put(getCategory(group), value.isEmpty() ? ' ' : value.charAt(0));
+                    break;
+                case "cursor":
+                    cursorVisible = Boolean.parseBoolean(value);
+                    break;
+                case "property":
+                    propertyMap.put(getCategory(group), value.isEmpty() ? null : value.trim());
+                    break;
+                case "renderer":
+                    renderer = value.trim().isEmpty() ? null : value.trim();
+                    break;
+                case "postrenderer":
+                case "windowdecoration":
+                    // Don't do anything with this now, we might use it later
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unknown style component \"" + styleComponent + "\" in style \"" + style + "\"");
             }
         }
 

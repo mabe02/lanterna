@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2024 Martin Berglund
  */
 package com.googlecode.lanterna.terminal;
 
@@ -55,13 +55,13 @@ public class PseudoTerminal {
     }
 
     private static String[] makeEnvironmentVariables() {
-        List<String> environment = new ArrayList<String>();
-        Map<String, String> env = new TreeMap<String, String>(System.getenv());
+        List<String> environment = new ArrayList<>();
+        Map<String, String> env = new TreeMap<>(System.getenv());
         env.put("TERM", "xterm");   //Will this make bash detect us as a proper terminal??
         for(String key : env.keySet()) {
             environment.add(key + "=" + env.get(key));
         }
-        return environment.toArray(new String[environment.size()]);
+        return environment.toArray(new String[0]);
     }
 
     private static class ProcessOutputReader {
@@ -143,16 +143,16 @@ public class PseudoTerminal {
                             }
                             else {
                                 switch(keyStroke.getKeyType()) {
-                                    case Character:
+                                    case CHARACTER:
                                         writeCharacter(keyStroke.getCharacter());
                                         break;
-                                    case Enter:
+                                    case ENTER:
                                         writeCharacter('\n');
                                         break;
-                                    case Backspace:
+                                    case BACKSPACE:
                                         writeCharacter('\b');
                                         break;
-                                    case Tab:
+                                    case TAB:
                                         writeCharacter('\t');
                                         break;
                                     default:
@@ -161,9 +161,7 @@ public class PseudoTerminal {
                             }
                         }
                     }
-                    catch(IOException e) {
-                    }
-                    catch(InterruptedException e) {
+                    catch(IOException | InterruptedException e) {
                     }
                     finally {
                         try {

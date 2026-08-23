@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna.bundle;
 
@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.PropertyResourceBundle;
@@ -69,7 +70,16 @@ public abstract class BundleLocator {
      * @return the instance of the bundle.
      */
     private ResourceBundle getBundle(Locale locale) {
-        return ResourceBundle.getBundle(bundleName, locale, loader, new UTF8Control());
+        try {
+            return ResourceBundle.getBundle(bundleName, locale, loader, new UTF8Control());
+        } catch (UnsupportedOperationException e) {
+            /*
+             * Custom Control implementations aren't supported with named modules. Since
+             * java 9 property bundles use utf-8 as default encoding so we can just load the
+             * bundle with the default Control.
+             */
+            return ResourceBundle.getBundle(bundleName, locale, loader);
+        }
     }
 
     // Taken from:
@@ -79,7 +89,7 @@ public abstract class BundleLocator {
     private static class UTF8Control extends ResourceBundle.Control {
         public ResourceBundle newBundle
                 (String baseName, Locale locale, String format, ClassLoader loader, boolean reload)
-                throws IllegalAccessException, InstantiationException, IOException
+                throws IOException
         {
             // The below is a copy of the default implementation.
             String bundleName = toBundleName(baseName, locale);
@@ -101,7 +111,7 @@ public abstract class BundleLocator {
             if (stream != null) {
                 try {
                     // Only this line is changed to make it to read properties files as UTF-8.
-                    bundle = new PropertyResourceBundle(new InputStreamReader(stream, "UTF-8"));
+                    bundle = new PropertyResourceBundle(new InputStreamReader(stream, StandardCharsets.UTF_8));
                 } finally {
                     stream.close();
                 }

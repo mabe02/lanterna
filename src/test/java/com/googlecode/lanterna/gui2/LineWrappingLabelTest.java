@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,13 +14,12 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2024 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
-import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.screen.Screen;
 
 import java.io.IOException;
@@ -69,41 +68,33 @@ public class LineWrappingLabelTest extends TestBase {
         contentPane.setLayoutManager(new BorderLayout());
         contentPane.addComponent(new Label("Resize window by holding ctrl and pressing arrow keys").setLayoutData(BorderLayout.Location.TOP));
         contentPane.addComponent(new Label(BIG_TEXT).withBorder(Borders.doubleLine()).setLayoutData(BorderLayout.Location.CENTER));
-        contentPane.addComponent(new Button("Close", new Runnable() {
-                    @Override
-                    public void run() {
-                        window.close();
-                    }
-                }).setLayoutData(BorderLayout.Location.BOTTOM));
+        contentPane.addComponent(new Button("Close", window::close).setLayoutData(BorderLayout.Location.BOTTOM));
 
         window.setComponent(contentPane);
 
-        textGUI.addListener(new TextGUI.Listener() {
-            @Override
-            public boolean onUnhandledKeyStroke(TextGUI textGUI, KeyStroke keyStroke) {
-                if(keyStroke.isCtrlDown()) {
-                    switch(keyStroke.getKeyType()) {
-                        case ArrowUp:
-                            if(windowSize.getRows() > 1) {
-                                windowSize = windowSize.withRelativeRows(-1);
-                                return true;
-                            }
-                        case ArrowDown:
-                            windowSize = windowSize.withRelativeRows(1);
+        textGUI.addListener((textGUI1, keyStroke) -> {
+            if(keyStroke.isCtrlDown()) {
+                switch(keyStroke.getKeyType()) {
+                    case ARROW_UP:
+                        if(windowSize.getRows() > 1) {
+                            windowSize = windowSize.withRelativeRows(-1);
                             return true;
-                        case ArrowLeft:
-                            if(windowSize.getColumns() > 1) {
-                                windowSize = windowSize.withRelativeColumns(-1);
-                                return true;
-                            }
-                        case ArrowRight:
-                            windowSize = windowSize.withRelativeColumns(1);
+                        }
+                    case ARROW_DOWN:
+                        windowSize = windowSize.withRelativeRows(1);
+                        return true;
+                    case ARROW_LEFT:
+                        if(windowSize.getColumns() > 1) {
+                            windowSize = windowSize.withRelativeColumns(-1);
                             return true;
-                        default:
-                    }
+                        }
+                    case ARROW_RIGHT:
+                        windowSize = windowSize.withRelativeColumns(1);
+                        return true;
+                    default:
                 }
-                return false;
             }
+            return false;
         });
 
         textGUI.addWindow(window);

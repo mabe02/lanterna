@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  * 
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,12 +14,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.TerminalPosition;
-import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.*;
 
 /**
  * Interface that defines a class that draws window decorations, i.e. a surrounding layer around the window that usually
@@ -53,4 +52,9 @@ public interface WindowDecorationRenderer {
      * @return Position of the top left corner of the window, relative to the top left corner of the window decoration
      */
     TerminalPosition getOffset(Window window);
+    
+    
+    default TerminalRectangle getTitleBarRectangle(Window window) {
+        return new TerminalRectangle(0, 0, window.getDecoratedSize().getColumns(), getOffset(window).getRow());
+    }
 }

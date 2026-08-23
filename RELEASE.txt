@@ -1,0 +1,2 @@
+mvn release:clean release:prepare -Prelease
+mvn release:perform -Prelease

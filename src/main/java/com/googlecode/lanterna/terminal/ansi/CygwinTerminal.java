@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  * 
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna.terminal.ansi;
 
@@ -36,14 +36,18 @@ import java.util.regex.Pattern;
  * <b>NOTE:</b> This class is experimental and does not fully work! Some of the operations, like disabling echo and
  * changing cbreak seems to be impossible to do without resorting to native code. Running "stty raw" before starting the
  * JVM will improve compatibility.
+ * <p>
+ * <b>NOTE:</b> This class will try to find Cygwin by scanning the directories on java.library.path, but you can also
+ * tell it where Cygwin is installed by setting the CYGWIN_HOME environment variable.
  *
  * @author Martin
  * @author Andreas
  */
 public class CygwinTerminal extends UnixLikeTTYTerminal {
-
     private static final String STTY_LOCATION = findProgram("stty.exe");
     private static final Pattern STTY_SIZE_PATTERN = Pattern.compile(".*rows ([0-9]+);.*columns ([0-9]+);.*");
+    private static final String JAVA_LIBRARY_PATH_PROPERTY = "java.library.path";
+    private static final String CYGWIN_HOME_ENV = "CYGWIN_HOME";
 
     /**
      * Creates a new CygwinTerminal based off input and output streams and a character set to use
@@ -64,7 +68,7 @@ public class CygwinTerminal extends UnixLikeTTYTerminal {
     }
 
     @Override
-    protected TerminalSize findTerminalSize() throws IOException {
+    protected TerminalSize findTerminalSize() {
         try {
             String stty = runSTTYCommand("-a");
             Matcher matcher = STTY_SIZE_PATTERN.matcher(stty);
@@ -82,12 +86,18 @@ public class CygwinTerminal extends UnixLikeTTYTerminal {
 
     @Override
     protected String runSTTYCommand(String... parameters) throws IOException {
-        List<String> commandLine = new ArrayList<String>(Arrays.asList(
+        List<String> commandLine = new ArrayList<>(Arrays.asList(
                 findSTTY(),
                 "-F",
                 getPseudoTerminalDevice()));
         commandLine.addAll(Arrays.asList(parameters));
-        return exec(commandLine.toArray(new String[commandLine.size()]));
+        return exec(commandLine.toArray(new String[0]));
+    }
+
+    @Override
+    protected void acquire() throws IOException {
+        super.acquire();
+        // Placeholder in case we want to add extra stty invocations for Cygwin
     }
 
     private String findSTTY() {
@@ -101,7 +111,13 @@ public class CygwinTerminal extends UnixLikeTTYTerminal {
     }
 
     private static String findProgram(String programName) {
-        String[] paths = System.getProperty("java.library.path").split(";");
+        if (System.getenv(CYGWIN_HOME_ENV) != null) {
+            File cygwinHomeBinFile = new File(System.getenv(CYGWIN_HOME_ENV) + "/bin", programName);
+            if (cygwinHomeBinFile.exists()) {
+                return cygwinHomeBinFile.getAbsolutePath();
+            }
+        }
+        String[] paths = System.getProperty(JAVA_LIBRARY_PATH_PROPERTY).split(";");
         for(String path : paths) {
             File shBin = new File(path, programName);
             if(shBin.exists()) {

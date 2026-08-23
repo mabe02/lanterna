@@ -26,7 +26,7 @@ public class Issue312 {
                 row = 1;
                 terminal.clearScreen();
             }
-            if (keyStroke.getKeyType() == KeyType.Escape || keyStroke.getKeyType() == KeyType.EOF) {
+            if (keyStroke.getKeyType() == KeyType.ESCAPE || keyStroke.getKeyType() == KeyType.EOF) {
                 break;
             }
             textGraphics.putString(0, row++, "Read KeyStroke: " + keyStroke + "\n");

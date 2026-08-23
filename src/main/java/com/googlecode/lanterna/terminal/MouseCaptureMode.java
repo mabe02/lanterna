@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna.terminal;
 
@@ -22,6 +22,13 @@ package com.googlecode.lanterna.terminal;
  * Constant describing different modes for capturing mouse input. By default, no mouse capturing is enabled (unless
  * previously enabled before starting the Lanterna application. These are the different modes of input capturing
  * supported. Please note that terminal emulators vary widely in how these are implemented!
+ *
+ * Also, some terminals such as Konsole, appear to unfortunately round up and down the column which is in the generated MouseEvent
+ * The column actually starts about halfway prior of the left border of the character and goes to about halfway past that edge.
+ * This makes them rather unsuitable for precision clicking on specific characters on the screen.
+ * The XTerm terminal appears to properly generate with the input stream with location along the boundaries of the characters as
+ * needed for clicks within the bounds of the characters to properly map to that column.
+ *
  * Created by martin on 26/07/15.
  */
 public enum MouseCaptureMode {
@@ -46,5 +53,9 @@ public enum MouseCaptureMode {
      * or not.
      */
     CLICK_RELEASE_DRAG_MOVE,
+    /**
+     * Sends all previous flags, as the terminal will handle only the ones it supports and ignore others
+     */
+    CLICK_AUTODETECT,
     ;
 }

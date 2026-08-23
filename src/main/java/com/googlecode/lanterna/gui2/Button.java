@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  * 
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,20 +14,19 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.Symbols;
-import com.googlecode.lanterna.TerminalTextUtils;
-import com.googlecode.lanterna.TerminalPosition;
-import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.graphics.ThemeDefinition;
-import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.input.KeyType;
-
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import com.googlecode.lanterna.Symbols;
+import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TerminalTextUtils;
+import com.googlecode.lanterna.graphics.ThemeDefinition;
+import com.googlecode.lanterna.input.KeyStroke;
 
 /**
  * Simple labeled button that the user can trigger by pressing the Enter or the Spacebar key on the keyboard when the
@@ -57,7 +56,7 @@ public class Button extends AbstractInteractableComponent<Button> {
      * @param label Label to put on the button
      */
     public Button(String label) {
-        this.listeners = new CopyOnWriteArrayList<Listener>();
+        this.listeners = new CopyOnWriteArrayList<>();
         setLabel(label);
     }
 
@@ -68,12 +67,7 @@ public class Button extends AbstractInteractableComponent<Button> {
      */
     public Button(String label, final Runnable action) {
         this(label);
-        listeners.add(new Listener() {
-            @Override
-            public void onTriggered(Button button) {
-                action.run();
-            }
-        });
+        listeners.add(button -> action.run());
     }
 
     @Override
@@ -86,13 +80,21 @@ public class Button extends AbstractInteractableComponent<Button> {
         return getRenderer().getCursorLocation(this);
     }
 
+    public Button setAccelerator(KeyStroke keyStroke)
+    {
+    	return super.setAccelerator(keyStroke);
+    }
+    
+    public KeyStroke getAccelerator() { return super.getAccelerator(); };
+    
     @Override
     public synchronized Result handleKeyStroke(KeyStroke keyStroke) {
-        if(keyStroke.getKeyType() == KeyType.Enter ||
-                (keyStroke.getKeyType() == KeyType.Character && keyStroke.getCharacter() == ' ')) {
+        if (isActivationStroke(keyStroke) || isKeyboardAcceleratorStroke(keyStroke)) 
+        {
+        	getBasePane().setFocusedInteractable(this);
             triggerActions();
             return Result.HANDLED;
-        }
+        }        
         return super.handleKeyStroke(keyStroke);
     }
 

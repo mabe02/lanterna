@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2024 Martin Berglund
  */
 package com.googlecode.lanterna.issue;
 
@@ -40,15 +40,11 @@ public class Issue221 {
         panel.setLayoutManager(new GridLayout(2));
 
         panel.addComponent(new Label("The List"));
-        RadioBoxList<String> box = new RadioBoxList<String>();
+        RadioBoxList<String> box = new RadioBoxList<>();
         box.addItem("Item 1");
         box.addItem("Item 2");
         box.addItem("Item 3");
-        box.addListener(new RadioBoxList.Listener() {
-            @Override public void onSelectionChanged(int selected, int previous) {
-                System.out.println("Selected Index: " + selected + ", previous: " + previous);
-            }
-        });
+        box.addListener((selected, previous) -> System.out.println("Selected Index: " + selected + ", previous: " + previous));
 
         panel.addComponent(box);
 

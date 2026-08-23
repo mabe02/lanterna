@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2024 Martin Berglund
  */
 
 package com.googlecode.lanterna;
@@ -40,7 +40,7 @@ public class TestTerminalFactory extends DefaultTerminalFactory {
         if (args == null) { return; }
         for(String arg: args) {
             if (arg == null) { continue; }
-            String tok[] = arg.split("=", 2);
+            String[] tok = arg.split("=", 2);
             arg = tok[0]; // only the part before "="
             String par = tok.length > 1 ? tok[1] : "";
             if("--text-terminal".equals(arg) || "--no-swing".equals(arg)) {
@@ -68,13 +68,13 @@ public class TestTerminalFactory extends DefaultTerminalFactory {
             }
             else if("--telnet-port".equals(arg)) {
                 int port = 1024; // default for option w/o param
-                try { port = Integer.valueOf(par); }
+                try { port = Integer.parseInt(par); }
                 catch (NumberFormatException e) {}
                 setTelnetPort(port);
             }
             else if("--with-timeout".equals(arg)) {
                 int inputTimeout = 40; // default for option w/o param
-                try { inputTimeout = Integer.valueOf(par); }
+                try { inputTimeout = Integer.parseInt(par); }
                 catch (NumberFormatException e) {}
                 setInputTimeout(inputTimeout);
             }

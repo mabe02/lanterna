@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2026 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
 
@@ -26,7 +26,27 @@ public class TextBoxTest extends TestBase {
     public static void main(String[] args) throws IOException, InterruptedException {
         new TextBoxTest().run(args);
     }
-
+    /*
+        ┌──TextBoxTest────────────────────────┐
+        │┌─Main──────────────────────────────┐│
+        ││┌─Single line─┐ ┌─Multiline───────┐││
+        │││┌─Default──┐ │ │┌───────────────┐│││
+        ││││..........│ │ ││ we are again.▲││││
+        │││└──────────┘ │ ││ys such a plea█││││
+        │││┌─With init─┐│ ││when you tried▒││││
+        ││││Some text..││ ││e twice?......▼││││
+        │││└───────────┘│ ││◄▒▒▒████▒▒▒▒▒► ││││
+        │││┌─Long text─┐│ │└───────────────┘│││
+        ││││e text box.││ └─────────────────┘││
+        │││└───────────┘│                    ││
+        │││┌─Password─┐ │                    ││
+        ││││********..│ │                    ││
+        │││└──────────┘ │                    ││
+        ││└─────────────┘                    ││
+        │└───────────────────────────────────┘│
+        │<  OK  >                             │
+        └─────────────────────────────────────┘
+    */
     @Override
     public void init(WindowBasedTextGUI textGUI) {
         final BasicWindow window = new BasicWindow("TextBoxTest");
@@ -57,12 +77,7 @@ public class TextBoxTest extends TestBase {
         window.setComponent(
                 Panels.vertical(
                     mainPanel.withBorder(Borders.singleLine("Main")),
-                    new Button("OK", new Runnable() {
-                        @Override
-                        public void run() {
-                            window.close();
-                        }
-                    })));
+                    new Button("OK", window::close)));
         textGUI.addWindow(window);
     }
 }

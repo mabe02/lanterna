@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  * 
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2024 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
 
@@ -30,7 +30,7 @@ import java.util.*;
  */
 public class AnimatedLabel extends Label {
     private static Timer TIMER = null;
-    private static final WeakHashMap<AnimatedLabel, TimerTask> SCHEDULED_TASKS = new WeakHashMap<AnimatedLabel, TimerTask>();
+    private static final WeakHashMap<AnimatedLabel, TimerTask> SCHEDULED_TASKS = new WeakHashMap<>();
 
     /**
      * Creates a classic spinning bar which can be used to signal to the user that an operation in is process.
@@ -66,7 +66,7 @@ public class AnimatedLabel extends Label {
      */
     public AnimatedLabel(String firstFrameText) {
         super(firstFrameText);
-        frames = new ArrayList<String[]>();
+        frames = new ArrayList<>();
         currentFrame = 0;
         combinedMaximumPreferredSize = TerminalSize.ZERO;
 
@@ -158,7 +158,7 @@ public class AnimatedLabel extends Label {
         private final WeakReference<AnimatedLabel> labelRef;
 
         private AnimationTimerTask(AnimatedLabel label) {
-            this.labelRef = new WeakReference<AnimatedLabel>(label);
+            this.labelRef = new WeakReference<>(label);
         }
 
         @Override

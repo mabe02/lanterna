@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  * 
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
 
@@ -34,7 +34,7 @@ public class InteractableLookupMap {
 
     InteractableLookupMap(TerminalSize size) {
         lookupMap = new int[size.getRows()][size.getColumns()];
-        interactables = new ArrayList<Interactable>();
+        interactables = new ArrayList<>();
         for (int[] aLookupMap : lookupMap) {
             Arrays.fill(aLookupMap, -1);
         }
@@ -56,7 +56,6 @@ public class InteractableLookupMap {
      * Adds an interactable component to the lookup map
      * @param interactable Interactable to add to the lookup map
      */
-    @SuppressWarnings("ConstantConditions")
     public synchronized void add(Interactable interactable) {
         TerminalPosition topLeft = interactable.toBasePane(TerminalPosition.TOP_LEFT_CORNER);
         TerminalSize size = interactable.getSize();
@@ -254,7 +253,7 @@ public class InteractableLookupMap {
     }
 
     private Set<Interactable> getDisqualifiedInteractables(TerminalPosition startPosition, boolean scanHorizontally) {
-        Set<Interactable> disqualified = new HashSet<Interactable>();
+        Set<Interactable> disqualified = new HashSet<>();
         if (lookupMap.length == 0) { return disqualified; } // safeguard
 
         TerminalSize size = getSize();

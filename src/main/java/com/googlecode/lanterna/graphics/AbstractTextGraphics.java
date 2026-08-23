@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna.graphics;
 
@@ -42,12 +42,7 @@ public abstract class AbstractTextGraphics implements TextGraphics {
         this.tabBehaviour = TabBehaviour.ALIGN_TO_COLUMN_4;
         this.foregroundColor = TextColor.ANSI.DEFAULT;
         this.backgroundColor = TextColor.ANSI.DEFAULT;
-        this.shapeRenderer = new DefaultShapeRenderer(new DefaultShapeRenderer.Callback() {
-            @Override
-            public void onPoint(int column, int row, TextCharacter character) {
-                setCharacter(column, row, character);
-            }
-        });
+        this.shapeRenderer = new DefaultShapeRenderer(this::setCharacter);
     }
 
     @Override
@@ -266,11 +261,14 @@ public abstract class AbstractTextGraphics implements TextGraphics {
     @Override
     public TextGraphics putString(int column, int row, String string) {
         string = prepareStringForPut(column, string);
-        int offset = 0;
-        for(int i = 0; i < string.length(); i++) {
-            char character = string.charAt(i);
-            setCharacter(column + offset, row, newTextCharacter(character));
-            offset += getOffsetToNextCharacter(character);
+        TextCharacter[] textCharacters = TextCharacter.fromString(string, foregroundColor, backgroundColor, activeModifiers);
+        int previousDoubleCharacterCount = 0;
+        for (int i = 0; i < textCharacters.length; i++) {
+            TextCharacter textCharacter = textCharacters[i];
+            setCharacter(column + i + previousDoubleCharacterCount, row, textCharacter);
+            if (textCharacter.isDoubleWidth()) {
+                previousDoubleCharacterCount++;
+            }
         }
         return this;
     }
@@ -289,10 +287,11 @@ public abstract class AbstractTextGraphics implements TextGraphics {
 
     @Override
     public TextGraphics putString(int column, int row, String string, Collection<SGR> extraModifiers) {
-        extraModifiers.removeAll(activeModifiers);
-        enableModifiers(extraModifiers);
+        Collection<SGR> newModifiers = EnumSet.copyOf(extraModifiers);
+        newModifiers.removeAll(activeModifiers);
+        enableModifiers(newModifiers);
         putString(column, row, string);
-        disableModifiers(extraModifiers);
+        disableModifiers(newModifiers);
         return this;
     }
 
@@ -335,6 +334,29 @@ public abstract class AbstractTextGraphics implements TextGraphics {
     public TextCharacter getCharacter(TerminalPosition position) {
         return getCharacter(position.getColumn(), position.getRow());
     }
+    
+    /**
+     * Returns screen coordinates of top-left corner of this TextGraphics.
+     * The default implementation returns {@link TerminalPosition#TOP_LEFT_CORNER}.
+     * Subclasses that offset the graphics must override this method.
+     * 
+     * @return screen coordinates of top-left corner.
+     */
+    protected TerminalPosition getScreenLocation() {
+        return TerminalPosition.TOP_LEFT_CORNER;
+    }
+
+    @Override
+    public TerminalPosition toScreenPosition(TerminalPosition pos) {
+        TerminalPosition max = getScreenLocation().plus(
+                new TerminalPosition(getSize().getColumns() - 1, getSize().getRows() - 1));
+        TerminalPosition loc = getScreenLocation().plus(pos);
+        if (loc.getColumn() > max.getColumn() || loc.getRow() > max.getRow()) {
+            return null;
+        } else {
+            return loc;
+        }
+    }
 
     @Override
     public TextGraphics newTextGraphics(TerminalPosition topLeftCorner, TerminalSize size) throws IllegalArgumentException {
@@ -347,7 +369,7 @@ public abstract class AbstractTextGraphics implements TextGraphics {
             //do anything because it is impossible to change anything anyway
             return new NullTextGraphics(size);
         }
-        return new SubTextGraphics(this, topLeftCorner, size);
+        return new SubTextGraphics(this, topLeftCorner, getScreenLocation(), size);
     }
 
     private TextCharacter newTextCharacter(char character) {

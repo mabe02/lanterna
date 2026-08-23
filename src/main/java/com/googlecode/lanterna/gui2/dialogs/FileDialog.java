@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,17 +14,29 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna.gui2.dialogs;
-
-import com.googlecode.lanterna.TerminalTextUtils;
-import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.gui2.*;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.Comparator;
+
+import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TerminalTextUtils;
+import com.googlecode.lanterna.gui2.ActionListBox;
+import com.googlecode.lanterna.gui2.Borders;
+import com.googlecode.lanterna.gui2.Button;
+import com.googlecode.lanterna.gui2.Direction;
+import com.googlecode.lanterna.gui2.GridLayout;
+import com.googlecode.lanterna.gui2.Label;
+import com.googlecode.lanterna.gui2.LocalizedString;
+import com.googlecode.lanterna.gui2.Panel;
+import com.googlecode.lanterna.gui2.Panels;
+import com.googlecode.lanterna.gui2.Separator;
+import com.googlecode.lanterna.gui2.TextBox;
+import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
+import com.googlecode.lanterna.input.KeyStroke;
 
 /**
  * Dialog that allows the user to iterate the file system and pick file to open/save
@@ -129,10 +141,10 @@ public class FileDialog extends DialogWindow {
                                 1))
                 .addTo(contentPane);
 
-        okButton = new Button(actionLabel, new OkHandler());
+        okButton = new Button(actionLabel, new OkHandler()).setAccelerator(new KeyStroke('o', false, true));
         Panels.grid(2,
                 okButton,
-                new Button(LocalizedString.Cancel.toString(), new CancelHandler()))
+                new Button(LocalizedString.Cancel.toString(), new CancelHandler()).setAccelerator(new KeyStroke('c', false, true)))
                 .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.END, GridLayout.Alignment.CENTER, false, false, 2, 1))
                 .addTo(contentPane);
 
@@ -164,7 +176,8 @@ public class FileDialog extends DialogWindow {
         @Override
         public void run() {
             if(!fileBox.getText().isEmpty()) {
-                selectedFile = new File(directory, fileBox.getText());
+                File file = new File(fileBox.getText());
+                selectedFile = file.isAbsolute() ? file : new File(directory, fileBox.getText());
                 close();
             }
             else {
@@ -181,7 +194,7 @@ public class FileDialog extends DialogWindow {
         }
     }
 
-    private class DoNothing implements Runnable {
+    private static class DoNothing implements Runnable {
         @Override
         public void run() {
         }
@@ -194,30 +207,19 @@ public class FileDialog extends DialogWindow {
         if(entries == null) {
             return;
         }
-        Arrays.sort(entries, new Comparator<File>() {
-            @Override
-            public int compare(File o1, File o2) {
-                return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
-            }
-        });
+        Arrays.sort(entries, Comparator.comparing(o -> o.getName().toLowerCase()));
         if (directory.getAbsoluteFile().getParentFile() !=null){
-            directoryListBox.addItem("..", new Runnable() {
-                @Override
-                public void run() {
-                    FileDialog.this.directory = directory.getAbsoluteFile().getParentFile();
-                    reloadViews(directory.getAbsoluteFile().getParentFile());
-                }
+            directoryListBox.addItem("..", () -> {
+                FileDialog.this.directory = directory.getAbsoluteFile().getParentFile();
+                reloadViews(directory.getAbsoluteFile().getParentFile());
             });
         } else {
             File[] roots = File.listRoots();
             for (final File entry : roots) {
                 if (entry.canRead()) {
-                    directoryListBox.addItem('[' + entry.getPath() + ']', new Runnable() {
-                        @Override
-                        public void run() {
-                            FileDialog.this.directory = entry;
-                            reloadViews(entry);
-                        }
+                    directoryListBox.addItem('[' + entry.getPath() + ']', () -> {
+                        FileDialog.this.directory = entry;
+                        reloadViews(entry);
                     });
                 }
             }
@@ -227,21 +229,15 @@ public class FileDialog extends DialogWindow {
                 continue;
             }
             if(entry.isDirectory()) {
-                directoryListBox.addItem(entry.getName(), new Runnable() {
-                    @Override
-                    public void run() {
-                        FileDialog.this.directory = entry;
-                        reloadViews(entry);
-                    }
+                directoryListBox.addItem(entry.getName(), () -> {
+                    FileDialog.this.directory = entry;
+                    reloadViews(entry);
                 });
             }
             else {
-                fileListBox.addItem(entry.getName(), new Runnable() {
-                    @Override
-                    public void run() {
-                        fileBox.setText(entry.getName());
-                        setFocusedInteractable(okButton);
-                    }
+                fileListBox.addItem(entry.getName(), () -> {
+                    fileBox.setText(entry.getName());
+                    setFocusedInteractable(okButton);
                 });
             }
         }

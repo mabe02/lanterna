@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,12 +14,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna.terminal.swing;
 
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextCharacter;
+import com.googlecode.lanterna.terminal.MouseCaptureMode;
 
 import javax.swing.*;
 import java.awt.*;
@@ -33,6 +34,7 @@ class SwingTerminalImplementation extends GraphicalTerminalImplementation {
 
     private final JComponent component;
     private final SwingTerminalFontConfiguration fontConfiguration;
+    private MouseAdapter mouseListener;
 
     /**
      * Creates a new {@code SwingTerminalImplementation}
@@ -58,37 +60,49 @@ class SwingTerminalImplementation extends GraphicalTerminalImplementation {
         //Prevent us from shrinking beyond one character
         component.setMinimumSize(new Dimension(fontConfiguration.getFontWidth(), fontConfiguration.getFontHeight()));
 
-        //noinspection unchecked
         component.setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, Collections.<AWTKeyStroke>emptySet());
-        //noinspection unchecked
         component.setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, Collections.<AWTKeyStroke>emptySet());
 
         //Make sure the component is double-buffered to prevent flickering
         component.setDoubleBuffered(true);
 
         component.addKeyListener(new TerminalInputListener());
-        component.addMouseListener(new TerminalMouseListener() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                SwingTerminalImplementation.this.component.requestFocusInWindow();
-            }
-        });
-        component.addHierarchyListener(new HierarchyListener() {
-            @Override
-            public void hierarchyChanged(HierarchyEvent e) {
-                if(e.getChangeFlags() == HierarchyEvent.DISPLAYABILITY_CHANGED) {
-                    if(e.getChanged().isDisplayable()) {
-                        onCreated();
-                    }
-                    else {
-                        onDestroyed();
-                    }
+
+        //Mouse support
+        updateMouseCaptureMode(this.mouseCaptureMode);
+
+        component.addHierarchyListener(e -> {
+            if(e.getChangeFlags() == HierarchyEvent.DISPLAYABILITY_CHANGED) {
+                if(e.getChanged().isDisplayable()) {
+                    onCreated();
+                }
+                else {
+                    onDestroyed();
                 }
             }
         });
     }
 
+    @Override
+    protected void updateMouseCaptureMode(MouseCaptureMode mouseCaptureMode)
+    {
+        if(this.mouseListener!=null)
+        {
+            component.removeMouseListener(this.mouseListener);
+            component.removeMouseWheelListener(this.mouseListener);
+            component.removeMouseMotionListener(this.mouseListener);
+        }
+        this.mouseListener=new TerminalMouseListener(this.mouseCaptureMode) {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                SwingTerminalImplementation.this.component.requestFocusInWindow();
+            }
+        };
+        component.addMouseListener(this.mouseListener);
+        component.addMouseWheelListener(this.mouseListener);
+        component.addMouseMotionListener(this.mouseListener);
+    }
 
     /**
      * Returns the current font configuration. Note that it is immutable and cannot be changed.
@@ -134,12 +148,7 @@ class SwingTerminalImplementation extends GraphicalTerminalImplementation {
             component.repaint();
         }
         else {
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    component.repaint();
-                }
-            });
+            SwingUtilities.invokeLater(component::repaint);
         }
     }
 

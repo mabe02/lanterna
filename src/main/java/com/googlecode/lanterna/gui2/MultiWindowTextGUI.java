@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,56 +14,61 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.graphics.BasicTextImage;
 import com.googlecode.lanterna.graphics.TextImage;
-import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.input.KeyType;
+import com.googlecode.lanterna.input.*;
 import com.googlecode.lanterna.screen.Screen;
-import com.googlecode.lanterna.TerminalPosition;
-import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.*;
 import com.googlecode.lanterna.screen.VirtualScreen;
+import com.googlecode.lanterna.gui2.Window.Hint;
 
 import java.io.EOFException;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean
+;
 
 /**
  * This is the main Text GUI implementation built into Lanterna, supporting multiple tiled windows and a dynamic
  * background area that can be fully customized. If you want to create a text-based GUI with windows and controls,
  * it's very likely this is what you want to use.
- *
+ * <p>
+ * Note: This class used to always wrap the {@link Screen} object with a {@link VirtualScreen} to ensure that the UI
+ * always fits. As of 3.1.0, we don't do this anymore so when you create the {@link MultiWindowTextGUI} you can wrap
+ * the screen parameter yourself if you want to keep this behavior.
  * @author Martin
  */
 public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTextGUI {
-    private final VirtualScreen virtualScreen;
     private final WindowManager windowManager;
     private final BasePane backgroundPane;
-    private final List<Window> windows;
+    private final WindowList windowList;
     private final IdentityHashMap<Window, TextImage> windowRenderBufferCache;
     private final WindowPostRenderer postRenderer;
-
-    private Window activeWindow;
+    
     private boolean eofWhenNoWindows;
+    
+    private Window titleBarDragWindow;
+    private TerminalPosition originWindowPosition;
+    private TerminalPosition dragStart;
 
     /**
      * Creates a new {@code MultiWindowTextGUI} that uses the specified {@code Screen} as the backend for all drawing
-     * operations. The screen will be automatically wrapped in a {@code VirtualScreen} in order to deal with GUIs
-     * becoming too big to fit the terminal. The background area of the GUI will be solid blue.
+     * operations. The background area of the GUI will be a solid color, depending on theme (default is blue). The
+     * current thread will be used as the GUI thread for all Lanterna library operations.
      * @param screen Screen to use as the backend for drawing operations
      */
     public MultiWindowTextGUI(Screen screen) {
-        this(screen, TextColor.ANSI.BLUE);
+        this(new SameTextGUIThread.Factory(), screen);
     }
 
     /**
      * Creates a new {@code MultiWindowTextGUI} that uses the specified {@code Screen} as the backend for all drawing
-     * operations. The screen will be automatically wrapped in a {@code VirtualScreen} in order to deal with GUIs
-     * becoming too big to fit the terminal. The background area of the GUI will be solid blue
+     * operations. The background area of the GUI will be a solid color, depending on theme (default is blue). This
+     * constructor allows you control the threading model for the UI.
      * @param guiThreadFactory Factory implementation to use when creating the {@code TextGUIThread}
      * @param screen Screen to use as the backend for drawing operations
      */
@@ -77,12 +82,29 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
 
     /**
      * Creates a new {@code MultiWindowTextGUI} that uses the specified {@code Screen} as the backend for all drawing
-     * operations. The screen will be automatically wrapped in a {@code VirtualScreen} in order to deal with GUIs
-     * becoming too big to fit the terminal. The background area of the GUI is a solid color as decided by the
-     * {@code backgroundColor} parameter.
+     * operations. The background area of the GUI will be a solid color, depending on theme (default is blue). This
+     * constructor allows you control the threading model for the UI and set a custom {@link WindowManager}.
+     * @param guiThreadFactory Factory implementation to use when creating the {@code TextGUIThread}
+     * @param screen Screen to use as the backend for drawing operations
+     * @param windowManager Custom window manager to use
+     */
+    public MultiWindowTextGUI(TextGUIThreadFactory guiThreadFactory, Screen screen, WindowManager windowManager) {
+        this(guiThreadFactory,
+                screen,
+                windowManager,
+                null,
+                new GUIBackdrop());
+    }
+
+    /**
+     * Creates a new {@code MultiWindowTextGUI} that uses the specified {@code Screen} as the backend for all drawing
+     * operations. The background area of the GUI is a solid color as decided by the {@code backgroundColor} parameter.
      * @param screen Screen to use as the backend for drawing operations
      * @param backgroundColor Color to use for the GUI background
+     * @deprecated It's preferred to use a custom background component if you want to customize the background color,
+     * or you should change the theme. Using this constructor won't work well with theming.
      */
+    @Deprecated
     public MultiWindowTextGUI(
             Screen screen,
             TextColor backgroundColor) {
@@ -92,9 +114,8 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
 
     /**
      * Creates a new {@code MultiWindowTextGUI} that uses the specified {@code Screen} as the backend for all drawing
-     * operations. The screen will be automatically wrapped in a {@code VirtualScreen} in order to deal with GUIs
-     * becoming too big to fit the terminal. The background area of the GUI is the component passed in as the
-     * {@code background} parameter, forced to full size.
+     * operations. The background area of the GUI will be the component supplied instead of the usual backdrop. This
+     * constructor allows you to set a custom {@link WindowManager} instead of {@link DefaultWindowManager}.
      * @param screen Screen to use as the backend for drawing operations
      * @param windowManager Window manager implementation to use
      * @param background Component to use as the background of the GUI, behind all the windows
@@ -109,9 +130,9 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
 
     /**
      * Creates a new {@code MultiWindowTextGUI} that uses the specified {@code Screen} as the backend for all drawing
-     * operations. The screen will be automatically wrapped in a {@code VirtualScreen} in order to deal with GUIs
-     * becoming too big to fit the terminal. The background area of the GUI is the component passed in as the
-     * {@code background} parameter, forced to full size.
+     * operations. The background area of the GUI will be the component supplied instead of the usual backdrop. This
+     * constructor allows you to set a custom {@link WindowManager} instead of {@link DefaultWindowManager} as well
+     * as a custom {@link WindowPostRenderer} that can be used to tweak the appearance of any window.
      * @param screen Screen to use as the backend for drawing operations
      * @param windowManager Window manager implementation to use
      * @param postRenderer {@code WindowPostRenderer} object to invoke after each window has been drawn
@@ -128,9 +149,10 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
 
     /**
      * Creates a new {@code MultiWindowTextGUI} that uses the specified {@code Screen} as the backend for all drawing
-     * operations. The screen will be automatically wrapped in a {@code VirtualScreen} in order to deal with GUIs
-     * becoming too big to fit the terminal. The background area of the GUI is the component passed in as the
-     * {@code background} parameter, forced to full size.
+     * operations. The background area of the GUI will be the component supplied instead of the usual backdrop. This
+     * constructor allows you to set a custom {@link WindowManager} instead of {@link DefaultWindowManager} as well
+     * as a custom {@link WindowPostRenderer} that can be used to tweak the appearance of any window. This constructor
+     * also allows you to control the threading model for the UI.
      * @param guiThreadFactory Factory implementation to use when creating the {@code TextGUIThread}
      * @param screen Screen to use as the backend for drawing operations
      * @param windowManager Window manager implementation to use
@@ -144,25 +166,15 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
             WindowPostRenderer postRenderer,
             Component background) {
 
-        this(guiThreadFactory, new VirtualScreen(screen), windowManager, postRenderer, background);
-    }
-
-    private MultiWindowTextGUI(
-            TextGUIThreadFactory guiThreadFactory,
-            VirtualScreen screen,
-            WindowManager windowManager,
-            WindowPostRenderer postRenderer,
-            Component background) {
-
         super(guiThreadFactory, screen);
+        windowList = new WindowList();
         if(windowManager == null) {
             throw new IllegalArgumentException("Creating a window-based TextGUI requires a WindowManager");
         }
         if(background == null) {
             //Use a sensible default instead of throwing
-            background = new EmptySpace(TextColor.ANSI.BLUE);
+            background = new GUIBackdrop();
         }
-        this.virtualScreen = screen;
         this.windowManager = windowManager;
         this.backgroundPane = new AbstractBasePane<BasePane>() {
             @Override
@@ -182,15 +194,14 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
             BasePane self() { return this; }
         };
         this.backgroundPane.setComponent(background);
-        this.windows = new LinkedList<Window>();
-        this.windowRenderBufferCache = new IdentityHashMap<Window, TextImage>();
+        this.windowRenderBufferCache = new IdentityHashMap<>();
         this.postRenderer = postRenderer;
         this.eofWhenNoWindows = false;
     }
 
     @Override
     public synchronized boolean isPendingUpdate() {
-        for(Window window: windows) {
+        for(Window window: getWindows()) {
             if(window.isVisible() && window.isInvalid()) {
                 return true;
             }
@@ -200,31 +211,35 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
 
     @Override
     public synchronized void updateScreen() throws IOException {
-        TerminalSize minimumTerminalSize = TerminalSize.ZERO;
-        for(Window window: windows) {
-            if(window.isVisible()) {
-                if (window.getHints().contains(Window.Hint.FULL_SCREEN) ||
-                        window.getHints().contains(Window.Hint.FIT_TERMINAL_WINDOW) ||
-                        window.getHints().contains(Window.Hint.EXPANDED)) {
-                    //Don't take full screen windows or auto-sized windows into account
-                    continue;
+        if (getScreen() instanceof VirtualScreen) {
+            // If the user has passed in a virtual screen, we should calculate the minimum size required and tell it.
+            // Previously the constructor always wrapped the screen in a VirtualScreen, but now we need to check.
+            TerminalSize minimumTerminalSize = TerminalSize.ZERO;
+            for (Window window : getWindows()) {
+                if (window.isVisible()) {
+                    if (window.getHints().contains(Window.Hint.FULL_SCREEN) ||
+                            window.getHints().contains(Window.Hint.FIT_TERMINAL_WINDOW) ||
+                            window.getHints().contains(Window.Hint.EXPANDED)) {
+                        //Don't take full screen windows or auto-sized windows into account
+                        continue;
+                    }
+                    TerminalPosition lastPosition = window.getPosition();
+                    minimumTerminalSize = minimumTerminalSize.max(
+                            //Add position to size to get the bottom-right corner of the window
+                            window.getDecoratedSize().withRelative(
+                                    Math.max(lastPosition.getColumn(), 0),
+                                    Math.max(lastPosition.getRow(), 0)));
                 }
-                TerminalPosition lastPosition = window.getPosition();
-                minimumTerminalSize = minimumTerminalSize.max(
-                        //Add position to size to get the bottom-right corner of the window
-                        window.getDecoratedSize().withRelative(
-                                Math.max(lastPosition.getColumn(), 0),
-                                Math.max(lastPosition.getRow(), 0)));
             }
+            ((VirtualScreen) getScreen()).setMinimumSize(minimumTerminalSize);
         }
-        virtualScreen.setMinimumSize(minimumTerminalSize);
         super.updateScreen();
     }
 
     @Override
     protected synchronized KeyStroke readKeyStroke() throws IOException {
         KeyStroke keyStroke = super.pollInput();
-        if(eofWhenNoWindows && keyStroke == null && windows.isEmpty()) {
+        if(windowList.isHadWindowAtSomePoint() && eofWhenNoWindows && keyStroke == null && getWindows().isEmpty()) {
             return new KeyStroke(KeyType.EOF);
         }
         else if(keyStroke != null) {
@@ -238,8 +253,8 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
     @Override
     protected synchronized void drawGUI(TextGUIGraphics graphics) {
         drawBackgroundPane(graphics);
-        getWindowManager().prepareWindows(this, Collections.unmodifiableList(windows), graphics.getSize());
-        for(Window window: windows) {
+        windowManager.prepareWindows(this, windowList.getWindowsInStableOrder(), graphics.getSize());
+        for(Window window: getWindows()) {
             if (window.isVisible()) {
                 // First draw windows to a buffer, then copy it to the real destination. This is to make physical off-screen
                 // drawing work better. Store the buffers in a cache so we don't have to re-create them every time.
@@ -249,16 +264,19 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
                     windowRenderBufferCache.put(window, textImage);
                 }
                 TextGUIGraphics windowGraphics = new DefaultTextGUIGraphics(this, textImage.newTextGraphics());
+                TextGUIGraphics insideWindowDecorationsGraphics = windowGraphics;
                 TerminalPosition contentOffset = TerminalPosition.TOP_LEFT_CORNER;
                 if (!window.getHints().contains(Window.Hint.NO_DECORATIONS)) {
-                    WindowDecorationRenderer decorationRenderer = getWindowManager().getWindowDecorationRenderer(window);
-                    windowGraphics = decorationRenderer.draw(this, windowGraphics, window);
+                    WindowDecorationRenderer decorationRenderer = windowManager.getWindowDecorationRenderer(window);
+                    insideWindowDecorationsGraphics = decorationRenderer.draw(this, windowGraphics, window);
                     contentOffset = decorationRenderer.getOffset(window);
                 }
 
-                window.draw(windowGraphics);
+                window.draw(insideWindowDecorationsGraphics);
                 window.setContentOffset(contentOffset);
-                Borders.joinLinesWithFrame(windowGraphics);
+                if (windowGraphics != insideWindowDecorationsGraphics) {
+                    Borders.joinLinesWithFrame(windowGraphics);
+                }
 
                 graphics.drawImage(window.getPosition(), textImage);
 
@@ -277,7 +295,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
         }
 
         // Purge the render buffer cache from windows that have been removed
-        windowRenderBufferCache.keySet().retainAll(windows);
+        windowRenderBufferCache.keySet().retainAll(getWindows());
     }
 
     private void drawBackgroundPane(TextGUIGraphics graphics) {
@@ -297,7 +315,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
 
     /**
      * Sets whether the TextGUI should return EOF when you try to read input while there are no windows in the window
-     * manager. Setting this to true (on by default) will make the GUI automatically exit when the last window has been
+     * manager. Setting this to true (off by default) will make the GUI automatically exit when the last window has been
      * closed.
      * @param eofWhenNoWindows Should the GUI return EOF when there are no windows left
      */
@@ -315,6 +333,17 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
         return eofWhenNoWindows;
     }
 
+    /**
+     * This method used to exist to control if the virtual screen should by bypassed or not. Since 3.1.0 calling this
+     * has no effect since we don't force a VirtualScreen anymore and you control it yourself when you create the GUI.
+     * @param virtualScreenEnabled Not used anymore
+     * @deprecated This method don't do anything anymore (as of 3.1.0)
+     */
+    @Override
+    @Deprecated
+    public void setVirtualScreenEnabled(boolean virtualScreenEnabled) {
+    }
+
     @Override
     public synchronized Interactable getFocusedInteractable() {
         Window activeWindow = getActiveWindow();
@@ -328,6 +357,9 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
 
     @Override
     public synchronized boolean handleInput(KeyStroke keyStroke) {
+        ifMouseDownPossiblyChangeActiveWindow(keyStroke);
+        ifMouseDownPossiblyStartTitleDrag(keyStroke);
+        ifMouseDragPossiblyMoveWindow(keyStroke);
         Window activeWindow = getActiveWindow();
         if(activeWindow != null) {
             return activeWindow.handleInput(keyStroke);
@@ -335,6 +367,98 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
         else {
             return backgroundPane.handleInput(keyStroke);
         }
+    }
+    
+    protected synchronized void ifMouseDownPossiblyChangeActiveWindow(KeyStroke keyStroke) {
+        if (!(keyStroke instanceof MouseAction)) {
+            return;
+        }
+        MouseAction mouse = (MouseAction)keyStroke;
+        if(mouse.isMouseDown()) {
+            // for now, active windows do not overlap?
+            // by happenstance, the last in the list in case of many overlapping will be active
+            Window priorActiveWindow = getActiveWindow();
+            AtomicBoolean anyHit = new AtomicBoolean(false);
+            List<Window> snapshot = new ArrayList<>(getWindows());
+            for (Window w : snapshot) {
+                w.getBounds().whenContains(mouse.getPosition(), () -> {
+                	// Only change active window if the active MODAL dialog or if 
+                	// window is not MODAL 
+                	if (!priorActiveWindow.getHints().contains(Hint.MODAL) ||
+                		(priorActiveWindow.getHints().contains(Hint.MODAL) && w == priorActiveWindow))
+                	{
+                		setActiveWindow(w);
+                		anyHit.set(true);
+                	}                	
+                });
+            }
+            // clear popup menus if they clicked onto another window or missed all windows
+            if (priorActiveWindow != null && ( priorActiveWindow != getActiveWindow() || !anyHit.get() ) ) {
+                if (priorActiveWindow.getHints().contains(Hint.MENU_POPUP)) {
+                    priorActiveWindow.close();
+                }
+            }
+        }
+    }
+    
+    protected void ifMouseDownPossiblyStartTitleDrag(KeyStroke keyStroke) {
+        if (!(keyStroke instanceof MouseAction)) {
+            return;
+        }
+        MouseAction mouse = (MouseAction)keyStroke;
+        if(mouse.isMouseDown()) {
+            titleBarDragWindow = null;
+            dragStart = null;
+            Window window = getActiveWindow();
+            if (window == null) {
+                return;
+            }
+            
+            if (window.getHints().contains(Hint.MENU_POPUP)) {
+                // popup windows are not draggable
+                return;
+            }
+            
+            WindowDecorationRenderer decorator = windowManager.getWindowDecorationRenderer(window);
+            TerminalRectangle titleBarRectangle = decorator.getTitleBarRectangle(window);
+            TerminalPosition local = window.fromGlobalToDecoratedRelative(mouse.getPosition());
+            titleBarRectangle.whenContains(local, () -> {
+                titleBarDragWindow = window;
+                originWindowPosition = titleBarDragWindow.getPosition();
+                dragStart = mouse.getPosition();
+                moveToTop(window);
+            });
+        }
+        
+    }
+    protected void ifMouseDragPossiblyMoveWindow(KeyStroke keyStroke) {
+        if (titleBarDragWindow == null) {
+            return;
+        }
+        if (!(keyStroke instanceof MouseAction)) {
+            return;
+        }
+        MouseAction mouse = (MouseAction)keyStroke;
+        if(mouse.isMouseDrag()) {
+            TerminalPosition mp = mouse.getPosition();
+            TerminalPosition wp = originWindowPosition;
+            int dx = mp.getColumn() - dragStart.getColumn();
+            int dy = mp.getRow() - dragStart.getRow();
+            changeWindowHintsForDragged(titleBarDragWindow);
+            titleBarDragWindow.setPosition(new TerminalPosition(wp.getColumn() + dx, wp.getRow() + dy));
+            // TODO ? any additional children popups (shown menus, etc) should also be moved (or just closed)
+        }
+        
+    }
+    /**
+     * In order for window to be draggable, it would no longer be CENTERED.    
+     * Removes Hint.CENTERED, adds Hint.FIXED_POSITION to the window hints.
+     */
+    protected void changeWindowHintsForDragged(Window window) {
+        Set<Hint> hints = new HashSet<>(titleBarDragWindow.getHints());
+        hints.remove(Hint.CENTERED);
+        hints.add(Hint.FIXED_POSITION);
+        titleBarDragWindow.setHints(hints);
     }
 
     @Override
@@ -353,13 +477,10 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
             window.getTextGUI().removeWindow(window);
         }
         window.setTextGUI(this);
-        windowManager.onAdded(this, window, windows);
-        if(!windows.contains(window)) {
-            windows.add(window);
-        }
-        if(!window.getHints().contains(Window.Hint.NO_FOCUS)) {
-            setActiveWindow(window);
-        }
+        windowManager.onAdded(this, window, windowList.getWindowsInStableOrder());
+        
+        windowList.addWindow(window);
+        
         invalidate();
         return this;
     }
@@ -373,25 +494,13 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
 
     @Override
     public synchronized WindowBasedTextGUI removeWindow(Window window) {
-        if(!windows.remove(window)) {
+        boolean contained = windowList.removeWindow(window);
+        if(!contained) {
             //Didn't contain this window
             return this;
         }
         window.setTextGUI(null);
-        windowManager.onRemoved(this, window, windows);
-        changeWindow: if(activeWindow == window) {
-            //Go backward in reverse and find the first suitable window
-            for(int index = windows.size() - 1; index >= 0; index--) {
-                Window candidate = windows.get(index);
-                if(!candidate.getHints().contains(Window.Hint.NO_FOCUS)) {
-                    setActiveWindow(candidate);
-                    break changeWindow;
-                }
-            }
-            // No suitable window was found, so pass control back
-            // to the background pane
-            setActiveWindow(null);
-        }
+        windowManager.onRemoved(this, window, windowList.getWindowsInStableOrder());
         invalidate();
         return this;
     }
@@ -424,29 +533,23 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
 
     @Override
     public synchronized Collection<Window> getWindows() {
-        return Collections.unmodifiableList(new ArrayList<Window>(windows));
+        return windowList.getWindowsInZOrder();
     }
 
     @Override
     public synchronized MultiWindowTextGUI setActiveWindow(Window activeWindow) {
-        this.activeWindow = activeWindow;
-        if (activeWindow != null) moveToTop(activeWindow);
+        windowList.setActiveWindow(activeWindow);
         return this;
     }
 
     @Override
     public synchronized Window getActiveWindow() {
-        return activeWindow;
+        return windowList.getActiveWindow();
     }
 
     @Override
     public BasePane getBackgroundPane() {
         return backgroundPane;
-    }
-
-    @Override
-    public Screen getScreen() {
-        return virtualScreen;
     }
 
     @Override
@@ -456,11 +559,13 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
 
     @Override
     public synchronized WindowBasedTextGUI moveToTop(Window window) {
-        if(!windows.contains(window)) {
-            throw new IllegalArgumentException("Window " + window + " isn't in MultiWindowTextGUI " + this);
-        }
-        windows.remove(window);
-        windows.add(window);
+        windowList.moveToTop(window);
+        invalidate();
+        return this;
+    }
+    
+    public synchronized WindowBasedTextGUI moveToBottom(Window window) {
+        windowList.moveToBottom(window);
         invalidate();
         return this;
     }
@@ -474,56 +579,7 @@ public class MultiWindowTextGUI extends AbstractTextGUI implements WindowBasedTe
      * @return Itself
      */
     public synchronized WindowBasedTextGUI cycleActiveWindow(boolean reverse) {
-        if(windows.isEmpty() || windows.size() == 1 || (activeWindow != null && activeWindow.getHints().contains(Window.Hint.MODAL))) {
-            return this;
-        }
-        Window originalActiveWindow = activeWindow;
-        Window nextWindow;
-        if(activeWindow == null) {
-            // Cycling out of active background pane
-            nextWindow = reverse ? windows.get(windows.size() - 1) : windows.get(0);
-        }
-        else {
-            // Switch to the next window
-            nextWindow = getNextWindow(reverse, activeWindow);
-        }
-
-        int noFocusWindows = 0;
-        while(nextWindow.getHints().contains(Window.Hint.NO_FOCUS)) {
-            ++noFocusWindows;
-            if(noFocusWindows == windows.size()) {
-                // All windows are NO_FOCUS, so give up
-                return this;
-            }
-            nextWindow = getNextWindow(reverse, nextWindow);
-            if(nextWindow == originalActiveWindow) {
-                return this;
-            }
-        }
-
-        if(reverse) {
-            moveToTop(nextWindow);
-        }
-        else if (originalActiveWindow != null) {
-            windows.remove(originalActiveWindow);
-            windows.add(0, originalActiveWindow);
-        }
-        setActiveWindow(nextWindow);
+        windowList.cycleActiveWindow(reverse);
         return this;
-    }
-
-    private Window getNextWindow(boolean reverse, Window window) {
-        int index = windows.indexOf(window);
-        if(reverse) {
-            if(++index >= windows.size()) {
-                index = 0;
-            }
-        }
-        else {
-            if(--index < 0) {
-                index = windows.size() - 1;
-            }
-        }
-        return windows.get(index);
     }
 }

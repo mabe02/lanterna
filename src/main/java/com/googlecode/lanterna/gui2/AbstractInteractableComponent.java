@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  * 
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,13 +14,15 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2024 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
+import com.googlecode.lanterna.input.MouseAction;
+import com.googlecode.lanterna.input.MouseActionType;
 
 /**
  * Default implementation of Interactable that extends from AbstractComponent. If you want to write your own component
@@ -34,6 +36,7 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
     private InputFilter inputFilter;
     private boolean inFocus;
     private boolean enabled;
+    private KeyStroke accelerator;
 
     /**
      * Default constructor
@@ -78,6 +81,14 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
     protected void afterEnterFocus(FocusChangeDirection direction, Interactable previouslyInFocus) {
         //By default no action
     }
+
+    protected synchronized T setAccelerator(KeyStroke keyStroke)
+    {
+    	this.accelerator = keyStroke;
+    	return self();
+    }
+
+    protected synchronized KeyStroke getAccelerator() { return this.accelerator; };
 
     /**
      * {@inheritDoc}
@@ -157,26 +168,28 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
      */
     protected Result handleKeyStroke(KeyStroke keyStroke) {
         // Skip the keystroke if ctrl, alt or shift was down
-        if(!keyStroke.isAltDown() && !keyStroke.isCtrlDown()) {
-            if(!keyStroke.isShiftDown()) {
-                switch(keyStroke.getKeyType()) {
-                    case ArrowDown:
-                        return Result.MOVE_FOCUS_DOWN;
-                    case ArrowLeft:
-                        return Result.MOVE_FOCUS_LEFT;
-                    case ArrowRight:
-                        return Result.MOVE_FOCUS_RIGHT;
-                    case ArrowUp:
-                        return Result.MOVE_FOCUS_UP;
-                    case Tab:
-                        return Result.MOVE_FOCUS_NEXT;
-                    case ReverseTab:
-                        return Result.MOVE_FOCUS_PREVIOUS;
-                    case MouseEvent:
-                        getBasePane().setFocusedInteractable(this);
-                        return Result.HANDLED;
-                    default:
-                }
+        if(!keyStroke.isAltDown() && !keyStroke.isCtrlDown() && !keyStroke.isShiftDown()) {
+            switch(keyStroke.getKeyType()) {
+                case ARROW_DOWN:
+                    return Result.MOVE_FOCUS_DOWN;
+                case ARROW_LEFT:
+                    return Result.MOVE_FOCUS_LEFT;
+                case ARROW_RIGHT:
+                    return Result.MOVE_FOCUS_RIGHT;
+                case ARROW_UP:
+                    return Result.MOVE_FOCUS_UP;
+                case TAB:
+                    return Result.MOVE_FOCUS_NEXT;
+                case REVERSE_TAB:
+                    return Result.MOVE_FOCUS_PREVIOUS;
+                case MOUSE_EVENT:
+                    if (isMouseMove(keyStroke)) {
+                        // do nothing
+                        return Result.UNHANDLED;
+                    }
+                    getBasePane().setFocusedInteractable(this);
+                    return Result.HANDLED;
+                default:
             }
             // On Mac at least, Shift+Tab is ReverseTab, and isShiftDown() always reports `true`.
             if (keyStroke.getKeyType() == KeyType.ReverseTab) {
@@ -201,4 +214,52 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
         this.inputFilter = inputFilter;
         return self();
     }
+
+    public boolean isKeyboardActivationStroke(KeyStroke keyStroke) {
+        boolean isKeyboardActivation = (keyStroke.getKeyType() == KeyType.CHARACTER && keyStroke.getCharacter() == ' ') || keyStroke.getKeyType() == KeyType.ENTER;
+
+        return isFocused() && isKeyboardActivation;
+    }
+
+    public boolean isKeyboardAcceleratorStroke(KeyStroke keyStroke)
+    {
+    	if (accelerator == null) return false;
+
+        return isEnabled() && accelerator.equals(keyStroke);
+    }
+
+    public boolean isMouseActivationStroke(KeyStroke keyStroke) {
+        boolean isMouseActivation = false;
+        if (keyStroke instanceof MouseAction) {
+            MouseAction action = (MouseAction)keyStroke;
+            isMouseActivation = action.getActionType() == MouseActionType.CLICK_DOWN;
+        }
+
+        return isFocused() && isMouseActivation;
+    }
+
+    public boolean isActivationStroke(KeyStroke keyStroke) {
+        boolean isKeyboardActivationStroke = isKeyboardActivationStroke(keyStroke);
+        boolean isMouseActivationStroke = isMouseActivationStroke(keyStroke);
+
+        return isKeyboardActivationStroke || isMouseActivationStroke;
+    }
+
+    public boolean isMouseDown(KeyStroke keyStroke) {
+        return keyStroke.getKeyType() == KeyType.MOUSE_EVENT && ((MouseAction)keyStroke).isMouseDown();
+    }
+
+    public boolean isMouseDrag(KeyStroke keyStroke) {
+        return keyStroke.getKeyType() == KeyType.MOUSE_EVENT && ((MouseAction)keyStroke).isMouseDrag();
+    }
+
+    public boolean isMouseMove(KeyStroke keyStroke) {
+        return keyStroke.getKeyType() == KeyType.MOUSE_EVENT && ((MouseAction)keyStroke).isMouseMove();
+    }
+
+    public boolean isMouseUp(KeyStroke keyStroke) {
+        return keyStroke.getKeyType() == KeyType.MOUSE_EVENT && ((MouseAction)keyStroke).isMouseUp();
+    }
+
+
 }

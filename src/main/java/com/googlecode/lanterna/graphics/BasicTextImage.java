@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna.graphics;
 
@@ -171,7 +171,9 @@ public class BasicTextImage implements TextImage {
     
     @Override
     public void copyTo(TextImage destination) {
-        copyTo(destination, 0, buffer.length, 0, buffer[0].length, 0, 0);
+        if (buffer.length > 0) {
+            copyTo(destination, 0, buffer.length, 0, buffer[0].length, 0, 0);
+        }
     }
 
     @Override
@@ -209,8 +211,8 @@ public class BasicTextImage implements TextImage {
         }
 
         //Make sure we can't copy more than is available
-        columns = Math.min(buffer[0].length - startColumnIndex, columns);
         rows = Math.min(buffer.length - startRowIndex, rows);
+        columns = rows>0 ? Math.min(buffer[0].length - startColumnIndex, columns) : 0;
 
         //Adjust target lengths as well
         columns = Math.min(destination.getSize().getColumns() - destinationColumnOffset, columns);
@@ -231,10 +233,39 @@ public class BasicTextImage implements TextImage {
             //Manually copy character by character
             for(int y = startRowIndex; y < startRowIndex + rows; y++) {
                 for(int x = startColumnIndex; x < startColumnIndex + columns; x++) {
+                    TextCharacter character = buffer[y][x];
+                    if (character.isDoubleWidth()) {
+                        // If we're about to put a double-width character, first reset the character next to it
+                        if (x + 1 < startColumnIndex + columns) {
+                            destination.setCharacterAt(
+                                    x - startColumnIndex + destinationColumnOffset,
+                                    y - startRowIndex + destinationRowOffset,
+                                    character.withCharacter(' '));
+                        }
+                        // If the last character is a double-width character, it would exceed the dimension so reset it
+                        else if (x + 1 == startColumnIndex + columns) {
+                            character = character.withCharacter(' ');
+                        }
+                    }
                     destination.setCharacterAt(
                             x - startColumnIndex + destinationColumnOffset, 
-                            y - startRowIndex + destinationRowOffset, 
-                            buffer[y][x]);
+                            y - startRowIndex + destinationRowOffset,
+                            character);
+                    if (character.isDoubleWidth()) {
+                        x++;
+                    }
+                }
+            }
+        }
+
+        // If the character immediately to the left in the destination is double-width, then reset it
+        if (destinationColumnOffset > 0) {
+            int destinationX = destinationColumnOffset - 1;
+            for(int y = startRowIndex; y < startRowIndex + rows; y++) {
+                int destinationY = y - startRowIndex + destinationRowOffset;
+                TextCharacter neighbour = destination.getCharacterAt(destinationX, destinationY);
+                if (neighbour.isDoubleWidth()) {
+                    destination.setCharacterAt(destinationX, destinationY, neighbour.withCharacter(' '));
                 }
             }
         }
@@ -305,7 +336,7 @@ public class BasicTextImage implements TextImage {
         sb.append('{').append(size.getColumns()).append('x').append(size.getRows()).append('}').append('\n');
         for (TextCharacter[] line : buffer) {
             for (TextCharacter tc : line) {
-                sb.append(tc.getCharacter());
+                sb.append(tc.getCharacterString());
             }
             sb.append('\n');
         }

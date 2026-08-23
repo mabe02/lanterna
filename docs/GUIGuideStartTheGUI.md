@@ -2,17 +2,17 @@
 ## Getting the `WindowBasedTextGUI` object ###
 Lanterna has a basic `TextGUI` interface and a slightly more extended `WindowBasedTextGUI` interface you will be using
 when working with the GUI system built-in. In reality though, there is only one concrete implementation at this point,
-`MultiWindowTextGUI` so there isn't really case where you would use `TextGUI` over `WindowBasedTextGUI`.
+`MultiWindowTextGUI` so there isn't really any case where you would use `TextGUI` over `WindowBasedTextGUI`.
 
 To instantiate, you need a `Screen` object that the GUI will render too:
 
     WindowBasedTextGUI gui = new MultiWindowTextGUI(screen);
 
 ## Threading concerns
-Usually GUI APIs have threading issues of some sort, many simply give up and declare that all modifications had to be
-done on a designated "GUI thread". This generally a reasonably approach and while Lanterna doesn't enforce it 
-(internal API is synchronized on a best-effort basis), it's recommended. When you create the text GUI on your code,
-you can make a decision about if you want Lanterna to create its own GUI thread will be responsible for all the drawing
+Usually GUI APIs have threading issues of some sort. Many simply give up and declare that all modifications have to be
+done on a designated "GUI thread". This is generally a reasonably approach and while Lanterna doesn't enforce it 
+(internal API is synchronized on a best-effort basis), it's recommended. When you create the text GUI in your code,
+you can make a decision about if you want Lanterna to create its own GUI thread that will be responsible for all the drawing
 operations or if you want your own thread to do this. The managed GUI thread is slightly more complicated so in this
 guide we are going to use the latter. While most of the API remains the same (the separate GUI thread approach will
 require manually starting and stopping), whenever there are differences these will be pointed out.

@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna.terminal.ansi;
 
@@ -89,16 +89,13 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
         if(catchSpecialCharacters) {
             keyStrokeSignalsEnabled(false);
         }
-        registerTerminalResizeListener(new Runnable() {
-            @Override
-            public void run() {
-                // This will trigger a resize notification as the size will be different than before
-                try {
-                    getTerminalSize();
-                }
-                catch(IOException ignore) {
-                    // Not much to do here, we can't re-throw it
-                }
+        registerTerminalResizeListener(() -> {
+            // This will trigger a resize notification as the size will be different than before
+            try {
+                getTerminalSize();
+            }
+            catch(IOException ignore) {
+                // Not much to do here, we can't re-throw it
             }
         });
         Runtime.getRuntime().addShutdownHook(shutdownHook);
@@ -214,8 +211,7 @@ public abstract class UnixLikeTerminal extends ANSITerminal {
                 exitPrivateMode();
             }
         }
-        catch(IOException ignored) {}
-        catch(IllegalStateException ignored) {} // still possible!
+        catch(IOException | IllegalStateException ignored) {}
 
         try {
             restoreTerminalSettingsAndKeyStrokeSignals();

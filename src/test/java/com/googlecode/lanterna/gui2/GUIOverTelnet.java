@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2024 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
 
@@ -28,6 +28,7 @@ import com.googlecode.lanterna.terminal.ansi.TelnetTerminal;
 import com.googlecode.lanterna.terminal.ansi.TelnetTerminalServer;
 
 import java.io.IOException;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,28 +40,25 @@ public class GUIOverTelnet {
         while(true) {
             final TelnetTerminal telnetTerminal = telnetTerminalServer.acceptConnection();
             System.out.println("Accepted connection from " + telnetTerminal.getRemoteSocketAddress());
-            Thread thread = new Thread() {
-                @Override
-                public void run() {
-                    try {
-                        runGUI(telnetTerminal);
-                    }
-                    catch(IOException e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        telnetTerminal.close();
-                    }
-                    catch(IOException ignore) {}
+            Thread thread = new Thread(() -> {
+                try {
+                    runGUI(telnetTerminal);
                 }
-            };
+                catch(IOException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    telnetTerminal.close();
+                }
+                catch(IOException ignore) {}
+            });
             thread.start();
         }
     }
 
-    private static final List<TextBox> ALL_TEXTBOXES = new ArrayList<TextBox>();
+    private static final List<TextBox> ALL_TEXTBOXES = new ArrayList<>();
 
-    @SuppressWarnings({"rawtypes","unchecked"})
+    @SuppressWarnings({"rawtypes"})
     private static void runGUI(final TelnetTerminal telnetTerminal) throws IOException {
         Screen screen = new TerminalScreen(telnetTerminal);
         screen.startScreen();
@@ -71,20 +69,12 @@ public class GUIOverTelnet {
             final BasicWindow window = new BasicWindow("Text GUI over Telnet");
             Panel contentArea = new Panel();
             contentArea.setLayoutManager(new LinearLayout(Direction.VERTICAL));
-            contentArea.addComponent(new Button("Button", new Runnable() {
-                @Override
-                public void run() {
-                    final BasicWindow messageBox = new BasicWindow("Response");
-                    messageBox.setComponent(Panels.vertical(
-                            new Label("Hello!"),
-                            new Button("Close", new Runnable() {
-                                @Override
-                                public void run() {
-                                    messageBox.close();
-                                }
-                            })));
-                    textGUI.addWindow(messageBox);
-                }
+            contentArea.addComponent(new Button("Button", () -> {
+                final BasicWindow messageBox = new BasicWindow("Response");
+                messageBox.setComponent(Panels.vertical(
+                        new Label("Hello!"),
+                        new Button("Close", messageBox::close)));
+                textGUI.addWindow(messageBox);
             }).withBorder(Borders.singleLine("This is a button")));
 
 
@@ -129,11 +119,11 @@ public class GUIOverTelnet {
 
                 @Override
                 public Result handleKeyStroke(KeyStroke keyStroke) {
-                    if(keyStroke.getKeyType() == KeyType.Tab ||
-                            keyStroke.getKeyType() == KeyType.ReverseTab) {
+                    if(keyStroke.getKeyType() == KeyType.TAB ||
+                            keyStroke.getKeyType() == KeyType.REVERSE_TAB) {
                         return super.handleKeyStroke(keyStroke);
                     }
-                    if(keyStroke.getKeyType() == KeyType.Character) {
+                    if(keyStroke.getKeyType() == KeyType.CHARACTER) {
                         text = "Character: " + keyStroke.getCharacter() + (keyStroke.isCtrlDown() ? " (ctrl)" : "") +
                                 (keyStroke.isAltDown() ? " (alt)" : "");
                     }
@@ -145,18 +135,19 @@ public class GUIOverTelnet {
                 }
             }.withBorder(Borders.singleLine("Custom component")));
 
-            contentArea.addComponent(new Button("Close", new Runnable() {
-                @Override
-                public void run() {
-                    window.close();
-                }
-            }));
+            contentArea.addComponent(new Button("Close", window::close));
             window.setComponent(contentArea);
 
             textGUI.addWindowAndWait(window);
         }
         finally {
-            screen.stopScreen();
+            try {
+                screen.stopScreen();
+            }
+            catch (SocketException ignore) {
+                // If the telnet client suddenly quit, we'll get an exception when we try to get the client to exit
+                // private mode, but that's fine, no need to report this
+            }
         }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2024 Martin Berglund
  */
 package com.googlecode.lanterna.gui2.dialogs;
 
@@ -30,47 +30,50 @@ public enum MessageDialogButton {
     /**
      * "OK"
      */
-    OK(LocalizedString.OK),
+    OK(LocalizedString.OK, 'o'),
     /**
      * "Cancel"
      */
-    Cancel(LocalizedString.Cancel),
+    CANCEL(LocalizedString.Cancel, 'c'),
     /**
      * "Yes"
      */
-    Yes(LocalizedString.Yes),
+    YES(LocalizedString.Yes, 'y'),
     /**
      * "No"
      */
-    No(LocalizedString.No),
+    NO(LocalizedString.No, 'n'),
     /**
      * "Close"
      */
-    Close(LocalizedString.Close),
+    CLOSE(LocalizedString.Close, 'x'),
     /**
      * "Abort"
      */
-    Abort(LocalizedString.Abort),
+    ABORT(LocalizedString.Abort, 'a'),
     /**
      * "Ignore"
      */
-    Ignore(LocalizedString.Ignore),
+    IGNORE(LocalizedString.Ignore, 'i'),
     /**
      * "Retry"
      */
-    Retry(LocalizedString.Retry),
+    RETRY(LocalizedString.Retry, 'r'),
 
     /**
      * "Continue"
      */
-    Continue(LocalizedString.Continue);
+    CONTINUE(LocalizedString.Continue, 'c');
 
     private final LocalizedString label;
+    private final char acceleratorChar;
 
-    MessageDialogButton(final LocalizedString label) {
+    MessageDialogButton(final LocalizedString label, char acceleratorChar) {
         this.label = label;
+        this.acceleratorChar = acceleratorChar;
     }
 
+    public char getAcceleratorCharacter() { return acceleratorChar; }
     @Override
     public String toString() {
         return label.toString();

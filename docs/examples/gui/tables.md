@@ -17,7 +17,7 @@ To add a row:
 	table.getTableModel().addRow("1", "2", "3");
 ```
 
-When adding a row, the number of arguments much match the number of columns.
+When adding a row, the number of arguments must match the number of columns.
 
 You can add a select action, which will run when a row is selected and the `Enter` key is pressed:
 

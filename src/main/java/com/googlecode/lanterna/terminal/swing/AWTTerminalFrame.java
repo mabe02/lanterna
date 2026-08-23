@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2024 Martin Berglund
  */
 package com.googlecode.lanterna.terminal.swing;
 
@@ -124,6 +124,39 @@ public class AWTTerminalFrame extends Frame implements IOSafeTerminal {
     }
 
     /**
+     * Returns the wrapped AWTTerminal which is holding the actual terminal content. This can be useful if you want to
+     * add custom AWT listeners to it, etc.
+     * @return The inner AWTTerminal
+     */
+    public AWTTerminal getAWTTerminal() {
+        return awtTerminal;
+    }
+
+    /**
+     * Returns the current font configuration. Note that it is immutable and cannot be changed.
+     * @return This {@link AWTTerminalFrame}'s current font configuration
+     */
+    public AWTTerminalFontConfiguration getFontConfiguration() {
+        return awtTerminal.getFontConfiguration();
+    }
+
+    /**
+     * Returns this terminal emulator's color configuration. Note that it is immutable and cannot be changed.
+     * @return This {@link AWTTerminalFrame}'s color configuration
+     */
+    public TerminalEmulatorColorConfiguration getColorConfiguration() {
+        return awtTerminal.getColorConfiguration();
+    }
+
+    /**
+     * Returns this terminal emulator's device configuration. Note that it is immutable and cannot be changed.
+     * @return This {@link AWTTerminalFrame}'s device configuration
+     */
+    public TerminalEmulatorDeviceConfiguration getDeviceConfiguration() {
+        return awtTerminal.getDeviceConfiguration();
+    }
+
+    /**
      * Returns the auto-close triggers used by the AWTTerminalFrame
      * @return Current auto-close trigger
      */
@@ -164,9 +197,9 @@ public class AWTTerminalFrame extends Frame implements IOSafeTerminal {
             return new KeyStroke(KeyType.EOF);
         }
         KeyStroke keyStroke = awtTerminal.pollInput();
-        if(autoCloseTriggers.contains(TerminalEmulatorAutoCloseTrigger.CloseOnEscape) &&
+        if(autoCloseTriggers.contains(TerminalEmulatorAutoCloseTrigger.CLOSE_ON_ESCAPE) &&
                 keyStroke != null && 
-                keyStroke.getKeyType() == KeyType.Escape) {
+                keyStroke.getKeyType() == KeyType.ESCAPE) {
             dispose();
         }
         return keyStroke;
@@ -185,7 +218,7 @@ public class AWTTerminalFrame extends Frame implements IOSafeTerminal {
     @Override
     public void exitPrivateMode() {
         awtTerminal.exitPrivateMode();
-        if(autoCloseTriggers.contains(TerminalEmulatorAutoCloseTrigger.CloseOnExitPrivateMode)) {
+        if(autoCloseTriggers.contains(TerminalEmulatorAutoCloseTrigger.CLOSE_ON_EXIT_PRIVATE_MODE)) {
             dispose();
         }
     }
@@ -218,6 +251,11 @@ public class AWTTerminalFrame extends Frame implements IOSafeTerminal {
     @Override
     public void putCharacter(char c) {
         awtTerminal.putCharacter(c);
+    }
+
+    @Override
+    public void putString(String string) {
+        awtTerminal.putString(string);
     }
 
     @Override

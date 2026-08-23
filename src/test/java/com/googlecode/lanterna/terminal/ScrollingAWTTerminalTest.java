@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2024 Martin Berglund
  */
 package com.googlecode.lanterna.terminal;
 
@@ -25,7 +25,7 @@ import com.googlecode.lanterna.terminal.swing.TerminalEmulatorDeviceConfiguratio
 import com.googlecode.lanterna.terminal.swing.SwingTerminalFontConfiguration;
 import java.awt.BorderLayout;
 import java.util.Random;
-import javax.swing.UIManager;
+import javax.swing.*;
 
 /**
  *
@@ -70,32 +70,16 @@ public class ScrollingAWTTerminalTest extends javax.swing.JFrame {
         panelTerminalContainer.setLayout(new java.awt.BorderLayout());
 
         buttonPrint100Lines.setText("Print 100 lines");
-        buttonPrint100Lines.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonPrint100LinesActionPerformed(evt);
-            }
-        });
+        buttonPrint100Lines.addActionListener(this::buttonPrint100LinesActionPerformed);
 
         buttonPrint10Lines.setText("Print 10 lines");
-        buttonPrint10Lines.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonPrint10LinesActionPerformed(evt);
-            }
-        });
+        buttonPrint10Lines.addActionListener(this::buttonPrint10LinesActionPerformed);
 
         buttonPrint1Line.setText("Print 1 line");
-        buttonPrint1Line.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonPrint1LineActionPerformed(evt);
-            }
-        });
+        buttonPrint1Line.addActionListener(this::buttonPrint1LineActionPerformed);
 
         buttonMoveCursor.setText("Move cursor");
-        buttonMoveCursor.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonMoveCursorActionPerformed(evt);
-            }
-        });
+        buttonMoveCursor.addActionListener(this::buttonMoveCursorActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -175,30 +159,17 @@ public class ScrollingAWTTerminalTest extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         /* Set the Nimbus look and feel */
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         }
-        catch(ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ScrollingAWTTerminalTest.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        catch(InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ScrollingAWTTerminalTest.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        catch(IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ScrollingAWTTerminalTest.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        catch(javax.swing.UnsupportedLookAndFeelException ex) {
+        catch(ClassNotFoundException | InstantiationException | UnsupportedLookAndFeelException | IllegalAccessException ex) {
             java.util.logging.Logger.getLogger(ScrollingAWTTerminalTest.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new ScrollingAWTTerminalTest().setVisible(true);
-            }
-        });
+        java.awt.EventQueue.invokeLater(() -> new ScrollingAWTTerminalTest().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

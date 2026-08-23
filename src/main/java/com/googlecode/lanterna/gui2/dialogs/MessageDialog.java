@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,12 +14,18 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna.gui2.dialogs;
 
 import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.gui2.*;
+import com.googlecode.lanterna.gui2.Button;
+import com.googlecode.lanterna.gui2.EmptySpace;
+import com.googlecode.lanterna.gui2.GridLayout;
+import com.googlecode.lanterna.gui2.Label;
+import com.googlecode.lanterna.gui2.Panel;
+import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
+import com.googlecode.lanterna.input.KeyStroke;
 
 /**
  * Simple message dialog that displays a message and has optional selection/confirmation buttons
@@ -44,13 +50,10 @@ public class MessageDialog extends DialogWindow {
         Panel buttonPanel = new Panel();
         buttonPanel.setLayoutManager(new GridLayout(buttons.length).setHorizontalSpacing(1));
         for(final MessageDialogButton button: buttons) {
-            buttonPanel.addComponent(new Button(button.toString(), new Runnable() {
-                @Override
-                public void run() {
-                    result = button;
-                    close();
-                }
-            }));
+            buttonPanel.addComponent(new Button(button.toString(), () -> {
+                result = button;
+                close();
+            }).setAccelerator(new KeyStroke(button.getAcceleratorCharacter(), false, true)));
         }
 
         Panel mainPanel = new Panel();

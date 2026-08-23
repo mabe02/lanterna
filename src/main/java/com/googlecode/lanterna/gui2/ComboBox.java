@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2024 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
 
@@ -31,6 +31,7 @@ import com.googlecode.lanterna.TerminalTextUtils;
 import com.googlecode.lanterna.graphics.Theme;
 import com.googlecode.lanterna.graphics.ThemeDefinition;
 import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 
 /**
  * This is a simple combo box implementation that allows the user to select one out of multiple items through a
@@ -49,8 +50,11 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
          * This method is called whenever the user changes selection from one item to another in the combo box
          * @param selectedIndex Index of the item which is now selected
          * @param previousSelection Index of the item which was previously selected
+         * @param changedByUserInteraction If {@code true} then this selection change happened because of user
+         *                                 interaction with the combo box. If {@code false} then the selected
+         *                                 item was set programmatically.
          */
-        void onSelectionChanged(int selectedIndex, int previousSelection);
+        void onSelectionChanged(int selectedIndex, int previousSelection, boolean changedByUserInteraction);
     }
 
     private final List<V> items;
@@ -71,6 +75,7 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
      * displayed at once, more than that and there will be a scroll bar.
      * @param items Items to populate the new combo box with
      */
+    @SafeVarargs
     public ComboBox(V... items) {
         this(Arrays.asList(items));
     }
@@ -113,8 +118,8 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
                 throw new IllegalArgumentException("Cannot add null elements to a ComboBox");
             }
         }
-        this.items = new ArrayList<V>(items);
-        this.listeners = new CopyOnWriteArrayList<Listener>();
+        this.items = new ArrayList<>(items);
+        this.listeners = new CopyOnWriteArrayList<>();
         this.popupWindow = null;
         this.selectedIndex = selectedIndex;
         this.readOnly = true;
@@ -185,7 +190,7 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
         if(index == -1) {
             return this;
         }
-        return remoteItem(index);
+        return removeItem(index);
     }
 
     /**
@@ -194,7 +199,7 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
      * @return Itself
      * @throws IndexOutOfBoundsException if the index is out of range
      */
-    public synchronized ComboBox<V> remoteItem(int index) {
+    public synchronized ComboBox<V> removeItem(int index) {
         items.remove(index);
         if(index < selectedIndex) {
             setSelectedIndex(selectedIndex - 1);
@@ -323,7 +328,11 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
      * @param selectedIndex Index of the item to select, or -1 if the selection should be cleared
      * @throws IndexOutOfBoundsException if the index is out of range
      */
-    public synchronized void setSelectedIndex(final int selectedIndex) {
+    public void setSelectedIndex(final int selectedIndex) {
+        setSelectedIndex(selectedIndex, false);
+    }
+
+    private synchronized void setSelectedIndex(final int selectedIndex, final boolean changedByUserInteraction) {
         if(items.size() <= selectedIndex || selectedIndex < -1) {
             throw new IndexOutOfBoundsException("Illegal argument to ComboBox.setSelectedIndex: " + selectedIndex);
         }
@@ -335,12 +344,9 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
         else {
             updateText(items.get(selectedIndex).toString());
         }
-        runOnGUIThreadIfExistsOtherwiseRunDirect(new Runnable() {
-            @Override
-            public void run() {
-                for(Listener listener: listeners) {
-                    listener.onSelectionChanged(selectedIndex, oldSelection);
-                }
+        runOnGUIThreadIfExistsOtherwiseRunDirect(() -> {
+            for(Listener listener: listeners) {
+                listener.onSelectionChanged(selectedIndex, oldSelection, changedByUserInteraction);
             }
         });
         invalidate();
@@ -386,9 +392,9 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
 
     /**
      * Returns the item at the selected index, this is the same as calling:
-     * <pre>
+     * <pre>{@code
      *     getSelectedIndex() > -1 ? getItem(getSelectedIndex()) : null
-     * </pre>
+     * }</pre>
      * @return The item at the selected index
      */
     public synchronized V getSelectedItem() {
@@ -430,13 +436,12 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
     protected synchronized void afterLeaveFocus(FocusChangeDirection direction, Interactable nextInFocus) {
         if(popupWindow != null) {
             popupWindow.close();
-            popupWindow = null;
         }
     }
 
     @Override
     protected InteractableRenderer<ComboBox<V>> createDefaultRenderer() {
-        return new DefaultComboBoxRenderer<V>();
+        return new DefaultComboBoxRenderer<>();
     }
 
     @Override
@@ -451,62 +456,37 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
 
     private Result handleReadOnlyCBKeyStroke(KeyStroke keyStroke) {
         switch(keyStroke.getKeyType()) {
-            case ArrowDown:
-                if(popupWindow != null) {
-                    popupWindow.listBox.handleKeyStroke(keyStroke);
-                    return Result.HANDLED;
+            case CHARACTER:
+            case ENTER:
+                if (isKeyboardActivationStroke(keyStroke)) {
+                    showPopup(keyStroke);
                 }
-                return Result.MOVE_FOCUS_DOWN;
-
-            case ArrowUp:
-                if(popupWindow != null) {
-                    popupWindow.listBox.handleKeyStroke(keyStroke);
-                    return Result.HANDLED;
-                }
-                return Result.MOVE_FOCUS_UP;
-
-            case PageUp:
-            case PageDown:
-            case Home:
-            case End:
-                if(popupWindow != null) {
-                    popupWindow.listBox.handleKeyStroke(keyStroke);
-                    return Result.HANDLED;
+                return super.handleKeyStroke(keyStroke);
+            
+            case MOUSE_EVENT:
+                if (isMouseActivationStroke(keyStroke)) {
+                    showPopup(keyStroke);
                 }
                 break;
-
-            case Enter:
-                if(popupWindow != null) {
-                    popupWindow.listBox.handleKeyStroke(keyStroke);
-                    popupWindow.close();
-                    popupWindow = null;
-                }
-                else {
-                    popupWindow = new PopupWindow();
-                    popupWindow.setPosition(toGlobal(new TerminalPosition(0, 1)));
-                    ((WindowBasedTextGUI) getTextGUI()).addWindow(popupWindow);
-                }
-                break;
-
-            case Escape:
-                if(popupWindow != null) {
-                    popupWindow.close();
-                    popupWindow = null;
-                    return Result.HANDLED;
-                }
-                break;
-
+            
             default:
         }
         return super.handleKeyStroke(keyStroke);
+    }
+    
+    protected void showPopup(KeyStroke keyStroke) {
+        popupWindow = new PopupWindow();
+        popupWindow.setPosition(toGlobal(new TerminalPosition(0, 1)));
+        ((WindowBasedTextGUI) getTextGUI()).addWindow(popupWindow);
+        ((WindowBasedTextGUI) getTextGUI()).setActiveWindow(popupWindow);
     }
 
     private Result handleEditableCBKeyStroke(KeyStroke keyStroke) {
         //First check if we are in drop-down focused mode, treat keystrokes a bit differently then
         if(isDropDownFocused()) {
             switch(keyStroke.getKeyType()) {
-                case ReverseTab:
-                case ArrowLeft:
+                case REVERSE_TAB:
+                case ARROW_LEFT:
                     dropDownFocused = false;
                     textInputPosition = text.length();
                     return Result.HANDLED;
@@ -518,29 +498,29 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
         }
 
         switch(keyStroke.getKeyType()) {
-            case Character:
+            case CHARACTER:
                 text = text.substring(0, textInputPosition) + keyStroke.getCharacter() + text.substring(textInputPosition);
                 textInputPosition++;
                 return Result.HANDLED;
 
-            case Tab:
+            case TAB:
                 dropDownFocused = true;
                 return Result.HANDLED;
 
-            case Backspace:
+            case BACKSPACE:
                 if(textInputPosition > 0) {
                     text = text.substring(0, textInputPosition - 1) + text.substring(textInputPosition);
                     textInputPosition--;
                 }
                 return Result.HANDLED;
 
-            case Delete:
+            case DELETE:
                 if(textInputPosition < text.length()) {
                     text = text.substring(0, textInputPosition) + text.substring(textInputPosition + 1);
                 }
                 return Result.HANDLED;
 
-            case ArrowLeft:
+            case ARROW_LEFT:
                 if(textInputPosition > 0) {
                     textInputPosition--;
                 }
@@ -549,7 +529,7 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
                 }
                 return Result.HANDLED;
 
-            case ArrowRight:
+            case ARROW_RIGHT:
                 if(textInputPosition < text.length()) {
                     textInputPosition++;
                 }
@@ -559,15 +539,15 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
                 }
                 return Result.HANDLED;
 
-            case ArrowDown:
+            case ARROW_DOWN:
                 if(selectedIndex < items.size() - 1) {
-                    setSelectedIndex(selectedIndex + 1);
+                    setSelectedIndex(selectedIndex + 1, true);
                 }
                 return Result.HANDLED;
 
-            case ArrowUp:
+            case ARROW_UP:
                 if(selectedIndex > 0) {
-                    setSelectedIndex(selectedIndex - 1);
+                    setSelectedIndex(selectedIndex - 1, true);
                 }
                 return Result.HANDLED;
 
@@ -582,17 +562,15 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
         public PopupWindow() {
             setHints(Arrays.asList(
                     Hint.NO_FOCUS,
-                    Hint.FIXED_POSITION));
+                    Hint.FIXED_POSITION,
+                    Hint.MENU_POPUP));
             listBox = new ActionListBox(ComboBox.this.getSize().withRows(getItemCount()));
             for(int i = 0; i < getItemCount(); i++) {
                 V item = items.get(i);
                 final int index = i;
-                listBox.addItem(item.toString(), new Runnable() {
-                    @Override
-                    public void run() {
-                        setSelectedIndex(index);
-                        close();
-                    }
+                listBox.addItem(item.toString(), () -> {
+                    setSelectedIndex(index, true);
+                    close();
                 });
             }
             listBox.setSelectedIndex(getSelectedIndex());
@@ -603,10 +581,23 @@ public class ComboBox<V> extends AbstractInteractableComponent<ComboBox<V>> {
             }
             setComponent(listBox);
         }
+        @Override
+        public void close() {
+            super.close();
+            popupWindow = null;
+        }
 
         @Override
         public synchronized Theme getTheme() {
             return ComboBox.this.getTheme();
+        }
+        @Override
+        public synchronized boolean handleInput(KeyStroke keyStroke) {
+            if (keyStroke.getKeyType() == KeyType.ESCAPE) {
+                close();
+                return true;
+            }
+            return super.handleInput(keyStroke);
         }
     }
 

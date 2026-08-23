@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2024 Martin Berglund
  */
 package com.googlecode.lanterna.terminal;
 
@@ -24,7 +24,6 @@ import com.googlecode.lanterna.TestTerminalFactory;
 import com.googlecode.lanterna.terminal.swing.SwingTerminalFrame;
 
 import javax.swing.*;
-import java.io.IOException;
 
 /**
  *
@@ -32,7 +31,7 @@ import java.io.IOException;
  */
 public class SwingTerminalTest {
 
-    public static void main(String[] args) throws InterruptedException, IOException {
+    public static void main(String[] args) throws InterruptedException {
         SwingTerminalFrame terminal = new TestTerminalFactory(args).createSwingTerminal();
         terminal.setVisible(true);
         terminal.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

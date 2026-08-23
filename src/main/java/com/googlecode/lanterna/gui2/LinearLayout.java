@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  * 
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,14 +14,19 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2024 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 
+import java.util.ArrayList;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Collections;
+import java.util.stream.Collectors;
 
 /**
  * Simple layout manager the puts all components on a single line, either horizontally or vertically.
@@ -35,28 +40,48 @@ public class LinearLayout implements LayoutManager {
         /**
          * The component will be placed to the left (for vertical layouts) or top (for horizontal layouts)
          */
-        Beginning,
+        BEGINNING,
         /**
          * The component will be placed horizontally centered (for vertical layouts) or vertically centered (for
          * horizontal layouts)
          */
-        Center,
+        CENTER,
         /**
          * The component will be placed to the right (for vertical layouts) or bottom (for horizontal layouts)
          */
-        End,
+        END,
         /**
          * The component will be forced to take up all the horizontal space (for vertical layouts) or vertical space
          * (for horizontal layouts)
          */
-        Fill,
+        FILL,
+    }
+
+    /**
+     * This enum type will what to do with a component if the container has extra space to offer. This can happen if the
+     * window runs in full screen or the window has been programmatically set to a fixed size, above the preferred size
+     * of the window.
+     */
+    public enum GrowPolicy {
+        /**
+         * This is the default grow policy, the component will not become larger than the preferred size, even if the
+         * container can offer more.
+         */
+        NONE,
+        /**
+         * With this grow policy, if the container has more space available then this component will be grown to fill
+         * the extra space.
+         */
+        CAN_GROW,
     }
 
     private static class LinearLayoutData implements LayoutData {
         private final Alignment alignment;
+        private final GrowPolicy growPolicy;
 
-        public LinearLayoutData(Alignment alignment) {
+        public LinearLayoutData(Alignment alignment, GrowPolicy growPolicy) {
             this.alignment = alignment;
+            this.growPolicy = growPolicy;
         }
     }
 
@@ -69,7 +94,21 @@ public class LinearLayout implements LayoutManager {
      * @see Alignment
      */
     public static LayoutData createLayoutData(Alignment alignment) {
-        return new LinearLayoutData(alignment);
+        return createLayoutData(alignment, GrowPolicy.NONE);
+    }
+
+    /**
+     * Creates a {@code LayoutData} for {@code LinearLayout} that assigns a component to a particular alignment on its
+     * counter-axis, meaning the horizontal alignment on vertical {@code LinearLayout}s and vertical alignment on
+     * horizontal {@code LinearLayout}s.
+     * @param alignment Alignment to store in the {@code LayoutData} object
+     * @param growPolicy When policy to apply to the component if the parent container has more space available along
+     *                   the main axis.
+     * @return {@code LayoutData} object created for {@code LinearLayout}s with the specified alignment
+     * @see Alignment
+     */
+    public static LayoutData createLayoutData(Alignment alignment, GrowPolicy growPolicy) {
+        return new LinearLayoutData(alignment, growPolicy);
     }
 
     private final Direction direction;
@@ -116,6 +155,9 @@ public class LinearLayout implements LayoutManager {
 
     @Override
     public TerminalSize getPreferredSize(List<Component> components) {
+        // Filter out invisible components
+        components = components.stream().filter(Component::isVisible).collect(Collectors.toList());
+
         if(direction == Direction.VERTICAL) {
             return getPreferredSizeVertically(components);
         }
@@ -159,15 +201,29 @@ public class LinearLayout implements LayoutManager {
 
     @Override
     public void doLayout(TerminalSize area, List<Component> components) {
+        // Filter out invisible components
+        components = components.stream().filter(Component::isVisible).collect(Collectors.toList());
+
         if(direction == Direction.VERTICAL) {
-            doVerticalLayout(area, components);
+            if (Boolean.getBoolean("com.googlecode.lanterna.gui2.LinearLayout.useOldNonFlexLayout")) {
+                doVerticalLayout(area, components);
+            }
+            else {
+                doFlexibleVerticalLayout(area, components);
+            }
         }
         else {
-            doHorizontalLayout(area, components);
+            if (Boolean.getBoolean("com.googlecode.lanterna.gui2.LinearLayout.useOldNonFlexLayout")) {
+                doHorizontalLayout(area, components);
+            }
+            else {
+                doFlexibleHorizontalLayout(area, components);
+            }
         }
         this.changed = false;
     }
 
+    @Deprecated
     private void doVerticalLayout(TerminalSize area, List<Component> components) {
         int remainingVerticalSpace = area.getRows();
         int availableHorizontalSpace = area.getColumns();
@@ -177,7 +233,7 @@ public class LinearLayout implements LayoutManager {
                 component.setSize(TerminalSize.ZERO);
             }
             else {
-                Alignment alignment = Alignment.Beginning;
+                Alignment alignment = Alignment.BEGINNING;
                 LayoutData layoutData = component.getLayoutData();
                 if (layoutData instanceof LinearLayoutData) {
                     alignment = ((LinearLayoutData)layoutData).alignment;
@@ -187,21 +243,21 @@ public class LinearLayout implements LayoutManager {
                 TerminalSize decidedSize = new TerminalSize(
                         Math.min(availableHorizontalSpace, preferredSize.getColumns()),
                         Math.min(remainingVerticalSpace, preferredSize.getRows()));
-                if(alignment == Alignment.Fill) {
+                if(alignment == Alignment.FILL) {
                     decidedSize = decidedSize.withColumns(availableHorizontalSpace);
-                    alignment = Alignment.Beginning;
+                    alignment = Alignment.BEGINNING;
                 }
 
                 TerminalPosition position = component.getPosition();
                 position = position.withRow(area.getRows() - remainingVerticalSpace);
                 switch(alignment) {
-                    case End:
+                    case END:
                         position = position.withColumn(availableHorizontalSpace - decidedSize.getColumns());
                         break;
-                    case Center:
+                    case CENTER:
                         position = position.withColumn((availableHorizontalSpace - decidedSize.getColumns()) / 2);
                         break;
-                    case Beginning:
+                    case BEGINNING:
                     default:
                         position = position.withColumn(0);
                         break;
@@ -213,6 +269,113 @@ public class LinearLayout implements LayoutManager {
         }
     }
 
+    private void doFlexibleVerticalLayout(TerminalSize area, List<Component> components) {
+        int availableVerticalSpace = area.getRows();
+        int availableHorizontalSpace = area.getColumns();
+        final Map<Component, TerminalSize> fittingMap = new IdentityHashMap<>();
+        int totalRequiredVerticalSpace = 0;
+
+        for (Component component: components) {
+            Alignment alignment = Alignment.BEGINNING;
+            LayoutData layoutData = component.getLayoutData();
+            if (layoutData instanceof LinearLayoutData) {
+                alignment = ((LinearLayoutData)layoutData).alignment;
+            }
+
+            TerminalSize preferredSize = component.getPreferredSize();
+            TerminalSize fittingSize = new TerminalSize(
+                    Math.min(availableHorizontalSpace, preferredSize.getColumns()),
+                    preferredSize.getRows());
+            if(alignment == Alignment.FILL) {
+                fittingSize = fittingSize.withColumns(availableHorizontalSpace);
+            }
+
+            fittingMap.put(component, fittingSize);
+            totalRequiredVerticalSpace += fittingSize.getRows() + spacing;
+        }
+        if (!components.isEmpty()) {
+            // Remove the last spacing
+            totalRequiredVerticalSpace -= spacing;
+        }
+
+        // If we can't fit everything, trim the down the size of the largest components until it fits
+        if (availableVerticalSpace < totalRequiredVerticalSpace) {
+            List<Component> copyOfComponents = new ArrayList<>(components);
+            Collections.reverse(copyOfComponents);
+            copyOfComponents.sort((o1, o2) -> {
+                // Reverse sort
+                return -Integer.compare(fittingMap.get(o1).getRows(), fittingMap.get(o2).getRows());
+            });
+
+            while (availableVerticalSpace < totalRequiredVerticalSpace) {
+                int largestSize = fittingMap.get(copyOfComponents.get(0)).getRows();
+                for (Component largeComponent: copyOfComponents) {
+                    TerminalSize currentSize = fittingMap.get(largeComponent);
+                    if (largestSize > currentSize.getRows()) {
+                        break;
+                    }
+                    fittingMap.put(largeComponent, currentSize.withRelativeRows(-1));
+                    totalRequiredVerticalSpace--;
+                    if (availableHorizontalSpace >= totalRequiredVerticalSpace) {
+                        break;
+                    }
+                }
+            }
+        }
+
+        // If we have more space available than we need, grow components to fill
+        if (availableVerticalSpace > totalRequiredVerticalSpace) {
+            boolean resizedOneComponent = false;
+            while (availableVerticalSpace > totalRequiredVerticalSpace) {
+                for(Component component: components) {
+                    final LinearLayoutData layoutData = (LinearLayoutData)component.getLayoutData();
+                    final TerminalSize currentSize = fittingMap.get(component);
+                    if (layoutData != null && layoutData.growPolicy == GrowPolicy.CAN_GROW) {
+                        fittingMap.put(component, currentSize.withRelativeRows(1));
+                        availableVerticalSpace--;
+                        resizedOneComponent = true;
+                    }
+                    if (availableVerticalSpace <= totalRequiredVerticalSpace) {
+                        break;
+                    }
+                }
+                if (!resizedOneComponent) {
+                    break;
+                }
+            }
+        }
+
+        // Assign the sizes and positions
+        int topPosition = 0;
+        for(Component component: components) {
+            Alignment alignment = Alignment.BEGINNING;
+            LayoutData layoutData = component.getLayoutData();
+            if (layoutData instanceof LinearLayoutData) {
+                alignment = ((LinearLayoutData)layoutData).alignment;
+            }
+
+            TerminalSize decidedSize = fittingMap.get(component);
+            TerminalPosition position = component.getPosition();
+            position = position.withRow(topPosition);
+            switch(alignment) {
+                case END:
+                    position = position.withColumn(availableHorizontalSpace - decidedSize.getColumns());
+                    break;
+                case CENTER:
+                    position = position.withColumn((availableHorizontalSpace - decidedSize.getColumns()) / 2);
+                    break;
+                case BEGINNING:
+                default:
+                    position = position.withColumn(0);
+                    break;
+            }
+            component.setPosition(component.getPosition().with(position));
+            component.setSize(component.getSize().with(decidedSize));
+            topPosition += decidedSize.getRows() + spacing;
+        }
+    }
+
+    @Deprecated
     private void doHorizontalLayout(TerminalSize area, List<Component> components) {
         int remainingHorizontalSpace = area.getColumns();
         int availableVerticalSpace = area.getRows();
@@ -222,7 +385,7 @@ public class LinearLayout implements LayoutManager {
                 component.setSize(TerminalSize.ZERO);
             }
             else {
-                Alignment alignment = Alignment.Beginning;
+                Alignment alignment = Alignment.BEGINNING;
                 LayoutData layoutData = component.getLayoutData();
                 if (layoutData instanceof LinearLayoutData) {
                     alignment = ((LinearLayoutData)layoutData).alignment;
@@ -232,21 +395,21 @@ public class LinearLayout implements LayoutManager {
                 TerminalSize decidedSize = new TerminalSize(
                         Math.min(remainingHorizontalSpace, preferredSize.getColumns()),
                         Math.min(availableVerticalSpace, preferredSize.getRows()));
-                if(alignment == Alignment.Fill) {
+                if(alignment == Alignment.FILL) {
                     decidedSize = decidedSize.withRows(availableVerticalSpace);
-                    alignment = Alignment.Beginning;
+                    alignment = Alignment.BEGINNING;
                 }
 
                 TerminalPosition position = component.getPosition();
                 position = position.withColumn(area.getColumns() - remainingHorizontalSpace);
                 switch(alignment) {
-                    case End:
+                    case END:
                         position = position.withRow(availableVerticalSpace - decidedSize.getRows());
                         break;
-                    case Center:
+                    case CENTER:
                         position = position.withRow((availableVerticalSpace - decidedSize.getRows()) / 2);
                         break;
-                    case Beginning:
+                    case BEGINNING:
                     default:
                         position = position.withRow(0);
                         break;
@@ -255,6 +418,112 @@ public class LinearLayout implements LayoutManager {
                 component.setSize(component.getSize().with(decidedSize));
                 remainingHorizontalSpace -= decidedSize.getColumns() + spacing;
             }
+        }
+    }
+
+    private void doFlexibleHorizontalLayout(TerminalSize area, List<Component> components) {
+        int availableVerticalSpace = area.getRows();
+        int availableHorizontalSpace = area.getColumns();
+        final Map<Component, TerminalSize> fittingMap = new IdentityHashMap<>();
+        int totalRequiredHorizontalSpace = 0;
+
+        for (Component component: components) {
+            Alignment alignment = Alignment.BEGINNING;
+            LayoutData layoutData = component.getLayoutData();
+            if (layoutData instanceof LinearLayoutData) {
+                alignment = ((LinearLayoutData)layoutData).alignment;
+            }
+
+            TerminalSize preferredSize = component.getPreferredSize();
+            TerminalSize fittingSize = new TerminalSize(
+                    preferredSize.getColumns(),
+                    Math.min(availableVerticalSpace, preferredSize.getRows()));
+            if(alignment == Alignment.FILL) {
+                fittingSize = fittingSize.withRows(availableVerticalSpace);
+            }
+
+            fittingMap.put(component, fittingSize);
+            totalRequiredHorizontalSpace += fittingSize.getColumns() + spacing;
+        }
+        if (!components.isEmpty()) {
+            // Remove the last spacing
+            totalRequiredHorizontalSpace -= spacing;
+        }
+
+        // If we can't fit everything, trim the down the size of the largest components until it fits
+        if (availableHorizontalSpace < totalRequiredHorizontalSpace) {
+            List<Component> copyOfComponents = new ArrayList<>(components);
+            Collections.reverse(copyOfComponents);
+            copyOfComponents.sort((o1, o2) -> {
+                // Reverse sort
+                return -Integer.compare(fittingMap.get(o1).getColumns(), fittingMap.get(o2).getColumns());
+            });
+
+            while (availableHorizontalSpace < totalRequiredHorizontalSpace) {
+                int largestSize = fittingMap.get(copyOfComponents.get(0)).getColumns();
+                for (Component largeComponent: copyOfComponents) {
+                    TerminalSize currentSize = fittingMap.get(largeComponent);
+                    if (largestSize > currentSize.getColumns()) {
+                        break;
+                    }
+                    fittingMap.put(largeComponent, currentSize.withRelativeColumns(-1));
+                    totalRequiredHorizontalSpace--;
+                    if (availableHorizontalSpace >= totalRequiredHorizontalSpace) {
+                        break;
+                    }
+                }
+            }
+        }
+
+        // If we have more space available than we need, grow components to fill
+        if (availableHorizontalSpace > totalRequiredHorizontalSpace) {
+            boolean resizedOneComponent = false;
+            while (availableHorizontalSpace > totalRequiredHorizontalSpace) {
+                for(Component component: components) {
+                    final LinearLayoutData layoutData = (LinearLayoutData)component.getLayoutData();
+                    final TerminalSize currentSize = fittingMap.get(component);
+                    if (layoutData != null && layoutData.growPolicy == GrowPolicy.CAN_GROW) {
+                        fittingMap.put(component, currentSize.withRelativeColumns(1));
+                        availableHorizontalSpace--;
+                        resizedOneComponent = true;
+                    }
+                    if (availableHorizontalSpace <= totalRequiredHorizontalSpace) {
+                        break;
+                    }
+                }
+                if (!resizedOneComponent) {
+                    break;
+                }
+            }
+        }
+
+        // Assign the sizes and positions
+        int leftPosition = 0;
+        for(Component component: components) {
+            Alignment alignment = Alignment.BEGINNING;
+            LayoutData layoutData = component.getLayoutData();
+            if (layoutData instanceof LinearLayoutData) {
+                alignment = ((LinearLayoutData)layoutData).alignment;
+            }
+
+            TerminalSize decidedSize = fittingMap.get(component);
+            TerminalPosition position = component.getPosition();
+            position = position.withColumn(leftPosition);
+            switch(alignment) {
+                case END:
+                    position = position.withRow(availableVerticalSpace - decidedSize.getRows());
+                    break;
+                case CENTER:
+                    position = position.withRow((availableVerticalSpace - decidedSize.getRows()) / 2);
+                    break;
+                case BEGINNING:
+                default:
+                    position = position.withRow(0);
+                    break;
+            }
+            component.setPosition(component.getPosition().with(position));
+            component.setSize(component.getSize().with(decidedSize));
+            leftPosition += decidedSize.getColumns() + spacing;
         }
     }
 }

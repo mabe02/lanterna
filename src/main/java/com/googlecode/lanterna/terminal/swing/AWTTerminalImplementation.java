@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,13 +14,14 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna.terminal.swing;
 
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.terminal.MouseCaptureMode;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -33,6 +34,7 @@ import java.util.Collections;
 class AWTTerminalImplementation extends GraphicalTerminalImplementation {
     private final Component component;
     private final AWTTerminalFontConfiguration fontConfiguration;
+    private MouseAdapter mouseListener;
 
     /**
      * Creates a new {@code AWTTerminalImplementation}
@@ -58,33 +60,49 @@ class AWTTerminalImplementation extends GraphicalTerminalImplementation {
         //Prevent us from shrinking beyond one character
         component.setMinimumSize(new Dimension(fontConfiguration.getFontWidth(), fontConfiguration.getFontHeight()));
 
-        //noinspection unchecked
         component.setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, Collections.<AWTKeyStroke>emptySet());
-        //noinspection unchecked
         component.setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, Collections.<AWTKeyStroke>emptySet());
 
         component.addKeyListener(new TerminalInputListener());
-        component.addMouseListener(new TerminalMouseListener() {
+
+        //Mouse support
+        updateMouseCaptureMode(this.mouseCaptureMode);
+
+        component.addHierarchyListener(e -> {
+            if(e.getChangeFlags() == HierarchyEvent.DISPLAYABILITY_CHANGED) {
+                if(e.getChanged().isDisplayable()) {
+                    onCreated();
+                }
+                else {
+                    onDestroyed();
+                }
+            }
+        });
+    }
+
+    @Override
+    protected void updateMouseCaptureMode(MouseCaptureMode mouseCaptureMode)
+    {
+        if(this.mouseListener!=null)
+        {
+            component.removeMouseListener(this.mouseListener);
+            component.removeMouseWheelListener(this.mouseListener);
+            component.removeMouseMotionListener(this.mouseListener);
+        }
+        this.mouseListener=new TerminalMouseListener(this.mouseCaptureMode) {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 AWTTerminalImplementation.this.component.requestFocusInWindow();
             }
-        });
+        };
+        component.addMouseListener(this.mouseListener);
+        component.addMouseWheelListener(this.mouseListener);
+        component.addMouseMotionListener(this.mouseListener);
+    }
 
-        component.addHierarchyListener(new HierarchyListener() {
-            @Override
-            public void hierarchyChanged(HierarchyEvent e) {
-                if(e.getChangeFlags() == HierarchyEvent.DISPLAYABILITY_CHANGED) {
-                    if(e.getChanged().isDisplayable()) {
-                        onCreated();
-                    }
-                    else {
-                        onDestroyed();
-                    }
-                }
-            }
-        });
+    public AWTTerminalFontConfiguration getFontConfiguration() {
+        return fontConfiguration;
     }
 
     @Override
@@ -123,12 +141,7 @@ class AWTTerminalImplementation extends GraphicalTerminalImplementation {
             component.repaint();
         }
         else {
-            EventQueue.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    component.repaint();
-                }
-            });
+            EventQueue.invokeLater(component::repaint);
         }
     }
 

@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,12 +14,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2024 Martin Berglund
  */
 package com.googlecode.lanterna.terminal.ansi;
 
 import java.io.*;
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.nio.charset.Charset;
@@ -93,14 +92,11 @@ public abstract class UnixLikeTTYTerminal extends UnixLikeTerminal {
             Class<?> signalClass = Class.forName("sun.misc.Signal");
             for(Method m : signalClass.getDeclaredMethods()) {
                 if("handle".equals(m.getName())) {
-                    Object windowResizeHandler = Proxy.newProxyInstance(getClass().getClassLoader(), new Class[]{Class.forName("sun.misc.SignalHandler")}, new InvocationHandler() {
-                        @Override
-                        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                            if("handle".equals(method.getName())) {
-                                onResize.run();
-                            }
-                            return null;
+                    Object windowResizeHandler = Proxy.newProxyInstance(getClass().getClassLoader(), new Class[]{Class.forName("sun.misc.SignalHandler")}, (proxy, method, args) -> {
+                        if("handle".equals(method.getName())) {
+                            onResize.run();
                         }
+                        return null;
                     });
                     m.invoke(null, signalClass.getConstructor(String.class).newInstance("WINCH"), windowResizeHandler);
                 }
@@ -114,58 +110,51 @@ public abstract class UnixLikeTTYTerminal extends UnixLikeTerminal {
 
     @Override
     protected void saveTerminalSettings() throws IOException {
-        sttyStatusToRestore = exec(getSTTYCommand(), "-g").trim();
+        sttyStatusToRestore = runSTTYCommand("-g").trim();
     }
 
     @Override
     protected void restoreTerminalSettings() throws IOException {
         if(sttyStatusToRestore != null) {
-            exec(getSTTYCommand(), sttyStatusToRestore);
+            runSTTYCommand(sttyStatusToRestore);
         }
     }
 
     @Override
     protected void keyEchoEnabled(boolean enabled) throws IOException {
-        exec(getSTTYCommand(), enabled ? "echo" : "-echo");
+        runSTTYCommand(enabled ? "echo" : "-echo");
     }
 
     @Override
     protected void canonicalMode(boolean enabled) throws IOException {
-        exec(getSTTYCommand(), enabled ? "icanon" : "-icanon");
+        runSTTYCommand(enabled ? "icanon" : "-icanon");
         if(!enabled) {
-            exec(getSTTYCommand(), "min", "1");
+            runSTTYCommand("min", "1");
         }
     }
 
     @Override
     protected void keyStrokeSignalsEnabled(boolean enabled) throws IOException {
         if(enabled) {
-            exec(getSTTYCommand(), "intr", "^C");
+            runSTTYCommand("intr", "^C");
         }
         else {
-            exec(getSTTYCommand(), "intr", "undef");
+            runSTTYCommand("intr", "undef");
         }
     }
 
     protected String runSTTYCommand(String... parameters) throws IOException {
-        List<String> commandLine = new ArrayList<String>(Collections.singletonList(
+        List<String> commandLine = new ArrayList<>(Arrays.asList(
                 getSTTYCommand()));
         commandLine.addAll(Arrays.asList(parameters));
-        return exec(commandLine.toArray(new String[commandLine.size()]));
+        return exec(commandLine.toArray(new String[0]));
     }
 
     protected String exec(String... cmd) throws IOException {
-        if (ttyDev != null) {
-            //Here's what we try to do, but that is Java 7+ only:
-            // processBuilder.redirectInput(ProcessBuilder.Redirect.from(ttyDev));
-            //instead, for Java 6, we join the cmd into a scriptlet with redirection
-            //and replace cmd by a call to sh with the scriptlet:
-            StringBuilder sb = new StringBuilder();
-            for (String arg : cmd) { sb.append(arg).append(' '); }
-            sb.append("< ").append(ttyDev);
-            cmd = new String[] { "sh", "-c", sb.toString() };
-        }
         ProcessBuilder pb = new ProcessBuilder(cmd);
+        if (ttyDev != null) {
+            pb.redirectInput(ProcessBuilder.Redirect.from(ttyDev));
+        }
         Process process = pb.start();
         ByteArrayOutputStream stdoutBuffer = new ByteArrayOutputStream();
         InputStream stdout = process.getInputStream();
@@ -185,7 +174,18 @@ public abstract class UnixLikeTTYTerminal extends UnixLikeTerminal {
         return builder.toString();
     }
 
-    private String getSTTYCommand() {
-        return "/bin/stty";
+    protected String[] getSTTYCommand() {
+        String sttyOverride = System.getProperty("com.googlecode.lanterna.terminal.UnixTerminal.sttyCommand");
+        if (sttyOverride != null) {
+            return new String[] { sttyOverride };
+        }
+        else {
+            // Issue #519: this will hopefully be more portable across linux distributions
+            // Previously we hard-coded "/bin/stty" here
+            return new String[] {
+                    "/usr/bin/env",
+                    "stty"
+            };
+        }
     }
 }

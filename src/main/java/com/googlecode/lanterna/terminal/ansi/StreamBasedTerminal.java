@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna.terminal.ansi;
 
@@ -27,7 +27,6 @@ import java.nio.charset.Charset;
 import com.googlecode.lanterna.Symbols;
 import com.googlecode.lanterna.TerminalTextUtils;
 import com.googlecode.lanterna.input.InputDecoder;
-import com.googlecode.lanterna.input.KeyDecodingProfile;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.ScreenInfoAction;
 import com.googlecode.lanterna.input.ScreenInfoCharacterPattern;
@@ -35,6 +34,7 @@ import com.googlecode.lanterna.terminal.AbstractTerminal;
 import com.googlecode.lanterna.TerminalPosition;
 
 import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.TimeUnit;
@@ -50,8 +50,12 @@ import java.util.concurrent.locks.ReentrantLock;
  * @author Martin
  */
 public abstract class StreamBasedTerminal extends AbstractTerminal {
+    /**
+     * Timeout for detecting the terminal size, in milliseconds. Default value is 5000.
+     */
+    private static final int TERMINAL_SIZE_TIMEOUT = Integer.getInteger("com.googlecode.lanterna.streamTerminalSizeTimeout", 5000);
 
-    private static final Charset UTF8_REFERENCE = Charset.forName("UTF-8");
+    private static final Charset UTF8_REFERENCE = StandardCharsets.UTF_8;
 
     private final InputStream terminalInput;
     private final OutputStream terminalOutput;
@@ -74,10 +78,9 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
             this.terminalCharset = terminalCharset;
         }
         this.inputDecoder = new InputDecoder(new InputStreamReader(this.terminalInput, this.terminalCharset));
-        this.keyQueue = new LinkedList<KeyStroke>();
+        this.keyQueue = new LinkedList<>();
         this.readLock = new ReentrantLock();
         this.lastReportedCursorPosition = null;
-        //noinspection ConstantConditions
     }
 
     /**
@@ -90,6 +93,23 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
     public void putCharacter(char c) throws IOException {
         if(TerminalTextUtils.isPrintableCharacter(c)) {
             writeToTerminal(translateCharacter(c));
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * The {@code StreamBasedTerminal} class will attempt to translate some unicode characters to VT100 if the encoding
+     * attached to this {@code Terminal} isn't UTF-8.
+     */
+    @Override
+    public void putString(String string) throws IOException {
+        if (UTF8_REFERENCE == terminalCharset) {
+            writeToTerminal(string.getBytes(terminalCharset));
+        } else {
+            for (int i = 0; i < string.length(); i++) {
+                putCharacter(string.charAt(i));
+            }
         }
     }
 
@@ -168,7 +188,7 @@ public abstract class StreamBasedTerminal extends AbstractTerminal {
         long startTime = System.currentTimeMillis();
         TerminalPosition cursorPosition = lastReportedCursorPosition;
         while(cursorPosition == null) {
-            if(System.currentTimeMillis() - startTime > 5000) {
+            if(System.currentTimeMillis() - startTime > TERMINAL_SIZE_TIMEOUT) {
                 //throw new IllegalStateException("Terminal didn't send any position report for 5 seconds, please file a bug with a reproduce!");
                 return null;
             }

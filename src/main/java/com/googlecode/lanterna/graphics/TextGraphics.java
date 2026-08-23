@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,11 +14,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna.graphics;
 
 import com.googlecode.lanterna.*;
+import com.googlecode.lanterna.screen.Screen;
+import com.googlecode.lanterna.screen.ScreenTranslator;
 import com.googlecode.lanterna.screen.TabBehaviour;
 
 import java.util.Collection;
@@ -43,7 +45,7 @@ import java.util.Collection;
  * with them. The reason is that not all implementations will handle the underlying terminal changing size.
  * @author Martin
  */
-public interface TextGraphics extends StyleSet<TextGraphics> {
+public interface TextGraphics extends StyleSet<TextGraphics>, ScreenTranslator {
     /**
      * Returns the size of the area that this text graphic can write to. Any attempts of placing characters outside of
      * this area will be silently ignored.

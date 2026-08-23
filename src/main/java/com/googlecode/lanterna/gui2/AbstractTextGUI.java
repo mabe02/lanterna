@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  * 
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
 
@@ -54,7 +54,7 @@ public abstract class AbstractTextGUI implements TextGUI {
             throw new IllegalArgumentException("Creating a TextGUI requires an underlying Screen");
         }
         this.screen = screen;
-        this.listeners = new CopyOnWriteArrayList<Listener>();
+        this.listeners = new CopyOnWriteArrayList<>();
         this.blockingIO = false;
         this.dirty = false;
         this.guiTheme = LanternaThemes.getDefaultTheme();
@@ -121,6 +121,11 @@ public abstract class AbstractTextGUI implements TextGUI {
         screen.setCursorPosition(getCursorPosition());
         screen.refresh();
         dirty = false;
+    }
+
+    @Override
+    public Screen getScreen() {
+        return screen;
     }
 
     @Override

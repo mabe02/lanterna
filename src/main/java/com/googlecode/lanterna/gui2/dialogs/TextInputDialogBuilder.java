@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna.gui2.dialogs;
 
@@ -125,18 +125,15 @@ public class TextInputDialogBuilder extends AbstractDialogBuilder<TextInputDialo
      * @return Itself
      */
     public TextInputDialogBuilder setValidationPattern(final Pattern pattern, final String errorMessage) {
-        return setValidator(new TextInputDialogResultValidator() {
-            @Override
-            public String validate(String content) {
-                Matcher matcher = pattern.matcher(content);
-                if(!matcher.matches()) {
-                    if(errorMessage == null) {
-                        return "Invalid input";
-                    }
-                    return errorMessage;
+        return setValidator(content -> {
+            Matcher matcher = pattern.matcher(content);
+            if(!matcher.matches()) {
+                if(errorMessage == null) {
+                    return "Invalid input";
                 }
-                return null;
+                return errorMessage;
             }
+            return null;
         });
     }
 

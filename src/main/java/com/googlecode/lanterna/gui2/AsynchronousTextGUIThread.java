@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,9 +14,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Extended interface of TextGUIThread for implementations that uses a separate thread for all GUI event processing and
@@ -40,6 +42,12 @@ public interface AsynchronousTextGUIThread extends TextGUIThread {
      * @throws InterruptedException In case this thread was interrupted while waiting for the GUI thread to exit
      */
     void waitForStop() throws InterruptedException;
+
+    /**
+     * Blocks until the GUI loop has stopped
+     * @throws InterruptedException In case this thread was interrupted while waiting for the GUI thread to exit
+     */
+    void waitForStop(long time, TimeUnit unit) throws InterruptedException;
 
     /**
      * Returns the current status of this GUI thread

@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2024 Martin Berglund
  */
 package com.googlecode.lanterna.issue;
 
@@ -56,29 +56,19 @@ public class Issue155 {
                         addItem(String.valueOf(i));
                     }
                 }},
-                new Button("Quit", new Runnable() {
-                    @Override public void run() { window.close(); }
-                })
+                new Button("Quit", window::close)
         );
     }
 
     private static Runnable openDialog(final WindowBasedTextGUI gui, final BasicWindow window, final int counter) {
-        return new Runnable() {
-            @Override public void run() {
-                new ActionListDialogBuilder().
-                        setCanCancel(true).
-                        addAction("Reinstall UI (this crashes everything)", setupUI(gui, window, counter)).
-                        build().
-                        showDialog(gui);
-            }
-        };
+        return () -> new ActionListDialogBuilder().
+                setCanCancel(true).
+                addAction("Reinstall UI (this crashes everything)", setupUI(gui, window, counter)).
+                build().
+                showDialog(gui);
     }
 
     private static Runnable setupUI(final WindowBasedTextGUI gui, final BasicWindow window, final int counter) {
-        return new Runnable() {
-            @Override public void run() {
-                window.setComponent(createUi(gui, window, counter));
-            }
-        };
+        return () -> window.setComponent(createUi(gui, window, counter));
     }
 }

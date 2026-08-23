@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna.graphics;
 
@@ -135,12 +135,7 @@ class DefaultShapeRenderer implements ShapeRenderer {
         //I've used the algorithm described here:
         //http://www-users.mat.uni.torun.pl/~wrona/3d_tutor/tri_fillers.html
         TerminalPosition[] points = new TerminalPosition[]{p1, p2, p3};
-        Arrays.sort(points, new Comparator<TerminalPosition>() {
-            @Override
-            public int compare(TerminalPosition o1, TerminalPosition o2) {
-                return (o1.getRow() < o2.getRow()) ? -1 : ((o1.getRow() == o2.getRow()) ? 0 : 1);
-            }
-        });
+        Arrays.sort(points, Comparator.comparingInt(TerminalPosition::getRow));
 
         float dx1, dx2, dx3;
         if (points[1].getRow() - points[0].getRow() > 0) {
@@ -187,9 +182,20 @@ class DefaultShapeRenderer implements ShapeRenderer {
 
     @Override
     public void fillRectangle(TerminalPosition topLeft, TerminalSize size, TextCharacter character) {
+        final boolean characterDoubleWidth = character.isDoubleWidth();
         for(int y = 0; y < size.getRows(); y++) {
             for(int x = 0; x < size.getColumns(); x++) {
-                callback.onPoint(topLeft.getColumn() + x, topLeft.getRow() + y, character);
+                // Don't put a double-width character at the right edge of the area
+                if (characterDoubleWidth && x + 1 == size.getColumns()) {
+                    callback.onPoint(topLeft.getColumn() + x, topLeft.getRow() + y, character.withCharacter(' '));
+                }
+                else {
+                    // Default case
+                    callback.onPoint(topLeft.getColumn() + x, topLeft.getRow() + y, character);
+                }
+                if (characterDoubleWidth) {
+                    x++;
+                }
             }
         }
     }

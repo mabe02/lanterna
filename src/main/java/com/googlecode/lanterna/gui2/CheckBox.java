@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  * 
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,19 +14,22 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.TerminalTextUtils;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TerminalTextUtils;
 import com.googlecode.lanterna.graphics.ThemeDefinition;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
+import com.googlecode.lanterna.input.MouseAction;
+import com.googlecode.lanterna.input.MouseActionType;
 
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * The checkbox component looks like a regular checkbox that you can find in modern graphics user interfaces, a label
@@ -70,7 +73,7 @@ public class CheckBox extends AbstractInteractableComponent<CheckBox> {
         else if(label.contains("\n") || label.contains("\r")) {
             throw new IllegalArgumentException("Multiline checkbox labels are not supported");
         }
-        this.listeners = new CopyOnWriteArrayList<Listener>();
+        this.listeners = new CopyOnWriteArrayList<>();
         this.label = label;
         this.checked = false;
     }
@@ -82,12 +85,9 @@ public class CheckBox extends AbstractInteractableComponent<CheckBox> {
      */
     public synchronized CheckBox setChecked(final boolean checked) {
         this.checked = checked;
-        runOnGUIThreadIfExistsOtherwiseRunDirect(new Runnable() {
-            @Override
-            public void run() {
-                for(Listener listener : listeners) {
-                    listener.onStatusChanged(checked);
-                }
+        runOnGUIThreadIfExistsOtherwiseRunDirect(() -> {
+            for(Listener listener : listeners) {
+                listener.onStatusChanged(checked);
             }
         });
         invalidate();
@@ -104,8 +104,11 @@ public class CheckBox extends AbstractInteractableComponent<CheckBox> {
 
     @Override
     public Result handleKeyStroke(KeyStroke keyStroke) {
-        if((keyStroke.getKeyType() == KeyType.Character && keyStroke.getCharacter() == ' ') ||
-                keyStroke.getKeyType() == KeyType.Enter) {
+        if (isKeyboardActivationStroke(keyStroke)) {
+            setChecked(!isChecked());
+            return Result.HANDLED;
+        } else if (isMouseActivationStroke(keyStroke)) {
+            getBasePane().setFocusedInteractable(this);
             setChecked(!isChecked());
             return Result.HANDLED;
         }

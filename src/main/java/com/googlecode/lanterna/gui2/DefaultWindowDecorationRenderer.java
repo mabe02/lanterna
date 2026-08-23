@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  * 
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
 
@@ -62,7 +62,13 @@ public class DefaultWindowDecorationRenderer implements WindowDecorationRenderer
         String actualTitle = TerminalTextUtils.fitString(title, titleMaxColumns);
         int titleActualColumns = TerminalTextUtils.getColumnWidth(actualTitle);
 
-        graphics.applyThemeStyle(themeDefinition.getPreLight());
+        // Don't draw highlights on menu popup windows
+        if (window.getHints().contains(Window.Hint.MENU_POPUP)) {
+            graphics.applyThemeStyle(themeDefinition.getNormal());
+        }
+        else {
+            graphics.applyThemeStyle(themeDefinition.getPreLight());
+        }
         graphics.drawLine(new TerminalPosition(0, drawableArea.getRows() - 2), new TerminalPosition(0, 1), verticalLine);
         graphics.drawLine(new TerminalPosition(1, 0), new TerminalPosition(drawableArea.getColumns() - 2, 0), horizontalLine);
         graphics.setCharacter(0, 0, topLeftCorner);

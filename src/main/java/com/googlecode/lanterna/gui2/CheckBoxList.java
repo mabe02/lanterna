@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  * 
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2024 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
 
@@ -23,6 +23,8 @@ import com.googlecode.lanterna.graphics.ThemeDefinition;
 import com.googlecode.lanterna.graphics.ThemeStyle;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
+import com.googlecode.lanterna.input.MouseAction;
+import com.googlecode.lanterna.input.MouseActionType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +49,11 @@ public class CheckBoxList<V> extends AbstractListBox<V, CheckBoxList<V>> {
 
     private final List<Listener> listeners;
     private final List<Boolean> itemStatus;
+    
+    // this is used during mouse dragged to assign all items to the same state
+    private boolean stateForMouseDragged;
+    private int minIndexForMouseDragged;
+    private int maxIndexForMouseDragged;
 
     /**
      * Creates a new {@code CheckBoxList} that is initially empty and has no hardcoded preferred size, so it will
@@ -63,13 +70,13 @@ public class CheckBoxList<V> extends AbstractListBox<V, CheckBoxList<V>> {
      */
     public CheckBoxList(TerminalSize preferredSize) {
         super(preferredSize);
-        this.listeners = new CopyOnWriteArrayList<Listener>();
-        this.itemStatus = new ArrayList<Boolean>();
+        this.listeners = new CopyOnWriteArrayList<>();
+        this.itemStatus = new ArrayList<>();
     }
 
     @Override
     protected ListItemRenderer<V,CheckBoxList<V>> createDefaultListItemRenderer() {
-        return new CheckBoxListItemRenderer<V>();
+        return new CheckBoxListItemRenderer<>();
     }
 
     @Override
@@ -128,7 +135,18 @@ public class CheckBoxList<V> extends AbstractListBox<V, CheckBoxList<V>> {
 
         return itemStatus.get(index);
     }
-
+    
+    /**
+     * Programmatically sets the checked state of an item in the list box.
+     * If the state was already true, it is set to false, otherwise it is set to true.
+     * @param index Index of the item to toggle the status of
+     * @return Itself
+     */
+    public synchronized CheckBoxList<V> toggleChecked(final int index) {
+        setChecked(index, !isChecked(index));
+        return self();
+    }
+    
     /**
      * Programmatically sets the checked state of an item in the list box
      * @param object Object to set the checked state of
@@ -144,13 +162,13 @@ public class CheckBoxList<V> extends AbstractListBox<V, CheckBoxList<V>> {
     }
 
     private void setChecked(final int index, final boolean checked) {
+        if (!(0 <= index && index < itemStatus.size())) {
+            return;
+        }
         itemStatus.set(index, checked);
-        runOnGUIThreadIfExistsOtherwiseRunDirect(new Runnable() {
-            @Override
-            public void run() {
-                for(Listener listener: listeners) {
-                    listener.onStatusChanged(index, checked);
-                }
+        runOnGUIThreadIfExistsOtherwiseRunDirect(() -> {
+            for(Listener listener: listeners) {
+                listener.onStatusChanged(index, checked);
             }
         });
     }
@@ -160,7 +178,7 @@ public class CheckBoxList<V> extends AbstractListBox<V, CheckBoxList<V>> {
      * @return List of all items in the list box that has checked state on
      */
     public synchronized List<V> getCheckedItems() {
-        List<V> result = new ArrayList<V>();
+        List<V> result = new ArrayList<>();
         for(int i = 0; i < itemStatus.size(); i++) {
             if(itemStatus.get(i)) {
                 result.add(getItemAt(i));
@@ -194,14 +212,40 @@ public class CheckBoxList<V> extends AbstractListBox<V, CheckBoxList<V>> {
 
     @Override
     public synchronized Result handleKeyStroke(KeyStroke keyStroke) {
-        if(keyStroke.getKeyType() == KeyType.Enter ||
-                (keyStroke.getKeyType() == KeyType.Character && keyStroke.getCharacter() == ' ')) {
-            if(itemStatus.get(getSelectedIndex()))
-                setChecked(getSelectedIndex(), Boolean.FALSE);
-            else
-                setChecked(getSelectedIndex(), Boolean.TRUE);
+        if (isKeyboardActivationStroke(keyStroke)) {
+            toggleChecked(getSelectedIndex());
             return Result.HANDLED;
+        } else if (keyStroke.getKeyType() == KeyType.MOUSE_EVENT) {
+            MouseAction mouseAction = (MouseAction) keyStroke;
+            MouseActionType actionType = mouseAction.getActionType();
+            
+            if (isMouseMove(keyStroke)
+                    || actionType == MouseActionType.CLICK_RELEASE
+                    || actionType == MouseActionType.SCROLL_UP
+                    || actionType == MouseActionType.SCROLL_DOWN) {
+                return super.handleKeyStroke(keyStroke);
+            }
+            
+            Result result = super.handleKeyStroke(keyStroke);
+            int newIndex = getIndexByMouseAction(mouseAction);
+            if (actionType == MouseActionType.CLICK_DOWN) {
+                stateForMouseDragged = !isChecked(newIndex);
+                setChecked(newIndex, stateForMouseDragged);
+                minIndexForMouseDragged = newIndex;
+                maxIndexForMouseDragged = newIndex;
+            }
+            
+            minIndexForMouseDragged = Math.min(minIndexForMouseDragged, newIndex);
+            maxIndexForMouseDragged = Math.max(maxIndexForMouseDragged, newIndex);
+            
+            if (actionType == MouseActionType.DRAG) {
+                for (int i = minIndexForMouseDragged; i <= maxIndexForMouseDragged; i++) {
+	                setChecked(i, stateForMouseDragged);
+                }
+            }
+            return result;
         }
+        
         return super.handleKeyStroke(keyStroke);
     }
 

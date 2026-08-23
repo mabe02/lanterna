@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  * 
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,12 +14,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TerminalRectangle;
 import com.googlecode.lanterna.bundle.LanternaThemes;
 import com.googlecode.lanterna.graphics.Theme;
 import com.googlecode.lanterna.graphics.ThemeDefinition;
@@ -67,18 +68,22 @@ public abstract class AbstractComponent<T extends Component> implements Componen
     private TerminalSize size;
     private TerminalSize explicitPreferredSize;   //This is keeping the value set by the user (if setPreferredSize() is used)
     private TerminalPosition position;
+    private TerminalRectangle bounds;
     private Theme themeOverride;
     private LayoutData layoutData;
+    private boolean visible;
     private boolean invalid;
 
     /**
      * Default constructor
      */
     public AbstractComponent() {
-        size = TerminalSize.ZERO;
-        position = TerminalPosition.TOP_LEFT_CORNER;
+        size = TerminalSize.of(0, 0);
+        position = TerminalPosition.of(0, 0);
+        bounds = TerminalRectangle.of(0, 0);
         explicitPreferredSize = null;
         layoutData = null;
+        visible = true;
         invalid = true;
         parent = null;
         overrideRenderer = null;
@@ -185,6 +190,30 @@ public abstract class AbstractComponent<T extends Component> implements Componen
         return self();
     }
 
+    @Override
+    public boolean isVisible() {
+        return visible;
+    }
+
+    @Override
+    public T setVisible(boolean visible) {
+        if (this.visible != visible) {
+            this.visible = visible;
+            if (visible) {
+                // This component is now visible, so mark it as invalid so it will be redrawn
+                invalidate();
+            }
+            else {
+                Container parent = getParent();
+                if (parent != null) {
+                    // This component is now invisible, so mark the parent container as needing to be redrawn
+                    parent.invalidate();
+                }
+            }
+        }
+        return self();
+    }
+
     /**
      * Invokes the component renderer's size calculation logic and returns the result. This value represents the
      * preferred size and isn't necessarily what it will eventually be assigned later on.
@@ -195,6 +224,12 @@ public abstract class AbstractComponent<T extends Component> implements Componen
     }
 
     @Override
+    public TerminalRectangle getBounds() {
+        bounds = bounds.as(getPosition(), getSize());
+        return bounds;
+    }
+    
+    @Override
     public synchronized T setPosition(TerminalPosition position) {
         this.position = position;
         return self();
@@ -203,6 +238,11 @@ public abstract class AbstractComponent<T extends Component> implements Componen
     @Override
     public TerminalPosition getPosition() {
         return position;
+    }
+    
+    @Override
+    public TerminalPosition getGlobalPosition() {
+        return toGlobal(TerminalPosition.TOP_LEFT_CORNER);
     }
     
     @Override
@@ -378,13 +418,21 @@ public abstract class AbstractComponent<T extends Component> implements Componen
 
     @Override
     public synchronized void onAdded(Container container) {
+        if (parent != container && parent != null) {
+            // first inform current parent:
+            parent.removeComponent(this);
+        }
         parent = container;
     }
 
     @Override
     public synchronized void onRemoved(Container container) {
-        parent = null;
-        themeRenderer = null;
+        if (parent == container) {
+            parent = null;
+            themeRenderer = null;
+        } else {
+            throw new IllegalStateException(this + " is not " + container +"'s child.");
+        }
     }
 
     /**

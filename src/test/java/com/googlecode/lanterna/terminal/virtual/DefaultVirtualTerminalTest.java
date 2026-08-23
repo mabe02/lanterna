@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2024 Martin Berglund
  */
 package com.googlecode.lanterna.terminal.virtual;
 
@@ -91,14 +91,14 @@ public class DefaultVirtualTerminalTest {
         virtualTerminal.putCharacter(new TextCharacter('L'));
         virtualTerminal.putCharacter(new TextCharacter('O'));
         assertEquals(TerminalPosition.TOP_LEFT_CORNER.withColumn(5), virtualTerminal.getCursorPosition());
-        assertEquals('H', virtualTerminal.getCharacter(new TerminalPosition(0, 0)).getCharacter());
-        assertEquals('E', virtualTerminal.getCharacter(new TerminalPosition(1, 0)).getCharacter());
-        assertEquals('L', virtualTerminal.getCharacter(new TerminalPosition(2, 0)).getCharacter());
-        assertEquals('L', virtualTerminal.getCharacter(new TerminalPosition(3, 0)).getCharacter());
-        assertEquals('O', virtualTerminal.getCharacter(new TerminalPosition(4, 0)).getCharacter());
+        assertEquals('H', virtualTerminal.getCharacter(new TerminalPosition(0, 0)).getCharacterString().charAt(0));
+        assertEquals('E', virtualTerminal.getCharacter(new TerminalPosition(1, 0)).getCharacterString().charAt(0));
+        assertEquals('L', virtualTerminal.getCharacter(new TerminalPosition(2, 0)).getCharacterString().charAt(0));
+        assertEquals('L', virtualTerminal.getCharacter(new TerminalPosition(3, 0)).getCharacterString().charAt(0));
+        assertEquals('O', virtualTerminal.getCharacter(new TerminalPosition(4, 0)).getCharacterString().charAt(0));
 
         assertFalse(virtualTerminal.isWholeBufferDirtyThenReset());
-        assertEquals(new TreeSet<TerminalPosition>(Arrays.asList(
+        assertEquals(new TreeSet<>(Arrays.asList(
                 new TerminalPosition(0, 0),
                 new TerminalPosition(1, 0),
                 new TerminalPosition(2, 0),
@@ -200,22 +200,22 @@ public class DefaultVirtualTerminalTest {
         virtualTerminal.putCharacter(new TextCharacter('画'));
         virtualTerminal.putCharacter(new TextCharacter('面'));
 
-        assertEquals('画', virtualTerminal.getCharacter(new TerminalPosition(0, 0)).getCharacter());
-        assertEquals('画', virtualTerminal.getCharacter(new TerminalPosition(1, 0)).getCharacter());
-        assertEquals('面', virtualTerminal.getCharacter(new TerminalPosition(2, 0)).getCharacter());
-        assertEquals('面', virtualTerminal.getCharacter(new TerminalPosition(3, 0)).getCharacter());
+        assertEquals('画', virtualTerminal.getCharacter(new TerminalPosition(0, 0)).getCharacterString().charAt(0));
+        assertEquals('画', virtualTerminal.getCharacter(new TerminalPosition(1, 0)).getCharacterString().charAt(0));
+        assertEquals('面', virtualTerminal.getCharacter(new TerminalPosition(2, 0)).getCharacterString().charAt(0));
+        assertEquals('面', virtualTerminal.getCharacter(new TerminalPosition(3, 0)).getCharacterString().charAt(0));
 
         virtualTerminal.setCursorPosition(new TerminalPosition(0, 0));
         virtualTerminal.putCharacter(new TextCharacter('Y'));
 
-        assertEquals('Y', virtualTerminal.getCharacter(new TerminalPosition(0, 0)).getCharacter());
+        assertEquals('Y', virtualTerminal.getCharacter(new TerminalPosition(0, 0)).getCharacterString().charAt(0));
         assertEquals(TextCharacter.DEFAULT_CHARACTER, virtualTerminal.getCharacter(new TerminalPosition(1, 0)));
 
         virtualTerminal.setCursorPosition(new TerminalPosition(3, 0));
         virtualTerminal.putCharacter(new TextCharacter('V'));
 
         assertEquals(TextCharacter.DEFAULT_CHARACTER, virtualTerminal.getCharacter(new TerminalPosition(2, 0)));
-        assertEquals('V', virtualTerminal.getCharacter(new TerminalPosition(3, 0)).getCharacter());
+        assertEquals('V', virtualTerminal.getCharacter(new TerminalPosition(3, 0)).getCharacterString().charAt(0));
     }
 
     @Test
@@ -319,7 +319,7 @@ public class DefaultVirtualTerminalTest {
         assertLineEquals("  C", 2);
 
         // Dirty positions should now be these
-        assertEquals(new TreeSet<TerminalPosition>(Arrays.asList(
+        assertEquals(new TreeSet<>(Arrays.asList(
                 new TerminalPosition(0, 0),
                 new TerminalPosition(1, 1),
                 new TerminalPosition(2, 2))), virtualTerminal.getDirtyCells());
@@ -329,14 +329,14 @@ public class DefaultVirtualTerminalTest {
         virtualTerminal.putCharacter('\n');
 
         // Dirty positions should now be adjusted
-        assertEquals(new TreeSet<TerminalPosition>(Arrays.asList(
+        assertEquals(new TreeSet<>(Arrays.asList(
                 new TerminalPosition(1, 0),
                 new TerminalPosition(2, 1))), virtualTerminal.getDirtyCells());
         assertEquals(new TerminalPosition(0, 2), virtualTerminal.getCursorPosition());
     }
 
     @Test
-    public void testPrivateMode() throws Exception {
+    public void testPrivateMode() {
         final int ROWS = 5;
         virtualTerminal.setTerminalSize(new TerminalSize(20, ROWS));
         for(int i = 1; i <= ROWS + 2; i++) {
@@ -376,15 +376,12 @@ public class DefaultVirtualTerminalTest {
         for(int i = 1; i <= ROWS; i++) {
             putString("Line " + i + "\n");
         }
-        virtualTerminal.forEachLine(0, ROWS, new VirtualTerminal.BufferWalker() {
-            @Override
-            public void onLine(int rowNumber, VirtualTerminal.BufferLine bufferLine) {
-                if(rowNumber == ROWS) {
-                    assertLineEquals("", bufferLine);
-                }
-                else {
-                    assertLineEquals("Line " + (rowNumber + 1), bufferLine);
-                }
+        virtualTerminal.forEachLine(0, ROWS, (rowNumber, bufferLine) -> {
+            if(rowNumber == ROWS) {
+                assertLineEquals("", bufferLine);
+            }
+            else {
+                assertLineEquals("Line " + (rowNumber + 1), bufferLine);
             }
         });
     }

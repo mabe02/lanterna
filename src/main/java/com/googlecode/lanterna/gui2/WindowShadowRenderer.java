@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  * 
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
 
@@ -38,42 +38,60 @@ public class WindowShadowRenderer implements WindowPostRenderer {
         TerminalSize decoratedWindowSize = window.getDecoratedSize();
         ThemeDefinition themeDefinition = window.getTheme().getDefinition(WindowShadowRenderer.class);
         textGraphics.applyThemeStyle(themeDefinition.getNormal());
-        char filler = themeDefinition.getCharacter("FILLER", Symbols.BLOCK_SOLID);
+        char filler = themeDefinition.getCharacter("FILLER", ' ');
         boolean useDoubleWidth = themeDefinition.getBooleanProperty("DOUBLE_WIDTH", true);
         boolean useTransparency = themeDefinition.getBooleanProperty("TRANSPARENT", false);
 
         TerminalPosition lowerLeft = windowPosition.withRelativeColumn(useDoubleWidth ? 2 : 1).withRelativeRow(decoratedWindowSize.getRows());
         TerminalPosition lowerRight = lowerLeft.withRelativeColumn(decoratedWindowSize.getColumns() - (useDoubleWidth ? 3 : 2));
-        for(int column = lowerLeft.getColumn(); column <= lowerRight.getColumn(); column++) {
+        for(int column = lowerLeft.getColumn(); column <= lowerRight.getColumn() + 1; column++) {
             char characterToDraw = filler;
             if(useTransparency) {
                 TextCharacter tc = textGraphics.getCharacter(column, lowerLeft.getRow());
-                if (tc != null) { characterToDraw = tc.getCharacter(); }
+                if (tc != null) {
+                    characterToDraw = tc.getCharacterString().charAt(0);
+                }
             }
             textGraphics.setCharacter(column, lowerLeft.getRow(), characterToDraw);
+            if (TerminalTextUtils.isCharDoubleWidth(characterToDraw)) {
+                column++;
+            }
         }
 
         lowerRight = lowerRight.withRelativeColumn(1);
         TerminalPosition upperRight = lowerRight.withRelativeRow(-decoratedWindowSize.getRows() + 1);
-        for(int row = upperRight.getRow(); row <= lowerRight.getRow(); row++) {
+        boolean hasDoubleWidthShadow = false;
+        for(int row = upperRight.getRow(); row < lowerRight.getRow(); row++) {
             char characterToDraw = filler;
             if(useTransparency) {
                 TextCharacter tc = textGraphics.getCharacter(upperRight.getColumn(), row);
-                if (tc != null) { characterToDraw = tc.getCharacter(); }
+                if (tc != null) {
+                    characterToDraw = tc.getCharacterString().charAt(0);
+                }
             }
             textGraphics.setCharacter(upperRight.getColumn(), row, characterToDraw);
+            if (TerminalTextUtils.isCharDoubleWidth(characterToDraw)) {
+                hasDoubleWidthShadow = true;
+            }
         }
 
-        if(useDoubleWidth) {
+        textGraphics.applyThemeStyle(themeDefinition.getNormal());
+        if(useDoubleWidth || hasDoubleWidthShadow) {
             //Fill the remaining hole
             upperRight = upperRight.withRelativeColumn(1);
             for(int row = upperRight.getRow(); row <= lowerRight.getRow(); row++) {
                 char characterToDraw = filler;
                 if(useTransparency) {
                     TextCharacter tc = textGraphics.getCharacter(upperRight.getColumn(), row);
-                    if (tc != null) { characterToDraw = tc.getCharacter(); }
+                    if (tc != null && !tc.isDoubleWidth()) {
+                        characterToDraw = tc.getCharacterString().charAt(0);
+                    }
                 }
-                textGraphics.setCharacter(upperRight.getColumn(), row, characterToDraw);
+                TextCharacter neighbour = textGraphics.getCharacter(upperRight.getColumn() - 1, row);
+                // Only need to draw this is the character to the left isn't double-width
+                if (neighbour != null && !neighbour.isDoubleWidth()) {
+                    textGraphics.setCharacter(upperRight.getColumn(), row, characterToDraw);
+                }
             }
         }
     }

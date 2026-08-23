@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
 
@@ -152,7 +152,7 @@ public class BorderLayout implements LayoutManager {
         
         //Set the remaining components to 0x0
         for(Component component: components) {
-            if(!layout.values().contains(component)) {
+            if(component.isVisible() && !layout.containsValue(component)) {
                 component.setPosition(TerminalPosition.TOP_LEFT_CORNER);
                 component.setSize(TerminalSize.ZERO);
             }
@@ -160,9 +160,12 @@ public class BorderLayout implements LayoutManager {
     }
     
     private EnumMap<Location, Component> makeLookupMap(List<Component> components) {
-        EnumMap<Location, Component> map = new EnumMap<BorderLayout.Location, Component>(Location.class);
-        List<Component> unassignedComponents = new ArrayList<Component>();
+        EnumMap<Location, Component> map = new EnumMap<>(Location.class);
+        List<Component> unassignedComponents = new ArrayList<>();
         for(Component component: components) {
+            if (!component.isVisible()) {
+                continue;
+            }
             if(component.getLayoutData() instanceof Location) {
                 map.put((Location)component.getLayoutData(), component);
             }

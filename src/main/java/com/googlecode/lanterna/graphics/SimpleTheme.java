@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna.graphics;
 
@@ -107,8 +107,8 @@ public class SimpleTheme implements Theme {
      * @param styles Extra SGR styles to apply unless overridden
      */
     public SimpleTheme(TextColor foreground, TextColor background, SGR... styles) {
-        this.defaultDefinition = new Definition(new Style(foreground, background, styles));
-        this.overrideDefinitions = new HashMap<Class<?>, Definition>();
+        this.defaultDefinition = new Definition(new DefaultMutableThemeStyle(foreground, background, styles));
+        this.overrideDefinitions = new HashMap<>();
         this.windowPostRenderer = null;
         this.windowDecorationRenderer = null;
     }
@@ -136,7 +136,7 @@ public class SimpleTheme implements Theme {
      * @return The newly created {@link Definition} that corresponds to this override.
      */
     public synchronized Definition addOverride(Class<?> clazz, TextColor foreground, TextColor background, SGR... styles) {
-        Definition definition = new Definition(new Style(foreground, background, styles));
+        Definition definition = new Definition(new DefaultMutableThemeStyle(foreground, background, styles));
         overrideDefinitions.put(clazz, definition);
         return definition;
     }
@@ -199,10 +199,10 @@ public class SimpleTheme implements Theme {
             this.selected = null;
             this.active = null;
             this.insensitive = null;
-            this.customStyles = new HashMap<String, ThemeStyle>();
+            this.customStyles = new HashMap<>();
             this.properties = new Properties();
-            this.characterMap = new HashMap<String, Character>();
-            this.componentRendererMap = new HashMap<Class<?>, RendererProvider<?>>();
+            this.characterMap = new HashMap<>();
+            this.componentRendererMap = new HashMap<>();
             this.cursorVisible = true;
         }
 
@@ -227,7 +227,7 @@ public class SimpleTheme implements Theme {
          * @return Itself
          */
         public synchronized Definition setPreLight(TextColor foreground, TextColor background, SGR... styles) {
-            this.preLight = new Style(foreground, background, styles);
+            this.preLight = new DefaultMutableThemeStyle(foreground, background, styles);
             return this;
         }
 
@@ -247,7 +247,7 @@ public class SimpleTheme implements Theme {
          * @return Itself
          */
         public synchronized Definition setSelected(TextColor foreground, TextColor background, SGR... styles) {
-            this.selected = new Style(foreground, background, styles);
+            this.selected = new DefaultMutableThemeStyle(foreground, background, styles);
             return this;
         }
 
@@ -267,7 +267,7 @@ public class SimpleTheme implements Theme {
          * @return Itself
          */
         public synchronized Definition setActive(TextColor foreground, TextColor background, SGR... styles) {
-            this.active = new Style(foreground, background, styles);
+            this.active = new DefaultMutableThemeStyle(foreground, background, styles);
             return this;
         }
 
@@ -287,7 +287,7 @@ public class SimpleTheme implements Theme {
          * @return Itself
          */
         public synchronized Definition setInsensitive(TextColor foreground, TextColor background, SGR... styles) {
-            this.insensitive = new Style(foreground, background, styles);
+            this.insensitive = new DefaultMutableThemeStyle(foreground, background, styles);
             return this;
         }
 
@@ -315,7 +315,16 @@ public class SimpleTheme implements Theme {
          * @return Itself
          */
         public synchronized Definition setCustom(String name, TextColor foreground, TextColor background, SGR... styles) {
-            customStyles.put(name, new Style(foreground, background, styles));
+            customStyles.put(name, new DefaultMutableThemeStyle(foreground, background, styles));
+            return this;
+        }
+
+        public synchronized int getIntegerProperty(String name, int defaultValue) {
+            return Integer.parseInt(properties.getProperty(name, Integer.toString(defaultValue)));
+        }
+
+        public synchronized Definition setIntegerProperty(String name, int value) {
+            properties.setProperty(name, Integer.toString(value));
             return this;
         }
 
@@ -401,40 +410,6 @@ public class SimpleTheme implements Theme {
                 componentRendererMap.put(type, rendererProvider);
             }
             return this;
-        }
-    }
-
-    private static class Style implements ThemeStyle {
-        private TextColor foreground;
-        private TextColor background;
-        private EnumSet<SGR> sgrs;
-
-        private Style(TextColor foreground, TextColor background, SGR... sgrs) {
-            if(foreground == null) {
-                throw new IllegalArgumentException("Cannot set SimpleTheme's style foreground to null");
-            }
-            if(background == null) {
-                throw new IllegalArgumentException("Cannot set SimpleTheme's style background to null");
-            }
-            this.foreground = foreground;
-            this.background = background;
-            this.sgrs = EnumSet.noneOf(SGR.class);
-            this.sgrs.addAll(Arrays.asList(sgrs));
-        }
-
-        @Override
-        public synchronized TextColor getForeground() {
-            return foreground;
-        }
-
-        @Override
-        public synchronized TextColor getBackground() {
-            return background;
-        }
-
-        @Override
-        public synchronized EnumSet<SGR> getSGRs() {
-            return EnumSet.copyOf(sgrs);
         }
     }
 }

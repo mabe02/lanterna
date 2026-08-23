@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna.terminal.virtual;
 
@@ -68,11 +68,11 @@ public class DefaultVirtualTerminal extends AbstractTerminal implements VirtualT
     public DefaultVirtualTerminal(TerminalSize initialTerminalSize) {
         this.regularTextBuffer = new TextBuffer();
         this.privateModeTextBuffer = new TextBuffer();
-        this.dirtyTerminalCells = new TreeSet<TerminalPosition>();
-        this.listeners = new ArrayList<VirtualTerminalListener>();
+        this.dirtyTerminalCells = new TreeSet<>();
+        this.listeners = new ArrayList<>();
 
         // Terminal state
-        this.inputQueue = new LinkedBlockingQueue<KeyStroke>();
+        this.inputQueue = new LinkedBlockingQueue<>();
         this.activeModifiers = EnumSet.noneOf(SGR.class);
         this.activeForegroundColor = TextColor.ANSI.DEFAULT;
         this.activeBackgroundColor = TextColor.ANSI.DEFAULT;
@@ -169,6 +169,13 @@ public class DefaultVirtualTerminal extends AbstractTerminal implements VirtualT
         }
         else if(TerminalTextUtils.isPrintableCharacter(c)) {
             putCharacter(new TextCharacter(c, activeForegroundColor, activeBackgroundColor, activeModifiers));
+        }
+    }
+
+    @Override
+    public synchronized void putString(String string) {
+        for (TextCharacter textCharacter: TextCharacter.fromString(string, activeForegroundColor, activeBackgroundColor, activeModifiers)) {
+            putCharacter(textCharacter);
         }
     }
 
@@ -277,11 +284,11 @@ public class DefaultVirtualTerminal extends AbstractTerminal implements VirtualT
     }
 
     public synchronized TreeSet<TerminalPosition> getDirtyCells() {
-        return new TreeSet<TerminalPosition>(dirtyTerminalCells);
+        return new TreeSet<>(dirtyTerminalCells);
     }
 
     public synchronized TreeSet<TerminalPosition> getAndResetDirtyCells() {
-        TreeSet<TerminalPosition> copy = new TreeSet<TerminalPosition>(dirtyTerminalCells);
+        TreeSet<TerminalPosition> copy = new TreeSet<>(dirtyTerminalCells);
         dirtyTerminalCells.clear();
         return copy;
     }
@@ -322,25 +329,17 @@ public class DefaultVirtualTerminal extends AbstractTerminal implements VirtualT
 
     @Override
     public synchronized void forEachLine(int startRow, int endRow, BufferWalker bufferWalker) {
-        final BufferLine emptyLine = new BufferLine() {
-            @Override
-            public TextCharacter getCharacterAt(int column) {
-                return TextCharacter.DEFAULT_CHARACTER;
-            }
-        };
+        final BufferLine emptyLine = column -> TextCharacter.DEFAULT_CHARACTER;
         ListIterator<List<TextCharacter>> iterator = currentTextBuffer.getLinesFrom(startRow);
         for(int row = startRow; row <= endRow; row++) {
             BufferLine bufferLine = emptyLine;
             if(iterator.hasNext()) {
                 final List<TextCharacter> list = iterator.next();
-                bufferLine = new BufferLine() {
-                    @Override
-                    public TextCharacter getCharacterAt(int column) {
-                        if(column >= list.size()) {
-                            return TextCharacter.DEFAULT_CHARACTER;
-                        }
-                        return list.get(column);
+                bufferLine = column -> {
+                    if(column >= list.size()) {
+                        return TextCharacter.DEFAULT_CHARACTER;
                     }
+                    return list.get(column);
                 };
             }
             bufferWalker.onLine(row, bufferLine);
@@ -348,14 +347,14 @@ public class DefaultVirtualTerminal extends AbstractTerminal implements VirtualT
     }
 
     synchronized void putCharacter(TextCharacter terminalCharacter) {
-        if(terminalCharacter.getCharacter() == '\t') {
+        if(terminalCharacter.is('\t')) {
             int nrOfSpaces = TabBehaviour.ALIGN_TO_COLUMN_4.getTabReplacement(cursorPosition.getColumn()).length();
             for(int i = 0; i < nrOfSpaces && cursorPosition.getColumn() < terminalSize.getColumns() - 1; i++) {
                 putCharacter(terminalCharacter.withCharacter(' '));
             }
         }
         else {
-            boolean doubleWidth = TerminalTextUtils.isCharDoubleWidth(terminalCharacter.getCharacter());
+            boolean doubleWidth = terminalCharacter.isDoubleWidth();
             // If we're at the last column and the user tries to print a double-width character, reset the cell and move
             // to the next line
             if(cursorPosition.getColumn() == terminalSize.getColumns() - 1 && doubleWidth) {
@@ -424,7 +423,7 @@ public class DefaultVirtualTerminal extends AbstractTerminal implements VirtualT
             correctCursor();
             if(!wholeBufferDirty) {
                 // Adjust all "dirty" positions
-                TreeSet<TerminalPosition> newDirtySet = new TreeSet<TerminalPosition>();
+                TreeSet<TerminalPosition> newDirtySet = new TreeSet<>();
                 for(TerminalPosition dirtyPosition: dirtyTerminalCells) {
                     TerminalPosition adjustedPosition = dirtyPosition.withRelativeRow(-trimBacklogRows);
                     if(adjustedPosition.getRow() >= 0) {
@@ -446,4 +445,8 @@ public class DefaultVirtualTerminal extends AbstractTerminal implements VirtualT
                         Math.max(cursorPosition.getRow(), 0));
     }
 
+    @Override
+    public String toString() {
+        return currentTextBuffer.toString();
+    }
 }

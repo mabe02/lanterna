@@ -9,7 +9,6 @@ import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
 
-import javax.xml.soap.Text;
 import java.io.IOException;
 import java.util.Random;
 
@@ -62,10 +61,9 @@ public class Tutorial03 {
             TerminalSize terminalSize = screen.getTerminalSize();
             for(int column = 0; column < terminalSize.getColumns(); column++) {
                 for(int row = 0; row < terminalSize.getRows(); row++) {
-                    screen.setCharacter(column, row, new TextCharacter(
+                    screen.setCharacter(column, row, TextCharacter.fromCharacter(
                             ' ',
                             TextColor.ANSI.DEFAULT,
-                            // This will pick a random background color
                             TextColor.ANSI.values()[random.nextInt(TextColor.ANSI.values().length)]));
                 }
             }
@@ -101,7 +99,7 @@ public class Tutorial03 {
              */
             while(true) {
                 KeyStroke keyStroke = screen.pollInput();
-                if(keyStroke != null && (keyStroke.getKeyType() == KeyType.Escape || keyStroke.getKeyType() == KeyType.EOF)) {
+                if(keyStroke != null && (keyStroke.getKeyType() == KeyType.ESCAPE || keyStroke.getKeyType() == KeyType.EOF)) {
                     break;
                 }
 
@@ -209,7 +207,7 @@ public class Tutorial03 {
                 try {
                     /*
                     The close() call here will restore the terminal by exiting from private mode which was done in
-                    the call to startScreen()
+                    the call to startScreen(), and also restore things like echo mode and intr
                      */
                     screen.close();
                 }

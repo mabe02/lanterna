@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  * 
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,18 +14,20 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2024 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
 
-import com.googlecode.lanterna.TerminalTextUtils;
-import com.googlecode.lanterna.TerminalPosition;
-import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.graphics.ThemeDefinition;
-import com.googlecode.lanterna.input.KeyStroke;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TerminalTextUtils;
+import com.googlecode.lanterna.graphics.ThemeDefinition;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.MouseAction;
+import com.googlecode.lanterna.input.MouseActionType;
 
 /**
  * Base class for several list box implementations, this will handle things like list of items and the scrollbar.
@@ -37,7 +39,8 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
     private final List<V> items;
     private int selectedIndex;
     private ListItemRenderer<V,T> listItemRenderer;
-
+    protected TerminalPosition scrollOffset = new TerminalPosition(0, 0);
+    
     /**
      * This constructor sets up the component so it has no preferred size but will ask to be as big as the list is. If
      * the GUI cannot accommodate this size, scrolling and a vertical scrollbar will be used.
@@ -56,7 +59,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
      *             or if set to {@code null} will ask to be big enough to display all items.
      */
     protected AbstractListBox(TerminalSize size) {
-        this.items = new ArrayList<V>();
+        this.items = new ArrayList<>();
         this.selectedIndex = -1;
         setPreferredSize(size);
         setListItemRenderer(createDefaultListItemRenderer());
@@ -64,7 +67,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
 
     @Override
     protected InteractableRenderer<T> createDefaultRenderer() {
-        return new DefaultListBoxRenderer<V, T>();
+        return new DefaultListBoxRenderer<>();
     }
 
     /**
@@ -74,7 +77,7 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
      * @return {@code ListItemRenderer} to use when drawing the items in the list
      */
     protected ListItemRenderer<V,T> createDefaultListItemRenderer() {
-        return new ListItemRenderer<V,T>();
+        return new ListItemRenderer<>();
     }
     
     ListItemRenderer<V,T> getListItemRenderer() {
@@ -102,52 +105,82 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
     public synchronized Result handleKeyStroke(KeyStroke keyStroke) {
         try {
             switch(keyStroke.getKeyType()) {
-                case Tab:
+                case TAB:
                     return Result.MOVE_FOCUS_NEXT;
 
-                case ReverseTab:
+                case REVERSE_TAB:
                     return Result.MOVE_FOCUS_PREVIOUS;
 
-                case ArrowRight:
+                case ARROW_RIGHT:
                     return Result.MOVE_FOCUS_RIGHT;
 
-                case ArrowLeft:
+                case ARROW_LEFT:
                     return Result.MOVE_FOCUS_LEFT;
 
-                case ArrowDown:
+                case ARROW_DOWN:
                     if(items.isEmpty() || selectedIndex == items.size() - 1) {
                         return Result.MOVE_FOCUS_DOWN;
                     }
                     selectedIndex++;
                     return Result.HANDLED;
 
-                case ArrowUp:
+                case ARROW_UP:
                     if(items.isEmpty() || selectedIndex == 0) {
                         return Result.MOVE_FOCUS_UP;
                     }
                     selectedIndex--;
                     return Result.HANDLED;
 
-                case Home:
+                case HOME:
                     selectedIndex = 0;
                     return Result.HANDLED;
 
-                case End:
+                case END:
                     selectedIndex = items.size() - 1;
                     return Result.HANDLED;
 
-                case PageUp:
+                case PAGE_UP:
                     if(getSize() != null) {
                         setSelectedIndex(getSelectedIndex() - getSize().getRows());
                     }
                     return Result.HANDLED;
 
-                case PageDown:
+                case PAGE_DOWN:
                     if(getSize() != null) {
                         setSelectedIndex(getSelectedIndex() + getSize().getRows());
                     }
                     return Result.HANDLED;
 
+                case CHARACTER:
+                	// Only check is Alt and Ctrl keys are not pressed signaling a possible accelerator key
+                    if(!keyStroke.isAltDown() && !keyStroke.isCtrlDown() && selectByCharacter(keyStroke.getCharacter())) {
+                        return Result.HANDLED;
+                    }
+                    return Result.UNHANDLED;
+                case MOUSE_EVENT:
+                    MouseAction mouseAction = (MouseAction) keyStroke;
+                    MouseActionType actionType = mouseAction.getActionType();
+                    if (isMouseMove(keyStroke)) {
+                        takeFocus();
+                        selectedIndex = getIndexByMouseAction(mouseAction);
+                        return Result.HANDLED;
+                    }
+                    
+                    if (actionType == MouseActionType.CLICK_RELEASE) {
+                        // do nothing, desired actioning has been performed already on CLICK_DOWN and DRAG
+                        return Result.HANDLED;
+                    } else if (actionType == MouseActionType.SCROLL_UP) {
+                        // relying on setSelectedIndex(index) to clip the index to valid values within range
+                        setSelectedIndex(getSelectedIndex() -1);
+                        return Result.HANDLED;
+                    } else if (actionType == MouseActionType.SCROLL_DOWN) {
+                        // relying on setSelectedIndex(index) to clip the index to valid values within range
+                        setSelectedIndex(getSelectedIndex() +1);
+                        return Result.HANDLED;
+                    }
+            
+                    selectedIndex = getIndexByMouseAction(mouseAction);
+                    return super.handleKeyStroke(keyStroke);
                 default:
             }
             return Result.UNHANDLED;
@@ -156,7 +189,39 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
             invalidate();
         }
     }
+    
+    /**
+     * By converting {@link TerminalPosition}s to
+     * {@link #toGlobal(TerminalPosition)} gets index clicked on by mouse action.
+     * 
+     * @return index of a item that was clicked on with {@link MouseAction}
+     */
+    protected int getIndexByMouseAction(MouseAction click) {
+        int index = click.getPosition().getRow() - getGlobalPosition().getRow() - scrollOffset.getRow();
+        
+        return Math.min(index, items.size() -1);
+    }
 
+    private boolean selectByCharacter(Character character) {
+        character = Character.toLowerCase(character);
+        
+        int selectedIndex = getSelectedIndex();
+        for (int i = 0; i<getItemCount(); i++) {
+            int index = (selectedIndex + i + 1) % getItemCount();
+            V item = getItemAt(index);
+            String label = item != null ? item.toString() : null;
+            if (label != null && label.length() > 0) {
+                char firstChar = Character.toLowerCase(label.charAt(0));
+                if (firstChar == character) {
+                    setSelectedIndex(index);
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    }
+    
     @Override
     protected synchronized void afterEnterFocus(FocusChangeDirection direction, Interactable previouslyInFocus) {
         if(items.isEmpty()) {
@@ -270,24 +335,20 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
      * @return Copy of all the items in this list box
      */
     public synchronized List<V> getItems() {
-        return new ArrayList<V>(items);
+        return new ArrayList<>(items);
     }
 
     /**
      * Sets which item in the list box that is currently selected. Please note that in this context, selected simply
      * means it is the item that currently has input focus. This is not to be confused with list box implementations
      * such as {@code CheckBoxList} where individual items have a certain checked/unchecked state.
+     * This method will clip the supplied index to within 0 to items.size() -1.
      * @param index Index of the item that should be currently selected
      * @return Itself
      */
     public synchronized T setSelectedIndex(int index) {
-        selectedIndex = index;
-        if(selectedIndex < 0) {
-            selectedIndex = 0;
-        }
-        if(selectedIndex > items.size() - 1) {
-            selectedIndex = items.size() - 1;
-        }
+        selectedIndex = Math.max(0, Math.min(index, items.size() -1));
+        
         invalidate();
         return self();
     }
@@ -384,6 +445,8 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
                     items.size() - scrollTopIndex < componentHeight) {
                 scrollTopIndex = items.size() - componentHeight;
             }
+            
+            listBox.scrollOffset = new TerminalPosition(0, -scrollTopIndex);
 
             graphics.applyThemeStyle(themeDefinition.getNormal());
             graphics.fill(' ');
@@ -411,23 +474,6 @@ public abstract class AbstractListBox<V, T extends AbstractListBox<V, T>> extend
                 verticalScrollBar.draw(graphics.newTextGraphics(
                         new TerminalPosition(graphics.getSize().getColumns() - 1, 0),
                         new TerminalSize(1, graphics.getSize().getRows())));
-                /*
-                graphics.putString(componentWidth - 1, 0, Symbols.ARROW_UP + "");
-
-                graphics.applyThemeStyle(themeDefinition.getInsensitive());
-                for(int i = 1; i < componentHeight - 1; i++)
-                    graphics.putString(componentWidth - 1, i, Symbols.BLOCK_MIDDLE + "");
-
-                graphics.applyThemeStyle(themeDefinition.getNormal());
-                graphics.putString(componentWidth - 1, componentHeight - 1, Symbols.ARROW_DOWN + "");
-
-                //Finally print the 'tick'
-                int scrollableSize = items.size() - componentHeight;
-                double position = (double)scrollTopIndex / ((double)scrollableSize);
-                int tickPosition = (int)(((double) componentHeight - 3.0) * position);
-                graphics.applyThemeStyle(themeDefinition.getInsensitive());
-                graphics.putString(componentWidth - 1, 1 + tickPosition, " ");
-                */
             }
         }
     }

@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2024 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
 
@@ -22,10 +22,10 @@ import com.googlecode.lanterna.*;
 import com.googlecode.lanterna.graphics.BasicTextImage;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.graphics.TextImage;
-import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -38,15 +38,12 @@ public class FullScreenTextGUITest {
 
         final AtomicBoolean stop = new AtomicBoolean(false);
         MultiWindowTextGUI textGUI = new MultiWindowTextGUI(screen);
-        textGUI.addListener(new TextGUI.Listener() {
-            @Override
-            public boolean onUnhandledKeyStroke(TextGUI textGUI, KeyStroke key) {
-                if(key.getKeyType() == KeyType.Escape) {
-                    stop.set(true);
-                    return true;
-                }
-                return false;
+        textGUI.addListener((textGUI1, key) -> {
+            if(key.getKeyType() == KeyType.ESCAPE) {
+                stop.set(true);
+                return true;
             }
+            return false;
         });
         try {
             textGUI.getBackgroundPane().setComponent(new BIOS());
@@ -55,6 +52,9 @@ public class FullScreenTextGUITest {
                     Thread.sleep(1);
                 }
             }
+        }
+        catch (EOFException ignore) {
+            // Terminal closed
         }
         finally {
             screen.stopScreen();
@@ -167,7 +167,11 @@ public class FullScreenTextGUITest {
         
         @Override
         protected ComponentRenderer<Panel> createDefaultRenderer() {
-            final ComponentRenderer<Panel> panelRenderer = super.createDefaultRenderer();
+            final DefaultPanelRenderer panelRenderer = (DefaultPanelRenderer)super.createDefaultRenderer();
+
+            // Turn off clearing the main area since we'll be using a custom renderer below to prepare the background
+            panelRenderer.setFillAreaBeforeDrawingComponents(false);
+
             return new ComponentRenderer<Panel>() {
                 @Override
                 public TerminalSize getPreferredSize(Panel component) {
@@ -194,6 +198,7 @@ public class FullScreenTextGUITest {
             public BIOSButton(String label, String description) {
                 super(label);
                 this.description = description;
+                setRenderer(newRenderer());
             }
 
             @Override
@@ -201,8 +206,7 @@ public class FullScreenTextGUITest {
                 helpLabel.setText(description);
             }
 
-            @Override
-            protected ButtonRenderer createDefaultRenderer() {
+            private ButtonRenderer newRenderer() {
                 return new ButtonRenderer() {
                     @Override
                     public TerminalPosition getCursorLocation(Button component) {
@@ -221,15 +225,13 @@ public class FullScreenTextGUITest {
                         if(isFocused()) {
                             graphics.setForegroundColor(TextColor.ANSI.WHITE);
                             graphics.setBackgroundColor(TextColor.ANSI.RED);
-                            graphics.setModifiers(EnumSet.of(SGR.BOLD));
-                            graphics.putString(0, 0, "  " + getLabel());
                         }
                         else {
                             graphics.setForegroundColor(TextColor.ANSI.YELLOW);
                             graphics.setBackgroundColor(TextColor.ANSI.BLUE);
-                            graphics.setModifiers(EnumSet.of(SGR.BOLD));
-                            graphics.putString(0, 0, "  " + getLabel());
                         }
+                        graphics.setModifiers(EnumSet.of(SGR.BOLD));
+                        graphics.putString(0, 0, "  " + getLabel());
                     }
                 };
             }

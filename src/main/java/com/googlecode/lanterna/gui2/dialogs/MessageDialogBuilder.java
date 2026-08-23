@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,14 +14,15 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna.gui2.dialogs;
 
 import com.googlecode.lanterna.gui2.Window;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -42,8 +43,10 @@ public class MessageDialogBuilder {
     public MessageDialogBuilder() {
         this.title = "MessageDialog";
         this.text = "Text";
-        this.buttons = new ArrayList<MessageDialogButton>();
-        this.extraWindowHints = Collections.singleton(Window.Hint.CENTERED);
+        this.buttons = new ArrayList<>();
+        this.extraWindowHints = new HashSet<>();
+        this.extraWindowHints.add(Window.Hint.CENTERED);
+        this.extraWindowHints.add(Window.Hint.MODAL);        
     }
 
     /**
@@ -54,7 +57,7 @@ public class MessageDialogBuilder {
         MessageDialog messageDialog = new MessageDialog(
                 title,
                 text,
-                buttons.toArray(new MessageDialogButton[buttons.size()]));
+                buttons.toArray(new MessageDialogButton[0]));
         messageDialog.setHints(extraWindowHints);
         return messageDialog;
     }
@@ -90,7 +93,7 @@ public class MessageDialogBuilder {
      * @param extraWindowHints Window hints to assign to the window in addition to the ones the builder will put
      * @return Itself
      */
-    public MessageDialogBuilder setExtraWindowHints(Set<Window.Hint> extraWindowHints) {
+    public MessageDialogBuilder setExtraWindowHints(Collection<Window.Hint> extraWindowHints) {
         this.extraWindowHints.clear();
         this.extraWindowHints.addAll(extraWindowHints);
         return this;

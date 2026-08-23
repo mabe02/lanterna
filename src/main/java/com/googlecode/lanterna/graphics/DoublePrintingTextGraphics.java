@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,10 +14,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna.graphics;
 
+import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.TerminalSize;
 
@@ -30,6 +31,8 @@ import com.googlecode.lanterna.TerminalSize;
  * and compare it when running with the --square parameter and without.
  */
 public class DoublePrintingTextGraphics extends AbstractTextGraphics {
+    private static final TerminalPosition MULTIPLIER = new TerminalPosition(2, 1);
+
     private final TextGraphics underlyingTextGraphics;
 
     /**
@@ -59,5 +62,10 @@ public class DoublePrintingTextGraphics extends AbstractTextGraphics {
     public TerminalSize getSize() {
         TerminalSize size = underlyingTextGraphics.getSize();
         return size.withColumns(size.getColumns() / 2);
+    }
+
+    @Override
+    public TerminalPosition toScreenPosition(TerminalPosition pos) {
+        return underlyingTextGraphics.toScreenPosition(pos.multiply(MULTIPLIER));
     }
 }

@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2024 Martin Berglund
  */
 package com.googlecode.lanterna.screen;
 
@@ -79,6 +79,12 @@ public class TerminalScreen extends AbstractScreen {
         this.terminal.addResizeListener(new TerminalScreenResizeListener());
         this.isStarted = false;
         this.fullRedrawHint = true;
+    }
+
+    @Override
+    public void close() throws IOException {
+        super.close();
+        terminal.close();
     }
 
     @Override
@@ -150,8 +156,9 @@ public class TerminalScreen extends AbstractScreen {
         TerminalPosition cursorPosition = getCursorPosition();
         if(cursorPosition != null) {
             getTerminal().setCursorVisible(true);
-            //If we are trying to move the cursor to the padding of a CJK character, put it on the actual character instead
-            if(cursorPosition.getColumn() > 0 && TerminalTextUtils.isCharCJK(getFrontBuffer().getCharacterAt(cursorPosition.withRelativeColumn(-1)).getCharacter())) {
+            //If we are trying to move the cursor to the padding of a double-width character, put it on the actual character instead
+            if(cursorPosition.getColumn() > 0 &&
+                            getFrontBuffer().getCharacterAt(cursorPosition.withRelativeColumn(-1)).isDoubleWidth()) {
                 getTerminal().setCursorPosition(cursorPosition.getColumn() - 1, cursorPosition.getRow());
             }
             else {
@@ -181,7 +188,7 @@ public class TerminalScreen extends AbstractScreen {
     }
 
     private void refreshByDelta() throws IOException {
-        Map<TerminalPosition, TextCharacter> updateMap = new TreeMap<TerminalPosition, TextCharacter>(new ScreenPointComparator());
+        Map<TerminalPosition, TextCharacter> updateMap = new TreeMap<>(new ScreenPointComparator());
         TerminalSize terminalSize = getTerminalSize();
 
         useScrollHint();
@@ -189,11 +196,16 @@ public class TerminalScreen extends AbstractScreen {
         for(int y = 0; y < terminalSize.getRows(); y++) {
             for(int x = 0; x < terminalSize.getColumns(); x++) {
                 TextCharacter backBufferCharacter = getBackBuffer().getCharacterAt(x, y);
-                if(!backBufferCharacter.equals(getFrontBuffer().getCharacterAt(x, y))) {
+                TextCharacter frontBufferCharacter = getFrontBuffer().getCharacterAt(x, y);
+                if(!backBufferCharacter.equals(frontBufferCharacter)) {
                     updateMap.put(new TerminalPosition(x, y), backBufferCharacter);
                 }
-                if(TerminalTextUtils.isCharCJK(backBufferCharacter.getCharacter())) {
+                if(backBufferCharacter.isDoubleWidth()) {
                     x++;    //Skip the trailing padding
+                } else if (frontBufferCharacter.isDoubleWidth()) {
+                    if (x+1 < terminalSize.getColumns()) {
+                        updateMap.put(new TerminalPosition(x+1, y), frontBufferCharacter.withCharacter(' '));
+                    }
                 }
             }
         }
@@ -238,13 +250,13 @@ public class TerminalScreen extends AbstractScreen {
                     currentSGR.add(sgr);
                 }
             }
-            getTerminal().putCharacter(newCharacter.getCharacter());
-            if(TerminalTextUtils.isCharCJK(newCharacter.getCharacter())) {
-                //CJK characters advances two columns
+            getTerminal().putString(newCharacter.getCharacterString());
+            if(newCharacter.isDoubleWidth()) {
+                // Double-width characters advances two columns
                 currentPosition = currentPosition.withRelativeColumn(2);
             }
             else {
-                //Normal characters advances one column
+                // Normal characters advances one column
                 currentPosition = currentPosition.withRelativeColumn(1);
             }
         }
@@ -291,14 +303,14 @@ public class TerminalScreen extends AbstractScreen {
                     getTerminal().setCursorPosition(x, y);
                     currentColumn = x;
                 }
-                getTerminal().putCharacter(newCharacter.getCharacter());
-                if(TerminalTextUtils.isCharCJK(newCharacter.getCharacter())) {
-                    //CJK characters take up two columns
+                getTerminal().putString(newCharacter.getCharacterString());
+                if(newCharacter.isDoubleWidth()) {
+                    // Double-width characters take up two columns
                     currentColumn += 2;
                     x++;
                 }
                 else {
-                    //Normal characters take up one column
+                    // Normal characters take up one column
                     currentColumn += 1;
                 }
             }
@@ -389,10 +401,10 @@ public class TerminalScreen extends AbstractScreen {
                 if(o1.getColumn() == o2.getColumn()) {
                     return 0;
                 } else {
-                    return new Integer(o1.getColumn()).compareTo(o2.getColumn());
+                    return Integer.compare(o1.getColumn(), o2.getColumn());
                 }
             } else {
-                return new Integer(o1.getRow()).compareTo(o2.getRow());
+                return Integer.compare(o1.getRow(), o2.getRow());
             }
         }
     }

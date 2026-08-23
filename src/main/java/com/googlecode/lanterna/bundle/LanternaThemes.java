@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna.bundle;
 
@@ -39,10 +39,20 @@ public class LanternaThemes {
         // No instantiation
     }
 
-    private static final ConcurrentHashMap<String, Theme> REGISTERED_THEMES = new ConcurrentHashMap<String, Theme>();
+    private static final ConcurrentHashMap<String, Theme> REGISTERED_THEMES = new ConcurrentHashMap<>();
 
     static {
-        registerTheme("default", new DefaultTheme());
+        // Register the default theme first
+        Properties defaultThemeProperties = loadPropTheme("default-theme.properties");
+        if (defaultThemeProperties != null) {
+            registerPropTheme("default", defaultThemeProperties);
+        }
+        else {
+            // If we couldn't load it from file, use the hard-coded one instead
+            registerTheme("default", new DefaultTheme());
+        }
+
+        // Now register all bundled themes that are defined in property files (if found)
         registerPropTheme("bigsnake", loadPropTheme("bigsnake-theme.properties"));
         registerPropTheme("businessmachine", loadPropTheme("businessmachine-theme.properties"));
         registerPropTheme("conqueror", loadPropTheme("conqueror-theme.properties"));
@@ -56,7 +66,7 @@ public class LanternaThemes {
      * @return Collection of theme names
      */
     public static Collection<String> getRegisteredThemes() {
-        return new ArrayList<String>(REGISTERED_THEMES.keySet());
+        return new ArrayList<>(REGISTERED_THEMES.keySet());
     }
 
     /**
@@ -116,9 +126,7 @@ public class LanternaThemes {
             return properties;
         }
         catch(IOException e) {
-            if("default-theme.properties".equals(resourceFileName)) {
-                throw new RuntimeException("Unable to load the default theme", e);
-            }
+            // Failed to load theme, return null
             return null;
         }
     }

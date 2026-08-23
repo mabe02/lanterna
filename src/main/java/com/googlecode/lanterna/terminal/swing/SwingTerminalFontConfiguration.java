@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna.terminal.swing;
 
@@ -29,7 +29,16 @@ public class SwingTerminalFontConfiguration extends AWTTerminalFontConfiguration
      * @return A {@link SwingTerminal} font configuration object with default values set up
      */
     public static SwingTerminalFontConfiguration getDefault() {
-        return newInstance(filterMonospaced(selectDefaultFont()));
+        return newInstance(filterMonospaced(selectDefaultFont(DEFAULT_FONT_SIZE)));
+    }
+
+    /**
+     * Returns the default font settings except for a custom font size to use.
+     * @param fontSize Size of the font
+     * @return An {@link SwingTerminal} font configuration object with default values set up
+     */
+    public static SwingTerminalFontConfiguration getDefaultOfSize(int fontSize) {
+        return newInstance(filterMonospaced(selectDefaultFont(fontSize)));
     }
 
     /**

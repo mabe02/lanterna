@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,20 +14,26 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna.terminal.swing;
 
 import com.googlecode.lanterna.Symbols;
 import com.googlecode.lanterna.TextCharacter;
-
-import java.awt.*;
+import java.awt.Font;
+import java.awt.GraphicsEnvironment;
+import java.awt.RenderingHints;
+import java.awt.Toolkit;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * This class encapsulates the font information used by an {@link AWTTerminal}. By customizing this class, you can
@@ -35,6 +41,10 @@ import java.util.List;
  * @author martin
  */
 public class AWTTerminalFontConfiguration {
+    /**
+     * The default font size used unless overridden
+     */
+    public static final int DEFAULT_FONT_SIZE = 14;
 
     /**
      * Controls how the SGR bold will take effect when enabled on a character. Mainly this is controlling if the 
@@ -59,7 +69,7 @@ public class AWTTerminalFontConfiguration {
         ;
     }
 
-    private static final Set<String> MONOSPACE_CHECK_OVERRIDE = Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(
+    private static final Set<String> MONOSPACE_CHECK_OVERRIDE = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
             "VL Gothic Regular",
             "NanumGothic",
             "WenQuanYi Zen Hei Mono",
@@ -69,81 +79,97 @@ public class AWTTerminalFontConfiguration {
             "AR PL UMing CN"
     )));
 
-    private static List<Font> getDefaultWindowsFonts() {
+    private static List<Font> getDefaultWindowsFonts(int fontSize) {
+        int adjustedFontSize = getAdjustedFontSize(fontSize);
         return Collections.unmodifiableList(Arrays.asList(
-                new Font("Courier New", Font.PLAIN, getFontSize()), //Monospaced can look pretty bad on Windows, so let's override it
-                new Font("Monospaced", Font.PLAIN, getFontSize())));
+                new Font("Courier New", Font.PLAIN, adjustedFontSize), //Monospaced can look pretty bad on Windows, so let's override it
+                new Font("Monospaced", Font.PLAIN, adjustedFontSize)));
     }
 
-    private static List<Font> getDefaultLinuxFonts() {
+    private static List<Font> getDefaultLinuxFonts(int fontSize) {
+        int adjustedFontSize = getAdjustedFontSize(fontSize);
         return Collections.unmodifiableList(Arrays.asList(
-                new Font("DejaVu Sans Mono", Font.PLAIN, getFontSize()),
-                new Font("Monospaced", Font.PLAIN, getFontSize()),
+                new Font("DejaVu Sans Mono", Font.PLAIN, adjustedFontSize),
+                new Font("Monospaced", Font.PLAIN, adjustedFontSize),
                 //Below, these should be redundant (Monospaced is supposed to catch-all)
                 // but Java 6 seems to have issues with finding monospaced fonts sometimes
-                new Font("Ubuntu Mono", Font.PLAIN, getFontSize()),
-                new Font("FreeMono", Font.PLAIN, getFontSize()),
-                new Font("Liberation Mono", Font.PLAIN, getFontSize()),
-                new Font("VL Gothic Regular", Font.PLAIN, getFontSize()),
-                new Font("NanumGothic", Font.PLAIN, getFontSize()),
-                new Font("WenQuanYi Zen Hei Mono", Font.PLAIN, getFontSize()),
-                new Font("WenQuanYi Zen Hei", Font.PLAIN, getFontSize()),
-                new Font("AR PL UMing TW", Font.PLAIN, getFontSize()),
-                new Font("AR PL UMing HK", Font.PLAIN, getFontSize()),
-                new Font("AR PL UMing CN", Font.PLAIN, getFontSize())));
+                new Font("Ubuntu Mono", Font.PLAIN, adjustedFontSize),
+                new Font("FreeMono", Font.PLAIN, adjustedFontSize),
+                new Font("Liberation Mono", Font.PLAIN, adjustedFontSize),
+                new Font("VL Gothic Regular", Font.PLAIN, adjustedFontSize),
+                new Font("NanumGothic", Font.PLAIN, adjustedFontSize),
+                new Font("WenQuanYi Zen Hei Mono", Font.PLAIN, adjustedFontSize),
+                new Font("WenQuanYi Zen Hei", Font.PLAIN, adjustedFontSize),
+                new Font("AR PL UMing TW", Font.PLAIN, adjustedFontSize),
+                new Font("AR PL UMing HK", Font.PLAIN, adjustedFontSize),
+                new Font("AR PL UMing CN", Font.PLAIN, adjustedFontSize)));
     }
 
-    private static List<Font> getDefaultFonts() {
+    private static List<Font> getDefaultFonts(int fontSize) {
+        int adjustedFontSize = getAdjustedFontSize(fontSize);
         return Collections.unmodifiableList(Collections.singletonList(
-                new Font("Monospaced", Font.PLAIN, getFontSize())));
+                new Font("Monospaced", Font.PLAIN, adjustedFontSize)));
     }
 
     // Here we check the screen resolution on the primary monitor and make a guess at if it's high-DPI or not
-    private static Integer CHOSEN_FONT_SIZE = null;
-    private synchronized static int getFontSize() {
-        if(CHOSEN_FONT_SIZE != null) {
-            return CHOSEN_FONT_SIZE;
+    private static int getAdjustedFontSize(int fontSize) {
+        int baseFontSize = fontSize;
+        String[] javaVersion = System.getProperty("java.version", "1").split("\\.");
+        if (System.getProperty("os.name", "").startsWith("Windows") && Integer.parseInt(javaVersion[0]) >= 9) {
+            // Java 9+ reports itself as HiDPI-unaware on Windows and will be scaled by the OS
+            // Keep in mind that Java 8 and earlier reports itself as version 1.X.0_YYY
+            return baseFontSize;
         }
-        // Source: http://stackoverflow.com/questions/3680221/how-can-i-get-the-monitor-size-in-java
-        GraphicsEnvironment ge      = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        GraphicsDevice[]    gs      = ge.getScreenDevices();
+        else {
+            return getHPIAdjustedFontSize(baseFontSize);
+        }
+    }
 
-        // Assume the first GraphicsDevice is the primary screen (this isn't always correct but what to do?)
-        // Warning, there could be printers coming back here according to JavaDoc! Hopefully Java is reasonable and
-        // passes them in after the real monitor(s).
-        if (gs.length > 0) {
-            int primaryMonitorWidth = gs[0].getDisplayMode().getWidth();
-
-            // If the width is wider than Full HD (1080p, or 1920x1080), then assume it's high-DPI
-            if (primaryMonitorWidth > 2000) {
-                CHOSEN_FONT_SIZE = 28;
+    private static int getHPIAdjustedFontSize(int baseFontSize) {
+        if (Toolkit.getDefaultToolkit().getScreenResolution() >= 110) {
+            // Rely on DPI if it is a high value.
+            return Toolkit.getDefaultToolkit().getScreenResolution() / (baseFontSize/2) + 1;
+        } else {
+            // Otherwise try to guess it from the monitor size:
+            // If the width is wider than Full HD (1080p, or 1920x1080), then assume it's high-DPI.
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            if (ge.getMaximumWindowBounds().getWidth() > 4096) {
+                return baseFontSize * 4;
+            } else if (ge.getMaximumWindowBounds().getWidth() > 2560) {
+                return baseFontSize * 2;
+            } else {
+                return baseFontSize;
             }
         }
-
-        // If no size was picked, default to 14
-        if(CHOSEN_FONT_SIZE == null) {
-            CHOSEN_FONT_SIZE = 14;
-        }
-        return CHOSEN_FONT_SIZE;
     }
+
 
     /**
      * Returns the default font to use depending on the platform
      * @return Default font to use, system-dependent
      */
     protected static Font[] selectDefaultFont() {
+        return selectDefaultFont(DEFAULT_FONT_SIZE);
+    }
+
+    /**
+     * Returns the default font to use depending on the platform
+     * @param fontSize The size of the fonts to use
+     * @return Default font to use, system-dependent
+     */
+    protected static Font[] selectDefaultFont(int fontSize) {
         String osName = System.getProperty("os.name", "").toLowerCase();
         if(osName.contains("win")) {
-            List<Font> windowsFonts = getDefaultWindowsFonts();
-            return windowsFonts.toArray(new Font[windowsFonts.size()]);
+            List<Font> windowsFonts = getDefaultWindowsFonts(fontSize);
+            return windowsFonts.toArray(new Font[0]);
         }
         else if(osName.contains("linux")) {
-            List<Font> linuxFonts = getDefaultLinuxFonts();
-            return linuxFonts.toArray(new Font[linuxFonts.size()]);
+            List<Font> linuxFonts = getDefaultLinuxFonts(fontSize);
+            return linuxFonts.toArray(new Font[0]);
         }
         else {
-            List<Font> defaultFonts = getDefaultFonts();
-            return defaultFonts.toArray(new Font[defaultFonts.size()]);
+            List<Font> defaultFonts = getDefaultFonts(fontSize);
+            return defaultFonts.toArray(new Font[0]);
         }
     }
 
@@ -152,7 +178,16 @@ public class AWTTerminalFontConfiguration {
      * @return An {@link AWTTerminal} font configuration object with default values set up
      */
     public static AWTTerminalFontConfiguration getDefault() {
-        return newInstance(filterMonospaced(selectDefaultFont()));
+        return newInstance(filterMonospaced(selectDefaultFont(DEFAULT_FONT_SIZE)));
+    }
+
+    /**
+     * Returns the default font settings except for a custom font size to use.
+     * @param fontSize Size of the font
+     * @return An {@link AWTTerminal} font configuration object with default values set up
+     */
+    public static AWTTerminalFontConfiguration getDefaultOfSize(int fontSize) {
+        return newInstance(filterMonospaced(selectDefaultFont(fontSize)));
     }
 
     /**
@@ -163,13 +198,13 @@ public class AWTTerminalFontConfiguration {
      * @return Array with the fonts from the input parameter that were monospaced
      */
     public static Font[] filterMonospaced(Font... fonts) {
-        List<Font> result = new ArrayList<Font>(fonts.length);
+        List<Font> result = new ArrayList<>(fonts.length);
         for(Font font: fonts) {
             if (isFontMonospaced(font)) {
                 result.add(font);
             }
         }
-        return result.toArray(new Font[result.size()]);
+        return result.toArray(new Font[0]);
     }
 
     /**
@@ -198,7 +233,7 @@ public class AWTTerminalFontConfiguration {
         }
         this.useAntiAliasing = useAntiAliasing;
         this.boldMode = boldMode;
-        this.fontPriority = new ArrayList<Font>(Arrays.asList(fontsInOrderOfPriority));
+        this.fontPriority = new ArrayList<>(Arrays.asList(fontsInOrderOfPriority));
         this.fontWidth = getFontWidth(fontPriority.get(0));
         this.fontHeight = getFontHeight(fontPriority.get(0));
 
@@ -232,8 +267,8 @@ public class AWTTerminalFontConfiguration {
      * @return Font which the {@code character} should be drawn using
      */
     Font getFontForCharacter(TextCharacter character) {
-        Font normalFont = getFontForCharacter(character.getCharacter());
-        if(boldMode == BoldMode.EVERYTHING || (boldMode == BoldMode.EVERYTHING_BUT_SYMBOLS && isNotASymbol(character.getCharacter()))) {
+        Font normalFont = getFontForCharacter(character.getCharacterString());
+        if(boldMode == BoldMode.EVERYTHING || (boldMode == BoldMode.EVERYTHING_BUT_SYMBOLS && isNotASymbol(character.getCharacterString().charAt(0)))) {
             if(character.isBold()) {
                 normalFont = normalFont.deriveFont(Font.BOLD);
             }
@@ -244,9 +279,9 @@ public class AWTTerminalFontConfiguration {
         return normalFont;
     }
 
-    private Font getFontForCharacter(char c) {
+    private Font getFontForCharacter(String string) {
         for(Font font: fontPriority) {
-            if(font.canDisplay(c)) {
+            if(font.canDisplayUpTo(string) == -1) {
                 return font;
             }
         }
@@ -258,7 +293,7 @@ public class AWTTerminalFontConfiguration {
      * Returns the horizontal size in pixels of the fonts configured
      * @return Horizontal size in pixels of the fonts configured
      */
-    int getFontWidth() {
+    public int getFontWidth() {
         return fontWidth;
     }
 
@@ -266,7 +301,7 @@ public class AWTTerminalFontConfiguration {
      * Returns the vertical size in pixels of the fonts configured
      * @return Vertical size in pixels of the fonts configured
      */
-    int getFontHeight() {
+    public int getFontHeight() {
         return fontHeight;
     }
 
@@ -274,7 +309,7 @@ public class AWTTerminalFontConfiguration {
      * Returns {@code true} if anti-aliasing has been enabled, {@code false} otherwise
      * @return {@code true} if anti-aliasing has been enabled, {@code false} otherwise
      */
-    boolean isAntiAliased() {
+    public boolean isAntiAliased() {
         return useAntiAliasing;
     }
 
@@ -308,7 +343,7 @@ public class AWTTerminalFontConfiguration {
     }
 
     
-    private static final Set<Character> SYMBOLS_CACHE = new HashSet<Character>();
+    private static final Set<Character> SYMBOLS_CACHE = new HashSet<>();
     static {
         for(Field field: Symbols.class.getFields()) {
             if(field.getType() == char.class &&
@@ -317,10 +352,7 @@ public class AWTTerminalFontConfiguration {
                 try {
                     SYMBOLS_CACHE.add(field.getChar(null));
                 }
-                catch(IllegalArgumentException ignore) {
-                    //Should never happen!
-                }
-                catch(IllegalAccessException ignore) {
+                catch(IllegalArgumentException | IllegalAccessException ignore) {
                     //Should never happen!
                 }
             }

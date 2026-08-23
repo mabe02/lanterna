@@ -34,13 +34,22 @@ Lanterna is available on [Maven Central](http://search.maven.org/), through [Son
     <dependency>
         <groupId>com.googlecode.lanterna</groupId>
         <artifactId>lanterna</artifactId>
-        <version>3.0.0</version>
+        <version>3.1.2</version>
     </dependency>
 ```
 
 Discussions
 ---
 There is a [google group](https://groups.google.com/forum/#!forum/lanterna-discuss) for discussions and announcements related to Lanterna.
+You are recommended to raise issues directly on Github though.
+
+
+Projects using Lanterna
+---
+Incomplete list of projects using Lanterna, feel free to let us know something we can add to this list:
+ * https://github.com/MultiMUD/clojure-lanterna
+ * https://github.com/datacron/project-lanterminal
+ * https://github.com/gabrieljones/ScaLaMatrixRain
 
 
 Development Guide
@@ -48,9 +57,10 @@ Development Guide
 See [docs](docs/contents.md) for examples and guides.
 
 JavaDoc is available here:
- * http://mabe02.github.io/lanterna/apidocs/3.0/
+ * http://mabe02.github.io/lanterna/apidocs/3.1/
 
-The JavaDocs for the previous version (2.1) is also available here:
+The JavaDocs for the previous versions (2.1 and 3.0) are also available here:
 * http://mabe02.github.io/lanterna/apidocs/2.1/
+* http://mabe02.github.io/lanterna/apidocs/3.0/
 
 There is also a development guide and some tutorials available [right here on Github](https://github.com/mabe02/lanterna/blob/master/docs/contents.md).

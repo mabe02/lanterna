@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,12 +14,12 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna;
 
-
-import java.awt.*;
+import java.awt.Color;
+import java.io.Serializable;
 import java.util.regex.Pattern;
 
 /**
@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
  *
  * @author Martin
  */
-public interface TextColor {
+public interface TextColor extends Serializable {
     /**
      * Returns the byte sequence in between CSI and character 'm' that is used to enable this color as the foreground
      * color on an ANSI-compatible terminal.
@@ -47,9 +47,27 @@ public interface TextColor {
     byte[] getBackgroundSGRSequence();
 
     /**
+     * @return Red intensity of this color, from 0 to 255
+     */
+    int getRed() ;
+
+    /**
+     * @return Green intensity of this color, from 0 to 255
+     */
+    int getGreen();
+
+    /**
+     * @return Blue intensity of this color, from 0 to 255
+     */
+    int getBlue();
+
+    /**
      * Converts this color to an AWT color object, assuming a standard VGA palette.
      * @return TextColor as an AWT Color
+     * @deprecated This adds a runtime dependency to the java.desktop module which isn't declared in the module
+     * descriptor of lanterna. If you want to call this method, make sure to add it to your module.
      */
+    @Deprecated
     Color toColor();
 
     /**
@@ -60,37 +78,76 @@ public interface TextColor {
      * For more information, see http://en.wikipedia.org/wiki/File:Ansi.png
      */
     enum ANSI implements TextColor {
-        BLACK((byte)0, 0, 0, 0),
-        RED((byte)1, 170, 0, 0),
-        GREEN((byte)2, 0, 170, 0),
-        YELLOW((byte)3, 170, 85, 0),
-        BLUE((byte)4, 0, 0, 170),
-        MAGENTA((byte)5, 170, 0, 170),
-        CYAN((byte)6, 0, 170, 170),
-        WHITE((byte)7, 170, 170, 170),
-        DEFAULT((byte)9, 0, 0, 0);
+        BLACK(0, 0, 0, 0),
+        RED(1, 170, 0, 0),
+        GREEN(2, 0, 170, 0),
+        YELLOW(3, 170, 85, 0),
+        BLUE(4, 0, 0, 170),
+        MAGENTA(5, 170, 0, 170),
+        CYAN(6, 0, 170, 170),
+        WHITE(7, 170, 170, 170),
+        DEFAULT(9, 0, 0, 0),
+        BLACK_BRIGHT(0, true, 85, 85, 85),
+        RED_BRIGHT(1, true, 255, 85, 85),
+        GREEN_BRIGHT(2, true, 85, 255, 85),
+        YELLOW_BRIGHT(3, true, 255, 255, 85),
+        BLUE_BRIGHT(4, true, 85, 85, 255),
+        MAGENTA_BRIGHT(5, true, 255, 85, 255),
+        CYAN_BRIGHT(6, true, 85, 255, 255),
+        WHITE_BRIGHT(7, true, 255, 255, 255);
 
-        private final byte index;
-        private final Color color;
+        private final boolean bright;
+        private final int red;
+        private final int green;
+        private final int blue;
+        private final byte[] foregroundSGR;
+        private final byte[] backgroundSGR;
 
-        ANSI(byte index, int red, int green, int blue) {
-            this.index = index;
-            this.color = new Color(red, green, blue);
+        ANSI(int index, int red, int green, int blue) {
+            this(index, false, red, green, blue);
+        }
+
+        ANSI(int index, boolean bright, int red, int green, int blue) {
+            this.bright = bright;
+            this.red = red;
+            this.green = green;
+            this.blue = blue;
+            foregroundSGR = String.format("%d%d", bright ? 9 : 3, index).getBytes();
+            backgroundSGR = String.format("%d%d", bright ? 10 : 4, index).getBytes();
         }
 
         @Override
         public byte[] getForegroundSGRSequence() {
-            return new byte[] { (byte)'3', (byte)(48 + index)}; //48 is ascii code for '0'
+            return foregroundSGR.clone();
         }
 
         @Override
         public byte[] getBackgroundSGRSequence() {
-            return new byte[] { (byte)'4', (byte)(48 + index)}; //48 is ascii code for '0'
+            return backgroundSGR.clone();
+        }
+
+        public boolean isBright() {
+            return bright;
+        }
+
+        @Override
+        public int getRed() {
+            return red;
+        }
+
+        @Override
+        public int getGreen() {
+            return green;
+        }
+
+        @Override
+        public int getBlue() {
+            return blue;
         }
 
         @Override
         public Color toColor() {
-            return color;
+            return new Color(getRed(), getGreen(), getBlue());
         }
     }
 
@@ -377,7 +434,6 @@ public interface TextColor {
         };
 
         private final int colorIndex;
-        private final Color awtColor;
 
         /**
          * Creates a new TextColor using the XTerm 256 color indexed mode, with the specified index value. You must
@@ -390,9 +446,6 @@ public interface TextColor {
                         ", must be in the range of 0-255");
             }
             this.colorIndex = colorIndex;
-            this.awtColor = new Color(COLOR_TABLE[colorIndex][0] & 0x000000ff,
-                    COLOR_TABLE[colorIndex][1] & 0x000000ff,
-                    COLOR_TABLE[colorIndex][2] & 0x000000ff);
         }
 
         @Override
@@ -406,8 +459,23 @@ public interface TextColor {
         }
 
         @Override
+        public int getRed() {
+            return COLOR_TABLE[colorIndex][0] & 0x000000ff;
+        }
+
+        @Override
+        public int getGreen() {
+            return COLOR_TABLE[colorIndex][1] & 0x000000ff;
+        }
+
+        @Override
+        public int getBlue() {
+            return COLOR_TABLE[colorIndex][2] & 0x000000ff;
+        }
+
+        @Override
         public Color toColor() {
-            return awtColor;
+            return new Color(getRed(), getGreen(), getBlue());
         }
 
         @Override
@@ -461,14 +529,12 @@ public interface TextColor {
             Indexed fromGreyRamp = fromGreyRamp((red + green + blue) / 3);
 
             //Now figure out which one is closest
-            Color colored = fromColorCube.toColor();
-            Color grey = fromGreyRamp.toColor();
-            int coloredDistance = ((red - colored.getRed()) * (red - colored.getRed())) +
-                    ((green - colored.getGreen()) * (green - colored.getGreen())) +
-                    ((blue - colored.getBlue()) * (blue - colored.getBlue()));
-            int greyDistance = ((red - grey.getRed()) * (red - grey.getRed())) +
-                    ((green - grey.getGreen()) * (green - grey.getGreen())) +
-                    ((blue - grey.getBlue()) * (blue - grey.getBlue()));
+            int coloredDistance = ((red - fromColorCube.getRed()) * (red - fromColorCube.getRed())) +
+                    ((green - fromColorCube.getGreen()) * (green - fromColorCube.getGreen())) +
+                    ((blue - fromColorCube.getBlue()) * (blue - fromColorCube.getBlue()));
+            int greyDistance = ((red - fromGreyRamp.getRed()) * (red - fromGreyRamp.getRed())) +
+                    ((green - fromGreyRamp.getGreen()) * (green - fromGreyRamp.getGreen())) +
+                    ((blue - fromGreyRamp.getBlue()) * (blue - fromGreyRamp.getBlue()));
             if(coloredDistance < greyDistance) {
                 return fromColorCube;
             }
@@ -496,7 +562,13 @@ public interface TextColor {
      * this</a> commit log. Behavior on terminals that don't support these codes is undefined.
      */
     class RGB implements TextColor {
-        private final Color color;
+        private final int red;
+        private final int green;
+        private final int blue;
+
+        public static RGB fromAWTColor(Color awtColor) {
+            return new RGB(awtColor.getRed(), awtColor.getGreen(), awtColor.getBlue());
+        }
 
         /**
          * This class can be used to specify a color in 24-bit color space (RGB with 8-bit resolution per color). Please be
@@ -519,7 +591,9 @@ public interface TextColor {
             if(b < 0 || b > 255) {
                 throw new IllegalArgumentException("RGB: b is outside of valid range (0-255)");
             }
-            this.color = new Color(r, g, b);
+            this.red = r;
+            this.green = g;
+            this.blue = b;
         }
 
         @Override
@@ -533,29 +607,23 @@ public interface TextColor {
         }
 
         @Override
-        public Color toColor() {
-            return color;
-        }
-
-        /**
-         * @return Red intensity of this color, from 0 to 255
-         */
         public int getRed() {
-            return color.getRed();
+            return red;
         }
 
-        /**
-         * @return Green intensity of this color, from 0 to 255
-         */
+        @Override
         public int getGreen() {
-            return color.getGreen();
+            return green;
         }
 
-        /**
-         * @return Blue intensity of this color, from 0 to 255
-         */
+        @Override
         public int getBlue() {
-            return color.getBlue();
+            return blue;
+        }
+
+        @Override
+        public Color toColor() {
+            return new Color(getRed(), getGreen(), getBlue());
         }
 
         @Override
@@ -566,21 +634,24 @@ public interface TextColor {
         @Override
         public int hashCode() {
             int hash = 7;
-            hash = 29 * hash + color.hashCode();
+            hash = 29 * hash + red;
+            hash = 29 * hash + green;
+            hash = 29 * hash + blue;
             return hash;
         }
 
-        @SuppressWarnings("SimplifiableIfStatement")
         @Override
         public boolean equals(Object obj) {
-            if(obj == null) {
+            if (obj == null) {
                 return false;
             }
-            if(getClass() != obj.getClass()) {
+            if (getClass() != obj.getClass()) {
                 return false;
             }
             final RGB other = (RGB) obj;
-            return color.equals(other.color);
+            return this.red == other.red
+                    && this.green == other.green
+                    && this.blue == other.blue;
         }
     }
 

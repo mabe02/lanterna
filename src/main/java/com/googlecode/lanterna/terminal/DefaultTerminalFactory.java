@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  *
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2024 Martin Berglund
  */
 package com.googlecode.lanterna.terminal;
 
@@ -27,19 +27,21 @@ import com.googlecode.lanterna.terminal.ansi.UnixLikeTTYTerminal;
 import com.googlecode.lanterna.terminal.ansi.UnixTerminal;
 import com.googlecode.lanterna.terminal.swing.*;
 
-import java.awt.*;
+import java.io.Console;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.util.EnumSet;
 
 /**
- * This TerminalFactory implementation uses a simple auto-detection mechanism for figuring out which terminal 
+ * This TerminalFactory implementation uses a simple auto-detection mechanism for figuring out which terminal
  * implementation to create based on characteristics of the system the program is running on.
  * <p>
- * Note that for all systems with a graphical environment present, the SwingTerminalFrame will be chosen. You can 
+ * Note that for all systems with a graphical environment present, the SwingTerminalFrame will be chosen. You can
  * suppress this by calling setForceTextTerminal(true) on this factory.
  * @author martin
  */
@@ -65,10 +67,11 @@ public class DefaultTerminalFactory implements TerminalFactory {
     private TerminalEmulatorDeviceConfiguration deviceConfiguration;
     private AWTTerminalFontConfiguration fontConfiguration;
     private MouseCaptureMode mouseCaptureMode;
-    
+    private UnixTerminal.CtrlCBehaviour unixTerminalCtrlCBehaviour;
+
     /**
      * Creates a new DefaultTerminalFactory with all properties set to their defaults
-     */   
+     */
     public DefaultTerminalFactory() {
         this(DEFAULT_OUTPUT_STREAM, DEFAULT_INPUT_STREAM, DEFAULT_CHARSET);
     }
@@ -84,7 +87,7 @@ public class DefaultTerminalFactory implements TerminalFactory {
         this.outputStream = outputStream;
         this.inputStream = inputStream;
         this.charset = charset;
-        
+
         this.forceTextTerminal = false;
         this.preferTerminalEmulator = false;
         this.forceAWTOverSwing = false;
@@ -93,32 +96,24 @@ public class DefaultTerminalFactory implements TerminalFactory {
         this.inputTimeout = -1;
         this.autoOpenTerminalFrame = true;
         this.title = null;
-        this.autoCloseTriggers = EnumSet.of(TerminalEmulatorAutoCloseTrigger.CloseOnExitPrivateMode);
+        this.autoCloseTriggers = EnumSet.of(TerminalEmulatorAutoCloseTrigger.CLOSE_ON_EXIT_PRIVATE_MODE);
         this.mouseCaptureMode = null;
+        this.unixTerminalCtrlCBehaviour = UnixTerminal.CtrlCBehaviour.CTRL_C_KILLS_APPLICATION;
 
         //SwingTerminal will replace these null values for the default implementation if they are unchanged
         this.colorConfiguration = null;
         this.deviceConfiguration = null;
         this.fontConfiguration = null;
     }
-    
+
     @Override
     public Terminal createTerminal() throws IOException {
         // 3 different reasons for tty-based terminal:
         //   "explicit preference", "no alternative",
         //       ("because we can" - unless "rather not")
-        if (forceTextTerminal || GraphicsEnvironment.isHeadless() ||
-                (System.console() != null && !preferTerminalEmulator) ) {
-            // if tty but have no tty, but do have a port, then go telnet:
-            if( telnetPort > 0 && System.console() == null) {
-                return createTelnetTerminal();
-            }
-            if(isOperatingSystemWindows()) {
-                return createWindowsTerminal();
-            }
-            else {
-                return createUnixTerminal(outputStream, inputStream, charset);
-            }
+        if (forceTextTerminal || isAwtHeadless() ||
+                (hasTerminal() && !preferTerminalEmulator) ) {
+            return createHeadlessTerminal();
         }
         else {
             // while Lanterna's TerminalEmulator lacks mouse support:
@@ -133,23 +128,51 @@ public class DefaultTerminalFactory implements TerminalFactory {
     }
 
     /**
+     * Instantiates a Terminal according to the factory implementation with the exception that
+     * {@link DefaultTerminalFactory#preferTerminalEmulator} is always ignored. You may want to use this method when
+     * using tools that rely on AOT compilation such as Graal native-image to ensure AWT/Swing code paths are not hit.
+     * @return Terminal implementation
+     * @throws IOException If there was an I/O error with the underlying input/output system
+     */
+    public Terminal createHeadlessTerminal() throws IOException {
+        // if tty but have no tty, but do have a port, then go telnet:
+        if( telnetPort > 0 && System.console() == null) {
+            return createTelnetTerminal();
+        }
+        if(isOperatingSystemWindows()) {
+            return createWindowsTerminal();
+        }
+
+        return createUnixTerminal(outputStream, inputStream, charset);
+    }
+
+    /**
      * Creates a new terminal emulator window which will be either Swing-based or AWT-based depending on what is
      * available on the system
      * @return New terminal emulator exposed as a {@link Terminal} interface
      */
     public Terminal createTerminalEmulator() {
-        Window window;
-        if(!forceAWTOverSwing && hasSwing()) {
-            window = createSwingTerminal();
-        }
-        else {
-            window = createAWTTerminal();
+        Terminal terminal;
+        if (!forceAWTOverSwing && hasSwing()) {
+            SwingTerminalFrame stf = createSwingTerminal();
+            if(mouseCaptureMode!=null)
+            {
+                stf.getSwingTerminal().setMouseCaptureMode(mouseCaptureMode);
+            }
+            terminal = stf;
+        } else {
+            AWTTerminalFrame atf = createAWTTerminal();
+            if(mouseCaptureMode!=null)
+            {
+                atf.getAWTTerminal().setMouseCaptureMode(mouseCaptureMode);
+            }
+            terminal = atf;
         }
 
-        if(autoOpenTerminalFrame) {
-            window.setVisible(true);
+        if (autoOpenTerminalFrame) {
+            makeWindowVisible(terminal);
         }
-        return (Terminal)window;
+        return terminal;
     }
 
     public AWTTerminalFrame createAWTTerminal() {
@@ -159,7 +182,7 @@ public class DefaultTerminalFactory implements TerminalFactory {
                 deviceConfiguration,
                 fontConfiguration,
                 colorConfiguration,
-                autoCloseTriggers.toArray(new TerminalEmulatorAutoCloseTrigger[autoCloseTriggers.size()]));
+                autoCloseTriggers.toArray(new TerminalEmulatorAutoCloseTrigger[0]));
     }
 
     public SwingTerminalFrame createSwingTerminal() {
@@ -169,7 +192,7 @@ public class DefaultTerminalFactory implements TerminalFactory {
                 deviceConfiguration,
                 fontConfiguration instanceof SwingTerminalFontConfiguration ? (SwingTerminalFontConfiguration)fontConfiguration : null,
                 colorConfiguration,
-                autoCloseTriggers.toArray(new TerminalEmulatorAutoCloseTrigger[autoCloseTriggers.size()]));
+                autoCloseTriggers.toArray(new TerminalEmulatorAutoCloseTrigger[0]));
     }
 
     /**
@@ -203,6 +226,17 @@ public class DefaultTerminalFactory implements TerminalFactory {
         }
     }
 
+    private boolean isAwtHeadless() {
+        try {
+            Class<?> cls = Class.forName("java.awt.GraphicsEnvironment");
+            Method method = cls.getDeclaredMethod("isHeadless");
+            return (Boolean) method.invoke(null);
+        } catch (Exception ignore) {
+            // Most likely cause is that the java.desktop module is not available in the runtime image.
+            return true;
+        }
+    }
+
     private boolean hasSwing() {
         try {
             Class.forName("javax.swing.JComponent");
@@ -210,6 +244,16 @@ public class DefaultTerminalFactory implements TerminalFactory {
         }
         catch(Exception ignore) {
             return false;
+        }
+    }
+
+    private void makeWindowVisible(Terminal terminal) {
+        try {
+            Class<?> cls = Class.forName("java.awt.Window");
+            Method method = cls.getDeclaredMethod("setVisible", boolean.class);
+            method.invoke(terminal, true);
+        } catch (Exception ex) {
+            throw new RuntimeException("Failed to make terminal emulator window visible.", ex);
         }
     }
 
@@ -244,6 +288,18 @@ public class DefaultTerminalFactory implements TerminalFactory {
      */
     public DefaultTerminalFactory setPreferTerminalEmulator(boolean preferTerminalEmulator) {
         this.preferTerminalEmulator = preferTerminalEmulator;
+        return this;
+    }
+
+    /**
+     * Sets the default CTRL-C behavior to use for all {@link UnixTerminal} objects created by this factory. You can
+     * use this to tell Lanterna to trap CTRL-C instead of exiting the application. Non-UNIX terminals are not affected
+     * by this.
+     * @param unixTerminalCtrlCBehaviour CTRL-C behavior to use for {@link UnixTerminal}:s
+     * @return Reference to itself, so multiple .set-calls can be chained
+     */
+    public DefaultTerminalFactory setUnixTerminalCtrlCBehaviour(UnixTerminal.CtrlCBehaviour unixTerminalCtrlCBehaviour) {
+        this.unixTerminalCtrlCBehaviour = unixTerminalCtrlCBehaviour;
         return this;
     }
 
@@ -298,7 +354,7 @@ public class DefaultTerminalFactory implements TerminalFactory {
     }
 
     /**
-     * Controls whether a SwingTerminalFrame shall be automatically shown (.setVisible(true)) immediately after 
+     * Controls whether a SwingTerminalFrame shall be automatically shown (.setVisible(true)) immediately after
      * creation. If {@code false}, you will manually need to call {@code .setVisible(true)} on the JFrame to actually
      * see the terminal window. Default for this value is {@code true}.
      * @param autoOpenTerminalFrame Automatically open SwingTerminalFrame after creation
@@ -308,7 +364,7 @@ public class DefaultTerminalFactory implements TerminalFactory {
         this.autoOpenTerminalFrame = autoOpenTerminalFrame;
         return this;
     }
-    
+
     /**
      * Sets the title to use on created SwingTerminalFrames created by this factory
      * @param title Title to use on created SwingTerminalFrames created by this factory
@@ -403,20 +459,19 @@ public class DefaultTerminalFactory implements TerminalFactory {
 
     private Terminal createWindowsTerminal() throws IOException {
         try {
-            Class<?> nativeImplementation = Class.forName("com.googlecode.lanterna.terminal.WindowsTerminal");
+            Class<?> nativeImplementation = Class.forName("com.googlecode.lanterna.terminal.win32.WindowsTerminal");
             Constructor<?> constructor = nativeImplementation.getConstructor(InputStream.class, OutputStream.class, Charset.class, UnixLikeTTYTerminal.CtrlCBehaviour.class);
             return (Terminal)constructor.newInstance(inputStream, outputStream, charset, UnixLikeTTYTerminal.CtrlCBehaviour.CTRL_C_KILLS_APPLICATION);
         }
-        catch(Exception ignore) {
+        catch(Exception | NoClassDefFoundError ignore) {
             try {
                 return createCygwinTerminal(outputStream, inputStream, charset);
             } catch(IOException e) {
-                throw new IOException("To start java on Windows, use javaw!" + System.lineSeparator()
-                        + "(see https://github.com/mabe02/lanterna/issues/335 )", e);
+                throw new IOException("To use Lanterna on Windows, either add JNA (and jna-platform) to the classpath or use javaw! (see https://github.com/mabe02/lanterna/issues/335)", e);
             }
         }
     }
-    
+
     private Terminal createCygwinTerminal(OutputStream outputStream, InputStream inputStream, Charset charset) throws IOException {
         CygwinTerminal cygTerminal = new CygwinTerminal(inputStream, outputStream, charset);
         if(inputTimeout >= 0) {
@@ -430,10 +485,10 @@ public class DefaultTerminalFactory implements TerminalFactory {
         try {
             Class<?> nativeImplementation = Class.forName("com.googlecode.lanterna.terminal.NativeGNULinuxTerminal");
             Constructor<?> constructor = nativeImplementation.getConstructor(InputStream.class, OutputStream.class, Charset.class, UnixLikeTTYTerminal.CtrlCBehaviour.class);
-            unixTerminal = (UnixTerminal)constructor.newInstance(inputStream, outputStream, charset, UnixLikeTTYTerminal.CtrlCBehaviour.CTRL_C_KILLS_APPLICATION);
+            unixTerminal = (UnixTerminal)constructor.newInstance(inputStream, outputStream, charset, unixTerminalCtrlCBehaviour);
         }
         catch(Exception ignore) {
-            unixTerminal = new UnixTerminal(inputStream, outputStream, charset);
+            unixTerminal = new UnixTerminal(inputStream, outputStream, charset, unixTerminalCtrlCBehaviour);
         }
         if(mouseCaptureMode != null) {
             unixTerminal.setMouseCaptureMode(mouseCaptureMode);
@@ -450,5 +505,25 @@ public class DefaultTerminalFactory implements TerminalFactory {
      */
     private static boolean isOperatingSystemWindows() {
         return System.getProperty("os.name", "").toLowerCase().startsWith("windows");
+    }
+
+    private static boolean hasTerminal() {
+        // Prior to Java 22, the test was System.console() != null but now things have changed:
+        // https://www.oracle.com/java/technologies/javase/22-relnote-issues.html#JDK-8308591
+        // We need to check if the Console.isTerminal() method is available and rely on that if so
+        Console console = System.console();
+        return console != null && isTerminalCheckJDK22(console);
+    }
+
+    private static boolean isTerminalCheckJDK22(Console console) {
+        try {
+            // Don't want to require Java 22 so we need to check this by reflection
+            Method isTerminal = Console.class.getMethod("isTerminal");
+            return (Boolean)isTerminal.invoke(console);
+        } catch (NoSuchMethodException e) {
+            return true;  // This is normal and expected for pre-22 JVM
+        } catch (InvocationTargetException | IllegalAccessException e) {
+            return true;  // This is unexpected, but return true here too, just in case
+        }
     }
 }

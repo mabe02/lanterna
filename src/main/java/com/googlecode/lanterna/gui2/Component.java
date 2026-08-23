@@ -1,5 +1,5 @@
 /*
- * This file is part of lanterna (http://code.google.com/p/lanterna/).
+ * This file is part of lanterna (https://github.com/mabe02/lanterna).
  * 
  * lanterna is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,12 +14,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * Copyright (C) 2010-2017 Martin Berglund
+ * Copyright (C) 2010-2020 Martin Berglund
  */
 package com.googlecode.lanterna.gui2;
 
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TerminalRectangle;
 import com.googlecode.lanterna.graphics.Theme;
 import com.googlecode.lanterna.graphics.ThemeDefinition;
 
@@ -31,10 +32,25 @@ import com.googlecode.lanterna.graphics.ThemeDefinition;
  */
 public interface Component extends TextGUIElement {
     /**
+     *
+     * @return the TerminalPosition and TerminalSize as a TerminalRectangle
+     */
+    TerminalRectangle getBounds();
+    
+    /**
      * Returns the top-left corner of this component, measured from its parent.
      * @return Position of this component
      */
     TerminalPosition getPosition();
+    
+    /**
+     * Returns the top-left corner of this component in global coordinates space
+     * using {@link TerminalPosition#TOP_LEFT_CORNER} with
+     * {@link #toGlobal(TerminalPosition)}
+     * 
+     * @return global position of this component
+     */
+    TerminalPosition getGlobalPosition();
 
     /**
      * This method will be called by the layout manager when it has decided where the component is to be located. If you
@@ -91,6 +107,25 @@ public interface Component extends TextGUIElement {
      * @return This component's layout data
      */
     LayoutData getLayoutData();
+
+    /**
+     * Returns the component's own state as to if it should be visible or not. The exact behavior of an invisible
+     * component will depend on the layout manager; some will just ignore invisible components where others leave an
+     * empty space in their place. Invisible components cannot get input focus. The visibility value of the component
+     * has no effect if the component is not added to a container.
+     * @return The component's internal visibility state
+     */
+    boolean isVisible();
+
+    /**
+     * Sets the component's own state as to if it should be visible or not. The exact behavior of an invisible
+     * component will depend on the layout manager; some will just ignore invisible components where others leave an
+     * empty space in their place. Invisible components cannot get input focus. The visibility value of the component
+     * has no effect if the component is not added to a container.
+     * @param visible {@code true} if the component should be visible, {@code false} otherwise
+     * @return Itself
+     */
+    Component setVisible(boolean visible);
     
     /**
      * Returns the container which is holding this container, or {@code null} if it's not assigned to anything.
