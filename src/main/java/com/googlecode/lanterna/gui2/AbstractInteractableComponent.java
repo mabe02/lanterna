@@ -192,7 +192,7 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
                 default:
             }
             // On Mac at least, Shift+Tab is ReverseTab, and isShiftDown() always reports `true`.
-            if (keyStroke.getKeyType() == KeyType.ReverseTab) {
+            if (keyStroke.getKeyType() == KeyType.REVERSE_TAB) {
                 return Result.MOVE_FOCUS_PREVIOUS;
             }
         }

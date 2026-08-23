@@ -3,6 +3,7 @@ package com.googlecode.lanterna.gui2;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.MouseAction;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -67,6 +68,11 @@ public class ScrollViewer
 
     @Override
     public final Collection<Component> getChildren() {
+        return getChildrenList();
+    }
+
+    @Override
+    public List<Component> getChildrenList() {
         final int visibleChildren = visibleChildren();
 
         if (visibleChildren == 0) {
@@ -114,7 +120,7 @@ public class ScrollViewer
         if (component != null) {
             this.component = component;
             component.onAdded(this);
-            component.setPosition(TerminalPosition.TOP_LEFT_CORNER);
+            component.setPosition(TerminalPosition.of(0, 0));
             contentAdapter.setAdaptedComponent(component);
             invalidate();
         }
@@ -205,18 +211,29 @@ public class ScrollViewer
 //            return false;
 //        }
 
+        if (key instanceof MouseAction) {
+            final MouseAction mouse = (MouseAction) key;
+
+            switch (mouse.getActionType()) {
+                case SCROLL_UP:
+                    lineUp();
+                    return true;
+                case SCROLL_DOWN:
+                    lineDown();
+                    return true;
+            }
+        }
+
         // @formatter:off
         switch (key.getKeyType()) {
-            default:            return false;
+            case ARROW_LEFT:     lineLeft();     break;
+            case ARROW_RIGHT:    lineRight();    break;
+            case ARROW_UP:       lineUp();       break;
+            case ARROW_DOWN:     lineDown();     break;
+            case PAGE_UP:        pageUp();       break;
+            case PAGE_DOWN:      pageDown();     break;
 
-            case ArrowLeft:     lineLeft();     break;
-            case ArrowRight:    lineRight();    break;
-            case ArrowUp:       lineUp();       break;
-            case ArrowDown:     lineDown();     break;
-            case PageUp:        pageUp();       break;
-            case PageDown:      pageDown();     break;
-
-            case Home:
+            case HOME:
                 if (isControlDown) {
                     scrollToTop();
                 }
@@ -225,7 +242,7 @@ public class ScrollViewer
                 }
                 break;
 
-            case End:
+            case END:
                 if (isControlDown) {
                     scrollToBottom();
                 }
@@ -234,6 +251,7 @@ public class ScrollViewer
                 }
                 break;
 
+            default:             return false;
         }
         // @formatter:on
 
@@ -1029,7 +1047,7 @@ public class ScrollViewer
 
                     sv.contentAdapter.draw(
                         g.newTextGraphics(
-                            TerminalPosition.TOP_LEFT_CORNER,
+                            TerminalPosition.of(0, 0),
                             size.withRelative(dX, dY)
                         ),
                         desiredChildSize

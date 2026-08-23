@@ -208,7 +208,7 @@ public final class ScrollableContentAdapter implements ScrollController {
             return Rectangle.EMPTY;
         }
 
-        final TerminalPosition relativeOffset = component.toAncestor(sv, TerminalPosition.TOP_LEFT_CORNER);
+        final TerminalPosition relativeOffset = component.toAncestor(sv, TerminalPosition.of(0, 0));
 
         Rectangle rectangle = targetRectangle;
 
@@ -288,7 +288,7 @@ public final class ScrollableContentAdapter implements ScrollController {
         // Note: "Above viewport" = childTop above viewportTop, childBottom above viewportBottom
         //       "Below viewport" = childTop below viewportTop, childBottom below viewportBottom
         //
-        // These child thus may overlap with the viewport, but will scroll the same direction.
+        // The child thus may overlap with the viewport, but will scroll the same direction.
         //
 
         final boolean isAbove = topChild < topView && bottomChild < bottomView;
@@ -402,7 +402,7 @@ public final class ScrollableContentAdapter implements ScrollController {
             d.graphicsSize = new TerminalSize(d.extentWidth, d.extentHeight);
         }
         else {
-            d.graphicsOffset = TerminalPosition.TOP_LEFT_CORNER;
+            d.graphicsOffset = TerminalPosition.of(0, 0);
             d.graphicsSize = d.viewport;
         }
 

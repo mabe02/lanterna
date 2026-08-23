@@ -30,17 +30,14 @@ public class ScrollControllerTest extends TestBase {
             Panels.vertical(
                 sv,
                 new CheckBox("Let Content Control Scrolling").addListener(
-                    new CheckBox.Listener() {
-                        @Override
-                        public void onStatusChanged(final boolean checked) {
-                            final int offsetX = sv.getHorizontalOffset();
-                            final int offsetY = sv.getVerticalOffset();
+                    checked -> {
+                        final int offsetX = sv.getHorizontalOffset();
+                        final int offsetY = sv.getVerticalOffset();
 
-                            sv.setCanContentControlScrolling(checked);
+                        sv.setCanContentControlScrolling(checked);
 
-                            sv.setHorizontalOffset(offsetX);
-                            sv.setVerticalOffset(offsetY);
-                        }
+                        sv.setHorizontalOffset(offsetX);
+                        sv.setVerticalOffset(offsetY);
                     }
                 )
             )
@@ -114,12 +111,12 @@ public class ScrollControllerTest extends TestBase {
                             g.fillRectangle(
                                 new TerminalPosition(x + dX - xOffset, y + dY - yOffset),
                                 new TerminalSize(CELL_W, CELL_H),
-                                new TextCharacter(' ', WHITE, bg1)
+                                TextCharacter.fromCharacter(' ', WHITE, bg1)
                             );
                             g.fillRectangle(
                                 new TerminalPosition(x + CELL_W + dX - xOffset, y + dY - yOffset),
                                 new TerminalSize(CELL_W, CELL_H),
-                                new TextCharacter(' ', WHITE, bg2)
+                                TextCharacter.fromCharacter(' ', WHITE, bg2)
                             );
                         }
                     }
@@ -140,26 +137,26 @@ public class ScrollControllerTest extends TestBase {
             if(!keyStroke.isAltDown() && !keyStroke.isCtrlDown()) {
                 if(!keyStroke.isShiftDown()) {
                     switch(keyStroke.getKeyType()) {
-                        case ArrowDown:
+                        case ARROW_DOWN:
                             return scrollable ? Result.UNHANDLED : Result.MOVE_FOCUS_DOWN;
-                        case ArrowLeft:
+                        case ARROW_LEFT:
                             return scrollable ? Result.UNHANDLED : Result.MOVE_FOCUS_LEFT;
-                        case ArrowRight:
+                        case ARROW_RIGHT:
                             return scrollable ? Result.UNHANDLED : Result.MOVE_FOCUS_RIGHT;
-                        case ArrowUp:
+                        case ARROW_UP:
                             return scrollable ? Result.UNHANDLED : Result.MOVE_FOCUS_UP;
-                        case Tab:
+                        case TAB:
                             return Result.MOVE_FOCUS_NEXT;
-                        case ReverseTab:
+                        case REVERSE_TAB:
                             return Result.MOVE_FOCUS_PREVIOUS;
-                        case MouseEvent:
+                        case MOUSE_EVENT:
                             getBasePane().setFocusedInteractable(this);
                             return Result.HANDLED;
                         default:
                     }
                 }
                 // On Mac at least, Shift+Tab is ReverseTab, and isShiftDown() always reports `true`.
-                if (keyStroke.getKeyType() == KeyType.ReverseTab) {
+                if (keyStroke.getKeyType() == KeyType.REVERSE_TAB) {
                     return Result.MOVE_FOCUS_PREVIOUS;
                 }
             }
