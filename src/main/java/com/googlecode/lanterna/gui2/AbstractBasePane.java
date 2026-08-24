@@ -334,6 +334,10 @@ public abstract class AbstractBasePane<T extends BasePane> implements BasePane {
                 position.getRow() >= focusedInteractable.getSize().getRows()) {
             return null;
         }
+        //Don't show the cursor if it has been scrolled out of view inside a ScrollViewer
+        if(!ScrollViewer.isPositionVisible(focusedInteractable, position)) {
+            return null;
+        }
         return focusedInteractable.toBasePane(position);
     }
 
@@ -357,9 +361,28 @@ public abstract class AbstractBasePane<T extends BasePane> implements BasePane {
         Interactable previous = focusedInteractable;
         focusedInteractable = toFocus;
         if(toFocus != null) {
+            bringIntoView(toFocus);
             toFocus.onEnterFocus(direction, previous);
         }
         invalidate();
+    }
+
+    private void bringIntoView(final Component c) {
+        if (c == null) {
+            return;
+        }
+        final ScrollViewer scrollViewer = ScrollViewer.findScrollViewer(c);
+        if (scrollViewer == null) {
+            return;
+        }
+        TerminalSize size = c.getSize();
+        if (size == null) {
+            size = c.getPreferredSize();
+        }
+        if (size == null || size.getRows() == 0 || size.getColumns() == 0) {
+            return;
+        }
+        scrollViewer.makeVisible(c, Rectangle.of(TerminalPosition.TOP_LEFT_CORNER, size));
     }
 
     @Override

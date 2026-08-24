@@ -220,6 +220,19 @@ public interface Component extends TextGUIElement {
     TerminalPosition toBasePane(TerminalPosition position);
 
     /**
+     * Translates a position in this component's coordinate space to the coordinate space of an ancestor.
+     * If this component is not a descendant of {@code ancestor}, then this method will return {@code null}.
+     * {@code null}.  If {@code ancestor} is the same instance as this component, {@code position} will be
+     * unchanged.
+     *
+     * @param ancestor A direct or transitive parent component.
+     * @param position The position to translate (relative to the top-left corner of this component's container)
+     * @return Position in the ancestor component's space, or {@code null} if the component is not a descendant of
+     * {@code ancestor}
+     */
+    TerminalPosition toAncestor(Component ancestor, TerminalPosition position);
+
+    /**
      * Translates a position local to the container to global coordinate space. This should be the absolute coordinate
      * in the terminal screen, taking no windows or containers into account. If the component belongs to no base pane,
      * it will return {@code null}.

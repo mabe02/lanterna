@@ -36,7 +36,7 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
     private InputFilter inputFilter;
     private boolean inFocus;
     private boolean enabled;
-    private KeyStroke accelerator;    
+    private KeyStroke accelerator;
 
     /**
      * Default constructor
@@ -87,9 +87,9 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
     	this.accelerator = keyStroke;
     	return self();
     }
-    
+
     protected synchronized KeyStroke getAccelerator() { return this.accelerator; };
-    
+
     /**
      * {@inheritDoc}
      * <p>
@@ -191,6 +191,10 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
                     return Result.HANDLED;
                 default:
             }
+            // On Mac at least, Shift+Tab is ReverseTab, and isShiftDown() always reports `true`.
+            if (keyStroke.getKeyType() == KeyType.REVERSE_TAB) {
+                return Result.MOVE_FOCUS_PREVIOUS;
+            }
         }
         return Result.UNHANDLED;
     }
@@ -199,7 +203,7 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
     public TerminalPosition getCursorLocation() {
         return getRenderer().getCursorLocation(self());
     }
-    
+
     @Override
     public InputFilter getInputFilter() {
         return inputFilter;
@@ -210,52 +214,52 @@ public abstract class AbstractInteractableComponent<T extends AbstractInteractab
         this.inputFilter = inputFilter;
         return self();
     }
-    
+
     public boolean isKeyboardActivationStroke(KeyStroke keyStroke) {
         boolean isKeyboardActivation = (keyStroke.getKeyType() == KeyType.CHARACTER && keyStroke.getCharacter() == ' ') || keyStroke.getKeyType() == KeyType.ENTER;
-        
+
         return isFocused() && isKeyboardActivation;
     }
-    
-    public boolean isKeyboardAcceleratorStroke(KeyStroke keyStroke) 
+
+    public boolean isKeyboardAcceleratorStroke(KeyStroke keyStroke)
     {
     	if (accelerator == null) return false;
-    	
+
         return isEnabled() && accelerator.equals(keyStroke);
     }
-    
+
     public boolean isMouseActivationStroke(KeyStroke keyStroke) {
         boolean isMouseActivation = false;
         if (keyStroke instanceof MouseAction) {
             MouseAction action = (MouseAction)keyStroke;
             isMouseActivation = action.getActionType() == MouseActionType.CLICK_DOWN;
         }
-        
+
         return isFocused() && isMouseActivation;
     }
-    
+
     public boolean isActivationStroke(KeyStroke keyStroke) {
         boolean isKeyboardActivationStroke = isKeyboardActivationStroke(keyStroke);
         boolean isMouseActivationStroke = isMouseActivationStroke(keyStroke);
-        
+
         return isKeyboardActivationStroke || isMouseActivationStroke;
     }
-    
+
     public boolean isMouseDown(KeyStroke keyStroke) {
         return keyStroke.getKeyType() == KeyType.MOUSE_EVENT && ((MouseAction)keyStroke).isMouseDown();
     }
-    
+
     public boolean isMouseDrag(KeyStroke keyStroke) {
         return keyStroke.getKeyType() == KeyType.MOUSE_EVENT && ((MouseAction)keyStroke).isMouseDrag();
     }
-    
+
     public boolean isMouseMove(KeyStroke keyStroke) {
         return keyStroke.getKeyType() == KeyType.MOUSE_EVENT && ((MouseAction)keyStroke).isMouseMove();
     }
-    
+
     public boolean isMouseUp(KeyStroke keyStroke) {
         return keyStroke.getKeyType() == KeyType.MOUSE_EVENT && ((MouseAction)keyStroke).isMouseUp();
     }
-    
-	
+
+
 }

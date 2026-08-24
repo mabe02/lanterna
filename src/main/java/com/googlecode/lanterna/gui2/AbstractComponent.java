@@ -381,6 +381,21 @@ public abstract class AbstractComponent<T extends Component> implements Componen
     }
 
     @Override
+    public TerminalPosition toAncestor(Component ancestor, TerminalPosition position) {
+        if (ancestor == this) {
+            return position;
+        }
+        if (ancestor == null) {
+            return null;
+        }
+        Container parent = getParent();
+        if (parent != null) {
+            return parent.toAncestor(ancestor, getPosition().withRelative(position));
+        }
+        return null;
+    }
+
+    @Override
     public TerminalPosition toGlobal(TerminalPosition position) {
         Container parent = getParent();
         if(parent == null) {
