@@ -404,6 +404,43 @@ public class ScrollViewer
         }
     }
 
+    /**
+     * Determines whether {@code positionInComponent} -- a position expressed in {@code component}'s own local
+     * coordinate space, such as the value returned by {@link Interactable#getCursorLocation()} -- is actually
+     * visible on screen. A position can be clipped from view when {@code component} is nested (directly or
+     * indirectly) inside one or more {@link ScrollViewer ScrollViewers} and has been scrolled outside of their
+     * viewport, even though it's still within the bounds of {@code component} itself.
+     * <p>
+     * This queries the live {@link ScrollController} for each ancestor {@code ScrollViewer} rather than the
+     * viewer's own (deferred, one-frame-delayed) cached viewport size, since this needs to reflect what was
+     * actually just drawn.
+     */
+    static boolean isPositionVisible(final Component component, final TerminalPosition positionInComponent) {
+        Container parent = component.getParent();
+
+        while (parent != null) {
+            if (parent instanceof ScrollViewer) {
+                final ScrollViewer sv = (ScrollViewer) parent;
+                final ScrollController controller = sv.getScrollController();
+                final TerminalPosition positionInViewer = component.toAncestor(sv, positionInComponent);
+
+                if (controller == null ||
+                    positionInViewer == null ||
+                    positionInViewer.getColumn() < 0 ||
+                    positionInViewer.getRow() < 0 ||
+                    positionInViewer.getColumn() >= controller.getViewportWidth() ||
+                    positionInViewer.getRow() >= controller.getViewportHeight()) {
+
+                    return false;
+                }
+            }
+
+            parent = parent.getParent();
+        }
+
+        return true;
+    }
+
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Properties">

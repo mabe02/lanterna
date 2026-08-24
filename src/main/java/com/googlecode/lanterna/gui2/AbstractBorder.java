@@ -84,6 +84,18 @@ public abstract class AbstractBorder extends AbstractComposite<Border> implement
         return terminalPosition.withRelative(getWrappedComponentTopLeftOffset());
     }
 
+    @Override
+    public TerminalPosition toAncestor(Component ancestor, TerminalPosition position) {
+        if(ancestor == this) {
+            return position;
+        }
+        TerminalPosition terminalPosition = super.toAncestor(ancestor, position);
+        if(terminalPosition == null) {
+            return null;
+        }
+        return terminalPosition.withRelative(getWrappedComponentTopLeftOffset());
+    }
+
     private TerminalPosition getWrappedComponentTopLeftOffset() {
         return getRenderer().getWrappedComponentTopLeftOffset();
     }
