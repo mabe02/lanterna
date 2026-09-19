@@ -440,10 +440,10 @@ public abstract class ANSITerminal extends StreamBasedTerminal implements Extend
     }
 
     void restoreCursorPosition() throws IOException {
-        writeCSISequenceToTerminal("u".getBytes());
+        writeToTerminal(new byte[] { (byte)0x1b, (byte)'8' });
     }
 
     void saveCursorPosition() throws IOException {
-        writeCSISequenceToTerminal("s".getBytes());
+        writeToTerminal(new byte[] { (byte)0x1b, (byte)'7' });
     }
 }
