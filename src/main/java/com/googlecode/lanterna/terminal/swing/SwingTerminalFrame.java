@@ -110,7 +110,7 @@ public class SwingTerminalFrame extends JFrame implements IOSafeTerminal {
         {
         	this.autoCloseTriggers = EnumSet.copyOf(Arrays.asList(autoCloseTriggers));
         }
-        else this.autoCloseTriggers = null;
+        else this.autoCloseTriggers = EnumSet.noneOf(TerminalEmulatorAutoCloseTrigger.class);
         this.disposed = false;
 
         getContentPane().setLayout(new BorderLayout());
